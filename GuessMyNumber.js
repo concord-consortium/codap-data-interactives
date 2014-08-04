@@ -1,7 +1,8 @@
-
+/* jshint indent: false, strict: false, quotmark: false, browser: true, devel: true */
+/* globals iframePhone */
 var GuessMyNumber = {
 
-  controller: window.parent.DG.currGameController,
+  codapPhone: null,
 
   absRangeMax: 101,
 
@@ -21,7 +22,10 @@ var GuessMyNumber = {
   initGame: function() {
 
     // Invoke the JavaScript interface
-    this.controller.doCommand( {
+
+    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function() {}, "codap-game", window.parent);
+
+    this.codapPhone.call({
       action: 'initGame',
       args: {
         name: "Guess My Number",
@@ -47,51 +51,58 @@ var GuessMyNumber = {
           }
         ]
       }
-    });
-
-    this.setupNewGame();
+    }, function() {
+      this.setupNewGame();
+    }.bind(this));
   },
 
-  addCase: function() {
-    var result;
-    if( !this.openRoundID) {
-      // Start a new Rounds case if we don't have one open
-      result = this.controller.doCommand({
-                            action: 'openCase',
-                            args: {
-                              collection: "Rounds",
-                              values: [ this.gameNum, this.trialNum ]
-                            }
-                          });
-      if( result.success)
-        this.openRoundID = result.caseID;
-      else
-        console.log("GuessMyNumber: Error calling 'openCase'"); // alert the user? Bail?
-    }
-    else {
-      result = this.controller.doCommand({
-                            action: 'updateCase',
-                            args: {
-                              collection: "Rounds",
-                              caseID: this.openRoundID,
-                              values: [ this.gameNum, this.trialNum ]
-                            }
-                          });
-    }
+  addCase: function(callback) {
 
-    this.controller.doCommand( {
-      action: 'createCase',
-      args: {
-        collection: "Guesses",
-        parent: this.openRoundID,
-        values: [ this.trialNum, this.guess, this.result ]
-      }
-    });
+    var createCase = function() {
+      this.codapPhone.call({
+        action: 'createCase',
+        args: {
+          collection: "Guesses",
+          parent: this.openRoundID,
+          values: [ this.trialNum, this.guess, this.result ]
+        }
+      });
+      callback();
+    }.bind(this);
+
+    if( ! this.openRoundID ) {
+      // Start a new Rounds case if we don't have one open
+      // Note: hideous formatting here is intended merely to make the diff as simple as possible,
+      // please don't format production code like this:
+      this.codapPhone.call({
+          action: 'openCase',
+          args: {
+            collection: "Rounds",
+            values: [ this.gameNum, this.trialNum ]
+          }
+        }, function(result) {
+          if( result.success) {
+            this.openRoundID = result.caseID;
+            createCase();
+          } else {
+            console.log("GuessMyNumber: Error calling 'openCase'"); // alert the user? Bail?
+          }
+        }.bind(this));
+    } else {
+      this.codapPhone.call({
+        action: 'updateCase',
+        args: {
+          collection: "Rounds",
+          caseID: this.openRoundID,
+          values: [ this.gameNum, this.trialNum ]
+        }
+      }, createCase);
+    }
   },
 
   addGame: function() {
-    if( this.openRoundID) {
-      this.controller.doCommand({
+    if (this.openRoundID) {
+      this.codapPhone.call({
         action: 'closeCase',
         args: {
           collection: "Rounds",
@@ -99,6 +110,7 @@ var GuessMyNumber = {
           values: [ this.gameNum, this.trialNum ]
         }
       });
+      // Since we are assuming closeCase will succeed, immediately forget the previously open round.
       this.openRoundID = null;
     }
   },
@@ -112,7 +124,7 @@ var GuessMyNumber = {
     this.currRangeMax = this.absRangeMax;
   },
 
-  processGuess: function( iGuess) {
+  processGuess: function(iGuess, callback) {
 
     this.trialNum++;
     this.guess = iGuess;
@@ -128,41 +140,48 @@ var GuessMyNumber = {
       this.result = "Too high";
       this.currRangeMax = Math.min( this.currRangeMax, iGuess - 1);
     }
-    else
+    else {
       this.result = "Guess again";
+    }
 
-    this.addCase();
-
-    return this.result;
+    this.addCase(callback);
   },
 
   userGuess: function(){
     var guess = Number(document.forms.form1.num.value);
+    document.forms.form1.enter.disabled = true;
 
-    this.processGuess( guess);
-    alert( this.result);
+    this.processGuess(guess, function() {
+      alert(this.result);
+      document.forms.form1.enter.disabled = false;
 
-    if (guess === this.secret) {
-      this.addGame();
-      this.setupNewGame();
-    }
+      if (guess === this.secret) {
+        this.addGame();
+        this.setupNewGame();
+      }
+    }.bind(this));
   },
 
   autoGuess: function() {
 
-    do {
+    var makeNextGuess = function() {
       var currRange = this.currRangeMax - this.currRangeMin;
       var guess = this.currRangeMin + Math.floor(Math.random() * currRange);
-      this.processGuess( guess);
 
-    } while( this.guess !== this.secret);
+      this.processGuess(guess, function() {
+        if (this.guess === this.secret) {
+          this.addGame();
+          this.setupNewGame();
+        } else {
+          makeNextGuess();
+        }
+      }.bind(this));
 
-    this.addGame();
-    this.setupNewGame();
+    }.bind(this);
+
+    makeNextGuess();
   }
 };
 
-
 GuessMyNumber.initGame();
 GuessMyNumber.chooseNumber();
-
