@@ -2,22 +2,22 @@
 var GuessMyNumber = {
 
   controller: window.parent.DG.currGameController,
-  
+
   absRangeMax: 101,
-  
+
   gameNum: 0,
   secret: null,
   trialNum: 0,
   guess: null,
   result: null,
-  
+
   currRangeMin: 0,
   currRangeMax: this.absRangeMax,
-  
+
   chooseNumber: function() {
     this.secret = Math.floor(Math.random() * this.absRangeMax);
   },
-  
+
   initGame: function() {
 
     // Invoke the JavaScript interface
@@ -88,7 +88,7 @@ var GuessMyNumber = {
       }
     });
   },
-  
+
   addGame: function() {
     if( this.openRoundID) {
       this.controller.doCommand({
@@ -105,18 +105,18 @@ var GuessMyNumber = {
 
   setupNewGame: function() {
     this.gameNum++;
-    
+
     this.chooseNumber();
     this.trialNum = 0;
     this.currRangeMin = 0;
     this.currRangeMax = this.absRangeMax;
   },
-  
+
   processGuess: function( iGuess) {
 
     this.trialNum++;
     this.guess = iGuess;
-  
+
     if (Number(iGuess) === this.secret) {
       this.result = "Got it!";
     }
@@ -132,13 +132,13 @@ var GuessMyNumber = {
       this.result = "Guess again";
 
     this.addCase();
-    
+
     return this.result;
   },
 
   userGuess: function(){
     var guess = Number(document.forms.form1.num.value);
-  
+
     this.processGuess( guess);
     alert( this.result);
 
@@ -147,16 +147,16 @@ var GuessMyNumber = {
       this.setupNewGame();
     }
   },
-  
+
   autoGuess: function() {
-    
+
     do {
       var currRange = this.currRangeMax - this.currRangeMin;
       var guess = this.currRangeMin + Math.floor(Math.random() * currRange);
       this.processGuess( guess);
-      
+
     } while( this.guess !== this.secret);
-    
+
     this.addGame();
     this.setupNewGame();
   }
