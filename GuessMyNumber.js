@@ -72,8 +72,6 @@ var GuessMyNumber = {
 
     if( ! this.openRoundID ) {
       // Start a new Rounds case if we don't have one open
-      // Note: hideous formatting here is intended merely to make the diff as simple as possible,
-      // please don't format production code like this:
       this.codapPhone.call({
           action: 'openCase',
           args: {
