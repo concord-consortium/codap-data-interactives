@@ -13,10 +13,6 @@ var PerformanceHarness = {
     startTime: null,
 
 
-    /*doCommand: function( iAction, iArgs) {
-     return DG.doCommand({ action: iAction, args: iArgs });
-     },
-     */
 
     initialize: function() {
 
