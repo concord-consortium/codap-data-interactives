@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC>
+<html lang="en">
+  <head>
+    <title>Cart Weight</title>
+
+    <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
+    <link rel="stylesheet" type="text/css" href="style/cart_style.css" />
+    <link rel="stylesheet" type="text/css" href="style/cart_layout.css" />
+
+    <script src="../Common/js/raphael.js" type="text/javascript"></script>
+    <script src="../Common/js/jquery.js" type="text/javascript"></script>
+    <script src="../Common/js/kcpcommon.js" type="text/javascript"></script>
+    <script src="../Common/js/events.js" type="text/javascript"></script>
+    <script src="../Common/js/dgapi.js" type="text/javascript"></script>
+    <script src="../Common/js/level_manager.js" type="text/javascript"></script>
+    <script src="js/cart_settings.js" type="text/javascript"></script>
+    <script src="js/cart_levels.js" type="text/javascript"></script>
+    <script src="js/cart.js" type="text/javascript"></script>
+    <script src="js/cart_model.js" type="text/javascript"></script>
+    <script src="js/cart_view.js" type="text/javascript"></script>
+    <script src="js/cart_game.js" type="text/javascript"></script>
+
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <!-- The 'cartGame' global is the top-level object that gets things going.
+          It is an instance of the CartGame 'class' defined in cart_game.js.  -->
+  </head>
+
+  <body onload="cartGame.initializeGame()" onkeypress="return cartGame.model.handleBodyKeypress(event);">
+
+    <div id="backbox">  <!--Everything lives within this-->
+            <div id="gameArea">  <!--Raphael is used to draw everything within this-->
+            </div>
+
+            <div id="video_panel">
+                <video id="welcome_video" width="290" height="304" autoplay="autoplay" loop="loop"
+                       onclick="cartGame.model.playGame()">
+                    <source src="img/welcome.mp4" type="video/mp4"/>
+                    <source src="img/welcome.ogv" type="video/ogg"/>
+                    Your browser does not support the video tag.
+                </video>
+                <button id="start_game_button" type="button" class="button bigrounded rosy"
+                         onclick="cartGame.model.playGame();">
+                     Play
+                </button>
+            </div>
+            <div id="welcome_panel" class="bottomPanel">
+                <div id="welcome_text" class="welcome">
+                    Cart Weight! The closer your guess, the higher your score.
+                </div>
+            </div>
+
+            <div id="game_panel" class="panel">
+                <div class="label">Game <span id="gameNum" class="info">1</span></div>
+                <div id="score_panel">
+                    <div id="label"><img src="../Common/img/checkers.png"> Score
+                    <span id="score" class="info"></span></div>
+                </div>
+            </div>
+
+            <div id="turn_panel" class="panel">
+                <div class="label">Actual: <span id="actual" class="info"></span><br>
+                Points: <span id="onescore" class="info"></span> </div>
+            </div>
+
+            <div id="guess_panel">
+                <!--[if IE]>
+                  <div id="IEroot">
+            <![endif]-->
+                    Guess: <input id="guess_input_box" type="text" value="0"
+                          onchange="cartGame.model.setGuess(document.getElementById('guess_input_box').value);"/>
+                    <img id="left_input" src="../Common/img/left_input.png">
+                    <img id="right_input" src="../Common/img/right_input.png">
+                <!--[if IE]>
+                  </div>
+                  <![endif]-->
+                <button id="guess_button" type="button" class="button medium white"
+                                        onclick="cartGame.model.handleTurnButton();">
+                </button>
+            </div>
+
+            <div id="gameCover">  <!--Prevent mouse interaction when game is over-->
+            </div>
+
+            <div id="outercontrols" class="bottomPanel">
+                <button id="game_button" type="button" class="button short_medium white"
+                        onclick="cartGame.model.handleGameButton();">
+              </button>
+                <div id="level">
+                    Level<br><span id="levelName" class="info"></span>
+                </div>
+                <button id="levels_button" type="button" class="button short_medium white"
+                        onclick="cartGame.model.handleLevelsButton();">
+                    Levels
+              </button>
+            </div>
+
+            <div id="cover" class="translucent"></div>  <!--Prevent mouse interaction when levels are showing-->
+            <div id="levels_panel" class="levels">
+                <div id="levels_close" onclick="cartGame.model.levelManager.leaveLevelsMode();"></div>
+                Choose a level. (You are currently on <span id="currLevel"></span>.)
+                <table id="levels_table" class="levels_table_style">
+                </table>
+            </div>
+
+            <div id="level_alert" class="alert">
+                <div id="level_alert_bar" class="bar">
+                    Level Alert!
+                </div>
+                <div id="unlock_info" class="unlock">
+                    Congratulations! You have unlocked level <span id="unlock"></span>!
+                    <button id="OK_button" type="button" class="button medium white">
+                        OK
+                  </button>
+                </div>
+            </div>
+        </div>
+  </body>
+</html>
