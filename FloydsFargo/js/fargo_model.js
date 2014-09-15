@@ -310,24 +310,24 @@ FargoModel.prototype.doTurn = function()
   
   this.turnFinished = false;
 };
-
-FargoModel.prototype.finishTurn = function(e)
+//finishTurn is called within the model as game is finish, and also called by an html Event Handler at every turn
+FargoModel.prototype.finishTurn = function()
 {
   this.turnFinished = true;
   this.addTurnCase();
 };
 
-FargoModel.prototype.watch = function(e)
+FargoModel.prototype.watch = function()
 {
   this.setIsSelling( false);
   this.playTurn();
-}
+};
 
-FargoModel.prototype.sell = function(e)
+FargoModel.prototype.sell = function()
 {
   this.setIsSelling( true);
   this.playTurn();
-}
+};
 
 FargoModel.prototype.playTurn = function()
 {
@@ -387,11 +387,11 @@ FargoModel.prototype.handleGameButton = function()
     // We start a new game
     this.playGame();
   }
-}
+};
 
 FargoModel.prototype.setIsSelling = function(value)
 {
-  var nextTurn = this.turnNumber + 1;
+  //var nextTurn = this.turnNumber + 1;
   
   this.isSelling = value;
   
