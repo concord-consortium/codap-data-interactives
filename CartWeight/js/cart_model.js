@@ -10,11 +10,10 @@
  * @preserve (c) 2012 KCP Technologies, Inc.
  */
 
-function CartModel(codapPhone, iDoAppCommandFunc)
+function CartModel(codapPhone)
 {
   this.codapPhone = codapPhone;
-  //this.doAppCommandFunc = iDoAppCommandFunc;
-  
+
   this.eventDispatcher = new EventDispatcher();
   this.levelManager = new LevelManager( CartLevels, this, 'cartGame.model.handleLevelButton(event, ##);',
                                         this, this.isLevelEnabled);
@@ -89,9 +88,6 @@ CartModel.prototype.initialize = function()
                 }
             }
         ]
-            // Storing function directly here won't work if we have to go through a JSON interface.
-            // For JavaScript-to-JavaScript, however, we don't have to JSON-ify.
-            //doCommandFunc: this.doAppCommandFunc
     }
 }, function(){console.log("Initializing game")});
 
