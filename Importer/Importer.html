@@ -1,0 +1,434 @@
+<!--// ==========================================================================-->
+<!--// Project:   Importer-->
+<!--// Copyright: ©2011 KCP Technologies, Inc.-->
+<!--// ==========================================================================-->
+
+<!--/**-->
+ <!--* @fileoverview Defines Importer component to be embedded in DG to import tab-delimited text.-->
+ <!--* @author bfinzer@kcptech.com (William Finzer)-->
+ <!--* @preserve (c) 2011 KCP Technologies, Inc.-->
+ <!--*/-->
+
+<html>
+<head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="Importer.css" />
+    <script src="../Common/js/kcpcommon.js" language="javascript"></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <script src="Importer.js" language="javascript"></script>
+
+    <title>Importer 2.0</title>
+</head>
+
+<body>
+<h1>Importer 2.0</h1>
+<p>Import data in JSON format (especially to describe hierarchical data), tab-delimited, or comma-delimited form.</p>
+<p>The example data is in JSON format to show how it works.</p>
+<p>Paste tab-delimited or comma-delimited text into the field below and press <strong>Import</strong> to bring the text as data
+into CODAP. The first row should be the name of the collection, the second row should contain tab-delimited
+or comma-delimited attribute names. The data should follow with with one case per row.</p>
+
+<button type="button" onclick="Importer.doImport()">Import</button>
+
+<code>
+<textarea id="textToImport" rows="15" cols="100">
+{
+  "collection_name" : "Data Sheets",
+  "cases" : [
+    {
+      "id" : "P02",
+      "narrative" : true,
+      "case_coherence" : true,
+      "nesting_present" : true,
+      "nesting_levels" : 1,
+      "spatial_match" : "one table per segment",
+      "contents" : {
+        "collection_name" : "DS Attributes",
+        "cases" : [
+          {
+            "name" : "date",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "label?"
+          },
+          {
+            "name" : "time",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "label?"
+          },
+          {
+            "name" : "segment",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "label?"
+          },
+          {
+            "name" : "lane_width",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "direction",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "label?"
+          },
+          {
+            "name" : "vehicle_type",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "label"
+          },
+          {
+            "name" : "speed",
+            "present" : true,
+            "named" : false,
+            "units" : true,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          },
+          {
+            "name" : "distance",
+            "present" : true,
+            "named" : false,
+            "units" : true,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          }
+        ]
+      }
+    },
+    {
+      "id" : "P03",
+      "narrative" : false,
+      "case_coherence" : true,
+      "nesting_present" : true,
+      "nesting_levels" : 2,
+      "spatial_match" : "one table per segment",
+      "contents" : {
+        "collection_name" : "DS Attributes",
+        "cases" : [
+          {
+            "name" : "date",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "time",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "segment",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "label"
+          },
+          {
+            "name" : "lane_width",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "direction",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "label"
+          },
+          {
+            "name" : "vehicle_type",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "speed",
+            "present" : true,
+            "named" : true,
+            "units" : false,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          },
+          {
+            "name" : "distance",
+            "present" : true,
+            "named" : true,
+            "units" : true,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          }
+        ]
+      }
+    },
+    {
+      "id" : "P13",
+      "narrative" : true,
+      "case_coherence" : true,
+      "nesting_present" : true,
+      "nesting_levels" : 1,
+      "spatial_match" : "none?",
+      "contents" : {
+        "collection_name" : "DS Attributes",
+        "cases" : [
+          {
+            "name" : "date",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "time",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "segment",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "lane_width",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "direction",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "vehicle_type",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "speed",
+            "present" : true,
+            "named" : false,
+            "units" : true,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          },
+          {
+            "name" : "distance",
+            "present" : true,
+            "named" : false,
+            "units" : false,
+            "repetitive_entry" : "",
+            "encoding" : "value"
+          }
+        ]
+      }
+    },
+    {
+      "id" : "P15",
+      "narrative" : false,
+      "case_coherence" : true,
+      "nesting_present" : false,
+      "nesting_levels" : 0,
+      "spatial_match" : "none",
+      "contents" : {
+        "collection_name" : "DS Attributes",
+        "cases" : [
+          {
+            "name" : "date",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "time",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "segment",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "lane_width",
+            "present" : true,
+            "named" : true,
+            "units" : true,
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "direction",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "vehicle_type",
+            "present" : true,
+            "named" : true,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "speed",
+            "present" : true,
+            "named" : true,
+            "units" : true,
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "distance",
+            "present" : true,
+            "named" : true,
+            "units" : true,
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          }
+        ]
+      }
+    },
+    {
+      "id" : "P16",
+      "narrative" : false,
+      "case_coherence" : true,
+      "nesting_present" : true,
+      "nesting_levels" : 2,
+      "spatial_match" : "mirrored",
+      "contents" : {
+        "collection_name" : "DS Attributes",
+        "cases" : [
+          {
+            "name" : "date",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "time",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "segment",
+            "present" : true,
+            "named" : "no?",
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "lane_width",
+            "present" : false,
+            "named" : "",
+            "units" : "",
+            "repetitive_entry" : "",
+            "encoding" : ""
+          },
+          {
+            "name" : "direction",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : false,
+            "encoding" : "set"
+          },
+          {
+            "name" : "vehicle_type",
+            "present" : true,
+            "named" : false,
+            "units" : "",
+            "repetitive_entry" : true,
+            "encoding" : "label"
+          },
+          {
+            "name" : "speed",
+            "present" : true,
+            "named" : true,
+            "units" : false,
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          },
+          {
+            "name" : "distance",
+            "present" : true,
+            "named" : true,
+            "units" : true,
+            "repetitive_entry" : true,
+            "encoding" : "value"
+          }
+        ]
+      }
+    }
+  ]
+}
+</textarea>
+</code>
+<div id="report">
+<p></p>
+</div>
+</body>
+</html>
