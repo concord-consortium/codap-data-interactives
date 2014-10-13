@@ -238,17 +238,20 @@ var Importer = {
 
     }.bind(this);// importAsJSON
 
+    // importAsSimpleText converts text files into a JSON file and then calls importAsJSON
     var importAsSimpleText = function (iText) {
       var tRows = iText.split("\n"),
-        tCollectionName = tRows.shift(),// Table Title
+        tCollectionName = tRows.shift(),// Child Table Title
         tAttrNamesRow = tRows.shift(),// column headers
         tSep = (tAttrNamesRow.indexOf(",") === -1) ? "\t" : ",",
         tAttributeNames,
         tAttrsArray,
         tNumCases = 0,
-        tParentName='Import,'
+        tCollectionArray=[],
+        tAttrNamesArray=[],
+        tParentName=[],
         sampleCounter= 0,
-        iJSONObject;
+        iJSONObject={};
 
 
 
@@ -260,11 +263,11 @@ var Importer = {
       });
 
       //parent collection kludge
-      this.createCollection('Import', 'parent', [
-        { name: 'cases' }
-      ], 'import');
-
-      this.createCollection(tCollectionName, 'child', tAttrsArray);
+//      this.createCollection('Import', 'parent', [
+//        { name: 'cases' }
+//      ], 'import');
+//
+//      this.createCollection(tCollectionName, 'child', tAttrsArray);
 
 
       var valuesArrays = [];
@@ -275,7 +278,15 @@ var Importer = {
         }
       });
 
-      iJSONObject = this.convertToJSON(tParentName, tCollectionName, tAttrNamesRow,valuesArrays, tAttrsArray, tAttributeNames);
+      tParentName.push('Import');
+      tCollectionArray.push(tCollectionName);
+      tAttributeNames.forEach(function (iAttrName) {
+          if (iAttrName !== "") {
+            tAttrNamesArray.push(tAttributeNames);
+          }
+      });
+
+      iJSONObject = this.convertToJSON(tParentName, tCollectionArray, tAttrNamesRow,valuesArrays, tAttrsArray, tAttributeNames, tAttrNamesArray);
 
       importAsJSON(iJSONObject);
 
@@ -330,7 +341,7 @@ var Importer = {
     return tValues;
   },
 
-  convertToJSON: function (iParentName, iCollectionName, iAttrNamesRow, iRows, headers, l1Attrs) {
+  convertToJSON: function (iParentName, iCollectionName, iAttrNamesRow, iRows, headers, l1Attrs, iAttrNamesArray) {
     var ix,
         row,
         item,
@@ -344,9 +355,9 @@ var Importer = {
       row = iRows[ix];
       item = casesIndex[row[l1KeyIndex]];
       if (item) {
-        this.updateObj(item, iAttrNamesRow, row, l1KeyIndex)
+        this.updateObj(item, iAttrNamesArray, row, iCollectionName)
       } else {
-        item = this.makeObj(iAttrNamesRow, row, l1KeyIndex, iParentName);
+        item = this.makeObj(iAttrNamesArray, row, iCollectionName, iParentName);
         cases.push(item);
         casesIndex[row[l1KeyIndex]] = item;
       }
