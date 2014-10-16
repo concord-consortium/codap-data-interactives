@@ -127,7 +127,7 @@ var Importer = {
     });
   },
 
-  addNewParentCase:function(iSampleObject, iChildKey, sampleCounter, tIsArrayFormat){
+  addNewParentCase:function(iSampleObject, sampleCounter, iChildKey, tIsArrayFormat){
     if (this.kNotOpen) {
       var tValues = [],
           iCase=null,
@@ -152,7 +152,9 @@ var Importer = {
 
      if (sampleCounter>iNumParents) {
        this.kNotOpen=false;
-     }
+     } else {
+       sampleCounter++;
+       this.addNewParentCase(iSampleObject,sampleCounter, iChildKey, tIsArrayFormat);}
     }
   },
 
@@ -395,6 +397,6 @@ var Importer = {
   }
 
   //};
-}
+};
 
 Importer.initImporterAsGame();
