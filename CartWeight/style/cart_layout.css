@@ -1,0 +1,238 @@
+#backbox
+{
+	position:absolute;
+    top: 0;
+    left: 0;
+    width: 290px;
+    height: 350px;
+}
+
+#cover
+{
+	position:absolute;
+    top: 0;
+    left: 0;
+    width: 290px;
+    height: 344px;
+}
+
+#welcome_panel
+{
+	position:absolute;
+	bottom:0px;
+	left:0px;
+    right: 0px;
+	height:44px;
+    padding: 5px;
+}
+
+#video_panel
+{
+	position:absolute;
+	top:0px;
+	width:100%;
+    bottom: 50px;
+}
+
+#start_game_button
+{
+	position:absolute;
+	top:40px;
+	left:90px;
+}
+#welcome_text
+{
+    position: absolute;
+    top: 10px;
+}
+
+#game_button
+{
+	position:absolute;
+	left:8px;
+	top:10px;
+}
+
+#levels_button
+{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+#outercontrols
+{
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    height:48px;
+    visibility: hidden;
+}
+
+#gameArea
+{
+    position: absolute;
+    top: 24px;
+    bottom: 48px;
+    width: 100%;
+    visibility: hidden;
+    background-image: url('../img/bkgrnd.png');
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+}
+
+#gameCover
+{
+    position: absolute;
+    top: 24px;
+    bottom: 48px;
+    width: 100%;
+    visibility: hidden;
+    background-color: rgba(255,255,255,.01);
+}
+
+#game_panel
+{
+    position: absolute;
+    width: 100%;
+    height: 32px;
+}
+
+#label
+{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+#score_panel
+{
+    position: absolute;
+    top: 2px;
+    right: 10px;
+    height: 100%;
+    width: 115px;
+}
+/*#score*/
+/*{*/
+    /*position: absolute;*/
+    /*top: 4px;*/
+    /*right: 0px;*/
+    /*width: 35px;*/
+/*}*/
+
+#turn_panel
+{
+    position: absolute;
+    right: 20px;
+    width: 110px;
+    bottom: 58px;
+    height: 55px;
+    line-height: 20px;
+}
+
+#guess_panel
+{
+    position: absolute;
+    left: 10px;
+    width: 143px;
+    font-size:16px;
+    bottom: 68px;
+    height: 66px;
+}
+
+#guess_input_box
+{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 70px;
+    padding-left: 5px;
+    font-size: larger;
+    text-align: center;
+}
+
+#IEroot #guess_input_box
+{
+    width: 50px;
+}
+
+#left_input
+{
+    position: absolute;
+    top: 12px;
+    left: 4em;
+}
+
+#right_input
+{
+    position: absolute;
+    top: 12px;
+    left: 7.1em;
+}
+
+#IEroot #right_input
+{
+    left: 109px;
+}
+
+#guess_button
+{
+    font-size:12px;
+    position: absolute;
+    left: -2px;
+    bottom: 0px;
+}
+
+#level
+{
+    position: absolute;
+    padding: 3px;
+    left: 112px;
+    height: 100%;
+    width: 60px;
+}
+
+#game
+{
+    position: absolute;
+    padding: 5px;
+    right: 5px;
+    height: 100%;
+    width: 50px;
+    text-align: center;
+}
+
+#level_alert
+{
+    position: absolute;
+    left: 20px;
+    width: 250px;
+    top: 10px;
+    height: 110px;
+    visibility: hidden;
+}
+
+#level_alert_bar
+{
+    position: absolute;
+    height: 20px;
+    width: 240px;
+}
+
+#unlock_info
+{
+    position: absolute;
+    top: 30px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 5px;
+}
+
+#OK_button
+{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}

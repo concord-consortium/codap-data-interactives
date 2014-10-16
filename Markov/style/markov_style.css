@@ -1,0 +1,157 @@
+body
+{
+    font-family: sans-serif;
+}
+
+.welcome
+{
+    font-family: sans-serif;
+    color: white;
+    font-weight: bold;
+}
+
+.bottomPanel
+{
+    background-color: #0a5289;
+}
+
+.panel
+{
+    background-image: -webkit-linear-gradient(left, rgba(0, 102, 153, 1), rgba(0, 102, 153, 0));
+    background-image: -moz-linear-gradient(left, rgba(0, 102, 153, 1), rgba(0, 102, 153, 0));
+    background-image: -ms-linear-gradient(left, rgba(0, 102, 153, 1), rgba(0, 102, 153, 0));
+    background-image: linear-gradient(to right, rgba(0, 102, 153, 1), rgba(0, 102, 153, 0));
+    color: #ffff00;
+}
+
+.info
+{
+    font-size: larger;
+    font-weight: bold;
+    color: white;
+}
+
+.info_small
+{
+    position: absolute;
+    bottom: 13px;
+}
+
+.label
+{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.alert
+{
+    background-color: #ffffff;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.bar
+{
+    background-color: #d5d5d5;
+    padding: 5px;
+}
+
+.short_medium
+{
+	font-size: 12px;
+	padding: .4em 1.0em .42em;
+}
+
+.hand_button
+{
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    font: 11px/100% Arial, Helvetica, sans-serif;
+    -webkit-border-radius: .5em;
+   	-moz-border-radius: .5em;
+   	border-radius: .5em;
+    background: #e8e8e8;
+    background-position: left top;
+    background-repeat: no-repeat;
+}
+
+.hand_button:hover
+{
+    background-color: #ffffff;
+}
+
+.hand_button:active
+{
+    border-width: 2px;
+    border-color: blue;
+}
+
+.rock
+{
+    background-image: url('../img/rock.png');
+    background-size: 38px 35px;
+}
+
+.scissors
+{
+    background-image: url('../img/scissors.png');
+    background-size: 40px 32px;
+}
+
+.paper
+{
+    background-image: url('../img/paper.png');
+    background-size: 45px 32px;
+}
+
+.button_bottom
+{
+    position: absolute;
+    bottom: 2px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+}
+
+.strategy
+{
+    background-color: #f5f5f5;
+    border-color: #000000;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.title
+{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.instructions
+{
+    font-size: 12px;
+}
+
+.strat_hint
+{
+    background-color: #ffffe0;
+    font-size: 12px;
+    border-radius: 3px;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.fixedWidth {
+    width: 102px;
+}
+
+.slider
+{
+}
+
+.bold {
+    font-weight: bold;
+}
