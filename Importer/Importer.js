@@ -249,13 +249,12 @@ var Importer = {
         tAttributeNames,
         tAttrsArray,
         tNumCases = 0,
-        tCollectionArray=[],
+        tChildCollectionNameArray=[],
         tAttrNamesArray=[],
-        tParentName=[],
+        tParentName= 'Import',//[],
         sampleCounter= 0,
+        iJSONText,
         iJSONObject={};
-
-
 
       tAttributeNames = tAttrNamesRow.split(tSep);
       tAttrsArray = tAttributeNames.map(function (iName) {
@@ -271,7 +270,6 @@ var Importer = {
 //
 //      this.createCollection(tCollectionName, 'child', tAttrsArray);
 
-
       var valuesArrays = [];
       tRows.forEach( function( iRow) {
         if( iRow !== "") {
@@ -280,17 +278,22 @@ var Importer = {
         }
       });
 
-      tParentName.push('Import');
-      tCollectionArray.push(tCollectionName);
+     // tParentName.push('Import');
+      tChildCollectionNameArray.push(tCollectionName);
       tAttributeNames.forEach(function (iAttrName) {
           if (iAttrName !== "") {
             tAttrNamesArray.push(tAttributeNames);
           }
       });
 
-      iJSONObject = this.convertToJSON(tParentName, tCollectionArray, tAttrNamesRow,valuesArrays, tAttrsArray, tAttributeNames, tAttrNamesArray);
+      iJSONText=this.convertToJSON(tParentName, tChildCollectionNameArray, tAttrNamesRow,valuesArrays, tAttrsArray, tAttributeNames, tAttrNamesArray);
 
-      importAsJSON(iJSONObject);
+      iJSONObject = JSON.parse(iJSONText);
+
+      if (iJSONObject)
+        importAsJSON(iJSONObject);
+      else
+        console.log("Error with JSON Object");
 
       updateReport(tNumCases + ' cases');
     }.bind(this);   // importAsSimpleText
@@ -343,7 +346,7 @@ var Importer = {
     return tValues;
   },
 
-  convertToJSON: function (iParentName, iCollectionName, iAttrNamesRow, iRows, headers, l1Attrs, iAttrNamesArray) {
+  convertToJSON: function (iParentName, iChildCollectionName, iAttrNamesRow, iRows, headers, l1Attrs, iAttrNamesArray) {
     var ix,
         row,
         item,
@@ -357,9 +360,9 @@ var Importer = {
       row = iRows[ix];
       item = casesIndex[row[l1KeyIndex]];
       if (item) {
-        this.updateObj(item, iAttrNamesArray, row, iCollectionName)
+        this.updateObj(item, l1Attrs, row, iChildCollectionName)
       } else {
-        item = this.makeObj(iAttrNamesArray, row, iCollectionName, iParentName);
+        item = this.makeObj(l1Attrs, row, iChildCollectionName, iParentName);
         cases.push(item);
         casesIndex[row[l1KeyIndex]] = item;
       }
