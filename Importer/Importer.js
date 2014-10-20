@@ -81,11 +81,12 @@ var Importer = {
 
     if (sampleCounter<=iNumParents){
       sampleCounter++;
-      Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter, tIsArrayFormat);
+      if (iSampleObject!=null)
+        Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter, tIsArrayFormat);
     }
   },
 
-  openCase: function (iCollectionName, iValuesArray, iCase, iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat) {
+  openJSONCase: function (iCollectionName, iValuesArray, iCase, iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat) {
     console.log('Importer: openCase');
     this.codapPhone.call({
       action: 'openCase',
@@ -98,6 +99,24 @@ var Importer = {
         this.kSampleID = result.caseID;
         console.log(this.kSampleID + " kSampleID in openCase");
         this.createChildCases(iCase, iChildKey, this.kSampleID, iCollectionName, iValuesArray, tIsArrayFormat, iNumParents, iSampleObject, sampleCounter);
+      }
+    }.bind(this));
+  },
+
+  openCSVCase: function(iCollectionName, iParentValuesArray, iChildCollectionName, iChildValuesArray) {
+    console.log('Importer: openCase');
+    this.codapPhone.call({
+      action: 'openCase',
+      args: {
+        collection: iCollectionName,
+        values: iParentValuesArray
+      }
+    }, function (result) {
+      if (result.success) {
+        this.kSampleID = result.caseID;
+        console.log(this.kSampleID + " kSampleID in openCase");
+        this.createCases(iChildCollectionName, iChildValuesArray, this.kSampleID);
+        this.closeCase(iCollectionName, iParentValuesArray, this.kSampleID);
       }
     }.bind(this));
   },
@@ -147,7 +166,7 @@ var Importer = {
           }
         });
 
-        this.openCase(iSampleObject.collection_name, tValues, iCase,iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat)
+        this.openJSONCase(iSampleObject.collection_name, tValues, iCase,iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat)
       }
 
      if (sampleCounter>iNumParents) {
@@ -216,91 +235,48 @@ var Importer = {
 
       this.createCollection(tChildName, tChildCaseName, tChildAttrsArray,tIsArrayFormat);
 
-     // iObject.cases.forEach(function (iCase) {
 
         // Open the parent case
 
       this.addNewParentCase(iObject, sampleCounter, tChildKey, tIsArrayFormat);
-       // Importer.openCase(tParentName, tValues, iCase, tChildKey);
 
-        // Create each of the child cases
-//        var valuesArrays = [];
-//        iCase[ tChildKey].cases.forEach( function( iChildCase) {
-//          valuesArrays.push( tIsArrayFormat ? iChildCase
-//                                            : this_.values( iChildCase));
-//          tNumChildren++;
-//        });
-//        this_.createCases( tChildName, valuesArrays, tOpenCaseResult.caseID);
-//        // Close the parent case
-//        this_.closeCase( tParentName, tValues, tOpenCaseResult.caseID);
-//        tNumParents++;
-//      });
-
-        //updateReport( tNumParents + ' parent cases and ' + tNumChildren + ' child cases');
 
     }.bind(this);// importAsJSON
 
-    // importAsSimpleText converts text files into a JSON file and then calls importAsJSON
+    // importAsSimpleText imports CSV files
     var importAsSimpleText = function (iText) {
-      var tRows = iText.split("\n"),
-        tCollectionName = tRows.shift(),// Child Table Title
-        tAttrNamesRow = tRows.shift(),// column headers
-        tSep = (tAttrNamesRow.indexOf(",") === -1) ? "\t" : ",",
-        tAttributeNames,
+      var
+        tCollectionName,//Child Collection Name
+        tAttrNamesRow,// column headers
         tAttrsArray,
         tNumCases = 0,
-        tChildCollectionNameArray=[],
-        tAttrNamesArray=[],
-        tParentName= 'Import',//[],
-        sampleCounter= 0,
-        iJSONText,
-        iJSONObject={};
+        tParentName= 'Import',
+        tChildKey='import',
+        tParentAttrsArray = [{name:'cases'}];
 
-      tAttributeNames = tAttrNamesRow.split(tSep);
-      tAttrsArray = tAttributeNames.map(function (iName) {
+      CSV.RELAXED=true;
+      var valuesArrays = CSV.parse(iText);
+      tCollectionName=valuesArrays.shift();
+      tAttrNamesRow=valuesArrays.shift();
+
+
+      tAttrsArray = tAttrNamesRow.map(function (iName) {
         var tAttrObject = {};
         tAttrObject.name = iName;
         return tAttrObject;
       });
 
-      //parent collection kludge
-//      this.createCollection('Import', 'parent', [
-//        { name: 'cases' }
-//      ], 'import');
-//
-//      this.createCollection(tCollectionName, 'child', tAttrsArray);
 
-      var valuesArrays = [];
-      tRows.forEach( function( iRow) {
-        if( iRow !== "") {
-          valuesArrays.push( iRow.split(tSep));
-          tNumCases++;
-        }
-      });
+      this.createCollection(tParentName, 'parent', tParentAttrsArray, tChildKey);
 
-     // tParentName.push('Import');
-      tChildCollectionNameArray.push(tCollectionName);
-      tAttributeNames.forEach(function (iAttrName) {
-          if (iAttrName !== "") {
-            tAttrNamesArray.push(tAttributeNames);
-          }
-      });
+      this.createCollection(tCollectionName, 'child', tAttrsArray);
 
-      iJSONText=this.convertToJSON(tParentName, tChildCollectionNameArray, tAttrNamesRow,valuesArrays, tAttrsArray, tAttributeNames, tAttrNamesArray);
-
-      iJSONObject = JSON.parse(iJSONText);
-
-      if (iJSONObject)
-        importAsJSON(iJSONObject);
-      else
-        console.log("Error with JSON Object");
+      this.openCSVCase(tParentName, ['pseudocase'], tCollectionName, valuesArrays);
 
       updateReport(tNumCases + ' cases');
     }.bind(this);   // importAsSimpleText
 
     // Begin doImport
-    //this.initImporterAsGame();
-
     var tJSONObject = null;
     try {
       tJSONObject = JSON.parse(tText);
@@ -344,62 +320,8 @@ var Importer = {
       tValues.push(iValue);
     });
     return tValues;
-  },
-
-  convertToJSON: function (iParentName, iChildCollectionName, iAttrNamesRow, iRows, headers, l1Attrs, iAttrNamesArray) {
-    var ix,
-        row,
-        item,
-        casesIndex = {},
-        obj = {},
-        cases=[],
-        l1KeyIndex = l1Attrs.indexOf(l1Attrs[0]);
-
-    obj.collection_name = iParentName;
-    for (ix = 1; ix < iRows.length; ix += 1) {
-      row = iRows[ix];
-      item = casesIndex[row[l1KeyIndex]];
-      if (item) {
-        this.updateObj(item, l1Attrs, row, iChildCollectionName)
-      } else {
-        item = this.makeObj(l1Attrs, row, iChildCollectionName, iParentName);
-        cases.push(item);
-        casesIndex[row[l1KeyIndex]] = item;
-      }
-    }
-    obj.cases = cases;
-    return JSON.stringify(obj, null, '  ');
-  },
-
-  updateObj: function (item, fields, arr, primaryFields) {
-    var ix;
-    var primary = item;
-    var secondary = {};
-    for (ix = 0; ix < Math.min(fields.length, arr.length); ix += 1) {
-      if (!(primaryFields.indexOf(fields[ix]) >= 0)) {
-        secondary[fields[ix]] = arr[ix];
-      }
-    }
-    primary.contents.cases.push(secondary);
-    return primary;
-  },
-
-  makeObj: function (fields, iRow, primaryFields, iParentName) {
-    var ix;
-    var primary = {};
-    var secondary = {};
-    for (ix = 0; ix < Math.min(fields.length, iRow.length); ix += 1) {
-      if (primaryFields.indexOf(fields[ix]) >= 0) {
-        primary[fields[ix]] = iRow[ix];
-      } else {
-        secondary[fields[ix]] = iRow[ix];
-      }
-    }
-    primary.contents = {collection_name: iParentName, cases: [secondary] };
-    return primary;
   }
 
-  //};
 };
 
 Importer.initImporterAsGame();
