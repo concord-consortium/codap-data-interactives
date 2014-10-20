@@ -1,0 +1,74 @@
+body
+{
+    font-family: sans-serif;
+}
+
+.welcome
+{
+    font-family: sans-serif;
+    color: white;
+    font-weight: bold;
+}
+
+.panel
+{
+    background-color: #164f69;
+    color: #ffff00;
+}
+
+.button_area
+{
+}
+
+.bottomPanel
+{
+	background-color: #164f69;
+    color: #ffff00;
+}
+
+.info
+{
+    font-size: larger;
+    font-weight: bold;
+    color: white;
+}
+
+.info_small
+{
+    position: absolute;
+    bottom: 13px;
+}
+
+.score
+{
+    font-size: 24px;
+}
+
+.label
+{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.alert
+{
+    background-color: #ffffff;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.bar
+{
+    background-color: #d5d5d5;
+    padding: 5px;
+}
+
+.short_medium {
+	font-size: 12px;
+	padding: .4em 1.0em .42em;
+}
+
+.fixedWidth {
+    width: 102px;
+}

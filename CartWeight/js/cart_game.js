@@ -26,8 +26,23 @@ var codapPhone=null;
  */
 CartGame.prototype.initializeGame = function() {
 
-    //this.dataGamesAPI = new DataGamesAPI();
-    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function() {}, "codap-game", window.parent);
+    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function( iCommand, callback) {
+      switch( iCommand.operation) {
+      
+      case 'saveState':
+        callback(cartGame.model.saveState());
+        return;
+      
+      case 'restoreState':
+        callback(cartGame.model.restoreState( iCommand.args && iCommand.args.state));
+        return;
+      
+      default:
+      }
+
+      callback({ success: false });
+    }, "codap-game", window.parent);
+
     this.model = new CartModel(this.codapPhone, this.doAppCommand);
     this.view = new CartView(this.model);
 
@@ -35,22 +50,3 @@ CartGame.prototype.initializeGame = function() {
     this.view.initialize();
 
 };
-
-/**
-  Handler for callbacks from DG application.
- */
-CartGame.prototype.doAppCommand = function( iCommand) {
-  switch( iCommand.operation) {
-  
-  case 'saveState':
-    return cartGame.model.saveState();
-  
-  case 'restoreState':
-    return cartGame.model.restoreState( iCommand.args && iCommand.args.state);
-  
-  default:
-  }
-
-  return { success: false };
-};
-
