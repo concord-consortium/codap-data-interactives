@@ -172,14 +172,14 @@
                 CSV.token_end();
                 CSV.record_end();
             }
-            else if (c == COMMA) {
+            else if (c == COMMA || c === TAB) {
                 CSV.token_end();
             }
             else if( CSV.state == MID_TOKEN ){
                 CSV.token += c;
                 CSV.debug("...add", c, CSV.token);
             }
-            else if ( c === SPACE || c === TAB) {
+            else if ( c === SPACE /*|| c === TAB*/) {
                 if (! CSV.IGNORE_QUOTE_WHITESPACE )
                     CSV.error(CSV.WARN_SPACE );
             }
