@@ -21,7 +21,21 @@
       var FargoGame = {
             initializeGame: function() {
               //this.dataGamesAPI = new DataGamesAPI();
-              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(){}, "codap-game", window.parent);
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback){
+                    var operation = iCmd && iCmd.operation,
+                            args = iCmd && iCmd.args,
+                            model = FargoGame.model;
+                    switch( operation) {
+                        case 'saveState':
+                            callback(model.saveGameState());
+                            break;
+                        case 'restoreState':
+                            callback(model.restoreGameState( args.state));
+                            break;
+                        default:
+                            callback({success:false});
+                    }
+                }, "codap-game", window.parent);
               this.model = new FargoModel(FargoGame.codapPhone, FargoGame.doAppCommand);
               this.view = new FargoView();
     
@@ -32,22 +46,6 @@
               this.model.eventDispatcher.addEventListener("onFargoModelUpdated", this.view.update, this.view);
               
               this.model.updateView();
-            },
-            
-            doAppCommand: function( iCmd) {
-              var operation = iCmd && iCmd.operation,
-                  args = iCmd && iCmd.args,
-                  model = FargoGame.model;
-              switch( operation) {
-              case 'saveState':
-                if( model && model.saveGameState)
-                  return model.saveGameState();
-                return null;
-              case 'restoreState':
-                if( model && model.restoreGameState && args && args.state)
-                  model.restoreGameState( args.state);
-                break;
-              }
             }
       }
     </script>
