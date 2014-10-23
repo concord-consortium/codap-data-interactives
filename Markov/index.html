@@ -27,11 +27,25 @@
 
 
         <script type="text/javascript">
-            <!--This global is here to make it obvious how things get going-->
+            /*This global is here to make it obvious how things get going*/
       var MarkovGame = {
             initializeGame: function() {
               //this.dataGamesAPI = new DataGamesAPI();
-              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function() {}, "codap-game", window.parent);
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback) {
+                  var operation = iCmd && iCmd.operation,
+                          args = iCmd && iCmd.args,
+                          model = MarkovGame.model;
+                  switch( operation) {
+                      case 'saveState':
+                          callback(model.saveGameState());
+                          break;
+                      case 'restoreState':
+                          callback(model.restoreGameState( iCmd.args && iCmd.args.state));
+                          break;
+                      default:
+                          callback({ success: false });
+                  }
+              }, "codap-game", window.parent);
               this.model = new MarkovModel(MarkovGame.codapPhone, MarkovGame.doAppCommand);
               this.view = new MarkovView( this.model);
     
@@ -45,13 +59,15 @@
                   model = MarkovGame.model;
               switch( operation) {
               case 'saveState':
-                if( model && model.saveGameState)
-                  return model.saveGameState();
-                return null;
+
+                  callback(model.saveGameState());
+                break;
               case 'restoreState':
                 if( model && model.restoreGameState && args && args.state)
                   model.restoreGameState( args.state);
                 break;
+                  default:
+                      callback({ success: false });
               }
             }
       }
