@@ -235,9 +235,6 @@ var Importer = {
 
       this.createCollection(tChildName, tChildCaseName, tChildAttrsArray,tIsArrayFormat);
 
-
-        // Open the parent case
-
       this.addNewParentCase(iObject, sampleCounter, tChildKey, tIsArrayFormat);
 
 
