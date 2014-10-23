@@ -29,28 +29,25 @@
             //This global is here to make it obvious how things get going
       var ShuffleGame = {
             initializeGame: function() {
-              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(){}, "codap-game", window.parent);
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback) {
+                  var operation = iCmd && iCmd.operation,
+                          args = iCmd && iCmd.args,
+                          model = ShuffleGame.model;
+                  switch( operation) {
+                      case 'saveState':
+                          callback(model.saveGameState());
+                          break;
+                      case 'restoreState':
+                          callback(model.restoreGameState( args.state));
+                          break;
+                      default:({success:false});
+                  }
+              }, "codap-game", window.parent);
               this.model = new ShuffleModel(ShuffleGame.codapPhone, ShuffleGame.doAppCommand);
               this.view = new ShuffleView( this.model);
     
               this.view.initialize();
               this.model.initialize();
-            },
-            
-            doAppCommand: function( iCmd) {
-              var operation = iCmd && iCmd.operation,
-                  args = iCmd && iCmd.args,
-                  model = ShuffleGame.model;
-              switch( operation) {
-              case 'saveState':
-                if( model && model.saveGameState)
-                  return model.saveGameState();
-                return null;
-              case 'restoreState':
-                if( model && model.restoreGameState && args && args.state)
-                  model.restoreGameState( args.state);
-                break;
-              }
             }
       }
 
