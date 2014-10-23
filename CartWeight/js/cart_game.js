@@ -30,17 +30,18 @@ CartGame.prototype.initializeGame = function() {
       switch( iCommand.operation) {
       
       case 'saveState':
-        callback(cartGame.model.saveState());
-        return;
+        callback(cartGame.model.saveState()
+        );
+        break;
       
       case 'restoreState':
         callback(cartGame.model.restoreState( iCommand.args && iCommand.args.state));
-        return;
+        break;
       
       default:
+        callback({ success: false });
       }
 
-      callback({ success: false });
     }, "codap-game", window.parent);
 
     this.model = new CartModel(this.codapPhone, this.doAppCommand);
