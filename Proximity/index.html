@@ -25,31 +25,29 @@
         <script src="../Common/js/iframe-phone.js" language="javascript"></script>
 
     <script type="text/javascript">
-            <!--This global is here to make it obvious how things get going-->
+            /*This global is here to make it obvious how things get going*/
       var ProximityGame = {
             initializeGame: function() {
-              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(){}, "codap-game", window.parent);
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback){
+                  var operation = iCmd && iCmd.operation,
+                          args = iCmd && iCmd.args,
+                          model = ProximityGame.model;
+                  switch( operation) {
+                      case 'saveState':
+                          callback(model.saveGameState());
+                          break;
+                      case 'restoreState':
+                          callback(model.restoreGameState( args.state));
+                          break;
+                      default:
+                        callback({success:false});
+                  }
+              }, "codap-game", window.parent);
               this.model = new ProximityModel(ProximityGame.codapPhone, ProximityGame.doAppCommand);
               this.view = new ProximityView( this.model);
     
               this.view.initialize();
               this.model.initialize();
-            },
-            
-            doAppCommand: function( iCmd) {
-              var operation = iCmd && iCmd.operation,
-                  args = iCmd && iCmd.args,
-                  model = ProximityGame.model;
-              switch( operation) {
-              case 'saveState':
-                if( model && model.saveGameState)
-                  return model.saveGameState();
-                return null;
-              case 'restoreState':
-                if( model && model.restoreGameState && args && args.state)
-                  model.restoreGameState( args.state);
-                break;
-              }
             }
       }
     </script>
