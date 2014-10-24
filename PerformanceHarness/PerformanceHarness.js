@@ -154,22 +154,26 @@ var PerformanceHarness = {
             console.profile("Creating Cases");
         this.startTime = Date.now();
 
-        this.codapPhone.call({
+        if (tDelay>0) {
+          this.codapPhone.call({
             action: 'openCase',
             args: {
-                collection: "Tests",
-                values: [ ++this.gameNum ]
+              collection: "Tests",
+              values: [ ++this.gameNum ]
             }
-        },function(result){
+          },function(result){
             if (result.success) {
-                this.openTestID = result.caseID;
-                do {
-                    addNextCase();
-                } while( (tDelay === 0) && (tIndex < tNumTrials));
+              this.openTestID = result.caseID;
+              do {
+                addNextCase();
+              } while( (tDelay === 0) && (tIndex < tNumTrials));
             } else {
-                console.log("PerformanceHarness: Error calling 'openCase'");
+              console.log("PerformanceHarness: Error calling 'openCase'");
             }
-        }.bind(this));
+          }.bind(this));
+        } else {
+            alert("Please enter a delay greater than 0.")
+        }
 
         // If a delay is specified, then we just call addNextCase() once, and the
         // internal timing mechanism will handle the additional calls.
