@@ -1,4 +1,4 @@
-
+<?DOCTYPE html>
 <html>
 <head>
     <title>Data Interactives</title>
@@ -67,6 +67,31 @@
             color: #da5936;
         }
     </style>
+    <script type="text/javascript">
+//        var CODAP_URL = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html';
+        var map = {
+            CartWeight: {name: 'Cart Weight', dimensions: '{"width":290,"height":304}',path: 'CartWeight/index.html'},
+            FloydsFargo: {name: 'Floyd\'s of Fargo', dimensions: '{"width":290,"height":304}',path: 'FloydsFargo/index.html'},
+            LunarLander: {name: 'Lunar Lander', dimensions: '{"width":290,"height":304}',path: 'LunarLander/index.html'},
+            Markov: {name: 'Markov', dimensions: '{"width":290,"height":304}',path: 'Markov/index.html'},
+            Proximity: {name: 'Proximity', dimensions: '{"width":290,"height":304}',path: 'Proximity/index.html'},
+            Shuffleboard: {name: 'Shuffleboard', dimensions: '{"width":290,"height":304}',path: 'Shuffleboard/index.html'},
+            GuessMyNumber: {name: 'Guess My Number', dimensions: '{"width":290,"height":304}',path: 'GuessMyNumber/GuessMyNumber.html'},
+            PerformanceHarness: {name: 'Performance Harness', dimensions: '{"width":290,"height":304}',path: 'PerformanceHarness/PerformanceHarness.html'},
+            Sampler: {name: 'Sampler', dimensions: '{"width":290,"height":304}',path: 'Sampler/Sampler.html'},
+            Importer: {name: 'Importer', dimensions: '{"width":290,"height":304}',path: 'Importer/Importer.html'}
+        };
+        function invokeDataInteractive(name) {
+            var CODAP_URL = document.getElementById('codap-url').value;
+            var oldLocation = location.href,
+                moreGames;
+            newLoc = oldLocation.replace(/index.html.*/, '');
+            moreGames = 'moreGames=[{"name":"' + map[name].name +
+                    '","dimensions":' + map[name].dimensions +
+                    ',"url":"' + newLoc + '/' + map[name].path + '"}]';
+            location = CODAP_URL + '?' + encodeURI(moreGames);
+        }
+    </script>
 </head>
 <body>
 <div id="header">
@@ -83,20 +108,20 @@
     <div>
         <ul>
 
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22CartWeight%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/CartWeight/index.html%22}]" target="_blank">Cart Weight</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Floyd%27s%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/FloydsFargo/index.html%22}]" target="_blank">Floyd's of Fargo</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22LunarLander%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/LunarLander/index.html%22}]" target="_blank">Lunar Lander</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Markov%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/Markov/index.html%22}]" target="_blank">Markov</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Proximity%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/Proximity/index.html%22}]" target="_blank">Proximity</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Shuffleboard%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/Shuffleboard/index.html%22}]" target="_blank">Shuffleboard</a></li>
+            <li><a href="javascript:invokeDataInteractive('CartWeight')" target="_blank">Cart Weight</a></li>
+            <li><a href="javascript:invokeDataInteractive('FloydsFargo')" target="_blank">Floyd's of Fargo</a></li>
+            <li><a href="javascript:invokeDataInteractive('LunarLander')" target="_blank">Lunar Lander</a></li>
+            <li><a href="javascript:invokeDataInteractive('Markov')" target="_blank">Markov</a></li>
+            <li><a href="javascript:invokeDataInteractive('Proximity')" target="_blank">Proximity</a></li>
+            <li><a href="javascript:invokeDataInteractive('Shuffleboard')" target="_blank">Shuffleboard</a></li>
         </ul>
     </div>
     <div>
         <ul>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22GuessMyNumber%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/GuessMyNumber/GuessMyNumber.html%22}]" target="_blank">Guess My Number</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22PerformanceHarness%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html%22}]" target="_blank">Performance Harness</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Sampler%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/Sampler/Sampler.html%22}]" target="_blank">Sampler</a></li>
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22Sampler%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/Importer/Importer.html%22}]" target="_blank">Importer</a></li>
+            <li><a href="javascript:invokeDataInteractive('GuessMyNumber')" target="_blank">Guess My Number</a></li>
+            <li><a href="javascript:invokeDataInteractive('PerformanceHarness')" target="_blank">Performance Harness</a></li>
+            <li><a href="javascript:invokeDataInteractive('Sampler')" target="_blank">Sampler</a></li>
+            <li><a href="javascript:invokeDataInteractive('Importer')" target="_blank">Importer</a></li>
         </ul>
     </div>
     <div>
@@ -107,31 +132,7 @@
         </ul>
     </div>
 </div>
-<!--<div> div of links to data interactives running without CODAP
-    <ul>
-        <li><a href="CartWeight/index.html" target="_blank">Cart Weight</a></li>
-        <li><a href="FloydsFargo/index.html" target="_blank">Floyd's of Fargo</a></li>
-        <li><a href="LunarLander/index.html"target = "_blank">Lunar Lander</a></li>
-        <li><a href="Markov/index.html"target = "_blank">Markov</a></li>
-        <li><a href="Proximity/index.html"target = "_blank">Proximity</a></li>
-        <li><a href="Shuffleboard/index.html"target = "_blank">Shuffleboard</a></li>
-
-    </ul>
-</div>
-<div>
-    <ul>
-        <li><a href="GuessMyNumber/GuessMyNumber.html" target="_blank">Guess My Number</a></li>
-        <li><a href="PerformanceHarness/PerformanceHarness.html"target = "_blank">Performance Harness</a></li>
-        <li><a href="Sampler/Sampler.html"target = "_blank">Sampler</a></li>
-    </ul>
-</div>
-<div>
-    <ul>
-        <li>
-            <a href="TerraPopInteractive/TPI.html" target="_blank">TerraPop</a>
-        </li>
-    </ul>
-</div>-->
+<p><label>CODAP: <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" /></label></p>
 
 </body>
 </html>
