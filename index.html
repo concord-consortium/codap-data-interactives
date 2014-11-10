@@ -82,14 +82,14 @@
             Importer: {name: 'Importer', dimensions: '{"width":290,"height":304}',path: 'Importer/Importer.html'}
         };
         function invokeDataInteractive(name) {
-            var CODAP_URL = document.getElementById('codap-url').value;
+            var codap_url = document.getElementById('codap-url').value;
             var oldLocation = location.href,
                 moreGames;
             newLoc = oldLocation.replace(/index.html.*/, '');
             moreGames = 'moreGames=[{"name":"' + map[name].name +
                     '","dimensions":' + map[name].dimensions +
                     ',"url":"' + newLoc + '/' + map[name].path + '"}]';
-            location = CODAP_URL + '?' + encodeURI(moreGames);
+            location = codap_url + '&' + encodeURI(moreGames);
         }
     </script>
 </head>
@@ -132,7 +132,7 @@
         </ul>
     </div>
 </div>
-<p><label>CODAP: <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" /></label></p>
+<p><label>CODAP: <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/" /></label></p>
 
 </body>
 </html>
