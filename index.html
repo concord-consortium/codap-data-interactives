@@ -45,19 +45,6 @@
             list-style-type: none;
         }
 
-        /*
-        div {
-          width: 700px;
-          margin: 0 auto;
-          overflow: auto;
-        }
-
-        li {
-          float: left;
-          margin: 10px;
-        }
-        */
-
         a {
             color: #3a878b;
             font-weight: 600;
@@ -70,26 +57,77 @@
     <script type="text/javascript">
 //        var CODAP_URL = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html';
         var map = {
-            CartWeight: {name: 'Cart Weight', dimensions: '{"width":290,"height":304}',path: 'CartWeight/index.html'},
-            FloydsFargo: {name: 'Floyd\'s of Fargo', dimensions: '{"width":290,"height":304}',path: 'FloydsFargo/index.html'},
-            LunarLander: {name: 'Lunar Lander', dimensions: '{"width":290,"height":304}',path: 'LunarLander/index.html'},
-            Markov: {name: 'Markov', dimensions: '{"width":290,"height":304}',path: 'Markov/index.html'},
-            Proximity: {name: 'Proximity', dimensions: '{"width":290,"height":304}',path: 'Proximity/index.html'},
-            Shuffleboard: {name: 'Shuffleboard', dimensions: '{"width":290,"height":304}',path: 'Shuffleboard/index.html'},
-            GuessMyNumber: {name: 'Guess My Number', dimensions: '{"width":290,"height":304}',path: 'GuessMyNumber/GuessMyNumber.html'},
-            PerformanceHarness: {name: 'Performance Harness', dimensions: '{"width":290,"height":304}',path: 'PerformanceHarness/PerformanceHarness.html'},
-            Sampler: {name: 'Sampler', dimensions: '{"width":290,"height":304}',path: 'Sampler/Sampler.html'},
-            Importer: {name: 'Importer', dimensions: '{"width":290,"height":304}',path: 'Importer/Importer.html'}
+            CartWeight: {
+                name: 'Cart Weight',
+                dimensions: '{"width":290,"height":304}',
+                path: 'CartWeight/index.html'
+            },
+            FloydsFargo: {name: 'Floyd\'s of Fargo',
+                dimensions: '{"width":570,"height":480}',
+                path: 'FloydsFargo/index.html'
+            },
+            LunarLander: {
+                name: 'Lunar Lander',
+                dimensions: '{"width":357,"height":541}',
+                path: 'LunarLander/index.html'
+            },
+            Markov: {
+                name: 'Markov',
+                dimensions: '{"width":550,"height":315}',
+                path: 'Markov/index.html'
+            },
+            Proximity: {
+                name: 'Proximity',
+                dimensions: '{"width":463,"height":344}',
+                path: 'Proximity/index.html'
+            },
+            Shuffleboard: {
+                name: 'Shuffleboard',
+                dimensions: '{"width":520,"height":350}',
+                path: 'Shuffleboard/index.html'
+            },
+            GuessMyNumber: {
+                name: 'Guess My Number',
+                dimensions: '{"width":400,"height":250}',
+                path: 'GuessMyNumber/GuessMyNumber.html'
+            },
+            PerformanceHarness: {
+                name: 'Performance Harness',
+                dimensions: '{"9width":400,"height":250}',
+                path: 'PerformanceHarness/PerformanceHarness.html'
+            },
+            Sampler: {
+                name: 'Sampler',
+                dimensions: '{"width":400,"height":300}',
+                path: 'Sampler/Sampler.html'
+            },
+            Importer: {
+                name: 'Importer',
+                dimensions: '{"width":750,"height":450}',
+                path: 'Importer/Importer.html'
+            },
+            TerraPop: {
+                name: 'TerraPop Interactive',
+                dimensions: '{"width":550,"height":500}',
+                path: 'TerraPopInteractive/TPI.html'
+            }
         };
+        function launch(url) {
+            window.open( url, '_blank');
+        }
         function invokeDataInteractive(name) {
-            var codap_url = document.getElementById('codap-url').value;
-            var oldLocation = location.href,
-                moreGames;
-            newLoc = oldLocation.replace(/index.html.*/, '');
-            moreGames = 'moreGames=[{"name":"' + map[name].name +
-                    '","dimensions":' + map[name].dimensions +
-                    ',"url":"' + newLoc + '/' + map[name].path + '"}]';
-            location = codap_url + '&' + encodeURI(moreGames);
+            var codapURL = document.getElementById('codap-url').value,
+                docserverURL = document.getElementById('doc-server-url').value,
+                oldLocation = location.href,
+                newLoc = oldLocation.replace(/index.html.*/, ''),
+                moreGames= 'moreGames=[{"name":"' + map[name].name +
+                        '","dimensions":' + map[name].dimensions +
+                        ',"url":"' + newLoc + '/' + map[name].path + '"}]';
+            if (docserverURL) {
+                launch(codapURL + '?docServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
+            } else {
+                launch(codapURL + '?' + encodeURI(moreGames));
+            }
         }
     </script>
 </head>
@@ -126,13 +164,19 @@
     </div>
     <div>
         <ul>
-
-            <li><a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?moreGames=[{%22name%22:%22TerraPop%22,%22dimensions%22:{%22width%22:550,%22height%22:500},%22url%22:%22http://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html%22}]" target="_blank">TerraPop Interactive</a></li>
+            <li><a href="javascript:invokeDataInteractive('TerraPop')" target="_blank">TerraPop Interactive</a></li>
 
         </ul>
     </div>
 </div>
-<p><label>CODAP: <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/" /></label></p>
+<p>
+    <label>CODAP:
+        <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
+    </label>
+    <label>Document Server:
+        <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
+    </label>
+</p>
 
 </body>
 </html>
