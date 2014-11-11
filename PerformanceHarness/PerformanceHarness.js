@@ -33,7 +33,7 @@ var PerformanceHarness = {
               { name: "iterations", type: 'numeric', precision: 0 },
               { name: "totalTime", type: 'numeric', precision: 0 },
               { name: "avgRate", type: 'numeric', precision: 2 },
-              { name: "sleepTime", type: 'numeric', precision: 0}
+              { name: "delay", type: 'numeric', precision: 0}
             ],
             childAttrName: "events",
             defaults: {
