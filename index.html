@@ -124,7 +124,7 @@
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + newLoc + '/' + map[name].path + '"}]';
             if (docserverURL) {
-                launch(codapURL + '?docServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
+                launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
                 launch(codapURL + '?' + encodeURI(moreGames));
             }
