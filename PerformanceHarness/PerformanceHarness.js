@@ -32,7 +32,8 @@ var PerformanceHarness = {
               { name: "test", type: 'numeric', precision: 0 },
               { name: "iterations", type: 'numeric', precision: 0 },
               { name: "totalTime", type: 'numeric', precision: 0 },
-              { name: "avgRate", type: 'numeric', precision: 2 }
+              { name: "avgRate", type: 'numeric', precision: 2 },
+              { name: "sleepTime", type: 'numeric', precision: 0}
             ],
             childAttrName: "events",
             defaults: {
@@ -85,7 +86,8 @@ var PerformanceHarness = {
             this.gameNum,
             this.trialNum,
             tTotalTime,
-              this.trialNum * 1000 / tTotalTime
+            this.trialNum * 1000 / tTotalTime,
+            tDelay
           ]
         }
       }, function () {
@@ -138,7 +140,8 @@ var PerformanceHarness = {
               this_.gameNum,
               this_.trialNum,
               tTotalTime,
-                this_.trialNum * 1000 / tTotalTime
+              this_.trialNum * 1000 / tTotalTime,
+              tDelay
             ]
           }
         });
