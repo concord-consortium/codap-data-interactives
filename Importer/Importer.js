@@ -190,7 +190,7 @@ var Importer = {
 
     var importAsJSON = function (iObject) {
       var tParentName = iObject.collection_name,
-        tParentCaseName = iObject.cases,
+        tParentCaseName = iObject.case_name,
         tDescriptions = iObject.descriptions,
         tParentAttrsArray = [],
         tChildAttrsArray = [],
@@ -209,7 +209,7 @@ var Importer = {
         if ((typeof iValue === 'object') && iValue.collection_name) {
           tChildKey = iKey;
           tChildName = iValue.collection_name;
-          tChildCaseName = iValue.cases;
+          tChildCaseName = iValue.case_name;
 
           if (iValue.attributes) {
             tChildAttrsArray = iValue.attributes;
