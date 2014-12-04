@@ -117,6 +117,8 @@ var Importer = {
         console.log(this.kSampleID + " kSampleID in openCase");
         this.createCases(iChildCollectionName, iChildValuesArray, this.kSampleID);
         this.closeCase(iCollectionName, iParentValuesArray, this.kSampleID);
+      } else {
+        console.log('Error in Importer.openCSVCase');
       }
     }.bind(this));
   },
