@@ -29,21 +29,38 @@ var GuessMyNumber = {
       action: 'initGame',
       args: {
         name: "Guess My Number",
+        version: "1.1",
         dimensions: { width: 400, height: 250 },
         collections: [
           {
-            name: "Rounds",
-            attrs: [  { name: "game", type: 'numeric', description: "The game number", precision: 0 },
-                      { name: "guesses", type: 'numeric', description: "The number of guesses", precision: 0 }
-                  ],
-            childAttrName: "round"
+            name: "Games",
+            attrs: [
+              { name: "game", type: 'numeric', description: "The game number", precision: 0 },
+              { name: "guesses", type: 'numeric', description: "The number of guesses", precision: 0 }
+            ],
+            childAttrName: "Trials",
+            labels: {
+              singleCase: "game",
+              pluralCase: "games",
+              singleCaseWithArticle: "a game",
+              setOfCases: "match",
+              setOfCasesWithArticle: "a match"
+            }
           },
           {
-            name: "Guesses",
-            attrs: [  { name: "trial", type: 'numeric', description: "The trial number", precision: 0 },
-                      { name: "guess", type: 'numeric', description: "The number guessed", precision: 0 },
-                      { name: "result", type: 'nominal', description: "The result of the trial" }
-                    ],
+            name: "Trials",
+            attrs: [
+              { name: "trial", type: 'numeric', description: "The trial number", precision: 0 },
+              { name: "guess", type: 'numeric', description: "The number guessed", precision: 0 },
+              { name: "result", type: 'nominal', description: "The result of the trial" }
+            ],
+            labels: {
+              singleCase: "trial",
+              pluralCase: "trials",
+              singleCaseWithArticle: "a trial",
+              setOfCases: "game",
+              setOfCasesWithArticle: "a game"
+            },
             defaults: {
               xAttr: "trial",
               yAttr: "guess"
@@ -62,7 +79,7 @@ var GuessMyNumber = {
       this.codapPhone.call({
         action: 'createCase',
         args: {
-          collection: "Guesses",
+          collection: "Trials",
           parent: this.openRoundID,
           values: [ this.trialNum, this.guess, this.result ]
         }
@@ -71,11 +88,11 @@ var GuessMyNumber = {
     }.bind(this);
 
     if( ! this.openRoundID ) {
-      // Start a new Rounds case if we don't have one open
+      // Start a new Games case if we don't have one open
       this.codapPhone.call({
           action: 'openCase',
           args: {
-            collection: "Rounds",
+            collection: "Games",
             values: [ this.gameNum, this.trialNum ]
           }
         }, function(result) {
@@ -90,7 +107,7 @@ var GuessMyNumber = {
       this.codapPhone.call({
         action: 'updateCase',
         args: {
-          collection: "Rounds",
+          collection: "Games",
           caseID: this.openRoundID,
           values: [ this.gameNum, this.trialNum ]
         }
@@ -103,7 +120,7 @@ var GuessMyNumber = {
       this.codapPhone.call({
         action: 'closeCase',
         args: {
-          collection: "Rounds",
+          collection: "Games",
           caseID: this.openRoundID,
           values: [ this.gameNum, this.trialNum ]
         }
