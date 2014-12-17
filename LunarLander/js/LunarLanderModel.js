@@ -69,7 +69,7 @@ LunarLanderModel.prototype.initGame = function() {
                     {name: "pilot", type: "nominal", description: "name of pilot"},
                     {name: "side", type: "nominal", description: "left or right"},
                     {name: "total_time", type: "numeric", precision: 2, defaultMin: 10, defaultMax: 30, description: "how long the landing lasted in seconds"},
-                    {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final speed of lander"},
+                    {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final velocity of lander"},
                     {name: "fuel_remaining", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 100, description: "fuel remaining after landing"}
                 ],
                 childAttrName: "flight_record",
@@ -83,7 +83,7 @@ LunarLanderModel.prototype.initGame = function() {
                 attrs: [
                     {name: "time", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "seconds since beginning of attempt"},
                     {name: "altitude", type: "numeric", precision: 1, defaultMin: 0, defaultMax: 360, description: "distance above the lunar surface"},
-                    {name: "speed", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "speed of lander"},
+                    {name: "velocity", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "velocity of lander"},
                     {name: "fuel", type: "numeric", defaultMin: 0, defaultMax: 100, precision: 2, description: "fuel left"},
                     {name: "thrust", type: "nominal", description: "TD+/- turn on or off down thruster, TU+/- turn on or off the up thruster"}
                 ],

@@ -166,7 +166,7 @@ LanderView.prototype.reset = function() {
 
 LanderView.prototype.endFlight = function() {
 var this_ = this,
-    tHeight = this.model.speed / 5,
+    tHeight = this.model.velocity / 5,
     tTime = 30 * tHeight;
 
   function down() {

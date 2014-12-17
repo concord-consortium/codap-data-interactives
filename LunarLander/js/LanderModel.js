@@ -26,8 +26,8 @@ function LanderModel( iSide, codapPhone) {
   this.codapPhone = codapPhone;
   this.landerState = 'inactive';  // inactive, active
   this.openGameCase = null; // ID of DG case for a landing attempt
-
   this.kGravity = 1;
+  this.kPreviousGameCaseClosed = true;
 
   // landing attempt properties
   this.attempt_num = 0;
@@ -50,7 +50,7 @@ LanderModel.prototype.initProperties = function() {
   this.impact = null;
   this.fuel_remaining = 100;
   this.altitude = this.kWorldTop;
-  this.speed = 0;
+  this.velocity = 0;
   this.thrust = '';
   this.thrustState = 'none';  // top, bottom, none
   this.lastUpdateTime = null;
@@ -58,6 +58,9 @@ LanderModel.prototype.initProperties = function() {
   this._thrust = 0;
   this._timeSinceRecord = 0;
   this.aborted = false;
+  if (this.openGameCase) {
+    this.endFlight();
+  }
 };
 
 /**
@@ -103,8 +106,8 @@ LanderModel.prototype.startDescent = function( iState) {
       this_._thrust = 0;
     }
 
-    this_.altitude -= this_.speed * tDelta + 0.5 * tAcc * tDelta * tDelta;
-    this_.speed += tAcc * tDelta;
+    this_.altitude -= this_.velocity * tDelta + 0.5 * tAcc * tDelta * tDelta;
+    this_.velocity += tAcc * tDelta;
     this_.altitude = Math.max( 0, this_.altitude);
 
     this_.fuel_remaining -= Math.abs(this_._thrust) * tDelta;
@@ -123,11 +126,12 @@ LanderModel.prototype.startDescent = function( iState) {
       this_.endFlight();
   }
 
-  this.attempt_num++;
-  this.initProperties();
-  this.openNewGameCase();
-  this.setState('descending');
-  tick();
+    this.attempt_num++;
+    this.initProperties();
+    this.openNewGameCase();
+    this.setState('descending');
+    tick();
+
 };
 
 /**
@@ -145,6 +149,8 @@ LanderModel.prototype.openNewGameCase = function()
     }, function(result){
         if(result.success){
             this.openGameCase=result.caseID;
+            this.kPreviousGameCaseClosed=false;
+            console.log('kPreviousGameCaseClosed is '+this.kPreviousGameCaseClosed);
             console.log("I have caseID "+result.caseID);
         } else {
             console.log("Lunar Lander: Error calling 'openCase'");
@@ -178,7 +184,7 @@ LanderModel.prototype.addFlightRecordCase = function()
               values:[
                       this.total_time,
                       this.altitude,
-                      this.speed,
+                      this.velocity,
                       this.fuel_remaining,
                       this.thrust
                   ]
@@ -211,7 +217,7 @@ LanderModel.prototype.endFlight = function()
   if(this.aborted)
   {
     this.total_time = null;
-    this.speed = null;
+    this.velocity = null;
     this.fuel_remaining = null;
     this.broadcastUpdate();
   }
@@ -227,10 +233,13 @@ LanderModel.prototype.endFlight = function()
           this.pilot,
           this.side,
           this.total_time,
-          this.speed,
+          this.velocity,
           this.fuel_remaining
         ]
       }
+    }, function(){
+      this.kPreviousGameCaseClosed=true;
+      console.log('kPreviousGameCaseClosed is '+this.kPreviousGameCaseClosed);
     });
   } else {
     console.log("Lunar Lander: Error no caseID");
