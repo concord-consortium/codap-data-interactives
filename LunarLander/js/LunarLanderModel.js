@@ -24,14 +24,20 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
    * If neither lander is active, change state and notify
    */
   function handleFlightEnded() {
-    var tInProgress = false;
-    this_.landers.forEach( function( iLander) {
-      if( iLander.landerState === 'descending')
-        tInProgress = true;
-    });
-    if( !tInProgress) {
-      this_.changeState( 'waiting');
-    }
+    var tInProgress=[];
+    var landed=0;
+
+    for (i=0;i<this_.landers.length; i++){
+      tInProgress[i]=false;
+      if (this_.landers[i].landerState === 'descending') {
+        tInProgress[i] = true;
+      } else {
+        ++landed;
+      }
+
+      if (landed==this_.landers.length)
+        this_.changeState('waiting');
+    };
   };
 
   this.codapPhone = codapPhone;

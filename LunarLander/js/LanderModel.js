@@ -247,10 +247,11 @@ LanderModel.prototype.endFlight = function()
 
   this.openGameCase = null;
 
-  this.setState('active');
+  //this.setState('active');
   this.thrustState = 'none';
   this.broadcastUpdate();
   this.eventDispatcher.dispatchEvent( new Event('flightEnded'));
+
 };
 
 /**
