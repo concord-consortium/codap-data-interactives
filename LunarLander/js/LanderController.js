@@ -15,14 +15,16 @@ function LanderController( iLander) {
   var this_ = this;
 
   function handleKeydown( iEvent) {
-    if( (this_.lander.thrustState !== 'none') || (this_.lander.landerState === 'inactive'))
+    console.log("In handleKeydown, the lander is: "+this_.lander.craft+" and the landerState is: "+this_.lander.landerState );
+    if( (this_.lander.thrustState !== 'none') || (this_.lander.landerState === 'inactive')
+      || (this_.lander.landerState==='pending'))
       return;
     var tChar = String.fromCharCode( iEvent.which ).toLowerCase(),
         tTopChar = this_.lander.keyTop,
         tBotChar = this_.lander.keyBottom;
 
-    if( (this_.lander.landerState !== 'descending') && !this_.lastKeyWasDown &&
-        ((tChar === tTopChar) || (tChar === tBotChar)))
+    if( (this_.lander.landerState === 'active') && !this_.lastKeyWasDown &&
+         ((tChar === tTopChar) || (tChar === tBotChar)))
       this_.lander.requestDescent();
 
     if( this_.lander.landerState === 'descending') {

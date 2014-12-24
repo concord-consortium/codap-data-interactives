@@ -24,21 +24,24 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
    * If neither lander is active, change state and notify
    */
   function handleFlightEnded() {
-    var tInProgress=[];
     var landed=0;
-
     for (i=0;i<this_.landers.length; i++){
-      tInProgress[i]=false;
-      if (this_.landers[i].landerState === 'descending') {
-        tInProgress[i] = true;
-      } else {
+      console.log("This lander is: "+this_.landers[i].craft);
+      console.log("In handleFlightEnded: "+this_.landers[i].craft+" landerState is "+this_.landers[i].landerState);
+      if (this_.landers[i].landerState === 'pending') {
         ++landed;
       }
-
-      if (landed==this_.landers.length)
+      console.log("Number of landers landed: "+landed);
+    }
+    if (landed===this_.landers.length) {
+        console.log ("Number of landers landed: "+landed);
+      for (i=0; i<this_.landers.length; i++){
+        this_.landers[i].landerState = 'active';
+        console.log('this.lander is: '+this_.landers[i].craft+" . Its state is: "+this_.landers[i].landerState);
+      }
         this_.changeState('waiting');
-    };
-  };
+    }
+  }
 
   this.codapPhone = codapPhone;
   this.doAppCommandFunc = iDoAppCommandFunc;
@@ -117,6 +120,7 @@ LunarLanderModel.prototype.getStarted = function() {
   this.changeState( 'waiting');
   this.landers[0].setState('active');
   this.landers[1].setState('inactive');
+  console.log("LunarLanderModel.getStarted this.gameState: "+this.gameState);
 };
 
 LunarLanderModel.prototype.changeState = function( iState) {
@@ -124,6 +128,7 @@ LunarLanderModel.prototype.changeState = function( iState) {
   tEvent.oldState = this.gameState;
   tEvent.newState = iState;
   this.gameState = iState;
+  console.log("In LunarLanderModel.changeState this.gameState: "+this.gameState);
   this.eventDispatcher.dispatchEvent( tEvent);
 };
 
@@ -133,6 +138,7 @@ LunarLanderModel.prototype.startDescent = function() {
     if(iLander.landerState !== 'inactive')
       iLander.startDescent();
   });
+  console.log("LunarLanderModel.startDescent this.gameState: "+this.gameState);
 };
 
 LunarLanderModel.prototype.abort = function() {
@@ -141,6 +147,7 @@ LunarLanderModel.prototype.abort = function() {
     if(iLander.landerState !== 'inactive')
       iLander.abort();
   });
+  console.log("LunarLanderModel.abort this.gameState: "+this.gameState);
 };
 
 LunarLanderModel.prototype.toggleLanders = function() {
