@@ -112,11 +112,13 @@ var Importer = {
         values: iParentValuesArray
       }
     }, function (result) {
-      if (result.success) {
+      if (result && result.success) {
         this.kSampleID = result.caseID;
         console.log(this.kSampleID + " kSampleID in openCase");
         this.createCases(iChildCollectionName, iChildValuesArray, this.kSampleID);
         this.closeCase(iCollectionName, iParentValuesArray, this.kSampleID);
+      } else {
+        console.log('Error in Importer.openCSVCase');
       }
     }.bind(this));
   },
@@ -190,7 +192,7 @@ var Importer = {
 
     var importAsJSON = function (iObject) {
       var tParentName = iObject.collection_name,
-        tParentCaseName = iObject.cases,
+        tParentCaseName = iObject.case_name,
         tDescriptions = iObject.descriptions,
         tParentAttrsArray = [],
         tChildAttrsArray = [],
@@ -209,7 +211,7 @@ var Importer = {
         if ((typeof iValue === 'object') && iValue.collection_name) {
           tChildKey = iKey;
           tChildName = iValue.collection_name;
-          tChildCaseName = iValue.cases;
+          tChildCaseName = iValue.case_name;
 
           if (iValue.attributes) {
             tChildAttrsArray = iValue.attributes;
@@ -242,35 +244,51 @@ var Importer = {
 
     // importAsSimpleText imports CSV files
     var importAsSimpleText = function (iText) {
-      var
-        tCollectionName,//Child Collection Name
-        tAttrNamesRow,// column headers
-        tAttrsArray,
+      var tValuesArrays,
+        tCollectionRow,
+        tChildName = 'Collection',// Child Collection Name: should be first line of CSV
+        tAttrNamesRow,// Column Header Names: should be second row
+        tAttrsArray, // Column Headers reformatted for the AddCollection API
         tNumCases = 0,
         tParentName= 'Import',
         tChildKey='import',
         tParentAttrsArray = [{name:'cases'}];
 
       CSV.RELAXED=true;
-      var valuesArrays = CSV.parse(iText);
-      tCollectionName=valuesArrays.shift();
-      tAttrNamesRow=valuesArrays.shift();
+      tValuesArrays = CSV.parse(iText);
+      if (tValuesArrays && tValuesArrays.length >= 2) {
+        tCollectionRow = tValuesArrays.shift();
+        tAttrNamesRow = tValuesArrays[0];
+
+        if (Array.isArray(tCollectionRow)) {
+          // check if it looks like name row is missing
+          if ((tAttrNamesRow.length === tCollectionRow.length) && (tAttrNamesRow.length > 1)) {
+            tAttrNamesRow = tCollectionRow;
+          } else {
+            tChildName = tCollectionRow[0];
+            tValuesArrays.shift();
+          }
+        } else {
+          tChildName = tCollectionRow;
+          tValuesArrays.shift();
+        }
+
+        // format Attribute Names for create collection api
+        tAttrsArray = tAttrNamesRow.map(function (iName) {
+          var tAttrObject = {};
+          tAttrObject.name = iName.toString();
+          return tAttrObject;
+        });
 
 
-      tAttrsArray = tAttrNamesRow.map(function (iName) {
-        var tAttrObject = {};
-        tAttrObject.name = iName;
-        return tAttrObject;
-      });
+        this.createCollection(tParentName, 'parent', tParentAttrsArray, tChildKey);
 
+        this.createCollection(tChildName, 'child', tAttrsArray);
 
-      this.createCollection(tParentName, 'parent', tParentAttrsArray, tChildKey);
-
-      this.createCollection(tCollectionName, 'child', tAttrsArray);
-
-      this.openCSVCase(tParentName, ['pseudocase'], tCollectionName, valuesArrays);
-
-      updateReport(tNumCases + ' cases');
+        this.openCSVCase(tParentName, ['pseudocase'], tChildName, tValuesArrays);
+        tNumCases = tValuesArrays.length;
+        updateReport(tNumCases + ' cases');
+      }
     }.bind(this);   // importAsSimpleText
 
     // Begin doImport
@@ -282,7 +300,7 @@ var Importer = {
       tJSONObject = null;
     }
 
-    if (tJSONObject)
+    if (tJSONObject && typeof tJSONObject === 'object')
       importAsJSON(tJSONObject);
     else
       importAsSimpleText(tText);

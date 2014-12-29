@@ -59,33 +59,47 @@ CartModel.prototype.initialize = function()
             dimensions:{width: 290, height:350},
             collections: [
             {
-                name: "Games",
-                attrs: [
-                    {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number" } ,
-                    {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 300, "description": "game score"   } ,
-                    {"name": "carts", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 5, "description": "how many cart weights were guessed"   } ,
-                    {"name": "level", "type": "nominal" }
-                ],
-                childAttrName: "Turn",
-                defaults: {
-                    xAttr: "game",
-                    yAttr: "score"
-                }
+              name: "Games",
+              attrs: [
+                  {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number" } ,
+                  {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 300, "description": "game score"   } ,
+                  {"name": "carts", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 5, "description": "how many cart weights were guessed"   } ,
+                  {"name": "level", "type": "nominal" }
+              ],
+              childAttrName: "Turn",
+              labels: {
+                singleCase: "game",
+                pluralCase: "games",
+                singleCaseWithArticle: "a game",
+                setOfCases: "match",
+                setOfCasesWithArticle: "a match"
+              },
+              defaults: {
+                  xAttr: "game",
+                  yAttr: "score"
+              }
             },
             {
-                name: "Carts",
-                attrs: [
-                    { "name": "cart", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "which cart in a game"   } ,
-                    { "name": "bricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 20, "description": "how many bricks on the cart"  } ,
-                    { "name": "weight", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "actual weight of the cart"   } ,
-                    { "name": "guess", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "your guess for the cart weight"   } ,
-                    { "name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points earned for this cart"   } ,
-                    { "name": "smBricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 10, "description": "how many small bricks on the cart"   }
-                ],
-                defaults: {
-                    xAttr: "bricks",
-                    yAttr: "weight"
-                }
+              name: "Carts",
+              attrs: [
+                  { "name": "cart", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "which cart in a game"   } ,
+                  { "name": "bricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 20, "description": "how many bricks on the cart"  } ,
+                  { "name": "weight", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "actual weight of the cart"   } ,
+                  { "name": "guess", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "your guess for the cart weight"   } ,
+                  { "name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points earned for this cart"   } ,
+                  { "name": "smBricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 10, "description": "how many small bricks on the cart"   }
+              ],
+              labels: {
+                singleCase: "cart",
+                pluralCase: "carts",
+                singleCaseWithArticle: "a cart",
+                setOfCases: "game",
+                setOfCasesWithArticle: "a game"
+              },
+              defaults: {
+                  xAttr: "bricks",
+                  yAttr: "weight"
+              }
             }
         ]
     }
