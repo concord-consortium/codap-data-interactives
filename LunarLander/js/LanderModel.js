@@ -158,17 +158,6 @@ LanderModel.prototype.openNewGameCase = function()
             console.log("Lunar Lander: Error calling 'openCase'");
         }
     }.bind(this));
-    /*var result = this.dgApi.doCommand("openCase",
-                    {
-                      collection: "Landing Attempts",
-                      values:
-                      [
-                        this.attempt_num, this.craft, this.pilot, this.side, '', '', ''
-                      ]
-                    });
-    // Stash the ID of the opened case so we can close it when done
-    if( result.success)
-      this.openGameCase = result.caseID;*/
   }
 };
 
@@ -222,7 +211,7 @@ LanderModel.prototype.endFlight = function()
     this.velocity = null;
     this.fuel_remaining = null;
     this.broadcastUpdate();
-    //console.log('In LanderModel.endFlight aborted this.landerState: '+this.landerState +" craft: "+this.craft);
+    console.log('In LanderModel.endFlight aborted this.landerState: '+this.landerState +" craft: "+this.craft);
 
   }
   if (this.openGameCase!==null) {
@@ -255,7 +244,7 @@ LanderModel.prototype.endFlight = function()
   this.thrustState = 'none';
   this.broadcastUpdate();
   this.eventDispatcher.dispatchEvent( new Event('flightEnded'));
-  //console.log('In LanderModel.endFlight after dispatchEvent flightEnded this.landerState: '+this.landerState+" craft: "+this.craft);
+  console.log('In LanderModel.endFlight after landed flightEnded this.landerState: '+this.landerState+" craft: "+this.craft);
 
 
 };
@@ -316,8 +305,6 @@ LanderModel.prototype.setParameter = function( iProp, iVal) {
 LanderModel.prototype.reset = function() {
   this.initProperties();
   this.broadcastUpdate();
-//  console.log('In LanderModel.reset this.landerState: '+this.landerState+" craft: "+this.craft);
-
 };
 
 /**

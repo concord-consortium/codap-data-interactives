@@ -22,7 +22,7 @@ function LunarLanderController( iModel, iView) {
       case 'waiting':
         this_.handleRequestDescent( null, true);
         break;
-      case 'descending':
+      case 'descending': //Start Descent button becomes Abort when gameState is descending
         this_.model.abort();
         flightEnded();
     }
@@ -48,7 +48,7 @@ function LunarLanderController( iModel, iView) {
   function flightEnded() {
     var tBothEnded = true;
     this_.model.landers.forEach( function(iLander) {
-      if( iLander.landerState === 'descending')
+      if (( iLander.landerState === 'descending') || (iLander.landerState === 'pending'))
         tBothEnded = false;
     });
 
@@ -109,7 +109,7 @@ LunarLanderController.prototype.handleStateChange = function( iEvent) {
 LunarLanderController.prototype.handleRequestDescent = function( iEvent, iImmediate) {
   var tNow = new Date().getTime();
   if( iImmediate ||
-      ((this.model.gameState !== 'setup') &&
+      ((this.model.gameState === 'waiting') &&
         ((this.lastTimeFlightEnded === null) || (tNow - this.lastTimeFlightEnded > 2000)))) {
     this.model.startDescent();
     $('#setup' ).toggle( false);

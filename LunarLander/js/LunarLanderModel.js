@@ -25,17 +25,25 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
    */
   function handleFlightEnded() {
     var landed=0;
-    for (i=0;i<this_.landers.length; i++){
-      console.log("This lander is: "+this_.landers[i].craft);
+    var numLanders=0;
+
+    for (i=0;i<this_.landers.length; i++ ) {
+      if ((this_.landers[i].landerState === 'pending') || (this_.landers[i].landerState === 'descending')) {
+        ++numLanders;
+        console.log("Number of active landers: "+numLanders);
+      }
+    }
+
+    for (i=0;i<numLanders; i++){
       console.log("In handleFlightEnded: "+this_.landers[i].craft+" landerState is "+this_.landers[i].landerState);
       if (this_.landers[i].landerState === 'pending') {
         ++landed;
-      }
-      console.log("Number of landers landed: "+landed);
-    }
-    if (landed===this_.landers.length) {
         console.log ("Number of landers landed: "+landed);
-      for (i=0; i<this_.landers.length; i++){
+      }
+    }
+    if (landed===numLanders) {
+        console.log ("Number of landers landed: "+landed);
+      for (i=0; i<numLanders; i++){
         this_.landers[i].landerState = 'active';
         console.log('this.lander is: '+this_.landers[i].craft+" . Its state is: "+this_.landers[i].landerState);
       }
