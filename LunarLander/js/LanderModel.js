@@ -156,17 +156,6 @@ LanderModel.prototype.openNewGameCase = function()
             console.log("Lunar Lander: Error calling 'openCase'");
         }
     }.bind(this));
-    /*var result = this.dgApi.doCommand("openCase",
-                    {
-                      collection: "Landing Attempts",
-                      values:
-                      [
-                        this.attempt_num, this.craft, this.pilot, this.side, '', '', ''
-                      ]
-                    });
-    // Stash the ID of the opened case so we can close it when done
-    if( result.success)
-      this.openGameCase = result.caseID;*/
   }
 };
 
@@ -247,7 +236,7 @@ LanderModel.prototype.endFlight = function()
 
   this.openGameCase = null;
 
-  this.setState('active');
+  this.setState('pending');
   this.thrustState = 'none';
   this.broadcastUpdate();
   this.eventDispatcher.dispatchEvent( new Event('flightEnded'));
