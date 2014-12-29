@@ -72,7 +72,6 @@ LanderModel.prototype.setState = function( iState) {
   tEvent.oldState = this.landerState;
   tEvent.newState = iState;
   this.landerState = iState;
-  console.log("In LanderModel.setState this.landerState: "+this.landerState + " craft: "+this.craft);
   this.eventDispatcher.dispatchEvent( tEvent);
 };
 
@@ -131,7 +130,6 @@ LanderModel.prototype.startDescent = function( iState) {
     this.initProperties();
     this.openNewGameCase();
     this.setState('descending');
-    console.log('In LanderModel.startDescent this.landerState: '+this.landerState + " craft: "+this.craft);
     tick();
 
 };
@@ -211,8 +209,6 @@ LanderModel.prototype.endFlight = function()
     this.velocity = null;
     this.fuel_remaining = null;
     this.broadcastUpdate();
-    console.log('In LanderModel.endFlight aborted this.landerState: '+this.landerState +" craft: "+this.craft);
-
   }
   if (this.openGameCase!==null) {
     this.codapPhone.call({
@@ -244,9 +240,6 @@ LanderModel.prototype.endFlight = function()
   this.thrustState = 'none';
   this.broadcastUpdate();
   this.eventDispatcher.dispatchEvent( new Event('flightEnded'));
-  console.log('In LanderModel.endFlight after landed flightEnded this.landerState: '+this.landerState+" craft: "+this.craft);
-
-
 };
 
 /**
@@ -254,8 +247,6 @@ LanderModel.prototype.endFlight = function()
  */
 LanderModel.prototype.requestDescent = function() {
   this.eventDispatcher.dispatchEvent( new Event('requestDescent'));
- // console.log('In LanderModel.requestDescent this.landerState: '+this.landerState+" craft: "+this.craft);
-
 };
 
 

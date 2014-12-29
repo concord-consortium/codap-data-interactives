@@ -15,7 +15,6 @@ function LanderController( iLander) {
   var this_ = this;
 
   function handleKeydown( iEvent) {
-    console.log("In handleKeydown, the lander is: "+this_.lander.craft+" and the landerState is: "+this_.lander.landerState );
     if( (this_.lander.thrustState !== 'none') || (this_.lander.landerState === 'inactive')
       || (this_.lander.landerState==='pending'))
       return;

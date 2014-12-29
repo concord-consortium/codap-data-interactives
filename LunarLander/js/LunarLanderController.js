@@ -64,7 +64,8 @@ function LunarLanderController( iModel, iView) {
    * @param iEvent
    */
   function handleKeydown( iEvent) {
-    if( (iEvent.which === 27) && (this_.model.gameState === 'descending')) {
+    var escKey=27;
+    if( (iEvent.which === escKey) && (this_.model.gameState === 'descending')) {
       this_.model.abort();
       flightEnded();
     }
@@ -113,6 +114,6 @@ LunarLanderController.prototype.handleRequestDescent = function( iEvent, iImmedi
         ((this.lastTimeFlightEnded === null) || (tNow - this.lastTimeFlightEnded > 2000)))) {
     this.model.startDescent();
     $('#setup' ).toggle( false);
-    $('#two_landers' ).toggle( false);
-  }
+    $('#two_landers' ).toggle( false);}
+
 };
