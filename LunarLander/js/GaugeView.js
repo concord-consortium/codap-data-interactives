@@ -38,7 +38,7 @@ function GaugeView( iModel, iElement) {
       .attr({ fill: valueFontColor, 'font-size': valueFontSize, 'text-anchor': 'start', 'font-weight': 'bold' });
     this.paper.text( centerSpeedX, centerSpeedY - fontSize, 'Speed')
       .attr({ fill: kBlue, 'font-size': fontSize });
-    this.speed = this.paper.text( centerSpeedX, centerSpeedY + valueFontSize, this.model.speed)
+    this.velocity = this.paper.text( centerSpeedX, centerSpeedY + valueFontSize, this.model.velocity)
       .attr({ fill: valueFontColor, 'font-size': valueFontSize, 'font-weight': 'bold' });
     this.paper.text( centerFuelX, fuelLabelY, 'Fuel')
       .attr({ fill: kBlue, 'font-size': fontSize });
@@ -78,11 +78,11 @@ GaugeView.prototype.handleUpdate = function() {
   }
 
   var tTime = round( this.model.total_time),
-      tSpeed = round( this.model.speed),
+      tSpeed = round( this.model.velocity),
       tFuel = (this.model.fuel_remaining !== null) ? Math.round( this.model.fuel_remaining) : '',
       tAngle, tTransform, tColor;
   this.time.attr('text', tTime);
-  this.speed.attr('text', tSpeed);
+  this.velocity.attr('text', tSpeed);
   this.fuel.attr({ text: tFuel });
   if( tSpeed !== '') {
     tAngle = tSpeed / this.layout.maxSpeed * 360;

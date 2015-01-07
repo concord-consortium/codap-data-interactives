@@ -24,15 +24,29 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
    * If neither lander is active, change state and notify
    */
   function handleFlightEnded() {
-    var tInProgress = false;
-    this_.landers.forEach( function( iLander) {
-      if( iLander.landerState === 'descending')
-        tInProgress = true;
-    });
-    if( !tInProgress) {
-      this_.changeState( 'waiting');
+    var landed=0;
+    var numLanders=0;
+
+    //Check to see how many landers are active
+    for (i=0;i<this_.landers.length; i++ ) {
+      if ((this_.landers[i].landerState === 'pending') || (this_.landers[i].landerState === 'descending')) {
+        ++numLanders;
+      }
     }
-  };
+    //Check to see how many landers have landed
+    for (i=0;i<numLanders; i++){
+      if (this_.landers[i].landerState === 'pending') {
+        ++landed;
+      }
+    }
+    //If all active landers have landed, change all landerState to active, and gameState to waiting
+    if (landed===numLanders) {
+      for (i=0; i<this_.landers.length; i++){
+        this_.landers[i].landerState = 'active';
+      }
+        this_.changeState('waiting');
+    }
+  }
 
   this.codapPhone = codapPhone;
   this.doAppCommandFunc = iDoAppCommandFunc;
@@ -69,7 +83,7 @@ LunarLanderModel.prototype.initGame = function() {
                     {name: "pilot", type: "nominal", description: "name of pilot"},
                     {name: "side", type: "nominal", description: "left or right"},
                     {name: "total_time", type: "numeric", precision: 2, defaultMin: 10, defaultMax: 30, description: "how long the landing lasted in seconds"},
-                    {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final speed of lander"},
+                    {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final velocity of lander"},
                     {name: "fuel_remaining", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 100, description: "fuel remaining after landing"}
                 ],
                 childAttrName: "flight_record",
@@ -83,7 +97,7 @@ LunarLanderModel.prototype.initGame = function() {
                 attrs: [
                     {name: "time", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "seconds since beginning of attempt"},
                     {name: "altitude", type: "numeric", precision: 1, defaultMin: 0, defaultMax: 360, description: "distance above the lunar surface"},
-                    {name: "speed", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "speed of lander"},
+                    {name: "velocity", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "velocity of lander"},
                     {name: "fuel", type: "numeric", defaultMin: 0, defaultMax: 100, precision: 2, description: "fuel left"},
                     {name: "thrust", type: "nominal", description: "TD+/- turn on or off down thruster, TU+/- turn on or off the up thruster"}
                 ],
