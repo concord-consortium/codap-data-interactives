@@ -37,7 +37,7 @@
             background-color: #EEE;
             border-radius: 10px;
             border: #CCC 1px solid;
-            width: 700px;
+            width: 500;
             margin: 7px;
         }
 
@@ -93,7 +93,7 @@
             },
             PerformanceHarness: {
                 name: 'Performance Harness',
-                dimensions: '{"9width":400,"height":250}',
+                dimensions: '{"width":400,"height":250}',
                 path: 'PerformanceHarness/PerformanceHarness.html'
             },
             Sampler: {
@@ -147,10 +147,9 @@
 </div>
 
 <div class="interactive-collection">
-    <h2>Data Interactives</h2>
+    <h2>Runnables</h2>
     <div>
         <ul>
-
             <li><a href="javascript:invokeDataInteractive('CartWeight')">Cart Weight</a></li>
             <li><a href="javascript:invokeDataInteractive('FloydsFargo')">Floyd's of Fargo</a></li>
             <li><a href="javascript:invokeDataInteractive('LunarLander')">Lunar Lander</a></li>
@@ -168,21 +167,51 @@
             <li><a href="javascript:invokeDataInteractive('Importer')">Importer</a></li>
         </ul>
     </div>
-    <div>
+    <div class="right_column">
         <ul>
             <li><a href="javascript:invokeDataInteractive('TerraPop')">TerraPop Interactive</a></li>
 
         </ul>
     </div>
+
+    <p>
+        <label>CODAP:
+            <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
+        </label>
+        <br>
+        <label>Document Server:
+            <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
+        </label>
+    </p>
+
+    <h2>Embeddables</h2>
+    <div>
+        <ul>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/CartWeight/">Cart Weight</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Floyds/">Floyd's of Fargo</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/LunarLander/">Lunar Lander</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Markov/">Markov</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Proximity/">Proximity</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Shuffleboard/">Shuffleboard</a></li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/GuessMyNumber/GuessMyNumber.html">Guess My Number</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/WolfSheep/index.html">Wolf-Sheep Predation</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html">Performance Harness</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Sampler/Sampler.html">Sampler</a></li>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Importer/Importer.html">Importer</a></li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li><a href="http://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html">TerraPop Interactive</a></li>
+
+        </ul>
+    </div>
 </div>
-<p>
-    <label>CODAP:
-        <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
-    </label>
-    <label>Document Server:
-        <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
-    </label>
-</p>
+
 
 </body>
 </html>
