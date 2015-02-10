@@ -1,0 +1,161 @@
+html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, b, ul, ol, li, section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  position: relative;
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: border-box; 
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  width:  100%;
+  height: 100%;
+  margin: 0px;
+  font: normal 1em / 1.33em 'Karla', sans-serif;
+}
+
+.swatch {
+  width: 3em;
+  height: 3em;
+  border-radius: 50%;
+  display: block;
+  text-indent: -1000px;
+  float: left;
+  overflow: hidden;
+  background: #000;
+  margin: 0 1em 1em 0;
+}
+
+.swatch:nth-child(9n) {
+  margin-right: 0
+}
+
+section .output {
+  background: #fff;
+  display: block;
+  padding: 0.5em 0.5em 0;
+  margin: 1em 0
+}
+
+code {
+  padding: 1em;
+  margin: 2em 0 0;
+  display: block;
+  position: relative;
+  clear: both;
+  line-height: 1.33em;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.025) 50%,rgba(0,0,0,0) 100%);
+  border-top: 1px solid rgba(0,0,0,0.15);
+  white-space: pre;
+}
+
+.output:after {
+  content: "";
+  width: 100%;
+  height: 0;
+  clear: both;
+  display: block;
+}
+
+section {
+  width: 36em;
+  margin: 2em auto;
+  padding: 1em 0;
+  z-index: 0
+}
+
+
+header, footer {
+  background: #fff; 
+  width: 36em;
+  margin: 1em auto;
+}
+
+header a#reload {position: fixed;top: 1em;left: 1em}
+
+header a,
+header a em,
+footer a,
+footer a em {
+  color: #aaa;
+  text-decoration: none;
+  transition: all 0.2s ease;    
+}
+
+header a em,
+footer a em {
+  font-style: normal;
+  border-bottom: 2px solid #ccc 
+}
+
+header a:hover,
+footer a:hover {
+  color: #f9951d
+}
+
+header a:hover em,
+footer a:hover em {
+  color: #f9951d;border-bottom-color: #f9951d
+}
+
+footer {border-top: 1px solid rgba(0,0,0,0.1);padding: 2em 0;margin: 2em auto}
+
+#logo {
+  width: 24em;
+  position: relative;left: -9em;margin-bottom: 1em}
+
+p {
+  font-size: 1.1566em;line-height: 1.5em;color: #787878}
+p b {font-weight: bold;color: #454545;}
+h1, h2 {
+  font-size: 2em;
+  line-height: 1.33em;
+}
+
+h1 {
+  color: #000;
+  font-weight: bold;
+  margin-top: 1em
+}
+
+h2 {
+  color: #787878;
+  font-weight: normal;
+}
+
+h3 {
+  font-size: 1.1566em;
+  font-weight: bold;
+  margin-bottom: 1em;
+  color: #000
+}
+
+h4 {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.66em;
+  margin-top: 2em;
+  color: #000
+}
+
+.button {
+  display: inline-block;
+  margin: 3em 0.66em 0.33em 0;
+  text-decoration: none;
+  color: #111;
+  color: #fff;
+  background: #f9951d;
+  border-radius: 4em;
+  font-size: 1.1566em;
+  padding: 0.75em 2em 0.7em;  
+}
+
+.primary {
+}
+
+.comment {color: #888;font-weight: normal;}
