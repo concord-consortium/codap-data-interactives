@@ -9,14 +9,14 @@
         }
 
         #header {
-            background: #f48c30;
-            background: -moz-linear-gradient(top,  #4C3E08 1%, #706539 100%);
-            background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#4C3E08), color-stop(100%,#706539));
-            background: -webkit-linear-gradient(top,  #4C3E08 1%,#706539 100%);
-            background: -o-linear-gradient(top,  #4C3E08 1%,#706539 100%);
-            background: -ms-linear-gradient(top,  #4C3E08 1%,#706539 100%);
-            background: linear-gradient(to bottom,  #4C3E08 1%,#706539 100%);
-            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4C3E08', endColorstr='#706539',GradientType=0 );
+            background: #98D1DD;
+            background: -moz-linear-gradient(top,  #0797A8 1%, #98D1DD 100%);
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#0797A8), color-stop(100%,#98D1DD));
+            background: -webkit-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
+            background: -o-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
+            background: -ms-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
+            background: linear-gradient(to bottom,  #0797A8 1%,#98D1DD 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0797A8', endColorstr='#98D1DD',GradientType=0 );
             color: white;
             padding: 0.5em 1em;
             font-size: 1em;
@@ -34,11 +34,36 @@
         }
 
         .interactive-collection div {
-            background-color: #EEE;
+            background-color:#EEE;
             border-radius: 10px;
             border: #CCC 1px solid;
-            width: 500;
+            width: 1030px;
             margin: 7px;
+            padding-left:10px;
+        }
+
+        .interactive-title {
+            font-weight: bold;
+            font-size: 18px;
+            -webkit-margin-before:.1em;
+            -webkit-margin-after:.1em;
+            width:248px;
+            max-width:248px;
+        }
+
+        .interactive-description {
+            -webkit-margin-before:.1em;
+            -webkit-margin-after:.1em;
+            width:620px;
+        }
+
+        .interactive-table {
+            width:100%;
+        }
+
+        .interactive-table tr:nth-child(odd) {
+            color:#000000;
+            background-color:#D6EDF1;
         }
 
         ul {
@@ -128,6 +153,10 @@
                 moreGames= 'moreGames=[{"name":"' + map[name].name +
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + newLoc + '/' + map[name].path + '"}]';
+        /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
+                    '","dimensions":' + map[name].dimensions +
+                    ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
+
             if (docserverURL) {
                 launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
@@ -143,73 +172,109 @@
 
 <div id="credits">
     <!--<p>Data Interactives repository: <a href="https://github.com/backspaces/agentscript">github.com/backspaces/agentscript</a></p>-->
-    <p>Concord Consortium's CODAP data interactives repository: <a href="https://github.com/concord-consortium/codap-data-interactives">github.com/concord-consortium/codap-data-interactives</a></p>
+    <p>Concord Consortium's CODAP data interactives repository: <a target="blank" href="https://github.com/concord-consortium/codap-data-interactives">github.com/concord-consortium/codap-data-interactives</a></p>
+    <p>Concord Consortium's CODAP project repository: <a target="blank" href="https://github.com/concord-consortium/codap">github.com/concord-consortium/codap</a></p>
+    <p>To find out more about the CODAP project: <a target="blank" href="http://concord.org/projects/codap">About CODAP</a></p>
 </div>
+<br>
+<p>This site has a list of interactives that can be used with CODAP.</p>
+<p> You can click on <span style="font-weight:bold">Launch</span> to launch the interactive in CODAP.
+<br>You can also drag <span style="font-weight:bold">Link</span> into an open CODAP document to add the interactive into the document.</p>
+<p>
+    <label>CODAP:
+        <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
+    </label>
+    <br>
+    <label>Document Server:
+        <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
+    </label>
+</p>
 
 <div class="interactive-collection">
-    <h2>Runnables</h2>
     <div>
-        <ul>
-            <li><a href="javascript:invokeDataInteractive('CartWeight')">Cart Weight</a></li>
-            <li><a href="javascript:invokeDataInteractive('FloydsFargo')">Floyd's of Fargo</a></li>
-            <li><a href="javascript:invokeDataInteractive('LunarLander')">Lunar Lander</a></li>
-            <li><a href="javascript:invokeDataInteractive('Markov')">Markov</a></li>
-            <li><a href="javascript:invokeDataInteractive('Proximity')">Proximity</a></li>
-            <li><a href="javascript:invokeDataInteractive('Shuffleboard')">Shuffleboard</a></li>
-        </ul>
-    </div>
-    <div>
-        <ul>
-            <li><a href="javascript:invokeDataInteractive('GuessMyNumber')">Guess My Number</a></li>
-            <li><a href="javascript:invokeDataInteractive('WolfSheep')">Wolf-Sheep Predation</a></li>
-            <li><a href="javascript:invokeDataInteractive('PerformanceHarness')">Performance Harness</a></li>
-            <li><a href="javascript:invokeDataInteractive('Sampler')">Sampler</a></li>
-            <li><a href="javascript:invokeDataInteractive('Importer')">Importer</a></li>
-        </ul>
-    </div>
-    <div class="right_column">
-        <ul>
-            <li><a href="javascript:invokeDataInteractive('TerraPop')">TerraPop Interactive</a></li>
+        <p>These interactives show how CODAP is used with our partners' models and data.</p>
 
-        </ul>
-    </div>
-
-    <p>
-        <label>CODAP:
-            <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
-        </label>
-        <br>
-        <label>Document Server:
-            <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
-        </label>
-    </p>
-
-    <h2>Embeddables</h2>
-    <div>
-        <ul>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/CartWeight/">Cart Weight</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Floyds/">Floyd's of Fargo</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/LunarLander/">Lunar Lander</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Markov/">Markov</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Proximity/">Proximity</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Shuffleboard/">Shuffleboard</a></li>
-        </ul>
+        <table class="interactive-table">
+            <tr><td class = "interactive-title">TerraPop Interactive</td>
+                <td class="interactive-description">Interactive for importing TerraPop data sets.</td>
+                <td><a href="javascript:invokeDataInteractive('TerraPop')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Wolf-Sheep Predation</td>
+                <td class="interactive-description">Netlogo model that explores the stability of predator-prey ecosystems.</td>
+                <td><a href="javascript:invokeDataInteractive('WolfSheep')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/WolfSheep/index.html/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
+                <td class="interactive-description">Learn about conservation of energy with a skater duel with this PhET interactive.</td>
+                <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
+                &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
+                <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
+            </tr>
+        </table>
     </div>
     <div>
-        <ul>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/GuessMyNumber/GuessMyNumber.html">Guess My Number</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/WolfSheep/index.html">Wolf-Sheep Predation</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html">Performance Harness</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Sampler/Sampler.html">Sampler</a></li>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/Importer/Importer.html">Importer</a></li>
-        </ul>
+        <p>These interactives involve playing games Playing computer games creates a lot of data, which usually disappear when the game is over. But in Data Games, you learn to analyze data that are saved, learning math and data skills that help you win!</p>
+        <table class="interactive-table">
+            <tr><td class = "interactive-title">Cart Weight</td>
+                <td class="interactive-description">Win by predicting the total weight of a cart stacked with bricks.</td>
+                <td><a href="javascript:invokeDataInteractive('CartWeight')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/CartWeight/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Floyd's of Fargo</td>
+                <td class="interactive-description">Make big money running your own car insurance business!</td>
+                <td><a href="javascript:invokeDataInteractive('FloydsFargo')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Floyds/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Lunar Lander</td>
+                <td class="interactive-description">You and your friends land spacecrafts, then rate your landings.</td>
+                <td><a href="javascript:invokeDataInteractive('LunarLander')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/LunarLander/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Markov</td>
+                <td class="interactive-description"> Play Rock, Paper, Scissors with the evil Dr. Markov to save the dog.</td>
+                <td><a href="javascript:invokeDataInteractive('Markov')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Markov/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Proximity</td>
+                <td class="interactive-description">Get high scores by shooting a ball to land as close to a target as possible.</td>
+                <td><a href="javascript:invokeDataInteractive('Proximity')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Proximity/">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Shuffleboard</td>
+                <td class="interactive-description">Live on the edge-Land a disk on each pad without sliding off to score big!</td>
+                <td><a href="javascript:invokeDataInteractive('Shuffleboard')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Shuffleboard/">Link</a></td>
+            </tr>
+        </table>
     </div>
     <div>
-        <ul>
-            <li><a href="http://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html">TerraPop Interactive</a></li>
+        <p>These interactives provide support for CODAP.</p>
+        <table class="interactive-table">
+            <tr><td class = "interactive-title">Guess My Number</td>
+                <td class="interactive-description">As the title says.</td>
+                <td><a href="javascript:invokeDataInteractive('GuessMyNumber')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/GuessMyNumber/GuessMyNumber.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Sampler</td>
+                <td class="interactive-description">A way to generate a sample data set.</td>
+                <td><a href="javascript:invokeDataInteractive('Sampler')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Sampler/Sampler.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Performance Harness</td>
+                <td class="interactive-description">A way to generate data while testing the performance of CODAP.</td>
+                <td><a href="javascript:invokeDataInteractive('PerformanceHarness')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html">Link</a></td>
+            </tr>
 
-        </ul>
+            <tr><td class = "interactive-title">Importer</td>
+                <td class="interactive-description">Interactive for importing JSON, comma delimited or tab delimited files into CODAP</td>
+                <td><a href="javascript:invokeDataInteractive('Importer')">Launch</a></td>
+                <td><a href="http://concord-consortium.github.io/codap-data-interactives/Importer/Importer.html">Link</a></td>
+            </tr>
+        </table>
     </div>
+
 </div>
 
 
