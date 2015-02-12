@@ -117,6 +117,30 @@ var TPI = {
       return tCbk[ iIndex].trim() === '';
     }
 
+    var constructColorMaps = function() {
+      // Go through each of the attribute descriptions, making a color map for those that appear in cbkCodes.
+
+      var constructMap = function( iDesc) {
+        var tCodes = this.cbkCodes[ iDesc.name];
+        if( !tCodes)
+          return;
+
+        iDesc.colormap = {};
+        iDesc.blockDisplayOfEmptyCategories = true;
+        this.forEachProperty( tCodes, function( iKey, iValue) {
+          if( iValue !== '')
+            iDesc.colormap[iValue] = randomColor();
+        });
+      }.bind( this);
+
+      this.cbkParentAttrDescriptions.forEach( function( iDesc) {
+        constructMap( iDesc);
+      });
+      this.cbkChildAttrDescriptions.forEach( function( iDesc) {
+        constructMap( iDesc);
+      });
+    }.bind( this);
+
     var tSep = this.determineLineSep( this.cbkText),
         tCbk = this.cbkText.split(tSep),
         tVarsIndex = null;
@@ -188,6 +212,8 @@ var TPI = {
         tLineIndex++;
       }
     }
+
+    constructColorMaps();
 
     // Give feedback about attributes
     $('#cbkHouseholdDisplay').text( this.cbkParentAttrDescriptions.length + ' parent attributes');
@@ -422,6 +448,20 @@ var TPI = {
               caseID: iCaseID
             }
     }, iCallback);
+  },
+
+  /**
+   Applies the specified function to each property of the specified object.
+   The order in which the properties are visited is not specified by the standard.
+
+   @param {Object} iObject   The object whose properties should be iterated
+   */
+  forEachProperty: function (iObject, iFunction) {
+    if (!iObject) return;
+    for (var tKey in iObject) {
+      if (iObject.hasOwnProperty(tKey))
+        iFunction(tKey, iObject[ tKey]);
+    }
   }
 
 };
