@@ -17,6 +17,7 @@ var Importer = {
   firstTime: true,
   kSampleID: null,
   kNumChildren: 0,
+  kTotalNumChildren: 0,
   kNotOpen:true,
 
   //return {
@@ -82,6 +83,7 @@ var Importer = {
     // Close the parent case
     if (this.kNumChildren >= iCase[iChildKey].cases.length) {
       this.closeCase(iParentName, iParentValuesArray, iCaseID);
+      this.kTotalNumChildren = this.kTotalNumChildren + this.kNumChildren;
       this.kNumChildren = 0;
     }
 
@@ -91,6 +93,8 @@ var Importer = {
         Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter,
           tIsArrayFormat);
     }
+      this.updateReport( iNumParents + ' parent cases and ' + this.kTotalNumChildren + ' child cases');
+
   },
 
   openJSONCase: function (iCollectionName, iValuesArray, iCase, iChildKey,
@@ -126,6 +130,7 @@ var Importer = {
         console.log(this.kSampleID + " kSampleID in openCase");
         this.createCases(iChildCollectionName, iChildValuesArray, this.kSampleID);
         this.closeCase(iCollectionName, iParentValuesArray, this.kSampleID);
+        this.updateReport( iParentValuesArray.length + ' parent cases and ' + iChildValuesArray.length + ' child cases');
       } else {
         console.log('Error in Importer.openCSVCase');
       }
@@ -189,16 +194,24 @@ var Importer = {
     }
   },
 
+  updateReport:function(iReport){
+  var tDiv = document.getElementById('report');
+  while (tDiv.childNodes.length)
+    tDiv.removeChild(tDiv.childNodes[ 0]);
+
+  tDiv.appendChild(document.createTextNode(iReport));
+  },
+
   doImport: function () {
     var tText = document.getElementById("textToImport").value.trim();
 
-    function updateReport(iReport) {
+/*    function updateReport(iReport) {
       var tDiv = document.getElementById('report');
       while (tDiv.childNodes.length)
         tDiv.removeChild(tDiv.childNodes[ 0]);
 
       tDiv.appendChild(document.createTextNode(iReport));
-    }
+    }*/
 
     var importAsJSON = function (iObject) {
       var tParentName = iObject.collection_name,
@@ -276,8 +289,7 @@ var Importer = {
       }
       var tValuesArray,
         tCollectionRow,
-        tChildName = 'children',// Child Collection Name: should be first
-                                  // line of CSV
+        tChildName = 'Collection',// Child Collection Name: should be first line of CSV
         tAttrNamesRow,// Column Header Names: should be second row
         tAttrsArray, // Column Headers reformatted for the AddCollection API
         tNumCases = 0,
@@ -318,9 +330,9 @@ var Importer = {
 
         this.createCollection(tChildName, 'child', tAttrsArray);
 
-        this.openCSVCase(tParentName, ['pseudocase'], tChildName, tValuesArray);
-        tNumCases = tValuesArray.length;
-        updateReport(tNumCases + ' cases');
+        this.openCSVCase(tParentName, ['pseudocase'], tChildName, tValuesArrays);
+        tNumCases = tValuesArrays.length;
+
       }
     }.bind(this);   // importAsSimpleText
 
