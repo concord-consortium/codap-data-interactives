@@ -28,7 +28,8 @@ var Importer = {
     if (this.firstTime) {
       console.log('Importer: initGame: first time with codapPhone');
 
-      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function (cmd, callback) {
+        callback();
       }, "codap-game", window.parent);
 
       this.codapPhone.call({
