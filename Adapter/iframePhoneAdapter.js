@@ -58,7 +58,7 @@ $(function () {
             reply = this.doCommandFunc(iMsg);
           } else if (this.gameElement && this.gameElement.doCommandFunc) {
             // for flash games we must find the embedded swf object, then call its 'doCommandFunc'
-            reply = this.gameElement.doCommandFunc(SC.json.encode(tRestoreCommand));
+            reply = this.gameElement.doCommandFunc(JSON.stringify(iMsg));
           } else {
             console.log('No synchronous connection point. Ignoring call.')
           }
@@ -105,13 +105,14 @@ $(function () {
         contentWindow.DoCommand = function (iCmd) {
           var result;
           result = target.doCommand(iCmd);
-          return SC.json.encode(result);
+          return JSON.stringify(result);
         };
       } else {
-        DG.logWarn("DG.GameView:iframeDidLoad no contentWindow\n");
+        console.log("DG.GameView:iframeDidLoad no contentWindow\n");
       }
 
-    }
+    };
+
     Adapter.prototype.makeNewProxyID = function () {
       this.idSeq++;
       return this.idPrefix + this.idSeq;
@@ -124,7 +125,8 @@ $(function () {
 
     Adapter.prototype.isProxyID = function (name) {
       return new RegExp('^' + this.idPrefix + '.*').test(name);
-    }
+    };
+
     /**
      * Iterates over obj's items, if an array, properties if an object, and
      * calls fn on each. If obj is neither array nor properties, calls fn on
@@ -176,7 +178,7 @@ $(function () {
 
     /*
      * ******* Handlers *********
-     * Generate needed proxy replies. R eplies are generated irrespective of
+     * Generate needed proxy replies. Replies are generated irrespective of
      * what actual reply CODAP may have, and may include proxy IDs.
      */
     /**
@@ -232,7 +234,7 @@ $(function () {
       if (Array.isArray(values)) {
         values.forEach(function () {
           caseIDs.push(this.makeNewProxyID());
-        }).bind(this);
+        }.bind(this));
       }
       return {
         proxyReply: {success: true, caseID: caseIDs[0], caseIDs: caseIDs},
@@ -406,7 +408,7 @@ $(function () {
      *    Useful for callbacks to embedded flash .swf objects,
      *    which have functions made available by AS3's ExternalInterface.addCallback()
      * @param embeddedGameID the ID parameter of the game, e.g. set by ChainSaw.html for ChainSaw.swf
-     * @return {} null or an element of an iFrame that has the given html ID.
+     * @return {Element} null or an element of an iFrame that has the given html ID.
      */
     Adapter.prototype.findCurrentGameElement = function (embeddedGameID) {
       // games are dynamically embedded objects in iFrames
@@ -433,8 +435,8 @@ $(function () {
           cmdObj = iCmd;
         }
         return adapter.call(cmdObj);
-      }, currGameController: {
-        doCommand: null
+      },
+      currGameController: {
       }
     }, adapter = new Adapter();
     DG.currGameController.doCommand = DG.doCommand;
