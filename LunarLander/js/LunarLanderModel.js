@@ -41,7 +41,7 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
     }
     //If all active landers have landed, change all landerState to active, and gameState to waiting
     if (landed===numLanders) {
-      for (i=0; i<this_.landers.length; i++){
+      for (i=0; i<numLanders; i++){
         this_.landers[i].landerState = 'active';
       }
         this_.changeState('waiting');
