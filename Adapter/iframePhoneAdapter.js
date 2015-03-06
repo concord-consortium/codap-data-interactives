@@ -181,7 +181,7 @@ $(function () {
         this.visitProperties(val, fn, depth - 1);
       } else {
         result = fn(val);
-        if (result) {
+        if (result !== undefined) {
           obj[key] = result;
         }
       }
