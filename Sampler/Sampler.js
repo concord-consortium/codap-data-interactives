@@ -33,7 +33,8 @@ var Sampler = {
   initSamplerAsGame: function () {
     console.log("In initSamplerAsGame");
 
-    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function() {}, "codap-game", window.parent);
+    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(
+      function(iCmd, iCallback) {iCallback();}, "codap-game", window.parent);
 
     this.codapPhone.call({
       action: 'initGame',

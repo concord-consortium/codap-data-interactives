@@ -4,7 +4,11 @@
 // ==========================================================================
 
 /**
- * @fileoverview Defines Importer component to be embedded in DG to import tab-delimited text.
+ * @fileoverview Defines Importer component to be embedded in DG to import
+ * tab-delimited text.
+ *
+ * CSV parsing uses the library csv.js (https://github.com/gkindel/CSV-JS)
+ *
  * @author bfinzer@kcptech.com (William Finzer)
  * @preserve (c) 2011 KCP Technologies, Inc.
  */
@@ -24,7 +28,8 @@ var Importer = {
     if (this.firstTime) {
       console.log('Importer: initGame: first time with codapPhone');
 
-      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function (cmd, callback) {
+        callback();
       }, "codap-game", window.parent);
 
       this.codapPhone.call({
@@ -61,11 +66,12 @@ var Importer = {
     });
   },
 
-  createChildCases: function (iCase, iChildKey, iCaseID, iParentName, iParentValuesArray, tIsArrayFormat, iNumParents, iSampleObject, sampleCounter) {
+  createChildCases: function (iCase, iChildKey, iCaseID, iParentName,
+                              iParentValuesArray, tIsArrayFormat, iNumParents,
+                              iSampleObject, sampleCounter) {
     console.log("In createChildCases");
 
     var valuesArrays = [];
-
 
     iCase[iChildKey].cases.forEach(function (iChildCase) {
       valuesArrays.push(tIsArrayFormat ? iChildCase
@@ -85,13 +91,15 @@ var Importer = {
     if (sampleCounter<=iNumParents){
       sampleCounter++;
       if (iSampleObject!=null)
-        Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter, tIsArrayFormat);
+        Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter,
+          tIsArrayFormat);
     }
       this.updateReport( iNumParents + ' parent cases and ' + this.kTotalNumChildren + ' child cases');
 
   },
 
-  openJSONCase: function (iCollectionName, iValuesArray, iCase, iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat) {
+  openJSONCase: function (iCollectionName, iValuesArray, iCase, iChildKey,
+                          iNumParents, iSampleObject, sampleCounter, tIsArrayFormat) {
     console.log('Importer: openCase');
     this.codapPhone.call({
       action: 'openCase',
@@ -103,7 +111,8 @@ var Importer = {
       if (result.success) {
         this.kSampleID = result.caseID;
         console.log(this.kSampleID + " kSampleID in openCase");
-        this.createChildCases(iCase, iChildKey, this.kSampleID, iCollectionName, iValuesArray, tIsArrayFormat, iNumParents, iSampleObject, sampleCounter);
+        this.createChildCases(iCase, iChildKey, this.kSampleID, iCollectionName,
+          iValuesArray, tIsArrayFormat, iNumParents, iSampleObject, sampleCounter);
       }
     }.bind(this));
   },
@@ -174,7 +183,8 @@ var Importer = {
           }
         });
 
-        this.openJSONCase(iSampleObject.collection_name, tValues, iCase,iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat)
+        this.openJSONCase(iSampleObject.collection_name, tValues, iCase,
+          iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat)
       }
 
      if (sampleCounter>iNumParents) {
@@ -219,7 +229,8 @@ var Importer = {
         sampleCounter= 0,
         tIsArrayFormat = false;
 
-      // Run through the properties of the first case gathering attribute names and the key to the child collection
+      // Run through the properties of the first case gathering attribute names
+      // and the key to the child collection
       this.forEachProperty(tFirstParentCase, function (iKey, iValue) {
         var description;
         if ((typeof iValue === 'object') && iValue.collection_name) {
@@ -247,9 +258,11 @@ var Importer = {
         }
       });
 
-      this.createCollection(tParentName, tParentCaseName, tParentAttrsArray, tChildKey,tIsArrayFormat);
+      this.createCollection(tParentName, tParentCaseName, tParentAttrsArray,
+        tChildKey,tIsArrayFormat);
 
-      this.createCollection(tChildName, tChildCaseName, tChildAttrsArray,tIsArrayFormat);
+      this.createCollection(tChildName, tChildCaseName, tChildAttrsArray,
+        tIsArrayFormat);
 
       this.addNewParentCase(iObject, sampleCounter, tChildKey, tIsArrayFormat);
 
@@ -258,7 +271,24 @@ var Importer = {
 
     // importAsSimpleText imports CSV files
     var importAsSimpleText = function (iText) {
-      var tValuesArrays,
+      // trims empty columns from right side of
+      function trimTrailingColumns(arr) {
+        var newArr = [];
+        arr.forEach(function (row) {
+          var value;
+          if (Array.isArray(row)) {
+            do {
+              value = row.pop();
+            } while(value === '');
+            if (value) row.push(value);
+          }
+          if (row.length) {
+            newArr.push(row);
+          }
+        })
+        return newArr;
+      }
+      var tValuesArray,
         tCollectionRow,
         tChildName = 'Collection',// Child Collection Name: should be first line of CSV
         tAttrNamesRow,// Column Header Names: should be second row
@@ -269,10 +299,12 @@ var Importer = {
         tParentAttrsArray = [{name:'cases'}];
 
       CSV.RELAXED=true;
-      tValuesArrays = CSV.parse(iText);
-      if (tValuesArrays && tValuesArrays.length >= 2) {
-        tCollectionRow = tValuesArrays.shift();
-        tAttrNamesRow = tValuesArrays[0];
+      CSV.IGNORE_RECORD_LENGTH = true;
+      tValuesArray = CSV.parse(iText);
+      if (tValuesArray && tValuesArray.length >= 2) {
+        tValuesArray = trimTrailingColumns(tValuesArray);
+        tCollectionRow = tValuesArray.shift();
+        tAttrNamesRow = tValuesArray[0];
 
         if (Array.isArray(tCollectionRow)) {
           // check if it looks like name row is missing
@@ -280,11 +312,11 @@ var Importer = {
             tAttrNamesRow = tCollectionRow;
           } else {
             tChildName = tCollectionRow[0];
-            tValuesArrays.shift();
+            tValuesArray.shift();
           }
         } else {
           tChildName = tCollectionRow;
-          tValuesArrays.shift();
+          tValuesArray.shift();
         }
 
         // format Attribute Names for create collection api
