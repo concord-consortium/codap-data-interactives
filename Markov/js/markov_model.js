@@ -124,14 +124,14 @@ MarkovModel.prototype.openNewGameCase = function()
             values:[this.gameNumber, '', '', this.level.levelName]
         }
     }, function(result){
-        if(result.success){
+        if(result && result.success){
             this.openGameCase = result.caseID;
             this.changeGameState( 'playing'); // Our view will update
             this.changeTurnState('waiting');
 
             console.log("I have caseID" + result.caseID);
         } else {
-            console.log("Markov: Error calling 'openCase'");
+            console.log("Markov: Error calling 'openCase': " + JSON.stringify(result));
         }
     }.bind(this));
   }
