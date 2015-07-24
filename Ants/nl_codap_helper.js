@@ -10,7 +10,7 @@ function codapCallInitGame() {
       dimensions: {width: 560, height: 734},
       collections: [
         {
-          name: "Simulations",
+          name: "Runs",
           attrs: [
             {name: 'run', type: 'numeric', description: "The number of the simulation in the sequence", precision: 0},
             {name: 'total_time', type: 'numeric', description: "Number of ticks the simulation lasted", precision: 0},
@@ -30,11 +30,11 @@ function codapCallInitGame() {
           ],
           childAttrName: "Ticks",
           labels: {
-            singleCase: "simulation",
-            pluralCase: "simulations",
-            singleCaseWithArticle: "a simulation",
-            setOfCases: "experiment",
-            setOfCasesWithArticle: "an experiment"
+            singleCase: "run",
+            pluralCase: "runs",
+            singleCaseWithArticle: "a run",
+            setOfCases: "simulation",
+            setOfCasesWithArticle: "a simulation"
           }
         },
         {
@@ -76,14 +76,13 @@ function codapCallInitGame() {
 }
 
 function codapDoCommand(iCommandObj, iCallback) {
-
+  var stateVars = ['run-number', 'diffusion-rate', 'evaporation-rate',
+    'population'];
   function saveState() {
     var tResult = {
           success: true,
           state: {}
-        },
-        stateVars = ['run-number', 'diffusion-rate', 'evaporation-rate',
-          'population'];
+        };
     stateVars.forEach(function (iVar) {
       tResult.state[iVar] = world.observer.getGlobal(iVar);
     });
@@ -92,9 +91,7 @@ function codapDoCommand(iCommandObj, iCallback) {
   }
 
   function restoreState(iState) {
-    var tResult = {success: true},
-        stateVars = ['run-number', 'diffusion-rate', 'evaporation-rate',
-          'population'];
+    var tResult = {success: true};
     stateVars.forEach(function (iVar) {
       world.observer.setGlobal(iVar, iState[iVar]);
     });
@@ -183,7 +180,7 @@ function codapCloseCase() {
   this.codapPhone.call({
         action: 'closeCase',
         args: {
-          collection: "Simulations",
+          collection: "Runs",
           caseID: caseID,
           values: [
             runNumber, numTicks, population, diffusion_rate, evaporation_rate
@@ -221,7 +218,7 @@ function codapOpenCase(callbackFunc) {
   this.codapPhone.call({
         action: 'openCase',
         args: {
-          collection: "Simulations",
+          collection: "Runs",
           values: [
             runNumber, '', numSheep, numWolves, sheepFoodGain, wolfFoodGain, sheepProbRepro, wolfProbRepro,
             includeGrass, grassRegrowthTime
