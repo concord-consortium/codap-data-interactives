@@ -16,7 +16,7 @@ function codapCallInitGame() {
       // To Do: EDITING REQUIRED
       name: "Virus", // This will appear in the titlebar of the model's iFrame
       // To Do: EDITING REQUIRED
-      dimensions: {width: 560, height: 734},  // Modify these to fit the size of the simulation
+      dimensions: {width: 670, height: 734},  // Modify these to fit the size of the simulation
       collections: [
       /**
        * There are two collections:
@@ -43,7 +43,7 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: 'People',
+              name: 'people',
               type: 'numeric',
               description: "How many people are in the trial",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
@@ -51,7 +51,7 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: 'Infectiousness',
+              name: 'infectiousness',
               type: 'numeric',
               description: "How infectious the virus is",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
@@ -59,7 +59,7 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: 'Chance-recover',
+              name: 'chance-recover',
               type: 'numeric',
               description: "The chance that victims have of recovering",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
@@ -68,19 +68,10 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: 'Duration',
+              name: 'duration',
               type: 'numeric',
-              description: "How long this run lasts",
+              description: "Doetermines the percent of the average life-span (which is 1500 weeks, or approximately 27 years, in this model) that an infected person goes through before the infection ends in either death or recovery.",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
-            },
-            {
-              // To Do: EDITING REQUIRED
-              // An attribute's name appears in the header of its column
-              name: 'Speed',
-              type: 'numeric',
-              description: "How fast the run progresses",
-              precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
-
             }
           ],
           childAttrName: "Ticks", // Must match 'name:' field below
@@ -113,7 +104,7 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: '%infected',
+              name: 'p_infected',
               type: 'numeric',
               description: "What percent of the people are infected",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
@@ -121,17 +112,9 @@ function codapCallInitGame() {
             {
               // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
-              name: '%immune',
+              name: 'p_immune',
               type: 'numeric',
               description: "What percent of the people are immune",
-              precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
-            },
-            {
-              // To Do: EDITING REQUIRED
-              // An attribute's name appears in the header of its column
-              name: 'years',
-              type: 'numeric',
-              description: "How many years have passed at the time of this tick",
               precision: 0  // Only applies to numeric attributes. Essentially the number of decimal places
             }
           ],
@@ -163,11 +146,11 @@ function codapDoCommand(iCommandObj, iCallback) {
   var stateVars = [
     // To Do: EDITING REQUIRED
     'run-number', // The first state variable, run-number, is the one we defined above
-    'People',  // How many of these there are and what there names are comes from the model
-    'Infectiousness',
-    'Chance-recover',
-    'Duration',
-    'Speed'];
+    'people',  // How many of these there are and what there names are comes from the model
+    'infectiousness',
+    'chance-recover',
+    'duration',
+    'speed'];
 
   function saveState() {
     var tResult = {
@@ -223,11 +206,11 @@ function codapStartRun(callbackFunc) {
   var runNumber = world.observer.getGlobal('run-number') + 1, // We're going on to the next run
       // To Do: EDITING REQUIRED
       // how many more of these there are and what there names are depends on the model
-      state_var_1 = world.observer.getGlobal('People'),
-      state_var_2 = world.observer.getGlobal('Infectiousness'),
-      state_var_3 = world.observer.getGlobal('Chance-recover'),
-      state_var_4 = world.observer.getGlobal('Duration'),
-      state_var_5 = world.observer.getGlobal('People');
+      state_var_1 = world.observer.getGlobal('people'),
+      state_var_2 = world.observer.getGlobal('infectiousness'),
+      state_var_3 = world.observer.getGlobal('chance-recover'),
+      state_var_4 = world.observer.getGlobal('duration'),
+      state_var_5 = world.observer.getGlobal('speed');
 
   // Update the global run-number
   world.observer.setGlobal('run-number', runNumber);
@@ -257,11 +240,11 @@ function codapStopRun() {
   var runNumber = world.observer.getGlobal('run-number'),
   // To Do: EDITING REQUIRED
   // how many more of these there are and what there names are depends on the model
-      state_var_1 = world.observer.getGlobal('People'),
-      state_var_2 = world.observer.getGlobal('Infectiousness'),
-      state_var_3 = world.observer.getGlobal('Chance-recover'),
-      state_var_4 = world.observer.getGlobal('Duration'),
-      state_var_5 = world.observer.getGlobal('People'),
+      state_var_1 = world.observer.getGlobal('people'),
+      state_var_2 = world.observer.getGlobal('infectiousness'),
+      state_var_3 = world.observer.getGlobal('chance-recover'),
+      state_var_4 = world.observer.getGlobal('duration'),
+      state_var_5 = world.observer.getGlobal('speed'),
 
       // Leave this one as is
       caseID = world.observer.getGlobal('case-id');
