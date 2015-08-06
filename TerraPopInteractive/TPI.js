@@ -65,7 +65,8 @@ var TPI = {
 
     var handleSuccess = function() {
       console.log('Read success: ' + tFile.name);
-      this_[iProp] = this.result;
+      // Normalize the line endings to \r
+      this_[iProp] = this.result.replace(/(\r\n|\n|\r)/gm,"\r");
       iDisplayFunc.apply( this_);
       TPI.setImportState();
     };
@@ -88,13 +89,11 @@ var TPI = {
 
   determineLineSep: function( iText) {
     var tSep;
-/*
     if(iText.indexOf("\n\r") >= 0)
       tSep = "\n\r";
     else if(iText.indexOf("\n") >= 0)
       tSep = "\n";
     else
-*/
       tSep = "\r";
     return tSep;
   },
@@ -148,9 +147,11 @@ var TPI = {
         tVarsIndex = null;
 
     // It may be that the line sep character occupies position 0 of all or some lines
+/*
     tCbk.forEach( function( iLine, iIndex) {
       tCbk[iIndex] = iLine.trim();
     });
+*/
 
     // Determine where the description of variables begins
     tCbk.some(function( iLine, iIndex) {
@@ -407,7 +408,7 @@ var TPI = {
         name: "TerraPop Microdata Interactive",
         dimensions: { width: 750, height: 450 },
         contextType: 'DG.DataContext',
-        version: "1.1"
+        version: "1.3"
       }
     }, iCallback);
   },
