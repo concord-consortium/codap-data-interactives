@@ -88,11 +88,13 @@ var TPI = {
 
   determineLineSep: function( iText) {
     var tSep;
+/*
     if(iText.indexOf("\n\r") >= 0)
       tSep = "\n\r";
     else if(iText.indexOf("\n") >= 0)
       tSep = "\n";
     else
+*/
       tSep = "\r";
     return tSep;
   },
@@ -144,6 +146,12 @@ var TPI = {
     var tSep = this.determineLineSep( this.cbkText),
         tCbk = this.cbkText.split(tSep),
         tVarsIndex = null;
+
+    // It may be that the line sep character occupies position 0 of all or some lines
+    tCbk.forEach( function( iLine, iIndex) {
+      tCbk[iIndex] = iLine.trim();
+    });
+
     // Determine where the description of variables begins
     tCbk.some(function( iLine, iIndex) {
       if( iLine.indexOf('Microdata Variables') === 0) {
