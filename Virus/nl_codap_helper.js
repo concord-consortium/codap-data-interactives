@@ -16,7 +16,7 @@ function codapCallInitGame() {
       // To Do: EDITING REQUIRED
       name: "Virus", // This will appear in the titlebar of the model's iFrame
       // To Do: EDITING REQUIRED
-      dimensions: {width: 670, height: 734},  // Modify these to fit the size of the simulation
+      dimensions: {width: 1000, height: 734},  // Modify these to fit the size of the simulation
       collections: [
       /**
        * There are two collections:
