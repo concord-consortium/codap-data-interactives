@@ -13,7 +13,9 @@ function codapCallInitGame() {
   window.codapPhone.call({
     action: 'initGame',
     args: {
+      // To Do: EDITING REQUIRED
       name: "--Name of the simulation--", // This will appear in the titlebar of the model's iFrame
+      // To Do: EDITING REQUIRED
       dimensions: {width: 560, height: 734},  // Modify these to fit the size of the simulation
       collections: [
       /**
@@ -39,6 +41,7 @@ function codapCallInitGame() {
               precision: 0
             },
             {
+              // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
               name: '--Name of the attribute--',
               type: '--either "numeric" or "nominal"--',
@@ -60,6 +63,7 @@ function codapCallInitGame() {
        * Here begins the specification of the 'Ticks' collection
        */
         {
+          // To Do: EDITING REQUIRED
           name: "--The name of child collection--", // Must match 'childAttrName:' field above. Often 'Ticks'
           attrs: [
           /**
@@ -73,6 +77,7 @@ function codapCallInitGame() {
               precision: 0
             },
             {
+              // To Do: EDITING REQUIRED
               // An attribute's name appears in the header of its column
               name: '--Name of the attribute--',
               type: '--either "numeric" or "nominal"--',
@@ -106,6 +111,7 @@ function codapCallInitGame() {
 function codapDoCommand(iCommandObj, iCallback) {
 
   var stateVars = [
+    // To Do: EDITING REQUIRED
     'run-number', // The first state variable, run-number, is the one we defined above
     'state-var-1',  // How many of these there are and what there names are comes from the model
     'state-var-2',
@@ -163,6 +169,7 @@ function codapStartRun(callbackFunc) {
 
   // Here is where you gather the values you are going record at the run level
   var runNumber = world.observer.getGlobal('run-number') + 1, // We're going on to the next run
+      // To Do: EDITING REQUIRED
       // how many more of these there are and what there names are depends on the model
       state_var_1 = world.observer.getGlobal('state-var-1'),
       state_var_2 = world.observer.getGlobal('state-var-2'),
@@ -177,7 +184,8 @@ function codapStartRun(callbackFunc) {
         args: {
           collection: "Runs", // The same name you used in codapInitGame
           values: [
-              // These must be arranged in the same order you declared them in codapInitGame
+            // To Do: EDITING REQUIRED
+            // These must be arranged in the same order you declared them in codapInitGame
             runNumber,
             state_var_1,
             state_var_2,
@@ -191,6 +199,7 @@ function codapStartRun(callbackFunc) {
 
 function codapStopRun() {
   var runNumber = world.observer.getGlobal('run-number'),
+  // To Do: EDITING REQUIRED
   // how many more of these there are and what there names are depends on the model
       state_var_1 = world.observer.getGlobal('state-var-1'),
       state_var_2 = world.observer.getGlobal('state-var-2'),
@@ -207,6 +216,7 @@ function codapStopRun() {
           collection: "Runs", // The same name you used in codapInitGame
           caseID: caseID,
           values: [
+            // To Do: EDITING REQUIRED
             // These must be arranged in the same order you declared them in codapInitGame
             runNumber,
             state_var_1,
@@ -222,17 +232,26 @@ function codapGo() {
 
   function codapTransferData() {
 
-    var food_close = countFood(85),
-        food_medium = countFood(95),
-        food_far = countFood(105);
+    // To Do: EDITING REQUIRED
+    // The vars listed here should correspond to the NetLogo variables you want to record for each tick.
+    // How many there are and how you access them depends on the model.
+    var tick_var_1 = compute_tick_var_1(),
+        tick_var_2 = compute_tick_var_2(),
+        tick_var_3 = compute_tick_var_3();
+
     recordTick([[
+      // To Do: EDITING REQUIRED
+      // These must be arranged in the same order you declared them in codapInitGame
       ticks,
-      food_close,
-      food_medium,
-      food_far
+      tick_var_1,
+      tick_var_2,
+      tick_var_3
     ]], "Ticks");
 
-    if (Prims.equality(food_close, 0) && Prims.equality(food_medium, 0) && Prims.equality(food_far, 0)) {
+    // To Do: EDITING REQUIRED
+    // You can, if you want, have some condition under which the model should stop; e.g.
+    // when all the agents have died, for which you could use "!world.turtles().nonEmpty()".
+    if (some_condition_under_which_the_model_should_stop) {
       codapOpenTable();
       stopForevers();
       codapStopRun();
@@ -243,9 +262,6 @@ function codapGo() {
   if (world.observer.getGlobal('case-id') === -2)
     return; // We've called codapStartRun but haven't gotten the callback yet
 
-  if (!world.turtles().nonEmpty()) {
-    throw new Exception.StopInterrupt;
-  }
   var ticks = world.ticker.tickCount();
 
   if (ticks === 0) {  // On the zeroth tick we open the case that contains parameter info
@@ -254,7 +270,6 @@ function codapGo() {
   }
   else if (world.observer.getGlobal('case-id') >= 0)
     codapTransferData();
-
 }
 
 /**
