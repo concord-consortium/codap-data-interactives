@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access the Pivotal Tracker API via CORS</title>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'
+            type='text/javascript'></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="PTImporter.js" language="javascript"></script>
+    <title>Pivotal Tracker Importer</title>
+</head>
+<body>
+<form>
+    <p>
+        <label for='token'>User API Token:</label>
+        <input type='text' id='token' value = '2e9016c696c18a070ecd10695cfd586b'/>
+    </p>
+    <p>
+        <label for='project_id'>ID Number of Pivotal Tracker Project:</label>
+        <input type='text' id='project_id' value="1055240" />
+    </p>
+    <p>
+        <label for='created_sinceDate'>Created Since(mm/dd/yyyy):</label>
+        <input type='text' id="created_sinceDate" value ='05/01/2015' />
+    </p>
+    <p>
+        <label for='story_done'>Include done stories:</label>
+        <input type='checkbox' id="story_done" value ='done'  />
+    </p>
+    <button type="button" onclick="PTImporter.doImport()" value="Import">Import</button>
+</form>
+
+<div style='margin:40px'>
+    <p id='result_title'></p>
+    <ul id='result_area'>
+    </ul>
+</div>
+
+</body>
+</html>
