@@ -44,6 +44,19 @@ var PTImporter = {
                 { name: "created_at"},
                 { name: "update_at"},
                 { name: "accepted_at"}
+              ],
+              childAttrName: "Activity"
+            },
+            {
+              name: "Activities",
+              attrs: [
+                { name: "kind", type:"nominal"},
+                { name: "action", type: "nominal"},
+                { name: "change_kind", type: "nominal"},
+                { name: "change_type", type: "nominal"},
+                { name: "label_name", type: "nominal"},
+                { name: "change_by", type: "nominal"},
+                { name: "change_date"}
               ]
             }
           ]
@@ -61,175 +74,28 @@ var PTImporter = {
     }
   },
 
-  createCollection: function (iName, iCaseName, iAttrsArray, iChildKey) {
-    console.log('Importer: createCollection');
-    this.codapPhone.call({
-      action: 'createCollection',
-      args: {
-        name: iName,
-        caseName: iCaseName,
-        attrs: iAttrsArray,
-        childAttrName: iChildKey
-      }
-    });
-  },
-
-  createChildCases: function (iCase, iChildKey, iCaseID, iParentName,
-                              iParentValuesArray, tIsArrayFormat, iNumParents,
-                              iSampleObject, sampleCounter) {
-    console.log("In createChildCases");
-
-    var valuesArrays = [];
-
-    iCase[iChildKey].cases.forEach(function (iChildCase) {
-      valuesArrays.push(tIsArrayFormat ? iChildCase
-        : this.values(iChildCase));
-      this.kNumChildren++;
-    }.bind(this));
-
-    this.createCases(iCase[iChildKey].collection_name, valuesArrays, iCaseID);//swapped out this.values(iChildCase) for valuesArrays
-
-    // Close the parent case
-    if (this.kNumChildren >= iCase[iChildKey].cases.length) {
-      this.closeCase(iParentName, iParentValuesArray, iCaseID);
-      this.kTotalNumChildren = this.kTotalNumChildren + this.kNumChildren;
-      this.kNumChildren = 0;
-    }
-
-    if (sampleCounter<=iNumParents){
-      sampleCounter++;
-      if (iSampleObject!=null)
-        Importer.addNewParentCase(iSampleObject, iChildKey, sampleCounter,
-          tIsArrayFormat);
-    }
-    this.updateReport( iNumParents + ' parent cases and ' + this.kTotalNumChildren + ' child cases');
-
-  },
-
-  openJSONCase: function (iCollectionName, iValuesArray, iCase, iChildKey,
-                          iNumParents, iSampleObject, sampleCounter, tIsArrayFormat) {
-    console.log('Importer: openCase');
-    this.codapPhone.call({
-      action: 'openCase',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArray
-      }
-    }, function (result) {
-      if (result.success) {
-        this.kSampleID = result.caseID;
-        console.log(this.kSampleID + " kSampleID in openCase");
-        this.createChildCases(iCase, iChildKey, this.kSampleID, iCollectionName,
-          iValuesArray, tIsArrayFormat, iNumParents, iSampleObject, sampleCounter);
-      }
-    }.bind(this));
-  },
-
-  openPTJSONCase: function (iCollectionName, iValuesArray) {
-    console.log('Importer: openCase');
-    this.codapPhone.call({
-      action: 'openCase',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArray
-      }
-    }, function (result) {
-      if (result.success) {
-        this.kSampleID = result.caseID;
-        console.log(this.kSampleID + " kSampleID in openCase");
-        this.closeCase(iCollectionName,iValuesArray, result.caseID);
-      }
-    }.bind(this));
-  },
-
-  openCSVCase: function(iCollectionName, iParentValuesArray, iChildCollectionName, iChildValuesArray) {
-    console.log('Importer: openCase');
-    this.codapPhone.call({
-      action: 'openCase',
-      args: {
-        collection: iCollectionName,
-        values: iParentValuesArray
-      }
-    }, function (result) {
-      if (result && result.success) {
-        this.kSampleID = result.caseID;
-        console.log(this.kSampleID + " kSampleID in openCase");
-        this.createCases(iChildCollectionName, iChildValuesArray, this.kSampleID);
-        this.closeCase(iCollectionName, iParentValuesArray, this.kSampleID);
-        this.updateReport( iParentValuesArray.length + ' parent cases and ' + iChildValuesArray.length + ' child cases');
-      } else {
-        console.log('Error in Importer.openCSVCase');
-      }
-    }.bind(this));
-  },
-
-  createCases: function (iCollectionName, iValuesArrays, iParentID) {
-    console.log('Importer: createCases');
-    this.codapPhone.call({
-      action: 'createCases',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArrays,
-        parent: iParentID,
-        log: false
-      }
-    });
-  },
-
-  closeCase: function (iCollectionName, iValuesArray, iCaseID) {
-    console.log('Importer: closeCase');
-    this.codapPhone.call({
-      action: 'closeCase',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArray,
-        caseID: iCaseID
-      }
-    });
-  },
-
-  addNewParentCase:function(iSampleObject, sampleCounter, iChildKey, tIsArrayFormat){
-    if (this.kNotOpen) {
-      var tValues = [],
-        iCase=null,
-        iNumParents=iSampleObject.cases.length;
-
-      if (sampleCounter<iNumParents) {
-        // Extract the values for the parent case, except for the array of child cases
-        iCase = iSampleObject.cases[sampleCounter];
-        Importer.forEachProperty(iCase, function (iKey, iValue) {
-          if (iKey !== iChildKey) {
-            if (typeof iValue === 'object') {
-              iValue = JSON.stringify(iValue);
-            }
-            else {
-              tValues.push(iValue);
-            }
-          }
-        });
-
-        this.openJSONCase(iSampleObject.collection_name, tValues, iCase,
-          iChildKey, iNumParents, iSampleObject, sampleCounter, tIsArrayFormat)
-      }
-
-      if (sampleCounter>iNumParents) {
-        this.kNotOpen=false;
-      } else {
-        sampleCounter++;
-        this.addNewParentCase(iSampleObject,sampleCounter, iChildKey, tIsArrayFormat);}
-    }
-  },
-
-  updateReport:function(iReport){
-    var tDiv = document.getElementById('report');
-    while (tDiv.childNodes.length)
-      tDiv.removeChild(tDiv.childNodes[ 0]);
-
-    tDiv.appendChild(document.createTextNode(iReport));
-  },
-
   doImport: function () {
-    //var tText = document.getElementById("textToImport").value.trim();
+
+    function executeTrackerApiFetchActivities(storyID) {
+      // get parameters
+      console.log("in executeTrackerAPiFetchActivities");
+      var token = $('#token').val();
+      projectId = $('#project_id').val();
+
+      // compose request URL
+      var url = 'https://www.pivotaltracker.com/services/v5';
+      url += '/projects/' + projectId;
+      url += '/stories/' + storyID + '/activity';
+      url += '?limit=50';
+
+      // do API request to get activities
+      $.ajax({
+        url: url,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader('X-TrackerToken', token);
+        }
+      }).done(receiveTrackerApiResponsesActivities);
+    }
 
     function executeTrackerApiFetch() {
       // get parameters
@@ -239,7 +105,6 @@ var PTImporter = {
       createdSinceDate = $('#created_sinceDate').val();
       includeStoryDone = $("#story_done").val();
 
-
       // compose request URL
       var url = 'https://www.pivotaltracker.com/services/v5';
       url += '/projects/' + projectId;
@@ -247,10 +112,7 @@ var PTImporter = {
       if (includeStoryDone) {
         url += ' includedone:true';
       }
-      url += '&limit=250'
-
-
-      console.log(url);
+      url += '&limit=50'
 
       // do API request to get stories
       $.ajax({
@@ -259,92 +121,154 @@ var PTImporter = {
         beforeSend: function (xhr) {
           xhr.setRequestHeader('X-TrackerToken', token)
         }
-      }).done(displayTrackerApiResponse);
+      }).done(receiveTrackerApiResponse);
     }
 
+    function receiveTrackerApiResponse(stories) {
+      stories.forEach(function(story) {
+        var storyArray = convertStoryToCODAPJson(story);
 
-    function displayTrackerApiResponse(stories) {
-      storyArray = convertToCODAPJson(stories)
-      for (var i=0; i< storyArray.length; i++)
-      {   PTImporter.openPTJSONCase("Stories", storyArray[i])  }
+        //open story case in CODAP
+        console.log('PTImporter: openCase');
+        PTImporter.codapPhone.call({
+          action: 'openCase',
+          args: {
+            collection: "Stories",
+            values: storyArray
+          }
+        }, function (result) {
+          console.log("openCase callback");
+          if (result.success) {
+            this.kSampleID = result.caseID;
+            console.log(this.kSampleID + " kSampleID in openCase. Story ID is "+storyArray[0]);
+            createStoryCases(result);
+          }
+        });
+
+        function createStoryCases(result) {
+          // get parameters for PT request
+          console.log("in executeTrackerAPiFetchActivities");
+          var token = $('#token').val();
+          projectId = $('#project_id').val();
+
+          // compose request URL for PT activities
+          var url = 'https://www.pivotaltracker.com/services/v5';
+          url += '/projects/' + projectId;
+          url += '/stories/' + story.id + '/activity';
+          url += '?limit=50';
+
+          // do API request to get activities
+          $.ajax({
+            url: url,
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-TrackerToken', token);
+            }
+          }).done(receiveTrackerApiResponsesActivities);
+
+          function receiveTrackerApiResponsesActivities(activities) {
+            var activityArray = convertActivitiesToCODAPJson(activities);
+            createCases("Activities", activityArray, result.caseID);
+            closeCase("Stories", storyArray, result.caseID);
+          }
+        }
+
+        function createCases(iCollectionName, iValuesArrays, iParentID) {
+          console.log('PTImporter: createCases');
+          PTImporter.codapPhone.call({
+            action: 'createCases',
+            args: {
+              collection: iCollectionName,
+              values: iValuesArrays,
+              parent: iParentID,
+              log: false
+            }
+          });
+        }
+
+        function closeCase(iCollectionName, iValuesArray, iCaseID) {
+          console.log('PTImporter: closeCase');
+          PTImporter.codapPhone.call({
+            action: 'closeCase',
+            args: {
+              collection: iCollectionName,
+              values: iValuesArray,
+              caseID: iCaseID
+            }
+          });
+        }
+      })
     }
 
-    var convertToCODAPJson = function (stories) {
+    var convertStoryToCODAPJson = function (story) {
       var tStoryArray = [];
-      labelName = [];
+      var labelName;
 
       //Check for undefined fields and change to blanks
-      for (var i = 0; i < stories.length; i++) {
-        if (stories[i].estimate == 'undefined') {
-          stories[i].estimate = "";
+        if (story.estimate === undefined) {
+          story.estimate = NaN;
         }
-        if (stories[i].owner_ids[0] == 'undefined') {
-          stories[i].owner_ids = "";
+        if (story.owner_ids[0] === undefined) {
+          story.owner_ids = NaN;
         }
-        if (stories[i].labels.length == 0) {
-          labelName[i] = "";
-        } else { labelName[i] = stories[i].labels[0].name;}
+        if (story.labels.length == 0) {
+          labelName = "";
+        } else { labelName = story.labels[0].name;}
 
-        if (stories[i].updated_at == 'undefined') {
-          stories[i].updated_at = "";
+        if (story.updated_at == undefined) {
+          story.updated_at = "";
         }
-        if (stories[i].current_state !== 'accepted') {
-          stories[i].accepted_at = "";
+        if (story.current_state !== 'accepted') {
+          story.accepted_at = "";
         }
-      }
+
+      //convert dates to string
+
+
       //Convert Pivotal Tracker JSON to CODAP readable JSON
-      for (var i = 0; i < stories.length; i++) {
-        tStoryArray[i] = [
-          stories[i].id,
-          stories[i].story_type,
-          stories[i].current_state,
-          stories[i].estimate,
-          stories[i].owner_ids[0],
-          labelName[i],
-          stories[i].created_at,
-          stories[i].updated_at,
-          stories[i].accepted_at
+
+        tStoryArray = [
+          story.id,
+          story.story_type,
+          story.current_state,
+          story.estimate,
+          story.owner_ids[0],
+          labelName,
+          Date.parse(story.created_at),
+          story.updated_at,
+          story.accepted_at
         ]
 
-      }
       return tStoryArray;
     }
 
+      var convertActivitiesToCODAPJson = function (activities) {
+        var tActivityArray = [];
+        var labelName = [];
+
+        //Check if changes were for labels and extract info from PT JSON to an array to send to CODAP
+        for (var i = 0; i < activities.length; i++) {
+          for (var j=0; j< activities[i].changes.length; j++) {
+            if (activities[i].changes[j].kind == 'label') {
+              labelName[j] = activities[i].changes[j].name;
+            }
+            tActivityArray[i] = [
+              activities[i].kind,
+              activities[i].highlight,
+              activities[i].changes[j].kind,
+              activities[i].changes[j].change_type,
+              labelName[j],
+              activities[i].performed_by.name,
+              activities[i].occurred_at
+            ]
+          }
+
+        //Convert Pivotal Tracker JSON to CODAP readable JSON
+
+        }
+        return tActivityArray;
+      }
     executeTrackerApiFetch();
-  },
-
-  /**
-   Applies the specified function to each property of the specified object.
-   The order in which the properties are visited is not specified by the standard.
-
-   @param {Object} iObject   The object whose properties should be iterated
-   */
-  forEachProperty: function (iObject, iFunction) {
-    if (!iObject) return;
-    for (var tKey in iObject) {
-      if (iObject.hasOwnProperty(tKey))
-        iFunction(tKey, iObject[ tKey]);
-    }
-  },
-
-  /**
-   Returns an array of values representing the property values of the object.
-   The order of the returned elements is not specified by the standard.
-   Returns an empty array for undefined or null objects.
-
-   @param {Object} iObject   The object whose properties names should be returned
-   @returns {Array of values}  Array of property values
-   */
-  values: function (iObject) {
-    var tValues = [];
-    this.forEachProperty(iObject, function (iKey, iValue) {
-      tValues.push(iValue);
-    });
-    return tValues;
   }
-
 };
 
-PTImporter.initImporterAsGame();/**
- * Created by evangelineireland on 8/26/15.
- */
+PTImporter.initImporterAsGame();
