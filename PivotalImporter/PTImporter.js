@@ -112,7 +112,7 @@ var PTImporter = {
       if (includeStoryDone) {
         url += ' includedone:true';
       }
-      url += '&limit=50'
+      url += '&limit=75'
 
       // do API request to get stories
       $.ajax({
@@ -202,6 +202,7 @@ var PTImporter = {
     var convertStoryToCODAPJson = function (story) {
       var tStoryArray = [];
       var labelName;
+      var acceptDate;
 
       //Check for undefined fields and change to blanks
         if (story.estimate === undefined) {
@@ -217,12 +218,10 @@ var PTImporter = {
         if (story.updated_at == undefined) {
           story.updated_at = "";
         }
-        if (story.current_state !== 'accepted') {
-          story.accepted_at = "";
-        }
-
-      //convert dates to string
-
+        if (story.current_state === "accepted") {
+          acceptDate = (new Date(story.accepted_at)).toLocaleDateString();
+          console.log("current state is " + story.current_state +" Date accepted is "+ acceptDate);
+        } else {acceptDate='';}
 
       //Convert Pivotal Tracker JSON to CODAP readable JSON
 
@@ -233,9 +232,9 @@ var PTImporter = {
           story.estimate,
           story.owner_ids[0],
           labelName,
-          Date.parse(story.created_at),
-          story.updated_at,
-          story.accepted_at
+          (new Date(story.created_at)).toLocaleDateString(),
+          (new Date(story.updated_at)).toLocaleDateString(),
+          acceptDate
         ]
 
       return tStoryArray;
@@ -258,8 +257,7 @@ var PTImporter = {
               activities[i].changes[j].change_type,
               labelName[j],
               activities[i].performed_by.name,
-              activities[i].occurred_at
-            ]
+              (new Date(activities[i].occurred_at)).toLocaleDateString()            ]
           }
 
         //Convert Pivotal Tracker JSON to CODAP readable JSON
