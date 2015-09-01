@@ -70,7 +70,9 @@ var PTImporter = {
       console.log('Importer: reset');
       this.codapPhone.call({
         action: 'reset'
-      })
+      });
+      //need to reinitialize attributes again so call initImporterAsGame
+      PTImporter.initImporterAsGame();
     }
   },
 
@@ -99,11 +101,11 @@ var PTImporter = {
 
     function executeTrackerApiFetch() {
       // get parameters
-      var token = $('#token').val();
-      projectId = $('#project_id').val();
-      storyLabel = $('#story_label').val();
-      createdSinceDate = $('#created_sinceDate').val();
-      includeStoryDone = $("#story_done").val();
+      var token = $('#token').val(),
+          projectId = $('#project_id').val(),
+          createdSinceDate = $('#created_sinceDate').val(),
+         includeStoryDone = $("#story_done").val(),
+          storyLimit = $("#limit_by").val();
 
       // compose request URL
       var url = 'https://www.pivotaltracker.com/services/v5';
@@ -112,19 +114,23 @@ var PTImporter = {
       if (includeStoryDone) {
         url += ' includedone:true';
       }
-      url += '&limit=75'
+      url += '&limit='+storyLimit;
 
       // do API request to get stories
       $.ajax({
         url: url,
         type: "GET",
         beforeSend: function (xhr) {
-          xhr.setRequestHeader('X-TrackerToken', token)
+          xhr.setRequestHeader('X-TrackerToken', token);
+        },
+        error: function (xhr){
+          alert(xhr.status);
         }
       }).done(receiveTrackerApiResponse);
     }
 
     function receiveTrackerApiResponse(stories) {
+
       stories.forEach(function(story) {
         var storyArray = convertStoryToCODAPJson(story);
 
@@ -148,8 +154,8 @@ var PTImporter = {
         function createStoryCases(result) {
           // get parameters for PT request
           console.log("in executeTrackerAPiFetchActivities");
-          var token = $('#token').val();
-          projectId = $('#project_id').val();
+          var token = $('#token').val(),
+              projectId = $('#project_id').val();
 
           // compose request URL for PT activities
           var url = 'https://www.pivotaltracker.com/services/v5';
@@ -162,6 +168,9 @@ var PTImporter = {
             url: url,
             beforeSend: function (xhr) {
               xhr.setRequestHeader('X-TrackerToken', token);
+            },
+            error: function (xhr) {
+              $('error_msg').innerHTML = 'There was an error: ' + xhr.status;
             }
           }).done(receiveTrackerApiResponsesActivities);
 
@@ -196,13 +205,13 @@ var PTImporter = {
             }
           });
         }
-      })
+      });
     }
 
     var convertStoryToCODAPJson = function (story) {
-      var tStoryArray = [];
-      var labelName;
-      var acceptDate;
+      var tStoryArray = [],
+           labelName,
+           acceptDate;
 
       //Check for undefined fields and change to blanks
         if (story.estimate === undefined) {
@@ -211,11 +220,11 @@ var PTImporter = {
         if (story.owner_ids[0] === undefined) {
           story.owner_ids = NaN;
         }
-        if (story.labels.length == 0) {
+        if (story.labels.length === 0) {
           labelName = "";
         } else { labelName = story.labels[0].name;}
 
-        if (story.updated_at == undefined) {
+        if (story.updated_at === undefined) {
           story.updated_at = "";
         }
         if (story.current_state === "accepted") {
@@ -235,10 +244,10 @@ var PTImporter = {
           (new Date(story.created_at)).toLocaleDateString(),
           (new Date(story.updated_at)).toLocaleDateString(),
           acceptDate
-        ]
+        ];
 
       return tStoryArray;
-    }
+    };
 
       var convertActivitiesToCODAPJson = function (activities) {
         var tActivityArray = [];
@@ -257,16 +266,18 @@ var PTImporter = {
               activities[i].changes[j].change_type,
               labelName[j],
               activities[i].performed_by.name,
-              (new Date(activities[i].occurred_at)).toLocaleDateString()            ]
+              (new Date(activities[i].occurred_at)).toLocaleDateString()
+            ];
           }
 
         //Convert Pivotal Tracker JSON to CODAP readable JSON
 
         }
         return tActivityArray;
-      }
+      };
     executeTrackerApiFetch();
   }
-};
 
+};
 PTImporter.initImporterAsGame();
+
