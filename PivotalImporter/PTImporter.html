@@ -14,15 +14,19 @@
 <form>
     <p>
         <label for='token'>User API Token:</label>
-        <input type='text' id='token' value = '2e9016c696c18a070ecd10695cfd586b'/>
+        <input type='text' id='token' size = '50' placeholder = 'Pivotal Tracker API Token'/>
     </p>
     <p>
-        <label for='project_id'>ID Number of Pivotal Tracker Project:</label>
+        <label for='project_id'>Pivotal Tracker Project ID:</label>
         <input type='text' id='project_id' value="1055240" />
     </p>
     <p>
-        <label for='created_sinceDate'>Created Since(mm/dd/yyyy):</label>
-        <input type='text' id="created_sinceDate" value ='05/01/2015' />
+        <label for='created_sinceDate'>Created Since:</label>
+        <input type='text' id="created_sinceDate" value ='05/01/2015' placeholder = 'mm/dd/yyyy' />
+    </p>
+    <p>
+        <label for='story_done'>Number of stories limit:</label>
+        <input type='text' id="limit_by" value ='100'  />
     </p>
     <p>
         <label for='story_done'>Include done stories:</label>
@@ -30,12 +34,6 @@
     </p>
     <button type="button" onclick="PTImporter.doImport()" value="Import">Import</button>
 </form>
-
-<div style='margin:40px'>
-    <p id='result_title'></p>
-    <ul id='result_area'>
-    </ul>
-</div>
-
+<div id="error_msg"></div>
 </body>
 </html>
