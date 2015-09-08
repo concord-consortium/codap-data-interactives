@@ -52,11 +52,11 @@ var PTImporter = {
               attrs: [
                 { name: "kind", type:"nominal"},
                 { name: "action", type: "nominal"},
+                { name: "change_by", type: "nominal"},
+                { name: "change_date"},
                 { name: "change_kind", type: "nominal"},
                 { name: "change_type", type: "nominal"},
-                { name: "label_name", type: "nominal"},
-                { name: "change_by", type: "nominal"},
-                { name: "change_date"}
+                { name: "label_name", type: "nominal"}
               ]
             }
           ]
@@ -256,20 +256,23 @@ var PTImporter = {
         //Check if changes were for labels and extract info from PT JSON to an array to send to CODAP
         for (var i = 0; i < activities.length; i++) {
           for (var j=0; j< activities[i].changes.length; j++) {
-            if (activities[i].changes[j].kind == 'label') {
+            if (activities[i].changes[j].kind === 'label') {
               labelName[j] = activities[i].changes[j].name;
+            } else {
+              labelName[j] = '';
             }
+            console.log(activities[i].changes[j].kind);
             tActivityArray[i] = [
               activities[i].kind,
               activities[i].highlight,
+              activities[i].performed_by.name,
+              (new Date(activities[i].occurred_at)).toLocaleDateString(),
               activities[i].changes[j].kind,
               activities[i].changes[j].change_type,
-              labelName[j],
-              activities[i].performed_by.name,
-              (new Date(activities[i].occurred_at)).toLocaleDateString()
+              labelName[j]
             ];
+            console.log(tActivityArray);
           }
-
         //Convert Pivotal Tracker JSON to CODAP readable JSON
 
         }
