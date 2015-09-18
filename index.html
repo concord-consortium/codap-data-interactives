@@ -159,7 +159,7 @@
             OceanTracks: {
                 name: 'Ocean Tracks Selector',
                 dimensions: '{"width":550,"height":500}',
-                url: 'http://oceantracks.org/map/trackmenu_1.html'
+                url: 'https://oceantracks.org/map/trackmenu_1.html'
             },
             Ants: {
                 name: 'Ants',
@@ -190,11 +190,12 @@
                 docserverURL = document.getElementById('doc-server-url').value,
                 oldLocation = location.href,
                 newLoc = oldLocation.replace(/index.html.*/, ''),
+                newLocSSL = newLoc.replace("http","https")
                 path = map[name].path,
-                url = map[name].url || newLoc + '/' + path,
+                url = map[name].url || newLocSSL + '/' + path,
                 moreGames= 'moreGames=[{"name":"' + map[name].name +
-                        '","dimensions":' + map[name].dimensions +
-                        ',"url":"' + url + '"}]';
+                            '","dimensions":' + map[name].dimensions +
+                            ',"url":"' + url + '"}]';
         /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
                     '","dimensions":' + map[name].dimensions +
                     ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
