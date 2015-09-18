@@ -195,8 +195,9 @@
                 docserverURL = document.getElementById('doc-server-url').value,
                 oldLocation = location.href,
                 newLoc = oldLocation.replace(/index.html.*/, ''),
+                newLocSSL = newLoc.replace("http","https"),
                 path = map[name].path,
-                url = map[name].url || newLoc + '/' + path,
+                url = map[name].url || newLocSSL + '/' + path,
                 moreGames= 'moreGames=[{"name":"' + map[name].name +
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + url + '"}]';
@@ -256,8 +257,7 @@
                 <td><a href="javascript:invokeDataInteractive('ShipOdyssey')">Launch</a></td>
                 <td><a target="_blank" href="./Adapter/index.html">Link</a></td>
             </tr>
-            <table class="interactive-table">
-                <tr><td class = "interactive-title">Spring Mass Model</td>
+            <tr><td class = "interactive-title">Spring Mass Model</td>
                     <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="http://concord.org/projects/inquiryspace">InquirySpace</a>
                         project.</td>
                     <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
