@@ -160,7 +160,7 @@
             OceanTracks: {
                 name: 'Ocean Tracks Selector',
                 dimensions: '{"width":550,"height":500}',
-                url: 'http://oceantracks.org/map/trackmenu_1.html'
+                url: 'https://oceantracks.org/map/trackmenu_1.html'
             },
             Ants: {
                 name: 'Ants',
@@ -193,13 +193,22 @@
         }
         function invokeDataInteractive(name) {
             var codapURL = document.getElementById('codap-url').value,
-                docserverURL = document.getElementById('doc-server-url').value,
-                oldLocation = location.href,
-                newLoc = oldLocation.replace(/index.html.*/, ''),
-                newLocSSL = newLoc.replace("http","https"),
-                path = map[name].path,
-                url = map[name].url || newLocSSL + '/' + path,
-                moreGames= 'moreGames=[{"name":"' + map[name].name +
+                    docserverURL = document.getElementById('doc-server-url').value,
+                    oldLocation = location.href,
+                    newLoc = oldLocation.replace(/index.html.*/, ''),
+                    path = map[name].path,
+                    newLocSSL = "",
+                    url = "",
+                    moreGames="";
+
+            //if codapURL is SSL, then newLoc should be SSL and url should use newLocSSL. Because codapURL will already be https if github.io/codap-data-interactive is SSL, not need to check if location.href is SSL. This check is only if the user changes the codapURL to SSL manually.
+            if (codapURL.indexOf("https") > -1) {
+                newLocSSL = newLoc.replace("http", "https");
+                url = map[name].url || newLocSSL + '/' + path;
+            } else {
+                url = map[name].url || newLoc + '/' + path;
+            }
+            moreGames= 'moreGames=[{"name":"' + map[name].name +
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + url + '"}]';
         /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
@@ -207,6 +216,7 @@
                     ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
 
             if (docserverURL) {
+                //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
                 launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
                 launch(codapURL + '?' + encodeURI(moreGames));
