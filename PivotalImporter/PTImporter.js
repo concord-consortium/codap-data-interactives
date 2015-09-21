@@ -269,7 +269,7 @@ var PTImporter = {
               (new Date(activities[i].occurred_at)).toLocaleDateString(),
               activities[i].changes[j].kind,
               activities[i].changes[j].change_type,
-              labelName[j]
+              labelName
             ];
             console.log(tActivityArray);
           }
