@@ -210,7 +210,7 @@ var PTImporter = {
 
     var convertStoryToCODAPJson = function (story) {
       var tStoryArray = [],
-           labelName,
+           labelName=[],
            acceptDate;
 
       //Check for undefined fields and change to blanks
@@ -222,7 +222,9 @@ var PTImporter = {
         }
         if (story.labels.length === 0) {
           labelName = "";
-        } else { labelName = story.labels[0].name;}
+        } else {
+          for (var i=0; i< story.labels.length; i++)
+            labelName[i] = story.labels[i].name;}
 
         if (story.updated_at === undefined) {
           story.updated_at = "";
