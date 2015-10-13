@@ -1,6 +1,7 @@
 <?DOCTYPE html>
 <html>
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <title>Data Interactives</title>
     <style type="text/css">
         body {
@@ -166,11 +167,6 @@
                 dimensions: '{"width":550,"height":500}',
                 url: 'http://oceantracks.org/map/trackmenu_1.html'
             },
-            PhET: {
-                name: 'PhET Simulation',
-                dimensions: '{"width":550,"height":500}',
-                url: 'http://phetsims.github.io/together/examples/codap-hierarchy.html'
-            },
             Ants: {
                 name: 'Ants',
                 dimensions: '{"width":550,"height":500}',
@@ -185,6 +181,26 @@
                 name: 'Track Generator',
                 dimensions: '{"width":400,"height":300}',
                 path: 'Movement/Movement.html'
+            },
+            OceanTracks: {
+                name: 'Ocean Tracks Selector',
+                dimensions: '{"width":550,"height":500}',
+                url: 'http://oceantracks.org/map/trackmenu_1.html'
+            },
+            PhET: {
+                name: 'PhET Simulation',
+                dimensions: '{"width":550,"height":500}',
+                url: 'http://phetsims.github.io/together/examples/codap-hierarchy.html'
+            },
+            PivotalImporter: {
+                name: 'Pivotal Tracker Importer',
+                dimensions: '{"width":400,"height":250}',
+                path: 'PivotalImporter/PTImporter.html'
+            },
+            SpringMass: {
+                name: 'Parchute Model',
+                dimensions: '{"width":600,"height":400}',
+                url: 'https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'
             }
         };
         function launch(url) {
@@ -192,12 +208,33 @@
         }
         function invokeDataInteractive(name) {
             var codapURL = document.getElementById('codap-url').value,
-                docserverURL = document.getElementById('doc-server-url').value,
-                oldLocation = location.href,
-                newLoc = oldLocation.replace(/index.html.*/, ''),
-                path = map[name].path,
-                url = map[name].url || newLoc + '/' + path,
-                moreGames= 'moreGames=[{"name":"' + map[name].name +
+                    docserverURL = document.getElementById('doc-server-url').value,
+                    oldLocation = location.href,
+                    newLoc = oldLocation.replace(/index.html.*/, ''),
+                    path = map[name].path,
+                    newLocSSL = "",
+                    url = "",
+                    moreGames="";
+
+            //if codapURL is SSL, then newLoc should be SSL and url should use newLocSSL. Because codapURL will already be https if github.io/codap-data-interactive is SSL, not need to check if location.href is SSL. This check is only if the user changes the codapURL to SSL manually.  Also changes the docserver URL to SSL
+            if (codapURL.indexOf("https") > -1) {
+                //check if location.href is already https. If it not then replace http with https, else do nothing.
+                if (newLoc.indexOf("https") > -1) {
+                    newLocSSL=newLoc;
+                } else {
+                    newLocSSL = newLoc.replace("http", "https");
+                }
+                url = map[name].url || newLocSSL + '/' + path;
+                if (docserverURL) {
+                    if (docserverURL.indexOf("https") === -1){
+                       oldDocServerURL = docserverURL;
+                       docserverURL = oldDocServerURL.replace("http","https");
+                    }
+                }
+            } else {
+                url = map[name].url || newLoc + '/' + path;
+            }
+            moreGames= 'moreGames=[{"name":"' + map[name].name +
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + url + '"}]';
         /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
@@ -205,6 +242,7 @@
                     ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
 
             if (docserverURL) {
+                //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
                 launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
                 launch(codapURL + '?' + encodeURI(moreGames));
@@ -228,13 +266,19 @@
 <p> You can click on <span style="font-weight:bold">Launch</span> to launch the interactive in CODAP.
 <br>You can also drag <span style="font-weight:bold">Link</span> into an open CODAP document to add the interactive into the document.</p>
 <p>
-    <label>CODAP:
-        <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
-    </label>
+    <label>CODAP:</label><input id="codap-url" size="75" type="text" value=""/>
     <br>
-    <label>Document Server:
-        <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
-    </label>
+    <label>Document Server: </label><input id="doc-server-url" size="75" type="text" value=""/>
+    <script type="text/javascript">
+                var pageLoc = location.href;
+                if (pageLoc.indexOf("https") > -1) {
+                    $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                    $("#doc-server-url").val("https://document-store.herokuapp.com");
+                } else {
+                    $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                    $("#doc-server-url").val("http://document-store.herokuapp.com");
+                }
+    </script>
 </p>
 
 <div class="interactive-collection">
@@ -245,17 +289,23 @@
             <tr><td class = "interactive-title">Oceans Tracks Track Selector</td>
                 <td class="interactive-description">Compare the tracks of Pacific Ocean animals
                     tagged by the <a target="_blank" href="http://oceantracks.org/">Ocean Tracks</a>
-                    project.</td>
+                    project. Note that this interactive will not load in SSL. </td>
                 <td><a href="javascript:invokeDataInteractive('OceanTracks')">Launch</a></td>
                 <td><a target="_blank" href="http://oceantracks.org/map/trackmenu_1.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">SRRI Ship Odyssey Data Game</td>
                 <td class="interactive-description">Send rats on a dive to find
-                    sunken treasure with this <a target="_blank" href="https://www.srri.umass.edu/">SRRI</a>
+                    sunken treasure with this <a target="_blank" href="http://www.srri.umass.edu/">SRRI</a>
                     game.</td>
                 <td><a href="javascript:invokeDataInteractive('ShipOdyssey')">Launch</a></td>
                 <td><a target="_blank" href="./Adapter/index.html">Link</a></td>
             </tr>
+            <tr><td class = "interactive-title">Spring Mass Model</td>
+                    <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="http://concord.org/projects/inquiryspace">InquirySpace</a>
+                        project.</td>
+                    <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
+                    <td><a target="_blank" href="https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json">Link</a></td>
+                </tr>
             <tr><td class = "interactive-title">TerraPop Interactive</td>
                 <td class="interactive-description">Interactive for importing
                   <a target="_blank" href="http://www.terrapop.org/">TerraPop</a>
@@ -298,6 +348,11 @@
                     random walk.</td>
                 <td><a href="javascript:invokeDataInteractive('TrackGenerator')">Launch</a></td>
                 <td><a href=".Movement/Movement.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Pivotal Tracker Importer</td>
+                <td class="interactive-description">Import stories and activities from any project in Pivotal Tracker</td>
+                <td><a href="javascript:invokeDataInteractive('PivotalImporter')">Launch</a></td>
+                <td><a href="./PivotalImporter/PTImporter.html">Link</a></td>
             </tr>
         </table>
     </div>
