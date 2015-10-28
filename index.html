@@ -152,6 +152,11 @@
                 dimensions: '{"width":550,"height":500}',
                 path: 'TerraPopInteractive/TPI.html'
             },
+            GeoJSONImporter: {
+                name: 'GeoJSON Importer',
+                dimensions: '{"width":450,"height":200}',
+                path: 'GeoJSONImporter/GeoJSONImporter.html'
+            },
             WolfSheep: {
                 name: 'Wolf-Sheep Predation',
                 dimensions: '{"width":550,"height":500}',
@@ -176,6 +181,16 @@
                 name: 'Track Generator',
                 dimensions: '{"width":400,"height":300}',
                 path: 'Movement/Movement.html'
+            },
+            OceanTracks: {
+                name: 'Ocean Tracks Selector',
+                dimensions: '{"width":550,"height":500}',
+                url: 'http://oceantracks.org/map/trackmenu_1.html'
+            },
+            PhET: {
+                name: 'PhET Simulation',
+                dimensions: '{"width":550,"height":500}',
+                url: 'http://phetsims.github.io/together/examples/codap-hierarchy.html'
             },
             PivotalImporter: {
                 name: 'Pivotal Tracker Importer',
@@ -319,11 +334,20 @@
                 <td><a href="javascript:invokeDataInteractive('Virus')">Launch</a></td>
                 <td><a target="_blank" href="./Virus/Virus.html">Link</a></td>
             </tr>
+            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
+                <td class="interactive-description">Learn about conservation of
+                  energy with a skater duel with this
+                  <a target="blank" href="https://phet.colorado.edu/">PhET</a>
+                  interactive.</td>
+                <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
+                &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
+                <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
+            </tr>
             <tr><td class = "interactive-title">Track Generator</td>
                 <td class="interactive-description">Simulate OceanTracks data with a simple
                     random walk.</td>
                 <td><a href="javascript:invokeDataInteractive('TrackGenerator')">Launch</a></td>
-                <td><a href="./Adapter/index.html">Link</a></td>
+                <td><a href=".Movement/Movement.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Pivotal Tracker Importer</td>
                 <td class="interactive-description">Import stories and activities from any project in Pivotal Tracker</td>
@@ -389,6 +413,11 @@
                     comma delimited or tab delimited files into CODAP</td>
                 <td><a href="javascript:invokeDataInteractive('Importer')">Launch</a></td>
                 <td><a target="_blank" href="./Importer/Importer.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">GeoJSONImporter</td>
+                <td class="interactive-description">Interactive for importing GeoJSON</td>
+                <td><a href="javascript:invokeDataInteractive('GeoJSONImporter')">Launch</a></td>
+                <td><a target="_blank" href="./GeoJSONImporter/GeoJSONImporter.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Performance Harness</td>
                 <td class="interactive-description">A way to generate data while
