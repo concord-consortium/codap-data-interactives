@@ -1,6 +1,7 @@
 <?DOCTYPE html>
 <html>
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <title>Data Interactives</title>
     <style type="text/css">
         body {
@@ -126,6 +127,11 @@
                 dimensions: '{"width":300,"height":150}',
                 path: 'RandomNumbers/RandomNumbers.html'
             },
+            FastPlants: {
+                name: 'Fast Plants',
+                dimensions: '{"width":400,"height":250}',
+                path: 'FastPlants/FastPlants.html'
+            },
             PerformanceHarness: {
                 name: 'Performance Harness',
                 dimensions: '{"width":400,"height":250}',
@@ -146,6 +152,11 @@
                 dimensions: '{"width":550,"height":500}',
                 path: 'TerraPopInteractive/TPI.html'
             },
+            GeoJSONImporter: {
+                name: 'GeoJSON Importer',
+                dimensions: '{"width":450,"height":200}',
+                path: 'GeoJSONImporter/GeoJSONImporter.html'
+            },
             WolfSheep: {
                 name: 'Wolf-Sheep Predation',
                 dimensions: '{"width":550,"height":500}',
@@ -156,10 +167,40 @@
                 dimensions: '{"width":550,"height":500}',
                 url: 'http://oceantracks.org/map/trackmenu_1.html'
             },
+            Ants: {
+                name: 'Ants',
+                dimensions: '{"width":550,"height":500}',
+                path: 'Ants/ants.html'
+            },
+            Virus: {
+                name: 'Virus NetLogo Simulation',
+                dimensions: '{"width":780,"height":620}',
+                path: 'Virus/Virus.html'
+            },
+            TrackGenerator: {
+                name: 'Track Generator',
+                dimensions: '{"width":400,"height":300}',
+                path: 'Movement/Movement.html'
+            },
+            OceanTracks: {
+                name: 'Ocean Tracks Selector',
+                dimensions: '{"width":550,"height":500}',
+                url: 'http://oceantracks.org/map/trackmenu_1.html'
+            },
             PhET: {
                 name: 'PhET Simulation',
                 dimensions: '{"width":550,"height":500}',
                 url: 'http://phetsims.github.io/together/examples/codap-hierarchy.html'
+            },
+            PivotalImporter: {
+                name: 'Pivotal Tracker Importer',
+                dimensions: '{"width":400,"height":250}',
+                path: 'PivotalImporter/PTImporter.html'
+            },
+            SpringMass: {
+                name: 'Parchute Model',
+                dimensions: '{"width":600,"height":400}',
+                url: 'https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'
             }
         };
         function launch(url) {
@@ -167,12 +208,33 @@
         }
         function invokeDataInteractive(name) {
             var codapURL = document.getElementById('codap-url').value,
-                docserverURL = document.getElementById('doc-server-url').value,
-                oldLocation = location.href,
-                newLoc = oldLocation.replace(/index.html.*/, ''),
-                path = map[name].path,
-                url = map[name].url || newLoc + '/' + path,
-                moreGames= 'moreGames=[{"name":"' + map[name].name +
+                    docserverURL = document.getElementById('doc-server-url').value,
+                    oldLocation = location.href,
+                    newLoc = oldLocation.replace(/index.html.*/, ''),
+                    path = map[name].path,
+                    newLocSSL = "",
+                    url = "",
+                    moreGames="";
+
+            //if codapURL is SSL, then newLoc should be SSL and url should use newLocSSL. Because codapURL will already be https if github.io/codap-data-interactive is SSL, not need to check if location.href is SSL. This check is only if the user changes the codapURL to SSL manually.  Also changes the docserver URL to SSL
+            if (codapURL.indexOf("https") > -1) {
+                //check if location.href is already https. If it not then replace http with https, else do nothing.
+                if (newLoc.indexOf("https") > -1) {
+                    newLocSSL=newLoc;
+                } else {
+                    newLocSSL = newLoc.replace("http", "https");
+                }
+                url = map[name].url || newLocSSL + '/' + path;
+                if (docserverURL) {
+                    if (docserverURL.indexOf("https") === -1){
+                       oldDocServerURL = docserverURL;
+                       docserverURL = oldDocServerURL.replace("http","https");
+                    }
+                }
+            } else {
+                url = map[name].url || newLoc + '/' + path;
+            }
+            moreGames= 'moreGames=[{"name":"' + map[name].name +
                         '","dimensions":' + map[name].dimensions +
                         ',"url":"' + url + '"}]';
         /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
@@ -180,6 +242,7 @@
                     ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
 
             if (docserverURL) {
+                //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
                 launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
                 launch(codapURL + '?' + encodeURI(moreGames));
@@ -203,13 +266,19 @@
 <p> You can click on <span style="font-weight:bold">Launch</span> to launch the interactive in CODAP.
 <br>You can also drag <span style="font-weight:bold">Link</span> into an open CODAP document to add the interactive into the document.</p>
 <p>
-    <label>CODAP:
-        <input id="codap-url" size="75" type="text" value="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
-    </label>
+    <label>CODAP:</label><input id="codap-url" size="75" type="text" value=""/>
     <br>
-    <label>Document Server:
-        <input id="doc-server-url" size="75" type="text" value="http://document-store.herokuapp.com/" />
-    </label>
+    <label>Document Server: </label><input id="doc-server-url" size="75" type="text" value=""/>
+    <script type="text/javascript">
+                var pageLoc = location.href;
+                if (pageLoc.indexOf("https") > -1) {
+                    $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                    $("#doc-server-url").val("https://document-store.concord.org");
+                } else {
+                    $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                    $("#doc-server-url").val("http://document-store.concord.org");
+                }
+    </script>
 </p>
 
 <div class="interactive-collection">
@@ -220,25 +289,23 @@
             <tr><td class = "interactive-title">Oceans Tracks Track Selector</td>
                 <td class="interactive-description">Compare the tracks of Pacific Ocean animals
                     tagged by the <a target="_blank" href="http://oceantracks.org/">Ocean Tracks</a>
-                    project.</td>
+                    project. Note that this interactive will not load in SSL. </td>
                 <td><a href="javascript:invokeDataInteractive('OceanTracks')">Launch</a></td>
                 <td><a target="_blank" href="http://oceantracks.org/map/trackmenu_1.html">Link</a></td>
             </tr>
-            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
-                <td class="interactive-description">Learn about conservation of
-                    energy with a skater duel with this
-                    <a target="_blank" href="https://phet.colorado.edu/">PhET</a>
-                    interactive.</td>
-                <td><a href="javascript:invokeDataInteractive('PhET')">Launch</a></td>
-                <td><a target="_blank" href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
-            </tr>
             <tr><td class = "interactive-title">SRRI Ship Odyssey Data Game</td>
                 <td class="interactive-description">Send rats on a dive to find
-                    sunken treasure with this <a target="_blank" href="https://www.srri.umass.edu/">SRRI</a>
+                    sunken treasure with this <a target="_blank" href="http://www.srri.umass.edu/">SRRI</a>
                     game.</td>
                 <td><a href="javascript:invokeDataInteractive('ShipOdyssey')">Launch</a></td>
                 <td><a target="_blank" href="./Adapter/index.html">Link</a></td>
             </tr>
+            <tr><td class = "interactive-title">Spring Mass Model</td>
+                    <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="https://concord.org/projects/inquiryspace">InquirySpace</a>
+                        project.</td>
+                    <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
+                    <td><a target="_blank" href="https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json">Link</a></td>
+                </tr>
             <tr><td class = "interactive-title">TerraPop Interactive</td>
                 <td class="interactive-description">Interactive for importing
                   <a target="_blank" href="http://www.terrapop.org/">TerraPop</a>
@@ -246,12 +313,47 @@
                 <td><a href="javascript:invokeDataInteractive('TerraPop')">Launch</a></td>
                 <td><a target="_blank" href="./TerraPopInteractive/TPI.html">Link</a></td>
             </tr>
+            <tr><td class = "interactive-title">Ants</td>
+                <td class="interactive-description">
+                  <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
+                  model of an ant colony seeking nearby food.</td>
+                <td><a href="javascript:invokeDataInteractive('Ants')">Launch</a></td>
+                <td><a target="blank" href="./Ants/ants.html">Link</a></td>
+            </tr>
             <tr><td class = "interactive-title">Wolf-Sheep Predation</td>
                 <td class="interactive-description">
                   <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
                   model that explores the stability of predator-prey ecosystems.</td>
                 <td><a href="javascript:invokeDataInteractive('WolfSheep')">Launch</a></td>
                 <td><a target="_blank" href="./WolfSheep/index.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Virus Growth</td>
+                <td class="interactive-description">
+                  <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
+                  model that explores the effect of infectiousness, chance of recovery, and duration of the cycle on infection in a population.</td>
+                <td><a href="javascript:invokeDataInteractive('Virus')">Launch</a></td>
+                <td><a target="_blank" href="./Virus/Virus.html">Link</a></td>
+            </tr>
+            <!--PhET interactives currently does not load.  Will uncomment when it works again-->
+<!--            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
+                <td class="interactive-description">Learn about conservation of
+                  energy with a skater duel with this
+                  <a target="blank" href="https://phet.colorado.edu/">PhET</a>
+                  interactive.</td>
+                <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
+                &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
+                <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
+            </tr>-->
+            <tr><td class = "interactive-title">Track Generator</td>
+                <td class="interactive-description">Simulate OceanTracks data with a simple
+                    random walk.</td>
+                <td><a href="javascript:invokeDataInteractive('TrackGenerator')">Launch</a></td>
+                <td><a href=".Movement/Movement.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Pivotal Tracker Importer</td>
+                <td class="interactive-description">Import stories and activities from any project in Pivotal Tracker</td>
+                <td><a href="javascript:invokeDataInteractive('PivotalImporter')">Launch</a></td>
+                <td><a href="./PivotalImporter/PTImporter.html">Link</a></td>
             </tr>
         </table>
     </div>
@@ -313,11 +415,21 @@
                 <td><a href="javascript:invokeDataInteractive('Importer')">Launch</a></td>
                 <td><a target="_blank" href="./Importer/Importer.html">Link</a></td>
             </tr>
+            <tr><td class = "interactive-title">GeoJSONImporter</td>
+                <td class="interactive-description">Interactive for importing GeoJSON</td>
+                <td><a href="javascript:invokeDataInteractive('GeoJSONImporter')">Launch</a></td>
+                <td><a target="_blank" href="./GeoJSONImporter/GeoJSONImporter.html">Link</a></td>
+            </tr>
             <tr><td class = "interactive-title">Performance Harness</td>
                 <td class="interactive-description">A way to generate data while
                   testing the performance of CODAP.</td>
                 <td><a href="javascript:invokeDataInteractive('PerformanceHarness')">Launch</a></td>
                 <td><a target="_blank" href="./PerformanceHarness/PerformanceHarness.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">Fast Plants</td>
+                <td class="interactive-description">Simulate growth of fast plants for use in cognitive interviews.</td>
+                <td><a href="javascript:invokeDataInteractive('FastPlants')">Launch</a></td>
+                <td><a target="_blank" href="./FastPlants/FastPlants.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Random Numbers</td>
                 <td class="interactive-description">An extremely simple interactive. It generates

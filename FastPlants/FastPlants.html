@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="../Common/js/kcpcommon.js" language="javascript"></script>
+    <script src="FastPlants.js" language="javascript"></script>
+
+
+    <title>Fast Plant Simulation</title>
+</head>
+
+<body bgcolor="#93A2B5">
+<h1>Fast Plant Simulation</h1>
+<form name="form1">
+    <p>
+        Number of plants <input type="text" size=5 maxlength=4 name="numPlants" value = 10>
+    </p>
+    <input type="checkbox" name="lightEffect">Enable Light Effect <br>
+    <input type="checkbox" name="noisyGrowth">Enable Noisy Growth <br>
+    <input type="checkbox" name="shrinkage">Enable Shrinkage in Last Days <br>
+    <p><input type="button" onClick="FastPlants.growPlants();" name="grow" value="Grow Plants"></p
+</form>
+</body>
+</html>
+
+<!--
+With nothing checked, all growth curves (height vs day) are smooth.
+
+As soon as a plant gets height > 0.5 it acquires two leaves. Each day, the number of leaves increases by 1 or 2.
+The number of leaves stops increasing after 1.5 * the halfway number of days which is around 10, but varies from plant
+to plant.
+
+The light effect causes
+plants in shade are on average 6 units taller. Plants in shade will 70% of the time increase their number of leaves
+by 1 instead of two, whereas for plants in sun, it happens only 40% of the time. DaysToFlower is about two days greater
+for plants in the shade.
+plants in sun grow a bit faster to their maximum and their “middle day” is on average 2 days sooner than those
+in shade.
+
+Noisy Growth affects only the plant growth, not the leaves or flowers. Each day it adds a normally distributed growth
+with a mean of 0 and standard deviation of 2. However, this ‘noise" is not allowed to shrink the plant from its
+previous height.
+
+Shrinkage in Last Days affects only the height and only in the last three days. It subtracts from the plant’s height
+a normally distributed amount with a mean of 0.5 and a standard deviation of 0.5 (but with a floor of zero).
+-->

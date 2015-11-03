@@ -1,0 +1,41 @@
+<!--// ==========================================================================-->
+<!--// Project:   Movement-->
+<!--// ==========================================================================-->
+
+<!--/**-->
+ <!--* @fileoverview Defines Movement component to be embedded in DG to generate random samples.-->
+ <!--* @author williamfinzer@gmail.com (William Finzer)-->
+ <!--*/-->
+
+<html>
+<head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="Movement.css" />
+    <script src="../Common/js/kcpcommon.js" language="javascript"></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <script src="Movement.js" language="javascript"></script>
+
+
+    <title>Track Generator</title>
+</head>
+
+<body>
+<h1>Track Generator</h1>
+<p>Specify the nature of the tracks you wish to generate.</p>
+<form name="form1">
+    Name of animal: <input type="text" size=15 maxlength=30 name="tracksName" value="Seal"><br>
+    Track Length: <input type="text" size=7 maxlength=12 name="trackLength" value="50"><br>
+    Number of tracks: <input type="text" size=7 maxlength=12 name="numTracks" value="1"><br>
+	<input type="button" onClick="Movement.generateTracks();" value="Generate Tracks">
+</form>
+
+<code>
+</code>
+<div id="report">
+<p></p>
+</div>
+</body>
+</html>
