@@ -38,17 +38,16 @@ var codapHelper = {
     if( iValuesArrays && !Array.isArray( iValuesArrays))
       iValuesArrays = [iValuesArrays];
     this.codapPhone.call({
-      action: 'createCase',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArrays,
-        parent: iParentID,
-        log: false
-      }
-    }, function (iResult) {
-      if( iCallback)
-        iCallback(iResult);
-    });
+        action: 'createCase',
+        args: {
+          collection: iCollectionName,
+          values: iValuesArrays,
+          parent: iParentID,
+          log: false
+        }
+      },
+      iCallback
+    );
   },
 
   openCase: function (iCollectionName, iValues, iCallback) {
