@@ -33,25 +33,39 @@ var codapHelper = {
   },
 
   createCases: function (iCollectionName, iValuesArrays, iParentID, iCallback) {
-    console.log("In createCases");
+    //console.log("In createCases");
     if( iValuesArrays && !Array.isArray( iValuesArrays))
       iValuesArrays = [iValuesArrays];
     this.codapPhone.call({
-      action: 'createCase',
-      args: {
-        collection: iCollectionName,
-        values: iValuesArrays,
-        parent: iParentID,
-        log: false
-      }
-    }, function () {
-      if( iCallback)
-        iCallback();
-    });
+        action: 'createCase',
+        args: {
+          collection: iCollectionName,
+          values: iValuesArrays,
+          parent: iParentID,
+          log: false
+        }
+      },
+      iCallback
+    );
   },
 
   openCase: function (iCollectionName, iValues, iCallback) {
-    console.log("In openCase");
+    //console.log("In NEW openCase");
+    if( iValues && !Array.isArray( iValues))
+      iValues = [iValues];
+    this.codapPhone.call({
+          action: 'openCase',
+          args: {
+            collection: iCollectionName,
+            values: iValues
+          }
+        },
+        iCallback
+    )
+  },
+
+  openParentCase: function (iCollectionName, iValues, iParentID, iCallback) {
+    //console.log("In NEW openCase");
     if( iValues && !Array.isArray( iValues))
       iValues = [iValues];
     this.codapPhone.call({
@@ -66,7 +80,7 @@ var codapHelper = {
   },
 
   closeCase: function (iCollectionName, iValues, iCaseID) {
-    console.log("In closeCase");
+    //console.log("In closeCase");
     if( iValues && !Array.isArray( iValues))
       iValues = [iValues];
     this.codapPhone.call({
@@ -78,6 +92,22 @@ var codapHelper = {
       }
     }, function () {
       console.log("closeCase")
+    });
+  },
+
+  updateCase: function (iCollectionName, iValues, iCaseID) {
+    //console.log("In updateCase");
+    if( iValues && !Array.isArray( iValues))
+      iValues = [iValues];
+    this.codapPhone.call({
+      action: 'updateCase',
+      args: {
+        collection: iCollectionName,
+        values: iValues,
+        caseID: iCaseID
+      }
+    }, function () {
+      console.log("updateCase")
     });
   }
 

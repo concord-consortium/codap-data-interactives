@@ -331,8 +331,8 @@ var Importer = {
 
         this.createCollection(tChildName, 'child', tAttrsArray);
 
-        this.openCSVCase(tParentName, ['pseudocase'], tChildName, tValuesArrays);
-        tNumCases = tValuesArrays.length;
+        this.openCSVCase(tParentName, ['pseudocase'], tChildName, tValuesArray);
+        tNumCases = tValuesArray.length;
 
       }
     }.bind(this);   // importAsSimpleText

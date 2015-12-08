@@ -273,10 +273,10 @@
                 var pageLoc = location.href;
                 if (pageLoc.indexOf("https") > -1) {
                     $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                    $("#doc-server-url").val("https://document-store.herokuapp.com");
+                    $("#doc-server-url").val("https://document-store.concord.org");
                 } else {
                     $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                    $("#doc-server-url").val("http://document-store.herokuapp.com");
+                    $("#doc-server-url").val("http://document-store.concord.org");
                 }
     </script>
 </p>
@@ -301,7 +301,7 @@
                 <td><a target="_blank" href="./Adapter/index.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Spring Mass Model</td>
-                    <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="http://concord.org/projects/inquiryspace">InquirySpace</a>
+                    <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="https://concord.org/projects/inquiryspace">InquirySpace</a>
                         project.</td>
                     <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
                     <td><a target="_blank" href="https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json">Link</a></td>
@@ -334,7 +334,8 @@
                 <td><a href="javascript:invokeDataInteractive('Virus')">Launch</a></td>
                 <td><a target="_blank" href="./Virus/Virus.html">Link</a></td>
             </tr>
-            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
+            <!--PhET interactives currently does not load.  Will uncomment when it works again-->
+<!--            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
                 <td class="interactive-description">Learn about conservation of
                   energy with a skater duel with this
                   <a target="blank" href="https://phet.colorado.edu/">PhET</a>
@@ -342,12 +343,12 @@
                 <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
                 &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
                 <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
-            </tr>
+            </tr>-->
             <tr><td class = "interactive-title">Track Generator</td>
                 <td class="interactive-description">Simulate OceanTracks data with a simple
                     random walk.</td>
                 <td><a href="javascript:invokeDataInteractive('TrackGenerator')">Launch</a></td>
-                <td><a href=".Movement/Movement.html">Link</a></td>
+                <td><a href="./Movement/Movement.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Pivotal Tracker Importer</td>
                 <td class="interactive-description">Import stories and activities from any project in Pivotal Tracker</td>
