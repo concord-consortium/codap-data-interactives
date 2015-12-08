@@ -6,9 +6,8 @@ var codapHelper = {
   codapPhone: null,
   initAccomplished: false,
 
-  initSim: function( simDescription) {
-    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
-    }, "codap-game", window.parent);
+  initSim: function( simDescription, doCommandFunc) {
+    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(doCommandFunc, "codap-game", window.parent);
 
     this.codapPhone.call({
       action: 'initGame',
