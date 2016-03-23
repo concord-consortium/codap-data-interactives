@@ -4,12 +4,16 @@ var DataCard = {
 
   codapPhone: null,
 
+  logMessage: function (message) {
+    console.log(message);
+  },
+
   connect: function () {
 
     // Invoke the JavaScript interface
 
     this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
-    }, "codap-game", window.parent);
+    }, "data-interactive", window.parent);
 
 
     this.codapPhone.call({
@@ -19,14 +23,14 @@ var DataCard = {
       },
       values: {
         title: 'Data Card',
-          version: '0.1',
-            dimensions: {
-              width: 400,
-              height: 200
-            }
-          }
-        }, function () {
-
+        version: '0.1',
+        dimensions: {
+          width: 400,
+          height: 200
+        }
+      }
+    }, function (result) {
+      this.logMessage('interactiveFrame result: ' + (result && JSON.stringify(result)));
     }.bind(this));
   },
 
