@@ -1,0 +1,54 @@
+<html>
+<head>
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="DataCard.css"/>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="DataCard.js" language="javascript"></script>
+
+    <title>Data Card</title>
+</head>
+
+<body>
+<h1>Data Card</h1>
+<form name="form1">
+    Collection name: <input type="text" size=30 name="collName" value="My Collection">
+</form>
+<p></p>
+<table id="card">
+    <tr>
+        <th>Attribute</th>
+        <th>Value</th>
+    </tr>
+    <div>
+        <tr>
+            <td>
+                name
+            </td>
+            <td>
+                Bill
+            </td>
+        </tr>
+        <tr>
+            <td>
+                age
+            </td>
+            <td>
+                70
+            </td>
+        </tr>
+        <tr>
+            <td>
+                height
+            </td>
+            <td>
+                168cm
+            </td>
+        </tr>
+    </div>
+</table>
+<p></p>
+<button type="button" onclick="DataCard.doSubmit()">Submit</button>
+</body>
+</html>
