@@ -3,15 +3,18 @@
 var DataCard = {
 
   codapPhone: null,
+  context: null,
 
   logMessage: function (message) {
     console.log(message);
   },
 
+  logResult: function (result) {
+    this.logMessage('result: ' + (result && JSON.stringify(result)));
+  },
+
   connect: function () {
-
     // Invoke the JavaScript interface
-
     this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
     }, "data-interactive", window.parent);
 
@@ -30,8 +33,25 @@ var DataCard = {
         }
       }
     }, function (result) {
-      this.logMessage('interactiveFrame result: ' + (result && JSON.stringify(result)));
+      this.logResult(result);
+      if (result && result.success) {
+        this.addContext(this.logResult.bind(this));
+      }
     }.bind(this));
+  },
+
+  addContext: function (callback) {
+    this.codapPhone.call({
+      action: 'create',
+      what: {
+        type: 'dataContext'
+      },
+      values: {
+        identifier: "DataCard",
+        title: "Data Card",
+        description: "Displays individual items in a set of data, one item at a time.",
+      }
+    }, callback);
   },
 
   addCase: function (callback) {
@@ -106,3 +126,4 @@ var DataCard = {
 };
 
 DataCard.connect();
+
