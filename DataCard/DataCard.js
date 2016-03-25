@@ -1,129 +1,146 @@
 /* jshint indent: false, strict: false, quotmark: false, browser: true, devel: true */
 /* globals iframePhone */
-var DataCard = {
+$(function () {
 
-  codapPhone: null,
-  context: null,
+  var Logger = {
+    logMessage: function (message) {
+      console.log(message);
+    }
+  };
 
-  logMessage: function (message) {
-    console.log(message);
-  },
+  var DataCard = {
 
-  logResult: function (result) {
-    this.logMessage('result: ' + (result && JSON.stringify(result)));
-  },
+    /**
+     * Provides a communication channel to CODAP.
+     *
+     * @type {iframePhone.IframePhoneRpcEndpoint}
+     */
+    codapPhone: null,
 
-  connect: function () {
-    // Invoke the JavaScript interface
-    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
-    }, "data-interactive", window.parent);
+    /**
+     *
+     */
+    context: null,
+
+    collectionName: $('collName').val(),
+
+    logResult: function (result) {
+      Logger.logMessage('result: ' + (result && JSON.stringify(result)));
+    },
+
+    connect: function () {
+      // Invoke the JavaScript interface
+      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+      }, "data-interactive", window.parent);
 
 
-    this.codapPhone.call({
-      action: 'create',
-      what: {
-        type: 'interactiveFrame'
-      },
-      values: {
-        title: 'Data Card',
-        version: '0.1',
-        dimensions: {
-          width: 400,
-          height: 200
-        }
-      }
-    }, function (result) {
-      this.logResult(result);
-      if (result && result.success) {
-        this.addContext(this.logResult.bind(this));
-      }
-    }.bind(this));
-  },
-
-  addContext: function (callback) {
-    this.codapPhone.call({
-      action: 'create',
-      what: {
-        type: 'dataContext'
-      },
-      values: {
-        identifier: "DataCard",
-        title: "Data Card",
-        description: "Displays individual items in a set of data, one item at a time.",
-      }
-    }, callback);
-  },
-
-  addCase: function (callback) {
-
-    var createCase = function () {
       this.codapPhone.call({
-        action: 'createCase',
-        args: {
-          collection: "Trials",
-          parent: this.openRoundID,
-          values: [this.trialNum, this.guess, this.result]
-        }
-      });
-      callback();
-    }.bind(this);
+          action: 'create',
+          what: {
+            type: 'interactiveFrame'
+          },
+          values: {
+            title: 'Data Card', version: '0.1', dimensions: {
+              width: 400, height: 200
+            }
+          }
+        },
+        function (result) {
+          this.logResult(result);
+          if (result && result.success) {
+            this.addContext(this.logResult.bind(this));
+          }
+        }.bind(this)
+      );
+    },
 
-    if (!this.openRoundID) {
-      // Start a new Games case if we don't have one open
+    addContext: function () {
       this.codapPhone.call({
-        action: 'openCase',
-        args: {
-          collection: "Games",
-          values: [this.gameNum, this.trialNum]
+        action: 'create',
+        what: {
+          type: 'dataContext'
+        },
+        values: {
+          identifier: "DataCard",
+          title: "Data Card",
+          description: "Displays individual items in a set of data, one item at a time."
         }
       }, function (result) {
-        if (result.success) {
-          this.openRoundID = result.caseID;
-          createCase();
-        } else {
-          console.log("DataCard: Error calling 'openCase'"); // alert the user? Bail?
+        this.logResult(result);
+        if (result && result.success) {
+          this.addCollection();
         }
       }.bind(this));
-    } else {
-      this.codapPhone.call({
-        action: 'updateCase',
-        args: {
-          collection: "Games",
-          caseID: this.openRoundID,
-          values: [this.gameNum, this.trialNum]
-        }
-      }, createCase);
-    }
-  },
+    },
 
-  addGame: function () {
-    if (this.openRoundID) {
+    addCollection: function () {
+      var attrNames = $('#card tr td:first-of-type')
+          .map(function () {
+            return $(this).text();
+          })
+          .get()
+          .map(function (name) {
+            return {'name': name.trim()};
+          });
       this.codapPhone.call({
-        action: 'closeCase',
-        args: {
-          collection: "Games",
-          caseID: this.openRoundID,
-          values: [this.gameNum, this.trialNum]
+        action: 'create',
+        what: {
+          type: 'collection',
+          context: 'DataCard'
+        },
+        values: {
+          identifier: 'DataCards',
+          title: this.collectionName,
+          description: "",
+          attributes: attrNames
         }
       });
-      // Since we are assuming closeCase will succeed, immediately forget the previously open round.
-      this.openRoundID = null;
+    },
+
+    addCase: function (iCase) {
+      this.codapPhone.call({
+            action: 'create',
+            what: {
+              type: 'case',
+              context: 'DataCard',
+              collection: 'DataCards'
+            },
+            values: {
+              values: iCase
+            }
+          },
+          this.logResult
+      );
+    },
+    changeCollectionName: function (name) {
+      this.collectionName = name;
+      this.codapPhone.call({
+        action: 'update',
+        what: {
+          type: 'collection',
+          identifier: 'DataCase'
+        },
+        values: {
+          title: name
+        }
+      }, this.logResult);
     }
-  },
+  };
 
-  doSubmit: function() {
-    var tCollName = document.forms.form1.collName.value;
-    var tRows = document.getElementById("card").rows,
-        tRowIndex = 1,
-        tCase = {};
-    for( tRowIndex = 1; tRowIndex < tRows.length; tRowIndex++) {
-        var tRow = tRows[ tRowIndex];
-        tCase[ tRow.cells[0].innerHTML.trim()] = tRow.cells[1].innerHTML.trim();
-    }
-    console.log( tCollName);
-    console.log( tCase);
-  }
-};
+  // handle DOM events
+  $('#collName').on('change', DataCard, function (ev) {
+    var collName = $('#collName').val();
+    DataCard.changeCollectionName(collName);
+  });
+  $('#send-card').on('click', DataCard, function (ev) {
+    var tCase = {};
+    $('#card tbody tr').each(function (index, row) {
+      tCase[$('td:first-of-type', row).text().trim()]
+          = $('td:last-of-type input', row).val().trim();
+    });
+    ev.data.addCase(tCase);
+  });
 
-DataCard.connect();
+  DataCard.connect();
 
+});

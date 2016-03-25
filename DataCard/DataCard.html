@@ -14,21 +14,23 @@
 <body>
 <h1>Data Card</h1>
 <form name="form1">
-    Collection name: <input type="text" size=30 name="collName" value="My Collection">
+    Collection name: <input type="text" size=30 id="collName" value="My Collection">
 </form>
 <p></p>
 <table id="card">
+    <thead>
     <tr>
         <th>Attribute</th>
         <th>Value</th>
     </tr>
-    <div>
+    </thead>
+    <tbody>
         <tr>
             <td>
                 name
             </td>
             <td>
-                Bill
+                <input type="text" size=30 id="d0" value="Bill" />
             </td>
         </tr>
         <tr>
@@ -36,7 +38,7 @@
                 age
             </td>
             <td>
-                70
+                <input type="text" size=30 id="d1" value="70" />
             </td>
         </tr>
         <tr>
@@ -44,12 +46,12 @@
                 height
             </td>
             <td>
-                168cm
+                <input type="text" size=30 id="d2" value="168cm" />
             </td>
         </tr>
-    </div>
+    </tbody>
 </table>
 <p></p>
-<button type="button" onclick="DataCard.doSubmit()">Submit</button>
+<button type="button" id="send-card">Submit</button>
 </body>
 </html>
