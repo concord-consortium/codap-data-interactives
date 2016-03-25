@@ -35,7 +35,7 @@ $(function () {
 
 
       this.codapPhone.call({
-          action: 'create',
+          action: 'update',
           what: {
             type: 'interactiveFrame'
           },
