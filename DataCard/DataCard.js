@@ -34,43 +34,54 @@ $(function () {
       }, "data-interactive", window.parent);
 
 
+      this.updateFrame();
+      this.addContext();
+      this.addCollection();
+    },
+
+    updateFrame: function () {
+      var kMaxWidth = 400, kMinHeight = 400;
+
       this.codapPhone.call({
-          action: 'update',
-          what: {
-            type: 'interactiveFrame'
-          },
-          values: {
-            title: 'Data Card', version: '0.1', dimensions: {
-              width: 400, height: 200
+        action: 'get',
+        what: { resource: 'doc.interactiveFrame'}
+      }, function (result) {
+        this.logResult(result);
+        if (!result || !result.success){
+          return;
+        }
+
+        var width = Math.min(kMaxWidth,
+            (result.values.dimensions && result.values.dimensions.width) || 999);
+        var height = Math.max(kMinHeight,
+            (result.values.dimensions && result.values.dimensions.height) || 0);
+          this.codapPhone.call({
+            action: 'update',
+            what: { resource: 'doc.interactiveFrame'},
+            values: {
+              title: 'Data Card',
+              version: '0.1',
+              dimensions: {
+                width: width,
+                height: height
+              }
             }
-          }
-        },
-        function (result) {
-          this.logResult(result);
-          if (result && result.success) {
-            this.addContext(this.logResult.bind(this));
-          }
-        }.bind(this)
-      );
+          }, this.logResult)
+      }.bind(this));
     },
 
     addContext: function () {
       this.codapPhone.call({
         action: 'create',
         what: {
-          type: 'dataContext'
+          resource: 'doc.dataContext'
         },
         values: {
-          identifier: "DataCard",
+          name: "DataCard",
           title: "Data Card",
           description: "Displays individual items in a set of data, one item at a time."
         }
-      }, function (result) {
-        this.logResult(result);
-        if (result && result.success) {
-          this.addCollection();
-        }
-      }.bind(this));
+      }, this.logResult);
     },
 
     addCollection: function () {
@@ -85,25 +96,22 @@ $(function () {
       this.codapPhone.call({
         action: 'create',
         what: {
-          type: 'collection',
-          context: 'DataCard'
+          resource: 'doc.dataContext[DataCard].collection'
         },
         values: {
-          identifier: 'DataCards',
+          name: 'DataCards',
           title: this.collectionName,
           description: "",
           attributes: attrNames
         }
-      });
+      }, this.logResult);
     },
 
     addCase: function (iCase) {
       this.codapPhone.call({
             action: 'create',
             what: {
-              type: 'case',
-              context: 'DataCard',
-              collection: 'DataCards'
+              resource: 'doc.dataContext[DataCard].collection[DataCards].case'
             },
             values: {
               values: iCase
@@ -112,25 +120,37 @@ $(function () {
           this.logResult
       );
     },
-    changeCollectionName: function (name) {
+    displayCollectionTitle: function () {
+      this.codapPhone.call({
+        action: 'get',
+        what: { resource: 'doc.dataContext[DataCard].collection[DataCards]'}
+      }, function (result) {
+        this.logResult(result);
+        if (!result || !result.success) { return; }
+        $('#collName').val(result.values.title);
+      }.bind(this))
+    },
+    changeCollectionTitle: function (name) {
       this.collectionName = name;
       this.codapPhone.call({
         action: 'update',
         what: {
-          type: 'collection',
-          identifier: 'DataCase'
+          resource: 'doc.dataContext[DataCard].collection[DataCards]'
         },
         values: {
           title: name
         }
-      }, this.logResult);
+      }, function(result) {
+        this.logResult(result);
+        this.displayCollectionTitle();
+      }.bind(this));
     }
   };
 
   // handle DOM events
-  $('#collName').on('change', DataCard, function (ev) {
+  $('#collName').on('blur', DataCard, function (ev) {
     var collName = $('#collName').val();
-    DataCard.changeCollectionName(collName);
+    DataCard.changeCollectionTitle(collName);
   });
   $('#send-card').on('click', DataCard, function (ev) {
     var tCase = {};
