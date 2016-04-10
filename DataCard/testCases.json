@@ -1,0 +1,100 @@
+[
+  {
+    "action": "update",
+    "what": { "resource": "doc.interactiveFrame"},
+    "values": {
+      "title": "Data Card",
+      "version": "0.1",
+      "dimensions": { "width": 1200, "height": 600}
+    }
+  }, {
+    "action": "get",
+    "what": { "resource": "doc.interactiveFrame"}
+  },
+
+  {
+    "action": "create",
+    "what": { "resource": "doc.dataContext"},
+    "values": {
+      "name": "DataCard",
+      "title": "Data Card",
+      "description": "Displays individual items in a set of data, one item at a time."
+    }
+  }, {
+    "action": "update",
+    "what": { "resource": "doc.dataContext[DataCard]"},
+    "values": { "title": "Data, Data, Data"}
+  }, {
+    "action": "get",
+    "what": { "resource": "doc.dataContext"}
+  }, {
+    "action": "get",
+    "what": { "resource": "doc.dataContext[DataCard]"}
+  },
+
+  {
+    "action": "create",
+    "what": {"resource": "doc.dataContext[DataCard].collection"},
+    "values": {
+      "name": "DataCards",
+      "title": "Poeple"
+    }
+  }, {
+    "action": "update",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"},
+    "values": {
+      "title": "People"
+    }
+  }, {
+  "action": "get",
+  "what": {"resource": "doc.dataContext[DataCard].collection"}
+  }, {
+  "action": "get",
+  "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"}
+  },
+
+
+  {
+    "action": "create",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes"},
+    "values": [
+      {
+        "name": "name",
+        "type": "categorical"
+      },       {
+        "name": "age",
+        "type": "numeric"
+      },       {
+        "name": "height (cm)",
+        "type": "numeric"
+      }
+    ]
+  }, {
+    "action": "get",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes"}
+  }, {
+    "action": "get",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"}
+  }, {
+    "action": "update",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attribute[name]"},
+    "values": {
+      "title": "Name"
+    }
+  },
+
+
+  {
+    "action": "delete",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"}
+  },{
+    "action": "delete",
+    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"}
+  }, {
+    "action": "delete",
+    "what": { "resource": "doc.dataContext[DataCard]"}
+  }, {
+    "action": "delete",
+    "what": { "resource": "doc.interactiveFrame"}
+  }
+]
