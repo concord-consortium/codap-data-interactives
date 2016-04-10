@@ -35,13 +35,16 @@
           if (!Array.isArray(parsedMessages)) {
             parsedMessages = [parsedMessages];
           }
-          parsedMessages.forEach(function (parsedMessage) {
+          parsedMessages.forEach(function (parsedMessage, ix) {
+            var id = ++seq;
             console.log('Message: ' + message);
+            $('<div>').prop('id', 'r' + id).addClass('di-req').text('#' + id +
+                ' Request: ' + JSON.stringify(parsedMessage))
+                .prependTo('#receivedMessage');
             codapPhone.call(parsedMessage, function (result) {
-              $('#receivedMessage').prepend($('<div>').addClass('di-req').text(
-                  '#' + (++seq) + ' Request: ' + JSON.stringify(parsedMessage)));
-              $('#receivedMessage').prepend($('<div>').addClass('di-resp').text(
-                  '#' + seq + ' Response: ' + JSON.stringify(result, null, '  ')));
+              var respEl = $('<div>').addClass('di-resp').text('#' + id +
+                  ' Response: ' + JSON.stringify(result));
+              $('#r' + id).append(respEl);
             });
           });
         } catch (e) {
