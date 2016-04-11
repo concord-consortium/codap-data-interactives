@@ -1,7 +1,7 @@
 [
   {
     "action": "update",
-    "what": { "resource": "doc.interactiveFrame"},
+    "resource": "doc.interactiveFrame",
     "values": {
       "title": "Data Card",
       "version": "0.1",
@@ -9,12 +9,12 @@
     }
   }, {
     "action": "get",
-    "what": { "resource": "doc.interactiveFrame"}
+    "resource": "doc.interactiveFrame"
   },
 
   {
     "action": "create",
-    "what": { "resource": "doc.dataContext"},
+    "resource": "doc.dataContext",
     "values": {
       "name": "DataCard",
       "title": "Data Card",
@@ -22,79 +22,86 @@
     }
   }, {
     "action": "update",
-    "what": { "resource": "doc.dataContext[DataCard]"},
+    "resource": "doc.dataContext[DataCard]",
     "values": { "title": "Data, Data, Data"}
   }, {
     "action": "get",
-    "what": { "resource": "doc.dataContext"}
+    "resource": "doc.dataContext"
   }, {
     "action": "get",
-    "what": { "resource": "doc.dataContext[DataCard]"}
+    "resource": "doc.dataContext[DataCard]"
   },
 
   {
     "action": "create",
-    "what": {"resource": "doc.dataContext[DataCard].collection"},
+    "resource": "doc.dataContext[DataCard].collection",
     "values": {
       "name": "DataCards",
       "title": "Poeple"
     }
   }, {
     "action": "update",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"},
+    "resource": "doc.dataContext[DataCard].collection[DataCards]",
     "values": {
       "title": "People"
     }
   }, {
   "action": "get",
-  "what": {"resource": "doc.dataContext[DataCard].collection"}
+  "resource": "doc.dataContext[DataCard].collection"
   }, {
   "action": "get",
-  "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"}
+  "resource": "doc.dataContext[DataCard].collection[DataCards]"
   },
 
 
   {
     "action": "create",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes"},
-    "values": [
-      {
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes",
+    "values": [ {
         "name": "name",
         "type": "categorical"
-      },       {
+      }, {
         "name": "age",
         "type": "numeric"
-      },       {
+      }, {
         "name": "height (cm)",
         "type": "numeric"
       }
     ]
   }, {
-    "action": "get",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes"}
-  }, {
-    "action": "get",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"}
-  }, {
     "action": "update",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attribute[name]"},
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[name]",
     "values": {
       "title": "Name"
     }
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes"
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"
   },
 
+  {
+    "action": "create",
+    "resource": "logAction",
+    "values": {
+      "formatStr": "Test log message: %@",
+      "replaceArgs": "test"
+    }
+  },
 
   {
     "action": "delete",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"}
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"
   },{
     "action": "delete",
-    "what": {"resource": "doc.dataContext[DataCard].collection[DataCards]"}
+    "resource": "doc.dataContext[DataCard].collection[DataCards]"
   }, {
     "action": "delete",
-    "what": { "resource": "doc.dataContext[DataCard]"}
+    "resource": "doc.dataContext[DataCard]"
   }, {
     "action": "delete",
-    "what": { "resource": "doc.interactiveFrame"}
+    "resource": "doc.interactiveFrame"
   }
 ]
