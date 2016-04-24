@@ -47,7 +47,8 @@ var PerformanceHarness = {
               { name: "trial", type: 'numeric', precision: 0, defaultMin: 0, defaultMax: 100 },
               { name: "randNum", type: 'numeric', precision: 2 },
               { name: "rate", type: 'numeric', precision: 2, defaultMin: 0, defaultMax: 60 },
-              { name: "choice", type: 'nominal' },
+              { name: "choice", type: 'nominal',
+              colormap: { red: null, green: null }},
               { name: "signal", type: 'numeric', precision: 3, defaultMin: -1, defaultMax: 1 }
             ],
             defaults: {
