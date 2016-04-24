@@ -1,0 +1,107 @@
+[
+  {
+    "action": "update",
+    "resource": "doc.interactiveFrame",
+    "values": {
+      "title": "Data Card",
+      "version": "0.1",
+      "dimensions": { "width": 1200, "height": 600}
+    }
+  }, {
+    "action": "get",
+    "resource": "doc.interactiveFrame"
+  },
+
+  {
+    "action": "create",
+    "resource": "doc.dataContext",
+    "values": {
+      "name": "DataCard",
+      "title": "Data Card",
+      "description": "Displays individual items in a set of data, one item at a time."
+    }
+  }, {
+    "action": "update",
+    "resource": "doc.dataContext[DataCard]",
+    "values": { "title": "Data, Data, Data"}
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext"
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard]"
+  },
+
+  {
+    "action": "create",
+    "resource": "doc.dataContext[DataCard].collection",
+    "values": {
+      "name": "DataCards",
+      "title": "Poeple"
+    }
+  }, {
+    "action": "update",
+    "resource": "doc.dataContext[DataCard].collection[DataCards]",
+    "values": {
+      "title": "People"
+    }
+  }, {
+  "action": "get",
+  "resource": "doc.dataContext[DataCard].collection"
+  }, {
+  "action": "get",
+  "resource": "doc.dataContext[DataCard].collection[DataCards]"
+  },
+
+
+  {
+    "action": "create",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes",
+    "values": [ {
+        "name": "name",
+        "type": "categorical"
+      }, {
+        "name": "age",
+        "type": "numeric"
+      }, {
+        "name": "height (cm)",
+        "type": "numeric"
+      }
+    ]
+  }, {
+    "action": "update",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[name]",
+    "values": {
+      "title": "Name"
+    }
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes"
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"
+  },
+
+  {
+    "action": "create",
+    "resource": "logAction",
+    "values": {
+      "formatStr": "Test log message: %@",
+      "replaceArgs": "test"
+    }
+  },
+
+  {
+    "action": "delete",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"
+  },{
+    "action": "delete",
+    "resource": "doc.dataContext[DataCard].collection[DataCards]"
+  }, {
+    "action": "delete",
+    "resource": "doc.dataContext[DataCard]"
+  }, {
+    "action": "delete",
+    "resource": "doc.interactiveFrame"
+  }
+]

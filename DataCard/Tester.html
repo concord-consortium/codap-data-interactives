@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Interactive API Tester</title>
+  <link rel="stylesheet" media="screen,projection" type="text/css" href="DataCard.css"/>
+  <style>
+    label textarea {
+      display:block;
+    }
+    label {
+      font-size: smaller;
+      font-family: sans-serif;
+      font-weight: bold;
+    }
+    .di-req {
+      color: seagreen;
+    }
+    .di-resp {
+      color: darkslateblue;
+    }
+  </style>
+  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script src="../Common/js/jquery.js"></script>
+  <script type="text/javascript">
+    var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+    }, "data-interactive", window.parent);
+    var seq = 0;
+    $(function () {
+      function send() {
+        try {
+          var message = $('#message').val();
+          if (!message) { return; }
+          var parsedMessages = JSON.parse(message);
+          if (!Array.isArray(parsedMessages)) {
+            parsedMessages = [parsedMessages];
+          }
+          parsedMessages.forEach(function (parsedMessage, ix) {
+            var id = ++seq;
+            console.log('Message: ' + message);
+            $('<div>').prop('id', 'r' + id).addClass('di-req').text('#' + id +
+                ' Request: ' + JSON.stringify(parsedMessage))
+                .prependTo('#receivedMessage');
+            codapPhone.call(parsedMessage, function (result) {
+              var respEl = $('<div>').addClass('di-resp').text('#' + id +
+                  ' Response: ' + JSON.stringify(result));
+              $('#r' + id).append(respEl);
+            });
+          });
+        } catch (e) {
+          $('#receivedMessage').prepend($('<div>').text('' + (++seq) + ': ' + e));
+        }
+      }
+
+      $('#sendMessage').on('click', send);
+    });
+  </script>
+</head>
+<body>
+<header>
+  <h1>Data Interactive API Tester</h1>
+</header>
+<article>
+  <p>Enter a Data Interactive request message as parse-able JSON, or an array of messages.</p>
+  <label>Requests:<textarea id="message" rows="4" cols="80"></textarea></label>
+  <div><button id="sendMessage">send</button></div>
+  <div id="receivedMessage"></div>
+</article>
+</body>
+</html>
