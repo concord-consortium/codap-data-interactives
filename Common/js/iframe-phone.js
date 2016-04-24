@@ -11,6 +11,10 @@ function IFrameEndpoint() {
   var postMessageQueue = [];
   var helloInterval;
 
+  function isConnected() {
+    return connected;
+  }
+
   function postToTarget(message, target) {
     // See http://dev.opera.com/articles/view/window-postmessage-messagechannel/#crossdoc
     //     https://github.com/Modernizr/Modernizr/issues/388
@@ -133,6 +137,7 @@ function IFrameEndpoint() {
     getListenerNames  : getListenerNames,
     addListener       : addListener,
     removeAllListeners: removeAllListeners,
+    isConnected       : isConnected,
     disconnect        : disconnect,
     post              : post
   };
@@ -201,6 +206,10 @@ module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindo
         }
     });
 
+    function isConnected() {
+      return phone.isConnected();
+    }
+
     function call(message, callback) {
         var uuid = getPseudoUUID();
 
@@ -226,7 +235,8 @@ module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindo
 
     return {
         call: call,
-        disconnect: disconnect
+        disconnect: disconnect,
+        isConnected: isConnected
     };
 };
 
@@ -275,6 +285,10 @@ module.exports = function ParentEndpoint(targetWindow, targetOrigin, afterConnec
 
   function getOrigin(iframe) {
     return iframe.src.match(/(.*?\/\/.*?)\//)[1];
+  }
+
+  function isConnected() {
+    return connected;
   }
 
   function post(type, content) {
@@ -383,7 +397,8 @@ module.exports = function ParentEndpoint(targetWindow, targetOrigin, afterConnec
     post: post,
     addListener: addListener,
     removeListener: removeListener,
-    disconnect: disconnect
+    disconnect: disconnect,
+    isConnected: isConnected
   };
 };
 
