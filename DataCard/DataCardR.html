@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Data Card</title>
+    <style type="text/css">
+      body {
+        background-color: #fffaf0;
+        font-family: sans-serif;
+        color: rgb(110,109,95);
+      }
+      section {
+        margin: 0.25em 0;
+        padding: 0.25em 0;
+        width: 480px;
+        background-color: rgb(178,182,151);
+      }
+      section label, section .collection-name {
+        margin: 0 0.25em ;
+        padding: 0 0.25em ;
+        font-weight: bold;
+        color: white;
+      }
+      .card-deck {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: stretch;
+      }
+      .card-section {
+        width: 480px;
+      }
+      .attr-container, .case-frame {
+        /*padding: 0 0.5em;*/
+        background-color: rgb(110,109,95);
+      }
+      .case-frame {
+        width: 212px;
+        overflow: hidden;
+        position: relative;
+      }
+      @keyframes animateCases {
+        from {
+          left: 0;
+        }
+        to {
+          left: -212px;
+        }
+      }
+      .case-container {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        animation-name: animateCases;
+        animation-duration: 1s;
+        animation-direction: alternate;
+        animation-iteration-count: 4;
+        animation-timing-function: linear;
+      }
+      .case {
+        width: 208px;
+        border: 1px solid transparent;
+        font-family: serif;
+        color: black;
+      }
+      .attr-list, .case {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-shrink: 0;
+      }
+
+      .attr, .attr-value {
+        width: 200px;
+        height: 20px;
+        border-radius: 5px;
+        margin: 2px 1px 0;
+        padding: 2px 4px;
+      }
+      .attr {
+        background-color: #fffaf0;
+      }
+      .attr-value {
+        background-color: white;
+      }
+      .left-ctls,.right-ctls {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 .25em;
+      }
+      .control {
+        border: 1px dimgray solid;
+        border-radius: .6em;
+        background-color: #fffaf0;
+        padding: 0 4px;
+      }
+      .control:hover {
+        font-weight: bold;
+        cursor: pointer;
+        border-width: 2px;
+      }
+    </style>
+    <!--<link rel="stylesheet" href="../shared/css/base.css" />-->
+  </head>
+  <body>
+    <header>
+      <h1>Data Card</h1>
+    </header>
+    <div id="container">
+      <p>
+        To install React, follow the instructions on
+        <a href="https://github.com/facebook/react/">GitHub</a>.
+      </p>
+      <p>
+        If you can see this, React is <strong>not</strong> working right.
+        If you checked out the source from GitHub make sure to run <code>grunt</code>.
+      </p>
+    </div>
+    <script src="react.js"></script>
+    <script src="react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+    <script type="text/babel">
+      var ExampleApplication = React.createClass({
+        render: function() {
+          var elapsed = Math.round(this.props.elapsed  / 100);
+          var seconds = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
+          var message =
+            'React has been successfully running for ' + seconds + ' seconds.';
+
+          return <p>{message}</p>;
+        }
+      });
+//      var start = new Date().getTime();
+//      setInterval(function() {
+//        ReactDOM.render(
+//          <ExampleApplication elapsed={new Date().getTime() - start} />,
+//          document.getElementById('container')
+//        );
+//      }, 50);
+      var data = ['BartStations', 'BartRoutes', 'BartArrivals'];
+      var ContextSelector = React.createClass({
+        render: function () {
+          var options =
+              this.props.data.map(function (name) {
+                return (
+                    <option> {name} </option>
+                );
+              });
+          return <select id="context-selector" >
+              {options} </select>
+
+        }
+      });
+      var DataCardApplication = React.createClass({
+        render: function () {
+          return <section id="context-selector">
+            <label>Context:
+
+                <ContextSelector data={this.props.data} />
+          </label >
+          </section>
+        }
+      });
+      ReactDOM.render(<DataCardApplication data={data} />,
+          document.getElementById('container'));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE HTML >
+<html>
+<head>
+  <!--<link rel="stylesheet" media="screen,projection" type="text/css" href="DataCard.css"/>-->
+  <!--<script src="../Common/js/iframe-phone.js" language="javascript"></script>-->
+  <!--<script src="../Common/js/jquery.js"></script>-->
+  <!--<script src="DataCard.js" language="javascript"></script>-->
+
+  <style type="text/css">
+    body {
+      background-color: #fffaf0;
+      font-family: sans-serif;
+      color: rgb(110,109,95);
+    }
+    section {
+      margin: 0.25em 0;
+      padding: 0.25em 0;
+      width: 480px;
+      background-color: rgb(178,182,151);
+    }
+    section label, section .collection-name {
+      margin: 0 0.25em ;
+      padding: 0 0.25em ;
+      font-weight: bold;
+      color: white;
+    }
+    .card-deck {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+    .card-section {
+      width: 480px;
+    }
+    .attr-container, .case-frame {
+      /*padding: 0 0.5em;*/
+      background-color: rgb(110,109,95);
+    }
+    .case-frame {
+      width: 212px;
+      overflow: hidden;
+      position: relative;
+    }
+    @keyframes animateCases {
+      from {
+        left: 0;
+      }
+      to {
+        left: -212px;
+      }
+    }
+    .case-container {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      animation-name: animateCases;
+      animation-duration: 1s;
+      animation-direction: alternate;
+      animation-iteration-count: 4;
+      animation-timing-function: linear;
+    }
+    .case {
+      width: 208px;
+      border: 1px solid transparent;
+      font-family: serif;
+      color: black;
+    }
+    .attr-list, .case {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-shrink: 0;
+    }
+
+    .attr, .attr-value {
+      width: 200px;
+      height: 20px;
+      border-radius: 5px;
+      margin: 2px 1px 0;
+      padding: 2px 4px;
+    }
+    .attr {
+      background-color: #fffaf0;
+    }
+    .attr-value {
+      background-color: white;
+    }
+    .left-ctls,.right-ctls {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 .25em;
+    }
+    .control {
+      border: 1px dimgray solid;
+      border-radius: .6em;
+      background-color: #fffaf0;
+      padding: 0 4px;
+    }
+    .control:hover {
+      font-weight: bold;
+      cursor: pointer;
+      border-width: 2px;
+    }
+  </style>
+  <script src="../Common/js/jquery.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      var model = Object.create({
+        contextNames: ['BartStations', 'BartRoutes', 'BartArrivals'],
+        context: null,
+        collections: [
+          {
+            name: 'Cities',
+            attributes: [
+              {
+                name: 'state',
+                title: 'State'
+              },
+              {
+                name: 'county',
+                title: 'County'
+              },
+              {
+                name: 'city',
+                title: 'City'
+              }
+            ],
+            cases: [
+
+            ]
+          }
+        ],
+        reset: function () {
+          this.contextNames = null;
+          this.context = null;
+          this.collections = null;
+        }
+      });
+      var dataCardView = Object.create({
+        el: null,
+        model: null,
+
+        init: function(el, model) {
+          this.model = model;
+          this.el = el;
+        },
+
+        render: function () {
+          this.el.empty();
+          this.renderContextSelector(this.el, model.contextNames);
+          this.collections && this.collections.forEach(function (collection) {
+            this.renderCollection(this.el, collection);
+          }.bind(this));
+        },
+
+        renderContextSelector: function (rootEl, contextNameArray) {
+          var selectorSection = $('.context-selector-section', rootEl);
+          var el;
+
+          if (selectorSection.length === 0) {
+            selectorSection = $('<section>', {class: 'content-selector-section'}).appendTo(rootEl);
+            el = $('<label>').text('Context: ').appendTo(selectorSection);
+            el = $('<select>', {id: 'context-selector'}).appendTo(el);
+          }
+          el = $('select', selectorSection);
+          el.empty();
+          contextNameArray && contextNameArray.forEach(function (name) {
+            $('<option>').text(name).appendTo(el);
+          });
+        },
+
+        renderCollection: function (el, collection) {
+          var cardSection
+        }
+      });
+      dataCardView.init($('#content'), model);
+      dataCardView.render();
+    });
+  </script>
+  <title>Data Card</title>
+</head>
+
+<body>
+<header>
+    <h1>Data Card</h1>
+</header>
+<article id="content">
+
+</article>
+<section class="content-selector-section">
+  <label>Context:
+    <select id="context-selector">
+      <option id="BartStations" selected="selected" >BartStations</option>
+      <option id="BartRoutes" >BartRoutes</option>
+      <option id="BartArrivals" >BartArrivals</option>
+    </select>
+  </label>
+</section>
+<section class="card-section">
+  <div class="collection-name">Cities</div>
+  <div class="card-deck">
+    <div class="left-ctls">
+      <div class="control ctl-move-left">&lt;</div>
+    </div>
+    <div class="attr-container">
+      <div class="attr-list">
+        <div class="attr">State</div>
+        <div class="attr">County</div>
+        <div class="attr">City</div>
+      </div>
+    </div>
+    <div class="case-frame">
+      <div class="case-container">
+        <div class="case">
+          <div class="attr-value">California</div>
+          <div class="attr-value">Alameda</div>
+          <div class="attr-value">Oakland</div>
+        </div>
+        <div class="case">
+          <div class="attr-value">California</div>
+          <div class="attr-value">Alameda</div>
+          <div class="attr-value">Berkeley</div>
+        </div>
+      </div>
+    </div>
+    <div class="right-ctls">
+      <div class="control ctl-move-right">&gt;</div>
+      <div class="control ctl-add-case">&plus;</div>
+    </div>
+  </div>
+</section>
+<section class="card-section">
+  <div class="collection-name">Stations</div>
+  <div class="card-deck">
+    <div class="left-ctls">
+      <div class="control ctl-move-left">&lt;</div>
+    </div>
+    <div class="attr-container">
+      <div class="attr-list">
+        <div class="attr">Station Name</div>
+        <div class="attr">Station Abreviation</div>
+        <div class="attr">Address</div>
+        <div class="attr">Latitude</div>
+        <div class="attr">Longitude</div>
+      </div>
+    </div>
+    <div class="case-frame">
+    <div class="case-container">
+      <div class="case">
+        <div class="attr-value">Fruitvale</div>
+        <div class="attr-value">FRVL</div>
+        <div class="attr-value">3401 East 12th Street</div>
+        <div class="attr-value">37.77</div>
+        <div class="attr-value">-122.22</div>
+      </div>
+      <div class="case">
+        <div class="attr-value">Lake Merritt</div>
+        <div class="attr-value">LAKE</div>
+        <div class="attr-value">800 Madison Street</div>
+        <div class="attr-value">37.80</div>
+        <div class="attr-value">-122.27</div>
+      </div>
+      <div class="case">
+        <div class="attr-value">Downtown Berkeley</div>
+        <div class="attr-value">DBRK</div>
+        <div class="attr-value">2160 Shattuck Avenue</div>
+        <div class="attr-value">37.85</div>
+        <div class="attr-value">-122.26</div>
+      </div>
+    </div>
+    </div>
+    <div class="right-ctls">
+      <div class="control ctl-move-right">&gt;</div>
+      <div class="control ctl-add-case">&plus;</div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
