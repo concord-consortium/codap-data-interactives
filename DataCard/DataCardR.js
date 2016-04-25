@@ -83,7 +83,7 @@ var data = {
 var ContextSelector = React.createClass({
   render: function () {
     var options =
-        this.props.data.map(function (name) {
+        this.props.contexts.map(function (name) {
           return (
               <option key={name} > {name} </option>
           );
@@ -98,7 +98,7 @@ var ContextMenu = React.createClass({
   render: function () {
     return <section id="context-selector">
       <label>Context:&nbsp;
-        <ContextSelector data={this.props.data} />
+        <ContextSelector contexts={this.props.contexts} />
       </label >
     </section>
   }
@@ -106,7 +106,7 @@ var ContextMenu = React.createClass({
 
 var AttrList = React.createClass({
   render: function () {
-    var items = this.props.data.map(function (item) {
+    var items = this.props.attrs.map(function (item) {
       return <div key={item.name} className="attr">{item.title}</div>
     });
     return <div className="attr-list">{items}</div>
@@ -125,8 +125,8 @@ var CaseDisplay = React.createClass ({
 
 var CaseList = React.createClass({
   render: function () {
-    var cases = this.props.data.cases.map(function (myCase) {
-      return <CaseDisplay key={myCase.id} attrs={this.props.data.attrs} myCase={myCase}/>
+    var cases = this.props.collection.cases.map(function (myCase) {
+      return <CaseDisplay key={myCase.id} attrs={this.props.collection.attrs} myCase={myCase}/>
     }.bind(this));
     return <div className="case-container"> {cases} </div>
   }
@@ -135,16 +135,16 @@ var CaseList = React.createClass({
 var DataCard = React.createClass({
   render: function () {
     return <section className="card-section">
-      <div className="collection-name">{this.props.data.name}</div>
+      <div className="collection-name">{this.props.collection.name}</div>
       <div className="card-deck">
         <div className="left-ctls">
           <div className="control ctl-move-left">&lt;</div>
         </div>
         <div className="attr-container">
-          <AttrList data={this.props.data.attrs} />
+          <AttrList attrs={this.props.collection.attrs} />
         </div>
         <div className="case-frame">
-          <CaseList data={this.props.data} />
+          <CaseList collection={this.props.collection} />
         </div>
         <div className="right-ctls">
           <div className="control ctl-move-right">&gt;</div>
@@ -157,12 +157,13 @@ var DataCard = React.createClass({
 
 var DataCardApplication = React.createClass({
   render: function () {
+    var cards = this.props.data.collections.map(function (collection){
+      return <DataCard key={collection.name} collection={collection} />
+    });
     return <div>
-      <ContextMenu data={this.props.data.contexts} />
-      <DataCard data={this.props.data.collections[0]} />
-      <DataCard data={this.props.data.collections[1]} />
+      <ContextMenu contexts={this.props.data.contexts} />
+      {cards}
     </div>
-
   }
 });
 ReactDOM.render(<DataCardApplication data={data} />,
