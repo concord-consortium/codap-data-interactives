@@ -70,9 +70,11 @@ section label, section .collection-name {
 .attr, .attr-value {
   width: 200px;
   height: 20px;
-  border-radius: 5px;
   margin: 2px 1px 0;
   padding: 2px 4px;
+}
+.attr {
+  border-radius: 5px;
 }
 .attr {
   background-color: #fffaf0;
