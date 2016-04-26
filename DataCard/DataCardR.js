@@ -111,29 +111,76 @@ var DataCard = React.createClass({
 
 var DataCardApplication = React.createClass({
   moveCard: function (collectionName, direction) {
-    var newIx = null;
-    var collectionIx = this.data.collections.findIndex(function (collection) {
+    function adjustParentCard(collectionIx, myCase) {
+      if (collectionIx <= 0) {
+        return;
+      }
+      var parentId = myCase.parentId;
+      var parentCollection = collections[collectionIx - 1];
+      if (parentCollection.cases[parentCollection.currentCaseIndex].id === parentId) {
+        return;
+      }
+      var parentCaseIndex = parentCollection.cases.findIndex(function(iCase) {
+        return iCase.id === parentId;
+      });
+      console.log('adjustParentCard. ' + JSON.stringify({
+            parentId: parentId,
+            parentCollectionCaseIds: parentCollection.cases.map(function (iCase) {return iCase.id}),
+            collectionIx: collectionIx,
+            parentCaseIndex: parentCollection.currentCaseIndex
+          }));
+      if (parentCaseIndex >= 0) {
+        parentCollection.currentCaseIndex = parentCaseIndex;
+      }
+      adjustParentCard(collectionIx - 1, parentCollection.cases[parentCollection.currentCaseIndex])
+    }
+    function adjustChildCard(collectionIx, myCase){
+      if (collectionIx + 1 >= collections.length) {
+        return;
+      }
+      var parentId = myCase.id;
+      var childCollection = collections[collectionIx + 1];
+      var childCase  = childCollection.cases[childCollection.currentCaseIndex];
+      var childCaseIx;
+      if (childCase.parentId !== parentId) {
+        childCaseIx = childCollection.cases.findIndex(function (iCase) { return iCase.parentId === parentId; });
+        console.log('adjustChildCard. ' + JSON.stringify({
+              parentId: parentId,
+              childCollectionCaseIds: childCollection.cases.map(function (iCase) {return iCase.id}),
+              collectionIx: collectionIx,
+              childCaseIndex: childCaseIx
+            }));
+        if (childCaseIx >= 0) {
+          childCollection.currentCaseIndex = childCaseIx;
+        }
+        adjustChildCard(collectionIx + 1, childCollection.cases[childCollection.currentCaseIndex]);
+      }
+    }
+    var newCaseIx = null;
+    var collections = this.data.collections;
+    var collectionIx = collections.findIndex(function (collection) {
       return collection.name === collectionName;
     });
     var collection = (collectionIx >= 0) && this.data.collections[collectionIx];
+
     console.log('moveCard. ' + JSON.stringify({
           collection: collectionName,
           direction: direction,
-          ix: collectionIx,
+          collectionIx: collectionIx,
           length: collection.cases.length,
           currentCaseIndex: collection.currentCaseIndex
         }));
-
     if (collection) {
       if (direction === 'left' && collection.currentCaseIndex > 0) {
-        newIx = collection.currentCaseIndex - 1;
+        newCaseIx = collection.currentCaseIndex = collection.currentCaseIndex - 1;
       } else if (direction === 'right' && (collection.currentCaseIndex + 1) < collection.cases.length) {
-        newIx = collection.currentCaseIndex + 1;
+        newCaseIx = collection.currentCaseIndex = collection.currentCaseIndex + 1;
+      } else {
+        return;
       }
-      if (newIx !== null) {
-        this.data.collections[collectionIx].currentCaseIndex = newIx;
-        this.setState(this.data);
-      }
+      adjustParentCard(collectionIx, collection.cases[newCaseIx]);
+      adjustChildCard(collectionIx, collection.cases[newCaseIx]);
+      this.setState(this.data);
     }
   },
   data: {
@@ -222,7 +269,7 @@ var DataCardApplication = React.createClass({
         cases: [
           {
             id: 102,
-            parent: 2,
+            parentId: 2,
             values: {
               station_name: '12th St. Oakland City Center',
               abbreviation: '12TH',
@@ -233,7 +280,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 103,
-            parent: 2,
+            parentId: 2,
             values: {
               station_name: '19th St. Oakland',
               abbreviation: '19TH',
@@ -244,7 +291,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 104,
-            parent: 3,
+            parentId: 2,
             values: {
               station_name: 'Coliseum/Oakland Airport',
               abbreviation: 'COLS',
@@ -255,7 +302,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 105,
-            parent: 3,
+            parentId: 3,
             values: {
               station_name: '16th St. Mission',
               abbreviation: '16TH',
@@ -266,7 +313,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 106,
-            parent: 3,
+            parentId: 3,
             values: {
               station_name: '24th St. Mission',
               abbreviation: '24TH',
@@ -277,7 +324,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 107,
-            parent: 3,
+            parentId: 3,
             values: {
               station_name: 'Balboa Park',
               abbreviation: 'BALB',
@@ -288,7 +335,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 108,
-            parent: 3,
+            parentId: 3,
             values: {
               station_name: 'Civic Center/UN Plaza',
               abbreviation: 'CIVC',
@@ -299,7 +346,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 109,
-            parent: 4,
+            parentId: 4,
             values: {
               station_name: 'Ashby',
               abbreviation: 'ASHB',
@@ -310,7 +357,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 110,
-            parent: 5,
+            parentId: 5,
             values: {
               station_name: 'Bay Fair',
               abbreviation: 'BAYF',
@@ -321,7 +368,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 111,
-            parent: 6,
+            parentId: 6,
             values: {
               station_name: 'Castro Valley',
               abbreviation: 'CAST',
@@ -332,7 +379,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 112,
-            parent: 7,
+            parentId: 7,
             values: {
               station_name: 'Colma',
               abbreviation: 'COLM',
@@ -343,7 +390,7 @@ var DataCardApplication = React.createClass({
           },
           {
             id: 113,
-            parent: 8,
+            parentId: 8,
             values: {
               station_name: 'Concord',
               abbreviation: 'CONC',
