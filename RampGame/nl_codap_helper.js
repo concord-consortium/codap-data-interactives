@@ -10,8 +10,15 @@
  * You should replace things bracketed by double-dashes with what applies to your simulation.
  */
 function codapCallInitGame() {
+  if( !window.codapPhone) {
+    console.log( 'Initializing codapPhone ...');
+    window.codapPhone = new iframePhone.IframePhoneRpcEndpoint(codapDoCommand, "codap-game", window.parent);
+    window.setTimeout( codapCallInitGame, 1000);
+    return;
+  }
   if( !window.codapPhone.isConnected()) {
     window.setTimeout( codapCallInitGame, 1000);
+    console.log('Waiting for codapPhone connection ...');
     return;
   }
   window.codapPhone.call({
@@ -282,12 +289,3 @@ function stopForevers() {
   });
 }
 
-/*
-function testCODAP() {
-  window.codapPhone = new iframePhone.IframePhoneRpcEndpoint(codapDoCommand, "codap-game", window.parent);
-  window.setTimeout(codapCallInitGame, 100);
-}
-*/
-//window.setTimeout( function() {
-  window.codapPhone = new iframePhone.IframePhoneRpcEndpoint(codapDoCommand, "codap-game", window.parent);
-//}, 4000);

@@ -61384,11 +61384,6 @@ globals [
   graph-bottom
 ;  current-color         ; records the color of the current car
 
-  ; log variables
-  log-message
-  log-arg-1
-  log-arg-2
-  log-arg-3
 ]
 
 
@@ -61410,23 +61405,11 @@ graph-dots-own [distance-traveled start-hght frctn mss brightness]  ; brightness
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to data-export-log-event [ a b c d ]
-  let temp 0
-  ;;__javascript-eval ""
-end
-
-to data-export-log-event1
-  ;;__javascript-eval (word "console.log('message: " log-message "')")
-  ;;__javascript-eval (word "console.log('arg-1: " log-arg-1 "')")
-  ;;__javascript-eval (word "console.log('arg-2: " log-arg-2 "')")
-  let temp (word "logCODAPAction('" log-message "',['" log-arg-1 "','" log-arg-2 "','" log-arg-3 "'])")
-  __javascript-eval temp
-  set log-message ""
-  set log-arg-1 ""
-  set log-arg-2 ""
-  set log-arg-3 ""
+  __javascript-eval (word "logCODAPAction('" a "',['" b "','" c "','" d "'])")
 end
 
 to data-export-clear-last-run
+  __javascript-eval "codapReset()"
 end
 
 to data-export-update-run-series [ a ]
@@ -61451,10 +61434,6 @@ to startup  ; structured this way in order to have a start page
   set waiting-for-setup? false
   ;; CODAP
   __javascript-eval "codapCallInitGame()"
-  ;;__javascript-eval "logCODAPAction('in startup')"
-  set log-message "in startup %@"
-  set log-arg-1 "first time"
-  data-export-log-event1
   ;;
 end
 
@@ -61930,16 +61909,13 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
 to setup-new-run
-  ;;if not waiting-for-setup? [ set log-message "User tried to setup a new run before analyzing data."
-  ;;  data-export-log-event1
+  ;;if not waiting-for-setup? [data-export-log-event "User tried to setup a new run before analyzing data." "" "" ""
   ;;  stop]
   set waiting-for-setup? false
   set step next-step 
   set level next-level
   let endpoint 0
-  set log-message "User set up a new run. %@"
-  set log-arg-1 (create-run-parameter-list endpoint)
-  data-export-log-event1
+  data-export-log-event "User set up a new run. %@" (create-run-parameter-list endpoint) "" ""
   set waiting-for-setup? false
   set waiting-for-start? true
   my-clear-output
@@ -61963,7 +61939,7 @@ to setup-new-run
   show-target                    ; shows the target for this level and step
   pretty-print instructions
   ;; CODAP
-  __javascript-eval "codapReset()"
+  ;;__javascript-eval "codapReset()"
   ;;
   tick
 end
@@ -61991,18 +61967,14 @@ end
 
 to start-run
   if waiting-for-setup? [
-    set log-message "User tried to start before pressing 'setup'."
-    data-export-log-event1
+    data-export-log-event "User tried to start before pressing 'setup'." "" "" ""
     stop]  ; ignore this procedure if the next user action must be pressing the setup button
   if not waiting-for-start? [stop]
-  if running? [
-    set log-message "User tried to start while running."
-    data-export-log-event1
+  if running? [data-export-log-event "User tried to start while running." "" "" ""
     stop]            ; ignore if running
   if car-x >= 0 [
     pretty-print "Place the car on the ramp." 
-    set log-message "User tried to start with car on the level floor."
-    data-export-log-event1
+    data-export-log-event "User tried to start with car on the level floor." "" "" ""
     stop ] ; if the car is not on the ramp, stop
   set data-saved? false
   set waiting-for-start? false
@@ -62010,10 +61982,7 @@ to start-run
   set car-speed 0
   let endpoint 0
   set endpoint precision car-x 2
-  set log-message "User started the model with the following level and step: %@ %@"
-  set log-arg-1 (word  level " " step ".")
-  set log-arg-2 (create-run-parameter-list endpoint)
-  data-export-log-event1
+  data-export-log-event (word "User started the model with the following level and step: " level " " step ". %@") (create-run-parameter-list endpoint) "" ""
   set running? true
   set time 0
 end
@@ -62253,10 +62222,8 @@ to update-score  ; called once by analyze-data
       if total-score < 0 [set total-score 0 ]] 
     ]
     
-  set log-message (word "User score: " score-last-run ".")
-  data-export-log-event1
-  set log-message (word "User max score:" max-score ".")
-  data-export-log-event1
+  data-export-log-event (word "User score: " score-last-run ".") "" "" ""
+  data-export-log-event (word "User max score:" max-score ".") "" "" ""
 end             
 
 to display-help-message 
@@ -62337,8 +62304,7 @@ to display-help-message
   ; update the messages-shown list (useful for logging)
   set messages-shown replace-item (level - 1) messages-shown (number-shown-already + 1)
   ; set number-of-hints reduce + messages-shown
-  set log-message (word "User received the message " m)
-  data-export-log-event1
+  data-export-log-event (word "User received the message " m) "" "" ""
 end
 
 to-report score-display
@@ -62348,8 +62314,7 @@ to-report score-display
 end
 
 to analyze-data ;
-  if not ready-for-export? [ set log-message "User tried to analyze data before a run."
-    data-export-log-event1
+  if not ready-for-export? [data-export-log-event "User tried to analyze data before a run." "" "" ""
     stop]    
   my-clear-output
   capture-final-state
@@ -62810,9 +62775,8 @@ to update-run-series [endpoint]
   let student-inputs          []
   let run-series-data ( list computational-inputs representational-inputs computational-outputs student-inputs )
   data-export-update-run-series run-series-data
-  ;;set log-message "User exported the model %@."
-  ;;set log-arg-1 (create-run-parameter-list endpoint)
-  ;;data-export-log-event1
+  ;; The following attempt to log produces the compile time error: You can't use UPDATE-RUN-SERIES in a turtle context, because UPDATE-RUN-SERIES is observer-only.
+  ;;data-export-log-event "User explorted the model. %@" (create-run-parameter-list endpoint) "" ""
 end
 
 to-report create-run-parameter-list [endpoint]
@@ -63687,11 +63651,11 @@ Line -7500403 true 150 150 210 180
             width = activeContainer.offsetWidth;
             height = activeContainer.offsetHeight;
 //		CODAP
-//             parent.postMessage({
-//               width:  activeContainer.offsetWidth,
-//               height: activeContainer.offsetHeight,
-//               title:  document.title
-//             }, "*");
+             parent.postMessage({
+               width:  activeContainer.offsetWidth,
+               height: activeContainer.offsetHeight,
+               title:  document.title
+             }, "*");
           }
         }, 200);
       }
