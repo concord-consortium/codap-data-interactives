@@ -61413,7 +61413,6 @@ to data-export-clear-last-run
 end
 
 to data-export-update-run-series [ a ]
-  ;;__javascript-eval "console.log('in update-run-series')"
 end
 
 to data-export-initialize [ a ]
@@ -61432,7 +61431,6 @@ to startup  ; structured this way in order to have a start page
   set running? false
   set ready-for-export? false
   set waiting-for-setup? false
-  ;; CODAP
   __javascript-eval "codapCallInitGame()"
   ;;
 end
@@ -61938,9 +61936,6 @@ to setup-new-run
 ;  set waiting-for-setup? false  ; ignore this procedure if the next user action must be pressing the setup button
   show-target                    ; shows the target for this level and step
   pretty-print instructions
-  ;; CODAP
-  ;;__javascript-eval "codapReset()"
-  ;;
   tick
 end
 
@@ -62318,9 +62313,9 @@ to analyze-data ;
     stop]    
   my-clear-output
   capture-final-state
-  ;; CODAP
+
   __javascript-eval "codapGo()"
-  ;;
+
   update-score         ; computes and displays the score  
   get-next-step        ; computes next-step and next-level and prints result, but doesn't display the new level/step
   if next-level = 1 and next-step = 1 [
