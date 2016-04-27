@@ -95,6 +95,10 @@ section label, section .collection-name {
   border-radius: .6em;
   background-color: #fffaf0;
   padding: 0 4px;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */
 }
 .control:hover {
   font-weight: bold;
