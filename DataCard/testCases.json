@@ -84,6 +84,113 @@
 
   {
     "action": "create",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].cases",
+    "values": {
+      "values": {
+        "name": "Mickey",
+        "age": 88,
+        "height": 40
+      }
+    }
+  }, {
+    "action": "create",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].cases",
+    "values": [
+      {
+        "values": {
+          "name": "Minnie",
+          "age": 88,
+          "height": 38
+        }
+      }, {
+        "values": {
+          "name": "Donald",
+          "age": 82,
+          "height": 51
+        }
+      }
+    ]
+  },
+
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "calculator"
+    }
+  }, {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "map",
+      "dimensions": {"width":240, "height": 240}
+    }
+  },
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "slider",
+      "name": "ageSlider",
+      "lowerBound": -0.5,
+      "upperBound": 21.5,
+      "animationDirection": 1,
+      "animationMode": 1,
+      "title": "ageSlider"
+    }
+  },
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "text",
+      "componentStorage": {
+        "text": "T'was brillig and the slithy toves did gyre and gimble in the wabe."
+      }
+    }
+  },
+
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "graph",
+      "name": "HeightAge",
+      "dimensions": {"width":240, "height": 240},
+      "position": "top",
+      "dataContext": "DataCards",
+      "xAttribute": "age",
+      "yAttribute": "height"
+    }
+  },
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "caseTable",
+      "dimensions": {"width":480, "height": 200},
+      "dataContext": "DataCard"
+    }
+  },
+
+  {
+    "action": "create",
+    "resource": "doc.component",
+    "values": {
+      "type": "webView",
+      "title": "Concord",
+      "url": "http://www.concord.org"
+    }
+  },
+
+
+  {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].cases"
+  },
+
+  {
+    "action": "create",
     "resource": "logAction",
     "values": {
       "formatStr": "Test log message: %@",

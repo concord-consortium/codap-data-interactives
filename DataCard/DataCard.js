@@ -8,6 +8,41 @@ $(function () {
     }
   };
 
+  var CodapHelper = Object.create({
+    codapPhone: null,
+
+    connect: function () {
+      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+      }, "data-interactive", window.parent);
+    },
+
+    get: function(resource, callback) {
+      this.codapPhone.call({
+        action: 'get',
+        resource: resource
+      }, callback);
+    },
+
+    getDataContextList: function (callback) {
+      this.get( 'dataContext', callback);
+    },
+
+    getDataContext: function (contextName, callback) {
+      this.get( 'dataContext[' + contextName + ']', callback);
+    },
+
+    getCollectionList: function (contextName, callback) {
+      this.get('dataContext[' + contextName + '].collection', callback);
+    },
+
+    getCollection: function (contextName, collectionName, callback) {
+      this.get('dataContext[' + contextName + '].collection[' + collectionName + ']', callback);
+    },
+
+    getAttributeList: function(contextName, collectionName, callback) {
+      this.get('dataContext[' + contextName + '].collection[' + collectionName + '].attributes', callback);
+    }
+  });
   var DataCard = {
 
     /**
@@ -44,7 +79,7 @@ $(function () {
 
       this.codapPhone.call({
         action: 'get',
-        what: { resource: 'doc.interactiveFrame'}
+        resource: 'doc.interactiveFrame'
       }, function (result) {
         this.logResult(result);
         if (!result || !result.success){
@@ -57,7 +92,7 @@ $(function () {
             (result.values.dimensions && result.values.dimensions.height) || 0);
           this.codapPhone.call({
             action: 'update',
-            what: { resource: 'doc.interactiveFrame'},
+            resource: 'doc.interactiveFrame',
             values: {
               title: 'Data Card',
               version: '0.1',
@@ -73,9 +108,7 @@ $(function () {
     addContext: function () {
       this.codapPhone.call({
         action: 'create',
-        what: {
-          resource: 'doc.dataContext'
-        },
+        resource: 'doc.dataContext',
         values: {
           name: "DataCard",
           title: "Data Card",
@@ -95,9 +128,7 @@ $(function () {
           });
       this.codapPhone.call({
         action: 'create',
-        what: {
-          resource: 'doc.dataContext[DataCard].collection'
-        },
+        resource: 'doc.dataContext[DataCard].collection',
         values: {
           name: 'DataCards',
           title: this.collectionName,
@@ -110,10 +141,8 @@ $(function () {
     addCase: function (iCase) {
       this.codapPhone.call({
             action: 'create',
-            what: {
-              resource: 'doc.dataContext[DataCard].collection[DataCards].case'
-            },
-            values: {
+            resource: 'doc.dataContext[DataCard].collection[DataCards].cases',
+        values: {
               values: iCase
             }
           },
@@ -123,7 +152,7 @@ $(function () {
     displayCollectionTitle: function () {
       this.codapPhone.call({
         action: 'get',
-        what: { resource: 'doc.dataContext[DataCard].collection[DataCards]'}
+        resource: 'doc.dataContext[DataCard].collection[DataCards]'
       }, function (result) {
         this.logResult(result);
         if (!result || !result.success) { return; }
@@ -134,9 +163,7 @@ $(function () {
       this.collectionName = name;
       this.codapPhone.call({
         action: 'update',
-        what: {
-          resource: 'doc.dataContext[DataCard].collection[DataCards]'
-        },
+        resource: 'doc.dataContext[DataCard].collection[DataCards]',
         values: {
           title: name
         }
