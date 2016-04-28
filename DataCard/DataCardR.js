@@ -78,14 +78,14 @@ var dataManager = Object.create({
       });
       console.log('adjustParentCard. ' + JSON.stringify({
             parentId: parentId,
-            parentCollectionCaseIds: parentCollection.cases.map(function (iCase) {return iCase.guid}),
+            parentCollectionCaseIds: parentCollection.cases.map(function (iCase) {return iCase.guid;}),
             collectionIx: collectionIx,
             parentCaseIndex: parentCollection.currentCaseIndex
           }));
       if (parentCaseIndex >= 0) {
         parentCollection.currentCaseIndex = parentCaseIndex;
       }
-      adjustParentCard(collectionIx - 1, parentCollection.cases[parentCollection.currentCaseIndex])
+      adjustParentCard(collectionIx - 1, parentCollection.cases[parentCollection.currentCaseIndex]);
     }
     function adjustChildCard(collectionIx, myCase){
       if (collectionIx + 1 >= collections.length) {
@@ -99,7 +99,7 @@ var dataManager = Object.create({
         childCaseIx = childCollection.cases.findIndex(function (iCase) { return iCase.parent === parentId; });
         console.log('adjustChildCard. ' + JSON.stringify({
               parentId: parentId,
-              childCollectionCaseIds: childCollection.cases.map(function (iCase) {return iCase.guid}),
+              childCollectionCaseIds: childCollection.cases.map(function (iCase) {return iCase.guid;}),
               collectionIx: collectionIx,
               childCaseIndex: childCaseIx
             }));
@@ -205,9 +205,19 @@ var dispatcher = Object.create({
   });
 
 var ContextMenu = React.createClass({
+  getInitialState: function () {
+    return {hasSelectedFirstOption: false};
+  },
   render: function () {
+    function fetchContext(contextName) {
+      dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' + contextName + ']'});
+    }
     function handleSelect(ev) {
-      dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' + ev.target.value + ']'});
+      fetchContext(ev.target.value);
+    }
+    if ((this.props.contexts.length > 0) && !this.state.hasSelectedFirstOption) {
+      this.setState({hasSelectedFirstOption: true});
+      fetchContext(this.props.contexts[0].name);
     }
     var options = this.props.contexts.map(function (context) {
       var title = context.title || context.name;
@@ -271,21 +281,24 @@ var DataCard = React.createClass({
     this.props.onNavigation && this.props.onNavigation(this.props.collection.name, direction);
   },
   render: function () {
+    var collection = this.props.collection;
+    var title = collection.title || collection.name;
     return <section className="card-section">
-      <div className="collection-name">{this.props.collection.title}</div>
+      <div className="collection-name">{title}</div>
       <div className="card-deck">
         <div className="left-ctls">
           <CaseNavControl action="left" onNavigation={this.moveCard} />
         </div>
         <div className="attr-container">
-          <AttrList attrs={this.props.collection.attrs} />
+          <AttrList attrs={collection.attrs} />
         </div>
         <div className="case-frame">
-          <CaseList collection={this.props.collection} />
+          <CaseList collection={collection} />
         </div>
         <div className="right-ctls">
           <CaseNavControl action="right"  onNavigation={this.moveCard}/>
           <div className="control ctl-add-case">+</div>
+          <div className="control ctl-add-case"><span>&times;</span></div>
         </div>
       </div>
     </section>
