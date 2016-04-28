@@ -17,6 +17,9 @@
 //  limitations under the License.
 // ==========================================================================
 /* jshint strict: false */
+/**
+ * dataManager responsible for managing the CaseTableApp's state
+ */
 var dataManager = Object.create({
 
   init: function () {
@@ -143,6 +146,11 @@ var dataManager = Object.create({
 
 }).init();
 
+/**
+ * dispatcher is responsible for routing actions
+ *
+ * @type {Object}
+ */
 var dispatcher = Object.create({
   //connection: null,
   //connectionState: 'uninitialized',
@@ -162,6 +170,7 @@ var dispatcher = Object.create({
         "action": "get",
         "resource": "doc.dataContext"
       });
+      return this;
     },
 
     sendRequest: function (request) {
@@ -202,8 +211,13 @@ var dispatcher = Object.create({
       }
     }
 
-  });
+  }).init();
 
+/**
+ * ContextMenu provides list of DataContexts present in CODAP and an interface for
+ * selecting one.
+ * @type {ClassicComponentClass<P>}
+ */
 var ContextMenu = React.createClass({
   getInitialState: function () {
     return {hasSelectedFirstOption: false};
@@ -233,6 +247,10 @@ var ContextMenu = React.createClass({
   }
 });
 
+/**
+ * AttrList presents a list of attributes for a data card.
+ * @type {ClassicComponentClass<P>}
+ */
 var AttrList = React.createClass({
   render: function () {
     var items = this.props.attrs.map(function (item) {
@@ -344,5 +362,4 @@ var DataCardApp = React.createClass({
 
 ReactDOM.render(<DataCardApp data={dataManager} />,
     document.getElementById('container'));
-dispatcher.init();
 
