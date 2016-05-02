@@ -1,5 +1,7 @@
 [
   {
+    "comment": "Set interactive frame ......",
+
     "action": "update",
     "resource": "doc.interactiveFrame",
     "values": {
@@ -13,10 +15,11 @@
   },
 
   {
+    "comment": "Create a data Context .......",
     "action": "create",
     "resource": "doc.dataContext",
     "values": {
-      "name": "DataCard",
+      "name": "DataCard1",
       "title": "Data Card",
       "description": "Displays individual items in a set of data, one item at a time."
     }
@@ -26,13 +29,15 @@
     "values": { "title": "Data, Data, Data"}
   }, {
     "action": "get",
-    "resource": "doc.dataContext"
+    "resource": "doc.dataContextList"
   }, {
     "action": "get",
     "resource": "doc.dataContext[DataCard]"
   },
 
   {
+    "comment": "Create a collection ........",
+
     "action": "create",
     "resource": "doc.dataContext[DataCard].collection",
     "values": {
@@ -47,7 +52,7 @@
     }
   }, {
   "action": "get",
-  "resource": "doc.dataContext[DataCard].collection"
+  "resource": "doc.dataContext[DataCard].collectionList"
   }, {
   "action": "get",
   "resource": "doc.dataContext[DataCard].collection[DataCards]"
@@ -55,6 +60,8 @@
 
 
   {
+    "comment": "Create attributes ..........",
+
     "action": "create",
     "resource": "doc.dataContext[DataCard].collection[DataCards].attributes",
     "values": [ {
@@ -83,6 +90,8 @@
   },
 
   {
+    "comment": "create some cases ......",
+
     "action": "create",
     "resource": "doc.dataContext[DataCard].collection[DataCards].cases",
     "values": {
@@ -110,105 +119,14 @@
         }
       }
     ]
-  },
-
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "calculator"
-    }
   }, {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "map",
-      "dimensions": {"width":240, "height": 240}
-    }
-  },
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "slider",
-      "name": "ageSlider",
-      "lowerBound": -0.5,
-      "upperBound": 21.5,
-      "animationDirection": 1,
-      "animationMode": 1,
-      "title": "ageSlider"
-    }
-  },
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "text",
-      "componentStorage": {
-        "text": "T'was brillig and the slithy toves did gyre and gimble in the wabe."
-      }
-    }
-  },
-
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "graph",
-      "name": "HeightAge",
-      "dimensions": {"width":240, "height": 240},
-      "position": "top",
-      "dataContext": "DataCards",
-      "xAttribute": "age",
-      "yAttribute": "height"
-    }
-  },
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "caseTable",
-      "dimensions": {"width":480, "height": 200},
-      "dataContext": "DataCard"
-    }
-  },
-
-  {
-    "action": "create",
-    "resource": "doc.component",
-    "values": {
-      "type": "webView",
-      "title": "Concord",
-      "url": "http://www.concord.org"
-    }
-  },
-
-
-  {
     "action": "get",
-    "resource": "doc.dataContext[DataCard].collection[DataCards].cases"
-  },
-
-  {
-    "action": "create",
-    "resource": "logAction",
-    "values": {
-      "formatStr": "Test log message: %@",
-      "replaceArgs": "test"
-    }
-  },
-
-  {
-    "action": "delete",
-    "resource": "doc.dataContext[DataCard].collection[DataCards].attributes[age]"
+    "resource": "doc.dataContext[DataCard].collection[DataCards].caseCount"
+  }, {
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].caseByIndex[0]"
   },{
-    "action": "delete",
-    "resource": "doc.dataContext[DataCard].collection[DataCards]"
-  }, {
-    "action": "delete",
-    "resource": "doc.dataContext[DataCard]"
-  }, {
-    "action": "delete",
-    "resource": "doc.interactiveFrame"
+    "action": "get",
+    "resource": "doc.dataContext[DataCard].collection[DataCards].caseByIndex[1]"
   }
 ]
