@@ -54,17 +54,77 @@ var dataManager = Object.create({
   },
 
   setContextList: function (contextList) {
+    function fetchContext(contextName) {
+      dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' + contextName + ']'});
+    }
     this.data.contexts = contextList;
+    if (contextList.length > 0) {
+      fetchContext(contextList[0].name);
+    }
     this.notify();
   },
 
   setDataCards: function (context) {
+    function fetchFirstCase(contextName, collectionName) {
+      dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' +
+        contextName + '].collection[' + collectionName + '].caseByIndex[0]'});
+    }
+    this.data.currentContext = context.name;
     this.data.collections = context.collections;
     this.data.collections.forEach(function(collection) {
       collection.currentCaseIndex = 0;
-    });
+      var contextName = this.data.currentContext;
+      fetchFirstCase(contextName, collection.name);
+    }.bind(this));
+    this.data.hasSelectedContext = true;
     this.notify();
   },
+
+  setCase: function (iCollectionName, values) {
+    function guaranteeLeftCollectionIsParent(parentCollection, parentID, context) {
+      var parentCase = parentCollection.currentCase;
+      var resource;
+      if (parentCase && parentCase.guid !== parentID) {
+        resource = 'doc.dataContext[' + context + '].collection['
+            + parentCollection.name + '].caseByID[' + parentID + ']';
+        dispatcher.sendRequest({action: 'get', resource: resource});
+      }
+    }
+
+    function guaranteeRightCollectionIsChild(childCollection, myCase, context) {
+      var childCase = childCollection.currentCase;
+      var resource;
+      if (childCase && childCase.parent !== myCase.guid) {
+        if (myCase.children) {
+          resource = 'doc.dataContext[' + context + '].collection[' +
+              childCollection.name + '].caseByID[' + myCase.children[0] + ']';
+          dispatcher.sendRequest({action: 'get', resource: resource});
+        }
+      }
+    }
+
+    var myCase = values.case;
+    var caseIndex = values.caseIndex;
+    var collections = this.data.collections;
+    var collectionIndex = collections.findIndex(function (coll) {
+      return coll.name === iCollectionName;
+    });
+    if (collectionIndex >= 0) {
+      var collection = collections[collectionIndex];
+      collection.currentCaseIndex = Number(caseIndex);
+      collection.currentCase = myCase;
+      if (collectionIndex > 0) {
+        guaranteeLeftCollectionIsParent(collections[collectionIndex - 1],
+            myCase.parent, this.data.currentContext);
+      }
+      if (collectionIndex < collections.length - 1) {
+        guaranteeRightCollectionIsChild(collections[collectionIndex + 1],
+            myCase, this.data.currentContext);
+      }
+      this.notify();
+    }
+  },
+
 
   moveCard: function (collectionName, direction) {
     function adjustParentCard(collectionIx, myCase) {
@@ -152,9 +212,11 @@ var dataManager = Object.create({
  * @type {Object}
  */
 var dispatcher = Object.create({
-  //connection: null,
-  //connectionState: 'uninitialized',
-  //connectionSendCount: 0,
+/*
+    connection: null,
+    connectionState: 'uninitialized',
+    connectionSendCount: 0,
+*/
     init: function () {
       this.connection = new iframePhone.IframePhoneRpcEndpoint(function () {
       }, "data-interactive", window.parent);
@@ -168,7 +230,7 @@ var dispatcher = Object.create({
       });
       this.sendRequest({
         "action": "get",
-        "resource": "doc.dataContext"
+        "resource": "doc.dataContextList"
       });
       return this;
     },
@@ -179,7 +241,32 @@ var dispatcher = Object.create({
       }.bind(this));
     },
 
+    parseResourceSelector: function (iResource) {
+      var selectorRE = /([A-Za-z0-9_]+)\[([A-Za-z0-9_]+)\]/;
+      var result = {};
+      var selectors = iResource.split('.');
+      var baseSelector = selectors.shift();
+      result.type = baseSelector;
+      if (baseSelector === 'doc') {
+        selectors.forEach(function (selector) {
+          var rtype, rname;
+          var match = selectorRE.exec(selector);
+          if (selectorRE.test(selector)) {
+            rtype = match[1];
+            rname = match[2];
+            result[rtype] = rname;
+            result.type = rtype;
+          } else {
+            result.type = selector;
+          }
+        });
+      }
+
+      return result;
+    },
+
     handleResponse: function (request, result) {
+      var resourceObj = this.parseResourceSelector(request.resource);
       if (!result) {
         console.log('Request to CODAP timed out: ' + JSON.stringify(request));
         this.connectionState = 'timed-out';
@@ -188,29 +275,24 @@ var dispatcher = Object.create({
         this.connectionState = 'active';
       } else if (request.action === 'get') {
         this.connectionState = 'active';
-        if (request.resource === 'doc.dataContext') {
-          this.doAction({action: 'updateContextList', data: result.values});
-        } else if (/doc.dataContext\[.*]/.test(request.resource)){
-          this.doAction({action: 'setDataCards', data: result.values});
+        switch (resourceObj.type) {
+          case 'dataContextList':
+            dataManager.setContextList(result.values);
+            break;
+          case 'dataContext':
+            dataManager.setDataCards(result.values);
+            break;
+          case 'caseByIndex':
+          case 'caseByID':
+            dataManager.setCase(resourceObj.collection, result.values);
+            break;
+          default:
+            console.log('No handler for get response: ' + request.resource);
         }
       } else {
         this.connectionState = 'active';
       }
     },
-
-    doAction: function (operation) {
-      switch (operation.action) {
-        case 'updateContextList' :
-          dataManager.setContextList(operation.data);
-          break;
-        case 'setDataCards' :
-          dataManager.setDataCards(operation.data);
-          break;
-        default:
-          console.log('unhandled action: ' + operation.action);
-      }
-    }
-
   }).init();
 
 /**
@@ -219,19 +301,12 @@ var dispatcher = Object.create({
  * @type {ClassicComponentClass<P>}
  */
 var ContextMenu = React.createClass({
-  getInitialState: function () {
-    return {hasSelectedFirstOption: false};
-  },
   render: function () {
     function fetchContext(contextName) {
       dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' + contextName + ']'});
     }
     function handleSelect(ev) {
       fetchContext(ev.target.value);
-    }
-    if ((this.props.contexts.length > 0) && !this.state.hasSelectedFirstOption) {
-      this.setState({hasSelectedFirstOption: true});
-      fetchContext(this.props.contexts[0].name);
     }
     var options = this.props.contexts.map(function (context) {
       var title = context.title || context.name;
@@ -265,7 +340,8 @@ var CaseDisplay = React.createClass ({
   render: function () {
     var myCase = this.props.myCase;
     var values = this.props.attrs.map(function (attr) {
-      return <div className="attr-value" key={attr.name}>{myCase.values[attr.name]}</div>;
+      var value = myCase? myCase.values[attr.name]: '';
+      return <div className="attr-value" key={attr.name}>{value}</div>;
     });
     return <div className="case">{values}</div>;
   }
@@ -274,8 +350,9 @@ var CaseDisplay = React.createClass ({
 var CaseList = React.createClass({
   render: function () {
     var caseIndex = this.props.collection.currentCaseIndex || 0;
-    var myCase = this.props.collection.cases[caseIndex];
-    var caseView = <CaseDisplay key={myCase.guid} attrs={this.props.collection.attrs} myCase={myCase}/>;
+    var myCase = this.props.collection.currentCase;
+    var id = myCase? myCase.guid: 'new';
+    var caseView = <CaseDisplay key={id} attrs={this.props.collection.attrs} myCase={myCase}/>;
     return <div className="case-container"> {caseView} </div>;
   }
 });
@@ -296,7 +373,15 @@ var CaseNavControl = React.createClass({
 var DataCard = React.createClass({
   moveCard: function (direction) {
     console.log('moveCard: direction: ' + direction);
-    this.props.onNavigation && this.props.onNavigation(this.props.collection.name, direction);
+    var increment = {left: -1, right: 1}[direction];
+    var contextName = this.props.context;
+    var collectionName = this.props.collection.name;
+    if (increment) {
+      var requestedIndex = this.props.collection.currentCaseIndex + increment;
+      var resource = 'doc.dataContext[' + contextName + '].collection[' + collectionName +
+          '].caseByIndex[' + requestedIndex + ']'
+      dispatcher.sendRequest({action: 'get', resource: resource});
+    }
   },
   render: function () {
     var collection = this.props.collection;
@@ -350,7 +435,9 @@ var DataCardApp = React.createClass({
   render: function () {
     var ix = 0;
     var cards = this.state.collections.map(function (collection){
-      return <DataCard key={'collection' + ix++} collection={collection}
+      return <DataCard key={'collection' + ix++}
+                       context={this.state.currentContext}
+                       collection={collection}
                        onNavigation={this.navigate} />
     }.bind(this));
     return <div>
