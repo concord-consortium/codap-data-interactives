@@ -17,6 +17,7 @@
 //  limitations under the License.
 // ==========================================================================
 /* jshint strict: false */
+/*global console:true,iframePhone:true,React:true, ReactDOM:true */
 /**
  * dataManager responsible for managing the CaseTableApp's state
  */
@@ -43,7 +44,7 @@ var dataManager = Object.create({
     this.listeners = this.listeners || [];
     var ix = this.listeners.indexOf(listener);
     if (ix >= 0) {
-      listeners.splice(ix, 1);
+      this.listeners.splice(ix, 1);
     }
   },
 
@@ -85,8 +86,8 @@ var dataManager = Object.create({
       var parentCase = parentCollection.currentCase;
       var resource;
       if (parentCase && parentCase.guid !== parentID) {
-        resource = 'doc.dataContext[' + context + '].collection['
-            + parentCollection.name + '].caseByID[' + parentID + ']';
+        resource = 'doc.dataContext[' + context + '].collection[' +
+            parentCollection.name + '].caseByID[' + parentID + ']';
         dispatcher.sendRequest({action: 'get', resource: resource});
       }
     }
@@ -362,8 +363,10 @@ var CaseNavControl = React.createClass({
     left: '<',
     right: '>'
   },
-  handleClick(ev) {
-    this.props.onNavigation && this.props.onNavigation(this.props.action);
+  handleClick: function (ev) {
+    if (this.props.onNavigation) {
+      this.props.onNavigation(this.props.action);
+    }
   },
   render: function () {
     return <div className="control" onClick={this.handleClick}>{this.symbol[this.props.action]}</div>
@@ -417,7 +420,7 @@ var DataCardApp = React.createClass({
     this.setState(dataManager.getState());
   },
 
-  getInitialState() {
+  getInitialState: function () {
     return {
       contexts: [],
       currentContext: null,
@@ -425,13 +428,14 @@ var DataCardApp = React.createClass({
     };
   },
 
-  componentDidMount() {
+  componentDidMount: function () {
     dataManager.register(this);
   },
 
-  componentWillUnmount() {
+  componentWillUnmount: function () {
     dataManager.unregister(this);
   },
+
   render: function () {
     var ix = 0;
     var cards = this.state.collections.map(function (collection){
