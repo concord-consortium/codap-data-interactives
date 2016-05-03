@@ -337,12 +337,25 @@ var AttrList = React.createClass({
   }
 });
 
+var CaseValue = React.createClass ({
+  getInitialState: function () {
+    return {value: this.props.value};
+  },
+  handleChange: function (ev) {
+    this.setState({value: ev.target.value});
+  },
+  render: function () {
+    return <input className="attr-value" key={this.props.name} value={this.state.value}
+                  onChange={this.handleChange} />;
+  }
+});
+
 var CaseDisplay = React.createClass ({
   render: function () {
     var myCase = this.props.myCase;
     var values = this.props.attrs.map(function (attr) {
       var value = myCase? myCase.values[attr.name]: '';
-      return <div className="attr-value" key={attr.name}>{value}</div>;
+      return <CaseValue className="attr-value" key={attr.name} value={value} />;
     });
     return <div className="case">{values}</div>;
   }
@@ -395,11 +408,16 @@ var DataCard = React.createClass({
         <div className="left-ctls">
           <CaseNavControl action="left" onNavigation={this.moveCard} />
         </div>
-        <div className="attr-container">
-          <AttrList attrs={collection.attrs} />
-        </div>
-        <div className="case-frame">
-          <CaseList collection={collection} />
+        <div className="card-content">
+          <div className="case-display">
+            <div className="attr-container">
+              <AttrList attrs={collection.attrs} />
+            </div>
+            <div className="case-frame">
+              <CaseList collection={collection} />
+            </div>
+            </div>
+          <input type="button" className="update-case" value="Update" />
         </div>
         <div className="right-ctls">
           <CaseNavControl action="right"  onNavigation={this.moveCard}/>
