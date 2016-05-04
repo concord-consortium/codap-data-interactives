@@ -293,7 +293,7 @@ var dispatcher = Object.create({
       } else {
         this.connectionState = 'active';
       }
-    },
+    }
   }).init();
 
 /**
@@ -302,6 +302,9 @@ var dispatcher = Object.create({
  * @type {ClassicComponentClass<P>}
  */
 var ContextMenu = React.createClass({
+  propTypes: {
+    contexts: React.PropTypes.array.isRequired
+  },
   render: function () {
     function fetchContext(contextName) {
       dispatcher.sendRequest({action: 'get', resource: 'doc.dataContext[' + contextName + ']'});
@@ -328,6 +331,9 @@ var ContextMenu = React.createClass({
  * @type {ClassicComponentClass<P>}
  */
 var AttrList = React.createClass({
+  propTypes: {
+    attrs: React.PropTypes.array.isRequired
+  },
   render: function () {
     var items = this.props.attrs.map(function (item) {
       var title = item.title || item.name;
@@ -338,6 +344,10 @@ var AttrList = React.createClass({
 });
 
 var CaseValue = React.createClass ({
+  propTypes: {
+    value: React.PropTypes.node.isRequired,
+    name: React.PropTypes.string.isRequired
+  },
   getInitialState: function () {
     return {value: this.props.value};
   },
@@ -351,17 +361,24 @@ var CaseValue = React.createClass ({
 });
 
 var CaseDisplay = React.createClass ({
+  propTypes: {
+    myCase: React.PropTypes.object,
+    attrs: React.PropTypes.array.isRequired
+  },
   render: function () {
     var myCase = this.props.myCase;
     var values = this.props.attrs.map(function (attr) {
       var value = myCase? myCase.values[attr.name]: '';
-      return <CaseValue className="attr-value" key={attr.name} value={value} />;
+      return <CaseValue className="attr-value" key={attr.name} name={attr.name} value={value} />;
     });
     return <div className="case">{values}</div>;
   }
 });
 
 var CaseList = React.createClass({
+  propTypes: {
+    collection: React.PropTypes.object.isRequired
+  },
   render: function () {
     var caseIndex = this.props.collection.currentCaseIndex || 0;
     var myCase = this.props.collection.currentCase;
@@ -372,6 +389,10 @@ var CaseList = React.createClass({
 });
 
 var CaseNavControl = React.createClass({
+  propTypes: {
+    onNavigation: React.PropTypes.func.isRequired,
+    action: React.PropTypes.string.isRequired
+  },
   symbol: {
     left: '<',
     right: '>'
@@ -387,6 +408,10 @@ var CaseNavControl = React.createClass({
 });
 
 var DataCard = React.createClass({
+  propTypes: {
+    context: React.PropTypes.string.isRequired,
+    collection: React.PropTypes.object.isRequired
+  },
   moveCard: function (direction) {
     console.log('moveCard: direction: ' + direction);
     var increment = {left: -1, right: 1}[direction];
@@ -434,6 +459,7 @@ var DataCardApp = React.createClass({
     dataManager.moveCard(collectionName, direction);
     this.didChange();
   },
+
   didChange: function (state) {
     this.setState(dataManager.getState());
   },

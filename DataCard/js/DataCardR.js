@@ -304,6 +304,9 @@ var dispatcher = Object.create({
 var ContextMenu = React.createClass({
   displayName: 'ContextMenu',
 
+  propTypes: {
+    contexts: React.PropTypes.array.isRequired
+  },
   render: function () {
     function fetchContext(contextName) {
       dispatcher.sendRequest({ action: 'get', resource: 'doc.dataContext[' + contextName + ']' });
@@ -343,6 +346,9 @@ var ContextMenu = React.createClass({
 var AttrList = React.createClass({
   displayName: 'AttrList',
 
+  propTypes: {
+    attrs: React.PropTypes.array.isRequired
+  },
   render: function () {
     var items = this.props.attrs.map(function (item) {
       var title = item.title || item.name;
@@ -360,18 +366,37 @@ var AttrList = React.createClass({
   }
 });
 
+var CaseValue = React.createClass({
+  displayName: 'CaseValue',
+
+  propTypes: {
+    value: React.PropTypes.node.isRequired,
+    name: React.PropTypes.string.isRequired
+  },
+  getInitialState: function () {
+    return { value: this.props.value };
+  },
+  handleChange: function (ev) {
+    this.setState({ value: ev.target.value });
+  },
+  render: function () {
+    return React.createElement('input', { className: 'attr-value', key: this.props.name, value: this.state.value,
+      onChange: this.handleChange });
+  }
+});
+
 var CaseDisplay = React.createClass({
   displayName: 'CaseDisplay',
 
+  propTypes: {
+    myCase: React.PropTypes.object,
+    attrs: React.PropTypes.array.isRequired
+  },
   render: function () {
     var myCase = this.props.myCase;
     var values = this.props.attrs.map(function (attr) {
       var value = myCase ? myCase.values[attr.name] : '';
-      return React.createElement(
-        'div',
-        { className: 'attr-value', key: attr.name },
-        value
-      );
+      return React.createElement(CaseValue, { className: 'attr-value', key: attr.name, name: attr.name, value: value });
     });
     return React.createElement(
       'div',
@@ -384,6 +409,9 @@ var CaseDisplay = React.createClass({
 var CaseList = React.createClass({
   displayName: 'CaseList',
 
+  propTypes: {
+    collection: React.PropTypes.object.isRequired
+  },
   render: function () {
     var caseIndex = this.props.collection.currentCaseIndex || 0;
     var myCase = this.props.collection.currentCase;
@@ -402,6 +430,10 @@ var CaseList = React.createClass({
 var CaseNavControl = React.createClass({
   displayName: 'CaseNavControl',
 
+  propTypes: {
+    onNavigation: React.PropTypes.func.isRequired,
+    action: React.PropTypes.string.isRequired
+  },
   symbol: {
     left: '<',
     right: '>'
@@ -423,6 +455,10 @@ var CaseNavControl = React.createClass({
 var DataCard = React.createClass({
   displayName: 'DataCard',
 
+  propTypes: {
+    context: React.PropTypes.string.isRequired,
+    collection: React.PropTypes.object.isRequired
+  },
   moveCard: function (direction) {
     console.log('moveCard: direction: ' + direction);
     var increment = { left: -1, right: 1 }[direction];
@@ -455,13 +491,22 @@ var DataCard = React.createClass({
         ),
         React.createElement(
           'div',
-          { className: 'attr-container' },
-          React.createElement(AttrList, { attrs: collection.attrs })
-        ),
-        React.createElement(
-          'div',
-          { className: 'case-frame' },
-          React.createElement(CaseList, { collection: collection })
+          { className: 'card-content' },
+          React.createElement(
+            'div',
+            { className: 'case-display' },
+            React.createElement(
+              'div',
+              { className: 'attr-container' },
+              React.createElement(AttrList, { attrs: collection.attrs })
+            ),
+            React.createElement(
+              'div',
+              { className: 'case-frame' },
+              React.createElement(CaseList, { collection: collection })
+            )
+          ),
+          React.createElement('input', { type: 'button', className: 'update-case', value: 'Update' })
         ),
         React.createElement(
           'div',
@@ -494,6 +539,7 @@ var DataCardApp = React.createClass({
     dataManager.moveCard(collectionName, direction);
     this.didChange();
   },
+
   didChange: function (state) {
     this.setState(dataManager.getState());
   },
