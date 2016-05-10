@@ -26,6 +26,7 @@
     var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
     }, "data-interactive", window.parent);
     var seq = 0;
+    var successes = 0;
     $(function () {
       function send() {
         try {
@@ -35,18 +36,24 @@
           if (!Array.isArray(parsedMessages)) {
             parsedMessages = [parsedMessages];
           }
-          parsedMessages.forEach(function (parsedMessage, ix) {
+          function sendOneMessage(msgNum) {
+            if (msgNum >= parsedMessages.length) { return; }
             var id = ++seq;
-            console.log('Message: ' + message);
+            var parsedMessage = parsedMessages[msgNum];
+            console.log('Message: ' + JSON.stringify(parsedMessage));
             $('<div>').prop('id', 'r' + id).addClass('di-req').text('#' + id +
-                ' Request: ' + JSON.stringify(parsedMessage))
-                .prependTo('#receivedMessage');
+                    ' Request: ' + JSON.stringify(parsedMessage))
+                .appendTo('#receivedMessage');
             codapPhone.call(parsedMessage, function (result) {
-              var respEl = $('<div>').addClass('di-resp').text('#' + id +
-                  ' Response: ' + JSON.stringify(result));
+              if (result && result.success) {successes++}
+              var respEl = $('<div>').addClass('di-resp').text('#' + id + '(' + successes +
+                  ') Response: ' + JSON.stringify(result));
               $('#r' + id).append(respEl);
+              console.log('Reply: ' + JSON.stringify(result));
+              sendOneMessage(msgNum+1);
             });
-          });
+          }
+          sendOneMessage(0);
         } catch (e) {
           $('#receivedMessage').prepend($('<div>').text('' + (++seq) + ': ' + e));
         }
