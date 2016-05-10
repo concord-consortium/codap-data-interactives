@@ -15,47 +15,38 @@
   },
 
   {
-    "comment": "Create a data Context .......",
-    "action": "create",
-    "resource": "dataContext",
-    "values": {
-      "name": "DataCard1",
-      "title": "Data Card",
-      "description": "Displays individual items in a set of data, one item at a time."
-    }
-  }, {
     "action": "update",
-    "resource": "dataContext[DataCard1]",
+    "resource": "dataContext[#default]",
     "values": { "title": "Data, Data, Data"}
   }, {
     "action": "get",
     "resource": "dataContextList"
   }, {
     "action": "get",
-    "resource": "dataContext[DataCard1]"
+    "resource": "dataContext[#default]"
   },
 
   {
     "comment": "Create a collection ........",
 
     "action": "create",
-    "resource": "dataContext[DataCard1].collection",
+    "resource": "collection",
     "values": {
       "name": "DataCards",
       "title": "Poeple"
     }
   }, {
     "action": "update",
-    "resource": "dataContext[DataCard1].collection[DataCards]",
+    "resource": "collection[DataCards]",
     "values": {
       "title": "People"
     }
   }, {
   "action": "get",
-  "resource": "dataContext[DataCard1].collectionList"
+  "resource": "collectionList"
   }, {
   "action": "get",
-  "resource": "dataContext[DataCard1].collection[DataCards]"
+  "resource": "collection[DataCards]"
   },
 
 
@@ -63,7 +54,7 @@
     "comment": "Create attributes ..........",
 
     "action": "create",
-    "resource": "dataContext[DataCard1].collection[DataCards].attribute",
+    "resource": "collection[DataCards].attribute",
     "values": [ {
         "name": "name",
         "type": "categorical"
@@ -77,26 +68,23 @@
     ]
   }, {
     "action": "update",
-    "resource": "dataContext[DataCard1].collection[DataCards].attribute[name]",
+    "resource": "collection[DataCards].attribute[name]",
     "values": {
       "title": "Name"
     }
   }, {
     "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].attribute[name]"
+    "resource": "collection[DataCards].attribute[name]"
   }, {
     "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].attribute[age]"
-  }, {
-    "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].attributeList"
+    "resource": "collection[DataCards].attribute[age]"
   },
 
   {
     "comment": "create some cases ......",
 
     "action": "create",
-    "resource": "dataContext[DataCard1].collection[DataCards].case",
+    "resource": "collection[DataCards].case",
     "values": {
       "values": {
         "name": "Mickey",
@@ -106,7 +94,7 @@
     }
   }, {
     "action": "create",
-    "resource": "dataContext[DataCard1].collection[DataCards].case",
+    "resource": "collection[DataCards].case",
     "values": [
       {
         "values": {
@@ -124,13 +112,13 @@
     ]
   }, {
     "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].caseCount"
+    "resource": "collection[DataCards].caseCount"
   }, {
     "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].caseByIndex[0]"
+    "resource": "collection[DataCards].caseByIndex[0]"
   },{
     "action": "get",
-    "resource": "dataContext[DataCard1].collection[DataCards].caseByIndex[1]"
+    "resource": "collection[DataCards].caseByIndex[1]"
   },
   {
     "action": "create",
@@ -174,7 +162,7 @@
       "name": "HeightAge",
       "dimensions": {"width":240, "height": 240},
       "position": "top",
-      "dataContext": "DataCard1",
+      "dataContext": "#default",
       "xAttribute": "age",
       "yAttribute": "height"
     }
@@ -184,7 +172,7 @@
     "values": {
       "type": "caseTable",
       "dimensions": {"width":480, "height": 200},
-      "dataContext": "DataCard1"
+      "dataContext": "#default"
     }
   }, {
     "action": "create",
