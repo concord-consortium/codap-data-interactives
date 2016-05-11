@@ -25,8 +25,8 @@ function codapCallInitGame() {
     action: 'initGame',
     args: {
       name: "Ramp Game", // This will appear in the titlebar of the model's iFrame
-      dimensions: {width: 675, height: 650},  // Modify these to fit the size of the simulation
-      version: '2.3',
+      dimensions: {width: 658, height: 600},  // Modify these to fit the size of the simulation
+      version: '4.4',
       collections: [
       /**
        * There is one collection. It contains the result of each move.
