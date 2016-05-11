@@ -194,5 +194,22 @@
       "title": "Concord",
       "url": "http://www.concord.org"
     }
+  }, {
+    "action": "get",
+    "resource": "componentList"
+  }, {
+    "action": "create",
+    "resource": "dataContext[DataCard1].selectionList",
+    "values": [9]
+  },{
+    "action": "get",
+    "resource": "dataContext[DataCard1].selectionList"
+  }, {
+    "action": "update",
+    "resource": "dataContext[DataCard1].selectionList",
+    "values": [10]
+  },{
+    "action": "get",
+    "resource": "dataContext[DataCard1].selectionList"
   }
 ]
