@@ -20,9 +20,19 @@
 /* jshint strict: false */
 /*global console:true,iframePhone:true,React:true, ReactDOM:true */
 /**
- * dataManager responsible for managing the CaseTableApp's state
+ * dataManager responsible for managing the CaseTableApp's state:
+ *
  */
 var dataManager = Object.create({
+
+  /**
+   * @property data {{
+   *   contexts: {[string]},
+   *   currentContext: {string},
+   *
+   * }}
+   */
+  data: null,
 
   init: function () {
     this.listeners = [];
@@ -57,7 +67,7 @@ var dataManager = Object.create({
 
   setContextList: function (contextList) {
     function fetchContext(contextName) {
-      dispatcher.sendRequest({ action: 'get', resource: 'doc.dataContext[' + contextName + ']' });
+      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + ']' });
     }
     this.data.contexts = contextList;
     if (contextList.length > 0) {
@@ -68,7 +78,7 @@ var dataManager = Object.create({
 
   setDataCards: function (context) {
     function fetchFirstCase(contextName, collectionName) {
-      dispatcher.sendRequest({ action: 'get', resource: 'doc.dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[0]' });
+      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[0]' });
     }
     this.data.currentContext = context.name;
     this.data.collections = context.collections;
@@ -86,7 +96,7 @@ var dataManager = Object.create({
       var parentCase = parentCollection.currentCase;
       var resource;
       if (parentCase && parentCase.guid !== parentID) {
-        resource = 'doc.dataContext[' + context + '].collection[' + parentCollection.name + '].caseByID[' + parentID + ']';
+        resource = 'dataContext[' + context + '].collection[' + parentCollection.name + '].caseByID[' + parentID + ']';
         dispatcher.sendRequest({ action: 'get', resource: resource });
       }
     }
@@ -96,7 +106,7 @@ var dataManager = Object.create({
       var resource;
       if (childCase && childCase.parent !== myCase.guid) {
         if (myCase.children) {
-          resource = 'doc.dataContext[' + context + '].collection[' + childCollection.name + '].caseByID[' + myCase.children[0] + ']';
+          resource = 'dataContext[' + context + '].collection[' + childCollection.name + '].caseByID[' + myCase.children[0] + ']';
           dispatcher.sendRequest({ action: 'get', resource: resource });
         }
       }
@@ -108,6 +118,7 @@ var dataManager = Object.create({
     var collectionIndex = collections.findIndex(function (coll) {
       return coll.name === iCollectionName;
     });
+    dispatcher.sendRequest({ action: 'create', resource: 'dataContext[' + this.data.currentContext + '].selectionList', values: [myCase.guid] });
     if (collectionIndex >= 0) {
       var collection = collections[collectionIndex];
       collection.currentCaseIndex = Number(caseIndex);
@@ -119,6 +130,47 @@ var dataManager = Object.create({
         guaranteeRightCollectionIsChild(collections[collectionIndex + 1], myCase, this.data.currentContext);
       }
       this.notify();
+    }
+  },
+
+  findCollectionForAttribute: function (iAttributeName) {
+    return this.data.collections.find(function (collection) {
+      var attr = collection.attrs.find(function (attr) {
+        return attr.name === iAttributeName;
+      });
+      return attr != undefined;
+    });
+  },
+
+  findCollectionForName: function (iCollectionName) {
+    return this.data.collections.find(function (collection) {
+      return collection.name === iCollectionName;
+    });
+  },
+
+  updateCurrentCaseValue: function (iAttributeName, iValue) {
+    var collection = this.findCollectionForAttribute(iAttributeName);
+    var currentCase = collection && collection.currentCase;
+    var values = currentCase && currentCase.values;
+    if (values) {
+      values[iAttributeName] = iValue;
+      this.notify();
+    }
+  },
+
+  getContextName: function () {
+    return this.data.currentContext;
+  },
+  getCurrentCase: function (iCollectionName) {
+    var collection = this.findCollectionForName(iCollectionName);
+    if (collection) {
+      return collection.currentCase;
+    }
+  },
+  getCurrentCaseIndex: function (iCollectionName) {
+    var collection = this.findCollectionForName(iCollectionName);
+    if (collection) {
+      return collection.currentCaseIndex;
     }
   },
 
@@ -223,7 +275,7 @@ var dispatcher = Object.create({
     this.connection = new iframePhone.IframePhoneRpcEndpoint(function () {}, "data-interactive", window.parent);
     this.connectionState = 'initialized';
     this.sendRequest({
-      action: 'update', resource: 'doc.interactiveFrame', values: {
+      action: 'update', resource: 'interactiveFrame', values: {
         "title": "Data Card",
         "version": "0.1",
         "dimensions": { "width": 500, "height": 600 }
@@ -231,7 +283,7 @@ var dispatcher = Object.create({
     });
     this.sendRequest({
       "action": "get",
-      "resource": "doc.dataContextList"
+      "resource": "dataContextList"
     });
     return this;
   },
@@ -246,22 +298,18 @@ var dispatcher = Object.create({
     var selectorRE = /([A-Za-z0-9_]+)\[([A-Za-z0-9_]+)\]/;
     var result = {};
     var selectors = iResource.split('.');
-    var baseSelector = selectors.shift();
-    result.type = baseSelector;
-    if (baseSelector === 'doc') {
-      selectors.forEach(function (selector) {
-        var rtype, rname;
-        var match = selectorRE.exec(selector);
-        if (selectorRE.test(selector)) {
-          rtype = match[1];
-          rname = match[2];
-          result[rtype] = rname;
-          result.type = rtype;
-        } else {
-          result.type = selector;
-        }
-      });
-    }
+    selectors.forEach(function (selector) {
+      var resourceType, resourceName;
+      var match = selectorRE.exec(selector);
+      if (selectorRE.test(selector)) {
+        resourceType = match[1];
+        resourceName = match[2];
+        result[resourceType] = resourceName;
+        result.type = resourceType;
+      } else {
+        result.type = selector;
+      }
+    });
 
     return result;
   },
@@ -293,6 +341,20 @@ var dispatcher = Object.create({
     } else {
       this.connectionState = 'active';
     }
+  },
+
+  updateCaseValue: function (attributeName, value) {
+    dataManager.updateCurrentCaseValue(attributeName, value);
+  },
+
+  updateCurrentCase: function (iCollectionName) {
+    var myContext = dataManager.getContextName();
+    var myCase = dataManager.getCurrentCase(iCollectionName);
+    var resource = 'dataContext[' + myContext + '].collection[' + iCollectionName + '].caseByID[' + myCase.guid + ']';
+    this.sendRequest({
+      action: 'update',
+      resource: resource,
+      values: myCase });
   }
 }).init();
 
@@ -308,11 +370,8 @@ var ContextMenu = React.createClass({
     contexts: React.PropTypes.array.isRequired
   },
   render: function () {
-    function fetchContext(contextName) {
-      dispatcher.sendRequest({ action: 'get', resource: 'doc.dataContext[' + contextName + ']' });
-    }
     function handleSelect(ev) {
-      fetchContext(ev.target.value);
+      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + ev.target.value + ']' });
     }
     var options = this.props.contexts.map(function (context) {
       var title = context.title || context.name;
@@ -373,14 +432,11 @@ var CaseValue = React.createClass({
     value: React.PropTypes.node.isRequired,
     name: React.PropTypes.string.isRequired
   },
-  getInitialState: function () {
-    return { value: this.props.value };
-  },
   handleChange: function (ev) {
-    this.setState({ value: ev.target.value });
+    dispatcher.updateCaseValue(this.props.name, ev.target.value);
   },
   render: function () {
-    return React.createElement('input', { className: 'attr-value', key: this.props.name, value: this.state.value,
+    return React.createElement('input', { className: 'attr-value', key: this.props.name, value: this.props.value,
       onChange: this.handleChange });
   }
 });
@@ -413,7 +469,7 @@ var CaseList = React.createClass({
     collection: React.PropTypes.object.isRequired
   },
   render: function () {
-    var caseIndex = this.props.collection.currentCaseIndex || 0;
+    //var caseIndex = this.props.collection.currentCaseIndex || 0;
     var myCase = this.props.collection.currentCase;
     var id = myCase ? myCase.guid : 'new';
     var caseView = React.createElement(CaseDisplay, { key: id, attrs: this.props.collection.attrs, myCase: myCase });
@@ -438,7 +494,7 @@ var CaseNavControl = React.createClass({
     left: '<',
     right: '>'
   },
-  handleClick: function (ev) {
+  handleClick: function () /*ev*/{
     if (this.props.onNavigation) {
       this.props.onNavigation(this.props.action);
     }
@@ -466,9 +522,12 @@ var DataCard = React.createClass({
     var collectionName = this.props.collection.name;
     if (increment) {
       var requestedIndex = this.props.collection.currentCaseIndex + increment;
-      var resource = 'doc.dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + requestedIndex + ']';
+      var resource = 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + requestedIndex + ']';
       dispatcher.sendRequest({ action: 'get', resource: resource });
     }
+  },
+  handleUpdateCase: function () /*ev*/{
+    dispatcher.updateCurrentCase(this.props.collection.name);
   },
   render: function () {
     var collection = this.props.collection;
@@ -506,7 +565,7 @@ var DataCard = React.createClass({
               React.createElement(CaseList, { collection: collection })
             )
           ),
-          React.createElement('input', { type: 'button', className: 'update-case', value: 'Update' })
+          React.createElement('input', { type: 'button', className: 'update-case', onClick: this.handleUpdateCase, value: 'Update' })
         ),
         React.createElement(
           'div',
@@ -540,7 +599,7 @@ var DataCardApp = React.createClass({
     this.didChange();
   },
 
-  didChange: function (state) {
+  didChange: function () /*state*/{
     this.setState(dataManager.getState());
   },
 
