@@ -179,6 +179,7 @@ var dataManager = Object.create({
       var resource = 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + index + ']';
       dispatcher.sendRequest({ action: 'get', resource: resource });
     }
+
     var collection = this.data.collections.find(function (col) {
       return col.name === iCollectionName;
     });
@@ -200,77 +201,7 @@ var dataManager = Object.create({
         break;
       default:
     }
-    //  function adjustParentCard(collectionIx, myCase) {
-    //    if (collectionIx <= 0) {
-    //      return;
-    //    }
-    //    var parentId = myCase.parent;
-    //    var parentCollection = collections[collectionIx - 1];
-    //    if (parentCollection.cases[parentCollection.currentCaseIndex].guid === parentId) {
-    //      return;
-    //    }
-    //    var parentCaseIndex = parentCollection.cases.findIndex(function(iCase) {
-    //      return iCase.guid === parentId;
-    //    });
-    //    console.log('adjustParentCard. ' + JSON.stringify({
-    //          parentId: parentId,
-    //          parentCollectionCaseIds: parentCollection.cases.map(function (iCase) {return iCase.guid;}),
-    //          collectionIx: collectionIx,
-    //          parentCaseIndex: parentCollection.currentCaseIndex
-    //        }));
-    //    if (parentCaseIndex >= 0) {
-    //      parentCollection.currentCaseIndex = parentCaseIndex;
-    //    }
-    //    adjustParentCard(collectionIx - 1, parentCollection.cases[parentCollection.currentCaseIndex]);
-    //  }
-    //  function adjustChildCard(collectionIx, myCase){
-    //    if (collectionIx + 1 >= collections.length) {
-    //      return;
-    //    }
-    //    var parentId = myCase.guid;
-    //    var childCollection = collections[collectionIx + 1];
-    //    var childCase  = childCollection.cases[childCollection.currentCaseIndex];
-    //    var childCaseIx;
-    //    if (childCase.parent !== parentId) {
-    //      childCaseIx = childCollection.cases.findIndex(function (iCase) { return iCase.parent === parentId; });
-    //      console.log('adjustChildCard. ' + JSON.stringify({
-    //            parentId: parentId,
-    //            childCollectionCaseIds: childCollection.cases.map(function (iCase) {return iCase.guid;}),
-    //            collectionIx: collectionIx,
-    //            childCaseIndex: childCaseIx
-    //          }));
-    //      if (childCaseIx >= 0) {
-    //        childCollection.currentCaseIndex = childCaseIx;
-    //      }
-    //      adjustChildCard(collectionIx + 1, childCollection.cases[childCollection.currentCaseIndex]);
-    //    }
-    //  }
-    //  var newCaseIx = null;
-    //  var collections = this.data.collections;
-    //  var collectionIx = collections.findIndex(function (collection) {
-    //    return collection.name === iCollection.name;
-    //  });
-    //  //var collection = (collectionIx >= 0) && this.data.collections[collectionIx];
-    //
-    //  console.log('moveCard. ' + JSON.stringify({
-    //        collection: iCollection.name,
-    //        direction: direction,
-    //        currentCaseIndex: iCollection.currentCaseIndex
-    //      }));
-    //  if (iCollection) {
-    //    if (direction === 'prev' && iCollection.currentCaseIndex > 0) {
-    //      newCaseIx = iCollection.currentCaseIndex = iCollection.currentCaseIndex - 1;
-    //    } else if (direction === 'next' && (iCollection.currentCaseIndex + 1) < iCollection.cases.length) {
-    //      newCaseIx = iCollection.currentCaseIndex = iCollection.currentCaseIndex + 1;
-    //    } else {
-    //      return;
-    //    }
-    //    adjustParentCard(collectionIx, iCollection.cases[newCaseIx]);
-    //    adjustChildCard(collectionIx, iCollection.cases[newCaseIx]);
-    //    this.notify();
-    //  }
   },
-
   startNewCase: function () {},
 
   getState: function () {
@@ -314,7 +245,7 @@ var dispatcher = Object.create({
   },
 
   parseResourceSelector: function (iResource) {
-    var selectorRE = /([A-Za-z0-9_]+)\[([A-Za-z0-9_]+)\]/;
+    var selectorRE = /([A-Za-z0-9_-]+)\[([^\]]+)]/;
     var result = {};
     var selectors = iResource.split('.');
     selectors.forEach(function (selector) {
@@ -541,30 +472,6 @@ var DataCard = React.createClass({
   },
   moveCard: function (action) {
     this.props.onNavigation(this.props.collection.name, action);
-    //function requestCase(contextName, collectionName, index) {
-    //  var resource = 'dataContext[' + contextName + '].collection[' + collectionName +
-    //      '].caseByIndex[' + index + ']';
-    //  dispatcher.sendRequest({action: 'get', resource: resource});
-    //}
-    //var contextName = this.props.context;
-    //var collectionName = this.props.collection.name;
-    //var currentCaseIndex = this.props.collection.currentCaseIndex;
-    //console.log('moveCard: action: ' + action);
-    //switch (action) {
-    //  case 'prev':
-    //    requestCase(contextName, collectionName, currentCaseIndex - 1);
-    //    break;
-    //  case 'next':
-    //    requestCase(contextName, collectionName, currentCaseIndex + 1);
-    //    break;
-    //  case 'new':
-    //    dataManager.startNewCase(collectionName, currentCaseIndex);
-    //    break;
-    //  case 'remove':
-    //    console.log('Remove not implemented.');
-    //    break;
-    //  default:
-    //}
   },
   handleUpdateCase: function () /*ev*/{
     dispatcher.updateCurrentCase(this.props.collection.name);
@@ -646,6 +553,7 @@ var DataCardApp = React.createClass({
   componentWillUnmount: function () {
     dataManager.unregister(this);
   },
+
   contextSelectHandler: function (contextName) {
     dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + ']' });
   },

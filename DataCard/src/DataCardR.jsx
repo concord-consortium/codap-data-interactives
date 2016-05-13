@@ -248,7 +248,7 @@ var dispatcher = Object.create({
     },
 
     parseResourceSelector: function (iResource) {
-      var selectorRE = /([A-Za-z0-9_]+)\[([A-Za-z0-9_]+)\]/;
+      var selectorRE = /([A-Za-z0-9_-]+)\[([^\]]+)]/;
       var result = {};
       var selectors = iResource.split('.');
       selectors.forEach(function (selector) {
