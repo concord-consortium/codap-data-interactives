@@ -176,79 +176,35 @@ var dataManager = Object.create({
     }
   },
 
-  moveCard: function (collectionName, direction) {
-    function adjustParentCard(collectionIx, myCase) {
-      if (collectionIx <= 0) {
-        return;
-      }
-      var parentId = myCase.parent;
-      var parentCollection = collections[collectionIx - 1];
-      if (parentCollection.cases[parentCollection.currentCaseIndex].guid === parentId) {
-        return;
-      }
-      var parentCaseIndex = parentCollection.cases.findIndex(function(iCase) {
-        return iCase.guid === parentId;
-      });
-      console.log('adjustParentCard. ' + JSON.stringify({
-            parentId: parentId,
-            parentCollectionCaseIds: parentCollection.cases.map(function (iCase) {return iCase.guid;}),
-            collectionIx: collectionIx,
-            parentCaseIndex: parentCollection.currentCaseIndex
-          }));
-      if (parentCaseIndex >= 0) {
-        parentCollection.currentCaseIndex = parentCaseIndex;
-      }
-      adjustParentCard(collectionIx - 1, parentCollection.cases[parentCollection.currentCaseIndex]);
+  moveCard: function (iCollectionName, action) {
+    function requestCase(contextName, collectionName, index) {
+      var resource = 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + index + ']';
+      dispatcher.sendRequest({action: 'get', resource: resource});
     }
-    function adjustChildCard(collectionIx, myCase){
-      if (collectionIx + 1 >= collections.length) {
-        return;
-      }
-      var parentId = myCase.guid;
-      var childCollection = collections[collectionIx + 1];
-      var childCase  = childCollection.cases[childCollection.currentCaseIndex];
-      var childCaseIx;
-      if (childCase.parent !== parentId) {
-        childCaseIx = childCollection.cases.findIndex(function (iCase) { return iCase.parent === parentId; });
-        console.log('adjustChildCard. ' + JSON.stringify({
-              parentId: parentId,
-              childCollectionCaseIds: childCollection.cases.map(function (iCase) {return iCase.guid;}),
-              collectionIx: collectionIx,
-              childCaseIndex: childCaseIx
-            }));
-        if (childCaseIx >= 0) {
-          childCollection.currentCaseIndex = childCaseIx;
-        }
-        adjustChildCard(collectionIx + 1, childCollection.cases[childCollection.currentCaseIndex]);
-      }
-    }
-    var newCaseIx = null;
-    var collections = this.data.collections;
-    var collectionIx = collections.findIndex(function (collection) {
-      return collection.name === collectionName;
-    });
-    var collection = (collectionIx >= 0) && this.data.collections[collectionIx];
 
-    console.log('moveCard. ' + JSON.stringify({
-          collection: collectionName,
-          direction: direction,
-          collectionIx: collectionIx,
-          length: collection.cases.length,
-          currentCaseIndex: collection.currentCaseIndex
-        }));
-    if (collection) {
-      if (direction === 'left' && collection.currentCaseIndex > 0) {
-        newCaseIx = collection.currentCaseIndex = collection.currentCaseIndex - 1;
-      } else if (direction === 'right' && (collection.currentCaseIndex + 1) < collection.cases.length) {
-        newCaseIx = collection.currentCaseIndex = collection.currentCaseIndex + 1;
-      } else {
-        return;
-      }
-      adjustParentCard(collectionIx, collection.cases[newCaseIx]);
-      adjustChildCard(collectionIx, collection.cases[newCaseIx]);
-      this.notify();
+    var collection = this.data.collections.find(function (col) {
+      return col.name === iCollectionName;
+    });
+    var contextName = this.data.currentContext;
+    var currentCaseIndex = collection.currentCaseIndex;
+    console.log('moveCard: action: ' + action);
+    switch (action) {
+      case 'prev':
+        requestCase(contextName, iCollectionName, currentCaseIndex - 1);
+        break;
+      case 'next':
+        requestCase(contextName, iCollectionName, currentCaseIndex + 1);
+        break;
+      case 'new':
+        this.startNewCase(iCollectionName, currentCaseIndex);
+        break;
+      case 'remove':
+        console.log('Remove not implemented.');
+        break;
+      default:
     }
   },
+  startNewCase: function () {},
 
   getState: function () {
     return this.data;
@@ -363,12 +319,12 @@ var dispatcher = Object.create({
  */
 var ContextMenu = React.createClass({
   propTypes: {
-    contexts: React.PropTypes.array.isRequired
+    contexts: React.PropTypes.array.isRequired,
+    onSelect: React.PropTypes.func.isRequired
   },
+
   render: function () {
-    function handleSelect(ev) {
-      dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + ev.target.value + ']'});
-    }
+    var onSelect = this.props.onSelect;
     var options = this.props.contexts.map(function (context) {
       var title = context.title || context.name;
       return (
@@ -377,7 +333,7 @@ var ContextMenu = React.createClass({
     });
     return <section id="context-selector" >
       <label>Context:&nbsp;
-        <select id="context-selector" onChange={handleSelect} >{options}</select>
+        <select id="context-selector" onChange={function (ev) {onSelect(ev.target.value)}} >{options}</select>
       </label >
     </section>
   }
@@ -409,7 +365,7 @@ var CaseValue = React.createClass ({
     dispatcher.updateCaseValue(this.props.name, ev.target.value);
   },
   render: function () {
-    return <input className="attr-value" key={this.props.name} value={this.props.value}
+    return <input type="text" className="attr-value" key={this.props.name} value={this.props.value}
                   onChange={this.handleChange} />;
   }
 });
@@ -448,10 +404,10 @@ var CaseNavControl = React.createClass({
     action: React.PropTypes.string.isRequired
   },
   symbol: {
-    left: '<',
-    right: '>',
-    add: '+',
-    remove: '&times;'
+    prev: '<',
+    next: '>',
+    new: '+',
+    remove: 'x'
   },
   handleClick: function (/*ev*/) {
     if (this.props.onNavigation) {
@@ -466,19 +422,11 @@ var CaseNavControl = React.createClass({
 var DataCard = React.createClass({
   propTypes: {
     context: React.PropTypes.string.isRequired,
-    collection: React.PropTypes.object.isRequired
+    collection: React.PropTypes.object.isRequired,
+    onNavigation: React.PropTypes.func.isRequired
   },
-  moveCard: function (direction) {
-    console.log('moveCard: direction: ' + direction);
-    var increment = {left: -1, right: 1}[direction];
-    var contextName = this.props.context;
-    var collectionName = this.props.collection.name;
-    if (increment) {
-      var requestedIndex = this.props.collection.currentCaseIndex + increment;
-      var resource = 'dataContext[' + contextName + '].collection[' + collectionName +
-          '].caseByIndex[' + requestedIndex + ']'
-      dispatcher.sendRequest({action: 'get', resource: resource});
-    }
+  moveCard: function (action) {
+    this.props.onNavigation(this.props.collection.name, action);
   },
   handleUpdateCase: function (/*ev*/) {
     dispatcher.updateCurrentCase(this.props.collection.name);
@@ -490,7 +438,7 @@ var DataCard = React.createClass({
       <div className="collection-name">{title}</div>
       <div className="card-deck">
         <div className="left-ctls">
-          <CaseNavControl action="left" onNavigation={this.moveCard} />
+          <CaseNavControl action="prev" onNavigation={this.moveCard} />
         </div>
         <div className="card-content">
           <div className="case-display">
@@ -504,9 +452,9 @@ var DataCard = React.createClass({
           <input type="button" className="update-case" onClick={this.handleUpdateCase} value="Update" />
         </div>
         <div className="right-ctls">
-          <CaseNavControl action="right"  onNavigation={this.moveCard}/>
-          <div className="control ctl-add-case">+</div>
-          <div className="control ctl-add-case"><span>&times;</span></div>
+          <CaseNavControl action="next"  onNavigation={this.moveCard}/>
+          <CaseNavControl action="new"  onNavigation={this.moveCard}/>
+          <CaseNavControl action="remove"  onNavigation={this.moveCard}/>
         </div>
       </div>
     </section>
@@ -539,6 +487,10 @@ var DataCardApp = React.createClass({
     dataManager.unregister(this);
   },
 
+  contextSelectHandler: function (contextName) {
+    dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
+  },
+
   render: function () {
     var ix = 0;
     var cards = this.state.collections.map(function (collection){
@@ -548,7 +500,7 @@ var DataCardApp = React.createClass({
                        onNavigation={this.navigate} />
     }.bind(this));
     return <div>
-      <ContextMenu contexts={this.state.contexts} />
+      <ContextMenu contexts={this.state.contexts} onSelect={this.contextSelectHandler} />
       {cards}
     </div>
   }
