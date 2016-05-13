@@ -61226,14 +61226,18 @@ _nS('controllers.Local'); _root['controllers']['Local']['standalone'] =
 
 
     <!-- This can be used to insert nlogo code into this page -->
-    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v4.4.nlogo">; RampGame PF v4.4
-; May 8, 2016
+    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v5.nlogo">; RampGame PF v5
+; May 11, 2016
 ; Built on RampGame v6d
 ; Started July 22, 2013
 ; Bob Tinker
 ; Copyright, the Physics Front
 ; Available under open source licenses
 
+; May 11    PF v5   Removed single quotes in text strings. Installed hooks for CODAP. The game chooses game-play at random.
+;                   Passes the value of game-play that was randomly selected on to CODAP.
+;                   Added an admittedly cryptic message to change scales if a new point is not visible. 
+;                   Removed Game-Play switch
 ; May 8     PF v3.2 Responded to minor issues identified in recent QA. Found some tiny bugs. Improved the hints. 
 ;                   Created a soft button to 'repeat challenge' that appears only at the end of a bad run. Less clutter.
 ; April 21. PF v3.4 Changed the new scoring algorithm. Prepared for testing. Eliminated the start-new-run button
@@ -61260,6 +61264,7 @@ globals [
 
   starting?                      ; true when waiting for the user to press the start button
   running?                       ; true when the car is running
+  game-play                      ; determines whether classic or two-step scoring is used
   
   ; the following variables need to be calculated only once each dt cycle, speeding up the calculations.
   t1                             ; the time the car hits the bottom of the ramp
@@ -61426,6 +61431,7 @@ end
 to data-export-initialize [ a ]
 end
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;; End of preliminaries ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61438,9 +61444,9 @@ to startup  ; structured this way in order to have a start page
   set waiting-for-start? false
   set running? false
   set ready-for-export? false
+  set game-play random 2              ; choose classic or two-step play at random (0 or 1)
   set waiting-for-setup? false
   __javascript-eval "codapCallInitGame()"
-  ;;
 end
 
 to go                       ; this is the main forever button called 'On/off'
@@ -61543,11 +61549,11 @@ to draw-first-page
   pretty-print "There are five levels of play. Each level has a different challenge. The challenges start easy but get very hard."
   pretty-print "There are four setps in each level. With each step the target gets smaller."
   pretty-print dashes
-  pretty-print "If you need help, try pressing the 'Hint' button."
+  pretty-print "If you need help, try pressing the Hint button."
   pretty-print dashes
   set level 1
   set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
-  pretty-print "Now press the 'On/Off' button to continue."
+  pretty-print "Now press the On/Off button to continue."
   pretty-print dashes
 end
 
@@ -61602,14 +61608,16 @@ to initialize
   create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
   set data-saved? true
   set output-width  70     ; characters in the output box, used with pretty-print
-  set total-score 0
-  set score-last-run 0
+  if level = 0 [
+    set total-score 0
+    set score-last-run 0
+    set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.)
+    set step 1        ; start at step 1
+  ]
   set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
   set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25 3.02 .8 1.55 1.41 1.1 3.2] ; a list of target values
 
   set number-of-random-tries 0
-  set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.) 
-  set step 1        ; start at step 1
   set n-steps  4
   set next-level level
   set next-step step
@@ -62109,8 +62117,8 @@ to get-next-step-2step
    if score-last-run > upper-break [  ; reward the user, then move on to next step or challenge
      ifelse score-last-run > 99.5 
        [ pretty-print dashes
-         pretty-print (word "Awesome!! You earned 100 points. That's a PERFECT score!!")]
-       [pretty-print (word "Congratulations!! You earned " score-last-run " points. That's a GREAT score.")]
+         pretty-print (word "Awesome!! You earned 100 points. Thats a PERFECT score!!")]
+       [pretty-print (word "Congratulations!! You earned " score-last-run " points. That is a GREAT score.")]
      pretty-print dashes
      if step = 4 and not (level = max-level) [
        pretty-print "You will now go on to the next challenge." ; go to the next level (=challenge)
@@ -62129,7 +62137,7 @@ to get-next-step-2step
    if score-last-run <= upper-break [    ; this command is not necessary, but left in for clarity
      ; show an appropriate message
      if score-last-run > lower-break [
-       pretty-print (word "You earned " score-last-run " points. That's a good score, but you can do better.")] 
+       pretty-print (word "You earned " score-last-run " points. That is a good score, but you can do better.")] 
 ;       set move-target? false]        ; needed??
      if score-last-run <= lower-break [
        pretty-print (word "Not so good. You scored " score-last-run " points. Have you looked at the hints?")]
@@ -62152,8 +62160,8 @@ to get-next-step-2step
          pretty-print dashes
          pretty-print (Word "Your average for this challenge is " ave ". You can do better.")
          pretty-print dashes
-         pretty-print "Press the 'PRESS HERE' button NOW for another chance to get a better score on this challenge."
-         pretty-print "If you don't press it now, you will go on to the next challenge."
+         pretty-print "Press the PRESS HERE button NOW for another chance to get a better score on this challenge."
+         pretty-print "If you do not press it now, you will go on to the next challenge."
          pretty-print dashes
          set allow-reset? true
          ask buttons [st]    ; show the button that says "Press here to repeat the last challenge"
@@ -62177,7 +62185,7 @@ to setup-game-level ; setup the game for the current level.
   if level = 1 [
     set instructions "Place the car where you want it to start."
     if step = 1 [
-      set instructions "Challenge 1: Make the car stop in the center of the red area by changing the car's starting position."
+      set instructions "Challenge 1: Make the car stop in the center of the red area by changing the starting position of the car."
       set instructions word instructions " As you get better, the red target will get smaller."
       set instructions word instructions " When the car stops your data is saved and graphed. The graph will help you later."
     ]
@@ -62194,7 +62202,7 @@ to setup-game-level ; setup the game for the current level.
   if level = 2 [
     set instructions ""
     if step = 1 [
-      set instructions "Challenge 2: Make the car stop in the center of the red area by changing the car's starting position."
+      set instructions "Challenge 2: Make the car stop in the center of the red area by changing where the car starts."
       set instructions word instructions " Watch out!! The red band now moves each trial."]
     set friction .18
     set old-friction friction
@@ -62329,7 +62337,7 @@ to display-help-message
       set m "Before starting a run, move the car to where you think it will have enough energy to reach the center of the red target."
         set m word m " Try to get the antenna on the car near the red line in the center of the red target."]
     if number-shown-already = 1 [
-      set m "Press the 'Run' button to start the car rolling down the ramp. "]
+      set m "Press the Run button to start the car rolling down the ramp. "]
     if number-shown-already = 2 [
       ifelse game-play = 0 ; classic play 
         [set m "After a good score you advance by one step and the red target gets smaller. "]
@@ -62378,7 +62386,7 @@ to display-help-message
     if number-shown-already = 2 [   
       set m "Note the friction value on the slider." ]  
     if number-shown-already = 3 [    
-      set m "Hint: Think about Galileo's experiment at the Tower of Pisa." ]
+      set m "Hint: Think about Galileos experiment at the Tower of Pisa." ]
     if number-shown-already = 4 [    
       set m "The greater mass requires more force to move it. But, the greater mass also increases the force on the car when it is on the ramp." ]
     ]
@@ -62413,14 +62421,15 @@ to analyze-data ;
 ;    stop]    
   my-clear-output
   capture-final-state
-
+  
   __javascript-eval "codapGo()"
 
-  update-score         ; computes and displays the score
+  update-score         ; computes and displays the score  
   get-next-step        ; computes next-step and next-level and prints result, but doesn't display the new level/step
   if next-level = 1 and next-step = 1 [        ; if the first run...
 ;    pretty-print dashes
-    pretty-print "Do you see the new point on the graph?"
+    pretty-print "Do you see the new point on the graph? "
+    pretty-print "If there is no new point you may have to change the graph scales."
     pretty-print "Now move the car to the ramp."]
     pretty-print dashes  
   ask graph-dots [set size 12] ; shrink all old dots
@@ -62668,7 +62677,7 @@ to handle-mouse-down   ; the first thing the mouse-down does is set what functio
       pretty-print "If you drag the mouse now, you will create a violet box."
       pretty-print "This box is like a magnifying glass--it lets you zoom into any part of the graph that you select."
       pretty-print "Just move drag box corner to cover the area that you want to magnify and then un-click the mouse." 
-      pretty-print "If you want to un-do the zoom, just press the 'Zoom Out' button and you will zoom out to see all the data and the origin, too."
+      pretty-print "If you want to un-do the zoom, just press the Zoom Out button and you will zoom out to see all the data and the origin, too."
       pretty-print dashes
   ]
 end
@@ -62707,7 +62716,7 @@ to handle-mouse-up
     if (abs (u0 - u1) > 20) and (abs (v0 - v1) > 20) [    ; rescale only if the box is big enough
       my-clear-output
       pretty-print "You just zoomed in. You might be unable to see all your data."
-      pretty-print "Remember: you can press 'Zoom Out' to see all your data and the origin."
+      pretty-print "Remember: you can press Zoom Out to see all your data and the origin."
       pretty-print dashes
       set scale-xmin (u0 - gbx) / gmx
       set scale-ymin (v0 - gby) / gmy
@@ -63217,16 +63226,6 @@ RESERVED
 1
 
 CHOOSER
-681
-427
-819
-472
-Game-Play
-game-play
-0 1
-1
-
-CHOOSER
 150
 337
 288
@@ -63234,26 +63233,6 @@ CHOOSER
 Data-graphed
 data-graphed
 "none" "All" "Friction Data"
-1
-
-TEXTBOX
-659
-383
-843
-428
-The control below will be hidden in the final game. The calling program will set its value to 0 or 1
-11
-0
-1
-
-TEXTBOX
-684
-471
-834
-489
-0 is classic, 1 is two-step
-11
-0
 1
 
 SWITCH
