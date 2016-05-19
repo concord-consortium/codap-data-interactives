@@ -9,7 +9,7 @@ section {
   width: 480px;
   background-color: rgb(178,182,151);
 }
-section label, section .collection-name {
+section .collection-name {
   margin: 0.25em ;
   font-weight: bold;
   color: white;
@@ -103,7 +103,7 @@ section label, section .collection-name {
   align-items: center;
   padding: 0 .2em;
 }
-.control {
+button.control {
   border: 1px dimgray solid;
   border-radius: .6em;
   background-color: #fffaf0;
@@ -114,12 +114,19 @@ section label, section .collection-name {
   -ms-user-select: none;      /* IE 10+ */
   user-select: none;          /* Likely future */
 }
-.control:hover {
+button.control:hover {
   font-weight: bold;
   cursor: pointer;
   border-width: 2px;
 }
+button.control[disabled] {
+  background-color: lightgray;
+}
 
 input.update-case {
   margin: 4px 2px;
+}
+
+div.mode-selector {
+  display: inline;
 }
