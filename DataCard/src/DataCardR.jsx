@@ -106,7 +106,7 @@ var dataManager = Object.create({
     this.notify();
   },
 
-  setCase: function (iCollectionName, values) {
+  setCase: function (iCollectionName, values, resourceName) {
     function guaranteeLeftCollectionIsParent(parentCollectionInfo, parentID, context) {
       var parentCollection = parentCollectionInfo.collection;
       var parentCase = parentCollectionInfo.currentCase;
@@ -142,6 +142,7 @@ var dataManager = Object.create({
       var collectionInfo = collectionInfoList[collectionIndex];
       collectionInfo.currentCaseIndex = Number(caseIndex);
       collectionInfo.currentCase = myCase;
+      collectionInfo.currentCaseResourceName = resourceName;
       if (collectionIndex > 0) {
         guaranteeLeftCollectionIsParent(collectionInfoList[collectionIndex - 1],
             myCase.parent, this.data.currentContext);
@@ -187,13 +188,34 @@ var dataManager = Object.create({
     });
   },
 
+  setDirty: function (collectionInfo, isDirty) {
+    collectionInfo.currentCaseIsDirty = isDirty;
+    this.computeNavEnabled(collectionInfo);
+  },
+
+  updateCase: function (collectionInfo) {
+    var resource = collectionInfo.currentCaseResourceName;
+    dispatcher.sendRequest({
+      action: 'update',
+      resource: resource,
+      values: collectionInfo.currentCase
+    })
+  },
+  didUpdateCase: function(iCollectionName) {
+    console.log('DidUpdateCase')
+    var collectionInfo = this.findCollectionInfoForName(iCollectionName);
+    if (collectionInfo) {
+      this.setDirty(collectionInfo, false);
+      this.notify();
+    }
+  },
   updateCurrentCaseValue: function (iAttributeName, iValue) {
     var collectionInfo = this.findCollectionInfoForAttribute(iAttributeName);
     var currentCase = collectionInfo && collectionInfo.currentCase;
     var values = currentCase && currentCase.values;
     if (values) {
       values[iAttributeName] = iValue;
-      collectionInfo.currentCaseIsDirty = true;
+      this.setDirty(collectionInfo, true);
       this.notify();
     }
   },
@@ -326,7 +348,18 @@ var dispatcher = Object.create({
             break;
           case 'caseByIndex':
           case 'caseByID':
-            dataManager.setCase(resourceObj.collection, result.values);
+            dataManager.setCase(resourceObj.collection, result.values,
+                request.resource);
+            break;
+          default:
+            console.log('No handler for get response: ' + request.resource);
+        }
+      } else if (request.action === 'update') {
+        this.connectionState = 'active';
+        switch (resourceObj.type) {
+          case 'caseByIndex':
+          case 'caseByID':
+            dataManager.didUpdateCase(resourceObj.collection);
             break;
           default:
             console.log('No handler for get response: ' + request.resource);
@@ -334,21 +367,6 @@ var dispatcher = Object.create({
       } else {
         this.connectionState = 'active';
       }
-    },
-
-    updateCaseValue: function (attributeName, value) {
-      dataManager.updateCurrentCaseValue(attributeName, value);
-    },
-
-    updateCurrentCase: function (iCollectionName) {
-      var myContext = dataManager.getContextName();
-      var myCase = dataManager.getCurrentCase(iCollectionName);
-      var resource = 'dataContext[' + myContext + '].collection[' +
-          iCollectionName + '].caseByID[' + myCase.guid + ']';
-      this.sendRequest({
-        action: 'update',
-        resource: resource,
-        values: myCase});
     }
   }).init();
 
@@ -415,23 +433,6 @@ var AttrList = React.createClass({
   }
 });
 
-var CaseValue = React.createClass ({
-  propTypes: {
-    name: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired,
-    value: React.PropTypes.node.isRequired
-  },
-  render: function () {
-    var name = this.props.name;
-    var onChange = this.props.onChange;
-    return <input type="text"
-                  className="attr-value"
-                  key={name}
-                  value={this.props.value}
-                  onChange={function(ev) { onChange(name, ev.target.value);}} />;
-  }
-});
-
 var CaseDisplay = React.createClass ({
   propTypes: {
     attrs: React.PropTypes.array.isRequired,
@@ -441,13 +442,18 @@ var CaseDisplay = React.createClass ({
   render: function () {
     var myCase = this.props.myCase;
     var values = this.props.attrs.map(function (attr) {
-      var value = myCase? myCase.values[attr.name]: '';
-      return <CaseValue
+      var name = attr.name;
+      var value = myCase? myCase.values[name]: '';
+      var onChange = this.props.onChange;
+      return <input
+          type="text"
           className="attr-value"
-          key={attr.name}
-          name={attr.name}
+          key={name}
+          name={name}
           value={value}
-          onChange={this.props.onChange}/>;
+          onChange={
+            function (ev) { onChange(name, ev.target.value)}
+            }/>;
     }.bind(this));
     return <div className="case">{values}</div>;
   }
@@ -486,7 +492,6 @@ var CaseNavControl = React.createClass({
     }
   },
   render: function () {
-    console.log('CaseNavControl: ' + [this.props.action,this.props.navEnabled].join('/'));
     var disable = !this.props.navEnabled;
     if (disable) {
       return <button className="control" disabled onClick={this.handleClick}>{this.symbol[this.props.action]}</button>
@@ -567,24 +572,30 @@ var DataCardView = React.createClass({
     currentCase: React.PropTypes.object.isRequired,
     collection: React.PropTypes.object.isRequired,
     context: React.PropTypes.string.isRequired,
+    isDirty: React.PropTypes.bool.isRequired,
     onCaseValueChange: React.PropTypes.func.isRequired,
     onContentUpdate: React.PropTypes.func.isRequired
   },
   render: function () {
     var collection = this.props.collection;
+    var isDirty = this.props.isDirty;
     return  <div className="card-content">
               <div className="case-display">
                 <div className="attr-container">
                   <AttrList attrs={collection.attrs} />
                 </div>
                 <div className="case-frame">
-                  <CaseList collection={collection} currentCase={this.props.currentCase} onChange={this.props.onCaseValueChange}/>
+                  <CaseList
+                      collection={collection}
+                      currentCase={this.props.currentCase}
+                      onChange={this.props.onCaseValueChange}/>
                 </div>
               </div>
               <input
                   type="button"
                   className="update-case"
-                  onClick={function (/*ev*/) { this.props.onContentUpdate(); }}
+                  disabled={!isDirty}
+                  onClick={this.props.onContentUpdate}
                   value="Update" />
             </div>
 
@@ -629,7 +640,8 @@ var DataCardAppView = React.createClass({
                         collection={collection}
                         context={this.state.currentContext}
                         currentCase={collectionInfo.currentCase}
-                        onContentUpdate={function() { dataManager.updateCase(); }}
+                        isDirty={collectionInfo.currentCaseIsDirty}
+                        onContentUpdate={function() { dataManager.updateCase(collectionInfo); }}
                         onCaseValueChange={function (name, value) {dataManager.updateCurrentCaseValue(name, value);}}/>
                   </SlideShowView>
                  </section>
