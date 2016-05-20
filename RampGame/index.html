@@ -61226,14 +61226,18 @@ _nS('controllers.Local'); _root['controllers']['Local']['standalone'] =
 
 
     <!-- This can be used to insert nlogo code into this page -->
-    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v5.nlogo">; RampGame PF v5
-; May 11, 2016
+    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v5.4.nlogo">; RampGame PF v5
+; May 20, 2016
 ; Built on RampGame v6d
 ; Started July 22, 2013
 ; Bob Tinker
 ; Copyright, the Physics Front
 ; Available under open source licenses
 
+; 
+; May 20    PF V5.3 Fixed some bugs. 
+;                   Reorganized the code to be a bit more logical
+; May 13    PF v5.1 Added some code to 'initialize' that allows restored state to be set by the calling program. 
 ; May 11    PF v5   Removed single quotes in text strings. Installed hooks for CODAP. The game chooses game-play at random.
 ;                   Passes the value of game-play that was randomly selected on to CODAP.
 ;                   Added an admittedly cryptic message to change scales if a new point is not visible. 
@@ -61288,6 +61292,7 @@ globals [
   carx                            ; used to generate a positive definite output to the distance traveled reporter
   car-speed
   car-locked?
+  allow-repeat?
   allow-reset?
   freeze?  ; used to freeze the game to push kids to use the lab notebook. (disabled)
   dashes
@@ -61328,7 +61333,7 @@ globals [
   targets               ; a list of target values
   advance-target?       ; used to determine whether the target moves between trials. 
   target-radius         ; the radius for this level and step
-  target-radius-max     ; the radius for setp one in a run
+  target-radius-max     ; the radius for step one in a run
   target-radius-min     ; the radius for the highest step in a run
   target-max            ; the maximum position of the target 
   target-min            ; the minimum position of the target
@@ -61456,7 +61461,7 @@ to go                       ; this is the main forever button called 'On/off'
     ifelse game-play = 1 ; "Two Step" 
       [pretty-print "You get two tries at each step. If you get 67 points or more on the first try, you will advance to the next step."
         pretty-print "Regardless of your score on the second try, you will advance to the next step."
-        pretty-print "At the end of a challenge, if your average score is below 67 you can repeat the challenge."]
+        pretty-print "At the end of a challenge, if your average score for the challenge is below 67 you can repeat the challenge."]
       [pretty-print "The only way to advance to a higher step is to get a score above 67"
          pretty-print "If you score below 33, you will step backward."]
     pretty-print dashes
@@ -61475,22 +61480,14 @@ to act-on-changes                            ; This calls subroutines ONCE when 
        ; To understand how this works, you must realize that this routine is called repeatedly, ever dt seconds
        ;    so to avoid multiple calls, I use an 'old-...' flag to record the event status the previous time called
        ;    When there is a difference between the old and current values I act on the change.
-        
-  if (not old-mouse-down?) and mouse-down? and allow-reset? [   ; detect a button press
-    set old-mouse-down? true
-    if (abs (mouse-xcor - but-u) < 20 ) and (abs (mouse-ycor - but-v) < 10) [  ; if the user clicks near the button...
-      press-repeat-challenge
-      stop]]
-  
-  if old-mouse-down? and (not mouse-down?) [ ;  detect a mouse up event
-    set old-mouse-down? false
-    repeat-level
-    ask buttons [ht]                         ; hide the repeat challenge button
-    stop]    ; erase the button  
-  
+  if (abs (mouse-xcor - but-u) < 20 ) and (abs (mouse-ycor - but-v) < 10) and mouse-down? and allow-repeat?  [  ; if the user clicks near the button...
+      repeat-level]                                                  ; execute the repeat-level function
+      
   if car-waiting? and mouse-inside? and 
     mouse-down? and (in-window? mouse-xcor mouse-ycor) [  ; call if waiting for user to touch the car after a run
     set car-waiting? false
+    set allow-repeat? false
+    ask buttons [ht]
     setup-new-run ]
          
   if friction != old-friction [              ; if the user tries to change the friction...
@@ -61532,107 +61529,6 @@ to act-on-changes                            ; This calls subroutines ONCE when 
         ifelse color = yellow [st][ht]]]]
 end
 
-to draw-first-page
-  create-drawing-dots 1 [
-    set size .1
-    setxy .4 * min-pxcor .9 * max-pycor
-    set label   "Press the On/Off button to continue." ]
-  create-drawing-dots 1 [
-    set size .1
-    setxy .5 * min-pxcor .85 * max-pycor
-    set label "   Leave it on all the time." ]
-  ask drawing-dots [set label-color yellow]
-  
-  set output-width  70     ; characters in the output box, used with pretty-print
-  set dashes "----------------------------------------------------------------------"
-  pretty-print "The goal of this game is to start the car at the right height on the ramp so that it will land in the middle of the red zone."
-  pretty-print "There are five levels of play. Each level has a different challenge. The challenges start easy but get very hard."
-  pretty-print "There are four setps in each level. With each step the target gets smaller."
-  pretty-print dashes
-  pretty-print "If you need help, try pressing the Hint button."
-  pretty-print dashes
-  set level 1
-  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
-  pretty-print "Now press the On/Off button to continue."
-  pretty-print dashes
-end
-
-to initialize
-  set dt .01 ; the time step
-  set g 9.81 ; acceleration of gravity in mks units
-  set nearby 5    ; the distance in pixels needed to count as a hit using the mouse
-  set ready-for-export? false
-  set waiting-for-start? true
-  set running? false
-  set car-waiting? false
-  set old-running? false
-  set freeze? false
-  set magnification 50    ; 
-  set x-center 1.34 set y-center .35  ; 
-  set data-graphed "All"
-  set old-data-graphed data-graphed
-  set show-values? true   ; controls the display of x,y values at the cursor
-  set allow-zoom? true    ; controls whether zooming on the grid is allowed. 
-  set tries-this-level 0  ; used in computing the average score for a level
-  set score-this-level 0  ; 
-  set allow-reset? false  ; used only when the user wants to repeat a challenge
-  initialize-repeat-challenge   ; creates a hidden repeat challenge button
-   
-  define-window      ; defines the ramp window bounded by (ul, ur, vb, bt)
-  define-transforms  ; creates transforms for the ramp  (mx, my, bx, by)
-  set first-reward? true
-  set try 1          ; start with the first try using the "two-step" rules
-  set ramp-color blue + 2
-  set ramp [[-1.6 1.1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
-  draw-ramp                      ; draws ramp
-  ; define car variables
-  set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
-  set saved-starting-x -.9
-  ;  make the car
-  set car-size 22
-  create-cars 1 [
-    ht  
-    ifelse level = 4 [set car-mass 200] [set car-mass 100]
-    set color red
-    set shape "car"
-    set size car-size
-    place-car saved-starting-x]
-
-  ; markers mark the target. They are two tiny turtles linked by a thick line
-  set move-target? false
-  create-markers 1 [ht set marker-1 who set color red set size .1 set heading 0]
-  create-markers 1 [ht set marker-2 who set color red set size .1 set heading 0
-    create-link-with marker marker-1 [
-      set thickness 3 set color red]]
-  create-markers 1 [ht set marker-3 who set color red set size 18 set heading 0 set shape "line"]    ; create a vertical line at the center of the target
-  create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
-  set data-saved? true
-  set output-width  70     ; characters in the output box, used with pretty-print
-  if level = 0 [
-    set total-score 0
-    set score-last-run 0
-    set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.)
-    set step 1        ; start at step 1
-  ]
-  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
-  set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25 3.02 .8 1.55 1.41 1.1 3.2] ; a list of target values
-
-  set number-of-random-tries 0
-  set n-steps  4
-  set next-level level
-  set next-step step
-  set max-level 5   ; the number of levels in the game. Used to stop advancing beyond this level
-  setup-game        ; setup for level 1 step 1 
-  show-target
-  
-  my-clear-output
-  setup-new-run
-  setup-data-export    ;;; used to define the structure of the exported data
-
-  initialize-graph   ; draw graph with default values
-  reset-ticks
-  reset-timer
-end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; Graphing routines ;;;;;;;;;;;;;;
@@ -61991,6 +61887,11 @@ to setup-new-run
   show-target                    ; shows the target for this level and step
   pretty-print instructions 
   pretty-print dashes
+  if level = 5 and step = 1 [
+    pretty-print "For this challenge, it would be very helpful to plot End_Distance vs. Friction after clearing the existing data from the plot."
+    pretty-print "To clear the existing data, click on the trashcan icon in the plot side panel and choose Delete Unselected cases."
+    pretty-print "Then, change the x-axis to Friction by dragging the Friction header in the table to the x-axis."
+    pretty-print dashes]
   tick
 end
 
@@ -62046,12 +61947,12 @@ to get-next-step
                     ; In 'classic' the user can advance a step, stay at the current step, or go back a step depending on score
                     ; in 'two-step' the user has two tries per step and never is forced to go backward
   set move-target? true
-  my-clear-output
+;  my-clear-output
   if game-play = 0 [get-next-step-classic]
   if game-play = 1 [get-next-step-2step]
   pretty-print dashes
   ifelse level = 5 
-    [pretty-print "Click on the car to set up your next try."]
+    [pretty-print "Click on the car to set up your next try."]   ; in level 5, the software sets the car starting position and prevents the user from moving it. 
     [pretty-print "Click on the car and move it to set up your next try."]
 end 
 
@@ -62096,22 +61997,26 @@ end
 
 to get-next-step-2step                     
   ; In this "two-step" play, the user gets two trys per step. 
+  ; Inputs step, level, try, tries-this-level, score-this-level
+  ; Output next-step, next-level, try, tries-this-level, score-this-level
   ;    The variable 'try' remembers whether the current run is the first or second at the current step.
   ;    The variables tries-this-level and score-this-level are used to compute the average for a level
   ;    If the user gets a score above 67 on either try, except on the 4th step, h/she moves to the next step
   ;    If the user fails to get above 67 on the first try, h/she can try the step again.
   ;    On the second try but not the last step in a level, the user goes to the next step regardless of score.
-  ;    On the second try and the last level for any level and the average score for that 
+  ;    On the second try and the last step for any level and the average score for that 
   ;       level is less that cutoff, the user gets the choice of repeating the level.            
-   set tries-this-level tries-this-level + 1               ; store data for this level
-   set score-this-level score-this-level + score-last-run  ; used to compute average for a level
-   let ave precision (score-this-level / tries-this-level) 1
-   let upper-break 2 * max-score / 3  ; the minimum score to advance   
-   let lower-break max-score / 4  ; tused only for motivation
+   set tries-this-level tries-this-level + 1                 ; store data for this level
+   set score-this-level score-this-level + score-last-run    ; used to compute average for a level
+   let ave precision (score-this-level / tries-this-level) 1 ; compute and round the average score for this level
+   let upper-break 2 * max-score / 3                         ; the minimum score to advance   
+   let lower-break max-score / 4                             ; used only for motivation
    
    if (step = 4) and (level = max-level) and (try = 2) [  ; the user has completed the game regardless of score
        pretty-print "Super!! You have reached the end of this game. I hope you had fun and learned something, too."
        pretty-print "You can continue to play and increase your score."
+;       set next-level 3 set next-step 1 set tries-this-level 0 set score-this-level 0 ; restart at level 3
+;       setup-new-run
        stop]
    
    if score-last-run > upper-break [  ; reward the user, then move on to next step or challenge
@@ -62137,7 +62042,7 @@ to get-next-step-2step
    if score-last-run <= upper-break [    ; this command is not necessary, but left in for clarity
      ; show an appropriate message
      if score-last-run > lower-break [
-       pretty-print (word "You earned " score-last-run " points. That is a good score, but you can do better.")] 
+       pretty-print (word "You earned " score-last-run " points. That is a good score. Can you do better?")] 
 ;       set move-target? false]        ; needed??
      if score-last-run <= lower-break [
        pretty-print (word "Not so good. You scored " score-last-run " points. Have you looked at the hints?")]
@@ -62158,21 +62063,29 @@ to get-next-step-2step
          set score-this-level 0
          set tries-this-level 0
          pretty-print dashes
-         pretty-print (Word "Your average for this challenge is " ave ". You can do better.")
-         pretty-print dashes
-         pretty-print "Press the PRESS HERE button NOW for another chance to get a better score on this challenge."
+         pretty-print (Word "Your average for this challenge is " ave ". Try doing better.")
+         pretty-print dashes  
+         pretty-print "Press the CLICK HERE... button NOW to repeat the level and earn a better score on this challenge."
          pretty-print "If you do not press it now, you will go on to the next challenge."
          pretty-print dashes
-         set allow-reset? true
-         ask buttons [st]    ; show the button that says "Press here to repeat the last challenge"
+         set allow-repeat? true
+;         ask buttons [die]
+;         initialize-repeat-challenge
+         ask buttons [st]  ; show the button that says "CLICK HERE to repeat the last challenge"
          set next-level level + 1]]] 
 end
 
 to repeat-level
-  if allow-reset? [
-    set allow-reset? false
-    set next-level level]
+  if allow-repeat? [
+    set allow-repeat? false
+    my-clear-output           ; erase the output, which will hold an incorrect message intended for the next challenge. 
+    ask buttons [ht]
+    set next-level next-level - 1
+;    set next-step 1
+    setup-new-run
+    pretty-print "Now try the last challenge again."]
 end
+
 
 to setup-game     ; sets all the controls for the current level and step
   setup-game-level
@@ -62187,7 +62100,7 @@ to setup-game-level ; setup the game for the current level.
     if step = 1 [
       set instructions "Challenge 1: Make the car stop in the center of the red area by changing the starting position of the car."
       set instructions word instructions " As you get better, the red target will get smaller."
-      set instructions word instructions " When the car stops your data is saved and graphed. The graph will help you later."
+      set instructions word instructions " When the car stops your data is saved and can be graphed. The graph will help you later."
     ]
     set friction .18
     set old-friction friction
@@ -62249,9 +62162,11 @@ to setup-game-level ; setup the game for the current level.
     set car-locked? true
     set target-radius-max .6 ; the distance between the center and edge of the target for step 1
     set target-radius-min .3] ; the radius for the highest step in this level
+  if not (step = 1) [set instructions ""]
 end
 
 to setup-game-step   ; sets the values of controls that change with each step--the target and starting point widths
+  set move-target? (try = 1)      ; *************************
   if move-target? and not target-locked? [ ; if the target can be moved this challenge and the user isn't repeating a try....
     set target-index (target-index + 1) mod length targets ]  ; cycle through the various targets in the variable targets. 
   set target item target-index targets                    ; pull a target out of the list of targets
@@ -62298,8 +62213,8 @@ end
 
 to update-score  ; called once by analyze-data
   ; computes the score for the most recent run and tests for random trials. 
-  ; input is final-position, generated by run-cars
-  ; output is score-last-run
+  ; input is final-position, generated by run-cars, and target
+  ; output is score-last-run, total-score, and number-of-random-tries
   set score-last-run 0
   if abs (final-position - target) < target-radius [
     set number-of-random-tries number-of-random-tries - 1
@@ -62312,10 +62227,12 @@ to update-score  ; called once by analyze-data
   if abs (final-position - target) > 2 * target-radius [  ; very bad try, may be random
     set number-of-random-tries number-of-random-tries + 1
     if number-of-random-tries > 2 [
-      pretty-print "It looks like you are just guessing. All the information that you need to hit the target is in the graph."]
+      pretty-print "It looks like you are just guessing. All the information that you need to hit the target is in the graph."
+      pretty-print dashes]
     if number-of-random-tries > 3 [
       set number-of-random-tries 4
-      pretty-print "You loose 100 points for gussing." 
+      pretty-print "You loose 100 points for guessing."
+      pretty-print dashes 
       set total-score total-score - 100
       if total-score < 0 [set total-score 0 ]] 
     ]
@@ -62328,6 +62245,9 @@ to display-help-message
   ; generates context-sensitive hints
   ; context is generated by level and messages-shown, a list of the number of messages shown at level (item + 1)
   ; each message is shown only once
+  if starting? [
+    output-print "Hints are not available until you press the On/Off button."
+    stop]
   let number-shown-already item (level - 1) messages-shown
   set messages-shown replace-item (level - 1) messages-shown (number-shown-already + 1)  ; increase the number shown at this level
   let m "Sorry, no more hints are available right now. Try again when you reach the next challenge."  ; the default message
@@ -62410,15 +62330,7 @@ to display-help-message
   data-export-log-event (word "User received the message " m) "" "" ""
 end
 
-to-report score-display
-  ifelse not (level = 1 and step = 1)
-    [report (word Score-last-run " of " max-score)]
-    [report ""]
-end
-
-to analyze-data ;
-;  if not ready-for-export? [data-export-log-event "User tried to analyze data before a run." "" "" ""
-;    stop]    
+to analyze-data ;   
   my-clear-output
   capture-final-state
   
@@ -62427,7 +62339,6 @@ to analyze-data ;
   update-score         ; computes and displays the score  
   get-next-step        ; computes next-step and next-level and prints result, but doesn't display the new level/step
   if next-level = 1 and next-step = 1 [        ; if the first run...
-;    pretty-print dashes
     pretty-print "Do you see the new point on the graph? "
     pretty-print "If there is no new point you may have to change the graph scales."
     pretty-print "Now move the car to the ramp."]
@@ -62453,7 +62364,7 @@ to analyze-data ;
   set data-saved? true
 ;  set waiting-for-setup? true
 ;  while [not (mouse-down? and in-window? mouse-xcor mouse-ycor)] []       ; freeze until a mouse click in the ramp window FREEZING IS NOT GOOD. USE FLAGS. 
-  set car-waiting? true      ; calls setup-new-run whe the user starts to move the car after a run. The flag is acted on in 'act-on-changes'
+  set car-waiting? true      ; calls setup-new-run when the user starts to move the car after a run. The flag is acted on in 'act-on-changes'
 end
 
 to wait-hack [x]
@@ -62630,7 +62541,7 @@ to handle-mouse-down   ; the first thing the mouse-down does is set what functio
   ; in subsequent mouse-move and mouse-up events. 
   ; A mouse-down might indicate the following values for mouse-function
   ; 0. Do nothing
-  ; 1. near line handle 1. Subsequent drags will drag this handle
+  ; 1. near line handle 1. Subsequent drags will drag this handle of the guideline
   ; 2. near line handle 2. Subsequent drags will drag this handle
   ; 3. otherwise, create a selection box if allow-zoom? is true. The selection box is used for zooming in. 
   if (any? line-handles) and (in-grid? mouse-xcor mouse-ycor) [  ; act only if there are line handles and the mouse is in the graphing grid
@@ -62643,8 +62554,8 @@ to handle-mouse-down   ; the first thing the mouse-down does is set what functio
     ask line-handle handle-2 [
       let d sqrt ( (mouse-xcor - xcor) ^ 2 + (mouse-ycor - ycor) ^ 2)
       if d < nearby [set mouse-function 2]]]  ; if the mouse is near handle 2, set mouse-function to 2
-  ; the line handles override the zoom box. 
-  
+          ; the line handles override the zoom box. 
+
   ; at this point mouse-function is valid. If it is 3, then create a selection box at the mouse location
   if mouse-function = 3 and (in-grid? mouse-xcor mouse-ycor) [   ; create a box with all corners at the same place
       let w 0                  ; put box-handles at the edges of the selection box
@@ -62801,7 +62712,7 @@ end
 ; routines to implement a single soft button for repeating a level. 
 ; the button is at but-u, but-y and the text lines are separated by kern 
 to initialize-repeat-challenge
-  set but-u -75 
+  set but-u -73 
   set but-v 100  
   let kern 7
   create-buttons 1 [
@@ -62814,30 +62725,155 @@ to initialize-repeat-challenge
     ht]
   ; now show the text
   create-buttons 1 [
-    set label "PRESS HERE"
-    setxy (but-u + 13) (but-v + kern - 2)
+    set label "CLICK HERE"
+    setxy (but-u + 12) (but-v + kern - 2)
     set size 0
     set label-color yellow 
     ht]
   create-buttons 1 [
     set label "to repeat the"
-    setxy (but-u + 16) (but-v - 2)
+    setxy (but-u + 15) (but-v - 2)
     set size 0
     set label-color yellow 
     ht]
   create-buttons 1 [
     set label "last challenge"
-    setxy (but-u + 17) (but-v - (kern + 2))
+    setxy (but-u + 15) (but-v - (kern + 2))
     set size 0
     set label-color yellow 
     ht]
 end
 
-to press-repeat-challenge
-  ask buttons [               ; buttons include the text
-    set label-color white]    ; set them all white
-  ask button button-who [     ; then set the actual button black
-    set color black]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;; Generate displays ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; These are three little routines that could be in the outputs
+;  but I hate putting code there. 
+
+to-report score-display
+  ifelse starting? 
+    [report ""]
+    [report (word score-last-run " of " max-score)]
+end
+
+to-report challenge-dipslay
+  ifelse starting? 
+    [report ""]
+    [report (word next-Level " of " max-level)]
+end
+
+to-report step-display 
+  ifelse starting? [report ""][report (word next-step " of " n-steps)]
+end 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;; initialize everything ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to draw-first-page
+  create-drawing-dots 1 [
+    set size .1
+    setxy .4 * min-pxcor .9 * max-pycor
+    set label   "Press the On/Off button to continue." ]
+  create-drawing-dots 1 [
+    set size .1
+    setxy .5 * min-pxcor .85 * max-pycor
+    set label "   Leave it on all the time." ]
+  ask drawing-dots [set label-color yellow]
+  
+  set output-width  64     ; characters in the output box, used with pretty-print
+  set dashes "----------------------------------------------------------------"
+  pretty-print "The goal of this game is to start the car at the right place on the ramp so that it will roll to the middle of the red zone."
+  pretty-print "There are five levels of play. Each level has a different challenge. The challenges start easy but get very hard."
+  pretty-print "There are four steps in each level. With each step, the target gets smaller."
+  pretty-print dashes
+  pretty-print "If you need help, try pressing the Hint button."         
+  pretty-print dashes
+  pretty-print "Now press the On/Off button to continue."
+  pretty-print dashes
+end
+
+to initialize
+  initialize-variables
+  initialize-turtles 
+  initialize-scene
+end
+to initialize-variables
+  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
+  set dt .02 ; the time step
+  set g 9.81 ; acceleration of gravity in mks units
+  set nearby 5    ; the distance in pixels needed to count as a hit using the mouse
+  set ready-for-export? false
+  set waiting-for-start? true
+  set running? false
+  set car-waiting? false
+  set old-running? false
+  set freeze? false
+  set magnification 50    ; 
+  set x-center 1.34 set y-center .35  ; 
+  set data-graphed "All"
+  set old-data-graphed data-graphed
+  set show-values? true   ; controls the display of x,y values at the cursor
+  set allow-zoom? false    ; controls whether zooming on the grid is allowed. 
+  set tries-this-level 0  ; used in computing the average score for a level
+  set score-this-level 0  ; 
+  set allow-repeat? false  ; used only when the user wants to repeat a challenge
+  set first-reward? true
+  set try 1          ; start with the first try using the "two-step" rules
+    ; define car variables
+  set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
+  set saved-starting-x -.9
+  set move-target? false
+  set data-saved? true
+  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
+  set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25 3.02 .8 1.55 1.41 1.1 3.2] ; a list of target values
+  set number-of-random-tries 0
+  if level = 0 [                  ; this odd conditional allows the calling program to set these variables. The default value in NL is zero
+    set total-score 0
+    set score-last-run 0
+    set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.)
+    set step 1 ]       ; start at step 1
+  set n-steps  4
+  set next-level level
+  set next-step step
+  set max-level 5   ; the number of levels in the game. Used to stop advancing beyond this level
+end
+
+to initialize-turtles
+  initialize-repeat-challenge   ; creates a hidden repeat challenge button
+    ; markers mark the target. They are two tiny turtles linked by a thick line
+  create-markers 1 [ht set marker-1 who set color red set size .1 set heading 0]
+  create-markers 1 [ht set marker-2 who set color red set size .1 set heading 0
+    create-link-with marker marker-1 [
+      set thickness 3 set color red]]
+  create-markers 1 [ht set marker-3 who set color red set size 18 set heading 0 set shape "line"]    ; create a vertical line at the center of the target
+  create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
+end
+
+to initialize-scene
+  define-window      ; defines the ramp window bounded by (ul, ur, vb, bt)
+  define-transforms  ; creates transforms for the ramp  (mx, my, bx, by)
+  set ramp-color blue + 2
+  set ramp [[-1.6 1.1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
+  draw-ramp                      ; draws ramp
+  ;  make the car
+  set car-size 22
+  create-cars 1 [
+    ht  
+    ifelse level = 4 [set car-mass 200] [set car-mass 100]
+    set color red
+    set shape "car"
+    set size car-size
+    place-car saved-starting-x]
+  setup-game        ; setup for level 1 step 1 
+  show-target
+  my-clear-output
+  setup-new-run
+  setup-data-export    ;;; used to define the structure of the exported data
+  initialize-graph   ; draw graph with default values
+  reset-ticks
+  reset-timer
 end
 
             ;************** UNDER CONSTRUCTION **************
@@ -63018,13 +63054,13 @@ end
 ;;;
 @#$#@#$#@
 GRAPHICS-WINDOW
-10
-32
-633
-552
+11
+30
+682
+588
 -1
 -1
-2.07
+2.23
 RESERVED
 10
 RESERVED
@@ -63129,7 +63165,7 @@ RESERVED
 MONITOR
 25
 326
-120
+121
 375
 Score last run
 score-display
@@ -63143,7 +63179,7 @@ MONITOR
 120
 441
 Challenge
-(word Level \" of \" max-level)
+challenge-dipslay
 17
 RESERVED
 12
@@ -63154,7 +63190,7 @@ MONITOR
 120
 489
 Step
-(word Step \" of \" n-steps)
+step-display
 17
 RESERVED
 12
@@ -63182,10 +63218,10 @@ RESERVED
 11
 
 BUTTON
-549
+559
 10
-643
-55
+654
+57
 Hints
 display-help-message
 NIL
@@ -63199,20 +63235,20 @@ RESERVED
 1
 
 CHOOSER
-502
-331
-616
-376
+433
+379
+547
+424
 x-axis
 x-axis
 "Starting Height" "Friction" "Mass"
 0
 
 BUTTON
-294
-337
-391
-370
+331
+384
+428
+417
 Zoom Out
 zoom-out
 NIL
@@ -63226,32 +63262,66 @@ RESERVED
 1
 
 CHOOSER
-150
-337
-288
-382
+187
+384
+325
+429
 Data-graphed
 data-graphed
 "none" "All" "Friction Data"
 1
 
 SWITCH
-258
-226
-420
-259
+270
+315
+432
+348
 Show-guideline?
 show-guideline?
 0
 RESERVED
 RESERVED
 
+BUTTON
+444
+258
+522
+292
+NIL
+startup
+NIL
+RESERVED
+RESERVED
+OBSERVER
+RESERVED
+NIL
+RESERVED
+RESERVED
+1
+
+BUTTON
+441
+297
+548
+331
+Set last level
+    set allow-repeat? false\n    ask buttons [ht]\n    set next-level 5\n    set next-step 1\n    setup-new-run
+NIL
+RESERVED
+RESERVED
+OBSERVER
+RESERVED
+NIL
+RESERVED
+RESERVED
+1
+
 OUTPUT
-131
-212
-645
-560
-12
+126
+213
+679
+583
+14
 @#$#@#$#@
 ## WHAT IS IT?
 
