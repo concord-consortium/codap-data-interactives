@@ -45,7 +45,8 @@ function CartModel(codapPhone) {
   this.changeIsBlocked = false;
 
   // ukde version A
-  this.numGamesPlayedInLevel = 0;  // In UKDE_A
+  this.ukdeA_numGamesPlayedInLevelWithoutWinning = 0;  // In UKDE_A
+  this.ukdeA_hasNextLevelBeenUnlocked = false;
 }
 
 /**
@@ -171,6 +172,14 @@ CartModel.prototype.initialize = function () {
     console.log("Initializing game")
   });
 
+  this.codapPhone.call({
+    action: 'logAction',
+    args: {
+      formatStr: "UKDE Cartweight Mode %@",
+      replaceArgs: [CartSettings.ukdeMode]
+    }
+  });
+
   $('#guess_input_box').bind({
     keypress: function (iEvent) {
       return cartGame.model.handleKeypress(this, iEvent);
@@ -187,7 +196,9 @@ CartModel.prototype.initialize = function () {
  * In UKDE Version A, player automatically moves on to next level after 'winning' a number of games.
  */
 CartModel.prototype.beginLevel = function () {
-  this.numGamesPlayedInLevel = 0;
+  // Only needed for ukdeA
+  this.ukdeA_numGamesPlayedInLevelWithoutWinning = 0;
+  this.ukdeA_hasNextLevelBeenUnlocked = false;
 };
 
 /**
@@ -227,7 +238,8 @@ CartModel.prototype.addTurnCase = function () {
       args: {
         collection: "Carts",
         parent: this.openGameCase,
-        values: [this.cartNum, this.bricks, this.weight, this.guess, this.oneScore, this.smallBricks]
+        values: [this.cartNum, this.bricks, this.weight, this.guess, this.oneScore, this.smallBricks],
+        log: true
       }
     });
 
@@ -246,7 +258,8 @@ CartModel.prototype.addGameCase = function () {
     args: {
       collection: "Games",
       caseID: this.openGameCase,
-      values: [this.gameNumber, this.score, this.cartNum, this.level.levelName]
+      values: [this.gameNumber, this.score, this.cartNum, this.level.levelName],
+      log: true
     }
   });
 
@@ -261,11 +274,19 @@ CartModel.prototype.addGameCase = function () {
   this.levelManager.levelsArray.forEach(function (iLevel) {
     if (!iLevel.unlocked && this_.isLevelEnabled(iLevel)) {
       iLevel.unlocked = true;
+      this_.ukdeA_hasNextLevelBeenUnlocked = true;
       var tEvent = new Event(CartEvents.levelUnlocked);
       tEvent.levelName = iLevel.levelName;
       this_.eventDispatcher.dispatchEvent(tEvent);
     }
   });
+
+  if( !this.ukdeA_hasNextLevelBeenUnlocked)
+      this.ukdeA_numGamesPlayedInLevelWithoutWinning++;
+  if( CartSettings.ukdeMode === 'A' &&
+      this.ukdeA_numGamesPlayedInLevelWithoutWinning >= CartSettings.ukdeA_numGamesThreshold) {
+    this.eventDispatcher.dispatchEvent( new Event( CartEvents.ukdeA_failedGamesThresholdPassed));
+  }
 };
 
 /**
@@ -505,6 +526,7 @@ CartModel.prototype.handleLevelButton = function (iEvent, iLevelIndex) {
   }
   if (this.isLevelEnabled(tClickedLevel)) {
     this.level = tClickedLevel;
+    this.beginLevel();
     this.playGame();
   }
 };
@@ -552,6 +574,20 @@ CartModel.prototype.isLevelEnabled = function (iLevelSpec) {
   }
 
   return tEnabled;
+};
+
+/**
+ * Called when we want game to move to next level regardless
+ *
+ */
+CartModel.prototype.moveToNextLevel = function () {
+  var tNextLevel = this.levelManager.getNextLevel( this.level);
+  if( tNextLevel) {
+    tNextLevel.unlocked = true;
+    this.level = tNextLevel;
+    this.beginLevel();
+    this.playGame();
+  }
 };
 
 /**
