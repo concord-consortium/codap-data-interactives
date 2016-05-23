@@ -6,7 +6,7 @@
 
 /**
  * @fileoverview Defines CartSettings, the parameters that determine most of the game characteristics
- * @author bfinzer@kcptech.com (William Finzer)
+ * @author wfinzer@concord.org (William Finzer)
  * @preserve (c) 2016 Concord Consortium
  */
 
@@ -50,7 +50,8 @@ function initCartSettings() {
     scoreMsg: 'Your score is %@',
     tryAgainMsg: 'Please try again!',
     // UKDE
-    ukdeMode: 'A',// Math.random() < 0.5 ? 'A' : 'B',
+    ukdeModeHasBeenLogged: false,
+    ukdeMode: 'B',// Math.random() < 0.5 ? 'A' : 'B',
     ukdeA_numGamesThreshold: 5  // In ukdeA if players do not unlock next level after this many games, they are given
                                 // choice of moving on anyway
   };

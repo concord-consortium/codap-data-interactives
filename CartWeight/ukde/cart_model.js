@@ -45,9 +45,16 @@ function CartModel(codapPhone) {
   this.smallBrickHistory = [];
   this.changeIsBlocked = false;
 
+  //ukde
+  this.turnButtonHasBeenPressed = false;
+
   // ukde version A
   this.ukdeA_numGamesPlayedInLevelWithoutWinning = 0;  // In UKDE_A
   this.ukdeA_hasNextLevelBeenUnlocked = false;
+
+  // ukde version B
+  this.ukdeB_Score = 0;
+  this.ukdeB_Scores = [];
 }
 
 /**
@@ -173,14 +180,6 @@ CartModel.prototype.initialize = function () {
     console.log("Initializing game")
   });
 
-  this.codapPhone.call({
-    action: 'logAction',
-    args: {
-      formatStr: "UKDE Cartweight Mode %@",
-      replaceArgs: [CartSettings.ukdeMode]
-    }
-  });
-
   $('#guess_input_box').bind({
     keypress: function (iEvent) {
       return cartGame.model.handleKeypress(this, iEvent);
@@ -198,8 +197,10 @@ CartModel.prototype.initialize = function () {
  */
 CartModel.prototype.beginLevel = function () {
   // Only needed for ukdeA
-  this.ukdeA_numGamesPlayedInLevelWithoutWinning = 0;
-  this.ukdeA_hasNextLevelBeenUnlocked = false;
+  if( CartSettings.ukdeMode === 'A') {
+    this.ukdeA_numGamesPlayedInLevelWithoutWinning = 0;
+    this.ukdeA_hasNextLevelBeenUnlocked = false;
+  }
 };
 
 /**
@@ -282,11 +283,12 @@ CartModel.prototype.addGameCase = function () {
     }
   });
 
-  if( !this.ukdeA_hasNextLevelBeenUnlocked)
+  if( CartSettings.ukdeMode === 'A') {
+    if (!this.ukdeA_hasNextLevelBeenUnlocked)
       this.ukdeA_numGamesPlayedInLevelWithoutWinning++;
-  if( CartSettings.ukdeMode === 'A' &&
-      this.ukdeA_numGamesPlayedInLevelWithoutWinning >= CartSettings.ukdeA_numGamesThreshold) {
-    this.eventDispatcher.dispatchEvent( new Event( CartEvents.ukdeA_failedGamesThresholdPassed));
+    if (this.ukdeA_numGamesPlayedInLevelWithoutWinning >= CartSettings.ukdeA_numGamesThreshold) {
+      this.eventDispatcher.dispatchEvent(new Event(CartEvents.ukdeA_failedGamesThresholdPassed));
+    }
   }
 };
 
@@ -313,6 +315,10 @@ CartModel.prototype.playGame = function () {
   this.openNewGameCase();
   this.turnState = 'guessing';
   this.changeGameState('playing'); // Our view will update
+
+  if (CartSettings.ukdeMode === 'B') {
+    this.ukdeB_Scores = [];
+  }
 };
 
 /**
@@ -359,6 +365,10 @@ CartModel.prototype.setupCart = function () {
   this.weight = this.tare + getBrickWeight(this.bricks, this.brickWeight, this.level.brickWeightVariability) +
       getBrickWeight(this.smallBricks, this.smBrickWeight, this.level.smallBrickWeightVariability);
   this.incrementCart();
+
+  if( CartSettings.ukdeMode === 'B' && this.brickHistory.length > CartSettings.numCarts) {
+    this.brickHistory.splice( 0, this.brickHistory.length - CartSettings.numCarts);
+  }
 };
 
 /**
@@ -366,6 +376,8 @@ CartModel.prototype.setupCart = function () {
  */
 CartModel.prototype.incrementCart = function () {
   var tEvent = new Event(CartEvents.cartChange);
+  if( CartSettings.ukdeMode === 'B')
+      tEvent.ofText = '';
   this.cartNum++;
   tEvent.cartNum = this.cartNum;
   this.eventDispatcher.dispatchEvent(tEvent);
@@ -404,8 +416,17 @@ CartModel.prototype.changeTurnState = function (iNewState) {
  */
 CartModel.prototype.endTurn = function () {
   this.addTurnCase();
-  if (this.cartNum >= CartSettings.numCarts)
-    this.endGame();
+  if( CartSettings.ukdeMode === 'B' && this.ukdeB_Scores.length >= CartSettings.numCarts) {
+    var tCurrScore = this.getCurrentTotalScore(),
+        tNextLevel = this.levelManager.getNextLevel( this.level);
+    if( !tNextLevel.prerequisite || tCurrScore >= tNextLevel.prerequisite.score) {
+      this.endGame();
+    }
+  }
+  else {
+    if (this.cartNum >= CartSettings.numCarts)
+      this.endGame();
+  }
 };
 
 /**
@@ -438,6 +459,18 @@ CartModel.prototype.handleGameButton = function () {
 CartModel.prototype.handleTurnButton = function () {
   if (this.gameState !== 'playing')
     return; // Especially to prevent <return> from causing action when the game is not on
+  if( !CartSettings.ukdeModeHasBeenLogged) {
+    this.codapPhone.call({
+      action: 'logAction',
+      args: {
+        formatStr: "UKDE Cartweight Mode %@",
+        replaceArgs: [CartSettings.ukdeMode]
+      }
+    });
+    CartSettings.ukdeModeHasBeenLogged = true;
+  }
+
+  this.turnButtonHasBeenPressed = true; // So we can tell whether user has yet done anything
   switch (this.turnState) {
     case 'guessing':
       this.changeTurnState('weighing');
@@ -506,6 +539,33 @@ CartModel.prototype.updateScore = function () {
   if (this.oneScore < 0) this.oneScore = 0;
 
   this.score += this.oneScore;
+  if( CartSettings.ukdeMode === 'B') {
+    this.ukdeB_Scores.push( this.oneScore);
+    if( this.ukdeB_Scores.length > 5) {
+      this.ukdeB_Scores.splice( 0, this.ukdeB_Scores.length - 5);
+    }
+  }
+};
+
+/**
+ * What is computed depends on the mode we're in
+ */
+CartModel.prototype.getRequiredScoreToWin = function () {
+  var tNextLevel = this.levelManager.getNextLevel( this.level);
+  return tNextLevel.prerequisite ? tNextLevel.prerequisite.score : '';
+};
+
+/**
+ * What is computed depends on the mode we're in
+ */
+CartModel.prototype.getCurrentTotalScore = function () {
+  var tScore = this.score;
+  if( CartSettings.ukdeMode === 'B' && this.ukdeB_Scores.length > 0) {
+    tScore = this.ukdeB_Scores.reduce( function( iPrev, iCurr) {
+      return iPrev + iCurr;
+    });
+  }
+  return tScore;
 };
 
 /**
@@ -604,7 +664,9 @@ CartModel.prototype.saveState = function () {
     state: {
       gameNumber: this.gameNumber,
       currentLevel: this.level && this.level.levelName,
-      levelsMap: this.levelManager.getLevelsLockState()
+      levelsMap: this.levelManager.getLevelsLockState(),
+      ukdeMode: CartSettings.ukdeMode,
+      turnButtonHasBeenPressed: this.turnButtonHasBeenPressed
     }
   };
 
@@ -645,6 +707,11 @@ CartModel.prototype.saveState = function () {
  */
 CartModel.prototype.restoreState = function (iState) {
   if (iState) {
+    if( iState.turnButtonHasBeenPressed) {
+      // Restore the ukdeMode that was saved rather replacing the randomly chosen one
+      CartSettings.ukdeMode = iState.ukdeMode;
+      this.turnButtonHasBeenPressed = true;
+    }
     if (iState.gameNumber)
       this.gameNumber = iState.gameNumber;
     if (iState.currentLevel) {

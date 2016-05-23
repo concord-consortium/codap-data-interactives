@@ -114,6 +114,32 @@ CartView.prototype.handleStateChange = function( iEvent)
       break;
     default:
   }
+
+  if( CartSettings.ukdeMode === 'B' && iEvent.priorState === 'welcome' && iEvent.newState === 'playing') {
+    this.showDirections();
+  }
+};
+
+/**
+ * Show directions for current mode
+ *
+ */
+CartView.prototype.showDirections = function()
+{
+
+  function closeAlert() {
+    KCPCommon.setElementVisibility("ukdeB_playDescription", false);
+    KCPCommon.setElementVisibility("cover", false);
+    this_.model.changeIsBlocked = false;
+  }
+
+  document.getElementById('needed_score').innerHTML = this.model.getRequiredScoreToWin();
+  document.getElementById('num_moves').innerHTML = CartSettings.numCarts;
+
+  KCPCommon.setElementVisibility("ukdeB_playDescription", true);
+  KCPCommon.setElementVisibility("cover", true);
+  this.model.changeIsBlocked = true;
+  document.getElementById("alright_button").onclick = closeAlert;
 };
 
 /**
@@ -202,7 +228,7 @@ CartView.prototype.updateAll = function()
 {
   document.getElementById("gameNum").innerHTML = this.model.gameNumber;
   document.getElementById("levelName").innerHTML = this.model.level.levelName;
-  document.getElementById("score").innerHTML = this.model.score;
+  document.getElementById("score").innerHTML = this.model.getCurrentTotalScore();
   document.getElementById("actual").innerHTML = Math.round( 10 * this.model.weight) / 10;
   document.getElementById("onescore").innerHTML = this.model.oneScore;
 };
