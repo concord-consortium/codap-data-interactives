@@ -2,6 +2,7 @@
 // Project:   Cart
 // Copyright: ©2012 KCP Technologies, Inc.
 // ==========================================================================
+
 /*global $, Cart, CartSettings, KCPCommon */
 
 /**

@@ -2,6 +2,7 @@
 // Project:   JavaScript games
 // Copyright: ©2012 KCP Technologies, Inc.
 // ==========================================================================
+
 /*global $, KCPCommon */
 
 /**
