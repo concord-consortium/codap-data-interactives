@@ -92,7 +92,7 @@ var dataManager = Object.create({
         collection: collection,
         currentCase: null,
         currentCaseIndex: 0,
-        currentCaseIsDirty: false,
+        isDirty: false,
         caseCount: null,
         navEnabled: {}
       }
@@ -143,6 +143,7 @@ var dataManager = Object.create({
       collectionInfo.currentCaseIndex = Number(caseIndex);
       collectionInfo.currentCase = myCase;
       collectionInfo.currentCaseResourceName = resourceName;
+      collectionInfo.currentCaseIsNew = false;
       if (collectionIndex > 0) {
         guaranteeLeftCollectionIsParent(collectionInfoList[collectionIndex - 1],
             myCase.parent, this.data.currentContext);
@@ -161,16 +162,18 @@ var dataManager = Object.create({
     this.notify();
   },
 
-  computeNavEnabled: function (collectionInfo) {
-    var navEnabledFlags = collectionInfo.navEnabled || {};
-    var caseIndex = collectionInfo.currentCaseIndex;
-    var caseCount = collectionInfo.caseCount;
-    var dirty = collectionInfo.currentCaseIsDirty || false;
-    navEnabledFlags.prev = !dirty && (caseIndex !== null) && (caseIndex !== undefined) && caseIndex > 0;
-    navEnabledFlags.next = !dirty /*&& (caseCount !== null) && (caseIndex !== undefined) && caseIndex < caseCount - 1;*/
-    navEnabledFlags.newInstance = !dirty;
-    navEnabledFlags.removeInstance = true;
-    collectionInfo.navEnabled = navEnabledFlags;
+  computeNavEnabled: function () {
+    this.data.collectionInfoList.forEach(function (collectionInfo) {
+      var navEnabledFlags = collectionInfo.navEnabled || {};
+      var caseIndex = collectionInfo.currentCaseIndex;
+      var caseCount = collectionInfo.caseCount;
+      var dirty = this.data.isDirty || false;
+      navEnabledFlags.prev = !dirty && (caseIndex !== null) && (caseIndex !== undefined) && caseIndex > 0;
+      navEnabledFlags.next = !dirty /*&& (caseCount !== null) && (caseIndex !== undefined) && caseIndex < caseCount - 1;*/
+      navEnabledFlags.newInstance = !dirty;
+      navEnabledFlags.removeInstance = true;
+      collectionInfo.navEnabled = navEnabledFlags;
+    }.bind(this));
   },
 
   findCollectionInfoForAttribute: function (iAttributeName) {
@@ -187,24 +190,49 @@ var dataManager = Object.create({
       return (collection.name === iCollectionName);
     });
   },
+  findCollectionIndexForName: function (iCollectionName) {
+    return this.data.collectionInfoList.findIndex(function (collectionInfo) {
+      var collection = collectionInfo.collection;
+      return (collection.name === iCollectionName);
+    });
+  },
 
   setDirty: function (collectionInfo, isDirty) {
-    collectionInfo.currentCaseIsDirty = isDirty;
+    collectionInfo.isDirty = isDirty;
+    this.data.isDirty
+        = this.data.collectionInfoList.reduce(function (sum, collectionInfo) {
+      return sum || collectionInfo.isDirty;
+    },  false );
     this.computeNavEnabled(collectionInfo);
   },
 
   updateCase: function (collectionInfo) {
-    var resource = collectionInfo.currentCaseResourceName;
-    dispatcher.sendRequest({
-      action: 'update',
-      resource: resource,
-      values: collectionInfo.currentCase
-    })
+    if (collectionInfo === undefined) {
+      this.data.collectionInfoList.forEach(function (collectionInfo) {this.updateCase(collectionInfo)}.bind(this) );
+    } else if (collectionInfo.isDirty) {
+      var resource = collectionInfo.currentCaseResourceName;
+      var isNew = collectionInfo.currentCaseIsNew;
+      var action = isNew? 'create': 'update';
+      dispatcher.sendRequest({
+        action: action,
+        resource: resource,
+        values: collectionInfo.currentCase
+      })
+    }
   },
-  didUpdateCase: function(iCollectionName) {
+  didUpdateCase: function(iCollectionName, reply) {
     console.log('DidUpdateCase')
     var collectionInfo = this.findCollectionInfoForName(iCollectionName);
     if (collectionInfo) {
+      if (reply.values && reply.values[0]) {
+        dispatcher.sendRequest({
+          action: 'get',
+          resource: 'dataContext[' + this.data.currentContext + '].collection[' +
+            collectionInfo.collection.name + '].caseByID[' +
+            reply.values[0].caseID + ']'
+        })
+      }
+      collectionInfo.currentCaseIsNew = false;
       this.setDirty(collectionInfo, false);
       this.notify();
     }
@@ -266,7 +294,36 @@ var dataManager = Object.create({
     }
     this.notify();
   },
-  startNewCase: function () {},
+  startNewCase: function (iCollectionName) {
+
+    function makeNewCase(collectionInfo, parentCollectionInfo, contextName) {
+      var parentCase = parentCollectionInfo && parentCollectionInfo.currentCase;
+      var caseValues = {};
+      collectionInfo.collection.attrs.forEach(function (attr) {
+        caseValues[attr.name] = '';
+      });
+      collectionInfo.currentCase = {
+        parent: parentCase.id || parentCase.guid,
+        values: caseValues
+      };
+      collectionInfo.currentCaseIsNew = true;
+      collectionInfo.currentCaseResourceName = 'dataContext[' + contextName +
+          '].collection[' + collectionInfo.collection.name + '].case';
+      // todo: how to find currentCaseIndex?
+    }
+    var contextName = this.getContextName();
+    var collectionIndex = this.findCollectionIndexForName(iCollectionName);
+    var ix;
+    var collectionInfo;
+    var parentCollectionInfo;
+    for (ix = collectionIndex; ix < this.data.collectionInfoList.length; ix += 1) {
+      collectionInfo = this.data.collectionInfoList[ix];
+      parentCollectionInfo = (ix > 0) && this.data.collectionInfoList[ix - 1];
+      makeNewCase(collectionInfo, parentCollectionInfo, contextName);
+      this.setDirty(collectionInfo, true);
+    }
+    this.notify();
+  },
 
   getState: function () {
     return this.data;
@@ -359,10 +416,19 @@ var dispatcher = Object.create({
         switch (resourceObj.type) {
           case 'caseByIndex':
           case 'caseByID':
-            dataManager.didUpdateCase(resourceObj.collection);
+            dataManager.didUpdateCase(resourceObj.collection, result);
             break;
           default:
-            console.log('No handler for get response: ' + request.resource);
+            console.log('No handler for update response: ' + request.resource);
+        }
+      } else if (request.action === 'create') {
+        this.connectionState = 'active';
+        switch (resourceObj.type) {
+          case 'case':
+            dataManager.didUpdateCase(resourceObj.collection, result);
+            break;
+          default:
+            console.log('No handler for create response: ' + request.resource);
         }
       } else {
         this.connectionState = 'active';
@@ -573,12 +639,14 @@ var DataCardView = React.createClass({
     collection: React.PropTypes.object.isRequired,
     context: React.PropTypes.string.isRequired,
     isDirty: React.PropTypes.bool.isRequired,
+    isNew: React.PropTypes.bool.isRequired,
     onCaseValueChange: React.PropTypes.func.isRequired,
     onContentUpdate: React.PropTypes.func.isRequired
   },
   render: function () {
     var collection = this.props.collection;
     var isDirty = this.props.isDirty;
+    var buttonTitle = this.props.isNew? 'Create': 'Update';
     return  <div className="card-content">
               <div className="case-display">
                 <div className="attr-container">
@@ -591,12 +659,6 @@ var DataCardView = React.createClass({
                       onChange={this.props.onCaseValueChange}/>
                 </div>
               </div>
-              <input
-                  type="button"
-                  className="update-case"
-                  disabled={!isDirty}
-                  onClick={this.props.onContentUpdate}
-                  value="Update" />
             </div>
 
   }
@@ -635,14 +697,21 @@ var DataCardAppView = React.createClass({
                   <SlideShowView
                       collection={collection}
                       navEnabled={navEnabled}
-                      onNavigation={function (collectionName, direction) { dataManager.selectCase(collectionName, direction); }}>
+                      onNavigation={function (collectionName, direction) {
+                        dataManager.selectCase(collectionName, direction);
+                      }}>
                     <DataCardView
                         collection={collection}
                         context={this.state.currentContext}
                         currentCase={collectionInfo.currentCase}
-                        isDirty={collectionInfo.currentCaseIsDirty}
-                        onContentUpdate={function() { dataManager.updateCase(collectionInfo); }}
-                        onCaseValueChange={function (name, value) {dataManager.updateCurrentCaseValue(name, value);}}/>
+                        isDirty={collectionInfo.isDirty}
+                        isNew={collectionInfo.currentCaseIsNew}
+                        onContentUpdate={function() {
+                          dataManager.updateCase(collectionInfo);
+                        }}
+                        onCaseValueChange={function (name, value) {
+                          dataManager.updateCurrentCaseValue(name, value);
+                        }}/>
                   </SlideShowView>
                  </section>
       } else {
@@ -653,6 +722,16 @@ var DataCardAppView = React.createClass({
 
       }
     }.bind(this));
+    if (cards.length > 0) {
+      cards.push(<section key="#control">
+        <input
+            type="button"
+            className="update-case"
+            disabled={!this.state.isDirty}
+            onClick={function () { dataManager.updateCase()}}
+            value="update" />
+      </section>)
+    }
     return <div className="data-card-app-view">
       <section id="context-selector" className="data-card-app-view-header">
         <ContextSelector
@@ -660,6 +739,7 @@ var DataCardAppView = React.createClass({
             onSelect={function (contextName) { dataManager.changeContext( contextName ); }} />
       </section>
       {cards}
+
     </div>
   }
 });
