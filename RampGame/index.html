@@ -61226,14 +61226,18 @@ _nS('controllers.Local'); _root['controllers']['Local']['standalone'] =
 
 
     <!-- This can be used to insert nlogo code into this page -->
-    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v5.nlogo">; RampGame PF v5
-; May 11, 2016
+    <script type="text/nlogo" id="nlogo-code" data-filename="RampGame-PF.v6.nlogo">; RampGame PF v6
+; May 20, 2016
 ; Built on RampGame v6d
 ; Started July 22, 2013
 ; Bob Tinker
 ; Copyright, the Physics Front
 ; Available under open source licenses
 
+; May 20    PF v6   Removed unused code
+; May 20    PF V5.3 Fixed some bugs. 
+;                   Reorganized the code to be a bit more logical
+; May 13    PF v5.1 Added some code to 'initialize' that allows restored state to be set by the calling program. 
 ; May 11    PF v5   Removed single quotes in text strings. Installed hooks for CODAP. The game chooses game-play at random.
 ;                   Passes the value of game-play that was randomly selected on to CODAP.
 ;                   Added an admittedly cryptic message to change scales if a new point is not visible. 
@@ -61264,6 +61268,7 @@ globals [
 
   starting?                      ; true when waiting for the user to press the start button
   running?                       ; true when the car is running
+  waiting-for-start?
   game-play                      ; determines whether classic or two-step scoring is used
   
   ; the following variables need to be calculated only once each dt cycle, speeding up the calculations.
@@ -61288,6 +61293,7 @@ globals [
   carx                            ; used to generate a positive definite output to the distance traveled reporter
   car-speed
   car-locked?
+  allow-repeat?
   allow-reset?
   freeze?  ; used to freeze the game to push kids to use the lab notebook. (disabled)
   dashes
@@ -61328,7 +61334,7 @@ globals [
   targets               ; a list of target values
   advance-target?       ; used to determine whether the target moves between trials. 
   target-radius         ; the radius for this level and step
-  target-radius-max     ; the radius for setp one in a run
+  target-radius-max     ; the radius for step one in a run
   target-radius-min     ; the radius for the highest step in a run
   target-max            ; the maximum position of the target 
   target-min            ; the minimum position of the target
@@ -61340,7 +61346,6 @@ globals [
   value-who             ; the who of the value graph-dots
   target-label          ; the who of the drawing dot used to label the target 
   waiting-for-setup?    ; used to allow the user to press setup.
-  waiting-for-start?    ; needed??????
   waiting-for-car-move? ; waiting for the user to click on the car to move it
   final-position        ; the final position of the car at the end of a run
   next-step             ; used to carry the step info from the time it is set in analyze data to its display in setup-next-run
@@ -61384,35 +61389,14 @@ globals [
   show-values?          ; controls the display of x,y values at the cursor
   allow-zoom?
   button-who
-  
-   ; graph colors
-  grid-back-color       ; the color of the background
-  grid-color 
-  grid-label-color
-  graph-color
-   ; define the graphing window in screen coordinates
-  graph-right
-  graph-left
-  graph-top
-  graph-bottom
-;  current-color         ; records the color of the current car
 ]
 
-
-breed [cursors cursor]                   ; used in the graph
-breed [box-handles box-handle]           ; used to define a box to zoom into
-breed [line-handles line-handle]         ; used to draw guide line--a line between two handles
-breed [grid-dots grid-dot]               ; used for drawing the graphing grid
-breed [graph-dots graph-dot]             ; used for graphs
-breed [reporters reporter]               ; used with hover to show data
-breed [drawing-dots drawing-dot]         ; used for text messages
 breed [cars car]
 breed [markers marker]                   ; used to show the target
 breed [values value]                     ; used to read out the x,y values from the graph 
 breed [buttons button]                   ; used for soft button
-
-graph-dots-own [distance-traveled start-hght frctn mss brightness]  ; brightness can be zero for hidden, 1 for dim and 2 for full size
-  
+breed [drawing-dots drawing-dot]         ; used for first page message
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;; Override Data Export Functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61456,7 +61440,7 @@ to go                       ; this is the main forever button called 'On/off'
     ifelse game-play = 1 ; "Two Step" 
       [pretty-print "You get two tries at each step. If you get 67 points or more on the first try, you will advance to the next step."
         pretty-print "Regardless of your score on the second try, you will advance to the next step."
-        pretty-print "At the end of a challenge, if your average score is below 67 you can repeat the challenge."]
+        pretty-print "At the end of a challenge, if your average score for the challenge is below 67 you can repeat the challenge."]
       [pretty-print "The only way to advance to a higher step is to get a score above 67"
          pretty-print "If you score below 33, you will step backward."]
     pretty-print dashes
@@ -61467,7 +61451,7 @@ to go                       ; this is the main forever button called 'On/off'
     if running? [run-car]   ; computes the motion of the car every dt seconds, if the simulation is running
     act-on-changes          ; detect changes in pull-downs, mouse, or in the friction slider
     support-mouse           ; allows the mouse to move the car
-    show-values             ; show the values at the cursor
+;    show-values             ; show the values at the cursor
     tick]
 end
 
@@ -61475,245 +61459,25 @@ to act-on-changes                            ; This calls subroutines ONCE when 
        ; To understand how this works, you must realize that this routine is called repeatedly, ever dt seconds
        ;    so to avoid multiple calls, I use an 'old-...' flag to record the event status the previous time called
        ;    When there is a difference between the old and current values I act on the change.
-        
-  if (not old-mouse-down?) and mouse-down? and allow-reset? [   ; detect a button press
-    set old-mouse-down? true
-    if (abs (mouse-xcor - but-u) < 20 ) and (abs (mouse-ycor - but-v) < 10) [  ; if the user clicks near the button...
-      press-repeat-challenge
-      stop]]
-  
-  if old-mouse-down? and (not mouse-down?) [ ;  detect a mouse up event
-    set old-mouse-down? false
-    repeat-level
-    ask buttons [ht]                         ; hide the repeat challenge button
-    stop]    ; erase the button  
-  
+  if (abs (mouse-xcor - but-u) < 20 ) and (abs (mouse-ycor - but-v) < 10) and mouse-down? and allow-repeat?  [  ; if the user clicks near the button...
+      repeat-level]                                                  ; execute the repeat-level function
+      
   if car-waiting? and mouse-inside? and 
     mouse-down? and (in-window? mouse-xcor mouse-ycor) [  ; call if waiting for user to touch the car after a run
     set car-waiting? false
+    set allow-repeat? false
+    ask buttons [ht]
     setup-new-run ]
          
   if friction != old-friction [              ; if the user tries to change the friction...
     ifelse friction-locked? or running?      ;   and the friction slider is supposed to be locked or the model is running
-      [ wait-hack .6 set friction old-friction 
+      [ 
+        wait-hack .6 
+        set friction old-friction 
         pretty-print "The friction is locked for this challenge."
         pretty-print dashes
         set friction old-friction  ]         ;   then reset the slider to its old position
       [set old-friction friction]]           ; otherwise allow the change
-  
-  if x-axis != old-x-axis [                  ; sense a change of the parameter plotted on the x-axis
-    set old-x-axis x-axis                    ; the following is executed only once when the parameter plotted on the x-axis is changed
-    set-default-scales
-    draw-grid
-    draw-points]
-  
-  if in-grid? mouse-xcor mouse-ycor [        ; handle mouse in graph
-    if mouse-down? and not old-mouse-down? [
-      set old-mouse-down? true
-      handle-mouse-down]                     ; call once when the mouse is clicked
-    if mouse-down? and old-mouse-down? [
-      handle-mouse-drag]                     ; call repeatedly while the mouse is down
-    if not mouse-down? and old-mouse-down? [
-      set old-mouse-down? false              ; call once when the mouse is released
-      handle-mouse-up]]
-  
-  if old-show-guideline? != show-guideline? [ ; the guideline is the black line with handles at each end
-    set old-show-guideline? show-guideline?
-    handle-line]                              ; called once when the user changes the 'show-guideline?' switch
-  
-  if old-data-graphed != data-graphed [       ; handle a chenge in the 'data-graphed' pull-down control
-    set old-data-graphed data-graphed
-    if data-graphed = "All" [
-      ask graph-dots [st]]
-    if data-graphed = "none" [
-      ask graph-dots [ht]]
-    if data-graphed = "Friction Data" [
-      ask graph-dots [
-        ifelse color = yellow [st][ht]]]]
-end
-
-to draw-first-page
-  create-drawing-dots 1 [
-    set size .1
-    setxy .4 * min-pxcor .9 * max-pycor
-    set label   "Press the On/Off button to continue." ]
-  create-drawing-dots 1 [
-    set size .1
-    setxy .5 * min-pxcor .85 * max-pycor
-    set label "   Leave it on all the time." ]
-  ask drawing-dots [set label-color yellow]
-  
-  set output-width  70     ; characters in the output box, used with pretty-print
-  set dashes "----------------------------------------------------------------------"
-  pretty-print "The goal of this game is to start the car at the right height on the ramp so that it will land in the middle of the red zone."
-  pretty-print "There are five levels of play. Each level has a different challenge. The challenges start easy but get very hard."
-  pretty-print "There are four setps in each level. With each step the target gets smaller."
-  pretty-print dashes
-  pretty-print "If you need help, try pressing the Hint button."
-  pretty-print dashes
-  set level 1
-  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
-  pretty-print "Now press the On/Off button to continue."
-  pretty-print dashes
-end
-
-to initialize
-  set dt .01 ; the time step
-  set g 9.81 ; acceleration of gravity in mks units
-  set nearby 5    ; the distance in pixels needed to count as a hit using the mouse
-  set ready-for-export? false
-  set waiting-for-start? true
-  set running? false
-  set car-waiting? false
-  set old-running? false
-  set freeze? false
-  set magnification 50    ; 
-  set x-center 1.34 set y-center .35  ; 
-  set data-graphed "All"
-  set old-data-graphed data-graphed
-  set show-values? true   ; controls the display of x,y values at the cursor
-  set allow-zoom? true    ; controls whether zooming on the grid is allowed. 
-  set tries-this-level 0  ; used in computing the average score for a level
-  set score-this-level 0  ; 
-  set allow-reset? false  ; used only when the user wants to repeat a challenge
-  initialize-repeat-challenge   ; creates a hidden repeat challenge button
-   
-  define-window      ; defines the ramp window bounded by (ul, ur, vb, bt)
-  define-transforms  ; creates transforms for the ramp  (mx, my, bx, by)
-  set first-reward? true
-  set try 1          ; start with the first try using the "two-step" rules
-  set ramp-color blue + 2
-  set ramp [[-1.6 1.1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
-  draw-ramp                      ; draws ramp
-  ; define car variables
-  set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
-  set saved-starting-x -.9
-  ;  make the car
-  set car-size 22
-  create-cars 1 [
-    ht  
-    ifelse level = 4 [set car-mass 200] [set car-mass 100]
-    set color red
-    set shape "car"
-    set size car-size
-    place-car saved-starting-x]
-
-  ; markers mark the target. They are two tiny turtles linked by a thick line
-  set move-target? false
-  create-markers 1 [ht set marker-1 who set color red set size .1 set heading 0]
-  create-markers 1 [ht set marker-2 who set color red set size .1 set heading 0
-    create-link-with marker marker-1 [
-      set thickness 3 set color red]]
-  create-markers 1 [ht set marker-3 who set color red set size 18 set heading 0 set shape "line"]    ; create a vertical line at the center of the target
-  create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
-  set data-saved? true
-  set output-width  70     ; characters in the output box, used with pretty-print
-  if level = 0 [
-    set total-score 0
-    set score-last-run 0
-    set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.)
-    set step 1        ; start at step 1
-  ]
-  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
-  set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25 3.02 .8 1.55 1.41 1.1 3.2] ; a list of target values
-
-  set number-of-random-tries 0
-  set n-steps  4
-  set next-level level
-  set next-step step
-  set max-level 5   ; the number of levels in the game. Used to stop advancing beyond this level
-  setup-game        ; setup for level 1 step 1 
-  show-target
-  
-  my-clear-output
-  setup-new-run
-  setup-data-export    ;;; used to define the structure of the exported data
-
-  initialize-graph   ; draw graph with default values
-  reset-ticks
-  reset-timer
-end
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;; Graphing routines ;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to initialize-graph                             ; define the graphing window, draw default graph
-  
-  ; The graphing window boundaries are graph-umin, graph-umax, graph-vmin, and graph-vmax (in screen coordinates) 
-  ; The grid screen boundaries are grid-umin, grid-umax, grid-vmin, grid-vmax (in screen coordinates)
-  ; The desired ranges of x and y are scale-xmin, scale-xmax etc. in problem coordinates.
-  ; The intended number of tic marks is determined by grid-separation in pixels per tic
-  ; The axis labels are x-label and y-label
-  ; Colors are set by gird-color and label-color
-
-  ; define the graph window
-  set graph-umax max-pxcor 
-  set graph-umin .64 * min-pxcor
-  set graph-vmax 45
-  set graph-vmin min-pycor
-  
-  ; define the grid rectangle
-  ; the 'spaces' are the distances inside the graph window that define the grid in screen coordinates
-  let top-space 12
-  let bottom-space 15
-  let left-space 20
-  let right-space 7
-  set grid-umin graph-umin + left-space
-  set grid-umax graph-umax - right-space
-  set grid-vmin graph-vmin + bottom-space
-  set grid-vmax graph-vmax - top-space
-  
-  ; various colors used in grapher
-  set graph-color 3        ; the color of the background of the graphing window
-  set grid-back-color 7   ; the color of the background of the grid
-  set grid-color white      ; the color of the grid lines
-  set grid-label-color white
-  
-  ; color the graphing space backgrounds
-  ask patches with [in-graph? pxcor pycor ][  
-    ifelse in-grid? pxcor pycor 
-      [set pcolor grid-back-color]       ; color the grid background
-      [set pcolor graph-color]]     ; color the graph area that is not in the grid
-  
-  ; more graph parameters  
-  set grid-separation 20    ; target number of pixels per grid line
-  set tic-length 3          ; number of pixels the tic extends beyond the axis
-  set line-width 1          ; width of lines in the grid. 
-
-  ; set the default grid ranges
-  set x-axis "Starting Height"      ; sets the x-axis pull-down selector
-  set old-x-axis x-axis             ; later, changes in x-axis will be sensed using old-x-axis
-  set old-mouse-down? false         ; helps detect mouse clicks
-  set mouse-function 0              ; determines the action taken on mouse click or drag
-  set y-label "Distance Traveled (m)"
-  set scale-ymin 0
-  set scale-ymax 4.5
-  set old-show-guideline? true
-  set show-guideline? true
-  set-default-scales
-  draw-grid
-  
-  create-values 1 [            ; values are used to show the (x, y) values at the cursor
-    set value-who who]         ; create two of them once here. 
-  create-values 1              ; save the who of one
-  ask values [
-    set size 0]                ; hide them for the time being
-  handle-line
-end
-
-to-report in-graph? [u v]  ; the graph window contains the grid, tics, and labels
-  report u >= graph-umin and         
-         u <= graph-umax and
-         v >= graph-vmin and
-         v <= graph-vmax
-end
-
-to-report in-grid? [u v] ; the grid is just the graphing area defined by x- and y-grid lines
-  report u >= grid-umin and
-         u <= grid-umax and
-         v >= grid-vmin and
-         v <= grid-vmax
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -61743,7 +61507,7 @@ end
 
 to support-mouse  ; used for ramp
   if not in-window? mouse-xcor mouse-ycor [stop]  ; do nothing if the mouse is outside the ramp window
-  if in-grid? mouse-xcor mouse-ycor [stop]         ; do nothing if the mouse is in the graphing grid
+;  if in-grid? mouse-xcor mouse-ycor [stop]         ; do nothing if the mouse is in the graphing grid
   if (car-locked? or running? or ready-for-export?) [stop] ; if the car is locked, do nothing
     ; set car-x to the transform of the mouse's xcor, set car-y to be on the ramp for that x value
   if mouse-down? [ask cars [                         ; move car to mouse, but move it slowly when the cursor is near the car
@@ -61991,6 +61755,11 @@ to setup-new-run
   show-target                    ; shows the target for this level and step
   pretty-print instructions 
   pretty-print dashes
+  if level = 5 and step = 1 [
+    pretty-print "For this challenge, it would be very helpful to plot End_Distance vs. Friction after clearing the existing data from the plot."
+    pretty-print "To clear the existing data, click on the trashcan icon in the plot side panel and choose Delete Unselected cases."
+    pretty-print "Then, change the x-axis to Friction by dragging the Friction header in the table to the x-axis."
+    pretty-print dashes]
   tick
 end
 
@@ -62046,12 +61815,12 @@ to get-next-step
                     ; In 'classic' the user can advance a step, stay at the current step, or go back a step depending on score
                     ; in 'two-step' the user has two tries per step and never is forced to go backward
   set move-target? true
-  my-clear-output
+;  my-clear-output
   if game-play = 0 [get-next-step-classic]
   if game-play = 1 [get-next-step-2step]
   pretty-print dashes
   ifelse level = 5 
-    [pretty-print "Click on the car to set up your next try."]
+    [pretty-print "Click on the car to set up your next try."]   ; in level 5, the software sets the car starting position and prevents the user from moving it. 
     [pretty-print "Click on the car and move it to set up your next try."]
 end 
 
@@ -62096,22 +61865,26 @@ end
 
 to get-next-step-2step                     
   ; In this "two-step" play, the user gets two trys per step. 
+  ; Inputs step, level, try, tries-this-level, score-this-level
+  ; Output next-step, next-level, try, tries-this-level, score-this-level
   ;    The variable 'try' remembers whether the current run is the first or second at the current step.
   ;    The variables tries-this-level and score-this-level are used to compute the average for a level
   ;    If the user gets a score above 67 on either try, except on the 4th step, h/she moves to the next step
   ;    If the user fails to get above 67 on the first try, h/she can try the step again.
   ;    On the second try but not the last step in a level, the user goes to the next step regardless of score.
-  ;    On the second try and the last level for any level and the average score for that 
+  ;    On the second try and the last step for any level and the average score for that 
   ;       level is less that cutoff, the user gets the choice of repeating the level.            
-   set tries-this-level tries-this-level + 1               ; store data for this level
-   set score-this-level score-this-level + score-last-run  ; used to compute average for a level
-   let ave precision (score-this-level / tries-this-level) 1
-   let upper-break 2 * max-score / 3  ; the minimum score to advance   
-   let lower-break max-score / 4  ; tused only for motivation
+   set tries-this-level tries-this-level + 1                 ; store data for this level
+   set score-this-level score-this-level + score-last-run    ; used to compute average for a level
+   let ave precision (score-this-level / tries-this-level) 1 ; compute and round the average score for this level
+   let upper-break 2 * max-score / 3                         ; the minimum score to advance   
+   let lower-break max-score / 4                             ; used only for motivation
    
    if (step = 4) and (level = max-level) and (try = 2) [  ; the user has completed the game regardless of score
        pretty-print "Super!! You have reached the end of this game. I hope you had fun and learned something, too."
        pretty-print "You can continue to play and increase your score."
+;       set next-level 3 set next-step 1 set tries-this-level 0 set score-this-level 0 ; restart at level 3
+;       setup-new-run
        stop]
    
    if score-last-run > upper-break [  ; reward the user, then move on to next step or challenge
@@ -62137,7 +61910,7 @@ to get-next-step-2step
    if score-last-run <= upper-break [    ; this command is not necessary, but left in for clarity
      ; show an appropriate message
      if score-last-run > lower-break [
-       pretty-print (word "You earned " score-last-run " points. That is a good score, but you can do better.")] 
+       pretty-print (word "You earned " score-last-run " points. That is a good score. Can you do better?")] 
 ;       set move-target? false]        ; needed??
      if score-last-run <= lower-break [
        pretty-print (word "Not so good. You scored " score-last-run " points. Have you looked at the hints?")]
@@ -62158,21 +61931,29 @@ to get-next-step-2step
          set score-this-level 0
          set tries-this-level 0
          pretty-print dashes
-         pretty-print (Word "Your average for this challenge is " ave ". You can do better.")
-         pretty-print dashes
-         pretty-print "Press the PRESS HERE button NOW for another chance to get a better score on this challenge."
+         pretty-print (Word "Your average for this challenge is " ave ". Try doing better.")
+         pretty-print dashes  
+         pretty-print "Press the CLICK HERE... button NOW to repeat the level and earn a better score on this challenge."
          pretty-print "If you do not press it now, you will go on to the next challenge."
          pretty-print dashes
-         set allow-reset? true
-         ask buttons [st]    ; show the button that says "Press here to repeat the last challenge"
+         set allow-repeat? true
+;         ask buttons [die]
+;         initialize-repeat-challenge
+         ask buttons [st]  ; show the button that says "CLICK HERE to repeat the last challenge"
          set next-level level + 1]]] 
 end
 
 to repeat-level
-  if allow-reset? [
-    set allow-reset? false
-    set next-level level]
+  if allow-repeat? [
+    set allow-repeat? false
+    my-clear-output           ; erase the output, which will hold an incorrect message intended for the next challenge. 
+    ask buttons [ht]
+    set next-level next-level - 1
+;    set next-step 1
+    setup-new-run
+    pretty-print "Now try the last challenge again."]
 end
+
 
 to setup-game     ; sets all the controls for the current level and step
   setup-game-level
@@ -62187,7 +61968,7 @@ to setup-game-level ; setup the game for the current level.
     if step = 1 [
       set instructions "Challenge 1: Make the car stop in the center of the red area by changing the starting position of the car."
       set instructions word instructions " As you get better, the red target will get smaller."
-      set instructions word instructions " When the car stops your data is saved and graphed. The graph will help you later."
+      set instructions word instructions " When the car stops your data is saved and can be graphed. The graph will help you later."
     ]
     set friction .18
     set old-friction friction
@@ -62249,9 +62030,11 @@ to setup-game-level ; setup the game for the current level.
     set car-locked? true
     set target-radius-max .6 ; the distance between the center and edge of the target for step 1
     set target-radius-min .3] ; the radius for the highest step in this level
+  if not (step = 1) [set instructions ""]
 end
 
 to setup-game-step   ; sets the values of controls that change with each step--the target and starting point widths
+  set move-target? (try = 1)      ; *************************
   if move-target? and not target-locked? [ ; if the target can be moved this challenge and the user isn't repeating a try....
     set target-index (target-index + 1) mod length targets ]  ; cycle through the various targets in the variable targets. 
   set target item target-index targets                    ; pull a target out of the list of targets
@@ -62298,8 +62081,8 @@ end
 
 to update-score  ; called once by analyze-data
   ; computes the score for the most recent run and tests for random trials. 
-  ; input is final-position, generated by run-cars
-  ; output is score-last-run
+  ; input is final-position, generated by run-cars, and target
+  ; output is score-last-run, total-score, and number-of-random-tries
   set score-last-run 0
   if abs (final-position - target) < target-radius [
     set number-of-random-tries number-of-random-tries - 1
@@ -62312,10 +62095,12 @@ to update-score  ; called once by analyze-data
   if abs (final-position - target) > 2 * target-radius [  ; very bad try, may be random
     set number-of-random-tries number-of-random-tries + 1
     if number-of-random-tries > 2 [
-      pretty-print "It looks like you are just guessing. All the information that you need to hit the target is in the graph."]
+      pretty-print "It looks like you are just guessing. All the information that you need to hit the target is in the graph."
+      pretty-print dashes]
     if number-of-random-tries > 3 [
       set number-of-random-tries 4
-      pretty-print "You loose 100 points for gussing." 
+      pretty-print "You loose 100 points for guessing."
+      pretty-print dashes 
       set total-score total-score - 100
       if total-score < 0 [set total-score 0 ]] 
     ]
@@ -62328,6 +62113,9 @@ to display-help-message
   ; generates context-sensitive hints
   ; context is generated by level and messages-shown, a list of the number of messages shown at level (item + 1)
   ; each message is shown only once
+  if starting? [
+    output-print "Hints are not available until you press the On/Off button."
+    stop]
   let number-shown-already item (level - 1) messages-shown
   set messages-shown replace-item (level - 1) messages-shown (number-shown-already + 1)  ; increase the number shown at this level
   let m "Sorry, no more hints are available right now. Try again when you reach the next challenge."  ; the default message
@@ -62410,15 +62198,7 @@ to display-help-message
   data-export-log-event (word "User received the message " m) "" "" ""
 end
 
-to-report score-display
-  ifelse not (level = 1 and step = 1)
-    [report (word Score-last-run " of " max-score)]
-    [report ""]
-end
-
-to analyze-data ;
-;  if not ready-for-export? [data-export-log-event "User tried to analyze data before a run." "" "" ""
-;    stop]    
+to analyze-data ;   
   my-clear-output
   capture-final-state
   
@@ -62427,381 +62207,22 @@ to analyze-data ;
   update-score         ; computes and displays the score  
   get-next-step        ; computes next-step and next-level and prints result, but doesn't display the new level/step
   if next-level = 1 and next-step = 1 [        ; if the first run...
-;    pretty-print dashes
     pretty-print "Do you see the new point on the graph? "
     pretty-print "If there is no new point you may have to change the graph scales."
-    pretty-print "Now move the car to the ramp."]
-    pretty-print dashes  
-  ask graph-dots [set size 12] ; shrink all old dots
-  create-graph-dots 1 [   ; save the data into a new graph-dot
-    set color [color] of one-of cars
-  ; each graph-dot contains the values of the just-ended run
-  ; these need to have different names. They are:
-  ;   distance-traveled in the run
-  ;   start-hght the starting height for the run
-  ;   frctn the friction used in the run
-  ;   mss the mass of the car
-  ;   brightness. A variable that runs from 0 to 2 to control the brightness of the dot. 
-    set distance-traveled car-x 
-    set start-hght start-height
-    set frctn friction
-    set mss car-mass
-    set size 16
-    set brightness 1]
-  draw-points           ; draw all the graph-dots including the new one
+    pretty-print "Now move the car to the ramp."
+    pretty-print dashes  ]
   set ready-for-export? false
   set data-saved? true
 ;  set waiting-for-setup? true
 ;  while [not (mouse-down? and in-window? mouse-xcor mouse-ycor)] []       ; freeze until a mouse click in the ramp window FREEZING IS NOT GOOD. USE FLAGS. 
-  set car-waiting? true      ; calls setup-new-run whe the user starts to move the car after a run. The flag is acted on in 'act-on-changes'
+  set car-waiting? true      ; calls setup-new-run when the user starts to move the car after a run. The flag is acted on in 'act-on-changes'
 end
 
-to wait-hack [x]
-  let i 0
-  while [i < ( x * 1e7)] [set i i + 1]  ;count to 10M x times for a delay of x seconds. 
-end
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;; scale and grid-drawing routines ;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to draw-grid  ; draws the grid 
-  ; inputs (all globals) are the grid screen boundaries, the desired ranges of x and y, the intended number of tic marks in the x-direction, 
-  ; the axis labels, and the colors of the grid and labels
-  
-  ; The grid screen boundaries are grid-umin, grid-umax, grid-vmin, grid-vmax (in screen coordinates)
-  ; The desired ranges of x and y are scale-xmin, scale-xmax etc. in problem coordinates.
-  ; The intended number of tic marks is determined by grid-separation in pixels per tic
-  ; The axis labels are x-label and y-label
-  ; Colors are set by gird-color and label-color
-  ; A breed 'grid-dots' is needed.
-  
-  ; Draws and labels the graphing grid 
-  ; Outputs are the transformation coefs which are stored in the second position in their respective list
-  ask grid-dots [die] ; clear the grid. Grid-dots are turtles that draw the grid using links that connect pairs of dots.
-  draw-verticals   ; draws the vertical lines and the x-axis
-  draw-horizontals ; draws the horizontal lines and the y-axis
-end
-
-to draw-verticals ; draws the vertical lines and labels them along x-axis
-  let xTarget (grid-umax - grid-umin ) / grid-separation     ;  sets the target number of tics based on the size of the graphing area
-                                                    ; allocates about grid-separation pixels per tic
-  let a ticMarks scale-xmin scale-xmax xTarget        ; a now contains graph-xmin, graph-xmax, and n-xtics (ticmarks is a procedure)
-  set scale-xmin first a set scale-xmax item 1 a
-  ; compute the transformation coeficients in u=gmx+b
-  set gmx (grid-umax - grid-umin) / (scale-xmax - scale-xmin)  ; transforms for the graph start with 'g' to distinguish them from 
-  set gbx grid-umin - gmx * scale-xmin                        ;      the transforms used in the ramp
-  let n-xtics last a
-  let dxx (scale-xmax - scale-xmin) / (n-xtics - 1)
-  let x scale-xmin
-  repeat n-xtics [   ; draw and label the verticals one at a time
-    let w 0 
-    let u gmx * x + gbx
-    create-grid-dots 1 [
-      set size 0 
-      setxy u grid-vmax  ; place at the top of the grid
-      set w who ]
-    create-grid-dots 1 [ ; place a linked dot at the bottom
-      set size 0 
-      setxy u grid-vmin - tic-length
-      create-link-with grid-dot w [
-        set thickness line-width
-        set color grid-color
-        if abs (x - scale-xmin ) < .01 * dxx or 
-            abs (x - scale-xmax ) < .01 * dxx [
-          set thickness 2 * line-width ]]]   ; make edges wider
-    create-grid-dots 1 [      ; used to place the value 
-      set size 0 
-      set label precision x 3
-      set label-color grid-label-color
-      setxy u + 2 grid-vmin - (tic-length + 4 )]
-    set x x + dxx ]
-  create-grid-dots 1 [    ; label the axis
-    set size 0
-    let u .5 * (grid-umax + grid-umin) + 1.3 * length x-label
-    setxy u grid-vmin - 12         
-    set label x-label 
-    set label-color grid-label-color]
-end
-      
-to draw-horizontals ; draws the horizontal lines and labels them along the y-axis
-  let yTarget (grid-vmax - grid-vmin ) / grid-separation      ;  sets the target number of tics based on the size of the graphing area
-                                                    ; allocates about grid-separation pixels per tic
-  let a ticMarks scale-ymin scale-ymax yTarget        ; a now contains graph-xmin, graph-xmax, x-interval, and n-xtics 
-  set scale-ymin first a 
-  set scale-ymax item 1 a
-  ; compute the transformation coefficients in u=gmx+b
-  set gmy (grid-vmax - grid-vmin) / (scale-ymax - scale-ymin)
-  set gby grid-vmin - gmy * scale-ymin
-  let n-ytics last a
-  let dyy (scale-ymax - scale-ymin) / (n-ytics - 1)
-  let y scale-ymin   ;******************
-  repeat n-ytics [   ; draw and label the horizontals one at a time
-    let w 0 
-    let v gmy * y + gby
-    create-grid-dots 1 [
-      set size 0 
-      setxy grid-umax v ; place a dot at the right of the grid
-      set w who ]
-    create-grid-dots 1 [
-      set size 0 
-      setxy (grid-umin - tic-length) v  ; place a second dot tic-length to the left of the grid
-      set label word (precision y 3) "  "
-      set label-color grid-label-color
-      create-link-with grid-dot w [     ; connect the dots to make a grid line and tic
-        set thickness line-width
-        set color grid-color  ;
-        if abs (y - scale-ymin ) < .01 * dyy or 
-            abs (y - scale-ymax ) < .01 * dyy [
-          set thickness 2 * line-width ]]]   ; make edges wider
-    set y y + dyy ]
-  create-grid-dots 1 [ ; label the y-axis
-    set size 0 
-    set label y-label
-    set label-color grid-label-color
-    let u grid-umin + 1.8 * length y-label
-    setxy u grid-vmax + 6 ]
-end 
-
-to-report ticMarks [zMin zMax targetNumber]
-     ; Computes the scaling parameters.
-     ; Inputs are:
-     ;     the beginning of the scale
-     ;     The end of the scale
-     ;     The target number of tic marks in the scale
-     ; returns a list:
-     ;    The first item is the beginning of the scale (rounded down to an even number)
-     ;    The second item is the end of the scale (rounded up)
-     ;    The third item is the actual number of tics (differnet from nTics)
-   if ( zMax < zMin ) [                       ; swap if in the wrong order
-     let z zMax
-     set zMax zMin
-     set zMin z ]
-      ; compute the target interval between scale divisions (tic marks) in problem coordinates.
-      ; note that if there are N tic marks, there are N-1 intervals.
-   let dz  (zMax - zMin) / (targetNumber - 1) ; the value of the interval for the target number of tics
-   let y log dz 10                            ; compute the log base 10 of dz
-   let a floor y                              ; round y down to the nearest smaller integer
-   let z y - a                                ; z is the fractional part of the log
-   let r 0
-   ifelse z < .15                             ; if z is less than .15 set r to 1
-     [set r 1]
-     [ifelse z < .5                           ; otherwise if it is less than .5 set r to 2
-        [set r  2]
-        [ifelse  z < .85                      ; otherwise if it is less that .85 set r to 5
-          [set r 5 ]                          ; and if all else fails, set r to 10
-          [set r 10 ]]]                       ; r is the nearest 'nice' number to z: 1, 2, 5 or 10                        
-   set dz  r * 10 ^ a                         ; dz is now the "corrected" tic interval
-   let k floor (zMin / dz)                  
-   let lowtic k * dz
-   let ntics 1 + ceiling (zMax / dz ) - k     ; the actual number of tic marks
-   let hitic lowtic + dz * (ntics - 1)  
-   report (list lowtic hitic ntics)
-end
-
-to draw-points
-  ; the points are saved as the breed graph-dot
-  ; each graph-dot contains the values of the run that created the point
-  ; these need to have different names. They are:
-  ;   distance-traveled in the run
-  ;   start-hght the starting height for the run
-  ;   frctn the friction used in the run
-  ;   mss the mass of the car
-  ;   brightness. A variable that runs from 0 to 2 to control the brightness of the dot.
-  let x-val 0     ; define x-val
-  ask graph-dots [
-    let y-val distance-traveled
-    if x-axis = "Starting Height" [set x-val start-hght]
-    if x-axis = "Friction" [set x-val frctn]
-    if x-axis = "Mass" [set x-val mss]
-    let u gmx * x-val + gbx  ; convert values to screen coordinates (u v)
-    let v gmy * y-val + gby
-    ifelse in-grid? u v   ; show the dot, only if it is within the current grid
-      [setxy u v  ; dot can be graphed--show it
-;        ifelse frctn > .13 [set color red][set color green]    ; color-code the friction
-        set color color + (brightness - 1) * 4 
-        ;set size 16
-        set shape "dot" 
-        ]
-      [setxy 0 0 set size 0]]  ; the dot cannot be graphed, so make it vanish but don't kill it. 
-end
-
-to handle-mouse-down   ; the first thing the mouse-down does is set what function to execute
-  ; in subsequent mouse-move and mouse-up events. 
-  ; A mouse-down might indicate the following values for mouse-function
-  ; 0. Do nothing
-  ; 1. near line handle 1. Subsequent drags will drag this handle
-  ; 2. near line handle 2. Subsequent drags will drag this handle
-  ; 3. otherwise, create a selection box if allow-zoom? is true. The selection box is used for zooming in. 
-  if (any? line-handles) and (in-grid? mouse-xcor mouse-ycor) [  ; act only if there are line handles and the mouse is in the graphing grid
-    ifelse allow-zoom?   
-       [set mouse-function 3]       ; default to selection]
-       [set mouse-function 0]
-    ask line-handle handle-1 [
-      let d sqrt ((mouse-xcor - xcor) ^ 2 + (mouse-ycor - ycor) ^ 2)
-      if d < nearby [set mouse-function 1]]   ; if the mouse is near handle 1, set mouse-function to 1
-    ask line-handle handle-2 [
-      let d sqrt ( (mouse-xcor - xcor) ^ 2 + (mouse-ycor - ycor) ^ 2)
-      if d < nearby [set mouse-function 2]]]  ; if the mouse is near handle 2, set mouse-function to 2
-  ; the line handles override the zoom box. 
-  
-  ; at this point mouse-function is valid. If it is 3, then create a selection box at the mouse location
-  if mouse-function = 3 and (in-grid? mouse-xcor mouse-ycor) [   ; create a box with all corners at the same place
-      let w 0                  ; put box-handles at the edges of the selection box
-      ask box-handles [die]    ; kill off any existing box (shouldn't be any)
-      create-box-handles 1 [   ; Only the third box shows its a handle.
-        set near-box who
-        set size 0]
-      create-box-handles 1 [   ; link this box to the first
-        create-link-with box-handle near-box [
-          set thickness 1 set color blue]
-        set w who 
-        set size 0]
-      create-box-handles 1 [   ; only this box handle is shown
-        set far-box who
-        set size 4
-        create-link-with box-handle w [  ; link this box to the second
-          set thickness 1 set color violet]]
-      create-box-handles 1 [ 
-        set w who
-        set size 0
-        create-link-with box-handle far-box  [ ; link this box to the third
-          set thickness 1 set color violet]
-        create-link-with box-handle near-box [ ; and to the first. 
-          set thickness 1 set color violet]]
-      ask box-handles [                        ; tell them all to be violet squares
-        setxy mouse-xcor mouse-ycor            ; and move them all to the mouse so they start there
-        set shape "square"
-        set color violet ]  ; note: this only creates the selection box. The drag changes its shape and 
-                             ;    the mouse-up executes a scale change that will include the graph area selected. 
-      pretty-print "If you drag the mouse now, you will create a violet box."
-      pretty-print "This box is like a magnifying glass--it lets you zoom into any part of the graph that you select."
-      pretty-print "Just move drag box corner to cover the area that you want to magnify and then un-click the mouse." 
-      pretty-print "If you want to un-do the zoom, just press the Zoom Out button and you will zoom out to see all the data and the origin, too."
-      pretty-print dashes
-  ]
-end
-
-to handle-mouse-drag
-  ; if mouse-function is
-    ; 1. Drag line handle #-
-    ; 2. Drag line handle #2
-    ; 3. Drag the far side of the selection box
-  if mouse-function = 1 and (in-grid? mouse-xcor mouse-ycor)[
-    ask line-handle handle-1 [
-      setxy mouse-xcor mouse-ycor]]
-  if mouse-function = 2 and (in-grid? mouse-xcor mouse-ycor)[
-    ask line-handle handle-2 [
-      setxy mouse-xcor mouse-ycor]]  
-  if mouse-function = 3 and (in-grid? mouse-xcor mouse-ycor)[
-    let u0 [xcor] of box-handle near-box
-    let v0 [ycor] of box-handle near-box
-    ask box-handle (near-box + 1)[
-      setxy u0 mouse-ycor]
-    ask box-handle far-box [
-      setxy mouse-xcor mouse-ycor]
-    ask box-handle (far-box + 1)[
-      setxy mouse-xcor v0]] 
-end
-
-to handle-mouse-up
-  ; if mouse-function is:
-  ;   1. and 2. nothing
-  ;   3. rescale the graph
-  if mouse-function = 3 and (in-grid? mouse-xcor mouse-ycor) [
-    let u0 [xcor] of box-handle near-box
-    let v0 [ycor] of box-handle near-box
-    let u1 [xcor] of box-handle far-box
-    let v1 [ycor] of box-handle far-box
-    if (abs (u0 - u1) > 20) and (abs (v0 - v1) > 20) [    ; rescale only if the box is big enough
-      my-clear-output
-      pretty-print "You just zoomed in. You might be unable to see all your data."
-      pretty-print "Remember: you can press Zoom Out to see all your data and the origin."
-      pretty-print dashes
-      set scale-xmin (u0 - gbx) / gmx
-      set scale-ymin (v0 - gby) / gmy
-      set scale-xmax (u1 - gbx) / gmx
-      set scale-ymax (v1 - gby) / gmy
-      draw-grid
-      draw-points] 
-    set mouse-function 0 ; reset the mouse-function to zero
-    ask box-handles [die]]
-end
-
-to handle-line  ; look at the show-guideline? pull-down and act accordingly
-  ask line-handles [die]
-  if show-guideline? [
-    let w 0
-    create-line-handles 1 [
-      let u grid-umin + .25 * (grid-umax - grid-umin)
-      let v grid-vmin + .25 * (grid-vmax - grid-vmin)
-      setxy u v
-      set handle-1 who ]
-    create-line-handles 1 [
-      let u grid-umin + .85 * (grid-umax - grid-umin)
-      let v grid-vmin + .55 * (grid-vmax - grid-vmin)
-      setxy u v
-      set handle-2 who
-      create-link-with line-handle handle-1 [
-        set color black]]
-    ask line-handles [
-      set shape "square"
-      set size 4
-      set color black]]
-end    
-
-to set-default-scales
-  set scale-xmin 0
-    if x-axis = "Mass" [
-    set scale-xmax 250
-    set x-label word x-axis " (g)"]
-  if x-axis = "Friction" [
-    set scale-xmax .4
-    set x-label x-axis]
-  if x-axis = "Starting Height"[
-    set scale-xmax 1
-    set x-label word x-axis " (m)"] 
-  set scale-ymin 0
-  set scale-ymax 4
-end
-   
-to zoom-out  ; shows all the data and (0, 0)
-  if allow-zoom? [   ; disable if zooms are not allowed 
-    if not any? graph-dots [      ; if there are no datapoints, initialize the graph
-      initialize-graph
-      my-clear-output
-      stop]
-    set scale-xmin 0              ; find the domain, which depends on which variable is being graphed
-    if x-axis = "Mass" [          ; the physical values are stored in graph-dots
-      set scale-xmax 0            ; get the maximum of the selected independent variable
-      ask graph-dots [
-        if mss > scale-xmax [
-          set scale-xmax mss]]]
-    if x-axis = "Friction" [
-      set scale-xmax 0
-      ask graph-dots [
-        if frctn > scale-xmax [
-          set scale-xmax frctn]]]
-    if x-axis = "Starting Height" [
-      set scale-xmax 0
-      ask graph-dots [
-        if start-hght > scale-xmax [
-          set scale-xmax start-hght]]]      
-    set scale-ymin 0               ; find the range
-    set scale-ymax 0 
-    ask graph-dots [
-      set size 12
-      if distance-traveled > scale-ymax [
-        set scale-ymax distance-traveled ]]
-    draw-grid
-    draw-points  ; repopulate with points
-  ] 
-end
-   
 ; routines to implement a single soft button for repeating a level. 
 ; the button is at but-u, but-y and the text lines are separated by kern 
 to initialize-repeat-challenge
-  set but-u -75 
+  set but-u -73 
   set but-v 100  
   let kern 7
   create-buttons 1 [
@@ -62814,79 +62235,157 @@ to initialize-repeat-challenge
     ht]
   ; now show the text
   create-buttons 1 [
-    set label "PRESS HERE"
-    setxy (but-u + 13) (but-v + kern - 2)
+    set label "CLICK HERE"
+    setxy (but-u + 12) (but-v + kern - 2)
     set size 0
     set label-color yellow 
     ht]
   create-buttons 1 [
     set label "to repeat the"
-    setxy (but-u + 16) (but-v - 2)
+    setxy (but-u + 15) (but-v - 2)
     set size 0
     set label-color yellow 
     ht]
   create-buttons 1 [
     set label "last challenge"
-    setxy (but-u + 17) (but-v - (kern + 2))
+    setxy (but-u + 15) (but-v - (kern + 2))
     set size 0
     set label-color yellow 
     ht]
 end
 
-to press-repeat-challenge
-  ask buttons [               ; buttons include the text
-    set label-color white]    ; set them all white
-  ask button button-who [     ; then set the actual button black
-    set color black]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;; Generate displays ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; These are three little routines that could be in the outputs
+;  but I hate putting code there. 
+
+to-report score-display
+  ifelse starting? 
+    [report ""]
+    [report (word score-last-run " of " max-score)]
 end
 
-            ;************** UNDER CONSTRUCTION **************
-to show-values 
-;  ask values [ifelse show-values? [st][ht]]      
-  ifelse show-values? and in-grid? mouse-xcor mouse-ycor  ; if the show-values? binary is set to true and the cursor is in the graph
-    [let ctr (grid-umax + grid-umin) / 2
-      let off 0
-      ifelse mouse-xcor < ctr
-        [set off 70][set off -10]
-      ask value value-who [          ; get the x-coordinate (one of three possibilities)
-       let x (mouse-xcor - gbx) / gmx ; transform into x-value from screen location
-       if x-axis = "Starting Height" [
-         set label (word x-axis ": " precision x 2 " m    ")]
-       if x-axis = "Friction" [
-         set label (word x-axis ": " precision x 3 )]
-       if x-axis = "Mass" [
-         set label (word x-axis ": " round x " m")]
-       set label-color black
-       setxy mouse-xcor + off mouse-ycor + 2
-       st]
-      ask value (value-who + 1) [     ; get y-coordinate 
-       let y precision ((mouse-ycor - gby) / gmy ) 2
-       set label (word "Distance Traveled: " y "  m")  
-       set label-color black
-       setxy mouse-xcor + off mouse-ycor - 5
-       st]] 
-    [ask values [ht]]
+to-report challenge-dipslay
+  ifelse starting? 
+    [report ""]
+    [report (word next-Level " of " max-level)]
 end
-    
-      
-;      set scale-xmin 0
-;      set scale-ymin 0
-;      ask grid-dots [die] ; clear the grid. Grid-dots are turtles that draw the grid using links that connect pairs of dots.
-;      draw-verticals   ; draws the vertical lines and the x-axis
-;      draw-horizontals 
-;    [draw-grid]   ; used if there are no points (rare)
-;  draw-points     ; draws the horizontal lines and the y-axis
-;end
 
-;to rescale-grid    ; redraws the grid and any points using the globals scale-xmin, scale-ymin,  etc....
- ; draw-grid         
- ; ask graph-dots [
- ;   let u mx * x-val + bx
- ;   let v my * y-val + by
- ;   ifelse in-grid? u v 
- ;     [st setxy u v ]
- ;     [ht]]    
-;end
+to-report step-display 
+  ifelse starting? [report ""][report (word next-step " of " n-steps)]
+end 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;; initialize everything ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to draw-first-page
+  create-drawing-dots 1 [
+    set size .1
+    setxy .4 * min-pxcor .9 * max-pycor
+    set label   "Press the On/Off button to continue." ]
+  create-drawing-dots 1 [
+    set size .1
+    setxy .5 * min-pxcor .85 * max-pycor
+    set label "   Leave it on all the time." ]
+  ask drawing-dots [set label-color yellow]
+  
+  set output-width  64     ; characters in the output box, used with pretty-print
+  set dashes "----------------------------------------------------------------"
+  pretty-print "The goal of this game is to start the car at the right place on the ramp so that it will roll to the middle of the red zone."
+  pretty-print "There are five levels of play. Each level has a different challenge. The challenges start easy but get very hard."
+  pretty-print "There are four steps in each level. With each step, the target gets smaller."
+  pretty-print dashes
+  pretty-print "If you need help, try pressing the Hint button."         
+  pretty-print dashes
+  pretty-print "Now press the On/Off button to continue."
+  pretty-print dashes
+end
+
+to initialize
+  initialize-variables
+  initialize-turtles 
+  initialize-scene
+end
+to initialize-variables
+  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
+  set dt .02 ; the time step
+  set g 9.81 ; acceleration of gravity in mks units
+  set nearby 5    ; the distance in pixels needed to count as a hit using the mouse
+  set ready-for-export? false
+  set waiting-for-start? true
+  set running? false
+  set car-waiting? false
+  set old-running? false
+  set freeze? false
+  set magnification 50    ; 
+  set x-center 1.34 set y-center .35  ; 
+  set tries-this-level 0  ; used in computing the average score for a level
+  set score-this-level 0  ; 
+  set allow-repeat? false  ; used only when the user wants to repeat a challenge
+  set first-reward? true
+  set try 1          ; start with the first try using the "two-step" rules
+    ; define car variables
+  set car-offset 12  ; distance the turtle center is above the ramp for magnification of 100
+  set saved-starting-x -.9
+  set move-target? false
+  set data-saved? true
+  set messages-shown [0 0 0 0 0 0 ] ; initializes the number of help messages already shown to the student, by level
+  set targets [2.91 1.04 2.31 .52 2.53 3.81 1.96 2.77 .73 1.53 3.29 1.25 3.02 .8 1.55 1.41 1.1 3.2] ; a list of target values
+  set number-of-random-tries 0
+  if level = 0 [                  ; this odd conditional allows the calling program to set these variables. The default value in NL is zero
+    set total-score 0
+    set score-last-run 0
+    set level 1       ; start at level 1 (subsequently, levels were renamed as challenges.)
+    set step 1 ]       ; start at step 1
+  set n-steps  4
+  set next-level level
+  set next-step step
+  set max-level 5   ; the number of levels in the game. Used to stop advancing beyond this level
+end
+
+to initialize-turtles
+  initialize-repeat-challenge   ; creates a hidden repeat challenge button
+    ; markers mark the target. They are two tiny turtles linked by a thick line
+  create-markers 1 [ht set marker-1 who set color red set size .1 set heading 0]
+  create-markers 1 [ht set marker-2 who set color red set size .1 set heading 0
+    create-link-with marker marker-1 [
+      set thickness 3 set color red]]
+  create-markers 1 [ht set marker-3 who set color red set size 18 set heading 0 set shape "line"]    ; create a vertical line at the center of the target
+  create-drawing-dots 1 [set target-label who set size .1 set color black set label-color white] ; used to label the center of the target
+end
+
+to initialize-scene
+  define-window      ; defines the ramp window bounded by (ul, ur, vb, bt)
+  define-transforms  ; creates transforms for the ramp  (mx, my, bx, by)
+  set ramp-color blue + 2
+  set ramp [[-1.6 1.1][0 0][.5 0][1 0][1.5 0][2 0][2.5 0][3 0][3.5 0][4 0][5 0]] ; the ramp, defined by x,y coordinates
+  draw-ramp                      ; draws ramp
+  ;  make the car
+  set car-size 22
+  create-cars 1 [
+    ht  
+    ifelse level = 4 [set car-mass 200] [set car-mass 100]
+    set color red
+    set shape "car"
+    set size car-size
+    place-car saved-starting-x]
+  setup-game        ; setup for level 1 step 1 
+  show-target
+  my-clear-output
+  setup-new-run
+  setup-data-export    ;;; used to define the structure of the exported data
+  reset-ticks
+  reset-timer
+end
+
+to wait-hack [x]
+  let i 0
+  while [i < ( x * 1e7)] [set i i + 1]  ;count to 10M x times for a delay of x seconds. 
+end
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;; Start of data-export methods ;;;;;;;;;;;;;;;;
@@ -63018,13 +62517,13 @@ end
 ;;;
 @#$#@#$#@
 GRAPHICS-WINDOW
-10
-32
-633
-552
+7
+29
+678
+587
 -1
 -1
-2.07
+2.23
 RESERVED
 10
 RESERVED
@@ -63085,7 +62584,7 @@ SLIDER
 96
 Friction
 friction
-0
+.05
 .4
 0.18
 .005
@@ -63129,7 +62628,7 @@ RESERVED
 MONITOR
 25
 326
-120
+121
 375
 Score last run
 score-display
@@ -63143,7 +62642,7 @@ MONITOR
 120
 441
 Challenge
-(word Level \" of \" max-level)
+challenge-dipslay
 17
 RESERVED
 12
@@ -63154,7 +62653,7 @@ MONITOR
 120
 489
 Step
-(word Step \" of \" n-steps)
+step-display
 17
 RESERVED
 12
@@ -63182,10 +62681,10 @@ RESERVED
 11
 
 BUTTON
-549
+559
 10
-643
-55
+654
+57
 Hints
 display-help-message
 NIL
@@ -63198,23 +62697,13 @@ RESERVED
 RESERVED
 1
 
-CHOOSER
-502
-331
-616
-376
-x-axis
-x-axis
-"Starting Height" "Friction" "Mass"
-0
-
 BUTTON
-294
-337
-391
-370
-Zoom Out
-zoom-out
+364
+427
+442
+461
+NIL
+startup
 NIL
 RESERVED
 RESERVED
@@ -63225,33 +62714,29 @@ RESERVED
 RESERVED
 1
 
-CHOOSER
-150
-337
-288
-382
-Data-graphed
-data-graphed
-"none" "All" "Friction Data"
+BUTTON
+450
+426
+557
+460
+Set last level
+    set allow-repeat? false\n    ask buttons [ht]\n    set next-level 5\n    set next-step 1\n    setup-new-run
+NIL
+RESERVED
+RESERVED
+OBSERVER
+RESERVED
+NIL
+RESERVED
+RESERVED
 1
 
-SWITCH
-258
-226
-420
-259
-Show-guideline?
-show-guideline?
-0
-RESERVED
-RESERVED
-
 OUTPUT
-131
-212
-645
-560
-12
+136
+229
+689
+599
+14
 @#$#@#$#@
 ## WHAT IS IT?
 

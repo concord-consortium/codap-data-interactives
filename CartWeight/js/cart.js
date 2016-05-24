@@ -151,4 +151,6 @@ Cart.prototype.updateBricks = function( iNumBricks, iNumSmBricks) {
  */
 Cart.prototype.updateCartNum = function( iEvent) {
   this.cartNum.attr( 'text', iEvent.cartNum);
+  if( iEvent.ofText === '')
+      this.of5.attr( 'text', '');
 };

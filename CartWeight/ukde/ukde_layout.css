@@ -1,0 +1,55 @@
+
+#ukdeA_failed_to_unlock
+{
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 10px;
+    height: 90px;
+    padding: 10px;
+    visibility: hidden;
+    background-color: lightgoldenrodyellow;
+}
+
+/*
+#level_alert_bar
+{
+    position: absolute;
+    height: 20px;
+    width: 240px;
+}
+
+*/
+#stay_button
+{
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+#move_button
+{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+#ukdeB_playDescription
+{
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 10px;
+    height: 90px;
+    padding: 10px;
+    visibility: hidden;
+    background-color: lightgoldenrodyellow;
+}
+
+#alright_button
+{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+

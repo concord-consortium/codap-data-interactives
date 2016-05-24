@@ -2,6 +2,7 @@
 // Project:   Cart
 // Copyright: ©2012 KCP Technologies, Inc.
 // ==========================================================================
+
 /*global $, Cart, CartSettings, KCPCommon */
 
 /**
@@ -33,6 +34,8 @@ CartView.prototype.initialize = function()
   this.model.eventDispatcher.addEventListener(CartEvents.turnStateChange, this.handleTurnStateChange, this);
   this.model.eventDispatcher.addEventListener(CartEvents.scoreChange, this.updateAll, this);
   this.model.eventDispatcher.addEventListener(CartEvents.levelUnlocked, this.handleLevelUnlocked, this);
+  this.model.eventDispatcher.addEventListener(CartEvents.ukdeA_failedGamesThresholdPassed,
+      this.handleUkdeA_failedGamesThresholdPassed, this);
   this.model.eventDispatcher.addEventListener(CartEvents.invalidGuess, this.handleInvalidGuess, this);
 
   this.gamePaper = Raphael(tGameArea, tGameArea.clientWidth, tGameArea.clientHeight);
@@ -49,11 +52,9 @@ CartView.prototype.initialize = function()
 
   this.cart = new Cart( this.gamePaper, this.model.eventDispatcher);
 
-/*
   this.gameOver = this.gamePaper.text( tGameArea.clientWidth / 2, tGameArea.clientHeight / 2, "Game Over")
     .attr({ fill: 'yellow', 'font-size': 48, 'font-weight': 'bold' })
     .hide();
-*/
 
   this.updateAll();
 
@@ -98,7 +99,7 @@ CartView.prototype.handleStateChange = function( iEvent)
       document.getElementById("guess_input_box").readOnly = false;
       this.updateAll();
 
-      //this.gameOver.hide();
+      this.gameOver.hide();
       this.prepareNextCart();
       if( !('ontouchstart' in window))
         $('#guess_input_box').select();
@@ -106,13 +107,39 @@ CartView.prototype.handleStateChange = function( iEvent)
     case "gameEnded":
       document.getElementById("game_button").innerHTML = "New Game";
       document.getElementById('guess_button').innerHTML = tCS.newCart;
-      //this.gameOver.toFront().show();
+      this.gameOver.toFront().show();
       break;
     case "levelsMode":
       this.model.levelManager.configureLevelsPanel( this.model.level);
       break;
     default:
   }
+
+  if( CartSettings.ukdeMode === 'B' && iEvent.priorState === 'welcome' && iEvent.newState === 'playing') {
+    this.showDirections();
+  }
+};
+
+/**
+ * Show directions for current mode
+ *
+ */
+CartView.prototype.showDirections = function()
+{
+
+  function closeAlert() {
+    KCPCommon.setElementVisibility("ukdeB_playDescription", false);
+    KCPCommon.setElementVisibility("cover", false);
+    this_.model.changeIsBlocked = false;
+  }
+
+  document.getElementById('needed_score').innerHTML = this.model.getRequiredScoreToWin();
+  document.getElementById('num_moves').innerHTML = CartSettings.numCarts;
+
+  KCPCommon.setElementVisibility("ukdeB_playDescription", true);
+  KCPCommon.setElementVisibility("cover", true);
+  this.model.changeIsBlocked = true;
+  document.getElementById("alright_button").onclick = closeAlert;
 };
 
 /**
@@ -201,7 +228,7 @@ CartView.prototype.updateAll = function()
 {
   document.getElementById("gameNum").innerHTML = this.model.gameNumber;
   document.getElementById("levelName").innerHTML = this.model.level.levelName;
-  document.getElementById("score").innerHTML = this.model.score;
+  document.getElementById("score").innerHTML = this.model.getCurrentTotalScore();
   document.getElementById("actual").innerHTML = Math.round( 10 * this.model.weight) / 10;
   document.getElementById("onescore").innerHTML = this.model.oneScore;
 };
@@ -266,5 +293,37 @@ CartView.prototype.handleLevelUnlocked = function( iEvent)
   KCPCommon.setElementVisibility("cover", true);
   this.model.changeIsBlocked = true;
   document.getElementById("OK_button").onclick = closeAlert;
+};
+
+/**
+ * UkdeA
+ * Our model has detected that player has failed to meet the threshold to move onto the next level
+ * enough times in a row that we should offer them to choice to move on anyway.
+ */
+CartView.prototype.handleUkdeA_failedGamesThresholdPassed = function( iEvent)
+{
+  var this_ = this;
+
+  function closeAlert() {
+    KCPCommon.setElementVisibility("ukdeA_failed_to_unlock", false);
+    KCPCommon.setElementVisibility("cover", false);
+    this_.model.changeIsBlocked = false;
+  }
+
+  function stay() {
+    closeAlert();
+    this_.model.playGame();
+  }
+
+  function move() {
+    closeAlert();
+    this_.model.moveToNextLevel();
+  }
+
+  KCPCommon.setElementVisibility("ukdeA_failed_to_unlock", true);
+  KCPCommon.setElementVisibility("cover", true);
+  this.model.changeIsBlocked = true;
+  document.getElementById("stay_button").onclick = stay;
+  document.getElementById("move_button").onclick = move;
 };
 

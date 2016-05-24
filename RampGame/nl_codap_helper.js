@@ -25,8 +25,8 @@ function codapCallInitGame() {
     action: 'initGame',
     args: {
       name: "Ramp Game", // This will appear in the titlebar of the model's iFrame
-      dimensions: {width: 658, height: 600},  // Modify these to fit the size of the simulation
-      version: '5',
+      dimensions: {width: 700, height: 630},  // Modify these to fit the size of the simulation
+      version: 'v6.0',
       collections: [
       /**
        * There is one collection. It contains the result of each move.
@@ -118,10 +118,16 @@ function codapDoCommand(iCommandObj, iCallback) {
   }
 
   function restoreState(iState) {
-    var tResult = {success: true};
+    var tResult = {success: true},
+        kGamePlayName = 'game-play',
+        tInitialGamePlay = world.observer.getGlobal(kGamePlayName);
     stateVars.forEach(function (iVar) {
       world.observer.setGlobal(iVar, iState[iVar]);
     });
+    // An state in which the game has not yet been played indicates that we should accept the
+    // newly randomized value rather than the saved value of game-play
+    if( iState.level === 1 && iState.step === 0)
+      world.observer.setGlobal(kGamePlayName, tInitialGamePlay);
     iCallback(tResult);
   }
 

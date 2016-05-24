@@ -3,9 +3,10 @@
 // Copyright: ©2016 Concord Consortium
 //=========================================================================
 
+
 /**
  * @fileoverview Defines CartSettings, the parameters that determine most of the game characteristics
- * @author bfinzer@kcptech.com (William Finzer)
+ * @author wfinzer@concord.org (William Finzer)
  * @preserve (c) 2016 Concord Consortium
  */
 
@@ -40,14 +41,19 @@ function initCartSettings() {
     cartHeight: 24,
     cartWidth: tCartWidth,
     cartGap: (tPlatformWidth - tCartWidth) / 2, // gap between cart and left edge in guessing position
-    animationTime: 1000,  // milliseconds
+    animationTime: 1, //1000,  // milliseconds
     easing: '<>',
     checkWeight: 'Check Weight',
     newCart: 'New Cart',
     endGame: 'End Game',
     newGame: 'New Game',
     scoreMsg: 'Your score is %@',
-    tryAgainMsg: 'Please try again!'
+    tryAgainMsg: 'Please try again!',
+    // UKDE
+    ukdeModeHasBeenLogged: false,
+    ukdeMode: Math.random() < 0.5 ? 'A' : 'B',
+    ukdeA_numGamesThreshold: 5  // In ukdeA if players do not unlock next level after this many games, they are given
+                                // choice of moving on anyway
   };
 
   CartEvents = {
@@ -57,6 +63,7 @@ function initCartSettings() {
     levelUnlocked: 'levelUnlocked',
     invalidGuess: 'invalidGuess',
     cartChange: 'cartChange',
+    ukdeA_failedGamesThresholdPassed: 'ukdeA_failedGamesThresholdPassed'
   };
 }
 
