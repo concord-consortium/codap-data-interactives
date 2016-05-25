@@ -116,6 +116,7 @@ CartLevels = [
           "smallBrickWeightVariability" : 0,
           "integerWeights" : true,
           "Description" : "Oh, no. Two sizes.",
-          "unlocked": true
+          "unlocked": true,
+          "ukdeBNeededScore": 250
         }
       ];
