@@ -419,8 +419,10 @@ CartModel.prototype.endTurn = function () {
   this.addTurnCase();
   if( CartSettings.ukdeMode === 'B' && this.ukdeB_Scores.length >= CartSettings.numCarts) {
     var tCurrScore = this.getCurrentTotalScore(),
-        tNextLevel = this.levelManager.getNextLevel( this.level);
-    if( !tNextLevel || !tNextLevel.prerequisite || tCurrScore >= tNextLevel.prerequisite.score) {
+        tNextLevel = this.levelManager.getNextLevel( this.level)
+        tThresholdScore = (!tNextLevel || !tNextLevel.prerequisite) ? this.level.ukdeBNeededScore :
+                            tNextLevel.prerequisite.score;
+    if( tCurrScore >= tThresholdScore) {
       this.endGame();
     }
   }
