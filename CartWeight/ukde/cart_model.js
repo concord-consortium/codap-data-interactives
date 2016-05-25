@@ -368,6 +368,7 @@ CartModel.prototype.setupCart = function () {
 
   if( CartSettings.ukdeMode === 'B' && this.brickHistory.length > CartSettings.numCarts) {
     this.brickHistory.splice( 0, this.brickHistory.length - CartSettings.numCarts);
+    this.smallBrickHistory.splice( 0, this.smallBrickHistory.length - CartSettings.numCarts);
   }
 };
 
@@ -419,7 +420,7 @@ CartModel.prototype.endTurn = function () {
   if( CartSettings.ukdeMode === 'B' && this.ukdeB_Scores.length >= CartSettings.numCarts) {
     var tCurrScore = this.getCurrentTotalScore(),
         tNextLevel = this.levelManager.getNextLevel( this.level);
-    if( !tNextLevel.prerequisite || tCurrScore >= tNextLevel.prerequisite.score) {
+    if( !tNextLevel || !tNextLevel.prerequisite || tCurrScore >= tNextLevel.prerequisite.score) {
       this.endGame();
     }
   }
