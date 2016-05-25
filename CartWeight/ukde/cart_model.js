@@ -462,7 +462,7 @@ CartModel.prototype.handleGameButton = function () {
 CartModel.prototype.handleTurnButton = function () {
   if (this.gameState !== 'playing')
     return; // Especially to prevent <return> from causing action when the game is not on
-  if( !CartSettings.ukdeModeHasBeenLogged) {
+  /*if( !CartSettings.ukdeModeHasBeenLogged) {*/
     this.codapPhone.call({
       action: 'logAction',
       args: {
@@ -470,8 +470,8 @@ CartModel.prototype.handleTurnButton = function () {
         replaceArgs: [CartSettings.ukdeMode]
       }
     });
-    CartSettings.ukdeModeHasBeenLogged = true;
-  }
+   /* CartSettings.ukdeModeHasBeenLogged = true;
+  }*/
 
   this.turnButtonHasBeenPressed = true; // So we can tell whether user has yet done anything
   switch (this.turnState) {
