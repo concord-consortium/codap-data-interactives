@@ -106,7 +106,7 @@ var dataManager = Object.create({
     this.notify();
   },
 
-  setCase: function (iCollectionName, values, resourceName) {
+  setCase: function (iCollectionName, values, resourceName, handlingOptions) {
     function guaranteeLeftCollectionIsParent(parentCollectionInfo, parentID, context) {
       var parentCollection = parentCollectionInfo.collection;
       var parentCase = parentCollectionInfo.currentCase;
@@ -114,7 +114,7 @@ var dataManager = Object.create({
       if (parentCase && parentCase.guid !== parentID) {
         resource = 'dataContext[' + context + '].collection[' +
             parentCollection.name + '].caseByID[' + parentID + ']';
-        dispatcher.sendRequest({action: 'get', resource: resource});
+        dispatcher.sendRequest({action: 'get', resource: resource}, {omitSelection: true});
       }
     }
 
@@ -126,7 +126,7 @@ var dataManager = Object.create({
         if (myCase.children) {
           resource = 'dataContext[' + context + '].collection[' +
               childCollection.name + '].caseByID[' + myCase.children[0] + ']';
-          dispatcher.sendRequest({action: 'get', resource: resource});
+          dispatcher.sendRequest({action: 'get', resource: resource}, {omitSelection: true});
         }
       }
     }
@@ -137,7 +137,6 @@ var dataManager = Object.create({
     var collectionIndex = collectionInfoList.findIndex(function (collectionInfo) {
       return collectionInfo.collection.name === iCollectionName;
     });
-    dispatcher.sendRequest({action: 'create', resource: 'dataContext[' + this.data.currentContext + '].selectionList', values: [myCase.guid]});
     if (collectionIndex >= 0) {
       var collectionInfo = collectionInfoList[collectionIndex];
       collectionInfo.currentCaseIndex = Number(caseIndex);
@@ -151,6 +150,10 @@ var dataManager = Object.create({
       if (collectionIndex < collectionInfoList.length - 1) {
         guaranteeRightCollectionIsChild(collectionInfoList[collectionIndex + 1],
             myCase, this.data.currentContext);
+      }
+      if (!handlingOptions || !handlingOptions.omitSelection) {
+        dispatcher.sendRequest({action: 'create', resource: 'dataContext['
+          + this.data.currentContext + '].selectionList', values: [myCase.guid]});
       }
       this.computeNavEnabled(collectionInfo);
       this.notify();
@@ -267,7 +270,8 @@ var dataManager = Object.create({
 
   selectCase: function (iCollectionName, action) {
     function requestCase(contextName, collectionName, index) {
-      var resource = 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + index + ']';
+      var resource = 'dataContext[' + contextName + '].collection['
+          + collectionName + '].caseByIndex[' + index + ']';
       dispatcher.sendRequest({action: 'get', resource: resource});
     }
 
@@ -360,9 +364,9 @@ var dispatcher = Object.create({
       return this;
     },
 
-    sendRequest: function (request) {
+    sendRequest: function (request, handlingOptions) {
       this.connection.call(request, function (response) {
-        this.handleResponse(request, response);
+        this.handleResponse(request, response, handlingOptions);
       }.bind(this));
     },
 
@@ -386,7 +390,7 @@ var dispatcher = Object.create({
       return result;
     },
 
-    handleResponse: function (request, result) {
+    handleResponse: function (request, result, handlingOptions) {
       var resourceObj = this.parseResourceSelector(request.resource);
       if (!result) {
         console.log('Request to CODAP timed out: ' + JSON.stringify(request));
@@ -406,7 +410,7 @@ var dispatcher = Object.create({
           case 'caseByIndex':
           case 'caseByID':
             dataManager.setCase(resourceObj.collection, result.values,
-                request.resource);
+                request.resource, handlingOptions);
             break;
           default:
             console.log('No handler for get response: ' + request.resource);
