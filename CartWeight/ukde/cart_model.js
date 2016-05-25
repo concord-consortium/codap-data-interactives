@@ -223,6 +223,13 @@ CartModel.prototype.openNewGameCase = function () {
         console.log("Cart Weight: Error calling 'openCase'");
       }
     }.bind(this));
+    this.codapPhone.call({
+      action: 'logAction',
+      args: {
+        formatStr: "opencase: gameNumber = %@, level = %@",
+        replaceArgs: [this.gameNumber, this.level.levelName]
+      }
+    });
   }
 };
 
