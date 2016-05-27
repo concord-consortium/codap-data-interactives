@@ -223,6 +223,13 @@ CartModel.prototype.openNewGameCase = function () {
         console.log("Cart Weight: Error calling 'openCase'");
       }
     }.bind(this));
+    this.codapPhone.call({
+      action: 'logAction',
+      args: {
+        formatStr: "opencase: gameNumber = %@, level = %@",
+        replaceArgs: [this.gameNumber, this.level.levelName]
+      }
+    });
   }
 };
 
@@ -368,6 +375,7 @@ CartModel.prototype.setupCart = function () {
 
   if( CartSettings.ukdeMode === 'B' && this.brickHistory.length > CartSettings.numCarts) {
     this.brickHistory.splice( 0, this.brickHistory.length - CartSettings.numCarts);
+    this.smallBrickHistory.splice( 0, this.smallBrickHistory.length - CartSettings.numCarts);
   }
 };
 
@@ -418,8 +426,10 @@ CartModel.prototype.endTurn = function () {
   this.addTurnCase();
   if( CartSettings.ukdeMode === 'B' && this.ukdeB_Scores.length >= CartSettings.numCarts) {
     var tCurrScore = this.getCurrentTotalScore(),
-        tNextLevel = this.levelManager.getNextLevel( this.level);
-    if( !tNextLevel.prerequisite || tCurrScore >= tNextLevel.prerequisite.score) {
+        tNextLevel = this.levelManager.getNextLevel( this.level)
+        tThresholdScore = (!tNextLevel || !tNextLevel.prerequisite) ? this.level.ukdeBNeededScore :
+                            tNextLevel.prerequisite.score;
+    if( tCurrScore >= tThresholdScore) {
       this.endGame();
     }
   }
@@ -459,7 +469,7 @@ CartModel.prototype.handleGameButton = function () {
 CartModel.prototype.handleTurnButton = function () {
   if (this.gameState !== 'playing')
     return; // Especially to prevent <return> from causing action when the game is not on
-  if( !CartSettings.ukdeModeHasBeenLogged) {
+  /*if( !CartSettings.ukdeModeHasBeenLogged) {*/
     this.codapPhone.call({
       action: 'logAction',
       args: {
@@ -467,8 +477,8 @@ CartModel.prototype.handleTurnButton = function () {
         replaceArgs: [CartSettings.ukdeMode]
       }
     });
-    CartSettings.ukdeModeHasBeenLogged = true;
-  }
+   /* CartSettings.ukdeModeHasBeenLogged = true;
+  }*/
 
   this.turnButtonHasBeenPressed = true; // So we can tell whether user has yet done anything
   switch (this.turnState) {

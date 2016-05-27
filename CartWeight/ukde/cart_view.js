@@ -126,6 +126,7 @@ CartView.prototype.handleStateChange = function( iEvent)
  */
 CartView.prototype.showDirections = function()
 {
+  var this_ = this;
 
   function closeAlert() {
     KCPCommon.setElementVisibility("ukdeB_playDescription", false);

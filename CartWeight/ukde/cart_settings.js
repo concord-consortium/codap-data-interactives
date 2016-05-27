@@ -41,7 +41,7 @@ function initCartSettings() {
     cartHeight: 24,
     cartWidth: tCartWidth,
     cartGap: (tPlatformWidth - tCartWidth) / 2, // gap between cart and left edge in guessing position
-    animationTime: 1, //1000,  // milliseconds
+    animationTime: 1000,  // milliseconds
     easing: '<>',
     checkWeight: 'Check Weight',
     newCart: 'New Cart',
