@@ -231,6 +231,11 @@ var dataManager = Object.create({
       collectionInfo.currentCase.guid = iReply.values[0].id;
       this.setDirty(collectionInfo, false);
       this.createCase();
+      dispatcher.sendRequest({
+        action: 'create',
+        resource: 'dataContext[' + this.data.currentContext + '].selectionList',
+        values: [iReply.values[0].id]
+      });
     }
   },
   updateCase: function (collectionInfo) {
