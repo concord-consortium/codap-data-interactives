@@ -28,20 +28,15 @@ function DogOnPlatform( iModel)
                   numPositions: 23 };
   var tLay = this.layout;
 
-  this.srcs = { normal: { src: 'img/dog_normal.png', width: 42, height: 72 },
-                happy: { src: 'img/dog_happy.png', width: 40, height: 72 },
-                sad: { src: 'img/dog_sad.png', width: 41, height: 72 },
-                exiting: { src: 'img/dog_exiting.png', width: 40, height: 72 },
-                step1: { src: 'img/dog_step1.png', width: 87, height: 72 },
-                step2: { src: 'img/dog_step1.png', width: 87, height: 72 } };
+  this.srcs = graphicSources.dogSources;
   this.dog_state = 'normal';
   this.boundaries = { normal_sad: 2, happy_normal: 15 };
 
-  this.poleBase = this.paper.image('img/base.png', tLay.poleCenter - tLay.poleBaseWidth / 2, tLay.poleBaseY,
+  this.poleBase = this.paper.image(graphicSources.otherPngs.base, tLay.poleCenter - tLay.poleBaseWidth / 2, tLay.poleBaseY,
                                         tLay.poleBaseWidth, tLay.poleBaseHeight );
-  this.pole = this.paper.image('img/pole.png', tLay.poleCenter - tLay.poleWidth / 2, tLay.poleTopAtExit,
+  this.pole = this.paper.image(graphicSources.otherPngs.pole, tLay.poleCenter - tLay.poleWidth / 2, tLay.poleTopAtExit,
                                         tLay.poleWidth, tLay.poleMaxHeight );
-  this.platform = this.paper.image('img/platform.png', tLay.poleCenter - tLay.platformWidth / 2,
+  this.platform = this.paper.image(graphicSources.otherPngs.platform, tLay.poleCenter - tLay.platformWidth / 2,
                                         tLay.poleTopAtExit - tLay.platformHeight,
                                         tLay.platformWidth, tLay.platformHeight );
   this.dog = this.paper.image(this.srcs[this.dog_state].src, tLay.poleCenter - tLay.normalDogWidth / 2,

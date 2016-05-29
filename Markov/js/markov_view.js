@@ -69,15 +69,13 @@ MarkovView.prototype.initialize = function()
     .attr({ fill: 'yellow', 'font-size': 48, 'font-weight': 'bold' })
     .hide();
 
-  this.marSrcs = { normal: { src: 'img/markov.png', width: 92, height: 247 },
-                    happy: { src: 'img/markov_happy.png', width: 108, height: 247 },
-                    mad: { src: 'img/markov_mad.png', width: 107, height: 247 } };
+  this.marSrcs = graphicSources.markovSources;
   this.markov = this.gamePaper.image( this.marSrcs.normal.src, this.layout.marHandX, 0, 92, 247);
 
   this.dog = new DogOnPlatform( this.model);
   this.queue = new Queue( this.gamePaper, this.model);
   this.slider = new Slider( 'slider', this.model);
-  this.arrow = this.gamePaper.image('img/arrow.png', -10, 0, 54, 41 ).hide();
+  this.arrow = this.gamePaper.image(graphicSources.otherPngs.arrow, -10, 0, 54, 41 ).hide();
 
   this.youGhostTile = null;
   this.marGhostTile = null;
