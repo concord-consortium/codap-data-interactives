@@ -33,11 +33,11 @@ var dataManager = Object.create({
    *   mode: {'view'|'author'}
    * }}
    */
-  data: null,
+  state: null,
 
   init: function () {
     this.listeners = [];
-    this.data = {
+    this.state = {
       collectionInfoList: [],
       contextNameList: [],
       currentContext: null,
@@ -49,7 +49,7 @@ var dataManager = Object.create({
   register: function (listener) {
     this.listeners = this.listeners || [];
     this.listeners.push(listener);
-    listener.setState(this.data);
+    listener.setState(this.state);
   },
 
   unregister: function (listener) {
@@ -62,7 +62,7 @@ var dataManager = Object.create({
 
   notify: function () {
     this.listeners.forEach(function (listener) {
-      listener.setState(this.data);
+      listener.setState(this.state);
     }.bind(this));
   },
 
@@ -74,7 +74,7 @@ var dataManager = Object.create({
     function fetchContext(contextName) {
       dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
     }
-    this.data.contextNameList = contextNameList;
+    this.state.contextNameList = contextNameList;
     if (contextNameList.length > 0) {
       fetchContext(contextNameList[0].name);
     }
@@ -86,8 +86,8 @@ var dataManager = Object.create({
       dispatcher.sendRequest({action: 'get', resource: 'dataContext[' +
         contextName + '].collection[' + collectionName + '].caseByIndex[0]'});
     }
-    this.data.currentContext = context.name;
-    this.data.collectionInfoList = context.collections.map(function (collection) {
+    this.state.currentContext = context.name;
+    this.state.collectionInfoList = context.collections.map(function (collection) {
       return {
         collection: collection,
         currentCase: null,
@@ -97,12 +97,12 @@ var dataManager = Object.create({
         navEnabled: {}
       }
     });
-    this.data.collectionInfoList.forEach(function(collectionInfo) {
+    this.state.collectionInfoList.forEach(function(collectionInfo) {
       var collection = collectionInfo.collection;
-      var contextName = this.data.currentContext;
+      var contextName = this.state.currentContext;
       fetchFirstCase(contextName, collection.name);
     }.bind(this));
-    this.data.hasSelectedContext = true;
+    this.state.hasSelectedContext = true;
     this.notify();
   },
 
@@ -133,7 +133,7 @@ var dataManager = Object.create({
 
     var myCase = values.case;
     var caseIndex = values.caseIndex;
-    var collectionInfoList = this.data.collectionInfoList;
+    var collectionInfoList = this.state.collectionInfoList;
     var collectionIndex = collectionInfoList.findIndex(function (collectionInfo) {
       return collectionInfo.collection.name === iCollectionName;
     });
@@ -146,15 +146,15 @@ var dataManager = Object.create({
       collectionInfo.currentCaseIsNew = false;
       if (collectionIndex > 0) {
         guaranteeLeftCollectionIsParent(collectionInfoList[collectionIndex - 1],
-            myCase.parent, this.data.currentContext);
+            myCase.parent, this.state.currentContext);
       }
       if (collectionIndex < collectionInfoList.length - 1) {
         guaranteeRightCollectionIsChild(collectionInfoList[collectionIndex + 1],
-            myCase, this.data.currentContext);
+            myCase, this.state.currentContext);
       }
       if (!handlingOptions || !handlingOptions.omitSelection) {
         dispatcher.sendRequest({action: 'create', resource: 'dataContext['
-          + this.data.currentContext + '].selectionList', values: [myCase.guid]});
+          + this.state.currentContext + '].selectionList', values: [myCase.guid]});
       }
       this.computeNavEnabled(collectionInfo);
       this.notify();
@@ -162,16 +162,16 @@ var dataManager = Object.create({
   },
 
   setMode: function (modeName) {
-    this.data.mode = modeName;
+    this.state.mode = modeName;
     this.notify();
   },
 
   computeNavEnabled: function () {
-    this.data.collectionInfoList.forEach(function (collectionInfo) {
+    this.state.collectionInfoList.forEach(function (collectionInfo) {
       var navEnabledFlags = collectionInfo.navEnabled || {};
       var caseIndex = collectionInfo.currentCaseIndex;
       //var caseCount = collectionInfo.caseCount;
-      var dirty = this.data.isDirty || false;
+      var dirty = this.state.isDirty || false;
       navEnabledFlags.prev = !dirty && (caseIndex !== null) && (caseIndex !== undefined) && caseIndex > 0;
       navEnabledFlags.next = !dirty /*&& (caseCount !== null) && (caseIndex !== undefined) && caseIndex < caseCount - 1;*/
       navEnabledFlags.newInstance = !dirty;
@@ -181,7 +181,7 @@ var dataManager = Object.create({
   },
 
   findCollectionInfoForAttribute: function (iAttributeName) {
-    return this.data.collectionInfoList.find(function (collectionInfo) {
+    return this.state.collectionInfoList.find(function (collectionInfo) {
       var collection = collectionInfo.collection;
       var attr = collection.attrs.find(function (attr) { return attr.name === iAttributeName; });
       return attr != undefined;
@@ -189,13 +189,13 @@ var dataManager = Object.create({
   },
 
   findCollectionInfoForName: function (iCollectionName) {
-    return this.data.collectionInfoList.find(function (collectionInfo) {
+    return this.state.collectionInfoList.find(function (collectionInfo) {
       var collection = collectionInfo.collection;
       return (collection.name === iCollectionName);
     });
   },
   findCollectionIndexForName: function (iCollectionName) {
-    return this.data.collectionInfoList.findIndex(function (collectionInfo) {
+    return this.state.collectionInfoList.findIndex(function (collectionInfo) {
       var collection = collectionInfo.collection;
       return (collection.name === iCollectionName);
     });
@@ -203,8 +203,8 @@ var dataManager = Object.create({
 
   setDirty: function (collectionInfo, isDirty) {
     collectionInfo.isDirty = isDirty;
-    this.data.isDirty
-        = this.data.collectionInfoList.reduce(function (sum, collectionInfo) {
+    this.state.isDirty
+        = this.state.collectionInfoList.reduce(function (sum, collectionInfo) {
       return sum || collectionInfo.isDirty;
     },  false );
     this.computeNavEnabled(collectionInfo);
@@ -212,16 +212,16 @@ var dataManager = Object.create({
 
   createCase: function () {
     // find first dirty case
-    var collectionIndex = this.data.collectionInfoList.findIndex(function (collectionInfo) {
+    var collectionIndex = this.state.collectionInfoList.findIndex(function (collectionInfo) {
       return collectionInfo.isDirty;
     });
     if (collectionIndex < 0) {
       this.notify();
       return;
     }
-    var collectionInfo = this.data.collectionInfoList[collectionIndex];
+    var collectionInfo = this.state.collectionInfoList[collectionIndex];
     if (collectionIndex > 0) {
-      collectionInfo.currentCase.parent = this.data.collectionInfoList[collectionIndex - 1].currentCase.guid;
+      collectionInfo.currentCase.parent = this.state.collectionInfoList[collectionIndex - 1].currentCase.guid;
     }
     dispatcher.sendRequest({
       action: 'create',
@@ -237,14 +237,14 @@ var dataManager = Object.create({
       this.createCase();
       dispatcher.sendRequest({
         action: 'create',
-        resource: 'dataContext[' + this.data.currentContext + '].selectionList',
+        resource: 'dataContext[' + this.state.currentContext + '].selectionList',
         values: [iReply.values[0].id]
       });
     }
   },
   updateCase: function (collectionInfo) {
     if (collectionInfo === undefined) {
-      this.data.collectionInfoList.forEach(function (collectionInfo) {
+      this.state.collectionInfoList.forEach(function (collectionInfo) {
         this.updateCase(collectionInfo)
       }.bind(this) );
     } else if (collectionInfo.isDirty) {
@@ -265,7 +265,7 @@ var dataManager = Object.create({
         console.log('DidUpdateCase: reply=' + iReply.values && iReply.values[0] && iReply.values[0].id);
         dispatcher.sendRequest({
           action: 'get',
-          resource: 'dataContext[' + this.data.currentContext + '].collection[' +
+          resource: 'dataContext[' + this.state.currentContext + '].collection[' +
             collectionInfo.collection.name + '].caseByID[' +
             iReply.values[0].id + ']'
         })
@@ -287,7 +287,7 @@ var dataManager = Object.create({
   },
 
   getContextName: function () {
-    return this.data.currentContext;
+    return this.state.currentContext;
   },
 
   getCurrentCase: function (iCollectionName) {
@@ -310,10 +310,10 @@ var dataManager = Object.create({
       dispatcher.sendRequest({action: 'get', resource: resource});
     }
 
-    var collection = this.data.collectionInfoList.find(function (collectionInfo) {
+    var collection = this.state.collectionInfoList.find(function (collectionInfo) {
       return collectionInfo.collection.name === iCollectionName;
     });
-    var contextName = this.data.currentContext;
+    var contextName = this.state.currentContext;
     var currentCaseIndex = collection.currentCaseIndex;
     console.log('selectCase: action: ' + action);
     switch (action) {
@@ -355,9 +355,9 @@ var dataManager = Object.create({
     var ix;
     var collectionInfo;
     var parentCollectionInfo;
-    for (ix = collectionIndex; ix < this.data.collectionInfoList.length; ix += 1) {
-      collectionInfo = this.data.collectionInfoList[ix];
-      parentCollectionInfo = (ix > 0) && this.data.collectionInfoList[ix - 1];
+    for (ix = collectionIndex; ix < this.state.collectionInfoList.length; ix += 1) {
+      collectionInfo = this.state.collectionInfoList[ix];
+      parentCollectionInfo = (ix > 0) && this.state.collectionInfoList[ix - 1];
       makeNewCase(collectionInfo, parentCollectionInfo, contextName);
       this.setDirty(collectionInfo, true);
     }
@@ -365,7 +365,7 @@ var dataManager = Object.create({
   },
 
   getState: function () {
-    return this.data;
+    return this.state;
   }
 
 }).init();
