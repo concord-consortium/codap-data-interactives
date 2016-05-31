@@ -156,7 +156,7 @@ var dataManager = Object.create({
         dispatcher.sendRequest({action: 'create', resource: 'dataContext['
           + this.state.currentContext + '].selectionList', values: [myCase.guid]});
       }
-      this.computeNavEnabled(collectionInfo);
+      this.setDirty(collectionInfo, false);
       this.notify();
     }
   },
@@ -366,6 +366,28 @@ var dataManager = Object.create({
 
   getState: function () {
     return this.state;
+  },
+
+  cancelCreateOrUpdateCase: function () {
+    this.state.collectionInfoList.forEach(function(collectionInfo){
+      if (collectionInfo.isDirty) {
+        if (collectionInfo.currentCaseIsNew) {
+          dispatcher.sendRequest({
+            action: 'get',
+            resource: 'dataContext[' + this.state.currentContext +
+            '].collection[' + collectionInfo.collection.name + '].caseByIndex['
+            + collectionInfo.currentCaseIndex + ']'
+          })
+          this.setDirty(collectionInfo, false)
+        } else {
+          dispatcher.sendRequest({
+            action: 'get',
+            resource: collectionInfo.currentCaseResourceName
+          });
+        }
+        collectionInfo.isNew = false;
+      }
+    }.bind(this));
   }
 
 }).init();
@@ -511,27 +533,27 @@ var ContextSelector = React.createClass({
   }
 });
 
-var ModeSelector = React.createClass({
-  propTypes: {
-    mode: React.PropTypes.string.isRequired,
-    modes: React.PropTypes.array.isRequired,
-    onSelect: React.PropTypes.func.isRequired
-  },
-  render: function () {
-    var onSelect = this.props.onSelect;
-    function selectHandler(ev) {
-      onSelect(ev.target.value);
-    }
-    var modesView = this.props.modes.map(function (modeName) {
-      var isSelected = (modeName === this.props.mode);
-      return <label key={modeName}>
-        <input type="radio" name="mode" checked={isSelected} value={modeName}
-               onChange={selectHandler} /> {modeName}
-      </label>
-    }.bind(this));
-    return <div className="mode-selector">{modesView}</div>;
-  }
-});
+//var ModeSelector = React.createClass({
+//  propTypes: {
+//    mode: React.PropTypes.string.isRequired,
+//    modes: React.PropTypes.array.isRequired,
+//    onSelect: React.PropTypes.func.isRequired
+//  },
+//  render: function () {
+//    var onSelect = this.props.onSelect;
+//    function selectHandler(ev) {
+//      onSelect(ev.target.value);
+//    }
+//    var modesView = this.props.modes.map(function (modeName) {
+//      var isSelected = (modeName === this.props.mode);
+//      return <label key={modeName}>
+//        <input type="radio" name="mode" checked={isSelected} value={modeName}
+//               onChange={selectHandler} /> {modeName}
+//      </label>
+//    }.bind(this));
+//    return <div className="mode-selector">{modesView}</div>;
+//  }
+//});
 
 /**
  * AttrList presents a list of attributes for a data card.
@@ -691,7 +713,7 @@ var DataCardView = React.createClass({
     context: React.PropTypes.string.isRequired,
     isDirty: React.PropTypes.bool.isRequired,
     isNew: React.PropTypes.bool.isRequired,
-    onCaseValueChange: React.PropTypes.func.isRequired,
+    onCaseValueChange: React.PropTypes.func.isRequired
   },
   render: function () {
     var collection = this.props.collection;
@@ -784,6 +806,12 @@ var DataCardAppView = React.createClass({
             disabled={!this.state.isDirty}
             onClick={createOrUpdateCase}
             value={hasNew? 'Create': 'Update'} />
+        <input
+            type="button"
+            className="update-case"
+            disabled={!this.state.isDirty}
+            onClick={function () {dataManager.cancelCreateOrUpdateCase()}}
+            value="Cancel" />
       </section>)
     }
     return <div className="data-card-app-view">

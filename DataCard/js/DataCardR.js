@@ -67,20 +67,8 @@ var dataManager = Object.create({
     }.bind(this));
   },
 
-  makeResourceSelector: function (elements) {
-    var selector = elements.reduce(function (prior, element) {
-      if (element.length === 1) {
-        return prior + '.' + element[0];
-      } else {
-        return prior + '.' + element[0] + '[' + element[1] + ']';
-      }
-    }, '');
-    return selector;
-  },
-
   changeContext: function (contextName) {
-    //dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
-    dispatcher.sendRequest({ action: 'get', resource: this.makeResourceSelector([['dataContext', contextName]]) });
+    dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + ']' });
   },
 
   setContextList: function (contextNameList) {
@@ -163,7 +151,7 @@ var dataManager = Object.create({
       if (!handlingOptions || !handlingOptions.omitSelection) {
         dispatcher.sendRequest({ action: 'create', resource: 'dataContext[' + this.state.currentContext + '].selectionList', values: [myCase.guid] });
       }
-      this.computeNavEnabled(collectionInfo);
+      this.setDirty(collectionInfo, false);
       this.notify();
     }
   },
@@ -370,6 +358,26 @@ var dataManager = Object.create({
 
   getState: function () {
     return this.state;
+  },
+
+  cancelCreateOrUpdateCase: function () {
+    this.state.collectionInfoList.forEach(function (collectionInfo) {
+      if (collectionInfo.isDirty) {
+        if (collectionInfo.currentCaseIsNew) {
+          dispatcher.sendRequest({
+            action: 'get',
+            resource: 'dataContext[' + this.state.currentContext + '].collection[' + collectionInfo.collection.name + '].caseByIndex[' + collectionInfo.currentCaseIndex + ']'
+          });
+          this.setDirty(collectionInfo, false);
+        } else {
+          dispatcher.sendRequest({
+            action: 'get',
+            resource: collectionInfo.currentCaseResourceName
+          });
+        }
+        collectionInfo.isNew = false;
+      }
+    }.bind(this));
   }
 
 }).init();
@@ -526,37 +534,27 @@ var ContextSelector = React.createClass({
   }
 });
 
-var ModeSelector = React.createClass({
-  displayName: 'ModeSelector',
-
-  propTypes: {
-    mode: React.PropTypes.string.isRequired,
-    modes: React.PropTypes.array.isRequired,
-    onSelect: React.PropTypes.func.isRequired
-  },
-  render: function () {
-    var onSelect = this.props.onSelect;
-    function selectHandler(ev) {
-      onSelect(ev.target.value);
-    }
-    var modesView = this.props.modes.map(function (modeName) {
-      var isSelected = modeName === this.props.mode;
-      return React.createElement(
-        'label',
-        { key: modeName },
-        React.createElement('input', { type: 'radio', name: 'mode', checked: isSelected, value: modeName,
-          onChange: selectHandler }),
-        ' ',
-        modeName
-      );
-    }.bind(this));
-    return React.createElement(
-      'div',
-      { className: 'mode-selector' },
-      modesView
-    );
-  }
-});
+//var ModeSelector = React.createClass({
+//  propTypes: {
+//    mode: React.PropTypes.string.isRequired,
+//    modes: React.PropTypes.array.isRequired,
+//    onSelect: React.PropTypes.func.isRequired
+//  },
+//  render: function () {
+//    var onSelect = this.props.onSelect;
+//    function selectHandler(ev) {
+//      onSelect(ev.target.value);
+//    }
+//    var modesView = this.props.modes.map(function (modeName) {
+//      var isSelected = (modeName === this.props.mode);
+//      return <label key={modeName}>
+//        <input type="radio" name="mode" checked={isSelected} value={modeName}
+//               onChange={selectHandler} /> {modeName}
+//      </label>
+//    }.bind(this));
+//    return <div className="mode-selector">{modesView}</div>;
+//  }
+//});
 
 /**
  * AttrList presents a list of attributes for a data card.
@@ -882,7 +880,15 @@ var DataCardAppView = React.createClass({
           className: 'update-case',
           disabled: !this.state.isDirty,
           onClick: createOrUpdateCase,
-          value: hasNew ? 'Create' : 'Update' })
+          value: hasNew ? 'Create' : 'Update' }),
+        React.createElement('input', {
+          type: 'button',
+          className: 'update-case',
+          disabled: !this.state.isDirty,
+          onClick: function () {
+            dataManager.cancelCreateOrUpdateCase();
+          },
+          value: 'Cancel' })
       ));
     }
     return React.createElement(
