@@ -51,9 +51,7 @@ function initCartSettings() {
     tryAgainMsg: 'Please try again!',
     // UKDE
     ukdeModeHasBeenLogged: false,
-    ukdeMode: Math.random() < 0.5 ? 'A' : 'B',
-    ukdeA_numGamesThreshold: 5  // In ukdeA if players do not unlock next level after this many games, they are given
-                                // choice of moving on anyway
+    ukdeMode: Math.random() < 0.5 ? 'A' : 'B'
   };
 
   CartEvents = {

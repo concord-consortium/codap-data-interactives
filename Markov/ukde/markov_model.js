@@ -43,6 +43,8 @@ function MarkovModel(codapPhone, iDoAppCommandFunc)
   this.autoplay = false;
   this.animTime = MarkovSettings.kAnimTime; // milliseconds for each phase
 
+  // UKDE
+
   // other
   this.hasChangedLevels = false;
   this.results = ['lose', 'win'];
@@ -71,7 +73,7 @@ MarkovModel.prototype.initialize = function()
         action:'initGame',
         args: {
             name: "Markov",
-            version: "2.0",
+            version: "2.1",
             dimensions: { width: 550, height: 315 },
             collections: [
                 {
@@ -108,6 +110,21 @@ MarkovModel.prototype.initialize = function()
             ]
         }
     }, function(){console.log("Initializing game")});
+  this.adjustLevelStateForUKDE();
+};
+
+/**
+ * For UKDE there are three levels. In ukdeMode === 'B', we lock the 2nd and 3rd levels, requiring the player to
+ * complete a level in fewer than ukdeBTooManyMoves to go on.
+ */
+MarkovModel.prototype.adjustLevelStateForUKDE = function()
+{
+  if( MarkovSettings.ukdeMode === 'B') {
+    this.levelManager.setLevelsLockState({
+      'Deimos': false,
+      'Phobos': false
+    });
+  }
 };
 
 /**
@@ -198,20 +215,41 @@ MarkovModel.prototype.addGameCase = function()
 
   this.openGameCase = null;
 
-  if( !this.level.scores)
-    this.level.scores = [];
-  this.level.scores.push( this.score);
-  this.level.highScore = !this.level.highScore ? this.score : Math.max( this.level.highScore, this.score);
-
-  // This game may have unlocked a previously locked level
-  this.levelManager.levelsArray.forEach( function( iLevel) {
-    if( !iLevel.unlocked && this_.isLevelEnabled( iLevel)) {
-      iLevel.unlocked = true;
-      var tEvent = new Event("levelUnlocked");
-      tEvent.levelName = iLevel.levelName;
-      this_.eventDispatcher.dispatchEvent( tEvent);
+  if( MarkovSettings.ukdeMode === 'B') {
+    var tEvent;
+    if( this.winner === 'you' && this.turn <= MarkovSettings.ukdeBTooManyMoves) {
+      // If there is another level to go to, do so
+      var tNextLevel = this.levelManager.getNextLevel( this.level);
+      if( tNextLevel) {
+        tNextLevel.unlocked = true;
+        tEvent = new Event("levelUnlocked");
+        tEvent.levelName = tNextLevel.levelName;
+        this.eventDispatcher.dispatchEvent( tEvent);
+        this.level = tNextLevel;
+      }
     }
-  });
+    else {
+      // We may be able to give a hint here
+      tEvent = new Event("timeForAHint");
+      this.eventDispatcher.dispatchEvent( tEvent);
+    }
+  }
+    /*
+      if( !this.level.scores)
+        this.level.scores = [];
+      this.level.scores.push( this.score);
+      this.level.highScore = !this.level.highScore ? this.score : Math.max( this.level.highScore, this.score);
+
+      // This game may have unlocked a previously locked level
+      this.levelManager.levelsArray.forEach( function( iLevel) {
+        if( !iLevel.unlocked && this_.isLevelEnabled( iLevel)) {
+          iLevel.unlocked = true;
+          var tEvent = new Event("levelUnlocked");
+          tEvent.levelName = iLevel.levelName;
+          this_.eventDispatcher.dispatchEvent( tEvent);
+        }
+      });
+    */
 };
 
 /**
@@ -358,6 +396,13 @@ MarkovModel.prototype.move = function( iMove)
   if( this.autoplay)
     this.up_down *= this.strategy[ this.mar_prev_2].weight;
   this.changeTurnState( 'moving');
+  this.codapPhone.call({
+    action: 'logAction',
+    args: {
+      formatStr: "UKDE Markov Mode %@",
+      replaceArgs: [MarkovSettings.ukdeMode]
+    }
+  });
 };
 
 /**
@@ -550,7 +595,8 @@ MarkovModel.prototype.saveGameState = function() {
               gameNumber: this.gameNumber,
               currentLevel: this.level && this.level.levelName,
               levelsMap: this.levelManager.getLevelsLockState(),
-              strategy: this.strategy
+              strategy: this.strategy,
+              ukdeMode: MarkovSettings.ukdeMode
             }
           };
 };
@@ -562,8 +608,14 @@ MarkovModel.prototype.saveGameState = function() {
  */
 MarkovModel.prototype.restoreGameState = function( iState) {
   if( iState) {
-    if( iState.gameNumber)
+    if( iState.gameNumber) {
+      // Restore the ukdeMode that was saved rather replacing the randomly chosen one
+      MarkovSettings.ukdeMode = iState.ukdeMode;
       this.gameNumber = iState.gameNumber;
+    }
+    else
+        this.adjustLevelStateForUKDE();
+
     if( iState.currentLevel) {
       var level = this.levelManager.getLevelNamed( iState.currentLevel);
       if( level) this.level = level;
@@ -572,7 +624,9 @@ MarkovModel.prototype.restoreGameState = function( iState) {
       this.levelManager.setLevelsLockState( iState.levelsMap);
     if( iState.strategy)
       this.strategy = iState.strategy;
-    this.playGame();
+    if( this.gameNumber) {
+      this.playGame();
+    }
   }
   return { success: true };
 };

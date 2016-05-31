@@ -11,7 +11,8 @@ MarkovLevels = [
     "RS" : "S",
     "SR" : "RRRRPS",
     "SP" : "P",
-    "Description" : "A good place to start"
+    "Description" : "A good place to start",
+    hintNum: 0
   },
   {
     "levelName" : "Deimos",
@@ -25,7 +26,8 @@ MarkovLevels = [
     "RS" : "S",
     "SR" : "RRRPS",
     "SP" : "PPPRS",
-    "Description" : "A little more challenging"
+    "Description" : "A little more challenging",
+    hintNum: 0
   },
   {
     "levelName" : "Phobos",
@@ -39,7 +41,8 @@ MarkovLevels = [
     "RS" : "SRRR",
     "SR" : "RRRS",
     "SP" : "PPPPPRS",
-    "Description" : "Like Deimos, more challenging"
+    "Description" : "Like Deimos, more challenging",
+    hintNum: 0
   }/*,
   {
     "levelName" : "Callisto",
@@ -53,6 +56,7 @@ MarkovLevels = [
     "RS" : "SSSSSSR",
     "SR" : "RRRRRPS",
     "SP" : "R",
-    "Description" : "Maybe more difficult? Not sure!"
+    "Description" : "Maybe more difficult? Not sure!",
+   hintNum: 0
   }*/
   ];

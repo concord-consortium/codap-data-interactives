@@ -18,6 +18,6 @@ var MarkovSettings = {
   kColorMap: { R: 'red', P: 'blue', S: 'green'},
   kInitialMessage: 'Rock, paper, or scissors?',
   // UKDE
-  ukdeModeHasBeenLogged: false,
-  ukdeMode: Math.random() < 0.5 ? 'A' : 'B'
+  ukdeMode: 'B', // Math.random() < 0.5 ? 'A' : 'B',
+  ukdeBTooManyMoves: 45 // If more than this many moves, user doesn't go on to next level
 };
