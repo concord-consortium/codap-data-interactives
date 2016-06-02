@@ -31,7 +31,7 @@ var dataManager = Object.create({
    *   currentContext: {string},
    *   collectionInfoList: {[Object]},
    *   hasSelectedContext: {boolean}
-   *   mode: {'view'|'author'}
+   *   mode: {'browse'|'design'}
    * }}
    */
   state: null,
@@ -39,10 +39,16 @@ var dataManager = Object.create({
   init: function () {
     this.listeners = [];
     this.state = {
+      title: "Data Card",
+      version: "0.1",
+      dimensions: {
+        width: 500,
+        height: 600
+      },
       collectionInfoList: [],
       contextNameList: [],
       currentContext: null,
-      mode: 'view'
+      mode: 'browse'
     };
     return this;
   },
@@ -67,17 +73,61 @@ var dataManager = Object.create({
     }.bind(this));
   },
 
+  setInteractiveFrame: function (frameData) {
+    if (frameData.dimensions) {
+      this.state.dimensions = frameData.dimensions;
+    }
+    if (frameData.title) {
+      this.state.title = frameData.title;
+    }
+    if (frameData.savedState) {
+      Object.assign(this.state, frameData.savedState);
+    }
+    dispatcher.sendRequest({
+      action: 'update',
+      resource: 'interactiveFrame',
+      values: {
+        title: this.state.title,
+        version: this.state.version,
+        dimensions: this.state.dimensions
+      }
+    });
+  },
+
+  getPersistentState: function () {
+    var state = this.state;
+    return {
+      currentContext: state.currentContext
+    };
+  },
+
+  updateDataContextList: function () {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContextList'
+    });
+  },
+
   changeContext: function (contextName) {
     dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + ']' });
   },
 
   setContextList: function (contextNameList) {
-    function fetchContext(contextName) {
-      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + ']' });
-    }
+    var currentContextName = this.state.currentContext;
     this.state.contextNameList = contextNameList;
+    if (currentContextName) {
+      if (!contextNameList.find(function (contextInfo) {
+        return contextInfo.name === currentContextName;
+      })) {
+        console.log('Initial currentContext missing:' + this.state.currentContext);
+        this.state.currentContext = null;
+      }
+    }
+    if (!currentContextName) {
+      currentContextName = this.state.currentContext = contextNameList[0].name;
+    }
     if (contextNameList.length > 0) {
-      fetchContext(contextNameList[0].name);
+      this.changeContext(currentContextName);
     }
     this.notify();
   },
@@ -394,20 +444,34 @@ var dispatcher = Object.create({
       connectionSendCount: 0,
   */
   init: function () {
-    this.connection = new iframePhone.IframePhoneRpcEndpoint(function () {}, "data-interactive", window.parent);
+    this.connection = new iframePhone.IframePhoneRpcEndpoint(this.handleCODAPRequest, "data-interactive", window.parent);
     this.connectionState = 'initialized';
     this.sendRequest({
-      action: 'update', resource: 'interactiveFrame', values: {
-        "title": "Data Card",
-        "version": "0.1",
-        "dimensions": { "width": 500, "height": 600 }
-      }
-    });
-    this.sendRequest({
       "action": "get",
-      "resource": "dataContextList"
+      "resource": "interactiveFrame"
     });
     return this;
+  },
+
+  handleCODAPRequest: function (request, callback) {
+    switch (request.resource) {
+      case 'interactiveState':
+        if (request.action === 'get') {
+          callback({
+            success: true,
+            values: dataManager.getPersistentState()
+          });
+        } else {
+          console.log('Unsupported interactiveState action, CODAP to DI: ' + JSON.stringify(request));
+        }
+        break;
+      case 'undoChangeNotice':
+      case 'appChangeNotice':
+      case 'dataContextChangeNotice':
+      default:
+        console.log('Unsupported request from CODAP to DI: ' + JSON.stringify(request));
+        callback({ success: false });
+    }
   },
 
   sendRequest: function (request, handlingOptions) {
@@ -447,6 +511,9 @@ var dispatcher = Object.create({
     } else if (request.action === 'get') {
       this.connectionState = 'active';
       switch (resourceObj.type) {
+        case 'interactiveFrame':
+          dataManager.setInteractiveFrame(result.values);
+          break;
         case 'dataContextList':
           dataManager.setContextList(result.values);
           break;
@@ -466,6 +533,9 @@ var dispatcher = Object.create({
     } else if (request.action === 'update') {
       this.connectionState = 'active';
       switch (resourceObj.type) {
+        case 'interactiveFrame':
+          dataManager.updateDataContextList();
+          break;
         case 'caseByIndex':
         case 'caseByID':
           dataManager.didUpdateCase(resourceObj.collection, result);
@@ -500,10 +570,11 @@ var dispatcher = Object.create({
  * @type {ClassicComponentClass<P>}
  */
 var ContextSelector = React.createClass({
-  displayName: 'ContextSelector',
+  displayName: "ContextSelector",
 
   propTypes: {
     contextNameList: React.PropTypes.array.isRequired,
+    currentContextName: React.PropTypes.string.isRequired,
     onSelect: React.PropTypes.func.isRequired
   },
 
@@ -512,19 +583,18 @@ var ContextSelector = React.createClass({
     var options = this.props.contextNameList.map(function (context) {
       var title = context.title || context.name;
       return React.createElement(
-        'option',
+        "option",
         { key: context.name, id: context.name },
         title
       );
     });
     return React.createElement(
-      'label',
-      null,
-      'Data Set: ',
+      "label",
+      { "class": "context-selector" },
+      "Data Set: ",
       React.createElement(
-        'select',
-        {
-          id: 'context-selector',
+        "select",
+        { value: this.props.currentContextName,
           onChange: function (ev) {
             onSelect(ev.target.value);
           } },
@@ -561,7 +631,7 @@ var ContextSelector = React.createClass({
  * @type {ClassicComponentClass<P>}
  */
 var AttrList = React.createClass({
-  displayName: 'AttrList',
+  displayName: "AttrList",
 
   propTypes: {
     attrs: React.PropTypes.array.isRequired
@@ -570,21 +640,21 @@ var AttrList = React.createClass({
     var items = this.props.attrs.map(function (item) {
       var title = item.title || item.name;
       return React.createElement(
-        'div',
-        { key: item.name, className: 'attr' },
+        "div",
+        { key: item.name, className: "attr" },
         title
       );
     });
     return React.createElement(
-      'div',
-      { className: 'attr-list' },
+      "div",
+      { className: "attr-list" },
       items
     );
   }
 });
 
 var CaseDisplay = React.createClass({
-  displayName: 'CaseDisplay',
+  displayName: "CaseDisplay",
 
   propTypes: {
     attrs: React.PropTypes.array.isRequired,
@@ -597,9 +667,9 @@ var CaseDisplay = React.createClass({
       var name = attr.name;
       var value = myCase ? myCase.values[name] : '';
       var onChange = this.props.onChange;
-      return React.createElement('input', {
-        type: 'text',
-        className: 'attr-value',
+      return React.createElement("input", {
+        type: "text",
+        className: "attr-value",
         key: name,
         name: name,
         value: value,
@@ -608,15 +678,15 @@ var CaseDisplay = React.createClass({
         } });
     }.bind(this));
     return React.createElement(
-      'div',
-      { className: 'case' },
+      "div",
+      { className: "case" },
       values
     );
   }
 });
 
 var CaseList = React.createClass({
-  displayName: 'CaseList',
+  displayName: "CaseList",
 
   propTypes: {
     collection: React.PropTypes.object.isRequired,
@@ -629,17 +699,17 @@ var CaseList = React.createClass({
     var id = myCase ? myCase.guid : 'new';
     var caseView = React.createElement(CaseDisplay, { key: id, attrs: this.props.collection.attrs, myCase: myCase, onChange: this.props.onChange });
     return React.createElement(
-      'div',
-      { className: 'case-container' },
-      ' ',
+      "div",
+      { className: "case-container" },
+      " ",
       caseView,
-      ' '
+      " "
     );
   }
 });
 
 var CaseNavControl = React.createClass({
-  displayName: 'CaseNavControl',
+  displayName: "CaseNavControl",
 
   propTypes: {
     onNavigation: React.PropTypes.func.isRequired,
@@ -661,20 +731,20 @@ var CaseNavControl = React.createClass({
     var disable = !this.props.navEnabled;
     if (disable) {
       return React.createElement(
-        'button',
-        { className: 'control', disabled: 'true', onClick: this.handleClick },
+        "button",
+        { className: "control", disabled: "true", onClick: this.handleClick },
         this.symbol[this.props.action]
       );
     } else return React.createElement(
-      'button',
-      { className: 'control', onClick: this.handleClick },
+      "button",
+      { className: "control", onClick: this.handleClick },
       this.symbol[this.props.action]
     );
   }
 });
 
 var DataCardAuthor = React.createClass({
-  displayName: 'DataCardAuthor',
+  displayName: "DataCardAuthor",
 
   propTypes: {
     collection: React.PropTypes.object.isRequired,
@@ -687,12 +757,12 @@ var DataCardAuthor = React.createClass({
       var title = attr && (attr.title || attr.name);
       attr = attr || { name: '', title: '', description: '', type: 'numeric', precision: 2 };
       return React.createElement(
-        'div',
-        { key: name, className: 'attr-author' },
-        React.createElement('input', { type: 'text', name: 'title', value: title }),
-        React.createElement('input', { type: 'text', name: 'type', value: attr.type }),
-        React.createElement('input', { type: 'text', name: 'description', value: attr.description }),
-        React.createElement('input', { type: 'text', name: 'precision', value: attr.precision })
+        "div",
+        { key: name, className: "attr-author" },
+        React.createElement("input", { type: "text", name: "title", value: title }),
+        React.createElement("input", { type: "text", name: "type", value: attr.type }),
+        React.createElement("input", { type: "text", name: "description", value: attr.description }),
+        React.createElement("input", { type: "text", name: "precision", value: attr.precision })
       );
     }
     var collection = this.props.collection;
@@ -704,23 +774,23 @@ var DataCardAuthor = React.createClass({
     attrsList.push(makeAttrView());
 
     return React.createElement(
-      'section',
-      { className: 'card-section' },
+      "section",
+      { className: "card-section" },
       React.createElement(
-        'label',
+        "label",
         null,
-        'Collection Name ',
-        React.createElement('input', { name: 'collection-name', value: title })
+        "Collection Name ",
+        React.createElement("input", { name: "collection-name", value: title })
       ),
       React.createElement(
-        'div',
-        { className: 'card-content' },
+        "div",
+        { className: "card-content" },
         React.createElement(
-          'div',
+          "div",
           null,
           attrsList
         ),
-        React.createElement('input', { type: 'button', className: 'update-case', onClick: this.updateCaseHandler, value: 'Update' })
+        React.createElement("input", { type: "button", className: "update-case", onClick: this.updateCaseHandler, value: "Update" })
       )
     );
   }
@@ -728,7 +798,7 @@ var DataCardAuthor = React.createClass({
 });
 
 var SlideShowView = React.createClass({
-  displayName: 'SlideShowView',
+  displayName: "SlideShowView",
 
   propTypes: {
     collection: React.PropTypes.object.isRequired,
@@ -742,27 +812,27 @@ var SlideShowView = React.createClass({
   render: function () {
     var navEnabled = this.props.navEnabled;
     return React.createElement(
-      'div',
-      { className: 'card-deck' },
+      "div",
+      { className: "card-deck" },
       React.createElement(
-        'div',
-        { className: 'left-ctls' },
-        React.createElement(CaseNavControl, { action: 'prev', navEnabled: navEnabled.prev, onNavigation: this.navigationHandler })
+        "div",
+        { className: "left-ctls" },
+        React.createElement(CaseNavControl, { action: "prev", navEnabled: navEnabled.prev, onNavigation: this.navigationHandler })
       ),
       this.props.children,
       React.createElement(
-        'div',
-        { className: 'right-ctls' },
-        React.createElement(CaseNavControl, { action: 'next', navEnabled: navEnabled.next, onNavigation: this.navigationHandler }),
-        React.createElement(CaseNavControl, { action: 'new', navEnabled: navEnabled.newInstance, onNavigation: this.navigationHandler }),
-        React.createElement(CaseNavControl, { action: 'remove', navEnabled: navEnabled.removeInstance, onNavigation: this.navigationHandler })
+        "div",
+        { className: "right-ctls" },
+        React.createElement(CaseNavControl, { action: "next", navEnabled: navEnabled.next, onNavigation: this.navigationHandler }),
+        React.createElement(CaseNavControl, { action: "new", navEnabled: navEnabled.newInstance, onNavigation: this.navigationHandler }),
+        React.createElement(CaseNavControl, { action: "remove", navEnabled: navEnabled.removeInstance, onNavigation: this.navigationHandler })
       )
     );
   }
 });
 
 var DataCardView = React.createClass({
-  displayName: 'DataCardView',
+  displayName: "DataCardView",
 
   propTypes: {
     currentCase: React.PropTypes.object.isRequired,
@@ -775,19 +845,19 @@ var DataCardView = React.createClass({
   render: function () {
     var collection = this.props.collection;
     return React.createElement(
-      'div',
-      { className: 'card-content' },
+      "div",
+      { className: "card-content" },
       React.createElement(
-        'div',
-        { className: 'case-display' },
+        "div",
+        { className: "case-display" },
         React.createElement(
-          'div',
-          { className: 'attr-container' },
+          "div",
+          { className: "attr-container" },
           React.createElement(AttrList, { attrs: collection.attrs })
         ),
         React.createElement(
-          'div',
-          { className: 'case-frame' },
+          "div",
+          { className: "case-frame" },
           React.createElement(CaseList, {
             collection: collection,
             currentCase: this.props.currentCase,
@@ -799,7 +869,7 @@ var DataCardView = React.createClass({
 });
 
 var DataCardAppView = React.createClass({
-  displayName: 'DataCardAppView',
+  displayName: "DataCardAppView",
 
   getInitialState: function () {
     return dataManager.getState();
@@ -836,13 +906,13 @@ var DataCardAppView = React.createClass({
       if (!collectionInfo.currentCase) {
         return;
       }
-      if (mode === 'view') {
+      if (mode === 'browse') {
         return React.createElement(
-          'section',
-          { className: 'card-section', key: collection.name },
+          "section",
+          { className: "card-section", key: collection.name },
           React.createElement(
-            'div',
-            { className: 'collection-name' },
+            "div",
+            { className: "collection-name" },
             title
           ),
           React.createElement(
@@ -873,32 +943,33 @@ var DataCardAppView = React.createClass({
     }.bind(this));
     if (cards.length > 0) {
       cards.push(React.createElement(
-        'section',
-        { key: '#control' },
-        React.createElement('input', {
-          type: 'button',
-          className: 'update-case',
+        "section",
+        { key: "#control" },
+        React.createElement("input", {
+          type: "button",
+          className: "update-case",
           disabled: !this.state.isDirty,
           onClick: createOrUpdateCase,
           value: hasNew ? 'Create' : 'Update' }),
-        React.createElement('input', {
-          type: 'button',
-          className: 'update-case',
+        React.createElement("input", {
+          type: "button",
+          className: "update-case",
           disabled: !this.state.isDirty,
           onClick: function () {
             dataManager.cancelCreateOrUpdateCase();
           },
-          value: 'Cancel' })
+          value: "Cancel" })
       ));
     }
     return React.createElement(
-      'div',
-      { className: 'data-card-app-view' },
+      "div",
+      { className: "data-card-app-view" },
       React.createElement(
-        'section',
-        { id: 'context-selector', className: 'data-card-app-view-header' },
+        "section",
+        { className: "context-section data-card-app-view-header" },
         React.createElement(ContextSelector, {
           contextNameList: this.state.contextNameList,
+          currentContextName: this.state.currentContext,
           onSelect: function (contextName) {
             dataManager.changeContext(contextName);
           } })

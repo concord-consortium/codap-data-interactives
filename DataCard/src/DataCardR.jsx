@@ -30,7 +30,7 @@ var dataManager = Object.create({
    *   currentContext: {string},
    *   collectionInfoList: {[Object]},
    *   hasSelectedContext: {boolean}
-   *   mode: {'view'|'author'}
+   *   mode: {'browse'|'design'}
    * }}
    */
   state: null,
@@ -38,10 +38,16 @@ var dataManager = Object.create({
   init: function () {
     this.listeners = [];
     this.state = {
+      title: "Data Card",
+      version: "0.1",
+      dimensions: {
+        width: 500,
+        height: 600
+      },
       collectionInfoList: [],
       contextNameList: [],
       currentContext: null,
-      mode: 'view'
+      mode: 'browse'
     };
     return this;
   },
@@ -66,17 +72,61 @@ var dataManager = Object.create({
     }.bind(this));
   },
 
+  setInteractiveFrame: function (frameData) {
+    if (frameData.dimensions) {
+      this.state.dimensions = frameData.dimensions;
+    }
+    if (frameData.title) {
+      this.state.title = frameData.title;
+    }
+    if (frameData.savedState) {
+      Object.assign(this.state, frameData.savedState);
+    }
+    dispatcher.sendRequest({
+      action: 'update',
+      resource: 'interactiveFrame',
+      values: {
+        title: this.state.title,
+        version: this.state.version,
+        dimensions: this.state.dimensions
+      }
+    });
+  },
+
+  getPersistentState: function () {
+    var state = this.state;
+    return {
+      currentContext: state.currentContext
+    }
+  },
+
+  updateDataContextList: function () {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContextList'
+    });
+  },
+
   changeContext: function (contextName) {
     dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
   },
 
   setContextList: function (contextNameList) {
-    function fetchContext(contextName) {
-      dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
-    }
+    var currentContextName = this.state.currentContext;
     this.state.contextNameList = contextNameList;
+    if (currentContextName) {
+      if (!contextNameList.find(function (contextInfo) {
+            return contextInfo.name === currentContextName;
+          })) {
+        console.log('Initial currentContext missing:' + this.state.currentContext);
+        this.state.currentContext = null;
+      }
+    }
+    if (!currentContextName) {
+      currentContextName = this.state.currentContext = contextNameList[0].name;
+    }
     if (contextNameList.length > 0) {
-      fetchContext(contextNameList[0].name);
+      this.changeContext(currentContextName);
     }
     this.notify();
   },
@@ -404,21 +454,35 @@ var dispatcher = Object.create({
     connectionSendCount: 0,
 */
     init: function () {
-      this.connection = new iframePhone.IframePhoneRpcEndpoint(function () {
-      }, "data-interactive", window.parent);
+      this.connection = new iframePhone.IframePhoneRpcEndpoint(
+          this.handleCODAPRequest, "data-interactive", window.parent);
       this.connectionState = 'initialized';
       this.sendRequest({
-        action: 'update', resource: 'interactiveFrame', values: {
-          "title": "Data Card",
-          "version": "0.1",
-          "dimensions": { "width": 500, "height": 600}
-        }
-      });
-      this.sendRequest({
         "action": "get",
-        "resource": "dataContextList"
+        "resource": "interactiveFrame"
       });
       return this;
+    },
+
+    handleCODAPRequest: function (request, callback) {
+      switch (request.resource) {
+        case 'interactiveState':
+          if (request.action === 'get') {
+            callback({
+              success: true,
+              values: dataManager.getPersistentState()
+            })
+          } else {
+            console.log('Unsupported interactiveState action, CODAP to DI: ' + JSON.stringify(request));
+          }
+          break;
+        case 'undoChangeNotice':
+        case 'appChangeNotice':
+        case 'dataContextChangeNotice':
+        default:
+          console.log('Unsupported request from CODAP to DI: ' + JSON.stringify(request));
+          callback({success: false});
+      }
     },
 
     sendRequest: function (request, handlingOptions) {
@@ -458,6 +522,9 @@ var dispatcher = Object.create({
       } else if (request.action === 'get') {
         this.connectionState = 'active';
         switch (resourceObj.type) {
+          case 'interactiveFrame':
+            dataManager.setInteractiveFrame(result.values);
+            break;
           case 'dataContextList':
             dataManager.setContextList(result.values);
             break;
@@ -478,6 +545,9 @@ var dispatcher = Object.create({
       } else if (request.action === 'update') {
         this.connectionState = 'active';
         switch (resourceObj.type) {
+          case 'interactiveFrame':
+            dataManager.updateDataContextList();
+            break;
           case 'caseByIndex':
           case 'caseByID':
             dataManager.didUpdateCase(resourceObj.collection, result);
@@ -514,6 +584,7 @@ var dispatcher = Object.create({
 var ContextSelector = React.createClass({
   propTypes: {
     contextNameList: React.PropTypes.array.isRequired,
+    currentContextName: React.PropTypes.string.isRequired,
     onSelect: React.PropTypes.func.isRequired
   },
 
@@ -525,9 +596,8 @@ var ContextSelector = React.createClass({
           <option key={context.name} id={context.name}>{title}</option>
       );
     });
-    return <label>Data Set:&nbsp;
-        <select
-            id="context-selector"
+    return <label class="context-selector">Data Set:&nbsp;
+        <select value={this.props.currentContextName}
             onChange={function (ev) {onSelect(ev.target.value)}} >{options}</select>
       </label >
   }
@@ -770,7 +840,7 @@ var DataCardAppView = React.createClass({
       if (!collectionInfo.currentCase) {
         return;
       }
-      if (mode === 'view') {
+      if (mode === 'browse') {
         return  <section className="card-section" key={collection.name}>
                   <div className="collection-name">{title}</div>
                   <SlideShowView
@@ -815,9 +885,10 @@ var DataCardAppView = React.createClass({
       </section>)
     }
     return <div className="data-card-app-view">
-      <section id="context-selector" className="data-card-app-view-header">
+      <section className="context-section data-card-app-view-header">
         <ContextSelector
             contextNameList={this.state.contextNameList}
+            currentContextName={this.state.currentContext}
             onSelect={function (contextName) { dataManager.changeContext( contextName ); }} />
       </section>
       {cards}
