@@ -868,6 +868,14 @@ var DataCardAppView = React.createClass({
 
       }
     }.bind(this));
+    var contextNameList = this.state.contextNameList;
+    var contextSelector = null;
+    if (contextNameList.length > 0) {
+      contextSelector = <ContextSelector
+          contextNameList={contextNameList}
+          currentContextName={this.state.currentContext}
+          onSelect={function (contextName) { dataManager.changeContext( contextName ); }} />
+    }
     if (cards.length > 0) {
       cards.push(<section key="#control">
         <input
@@ -886,10 +894,7 @@ var DataCardAppView = React.createClass({
     }
     return <div className="data-card-app-view">
       <section className="context-section data-card-app-view-header">
-        <ContextSelector
-            contextNameList={this.state.contextNameList}
-            currentContextName={this.state.currentContext}
-            onSelect={function (contextName) { dataManager.changeContext( contextName ); }} />
+        {contextSelector}
       </section>
       {cards}
 

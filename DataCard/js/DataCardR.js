@@ -941,6 +941,16 @@ var DataCardAppView = React.createClass({
           onRemoveAttribute: this.removeAttribute, onUpdateCollection: this.updateCollection });
       }
     }.bind(this));
+    var contextNameList = this.state.contextNameList;
+    var contextSelector = null;
+    if (contextNameList.length > 0) {
+      contextSelector = React.createElement(ContextSelector, {
+        contextNameList: contextNameList,
+        currentContextName: this.state.currentContext,
+        onSelect: function (contextName) {
+          dataManager.changeContext(contextName);
+        } });
+    }
     if (cards.length > 0) {
       cards.push(React.createElement(
         "section",
@@ -967,12 +977,7 @@ var DataCardAppView = React.createClass({
       React.createElement(
         "section",
         { className: "context-section data-card-app-view-header" },
-        React.createElement(ContextSelector, {
-          contextNameList: this.state.contextNameList,
-          currentContextName: this.state.currentContext,
-          onSelect: function (contextName) {
-            dataManager.changeContext(contextName);
-          } })
+        contextSelector
       ),
       cards
     );
