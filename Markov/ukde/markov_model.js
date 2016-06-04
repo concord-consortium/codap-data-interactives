@@ -538,49 +538,14 @@ MarkovModel.prototype.handleLevelButton = function( iEvent, iLevelIndex)
 };
 
 /**
- * The logic for whether a level is enabled lives here in the model, not in the level manager.
+ * For Markov, it's just a matter of whether the level is unlocked
  *
  * @param iLevelSpec
  * @return {Boolean}
  */
 MarkovModel.prototype.isLevelEnabled = function( iLevelSpec)
 {
-  /**
-   * Does the array of scores contain enough in a row above the given threshold?
-   * @param iRequiredNumInARow {Number}
-   * @param iThreshold {Number}
-   * @param iScores {Array} of {Number}
-   * @return {Boolean}
-   */
-  function gotEnoughHighScoresInARow( iRequiredNumInARow, iThreshold, iScores) {
-    if( !iRequiredNumInARow)
-      return true;  // Not required to get any in a row
-    if( !iScores || !iScores.length)
-      return false; // Didn't exist or wasn't an array with entries
-    var tNumInARow = 0;
-    iScores.forEach( function( iScore) {
-      if( tNumInARow >= iRequiredNumInARow)
-        return;
-      if( iScore >= iThreshold)
-        tNumInARow++;
-      else
-        tNumInARow = 0;
-    });
-    return tNumInARow >= iRequiredNumInARow;
-  }
-
-  var tEnabled = true,
-      tPrereq = iLevelSpec.prerequisite,
-      tPrereqLevel;
-  if( tPrereq && !iLevelSpec.unlocked) {
-    tPrereqLevel = (tPrereq.level) ? this.levelManager.getLevelNamed( tPrereq.level) : null;
-    if( tPrereqLevel.highScore && (tPrereqLevel.highScore >= tPrereq.score))
-      tEnabled = gotEnoughHighScoresInARow( tPrereq.inARow, tPrereq.score, tPrereqLevel.scores);
-    else
-      tEnabled = false;
-  }
-
-  return tEnabled;
+   return iLevelSpec.unlocked;
 };
 
 /**
@@ -612,21 +577,21 @@ MarkovModel.prototype.restoreGameState = function( iState) {
       // Restore the ukdeMode that was saved rather replacing the randomly chosen one
       MarkovSettings.ukdeMode = iState.ukdeMode;
       this.gameNumber = iState.gameNumber;
+      if( iState.currentLevel) {
+        var level = this.levelManager.getLevelNamed( iState.currentLevel);
+        if( level) this.level = level;
+      }
+      if( iState.levelsMap)
+        this.levelManager.setLevelsLockState( iState.levelsMap);
+      if( iState.strategy)
+        this.strategy = iState.strategy;
+      if( this.gameNumber) {
+        this.playGame();
+      }
     }
     else
         this.adjustLevelStateForUKDE();
 
-    if( iState.currentLevel) {
-      var level = this.levelManager.getLevelNamed( iState.currentLevel);
-      if( level) this.level = level;
-    }
-    if( iState.levelsMap)
-      this.levelManager.setLevelsLockState( iState.levelsMap);
-    if( iState.strategy)
-      this.strategy = iState.strategy;
-    if( this.gameNumber) {
-      this.playGame();
-    }
   }
   return { success: true };
 };

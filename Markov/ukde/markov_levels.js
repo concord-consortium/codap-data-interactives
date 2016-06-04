@@ -26,6 +26,7 @@ MarkovLevels = [
     "RS" : "S",
     "SR" : "RRRPS",
     "SP" : "PPPRS",
+    "prerequisite" : { "excuse" : "Win Tethys in fewer than 45 moves" },
     "Description" : "A little more challenging",
     hintNum: 0
   },
@@ -41,6 +42,7 @@ MarkovLevels = [
     "RS" : "SRRR",
     "SR" : "RRRS",
     "SP" : "PPPPPRS",
+    "prerequisite" : { "excuse" : "Win Deimos in fewer than 45 moves" },
     "Description" : "Like Deimos, more challenging",
     hintNum: 0
   }/*,
