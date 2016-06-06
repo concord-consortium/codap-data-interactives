@@ -353,7 +353,7 @@ var dataManager = Object.create({
     }
   },
 
-  selectCase: function (iCollectionName, action) {
+  moveToSelectedCase: function (iCollectionName, action) {
     function requestCase(contextName, collectionName, index) {
       var resource = 'dataContext[' + contextName + '].collection['
           + collectionName + '].caseByIndex[' + index + ']';
@@ -438,6 +438,40 @@ var dataManager = Object.create({
         collectionInfo.isNew = false;
       }
     }.bind(this));
+  },
+
+  dataContextDidChange: function (dataContextName, operation) {
+    if (dataContextName === this.state.currentContext) {
+      switch (operation) {
+        case 'selectCases':
+            dispatcher.sendRequest({
+              action: 'get',
+              resource: 'dataContext[' + this.state.currentContext +
+              '].selectionList'
+            })
+          break;
+        case 'deleteCase':
+          break;
+        default:
+      }
+    }
+    return true;
+  },
+
+  fetchSelectedCase: function (selection) {
+    if (!selection) {
+      return;
+    }
+    var collectionName = selection.collectionName;
+    var caseID = selection.caseID;
+    var collectionInfo = collectionName && this.findCollectionInfoForName(collectionName);
+    if (collectionInfo) {
+      dispatcher.sendRequest({
+        action: 'get',
+        resource: 'dataContext[' + this.state.currentContext +
+        '].collection[' + collectionInfo.collection.name + '].caseByID[' + caseID + ']'
+      }, {omitSelection: true});
+    }
   }
 
 }).init();
@@ -465,24 +499,42 @@ var dispatcher = Object.create({
     },
 
     handleCODAPRequest: function (request, callback) {
-      switch (request.resource) {
+      function getResourceType(resourceSelector) {
+        return resourceSelector && resourceSelector.match(/^[^[]*/)[0]
+      }
+      function getContext(resourceSelector) {
+        var match = resourceSelector.match(/^[^[]*\[([^\]]*)]/);
+        if (!match) {
+          return '#default';
+        } else {
+          return match[1];
+        }
+      }
+      var resourceType = getResourceType(request.resource);
+      var success = false;
+      var values = null;
+      switch (resourceType) {
         case 'interactiveState':
           if (request.action === 'get') {
-            callback({
-              success: true,
-              values: dataManager.getPersistentState()
-            })
+            success = true;
+            values = dataManager.getPersistentState()
           } else {
             console.log('Unsupported interactiveState action, CODAP to DI: ' + JSON.stringify(request));
           }
           break;
+        case 'dataContextChangeNotice':
+          var contextName = getContext(request.resource);
+          success = true;
+          request.values.forEach(function(action) {
+            dataManager.dataContextDidChange(contextName, action.operation);
+          })
+          break;
         case 'undoChangeNotice':
         case 'appChangeNotice':
-        case 'dataContextChangeNotice':
         default:
           console.log('Unsupported request from CODAP to DI: ' + JSON.stringify(request));
-          callback({success: false});
       }
+      callback({success: success, values: values});
     },
 
     sendRequest: function (request, handlingOptions) {
@@ -537,7 +589,7 @@ var dispatcher = Object.create({
                 request.resource, handlingOptions);
             break;
           case 'selectionList':
-              // nothing to do
+            dataManager.fetchSelectedCase(result.values[0]);
             break;
           default:
             console.log('No handler for get response: ' + request.resource);
@@ -596,7 +648,7 @@ var ContextSelector = React.createClass({
           <option key={context.name} id={context.name}>{title}</option>
       );
     });
-    return <label class="context-selector">Data Set:&nbsp;
+    return <label className="context-selector">Data Set:&nbsp;
         <select value={this.props.currentContextName}
             onChange={function (ev) {onSelect(ev.target.value)}} >{options}</select>
       </label >
@@ -847,7 +899,7 @@ var DataCardAppView = React.createClass({
                       collection={collection}
                       navEnabled={navEnabled}
                       onNavigation={function (collectionName, direction) {
-                        dataManager.selectCase(collectionName, direction);
+                        dataManager.moveToSelectedCase(collectionName, direction);
                       }}>
                     <DataCardView
                         collection={collection}
