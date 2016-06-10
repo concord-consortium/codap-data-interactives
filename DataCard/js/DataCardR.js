@@ -65,6 +65,7 @@ var dataManager = Object.create({
     if (ix >= 0) {
       this.listeners.splice(ix, 1);
     }
+    dispatcher.destroy();
   },
 
   notify: function () {
@@ -133,24 +134,56 @@ var dataManager = Object.create({
   },
 
   setDataCards: function (context) {
-    function fetchFirstCase(contextName, collectionName) {
-      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[0]' });
+    function fetchCase(contextName, collectionName, collectionIndex) {
+      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + collectionIndex + ']' });
     }
-    this.state.currentContext = context.name;
-    this.state.collectionInfoList = context.collections.map(function (collection) {
-      return {
-        collection: collection,
-        currentCase: null,
-        currentCaseIndex: 0,
-        isDirty: false,
-        caseCount: null,
-        navEnabled: {}
-      };
-    });
+    function create(context, state) {
+      state.collectionInfoList = context.collections.map(function (collection) {
+        return {
+          collection: collection,
+          currentCase: null,
+          currentCaseIndex: 0,
+          isDirty: false,
+          caseCount: null,
+          navEnabled: {}
+        };
+      });
+    }
+    function update(context, state) {
+      var collectionInfoList = state.collectionInfoList;
+      var newCollectionInfoList = [];
+      context.collections.forEach(function (collection) {
+        var name = collection.name;
+        var collectionInfo = collectionInfoList.find(function (collectionInfo) {
+          return collectionInfo.collection.name === name;
+        });
+        if (collectionInfo) {
+          collectionInfo.collection = collection;
+          collectionInfo.isDirty = false;
+        } else {
+          collectionInfo = {
+            collection: collection,
+            currentCase: null,
+            currentCaseIndex: 0,
+            isDirty: false,
+            caseCount: null,
+            navEnabled: {}
+          };
+        }
+        newCollectionInfoList.push(collectionInfo);
+      });
+      state.collectionInfoList = newCollectionInfoList;
+    }
+    var contextName = context.name;
+    if (contextName === this.state.currentContext) {
+      update(context, this.state);
+    } else {
+      create(context, this.state);
+    }
     this.state.collectionInfoList.forEach(function (collectionInfo) {
       var collection = collectionInfo.collection;
       var contextName = this.state.currentContext;
-      fetchFirstCase(contextName, collection.name);
+      fetchCase(contextName, collection.name, collectionInfo.currentCaseIndex);
     }.bind(this));
     this.state.hasSelectedContext = true;
     this.notify();
@@ -439,7 +472,16 @@ var dataManager = Object.create({
             resource: 'dataContext[' + this.state.currentContext + '].selectionList'
           });
           break;
-        case 'deleteCase':
+        case 'createCollection':
+        case 'deleteCollection':
+        case 'moveAttribute':
+        case 'createAttributes':
+        case 'deleteAttributes':
+        case 'updateAttributes':
+          this.changeContext(this.state.currentContext);
+          break;
+        case 'deleteCases':
+        case 'updateCases':
           break;
         default:
       }
@@ -482,7 +524,13 @@ var dispatcher = Object.create({
       "action": "get",
       "resource": "interactiveFrame"
     });
+    window.onunload = this.destroy.bind(this);
     return this;
+  },
+
+  destroy: function () {
+    console.log('Disconnecting from iFramePhone');
+    this.connection.disconnect();
   },
 
   handleCODAPRequest: function (request, callback) {
@@ -921,30 +969,48 @@ var DataCardView = React.createClass({
 var DataCardAppView = React.createClass({
   displayName: "DataCardAppView",
 
+  propTypes: {
+    dataManager: React.PropTypes.object.isRequired
+  },
+
   getInitialState: function () {
-    return dataManager.getState();
+    return this.props.dataManager.getState();
   },
 
   componentDidMount: function () {
-    dataManager.register(this);
+    this.props.dataManager.register(this);
   },
 
   componentWillUnmount: function () {
-    dataManager.unregister(this);
+    this.props.dataManager.unregister(this);
   },
 
   modeHandler: function (modeName) {
-    dataManager.setMode(modeName);
+    this.props.dataManager.setMode(modeName);
   },
 
-  render: function () {
-    function createOrUpdateCase(ev) {
-      if (ev.target.value === 'Create') {
-        dataManager.createCase();
-      } else {
-        dataManager.updateCase();
-      }
+  moveToSelectedCase: function (collectionName, direction) {
+    this.props.dataManager.moveToSelectedCase(collectionName, direction);
+  },
+
+  onCaseValueChange: function (name, value) {
+    this.props.dataManager.updateCurrentCaseValue(name, value);
+  },
+  changeContext: function (contextName) {
+    this.props.dataManager.changeContext(contextName);
+  },
+  cancelCreateOrUpdateCase: function () {
+    this.props.dataManager.cancelCreateOrUpdateCase();
+  },
+  createOrUpdateCase: function (ev) {
+    if (ev.target.value === 'Create') {
+      this.props.dataManager.createCase();
+    } else {
+      this.props.dataManager.updateCase();
     }
+  },
+  render: function () {
+
     var ix = 0;
     var mode = this.state.mode;
     var hasNew = false;
@@ -970,18 +1036,14 @@ var DataCardAppView = React.createClass({
             {
               collection: collection,
               navEnabled: navEnabled,
-              onNavigation: function (collectionName, direction) {
-                dataManager.moveToSelectedCase(collectionName, direction);
-              } },
+              onNavigation: this.moveToSelectedCase },
             React.createElement(DataCardView, {
               collection: collection,
               context: this.state.currentContext,
               currentCase: collectionInfo.currentCase,
               isDirty: collectionInfo.isDirty,
               isNew: collectionInfo.currentCaseIsNew,
-              onCaseValueChange: function (name, value) {
-                dataManager.updateCurrentCaseValue(name, value);
-              } })
+              onCaseValueChange: this.onCaseValueChange })
           )
         );
       } else {
@@ -997,9 +1059,7 @@ var DataCardAppView = React.createClass({
       contextSelector = React.createElement(ContextSelector, {
         contextNameList: contextNameList,
         currentContextName: this.state.currentContext,
-        onSelect: function (contextName) {
-          dataManager.changeContext(contextName);
-        } });
+        onSelect: this.changeContext });
     }
     if (cards.length > 0) {
       cards.push(React.createElement(
@@ -1009,15 +1069,13 @@ var DataCardAppView = React.createClass({
           type: "button",
           className: "update-case",
           disabled: !this.state.isDirty,
-          onClick: createOrUpdateCase,
+          onClick: this.createOrUpdateCase,
           value: hasNew ? 'Create' : 'Update' }),
         React.createElement("input", {
           type: "button",
           className: "update-case",
           disabled: !this.state.isDirty,
-          onClick: function () {
-            dataManager.cancelCreateOrUpdateCase();
-          },
+          onClick: this.cancelCreateOrUpdateCase,
           value: "Cancel" })
       ));
     }
@@ -1034,6 +1092,6 @@ var DataCardAppView = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(DataCardAppView, { data: dataManager }), document.getElementById('container'));
+ReactDOM.render(React.createElement(DataCardAppView, { dataManager: dataManager }), document.getElementById('container'));
 
 },{}]},{},[1]);
