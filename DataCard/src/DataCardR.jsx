@@ -25,16 +25,23 @@
 var dataManager = Object.create({
 
   /**
-   * @property data {{
-   *   contextList: {[string]},
-   *   currentContext: {string},
+   * @property state {{
    *   collectionInfoList: {[Object]},
-   *   hasSelectedContext: {boolean}
-   *   mode: {'browse'|'design'}
+   *   contextNameList: {[string]},
+   *   currentContext: {string},
+   *   dimensions: {{width: {number}, height: {number}}},
+   *   hasSelectedContext: {boolean},
+   *   mode: {'browse'|'design'},
+   *   title: {string},
+   *   version: {string}
    * }}
    */
   state: null,
 
+  /**
+   * Creates initial state.
+   * @returns {dataManager}
+   */
   init: function () {
     this.listeners = [];
     this.state = {
@@ -52,12 +59,20 @@ var dataManager = Object.create({
     return this;
   },
 
+  /**
+   * Registers a listener to changes in state.
+   * @param {object} listener
+   */
   register: function (listener) {
     this.listeners = this.listeners || [];
     this.listeners.push(listener);
     listener.setState(this.state);
   },
 
+  /**
+   * Removes a listener
+   * @param {object} listener
+   */
   unregister: function (listener) {
     this.listeners = this.listeners || [];
     var ix = this.listeners.indexOf(listener);
@@ -67,6 +82,9 @@ var dataManager = Object.create({
     dispatcher.destroy();
   },
 
+  /**
+   * Notifies registered listeners about changes of state by calling setState.
+   */
   notify: function () {
     this.listeners.forEach(function (listener) {
       listener.setState(this.state);
@@ -94,22 +112,36 @@ var dataManager = Object.create({
     });
   },
 
+  /**
+   * Return the portion of the DI state regarded as persistent across restart.
+   * @returns {{currentContext: (null|*)}}
+   */
   getPersistentState: function () {
     var state = this.state;
     return {
       currentContext: state.currentContext
-    }
+    };
   },
 
-  updateDataContextList: function () {
+  /**
+   * Request update of data context list from CODAP.
+   */
+  requestDataContextList: function () {
     dispatcher.sendRequest({
       action: 'get',
       resource: 'dataContextList'
     });
   },
 
-  changeContext: function (contextName) {
-    dispatcher.sendRequest({action: 'get', resource: 'dataContext[' + contextName + ']'});
+  /**
+   * Request dataContext information for a context.
+   * @param contextName
+   */
+  requestDataContext: function (contextName) {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContext[' + contextName + ']'
+    });
   },
 
   setContextList: function (contextNameList) {
@@ -127,7 +159,7 @@ var dataManager = Object.create({
       currentContextName = this.state.currentContext = contextNameList[0].name;
     }
     if (contextNameList.length > 0) {
-      this.changeContext(currentContextName);
+      this.requestDataContext(currentContextName);
     }
     this.notify();
   },
@@ -137,19 +169,8 @@ var dataManager = Object.create({
       dispatcher.sendRequest({action: 'get', resource: 'dataContext[' +
         contextName + '].collection[' + collectionName + '].caseByIndex[' + collectionIndex + ']'});
     }
-    function create(context, state) {
-      state.collectionInfoList = context.collections.map(function (collection) {
-        return {
-          collection: collection,
-          currentCase: null,
-          currentCaseIndex: 0,
-          isDirty: false,
-          caseCount: null,
-          navEnabled: {}
-        }
-      });
-    }
-    function update(context, state) {
+
+    function updateState(context, state) {
       var collectionInfoList = state.collectionInfoList;
       var newCollectionInfoList = [];
       context.collections.forEach(function (collection){
@@ -172,12 +193,14 @@ var dataManager = Object.create({
       });
       state.collectionInfoList = newCollectionInfoList;
     }
+
     var contextName = context.name;
-    if (contextName === this.state.currentContext) {
-      update(context, this.state);
-    } else {
-      create(context, this.state);
+    if (contextName !== this.state.currentContext) {
+      this.state.currentContext = contextName;
+      this.state.collectionInfoList = [];
     }
+
+    updateState(context, this.state);
     this.state.collectionInfoList.forEach(function(collectionInfo) {
       var collection = collectionInfo.collection;
       var contextName = this.state.currentContext;
@@ -247,20 +270,33 @@ var dataManager = Object.create({
     this.notify();
   },
 
+  /**
+   * Compute which types of navigation should be enabled for each collection
+   * based on dirty flags.
+   *
+   */
   computeNavEnabled: function () {
     this.state.collectionInfoList.forEach(function (collectionInfo) {
       var navEnabledFlags = collectionInfo.navEnabled || {};
       var caseIndex = collectionInfo.currentCaseIndex;
       //var caseCount = collectionInfo.caseCount;
       var dirty = this.state.isDirty || false;
-      navEnabledFlags.prev = !dirty && (caseIndex !== null) && (caseIndex !== undefined) && caseIndex > 0;
-      navEnabledFlags.next = !dirty /*&& (caseCount !== null) && (caseIndex !== undefined) && caseIndex < caseCount - 1;*/
+      navEnabledFlags.prev = !dirty && (caseIndex !== null) &&
+          (caseIndex !== undefined) && caseIndex > 0;
+      navEnabledFlags.next = !dirty; /*&& (caseCount !== null) &&
+          (caseIndex !== undefined) && caseIndex < caseCount - 1;*/
       navEnabledFlags.newInstance = !dirty;
       navEnabledFlags.removeInstance = true;
       collectionInfo.navEnabled = navEnabledFlags;
     }.bind(this));
   },
 
+  /**
+   * Given an attribute name, returns the CollectionInfo object for the collection
+   * that contains the attribute.
+   * @param iAttributeName
+   * @returns {object||null}
+   */
   findCollectionInfoForAttribute: function (iAttributeName) {
     return this.state.collectionInfoList.find(function (collectionInfo) {
       var collection = collectionInfo.collection;
@@ -269,12 +305,18 @@ var dataManager = Object.create({
     });
   },
 
+  /**
+   * Given a collection name, returns the CollectionInfo object for the collection.
+   * @param iCollectionName
+   * @returns {object||null}
+   */
   findCollectionInfoForName: function (iCollectionName) {
     return this.state.collectionInfoList.find(function (collectionInfo) {
       var collection = collectionInfo.collection;
       return (collection.name === iCollectionName);
     });
   },
+
   findCollectionIndexForName: function (iCollectionName) {
     return this.state.collectionInfoList.findIndex(function (collectionInfo) {
       var collection = collectionInfo.collection;
@@ -326,7 +368,7 @@ var dataManager = Object.create({
   updateCase: function (collectionInfo) {
     if (collectionInfo === undefined) {
       this.state.collectionInfoList.forEach(function (collectionInfo) {
-        this.updateCase(collectionInfo)
+        this.updateCase(collectionInfo);
       }.bind(this) );
     } else if (collectionInfo.isDirty) {
       var resource = collectionInfo.currentCaseResourceName;
@@ -336,7 +378,7 @@ var dataManager = Object.create({
         action: action,
         resource: resource,
         values: collectionInfo.currentCase
-      })
+      });
     }
   },
   didUpdateCase: function(iCollectionName, iReply) {
@@ -349,7 +391,7 @@ var dataManager = Object.create({
           resource: 'dataContext[' + this.state.currentContext + '].collection[' +
             collectionInfo.collection.name + '].caseByID[' +
             iReply.values[0].id + ']'
-        })
+        });
       }
       collectionInfo.currentCaseIsNew = false;
       this.setDirty(collectionInfo, false);
@@ -458,8 +500,8 @@ var dataManager = Object.create({
             resource: 'dataContext[' + this.state.currentContext +
             '].collection[' + collectionInfo.collection.name + '].caseByIndex['
             + collectionInfo.currentCaseIndex + ']'
-          })
-          this.setDirty(collectionInfo, false)
+          });
+          this.setDirty(collectionInfo, false);
         } else {
           dispatcher.sendRequest({
             action: 'get',
@@ -471,7 +513,8 @@ var dataManager = Object.create({
     }.bind(this));
   },
 
-  dataContextDidChange: function (dataContextName, operation) {
+  dataContextDidChange: function (dataContextName, action) {
+    var operation = action.operation;
     if (dataContextName === this.state.currentContext) {
       switch (operation) {
         case 'selectCases':
@@ -487,15 +530,31 @@ var dataManager = Object.create({
         case 'createAttributes':
         case 'deleteAttributes':
         case 'updateAttributes':
-          this.changeContext(this.state.currentContext);
+          this.requestDataContext(this.state.currentContext);
+          break;
+        case 'updateCases':
+          this.codapDidUpdateCases(action.result.caseIDs);
           break;
         case 'deleteCases':
-        case 'updateCases':
           break;
         default:
       }
     }
     return true;
+  },
+
+  codapDidUpdateCases: function (iCaseIDs) {
+    if (!iCaseIDs) {
+      return;
+    }
+    this.state.collectionInfoList.forEach(function (collectionInfo) {
+      if (iCaseIDs.indexOf(collectionInfo.currentCase.guid) >=0 ) {
+        this.fetchSelectedCase({
+          collectionName: collectionInfo.collection.name,
+          caseID: collectionInfo.currentCase.guid
+        });
+      }
+    }.bind(this));
   },
 
   fetchSelectedCase: function (selection) {
@@ -572,7 +631,7 @@ var dispatcher = Object.create({
           var contextName = getContext(request.resource);
           success = true;
           request.values.forEach(function(action) {
-            dataManager.dataContextDidChange(contextName, action.operation);
+            dataManager.dataContextDidChange(contextName, action);
           })
           break;
         case 'undoChangeNotice':
@@ -644,7 +703,7 @@ var dispatcher = Object.create({
         this.connectionState = 'active';
         switch (resourceObj.type) {
           case 'interactiveFrame':
-            dataManager.updateDataContextList();
+            dataManager.requestDataContextList();
             break;
           case 'caseByIndex':
           case 'caseByID':
@@ -930,8 +989,8 @@ var DataCardAppView = React.createClass({
   onCaseValueChange: function (name, value) {
     this.props.dataManager.updateCurrentCaseValue(name, value);
   },
-  changeContext: function (contextName) {
-    this.props.dataManager.changeContext( contextName );
+  requestDataContext: function (contextName) {
+    this.props.dataManager.requestDataContext( contextName );
   },
   cancelCreateOrUpdateCase: function () {
     this.props.dataManager.cancelCreateOrUpdateCase();
@@ -986,7 +1045,7 @@ var DataCardAppView = React.createClass({
       contextSelector = <ContextSelector
           contextNameList={contextNameList}
           currentContextName={this.state.currentContext}
-          onSelect={this.changeContext} />
+          onSelect={this.requestDataContext} />
     }
     if (cards.length > 0) {
       cards.push(<section key="#control">
