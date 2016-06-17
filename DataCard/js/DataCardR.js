@@ -145,6 +145,27 @@ var dataManager = Object.create({
     });
   },
 
+  requestSelectionList: function (dataContext) {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContext[' + dataContext + '].selectionList'
+    });
+  },
+
+  requestCaseByIndex: function (contextName, collectionName, collectionIndex) {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + collectionIndex + ']'
+    });
+  },
+
+  requestCaseByID: function (dataContext, collectionName, caseID, select) {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContext[' + dataContext + '].collection[' + collectionName + '].caseByID[' + caseID + ']'
+    }, { omitSelection: !select });
+  },
+
   setContextList: function (contextNameList) {
     var currentContextName = this.state.currentContext;
     this.state.contextNameList = contextNameList;
@@ -166,10 +187,6 @@ var dataManager = Object.create({
   },
 
   setDataCards: function (context) {
-    function fetchCase(contextName, collectionName, collectionIndex) {
-      dispatcher.sendRequest({ action: 'get', resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + collectionIndex + ']' });
-    }
-
     function updateState(context, state) {
       var collectionInfoList = state.collectionInfoList;
       var newCollectionInfoList = [];
@@ -206,34 +223,32 @@ var dataManager = Object.create({
     this.state.collectionInfoList.forEach(function (collectionInfo) {
       var collection = collectionInfo.collection;
       var contextName = this.state.currentContext;
-      fetchCase(contextName, collection.name, collectionInfo.currentCaseIndex);
+      this.requestCaseByIndex(contextName, collection.name, collectionInfo.currentCaseIndex);
     }.bind(this));
     this.state.hasSelectedContext = true;
     this.notify();
   },
 
   setCase: function (iCollectionName, values, resourceName, handlingOptions) {
-    function guaranteeLeftCollectionIsParent(parentCollectionInfo, parentID, context) {
+    var guaranteeLeftCollectionIsParent = function (parentCollectionInfo, parentID, context) {
       var parentCollection = parentCollectionInfo.collection;
       var parentCase = parentCollectionInfo.currentCase;
-      var resource;
+      //var resource;
       if (parentCase && parentCase.guid !== parentID) {
-        resource = 'dataContext[' + context + '].collection[' + parentCollection.name + '].caseByID[' + parentID + ']';
-        dispatcher.sendRequest({ action: 'get', resource: resource }, { omitSelection: true });
+        this.requestCaseByID(context, parentCollection.name, parentID, false);
       }
-    }
+    }.bind(this);
 
-    function guaranteeRightCollectionIsChild(childCollectionInfo, myCase, context) {
+    var guaranteeRightCollectionIsChild = function (childCollectionInfo, myCase, context) {
       var childCollection = childCollectionInfo.collection;
       var childCase = childCollectionInfo.currentCase;
-      var resource;
+      //var resource;
       if (childCase && childCase.parent !== myCase.guid) {
         if (myCase.children) {
-          resource = 'dataContext[' + context + '].collection[' + childCollection.name + '].caseByID[' + myCase.children[0] + ']';
-          dispatcher.sendRequest({ action: 'get', resource: resource }, { omitSelection: true });
+          this.requestCaseByID(context, childCollection.name, myCase.children[0], false);
         }
       }
-    }
+    }.bind(this);
 
     var myCase = values.case;
     var caseIndex = values.caseIndex;
@@ -383,10 +398,7 @@ var dataManager = Object.create({
     if (collectionInfo) {
       if (collectionInfo.currentCaseIsNew) {
         console.log('DidUpdateCase: reply=' + iReply.values && iReply.values[0] && iReply.values[0].id);
-        dispatcher.sendRequest({
-          action: 'get',
-          resource: 'dataContext[' + this.state.currentContext + '].collection[' + collectionInfo.collection.name + '].caseByID[' + iReply.values[0].id + ']'
-        });
+        this.requestCaseByID(this.state.currentContext, collectionInfo.collection.name, iReply.values[0].id, true);
       }
       collectionInfo.currentCaseIsNew = false;
       this.setDirty(collectionInfo, false);
@@ -422,11 +434,6 @@ var dataManager = Object.create({
   },
 
   moveToSelectedCase: function (iCollectionName, action) {
-    function requestCase(contextName, collectionName, index) {
-      var resource = 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByIndex[' + index + ']';
-      dispatcher.sendRequest({ action: 'get', resource: resource });
-    }
-
     var collection = this.state.collectionInfoList.find(function (collectionInfo) {
       return collectionInfo.collection.name === iCollectionName;
     });
@@ -435,10 +442,10 @@ var dataManager = Object.create({
     console.log('selectCase: action: ' + action);
     switch (action) {
       case 'prev':
-        requestCase(contextName, iCollectionName, currentCaseIndex - 1);
+        this.requestCaseByIndex(contextName, iCollectionName, currentCaseIndex - 1);
         break;
       case 'next':
-        requestCase(contextName, iCollectionName, currentCaseIndex + 1);
+        this.requestCaseByIndex(contextName, iCollectionName, currentCaseIndex + 1);
         break;
       case 'new':
         this.startNewCase(iCollectionName, currentCaseIndex);
@@ -488,10 +495,7 @@ var dataManager = Object.create({
     this.state.collectionInfoList.forEach(function (collectionInfo) {
       if (collectionInfo.isDirty) {
         if (collectionInfo.currentCaseIsNew) {
-          dispatcher.sendRequest({
-            action: 'get',
-            resource: 'dataContext[' + this.state.currentContext + '].collection[' + collectionInfo.collection.name + '].caseByIndex[' + collectionInfo.currentCaseIndex + ']'
-          });
+          this.requestCaseByIndex(this.state.currentContext, collectionInfo.collection.name, collectionInfo.currentCaseIndex);
           this.setDirty(collectionInfo, false);
         } else {
           dispatcher.sendRequest({
@@ -509,10 +513,7 @@ var dataManager = Object.create({
     if (dataContextName === this.state.currentContext) {
       switch (operation) {
         case 'selectCases':
-          dispatcher.sendRequest({
-            action: 'get',
-            resource: 'dataContext[' + this.state.currentContext + '].selectionList'
-          });
+          this.requestSelectionList(this.state.currentContext);
           break;
         case 'createCollection':
         case 'deleteCollection':
@@ -555,10 +556,7 @@ var dataManager = Object.create({
     var caseID = selection.caseID;
     var collectionInfo = collectionName && this.findCollectionInfoForName(collectionName);
     if (collectionInfo) {
-      dispatcher.sendRequest({
-        action: 'get',
-        resource: 'dataContext[' + this.state.currentContext + '].collection[' + collectionInfo.collection.name + '].caseByID[' + caseID + ']'
-      }, { omitSelection: true });
+      this.requestCaseByID(this.state.currentContext, collectionInfo.collection.name, caseID, false);
     }
   }
 
@@ -854,7 +852,8 @@ var CaseList = React.createClass({
     //var caseIndex = this.props.collection.currentCaseIndex || 0;
     var myCase = this.props.currentCase;
     var id = myCase ? myCase.guid : 'new';
-    var caseView = React.createElement(CaseDisplay, { key: id, attrs: this.props.collection.attrs, myCase: myCase, onChange: this.props.onChange });
+    var caseView = React.createElement(CaseDisplay, { key: id, attrs: this.props.collection.attrs,
+      myCase: myCase, onChange: this.props.onChange });
     return React.createElement(
       "div",
       { className: "case-container" },
@@ -889,12 +888,14 @@ var CaseNavControl = React.createClass({
     if (disable) {
       return React.createElement(
         "button",
-        { className: "control", disabled: "true", onClick: this.handleClick },
+        { className: "control", disabled: "true",
+          onClick: this.handleClick },
         this.symbol[this.props.action]
       );
     } else return React.createElement(
       "button",
-      { className: "control", onClick: this.handleClick },
+      { className: "control",
+        onClick: this.handleClick },
       this.symbol[this.props.action]
     );
   }
@@ -947,7 +948,8 @@ var DataCardAuthor = React.createClass({
           null,
           attrsList
         ),
-        React.createElement("input", { type: "button", className: "update-case", onClick: this.updateCaseHandler, value: "Update" })
+        React.createElement("input", { type: "button", className: "update-case",
+          onClick: this.updateCaseHandler, value: "Update" })
       )
     );
   }
@@ -974,15 +976,19 @@ var SlideShowView = React.createClass({
       React.createElement(
         "div",
         { className: "left-ctls" },
-        React.createElement(CaseNavControl, { action: "prev", navEnabled: navEnabled.prev, onNavigation: this.navigationHandler })
+        React.createElement(CaseNavControl, { action: "prev", navEnabled: navEnabled.prev,
+          onNavigation: this.navigationHandler })
       ),
       this.props.children,
       React.createElement(
         "div",
         { className: "right-ctls" },
-        React.createElement(CaseNavControl, { action: "next", navEnabled: navEnabled.next, onNavigation: this.navigationHandler }),
-        React.createElement(CaseNavControl, { action: "new", navEnabled: navEnabled.newInstance, onNavigation: this.navigationHandler }),
-        React.createElement(CaseNavControl, { action: "remove", navEnabled: navEnabled.removeInstance, onNavigation: this.navigationHandler })
+        React.createElement(CaseNavControl, { action: "next", navEnabled: navEnabled.next,
+          onNavigation: this.navigationHandler }),
+        React.createElement(CaseNavControl, { action: "new", navEnabled: navEnabled.newInstance,
+          onNavigation: this.navigationHandler }),
+        React.createElement(CaseNavControl, { action: "remove", navEnabled: navEnabled.removeInstance,
+          onNavigation: this.navigationHandler })
       )
     );
   }
@@ -1107,9 +1113,11 @@ var DataCardAppView = React.createClass({
         );
       } else {
         return React.createElement(DataCardAuthor, { key: 'collection' + ix++, collection: collection,
-          context: this.state.currentContext, onNewAttribute: this.newAttribute,
+          context: this.state.currentContext,
+          onNewAttribute: this.newAttribute,
           onUpdateAttribute: this.updateAttribute,
-          onRemoveAttribute: this.removeAttribute, onUpdateCollection: this.updateCollection });
+          onRemoveAttribute: this.removeAttribute,
+          onUpdateCollection: this.updateCollection });
       }
     }.bind(this));
     var contextNameList = this.state.contextNameList;
