@@ -86,6 +86,9 @@ section .collection-name {
   padding: 2px 4px;
   border-width: 0;
 }
+.attr-value:disabled {
+  background-color: #dddddd;
+}
 .attr {
   border-radius: 5px;
   background-color: #fffaf0;

@@ -827,6 +827,7 @@ var CaseDisplay = React.createClass({
         type: "text",
         className: "attr-value",
         key: name,
+        disabled: attr.formula && attr.formula.length > 0,
         name: name,
         value: value,
         onChange: function (ev) {
