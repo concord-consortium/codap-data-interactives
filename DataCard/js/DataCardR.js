@@ -234,7 +234,7 @@ var dataManager = Object.create({
       var parentCollection = parentCollectionInfo.collection;
       var parentCase = parentCollectionInfo.currentCase;
       //var resource;
-      if (parentCase && parentCase.guid !== parentID) {
+      if (parentCase && parentCase.id !== parentID) {
         this.requestCaseByID(context, parentCollection.name, parentID, false);
       }
     }.bind(this);
@@ -243,7 +243,7 @@ var dataManager = Object.create({
       var childCollection = childCollectionInfo.collection;
       var childCase = childCollectionInfo.currentCase;
       //var resource;
-      if (childCase && childCase.parent !== myCase.guid) {
+      if (childCase && childCase.parent !== myCase.id) {
         if (myCase.children) {
           this.requestCaseByID(context, childCollection.name, myCase.children[0], false);
         }
@@ -256,7 +256,7 @@ var dataManager = Object.create({
     var collectionIndex = collectionInfoList.findIndex(function (collectionInfo) {
       return collectionInfo.collection.name === iCollectionName;
     });
-    console.log('addCase - caseID/caseIndex: ' + [myCase.guid, caseIndex].join('/'));
+    console.log('addCase - caseID/caseIndex: ' + [myCase.id, caseIndex].join('/'));
     if (collectionIndex >= 0) {
       var collectionInfo = collectionInfoList[collectionIndex];
       collectionInfo.currentCaseIndex = Number(caseIndex);
@@ -270,7 +270,7 @@ var dataManager = Object.create({
         guaranteeRightCollectionIsChild(collectionInfoList[collectionIndex + 1], myCase, this.state.currentContext);
       }
       if (!handlingOptions || !handlingOptions.omitSelection) {
-        dispatcher.sendRequest({ action: 'create', resource: 'dataContext[' + this.state.currentContext + '].selectionList', values: [myCase.guid] });
+        dispatcher.sendRequest({ action: 'create', resource: 'dataContext[' + this.state.currentContext + '].selectionList', values: [myCase.id] });
       }
       this.setDirty(collectionInfo, false);
       this.notify();
@@ -356,7 +356,7 @@ var dataManager = Object.create({
     }
     var collectionInfo = this.state.collectionInfoList[collectionIndex];
     if (collectionIndex > 0) {
-      collectionInfo.currentCase.parent = this.state.collectionInfoList[collectionIndex - 1].currentCase.guid;
+      collectionInfo.currentCase.parent = this.state.collectionInfoList[collectionIndex - 1].currentCase.id;
     }
     dispatcher.sendRequest({
       action: 'create',
@@ -367,7 +367,7 @@ var dataManager = Object.create({
   didCreateCase: function (iCollectionName, iReply) {
     var collectionInfo = this.findCollectionInfoForName(iCollectionName);
     if (collectionInfo) {
-      collectionInfo.currentCase.guid = iReply.values[0].id;
+      collectionInfo.currentCase.id = iReply.values[0].id;
       this.setDirty(collectionInfo, false);
       this.createCase();
       dispatcher.sendRequest({
@@ -466,7 +466,7 @@ var dataManager = Object.create({
         caseValues[attr.name] = '';
       });
       collectionInfo.currentCase = {
-        parent: parentCase.id || parentCase.guid,
+        parent: parentCase.id || parentCase.id,
         values: caseValues
       };
       collectionInfo.currentCaseIsNew = true;
@@ -539,10 +539,10 @@ var dataManager = Object.create({
       return;
     }
     this.state.collectionInfoList.forEach(function (collectionInfo) {
-      if (iCaseIDs.indexOf(collectionInfo.currentCase.guid) >= 0) {
+      if (iCaseIDs.indexOf(collectionInfo.currentCase.id) >= 0) {
         this.fetchSelectedCase({
           collectionName: collectionInfo.collection.name,
-          caseID: collectionInfo.currentCase.guid
+          caseID: collectionInfo.currentCase.id
         });
       }
     }.bind(this));
@@ -851,7 +851,7 @@ var CaseList = React.createClass({
   render: function () {
     //var caseIndex = this.props.collection.currentCaseIndex || 0;
     var myCase = this.props.currentCase;
-    var id = myCase ? myCase.guid : 'new';
+    var id = myCase ? myCase.id : 'new';
     var caseView = React.createElement(CaseDisplay, { key: id, attrs: this.props.collection.attrs,
       myCase: myCase, onChange: this.props.onChange });
     return React.createElement(
