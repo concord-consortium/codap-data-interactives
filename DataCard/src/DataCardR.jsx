@@ -107,6 +107,7 @@ var dataManager = Object.create({
       values: {
         title: this.state.title,
         version: this.state.version,
+        preventBringToFront: false,
         dimensions: this.state.dimensions
       }
     });
@@ -517,6 +518,10 @@ var dataManager = Object.create({
     }.bind(this));
   },
 
+  dataContextCountDidChange: function () {
+    this.requestDataContextList();
+  },
+
   dataContextDidChange: function (dataContextName, action) {
     var operation = action.operation;
     if (dataContextName === this.state.currentContext) {
@@ -631,8 +636,13 @@ var dispatcher = Object.create({
             dataManager.dataContextDidChange(contextName, action);
           })
           break;
+        case 'documentChangeNotice':
+          if (request.values.operation === 'dataContextCountChanged') {
+            dataManager.dataContextCountDidChange();
+            success = true;
+          }
+          break;
         case 'undoChangeNotice':
-        case 'appChangeNotice':
         default:
           console.log('Unsupported request from CODAP to DI: ' +
               JSON.stringify(request));
