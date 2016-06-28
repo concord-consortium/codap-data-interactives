@@ -318,9 +318,9 @@
 {
     position: absolute;
     left: 140px;
-    width: 250px;
+    width: 300px;
     top: 10px;
-    height: 110px;
+    height: 200px;
     visibility: hidden;
 }
 
@@ -328,7 +328,7 @@
 {
     position: absolute;
     height: 20px;
-    width: 240px;
+    width: 290px;
 }
 
 #unlock_info

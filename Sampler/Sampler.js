@@ -256,7 +256,7 @@ var Sampler = {
           sDefaults = iValue.defaults;
           // Pull out the names of the child collection's attributes
           for (var iKey in iValue.cases[0]) {
-            sChildAttrsArray.push({ name: iKey });
+            sChildAttrsArray.push({ name: iKey, type: 'numeric' });
           }
         }
         else

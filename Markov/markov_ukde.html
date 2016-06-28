@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC>
+<html lang="en">
+	<head>
+		<title>Markov</title>
+
+        <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
+        <link rel="stylesheet" type="text/css" href="style/markov_style.css" />
+        <link rel="stylesheet" type="text/css" href="style/markov_layout.css" />
+
+        <script src="../Common/js/raphael.js" type="text/javascript"></script>
+        <script src="../Common/js/jquery.js" type="text/javascript"></script>
+        <script src="../Common/js/kcpcommon.js" type="text/javascript"></script>
+        <script src="../Common/js/events.js" type="text/javascript"></script>
+        <script src="../Common/js/dgapi.js" type="text/javascript"></script>
+        <script src="../Common/js/level_manager.js" type="text/javascript"></script>
+        <script src="graphicSources.js" type="text/javascript"></script>
+        <script src="ukde/markov_settings.js" type="text/javascript"></script>
+        <script src="ukde/markov_levels.js" type="text/javascript"></script>
+        <script src="js/tile.js" type="text/javascript"></script>
+        <script src="js/queue.js" type="text/javascript"></script>
+        <script src="js/slider.js" type="text/javascript"></script>
+        <script src="js/dog_on_platform.js" type="text/javascript"></script>
+        <script src="js/strategy_editor.js" type="text/javascript"></script>
+        <script src="ukde/markov_model.js" type="text/javascript"></script>
+        <script src="ukde/markov_view.js" type="text/javascript"></script>
+        <script src="ukde/hints.js" type="text/javascript"></script>
+
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+
+        <script type="text/javascript">
+            /*This global is here to make it obvious how things get going*/
+      var MarkovGame = {
+            initializeGame: function() {
+              //this.dataGamesAPI = new DataGamesAPI();
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback) {
+                  var operation = iCmd && iCmd.operation,
+                          args = iCmd && iCmd.args,
+                          model = MarkovGame.model;
+                  switch( operation) {
+                      case 'saveState':
+                          callback(model.saveGameState());
+                          break;
+                      case 'restoreState':
+                          callback(model.restoreGameState( iCmd.args && iCmd.args.state));
+                          break;
+                      default:
+                          callback({ success: false });
+                  }
+              }, "codap-game", window.parent);
+              this.model = new MarkovModel(MarkovGame.codapPhone, MarkovGame.doAppCommand);
+              this.view = new MarkovView( this.model);
+    
+              this.view.initialize();
+              this.model.initialize();
+            }
+      }
+
+    </script>
+    </head>
+
+	<body onload="MarkovGame.initializeGame()" onkeypress="return MarkovGame.model.handleBodyKeypress(event);">
+
+		<div id="backbox">  <!--Everything lives within this-->
+            <!--[if IE]>
+          		<div id="IEroot">
+       		<![endif]-->
+            <div id="video_panel">
+                <video id="welcome_video" width="550" height="278" autoplay="autoplay" loop="loop"
+                       onclick="MarkovGame.model.playGame();">
+                    <source src="img/welcome.mp4" type="video/mp4"/>
+                    <source src="img/welcome.ogv" type="video/ogg"/>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div id="welcome_panel" class="bottomPanel">
+                <div id="welcome_text" class="welcome">
+                    Save Madeline the dog by winning at Rock Paper Scissors.
+                </div>
+                <button id="start_game_button" type="button" class="button bigrounded rosy"
+                         onclick="MarkovGame.model.playGame();">
+                     Play
+                </button>
+            </div>
+
+            <div id="game_panel" class="panel">
+                <div class="label">Game <span id="gameNum" class="info">1</span></div>
+                <button id="strategy_button" type="button" class="button short_medium white fixedWidth"
+                                        onclick="MarkovGame.model.handleStrategyButton();">
+                    Set Strategy
+                </button>
+            </div>
+
+            <div id="exit">
+                <!--static image of exit portal-->
+            </div>
+
+
+            <div id="throw_area">
+                <!--static gradient rectangle-->
+            </div>
+
+            <div id="gameArea">  <!--Raphael drawing area-->
+            </div>
+
+            <div id="poleArea">  <!--Raphael drawing area-->
+            </div>
+
+            <div id="speaker" class="speaker_on">
+            </div>
+
+            <div id="moveButtonArea">
+                <button id="auto_button" type="button" class="button medium white fixedWidth"
+                                        onclick="MarkovGame.model.handleAutoButton();">
+                    Autoplay
+                </button>
+                <div id="slider" class="slider">
+                    <!--Draw the slider here-->
+                </div>
+                <button id="rock_button" type="button" class="hand_button rock"
+                                        onclick="MarkovGame.model.move('R');">
+                    <span class="button_bottom ">Rock</span>
+                </button>
+                <button id="paper_button" type="button" class="hand_button paper"
+                                        onclick="MarkovGame.model.move('P');">
+                    <span class="button_bottom ">Paper</span>
+                </button>
+                <button id="scissors_button" type="button" class="hand_button scissors"
+                                        onclick="MarkovGame.model.move('S');">
+                    <span class="button_bottom ">Scissors</span>
+                </button>
+                <div id="button_cover">
+                    <!--Translucent cover to disable buttons-->
+                </div>
+            </div>
+
+            <div id="gameCover">  <!--Prevent mouse interaction when game is over-->
+            </div>
+
+            <!--Sounds-->
+            <audio id="down" preload="auto">
+                <source src="img/kchDn.mp3" type="audio/mp3"/>
+                <source src="img/kchDn.ogv" type="audio/ogg"/>
+            </audio>
+            <audio id="up" preload="auto">
+                <source src="img/kchUp.mp3" type="audio/mp3"/>
+                <source src="img/kchUp.ogv" type="audio/ogg"/>
+            </audio>
+            <audio id="happy" preload="auto">
+                <source src="img/woof.mp3" type="audio/mp3"/>
+                <source src="img/woof.ogv" type="audio/ogg"/>
+            </audio>
+            <audio id="sad" preload="auto">
+                <source src="img/shortWhine.mp3" type="audio/mp3"/>
+                <source src="img/shortWhine.ogv" type="audio/ogg"/>
+            </audio>
+
+            <div id="outercontrols" class="panel">
+                <button id="game_button" type="button" class="button short_medium white"
+                        onclick="MarkovGame.model.handleGameButton();">
+            	</button>
+                <div id="level">
+                    Level <span id="levelName" class="info"></span>
+                </div>
+                <button id="levels_button" type="button" class="button short_medium white"
+                        onclick="MarkovGame.model.handleLevelsButton();">
+                    Levels
+            	</button>
+            </div>
+
+            <div id="cover" class="translucent"></div>  <!--Prevent mouse interaction when levels are showing-->
+            <div id="levels_panel" class="levels">
+                <div id="levels_close" onclick="MarkovGame.model.levelManager.leaveLevelsMode();"></div>
+                Choose a level. (You are currently on <span id="currLevel"></span>.)
+                <table id="levels_table" class="levels_table_style">
+                </table>
+            </div>
+
+            <div id="level_alert" class="alert">
+                <div id="level_alert_bar" class="bar">
+                    <span id="alert_title"></span>
+                </div>
+                <div id="unlock_info" class="unlock">
+                    <span id="alert_text"></span>
+                    <button id="OK_button" type="button" class="button medium white">
+                        OK
+                	</button>
+                </div>
+            </div>
+
+            <div id="strategy_dialog" class="strategy">
+                <div id="strat_title" class="title">
+                    Devise Your Strategy
+                </div>
+                <button id="strat_clear" type="button" class="button verysmall white bold">
+                    Clear Strategy
+                </button>
+                <div id="strat_instr" class="instructions">
+                    Devise an automatic strategy. In each box at left, choose what you will do in response to Markov's
+                    previous <i>two</i> moves. Drag weights to determine how many steps Madeline moves in that situation.
+                    <button id="back_to_game" type="button" class="button medium white bold"
+                            title="Save strategy & return to game">
+                        Back to Game
+                    </button>
+                </div>
+                <div id="strategy_tiles">
+                    <!--We draw strategy tiles with Raphael-->
+                </div>
+                <div id="hint" class="strat_hint">
+                    <!--Text gets filled in at runtime-->
+                </div>
+            </div>
+            <!--[if IE]>
+          		</div>
+       		<![endif]-->
+        </div>
+	</body>
+</html>

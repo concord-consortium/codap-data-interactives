@@ -96,7 +96,8 @@ CartLevels = [
             "level" : "Urbandale",
             "score" : 250,
             "excuse" : "Need 250 on Urbandale"
-          }
+          },
+          "ukdeBNeededScore": 250
         },
         {
           "levelName" : "Minot",
@@ -116,7 +117,12 @@ CartLevels = [
           "smallBrickWeightVariability" : 0,
           "integerWeights" : true,
           "Description" : "Oh, no. Two sizes.",
-          "unlocked": true,
+          "unlocked": false,
+          "prerequisite" : {
+            "level" : "Waterloo",
+            "score" : 200,
+            "excuse" : "Need 200 on Waterloo"
+          },
           "ukdeBNeededScore": 250
         }
       ];

@@ -1,4 +1,5 @@
 <!DOCTYPE html PUBLIC>
+
 <html lang="en">
 <head>
     <title>Cart Weight</title>
@@ -6,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css"/>
     <link rel="stylesheet" type="text/css" href="style/cart_style.css"/>
     <link rel="stylesheet" type="text/css" href="style/cart_layout.css"/>
+    <link rel="stylesheet" type="text/css" href="ukde/ukde_layout.css"/>
 
     <script src="../Common/js/raphael.js" type="text/javascript"></script>
     <script src="../Common/js/jquery.js" type="text/javascript"></script>
@@ -14,7 +16,7 @@
     <script src="../Common/js/dgapi.js" type="text/javascript"></script>
     <script src="../Common/js/level_manager.js" type="text/javascript"></script>
     <script src="ukde/cart_settings.js" type="text/javascript"></script>
-    <script src="js/cart_levels.js" type="text/javascript"></script>
+    <script src="ukde/cart_levels.js" type="text/javascript"></script>
     <script src="js/cart.js" type="text/javascript"></script>
     <script src="ukde/cart_model.js" type="text/javascript"></script>
     <script src="ukde/cart_view.js" type="text/javascript"></script>
@@ -89,23 +91,19 @@
         <div id="level">
             Level<br><span id="levelName" class="info"></span>
         </div>
-        <!--
-                        <button id="levels_button" type="button" class="button short_medium white"
-                                onclick="cartGame.model.handleLevelsButton();">
-                            Levels
-                      </button>
-        -->
+        <button id="levels_button" type="button" class="button short_medium white"
+                onclick="cartGame.model.handleLevelsButton();">
+            Levels
+        </button>
     </div>
 
     <div id="cover" class="translucent"></div>  <!--Prevent mouse interaction when levels are showing-->
-    <!--
-                <div id="levels_panel" class="levels">
-                    <div id="levels_close" onclick="cartGame.model.levelManager.leaveLevelsMode();"></div>
-                    Choose a level. (You are currently on <span id="currLevel"></span>.)
-                    <table id="levels_table" class="levels_table_style">
-                    </table>
-                </div>
-    -->
+    <div id="levels_panel" class="levels">
+        <div id="levels_close" onclick="cartGame.model.levelManager.leaveLevelsMode();"></div>
+        Choose a level. (You are currently on <span id="currLevel"></span>.)
+        <table id="levels_table" class="levels_table_style">
+        </table>
+    </div>
 
     <div id="level_alert" class="alert">
         <div id="level_alert_bar" class="bar">
@@ -119,16 +117,27 @@
         </div>
     </div>
 
-    <div id="generic_alert" class="alert">
-        <div id="generic_alert_bar" class="bar">
-            Generic Alert!
-        </div>
-        <div id="generic_info">
-            <span id="info">Generic Info</span>
-            <button id="generic_OK_button" type="button" class="button medium white">
-                OK
-            </button>
-        </div>
+    <!--UKDE_A For when player has failed to unlock next level more times than threshold-->
+    <div id="ukdeA_failed_to_unlock" class="alert">
+        You have failed to unlock the next level. Would you like to move to the next level anyway?
+        <button id="stay_button" type="button" class="button medium white">
+            No, I'll stay
+        </button>
+        <button id="move_button" type="button" class="button medium white">
+            Yes, please!
+        </button>
+    </div>
+
+    <!--UKDE_B Describe play mechanism -->
+    <div id="ukdeB_playDescription" class="alert">
+        To win a game and unlock the next level you must score at least
+        <span id="needed_score"></span>
+        within the last
+        <span id="num_moves"></span>
+        moves.
+        <button id="alright_button" type="button" class="button medium white">
+            Alright
+        </button>
     </div>
 </div>
 </body>
