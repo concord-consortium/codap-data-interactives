@@ -170,7 +170,7 @@
             OceanTracks: {
                 name: 'Ocean Tracks Selector',
                 dimensions: '{"width":550,"height":500}',
-                url: 'http://oceantracks.org/map/trackmenu_1.html'
+                url: 'https://oceantracks.org/map/trackmenu_1.html'
             },
             Ants: {
                 name: 'Ants',
@@ -195,12 +195,12 @@
             OceanTracks: {
                 name: 'Ocean Tracks Selector',
                 dimensions: '{"width":550,"height":500}',
-                url: 'http://oceantracks.org/map/trackmenu_1.html'
+                url: 'https://oceantracks.org/map/trackmenu_1.html'
             },
             PhET: {
                 name: 'PhET Simulation',
                 dimensions: '{"width":550,"height":500}',
-                url: 'http://phetsims.github.io/together/examples/codap-hierarchy.html'
+                url: 'https://phetsims.github.io/together/examples/codap-hierarchy.html'
             },
             PivotalImporter: {
                 name: 'Pivotal Tracker Importer',
@@ -208,9 +208,9 @@
                 path: 'PivotalImporter/PTImporter.html'
             },
             SpringMass: {
-                name: 'Parchute Model',
+                name: 'Spring Mass',
                 dimensions: '{"width":600,"height":400}',
-                url: 'https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'
+                url: 'https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json'
             }
         };
         function launch(url) {
@@ -255,7 +255,7 @@
                 //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
                 launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
             } else {
-                launch(codapURL + '?' + encodeURI(moreGames));
+                launch(codapURL + '?di=' + url) //encodeURIComponent(moreGames));
             }
         }
     </script>
@@ -283,10 +283,10 @@
                 var pageLoc = location.href;
                 if (pageLoc.indexOf("https") > -1) {
                     $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                    $("#doc-server-url").val("https://document-store.concord.org");
+                   // $("#doc-server-url").val("https://document-store.concord.org");
                 } else {
                     $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                    $("#doc-server-url").val("http://document-store.concord.org");
+                  //  $("#doc-server-url").val("http://document-store.concord.org");
                 }
     </script>
 </p>
@@ -298,10 +298,10 @@
         <table class="interactive-table">
             <tr><td class = "interactive-title">Oceans Tracks Track Selector</td>
                 <td class="interactive-description">Compare the tracks of Pacific Ocean animals
-                    tagged by the <a target="_blank" href="http://oceantracks.org/">Ocean Tracks</a>
+                    tagged by the <a target="_blank" href="https://oceantracks.org/">Ocean Tracks</a>
                     project. Note that this interactive will not load in SSL. </td>
                 <td><a href="javascript:invokeDataInteractive('OceanTracks')">Launch</a></td>
-                <td><a target="_blank" href="http://oceantracks.org/map/trackmenu_1.html">Link</a></td>
+                <td><a target="_blank" href="https://oceantracks.org/map/trackmenu_1.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">SRRI Ship Odyssey Data Game</td>
                 <td class="interactive-description">Send rats on a dive to find
@@ -314,7 +314,7 @@
                     <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="https://concord.org/projects/inquiryspace">InquirySpace</a>
                         project.</td>
                     <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
-                    <td><a target="_blank" href="https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json">Link</a></td>
+                    <td><a target="_blank" href='https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'>Link</a></td>
                 </tr>
             <tr><td class = "interactive-title">TerraPop Interactive</td>
                 <td class="interactive-description">Interactive for importing
