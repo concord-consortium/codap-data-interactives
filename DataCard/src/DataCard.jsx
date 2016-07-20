@@ -169,7 +169,6 @@ var dataManager = Object.create({
   },
 
   setContextList: function (contextNameList) {
-    var contextNameChanged = false;
     var currentContextName = this.state.currentContext;
     this.state.contextNameList = contextNameList;
     if (currentContextName) {
@@ -182,11 +181,8 @@ var dataManager = Object.create({
     }
     if (!currentContextName && contextNameList[0]) {
       currentContextName = this.state.currentContext = contextNameList[0].name;
-      contextNameChanged = true;
     }
-    if (contextNameChanged) {
-      this.requestDataContext(currentContextName);
-    }
+    this.requestDataContext(currentContextName);
     this.notify();
   },
 
