@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Drag and drop experiments</title>
+<style>
+  body {
+    background-color: lightslategray;
+    height: 100%;
+  }
+  .drop-region {
+    border: thin grey solid;
+    border-radius: 5px;
+    background-color: white;
+    padding: 1em;
+    text-align: center;
+    width: 30em;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .output-region {
+    background-color: lightgrey;
+    border: thin darkgray solid;
+  }
+  .table-container {
+    background-color: white;
+    margin: .5em 0 0;
+  }
+  table td {
+    font-size:small;
+    border: thin solid gray;
+  }
+</style>
+<script type="text/javascript" src="Common/js/jquery.js"></script>
+<script type="text/javascript" src="Common/js/iframe-phone.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+  var connection;
+  var connectionState = 'unstarted';
+  var $dropRegion = $('.drop-region');
+  var interactiveFrame = {
+    name: 'TableDrop',
+    dimensions: {x: 480, y: 640}
+  };
+
+
+  function sendRequest(request, callback) {
+    connection.call(request, callback);
+  }
+
+  function init() {
+    function handleCODAPRequest(request, callback) {
+    }
+
+    connection = new iframePhone.IframePhoneRpcEndpoint(
+        handleCODAPRequest, "data-interactive", window.parent);
+    connectionState = 'initialized';
+    sendRequest({
+      "action": "update",
+      "resource": "interactiveFrame",
+      "values": interactiveFrame
+    }, function (reply) { });
+  }
+
+  function handleRemove(ev) {
+    var parentEl = ev.target.parentNode.parentNode;
+    $(parentEl).remove();
+  }
+
+  function handleSend(ev) {
+    function hasHeaderRow(firstRow) {
+      return $('th', firstRow).length > 0;
+    }
+
+    function getAttributeDefinitions(firstRow) {
+      // we assume the first row is either all th or all td.
+      var $headers = $('th', firstRow);
+      var attrCount = ($headers.length > 0)? $headers.length: $('td', firstRow).length;
+      var attrs = [], ix;
+      if ($headers.length > 0) {
+        $headers.each(function (ix, thEl) {
+          var name = $(thEl).text();
+          attrs.push( {
+            name: name,
+            editable: true
+          });
+        })
+      } else {
+        attrs = [];
+        for (ix = 0; ix < attrCount; ix += 1) {
+          attrs[ix] = {
+            name: 'attr' + ix,
+            editable: true
+          }
+        }
+      }
+      return attrs;
+    }
+    var parentEl = ev.target.parentNode.parentNode;
+    var $srcTable = $('table', ev.target.parentNode.parentNode);
+    var $rows = $('tr', $srcTable);
+    var firstRow = $rows[0];
+    var columnCount;
+    var headerNames;
+    var contextName = $('.table-title', parentEl).val() || 'DropTarget';
+    var attrs;
+    var ignoreFirstRow = false;
+    if (firstRow) {
+      attrs = getAttributeDefinitions(firstRow);
+    }
+    sendRequest({
+      action: 'create',
+      resource: 'dataContext',
+      values: {
+        name: contextName,
+        collections: [{
+          name: contextName,
+          attrs: attrs
+        }]
+      }
+    }, function () {
+      sendRequest({
+        action: 'create',
+        resource: 'component',
+        values: {
+          type: 'caseTable'
+        }
+      })
+    });
+
+    var cases = [];
+    $rows.each(function (ix, row) {
+      if (ignoreFirstRow && ix === 0) return;
+      var values = {};
+      if ($('th', row).length >= columnCount) {
+        return;
+      }
+      $('td,th', row).each(function(ix, cell) {
+        values[attrs[ix].name] = $(cell).text();
+      });
+      cases.push ({values: values});
+    });
+    sendRequest({
+      action: 'create',
+      resource: 'case',
+      values: cases
+    });
+//    $(parentEl).remove();
+  }
+
+  function formatTables(data, target) {
+
+    function formatTable(ix, el) {
+      function makeTableHeader(targetEl, ix) {
+        var titleEl = $('<input>')
+            .addClass('table-title')
+            .val('Table_' + (ix + 1));
+        var removeButton = $('<button>')
+            .addClass('remove-button')
+            .text('Remove');
+        var sendButton = $('<button>')
+            .addClass('send-button')
+            .text('Transfer');
+        var tableHeader =  $('<div>')
+            .addClass('table-header')
+            .append(titleEl)
+            .append(removeButton)
+            .append(sendButton);
+        tableHeader.appendTo(targetEl);
+        $(removeButton).on('click', handleRemove);
+        $(sendButton).on('click', handleSend);
+      }
+
+      function formatRow(ix, el) {
+        function formatCell(ix, el) {
+          var txt = $(el).text();
+          if (el.tagName === 'TD') {
+            $('<td>').text(txt).appendTo(newRow);
+          } else if (el.tagName === 'TH') {
+            $('<th>').text(txt).appendTo(newRow);
+          }
+        } /* end formatCell */
+
+        var newRow = $('<tr>');
+        $('td,th', el).each(formatCell);
+        newRow.appendTo(newTable);
+      } /* end formatRow */
+
+      var tableContainer = $('<div>').prop('id', 'table-' + ix).addClass('table-container').appendTo(target);
+      var newTable = $('<table>');
+      $('tr', el).each(formatRow);
+      makeTableHeader(tableContainer, ix);
+      $(newTable).appendTo(tableContainer);
+    } /* end formatTable */
+
+    var tables = $('table', $('<div>' + data + '</div>'));
+    if (tables.length > 0) { target.html('<div>Found ' + tables.length + ' table(s)</div>'); }
+    tables.each(formatTable);
+  }
+
+  $dropRegion.on('dragenter', function (ev) {
+    var originalEvent = ev.originalEvent;
+    originalEvent.preventDefault();
+    return true;
+  });
+  $dropRegion.on('dragleave', function (ev) {
+//    var originalEvent = ev.originalEvent;
+//    originalEvent.preventDefault();
+  });
+  $dropRegion.on('dragover', function (ev) {
+    var originalEvent = ev.originalEvent;
+    originalEvent.preventDefault();
+    originalEvent.dataTransfer.dropEffect = 'copy';
+    return true;
+  });
+
+  $dropRegion.on('drop', function (ev) {
+    var originalEvent = ev.originalEvent;
+    originalEvent.preventDefault();
+    var data = originalEvent.dataTransfer.getData('text/html');
+    var data1 = originalEvent.dataTransfer.getData('text');
+//    console.log('dropped text: ' + data1);
+    formatTables(data, $('.output-region'));
+  });
+
+  init();
+});
+</script>
+</head>
+<body>
+<h1>Drag and Drop HTML Tables</h1>
+<p class="drop-region">Select the contents of a web page in another tab and drop it here.</p>
+<div class="output-region" id="drag-to-region"></div>
+<p>Drag HTML content to the above white region.
+  Any tables in the page will be displayed.
+  You can transfer to CODAP the ones you want.</p>
+</body>
+</html>

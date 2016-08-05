@@ -211,6 +211,11 @@
                 name: 'Spring Mass',
                 dimensions: '{"width":600,"height":400}',
                 url: 'https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json'
+            },
+            DropHTMLTable: {
+                name: 'DropHTMLTable',
+                dimensions: '{"width":600,"height":400}',
+                path: 'drop-html-table.html'
             }
         };
         function launch(url) {
@@ -463,6 +468,11 @@
                     data set.</td>
                 <td><a href="javascript:invokeDataInteractive('Sampler')">Launch</a></td>
                 <td><a target="_blank" href="./Sampler/Sampler.html">Link</a></td>
+            </tr>
+            <tr><td class = "interactive-title">DropHTMLTable</td>
+                <td class="interactive-description">A basic screen scraper. Drop the contents of an HTML page. The interactive will find the tables to transfer to CODAP.</td>
+                <td><a href="javascript:invokeDataInteractive('DropHTMLTable')">Launch</a></td>
+                <td><a target="_blank" href="./drop-html-table.html">Link</a></td>
             </tr>
         </table>
     </div>
