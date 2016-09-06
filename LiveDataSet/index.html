@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Data</title>
+  <style>
+    body {
+      background: white;
+    }
+  </style>
+  <script src="../Common/js/jquery.js"></script>
+  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script type="application/javascript">
+    $(function () {
+      var codapInterface = Object.create({
+        connection: null,
+        connectionState: 'preinit', // ['preinit', 'init', 'active', 'inactive', 'closed']
+        requestHandler: null,
+        init: function () {
+          this.connection = new iframePhone.IframePhoneRpcEndpoint(
+            function (codapRequest, callback) {
+              this.connectionState = 'active';
+              if (this.requestHandler) {
+                callback(this.requestHandler.handleCODAPRequest(codapRequest));
+              } else {
+                callback({success: 'true'});
+              }
+            }.bind(this), "data-interactive", window.parent
+          );
+        },
+        setRequestHandler: function (handler) {
+          this.requestHandler = handler;
+        },
+        destroy: function () {},
+        sendRequest: function (message, callback) {
+          switch (this.connectionState) {
+            case 'closed': // log the message and ignore
+              console.warn('sendRequest on closed CODAP connection: ' + JSON.stringify(message));
+              break;
+            case 'preinit': // warn, but issue request.
+              console.warn('sendRequest on not yet initialized CODAP connection: ' + JSON.stringify(message));
+            default:
+              if (this.connection) {
+                this.connection.call(message, function (response) {
+                  this.handleResponse(message, response, callback)
+                }.bind(this));
+              } else {
+                console.error('sendRequest on non-existent CODAP connection');
+              }
+          }
+        },
+        handleResponse: function (request, response, callback) {
+          if (response === undefined) {
+            console.warn('handleResponse: CODAP request timed out');
+          } else {
+            this.connectionState = 'active';
+          }
+          if (callback) {
+            callback(request, response);
+          }
+        }
+      });
+
+//      var globalValueManager = Object.create({
+//        codapInterface: null,
+//        $view: null,
+//        globalName: null,
+//        globalValue: null,
+//        getGlobalName: function () {
+//          codapInterface.sendRequest({action: 'get', resource: 'globalList'},
+//            function (request, response) {
+//              var names = response && response.values;
+//              if (names) {
+//                this.globalName = names[0];
+//                $('.global-name', this.$view).text(this.globalName)
+//              }
+//              this.getGlobalValue();
+//            }.bind(this));
+//
+//        },
+//        getGlobalValue: function () {
+//          if (!this.globalName) {
+//            return;
+//          }
+//          codapInterface.sendRequest({action: 'get', resource: 'global[' + this.globalName + ']'},
+//              function (request, response) {
+//                var value = response && response.values;
+//                if (value) {
+//                  this.globalValue = value;
+//                  $('.global-value', this.$view).text(this.globalValue)
+//                }
+//              }.bind(this));
+//        },
+//        init: function (codapInterface, $view) {
+//          this.codapInterface = codapInterface;
+//          this.$view = $view;
+//          codapInterface.init(this.codapMessageHandler);
+//          this.getGlobalName();
+//        }
+//      });
+//      globalValueManager.init(codapInterface, $('.global-display'));
+
+      var sharedValueManager = Object.create({
+        codapInterface: null,
+        view: null,
+        attributeName: 'x',
+        init: function (codapInterface, view) {
+          this.codapInterface = codapInterface;
+          this.view = view;
+          codapInterface.setRequestHandler(this);
+        },
+        handleCODAPRequest: function (request) {
+          console.log('handling request from CODAP: ' + JSON.stringify(request) );
+          switch (request.resource) {
+            case 'dataContextChangeNotice[single_value]':
+              this.updateValue();
+              break;
+            default:
+          }
+          return {success: true};
+        },
+        updateValue: function () {
+          this.codapInterface.sendRequest({
+            action: 'get',
+            resource: 'dataContext[single_value].collection[single_value].caseByIndex[0]'
+          }, function (request, response) {
+            if (response.success) {
+              this.view.text(response.values.case.values.x);
+            } else {
+              DG.logWarn('case request failed');
+            }
+          }.bind(this));
+        }
+      });
+      codapInterface.init();
+      sharedValueManager.init(codapInterface, $('.live-value'));
+      sharedValueManager.updateValue();
+    });
+  </script>
+</head>
+<body>
+<h1>Live Data</h1>
+<div>value: <span class="live-value"></span></div>
+</body>
+</html>
