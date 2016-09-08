@@ -71,45 +71,6 @@
         }
       });
 
-//      var globalValueManager = Object.create({
-//        codapInterface: null,
-//        $view: null,
-//        globalName: null,
-//        globalValue: null,
-//        getGlobalName: function () {
-//          codapInterface.sendRequest({action: 'get', resource: 'globalList'},
-//            function (request, response) {
-//              var names = response && response.values;
-//              if (names) {
-//                this.globalName = names[0];
-//                $('.global-name', this.$view).text(this.globalName)
-//              }
-//              this.getGlobalValue();
-//            }.bind(this));
-//
-//        },
-//        getGlobalValue: function () {
-//          if (!this.globalName) {
-//            return;
-//          }
-//          codapInterface.sendRequest({action: 'get', resource: 'global[' + this.globalName + ']'},
-//              function (request, response) {
-//                var value = response && response.values;
-//                if (value) {
-//                  this.globalValue = value;
-//                  $('.global-value', this.$view).text(this.globalValue)
-//                }
-//              }.bind(this));
-//        },
-//        init: function (codapInterface, $view) {
-//          this.codapInterface = codapInterface;
-//          this.$view = $view;
-//          codapInterface.init(this.codapMessageHandler);
-//          this.getGlobalName();
-//        }
-//      });
-//      globalValueManager.init(codapInterface, $('.global-display'));
-
       var sharedValueManager = Object.create({
         codapInterface: null,
         collaborativeString: null,
@@ -187,10 +148,11 @@
           realtimeUtils.createRealtimeFile('New Quickstart File', function(createResponse) {
             window.history.pushState(null, null, '?id=' + createResponse.id);
             console.log('Location: ' + window.location.href);
-            $('.doc-url').append('<a href="' + window.location + '">click here</a>')
+            $('.doc-url').html('<a href="' + +window.location.href+ + '">'+window.location.href+'</a>')
             realtimeUtils.load(createResponse.id, onFileLoaded, onFileInitialize);
           });
         }
+        $('.doc-url').html('<a href="' + window.location.href + '">'+window.location.href+'</a>')
       }
 
       // The first time a file is opened, it must be initialized with the
@@ -214,9 +176,7 @@
       // Connects the text boxes to the collaborative string
       function wireTextBoxes(collaborativeString) {
         var textArea1 = document.getElementById('text_area_1');
-        var textArea2 = document.getElementById('text_area_2');
         gapi.drive.realtime.databinding.bindString(collaborativeString, textArea1);
-        gapi.drive.realtime.databinding.bindString(collaborativeString, textArea2);
       }
 
       // end ggl part
@@ -230,7 +190,6 @@
 <h1>Live Data</h1>
 <div>id: <span class="doc-url"></span></div>
 <textarea id="text_area_1" class="live-value"></textarea>
-<textarea id="text_area_2"></textarea>
 <button id="auth_button">Authorize</button>
 
 </body>
