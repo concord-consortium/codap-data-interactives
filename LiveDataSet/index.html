@@ -6,13 +6,26 @@
   <style>
     body {
       background: white;
+      font-size: smaller;
+      padding: 2em;
+    }
+    .choice {
+      display: none;
+    }
+    .step-head {
+      cursor: pointer;
+    }
+    .step {
+      display: none;
     }
   </style>
   <script src="../Common/js/jquery.js"></script>
   <script src="../Common/js/iframe-phone.js" language="javascript"></script>
 
   <!-- google real time libraries. -->
+<!--
   <link href="https://www.gstatic.com/realtime/quickstart-styles.css" rel="stylesheet" type="text/css"/>
+-->
 
   <!-- Load the Realtime JavaScript library -->
   <script src="https://apis.google.com/js/api.js"></script>
@@ -22,6 +35,26 @@
 
   <script type="application/javascript">
     $(function () {
+
+      // BEGIN --- handlers and methods for managing the U/I ---
+      var dialogStep = null;
+      function setDialogStep (step) {
+        $('.step').hide();
+        dialogStep = step;
+        $('#' + step).slideDown();
+      }
+      setDialogStep('step-1');
+      $('.step-head').on('click', function (ev) {
+        setDialogStep($(this).next('.step')[0].id);
+      });
+      $('input[type=radio]').on('change', function (ev) {
+        var change = $(this).data('choice');
+        console.log('change: ' + change );
+        $('.choice').hide();
+        $('#' + change).slideDown();
+      });
+      // END --- handlers and methods for managing the U/I ---
+
       var codapInterface = Object.create({
         connection: null,
         connectionState: 'preinit', // ['preinit', 'init', 'active', 'inactive', 'closed']
@@ -91,16 +124,18 @@
           return {success: true};
         },
         updateValue: function () {
-          this.codapInterface.sendRequest({
-            action: 'get',
-            resource: 'dataContext[single_value].collection[single_value].caseByIndex[0]'
-          }, function (request, response) {
-            if (response.success) {
-              this.collaborativeString.setText(String(response.values.case.values.x));
-            } else {
-              DG.logWarn('case request failed');
-            }
-          }.bind(this));
+          if (codapInterface.connectionState === 'active') {
+            this.codapInterface.sendRequest({
+              action: 'get',
+              resource: 'dataContext[single_value].collection[single_value].caseByIndex[0]'
+            }, function (request, response) {
+              if (response && response.success) {
+                this.collaborativeString.setText(String(response.values.case.values.x));
+              } else {
+                DG.logWarn('case request failed');
+              }
+            }.bind(this));
+          }
         }
       });
       codapInterface.init();
@@ -124,14 +159,16 @@
             // Authorization failed because this is the first time the user has used your application,
             // show the authorize button to prompt them to authorize manually.
             var button = document.getElementById('auth_button');
-            button.classList.add('visible');
+            button.disabled=false;
             button.addEventListener('click', function () {
               realtimeUtils.authorize(function(response){
-                start();
+//                start();
+                setDialogStep('step-2');
               }, true);
             });
           } else {
-            start();
+            setDialogStep('step-2');
+//            start();
           }
         }, false);
       }
@@ -181,16 +218,74 @@
 
       // end ggl part
       // * * * * * *
-
-
     });
   </script>
 </head>
 <body>
 <h1>Live Data</h1>
-<div>id: <span class="doc-url"></span></div>
-<textarea id="text_area_1" class="live-value"></textarea>
-<button id="auth_button">Authorize</button>
+<p>This CODAP data interactive demonstrates live sharing of CODAP data among
+instances.
+It uses the Google Real Time API.
+</p>
+<h3 class="step-head">Step 1: authorize</h3>
+<div id="step-1" class="step">
+  <p>First you must authorize this application.</p>
+  <button id="auth_button">Authorize</button>
+  <button id="unauth_button" disabled="disabled">Unauthorize</button>
+</div>
+<h3 class="step-head">Step 2: choose data set</h3>
+<div id="step-2" class="step">
+  <p>You can either collaborate on an existing data set or create a new one from
+    the collaborative document.</p>
+  <div>
+    <label>
+      <input type="radio" name="dataset-option" value="create" data-choice="attach-existing-data-set" id="existing-data_button"/>
+      Collaborate on existing data
+    </label>
+    <label>
+      <input type="radio" name="dataset-option" value="attach" data-choice="create-new-data-set" id="new-data-set_button">
+      Make a new data set
+    </label>
+    <div class="choice" id="attach-existing-data-set">
+      <label>Choose a data set: <select></select></label>
+    </div>
+    <div class="choice" id="create-new-data-set">
+      <label>Data Set Name: <input type="text" id="new-data-set-name"/></label>
+    </div>
+  </div>
+</div>
+<h3 class="step-head">Step 3: create or link to a collaboration document</h3>
+<div id="step-3" class="step set-up-collaboration">
+  <p>You can either create a new collaborative document or attach to an existing
+    collaborative document.</p>
+  <div>
+    <label>
+      <input type="radio" name="doc-option" value="create" data-choice="create-dialog" id="create_button"/>
+      Create collaborative document
+    </label>
+    <label>
+      <input type="radio" name="doc-option" value="attach" data-choice="new-doc-url" id="attach_button"/>
+      Attach to a collaborative document
+    </label>
+  </div>
+  <div class="choice" id="create-dialog">
+    <p>
+      Collaborative document name: <input type="text" id="doc-name"/>
+      <input type="submit" id="create" value="create"/>
+    </p>
+    <p id="new-doc-url">
+      Share this url with collaborators: <span></span>
+    </p>
+  </div>
+  <div class="choice" id="attach-dialog">
+    Collaborative document URL: <input type="text" id="existing-doc-url"/>
+  </div>
+</div>
+<h3 class="step-head">Step 4: connect</h3>
+<div id="step-4" class="step">
+  <div>id: <span class="doc-url"></span></div>
+  <textarea id="text_area_1" class="live-value"></textarea>
+</div>
 
 </body>
 </html>
