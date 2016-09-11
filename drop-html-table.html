@@ -39,7 +39,9 @@ $(document).ready(function () {
   var $dropRegion = $('.drop-region');
   var interactiveFrame = {
     name: 'TableDrop',
-    dimensions: {x: 480, y: 640}
+    dimensions: {x: 480, y: 640},
+    preventDataContextReorg: false,
+    preventBringToFront: false
   };
 
 
@@ -71,42 +73,90 @@ $(document).ready(function () {
       return $('th', firstRow).length > 0;
     }
 
-    function getAttributeDefinitions(firstRow) {
-      // we assume the first row is either all th or all td.
-      var $headers = $('th', firstRow);
-      var attrCount = ($headers.length > 0)? $headers.length: $('td', firstRow).length;
-      var attrs = [], ix;
-      if ($headers.length > 0) {
-        $headers.each(function (ix, thEl) {
-          var name = $(thEl).text();
-          attrs.push( {
-            name: name,
-            editable: true
-          });
-        })
-      } else {
-        attrs = [];
-        for (ix = 0; ix < attrCount; ix += 1) {
-          attrs[ix] = {
-            name: 'attr' + ix,
-            editable: true
-          }
+    function rowLength($row) {
+      var $cols = $('th,td', $row);
+      return $cols.length;
+    }
+    /**
+     * Returns table stats object:
+     *   numRows {number}
+     *   maxCols {number}
+     *   headerRows {[number]} Array of row indices of header rows
+     *   rowLengthCounts {[number]} sparse array of counts of row lengths
+     */
+    function getTableStats($rows) {
+      var stats = {
+        numRows: 0,
+        maxCols: 0,
+        headerRows: [],
+        rowLengthCounts: [],
+        preponderantLength: 0
+      }
+      stats.numRows = $rows.length;
+      $rows.each(function (ix, $row) {
+        var len = rowLength($row);
+        if (stats.rowLengthCounts[len]) {
+          stats.rowLengthCounts[len]++;
+        } else {
+          stats.rowLengthCounts[len] = 1;
         }
+        stats.maxCols = Math.max(stats.maxCols, len);
+        if ($('th', $row).length === len) {
+          stats.headerRows.push(ix);
+        }
+      });
+      var maxCount = 0;
+      stats.rowLengthCounts.forEach(function (count, ix) {
+        if (maxCount < count) {
+          maxCount = count;
+          stats.preponderantLength = ix;
+        }
+      });
+      console.log('stats: ' + JSON.stringify(stats));
+      return stats;
+    }
+
+    function inferAttributeHeaderRow (stats, $rows) {
+      var sel = stats.headerRows.find(function (rowIx) {
+        return rowLength($rows[rowIx]) === stats.maxCols;
+      });
+      if ((sel === undefined) && stats.maxCols !== stats.preponderantLength) {
+        sel = stats.headerRows.find(function (rowIx) {
+          return rowLength($rows[rowIx]) === stats.preponderantLength;
+        });
+      }
+      if (sel !== undefined) {
+        return $rows[sel];
+      }
+    }
+
+    function getAttributeDefinitions($headerRow, attrCount) {
+      // we assume the first row is either all th or all td.
+      var attrs = [], ix, attrName;
+      var $cols = $('th,td', $headerRow);
+      for (ix = 0; ix < attrCount; ix += 1) {
+        if ($cols[ix]) {
+          attrName = $($cols[ix]).text() || 'attr' + ix;
+        } else {
+          attrName = 'attr' + ix;
+        }
+        attrs.push( {
+          name: attrName,
+          editable: true
+        });
       }
       return attrs;
     }
+
+    // --- --- begin handleSend --- ---
     var parentEl = ev.target.parentNode.parentNode;
     var $srcTable = $('table', ev.target.parentNode.parentNode);
     var $rows = $('tr', $srcTable);
-    var firstRow = $rows[0];
-    var columnCount;
+    var stats = getTableStats($rows);
+    var $headerRow = inferAttributeHeaderRow(stats, $rows) || $rows[0];
     var headerNames;
     var contextName = $('.table-title', parentEl).val() || 'DropTarget';
-    var attrs;
-    var ignoreFirstRow = false;
-    if (firstRow) {
-      attrs = getAttributeDefinitions(firstRow);
-    }
+    var attrs = getAttributeDefinitions($headerRow, stats.maxCols);
     sendRequest({
       action: 'create',
       resource: 'dataContext',
@@ -129,11 +179,8 @@ $(document).ready(function () {
 
     var cases = [];
     $rows.each(function (ix, row) {
-      if (ignoreFirstRow && ix === 0) return;
+      if (stats.headerRows.indexOf(ix) >= 0) return;
       var values = {};
-      if ($('th', row).length >= columnCount) {
-        return;
-      }
       $('td,th', row).each(function(ix, cell) {
         values[attrs[ix].name] = $(cell).text();
       });

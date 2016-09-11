@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "browserify -t [ babelify --presets [ react ] ] src/WebServiceFetchAndFilter.jsx -o js/WebServiceFetchAndFilter.js"
+  }
+}
