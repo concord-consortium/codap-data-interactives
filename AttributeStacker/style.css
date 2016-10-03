@@ -20,6 +20,7 @@ section {
   padding: 1em 2em;
   margin: 0.5em;
 }
+
 #attribute-stacking {
   display: flex;
   flex-direction: row;
@@ -35,8 +36,12 @@ section {
   margin-bottom: 2px;
 }
 
-.active {
+.drag-active {
   opacity: .1;
+}
+
+.inactive {
+  visibility: hidden;
 }
 
 .drop-area {
@@ -58,6 +63,9 @@ section {
   padding: 0 4px;
   overflow: hidden;
   background-color: skyblue;
+  color: white;
+  font-family: sans-serif;
+  font-size: smaller;
   text-align: center;
   -moz-user-select: none;
   -khtml-user-select: none;

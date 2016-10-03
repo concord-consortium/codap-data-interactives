@@ -40,7 +40,8 @@ $(function () {
           name: config.name,
           title: config.title,
           version: config.version,
-          dimensions: config.dimensions
+          dimensions: config.dimensions,
+          preventBringToFront: config.preventBringToFront
         };
         //Object.assign(newFrame, values);
         updateFrameReq.values = newFrame;
@@ -102,15 +103,18 @@ $(function () {
     }
   });
 
-  var extent = {rows: 0, cols: 0};
   var kSrcStackSelector = '#src-stack';
+  var kSrcStackItemsSelector = kSrcStackSelector + ' .items';
   var kTargetTableSelector = '#target-table';
   var kDataSetSectionSelector = '#DataSetSection';
   var kItemSelector = '.item';
   var kDropAreaClass = 'drop-area';
   var kColumnHeadMessage = 'Enter a name for this value attribute';
   var kRowHeadMessage = 'Enter a name for this categorical value';
+
+  var extent = {rows: 0, cols: 0};
   var itemCtr = 0;
+  var currentDataSet;
 
   function makeNewRow($tableEl, extent) {
     var row = extent.rows++;
@@ -119,7 +123,7 @@ $(function () {
     var el = $('<input>').prop({
       'value': 'type' + row,
       'title': kRowHeadMessage
-    });
+    }).addClass('inactive');
     $('<th>').append(el).appendTo($rowEl);
     for (ix = 0; ix < extent.cols; ix += 1) {
       el = $('<div>').addClass(kDropAreaClass);
@@ -137,7 +141,7 @@ $(function () {
         el = $('<input>').prop({
           'value': 'value' + col,
           'title': kColumnHeadMessage
-        });
+        }).addClass('inactive');
         el = $('<th>').append(el);
       } else {
         el = $('<div>').addClass(kDropAreaClass);
@@ -183,7 +187,7 @@ $(function () {
       var numCollections = values.collections?values.collections.length: 0;
       var lastCollection = numCollections && values.collections[numCollections - 1];
       var attributes = lastCollection.attrs;
-      var $srcStack = $(kSrcStackSelector + ' .items');
+      var $srcStack = $(kSrcStackItemsSelector);
       $(kItemSelector).remove();
       attributes.forEach(function (attr) {
         var itemID = 'item' + itemCtr++;
@@ -197,11 +201,6 @@ $(function () {
 
     var req = {action: 'get', resource: 'dataContext[' + dataSetName + ']'};
     codapInterface.sendRequest(req, handleResponse)
-  }
-
-  function handleDataSetSelection(ev) {
-    var dataSetName = $(this).val();
-    makeItems(dataSetName);
   }
 
   function getTableCoordinate($cellEl) {
@@ -228,14 +227,29 @@ $(function () {
     return (coord.row === dimensions.rows - 1);
   }
 
+  function activateColumn($tableEl, ix) {
+    $tableEl.find('tr:first th:nth-of-type('+(ix+2)+') input').removeClass('inactive');
+  }
+  function activateRow($tableEl, ix) {
+    $tableEl.find('tr:nth-of-type('+(ix+2)+') input').removeClass('inactive');
+  }
   function updateTable($cellEl) {
     var $tableEl = $(kTargetTableSelector);
+    var coords = getTableCoordinate($cellEl)
     if (isRightmostColumn($tableEl, $cellEl)) {
       makeNewColumn($tableEl, extent);
+      activateColumn($tableEl, coords.col);
     }
     if (isBottomRow($tableEl, $cellEl)) {
       makeNewRow($tableEl, extent);
+      activateRow($tableEl, coords.row);
     }
+  }
+
+  function handleDataSetSelection(ev) {
+    currentDataSet = $(this).val();
+
+    makeItems(currentDataSet);
   }
 
   function handleDragStart(ev) {
@@ -243,12 +257,12 @@ $(function () {
     var oev = ev.originalEvent;
     oev.dataTransfer.effectAllowed = 'move';
     oev.dataTransfer.setData('text/html', this.outerHTML);
-    $(this).addClass('active');
+    $(this).addClass('drag-active');
     $(kTargetTableSelector + ',' + kSrcStackSelector).addClass('drag-in-progress')
   }
 
   function handleDragEnd(ev) {
-    $(this).removeClass('active');
+    $(this).removeClass('drag-active');
     $(kTargetTableSelector + ',' + kSrcStackSelector).removeClass('drag-in-progress')
   }
 
@@ -293,10 +307,113 @@ $(function () {
     $('#' + $item[1].id).detach().appendTo(target);
 
     $this.removeClass('over');
-    $item.removeClass('active');
+    $item.removeClass('drag-active');
 
     ev.stopPropagation();
     return false;
+  }
+
+  function handleSubmitStacking(ev) {
+    if (!currentDataSet) { return; }
+    function makeUnassignedAttributesList($items) {
+      var names = [];
+      $items.each(function (ix, item) {
+        names.push($(item).text());
+      });
+      return names;
+    }
+
+    function makeTypeList($table) {
+      // the goal is to return an array of type names, corresponding to the
+      //zeroeth cell in the non-header parts of the table.
+      var rtn = [];
+      $('tr', $table).each(function(ix, row) {
+        if (ix !== 0) {
+          rtn.push($('td,th input', row).val());
+        }
+      });
+      return rtn;
+    }
+
+    function makeStackingAttributes($table) {
+      var result = [];
+      var $headerRow = $($table.find('tr')[0]);
+      $headerRow.find('th input:not(.inactive)').each(function(ix, el) {
+        if (ix !== 0) {
+          result.push($(el).val());
+        }
+      });
+      return result;
+    }
+
+    function makeAttributeMappings($table, typeList, stackingAttributes) {
+      rslt = [];
+      $table.find('tr').each(function(ix, el1) {
+        if (ix !== 0) {
+          $(el1).find('td').each(function (ix, el2) {
+            var $item = $(el2).find('.item');
+            if ($item.length > 0) {
+              rslt.push({fromAttr: $item.text(), toAttr: stackingAttributes[ix]});
+            }
+          });
+        }
+      });
+      return rslt;
+    }
+
+    function createStackedDataSetDefinition(dataSetName, parentCollectionName, parentAttributes, childCollectionName, categoryName, stackingAttributes) {
+      var parentCollection = {
+        name: parentCollectionName,
+        attrs: parentAttributes.map(function (attrName) {return {name: attrName}})
+      }
+
+      var childCollection = {
+        name: childCollectionName,
+        parent: parentCollectionName,
+        attrs: []
+      }
+
+      var dsd = {
+        name: dataSetName,
+        collections: [
+            parentCollection,
+            childCollection
+        ]
+      };
+
+      childCollection.attrs = [{name: categoryName}]
+          .concat(stackingAttributes.map(function (attrName) {
+            return {name: attrName};
+          }));
+      return dsd;
+    }
+
+    var $stackItems = $(kSrcStackItemsSelector);
+    var $targetTable = $(kTargetTableSelector);
+    // categoryName is the name of the attribute that classifies the stacking attributes
+    var categoryName = $targetTable.find('tr th input').val();
+    // parent attributes are the unstacked attributes
+    var parentAttributes = makeUnassignedAttributesList($stackItems.find('.item'));
+    // typeList is a list of the values of the category attribute
+    var typeList = makeTypeList($targetTable);
+    // stacking attributes are the new attributes factored by the stacking operation
+    var stackingAttributes = makeStackingAttributes($targetTable);
+    // we map the original attribute to its stacking attribute
+    var attributeMappings = makeAttributeMappings($targetTable, typeList,
+        stackingAttributes);
+
+    var dsd = createStackedDataSetDefinition('dataset1', 'parentCollection',
+        parentAttributes, 'childCollection', categoryName, stackingAttributes);
+
+    codapInterface.sendRequest({
+          action: 'create',
+          resource: 'dataContext',
+          values: dsd
+        },
+        function (req, resp) {
+      console.log('create dataset resp: ' + JSON.stringify(resp));
+    });
+
   }
 
   function init() {
@@ -304,7 +421,8 @@ $(function () {
       name: 'TidyData',
       title: window.title,
       version: '0.1',
-      dimensions: {width: 600, height: 500}
+      dimensions: {width: 600, height: 500},
+      preventBringToFront: false
     });
 
     makeDataSetSelector();
@@ -320,6 +438,7 @@ $(function () {
         .on('dragleave', '.' + kDropAreaClass, handleDragLeave)
         .on('drop', '.' + kDropAreaClass, handleDrop);
 
+    $('#submitStackingButton').on('click', handleSubmitStacking);
     makeNewColumn($(kTargetTableSelector), extent);
     makeNewRow($(kTargetTableSelector), extent);
   }
