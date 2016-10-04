@@ -114,7 +114,8 @@ $(function () {
 
   var extent = {rows: 0, cols: 0};
   var itemCtr = 0;
-  var currentDataSet;
+  var sourceDataSet;
+  var sourceDataSetDefinition;
 
   function makeNewRow($tableEl, extent) {
     var row = extent.rows++;
@@ -184,6 +185,7 @@ $(function () {
       if (!values) {
         return;
       }
+      sourceDataSetDefinition = values;
       var numCollections = values.collections?values.collections.length: 0;
       var lastCollection = numCollections && values.collections[numCollections - 1];
       var attributes = lastCollection.attrs;
@@ -230,9 +232,11 @@ $(function () {
   function activateColumn($tableEl, ix) {
     $tableEl.find('tr:first th:nth-of-type('+(ix+2)+') input').removeClass('inactive');
   }
+
   function activateRow($tableEl, ix) {
     $tableEl.find('tr:nth-of-type('+(ix+2)+') input').removeClass('inactive');
   }
+
   function updateTable($cellEl) {
     var $tableEl = $(kTargetTableSelector);
     var coords = getTableCoordinate($cellEl)
@@ -247,9 +251,9 @@ $(function () {
   }
 
   function handleDataSetSelection(ev) {
-    currentDataSet = $(this).val();
+    sourceDataSet = $(this).val();
 
-    makeItems(currentDataSet);
+    makeItems(sourceDataSet);
   }
 
   function handleDragStart(ev) {
@@ -314,7 +318,8 @@ $(function () {
   }
 
   function handleSubmitStacking(ev) {
-    if (!currentDataSet) { return; }
+    if (!sourceDataSet) { return; }
+
     function makeUnassignedAttributesList($items) {
       var names = [];
       $items.each(function (ix, item) {
@@ -332,6 +337,8 @@ $(function () {
           rtn.push($('td,th input', row).val());
         }
       });
+      // remove the last (must be empty row)
+      if (rtn.length > 0) { rtn.pop(); }
       return rtn;
     }
 
@@ -349,19 +356,22 @@ $(function () {
     function makeAttributeMappings($table, typeList, stackingAttributes) {
       rslt = [];
       $table.find('tr').each(function(ix, el1) {
+        var typeMapping = [];
         if (ix !== 0) {
           $(el1).find('td').each(function (ix, el2) {
             var $item = $(el2).find('.item');
             if ($item.length > 0) {
-              rslt.push({fromAttr: $item.text(), toAttr: stackingAttributes[ix]});
+              typeMapping.push({fromAttr: $item.text(), toAttr: stackingAttributes[ix]});
             }
           });
+          rslt.push(typeMapping);
         }
       });
       return rslt;
     }
 
-    function createStackedDataSetDefinition(dataSetName, parentCollectionName, parentAttributes, childCollectionName, categoryName, stackingAttributes) {
+    function createStackedDataSetDefinition(dataSetName, parentCollectionName,
+        parentAttributes, childCollectionName, categoryName, stackingAttributes) {
       var parentCollection = {
         name: parentCollectionName,
         attrs: parentAttributes.map(function (attrName) {return {name: attrName}})
@@ -388,8 +398,68 @@ $(function () {
       return dsd;
     }
 
+    function copySourceDataSetToStackedDataSet() {
+      var numCollections = sourceDataSetDefinition.collections?sourceDataSetDefinition.collections.length: 0;
+      var lastCollection = numCollections && sourceDataSetDefinition.collections[numCollections - 1];
+      var caseResourcePrefix = 'dataContext[' + sourceDataSet + '].collection[' + lastCollection.name + ']';
+      var caseCount;
+      var caseIx = 0;
+
+      function requestCase() {
+        if (caseIx < caseCount) {
+          codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix
+          + '.caseByIndex[' + caseIx + ']'}, function (req, resp) {
+            if (resp.success) {
+              cloneCase(resp.values);
+            }
+          });
+          caseIx += 1;
+        }
+      }
+
+      function cloneCase(v) {
+        function createChildren(req, resp) {
+          var parentID = resp.success && resp.values[0].id;
+          var childCases = [];
+          if (parentID !== null && parentID !== undefined) {
+            typeList.forEach(function (type, ix) {
+              var newCase = {parent:parentID, values: {}};
+              newCase.values[categoryName] = type;
+              attributeMappings[ix].forEach(function (mapping) {
+                newCase.values[mapping.toAttr] = myCase.values[mapping.fromAttr];
+              });
+              childCases.push(newCase);
+            });
+            codapInterface.sendRequest({action: 'create', resource: childResourceSpec, values: childCases}, function (req, resp) {
+              requestCase();
+            });
+          }
+        }
+        var myCase = v.case;
+        var parentCase = {values: {}};
+        var parentResourceSpec = 'dataContext['+stackedDataSetName+'].collection[parentCollection].case';
+        var childResourceSpec = 'dataContext['+stackedDataSetName+'].collection[childCollection].case';
+
+        parentAttributes.forEach(function (attrName) {
+          parentCase.values[attrName] = myCase.values[attrName];
+        });
+        codapInterface.sendRequest({action: 'create', resource: parentResourceSpec, values: parentCase}, createChildren)
+      }
+
+      codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix + '.caseCount'},
+          function (req, resp) {
+            caseCount = resp.values;
+            requestCase();
+          }
+      )
+    }
+
     var $stackItems = $(kSrcStackItemsSelector);
+
     var $targetTable = $(kTargetTableSelector);
+
+    var stackedDataSetName = 'dataset1';
+
     // categoryName is the name of the attribute that classifies the stacking attributes
     var categoryName = $targetTable.find('tr th input').val();
     // parent attributes are the unstacked attributes
@@ -402,7 +472,7 @@ $(function () {
     var attributeMappings = makeAttributeMappings($targetTable, typeList,
         stackingAttributes);
 
-    var dsd = createStackedDataSetDefinition('dataset1', 'parentCollection',
+    var dsd = createStackedDataSetDefinition(stackedDataSetName, 'parentCollection',
         parentAttributes, 'childCollection', categoryName, stackingAttributes);
 
     codapInterface.sendRequest({
@@ -411,8 +481,10 @@ $(function () {
           values: dsd
         },
         function (req, resp) {
-      console.log('create dataset resp: ' + JSON.stringify(resp));
-    });
+          console.log('create dataset resp: ' + JSON.stringify(resp));
+          copySourceDataSetToStackedDataSet()
+        }
+    );
 
   }
 
