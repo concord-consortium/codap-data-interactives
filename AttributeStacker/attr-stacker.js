@@ -109,6 +109,7 @@ $(function () {
   var kDataSetSectionSelector = '#DataSetSection';
   var kItemSelector = '.item';
   var kDropAreaClass = 'drop-area';
+  var kCategoryMessage = 'Enter a name for the category attribute';
   var kColumnHeadMessage = 'Enter a name for this value attribute';
   var kRowHeadMessage = 'Enter a name for this categorical value';
 
@@ -191,6 +192,7 @@ $(function () {
       var attributes = lastCollection.attrs;
       var $srcStack = $(kSrcStackItemsSelector);
       $(kItemSelector).remove();
+      makeStackingTable($(kTargetTableSelector))
       attributes.forEach(function (attr) {
         var itemID = 'item' + itemCtr++;
         $('<div>')
@@ -223,6 +225,11 @@ $(function () {
     return (coord.col === dimensions.cols - 1);
   }
 
+  function isLeftmostColumn($tableEl, $cellEl) {
+    var coord = getTableCoordinate($cellEl);
+    return(Number(coord.col) === 0);
+  }
+
   function isBottomRow($tableEl, $cellEl) {
     var coord = getTableCoordinate($cellEl);
     var dimensions = getTableDimensions($tableEl);
@@ -233,11 +240,12 @@ $(function () {
     $tableEl.find('tr:first th:nth-of-type('+(ix+2)+') input').removeClass('inactive');
   }
 
-  function activateRow($tableEl, ix) {
-    $tableEl.find('tr:nth-of-type('+(ix+2)+') input').removeClass('inactive');
+  function activateRow($tableEl, ix, droppedItemName) {
+    $tableEl.find('tr:nth-of-type('+(ix+2)+') input').removeClass('inactive').val(droppedItemName);
+
   }
 
-  function updateTable($cellEl) {
+  function updateTable($cellEl, droppedItemName) {
     var $tableEl = $(kTargetTableSelector);
     var coords = getTableCoordinate($cellEl)
     if (isRightmostColumn($tableEl, $cellEl)) {
@@ -246,7 +254,7 @@ $(function () {
     }
     if (isBottomRow($tableEl, $cellEl)) {
       makeNewRow($tableEl, extent);
-      activateRow($tableEl, coords.row);
+      activateRow($tableEl, coords.row, droppedItemName);
     }
   }
 
@@ -301,13 +309,14 @@ $(function () {
     var oev = ev.originalEvent;
     var target = this;
     var $srcStack = $(kSrcStackSelector);
+    var $item = $(oev.dataTransfer.getData('text/html'));
+
     if ($.contains($srcStack[0], this)) {
       target = $srcStack.find('.items');
     } else {
-      updateTable($this);
+      updateTable($this, $item.text());
     }
 
-    var $item = $(oev.dataTransfer.getData('text/html'));
     $('#' + $item[1].id).detach().appendTo(target);
 
     $this.removeClass('over');
@@ -383,7 +392,7 @@ $(function () {
         attrs: []
       }
 
-      var dsd = {
+      var dataSetDefinition = {
         name: dataSetName,
         collections: [
             parentCollection,
@@ -395,7 +404,7 @@ $(function () {
           .concat(stackingAttributes.map(function (attrName) {
             return {name: attrName};
           }));
-      return dsd;
+      return dataSetDefinition;
     }
 
     function copySourceDataSetToStackedDataSet() {
@@ -437,8 +446,8 @@ $(function () {
         }
         var myCase = v.case;
         var parentCase = {values: {}};
-        var parentResourceSpec = 'dataContext['+stackedDataSetName+'].collection[parentCollection].case';
-        var childResourceSpec = 'dataContext['+stackedDataSetName+'].collection[childCollection].case';
+        var parentResourceSpec = 'dataContext['+stackedDataSetName+'].collection['+ parentCollectionName + '].case';
+        var childResourceSpec = 'dataContext['+stackedDataSetName+'].collection[' + childCollectionName + '].case';
 
         parentAttributes.forEach(function (attrName) {
           parentCase.values[attrName] = myCase.values[attrName];
@@ -454,15 +463,27 @@ $(function () {
       )
     }
 
+    function makeDataSetName(originalDataSet) {
+      return originalDataSet.name + '_stacked';
+    }
+
+    function getOriginalCollectionName(originalDataSet) {
+      var numCollections = originalDataSet.collections? originalDataSet.collections.length: 0;
+      var lastCollection = numCollections && originalDataSet.collections[numCollections - 1];
+      return lastCollection.name;
+    }
+
     var $stackItems = $(kSrcStackItemsSelector);
 
     var $targetTable = $(kTargetTableSelector);
 
-    var stackedDataSetName = 'dataset1';
+    var stackedDataSetName = makeDataSetName(sourceDataSetDefinition);
 
     // categoryName is the name of the attribute that classifies the stacking attributes
     var categoryName = $targetTable.find('tr th input').val();
     // parent attributes are the unstacked attributes
+    var parentCollectionName = getOriginalCollectionName(sourceDataSetDefinition);
+    var childCollectionName = categoryName + 's';
     var parentAttributes = makeUnassignedAttributesList($stackItems.find('.item'));
     // typeList is a list of the values of the category attribute
     var typeList = makeTypeList($targetTable);
@@ -472,13 +493,13 @@ $(function () {
     var attributeMappings = makeAttributeMappings($targetTable, typeList,
         stackingAttributes);
 
-    var dsd = createStackedDataSetDefinition(stackedDataSetName, 'parentCollection',
-        parentAttributes, 'childCollection', categoryName, stackingAttributes);
+    var dataSetDefinition = createStackedDataSetDefinition(stackedDataSetName, parentCollectionName,
+        parentAttributes, childCollectionName, categoryName, stackingAttributes);
 
     codapInterface.sendRequest({
           action: 'create',
           resource: 'dataContext',
-          values: dsd
+          values: dataSetDefinition
         },
         function (req, resp) {
           console.log('create dataset resp: ' + JSON.stringify(resp));
@@ -488,6 +509,18 @@ $(function () {
 
   }
 
+  function makeStackingTable($table) {
+    var $categoryInput = $('<input>').prop({type: 'text', value:'category', title: kCategoryMessage});
+    var $categoryCell = $('<th>').append($categoryInput);
+    var $baseRow = $('<tr>').append($categoryCell);
+    $table.empty().append($baseRow);
+    extent = {rows: 0, cols: 0};
+    itemCtr = 0;
+
+    makeNewColumn($table, extent);
+    makeNewRow($table, extent);
+
+  }
   function init() {
     codapInterface.init({
       name: 'TidyData',
@@ -511,8 +544,7 @@ $(function () {
         .on('drop', '.' + kDropAreaClass, handleDrop);
 
     $('#submitStackingButton').on('click', handleSubmitStacking);
-    makeNewColumn($(kTargetTableSelector), extent);
-    makeNewRow($(kTargetTableSelector), extent);
+    makeStackingTable($(kTargetTableSelector));
   }
 
   init();
