@@ -106,7 +106,8 @@ $(function () {
   var kSrcStackSelector = '#src-stack';
   var kSrcStackItemsSelector = kSrcStackSelector + ' .items';
   var kTargetTableSelector = '#target-table';
-  var kDataSetSectionSelector = '#DataSetSection';
+  var kDataSetSectionSelector = '#dataset-selection';
+  var kDataSetSelector = kDataSetSectionSelector + ' select';
   var kItemSelector = '.item';
   var kDropAreaClass = 'drop-area';
   var kCategoryMessage = 'Enter a name for the category attribute';
@@ -114,8 +115,6 @@ $(function () {
   var kRowHeadMessage = 'Enter a name for this categorical value';
 
   var extent = {rows: 0, cols: 0};
-  var itemCtr = 0;
-  var sourceDataSet;
   var sourceDataSetDefinition;
 
   function makeNewRow($tableEl, extent) {
@@ -183,6 +182,7 @@ $(function () {
   function makeItems(dataSetName) {
     function handleResponse(req, resp) {
       var values = resp && resp.values;
+      var itemCtr = 0;
       if (!values) {
         return;
       }
@@ -217,6 +217,10 @@ $(function () {
 
   function getTableDimensions($tableEl) {
     return extent;
+  }
+
+  function getSourceDataSetName() {
+    return $(kDataSetSelector).val();
   }
 
   function isRightmostColumn($tableEl, $cellEl) {
@@ -259,9 +263,7 @@ $(function () {
   }
 
   function handleDataSetSelection(ev) {
-    sourceDataSet = $(this).val();
-
-    makeItems(sourceDataSet);
+    makeItems(getSourceDataSetName());
   }
 
   function handleDragStart(ev) {
@@ -326,8 +328,18 @@ $(function () {
     return false;
   }
 
+  function makeDataSetName(originalDataSet) {
+    return originalDataSet.name + '_stacked';
+  }
+
+  function getOriginalCollectionName(originalDataSet) {
+    var numCollections = originalDataSet.collections? originalDataSet.collections.length: 0;
+    var lastCollection = numCollections && originalDataSet.collections[numCollections - 1];
+    return lastCollection.name;
+  }
+
   function handleSubmitStacking(ev) {
-    if (!sourceDataSet) { return; }
+    if (!getSourceDataSetName()) { return; }
 
     function makeUnassignedAttributesList($items) {
       var names = [];
@@ -379,38 +391,39 @@ $(function () {
       return rslt;
     }
 
-    function createStackedDataSetDefinition(dataSetName, parentCollectionName,
-        parentAttributes, childCollectionName, categoryName, stackingAttributes) {
+    function createStackedDataSetDefinition(iDataSetName, iParentCollectionName,
+        iParentAttributes, iChildCollectionName, iCategoryName, iStackingAttributes) {
       var parentCollection = {
-        name: parentCollectionName,
-        attrs: parentAttributes.map(function (attrName) {return {name: attrName}})
+        name: iParentCollectionName,
+        attrs: iParentAttributes.map(function (attrName) {return {name: attrName}})
       }
 
       var childCollection = {
-        name: childCollectionName,
-        parent: parentCollectionName,
+        name: iChildCollectionName,
+        parent: iParentCollectionName,
         attrs: []
       }
 
       var dataSetDefinition = {
-        name: dataSetName,
+        name: iDataSetName,
         collections: [
             parentCollection,
             childCollection
         ]
       };
 
-      childCollection.attrs = [{name: categoryName}]
-          .concat(stackingAttributes.map(function (attrName) {
+      childCollection.attrs = [{name: iCategoryName}]
+          .concat(iStackingAttributes.map(function (attrName) {
             return {name: attrName};
           }));
       return dataSetDefinition;
     }
 
+
     function copySourceDataSetToStackedDataSet() {
       var numCollections = sourceDataSetDefinition.collections?sourceDataSetDefinition.collections.length: 0;
       var lastCollection = numCollections && sourceDataSetDefinition.collections[numCollections - 1];
-      var caseResourcePrefix = 'dataContext[' + sourceDataSet + '].collection[' + lastCollection.name + ']';
+      var caseResourcePrefix = 'dataContext[' + getSourceDataSetName() + '].collection[' + lastCollection.name + ']';
       var caseCount;
       var caseIx = 0;
 
@@ -463,16 +476,6 @@ $(function () {
       )
     }
 
-    function makeDataSetName(originalDataSet) {
-      return originalDataSet.name + '_stacked';
-    }
-
-    function getOriginalCollectionName(originalDataSet) {
-      var numCollections = originalDataSet.collections? originalDataSet.collections.length: 0;
-      var lastCollection = numCollections && originalDataSet.collections[numCollections - 1];
-      return lastCollection.name;
-    }
-
     var $stackItems = $(kSrcStackItemsSelector);
 
     var $targetTable = $(kTargetTableSelector);
@@ -515,7 +518,6 @@ $(function () {
     var $baseRow = $('<tr>').append($categoryCell);
     $table.empty().append($baseRow);
     extent = {rows: 0, cols: 0};
-    itemCtr = 0;
 
     makeNewColumn($table, extent);
     makeNewRow($table, extent);
