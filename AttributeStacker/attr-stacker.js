@@ -18,10 +18,44 @@
 // ==========================================================================
 $(function () {
   var codapInterface = Object.create({
+    /**
+     * The CODAP Connection
+     * @param {iframePhone.IframePhoneRpcEndpoint}
+     */
     connection: null,
-    connectionState: 'preinit', // ['preinit', 'init', 'active', 'inactive', 'closed']
-    requestHandler: null,
+
+    /**
+     * Current known state of the connection
+     * @param {'preinit' || 'init' || 'active' || 'inactive' || 'closed'}
+     */
+    connectionState: 'preinit',
+
+    /**
+     * Connection statistics
+     */
+    stats: {
+      countDiReq: 0,
+      countDiRplSuccess: 0,
+      countDiRplFail: 0,
+      countDiRplTimeout: 0,
+      countCodapReq: 0,
+      countCodapUnhandledReq: 0,
+      countCodapRplSuccess: 0,
+      countCodapRplFail: 0,
+      timeDiFirstReq: null,
+      timeDiLastReq: null,
+      timeCodapFirstReq: null,
+      timeCodapLastReq: null
+    },
+
+    /**
+     * A list of subscribers to messages from CODAP
+     * @param {[{actionSpec: {RegExp}, resourceSpec: {RegExp}, handler: {function}}]}
+     */
+    notificationSubscribers: [],
+
     config: null,
+
     /**
      * Initialize connection.
      *
@@ -58,22 +92,16 @@ $(function () {
 
       this.config = config;
       this.connection = new iframePhone.IframePhoneRpcEndpoint(
-          function (codapRequest, callback) {
-            this.connectionState = 'active';
-            if (this.requestHandler) {
-              callback(this.requestHandler.handleCODAPRequest(codapRequest));
-            } else {
-              callback({success: true});
-            }
-          }.bind(this), "data-interactive", window.parent
-      );
+        this.notificationHandler.bind(this), "data-interactive", window.parent);
       this.sendRequest(getFrameReq, getFrameRespHandler);
     },
 
-    setRequestHandler: function (handler) {
-      this.requestHandler = handler;
+    getStats: function () {
+      return this.stats;
     },
+
     destroy: function () {},
+
     sendRequest: function (message, callback) {
       switch (this.connectionState) {
         case 'closed': // log the message and ignore
@@ -83,6 +111,12 @@ $(function () {
           console.warn('sendRequest on not yet initialized CODAP connection: ' + JSON.stringify(message));
         default:
           if (this.connection) {
+            this.stats.countDiReq++;
+            this.stats.timeDiLastReq = new Date();
+            if (!this.stats.timeDiFirstReq) {
+              this.stats.timeCodapFirstReq = this.stats.timeDiLastReq;
+            }
+
             this.connection.call(message, function (response) {
               this.handleResponse(message, response, callback)
             }.bind(this));
@@ -91,15 +125,66 @@ $(function () {
           }
       }
     },
+
     handleResponse: function (request, response, callback) {
       if (response === undefined) {
         console.warn('handleResponse: CODAP request timed out');
+        this.stats.countDiRplTimeout++;
       } else {
         this.connectionState = 'active';
+        response.success? this.stats.countDiRplSuccess++: this.stats.countDiRplFail++;
       }
       if (callback) {
         callback(request, response);
       }
+    },
+
+    notificationHandler: function (request, callback) {
+      var action = request.action;
+      var resource = request.resource;
+      var stats = this.stats;
+
+      this.connectionState = 'active';
+      stats.countCodapReq++;
+      stats.timeCodapLastReq = new Date();
+      if (!stats.timeCodapFirstReq) {
+        stats.timeCodapFirstReq = stats.timeCodapLastReq;
+      }
+
+      var handled = this.notificationSubscribers.some(function (subscription) {
+        if (subscription.actionSpec.test(action)
+            && subscription.resourceSpec.test(resource)) {
+          var rtn = subscription.handler(request);
+          if (rtn && rtn.success) {
+            stats.countCodapRplSuccess++;
+          } else {
+            stats.countCodapRplFail++;
+          }
+          callback(rtn);
+          return true;
+        }
+        return false;
+      });
+      if (handled) {
+        stats.countCodapUnhandledReq++;
+        callback({success: true});
+      }
+    },
+
+    /**
+     * Registers a handler to respond to CODAP-initiated requests and
+     * notifications.
+     *
+     * @param actionSpec {regex} A regular expression to qualify actions.
+     * @param resourceSpec {regex} A regular expression to qualify resources.
+     * @param handler
+     */
+    on: function (actionSpec, resourceSpec, handler) {
+      this.notificationSubscribers.push({
+        actionSpec: RegExp(actionSpec),
+        resourceSpec: RegExp(resourceSpec),
+        handler: handler
+      });
     }
   });
 
@@ -156,13 +241,18 @@ $(function () {
     function handleResponse(req, resp) {
       var values = resp && resp.values;
       var $root = $('#dataset-selection');
+      var dataSetName = $root.find('select').val();
       var $label = $('<label>').text('Data Set: ');
       var $selEl = $('<select>');
       if (values) {
         $root.empty();
         values.forEach(function (item, ix) {
           var $option = $('<option>').prop('value', item.name).text(item.title);
-          if (ix === 0) {
+          if (dataSetName) {
+            if (item.name === dataSetName) {
+              $option.prop('selected', true);
+            }
+          } else if (ix === 0) {
             $option.prop('selected', true);
           }
           $option.appendTo($selEl);
@@ -171,7 +261,9 @@ $(function () {
         $selEl.appendTo($label);
         $label.appendTo($root)
         $selEl.on('change', handleDataSetSelection);
-        $selEl.change();
+        if (!dataSetName) {
+          $selEl.change();
+        }
       }
     }
 
@@ -523,6 +615,7 @@ $(function () {
     makeNewRow($table, extent);
 
   }
+
   function init() {
     codapInterface.init({
       name: 'TidyData',
@@ -531,6 +624,11 @@ $(function () {
       dimensions: {width: 600, height: 500},
       preventBringToFront: false
     });
+
+    codapInterface.on(/notify/, /documentChangeNotice/, function (request) {
+        makeDataSetSelector();
+        return {success: true};
+      });
 
     makeDataSetSelector();
 
