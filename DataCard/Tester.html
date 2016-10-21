@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ata Interactive API Tester</title>
+  <title>Data Interactive API Tester</title>
   <link rel="stylesheet" media="screen,projection" type="text/css" href="DataCard.css"/>
   <style>
     body {
@@ -53,7 +53,7 @@
       var testCases = [
         {
           "comment": "Set interactive frame ......",
-          "message": {
+          "message": [{
             "action": "update",
             "resource": "interactiveFrame",
             "values": {
@@ -65,17 +65,13 @@
                 "height": 500
               }
             }
-          },
-          "expect": {
-            "success": true
-          }
-        },
-        {
-          "message": {
+          },{
             "action": "get",
             "resource": "interactiveFrame"
-          },
-          "expect": {
+          }],
+          "expect": [{
+            "success": true
+          },{
             "success": true,
             "values": {
               "title": "DI-API Test",
@@ -85,9 +81,8 @@
                 "height": 500
               }
             }
-          }
+          }]
         },
-
         {
           "comment": "Create a data Context .......",
           "message": {
