@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Interactive API Tester</title>
+  <style type="text/css">
+    @import url("style.css");
+  </style>
+  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script src="../Common/js/jquery.js"></script>
+  <script type="text/javascript">
+    $(function () {
+
+      var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+      }, "data-interactive", window.parent);
+      var seq = 0;
+      var successes = 0;
+
+      function send() {
+        try {
+          var message = $('#message').val();
+          if (!message) { return; }
+          var parsedMessages = JSON.parse(message);
+
+          if (!Array.isArray(parsedMessages)) {
+            parsedMessages = [parsedMessages];
+          }
+
+          var compareObj = function(obj1, obj2) {
+            var ret = {},rett;
+            for(var i in obj1) {
+              rett = {};
+              if (typeof obj1[i] === 'object'){
+                rett = compareObj (obj1[i], obj2[i]) ;
+                if (!$.isEmptyObject(rett) ){
+                  ret[i]= rett
+                }
+              }else{
+                if(!obj2 || !obj2.hasOwnProperty(i) || obj1[i] !== obj2[i]) {
+                  ret[i] = obj1[i];
+                }
+              }
+            }
+            return ret;
+          };
+
+          function logComment(id, comment) {
+            if (comment) {
+              $('<div>').prop('id', 'r' + id).addClass('di-comment').text('#' + id +
+                      ' Comment: ' + comment)
+                  .appendTo('#receivedMessage');
+            }
+          }
+
+          function sendOneMessage(msgNum) {
+            if (msgNum >= parsedMessages.length) { return; }
+            var id = ++seq;
+            var parsedMessage = parsedMessages[msgNum].message;
+            var expected = parsedMessages[msgNum].expect;
+            var comment = parsedMessages[msgNum].comment;
+            console.log('Message: ' + JSON.stringify(parsedMessage));
+            logComment(id, comment);
+            $('<div>')
+                .prop('id', 'r' + id)
+                .addClass('di-req')
+                .text('#' + id + ' Request: ' + JSON.stringify(parsedMessage))
+                .appendTo('#receivedMessage');
+            if (expected) {
+              $('<div>')
+                  .addClass('di-expect')
+                  .text('#' + id + ' Expect: ' + JSON.stringify(expected))
+                  .appendTo('#receivedMessage');
+            }
+            codapPhone.call(parsedMessage, function (result) {
+              var failClass = '';
+              var diff;
+              if (result && expected) {
+                diff = compareObj(expected, result);
+                if ($.isEmptyObject(diff)) {
+                  successes++;
+                } else {
+                  failClass = 'fail';
+                }
+              } else if (result && result.success) {
+                successes++;
+              } else {
+                failClass = 'fail'
+              }
+              var respEl = $('<div>')
+                  .addClass('di-resp').addClass(failClass)
+                  .text('#' + id + ' Response: ' + JSON.stringify(result))
+                  .appendTo('#receivedMessage');
+//              $('#r' + id).append(respEl);
+              $('#success').text(successes);
+              console.log('Reply: ' + JSON.stringify(result));
+              sendOneMessage(msgNum+1);
+            });
+            $('#sentMessages').text(seq);
+          }
+          sendOneMessage(0);
+        } catch (e) {
+          $('#receivedMessage').prepend($('<div>').text('' + (++seq) + ': ' + e));
+        }
+      }
+
+
+      function loadSelected() {
+        function fillDialog(data) {
+          console.log('in callback')
+          $('#message').text(JSON.stringify(data, null,"  "));
+        }
+        var url = $('#test-scripts').val();
+        console.log('url='+url);
+        $.get(url, fillDialog);
+      }
+//      $('#message').text(JSON.stringify(testCases, null, '  '));
+
+      $('#test-scripts').on('change', loadSelected);
+      $('#sendMessage').on('click', send);
+      $.get('./TestScripts.json', function (data) {
+        var $selectEl = $("#test-scripts");
+        data.forEach(function (option) {
+          $('<option>').attr('value', option.url).text(option.title).appendTo($selectEl);
+        })
+        loadSelected();
+      })
+    });
+  </script>
+</head>
+<body>
+<header>
+  <h1>Data Interactive API Tester</h1>
+</header>
+<article>
+  <section id="ctl">
+    <!--<select id="test-scripts" title="Select a test script">-->
+    <!--</select>-->
+<table>
+  <tr><td>Set Interactive Frame</td><td><button>run</button></td><td>&nbsp;</td></tr>
+</table>
+  </section>
+  <section id="main">
+    <label>Requests:<textarea id="message" rows="12" cols="80"
+                              title="Enter a Data Interactive request message as parse-able JSON, or an array of messages."
+    ></textarea></label>
+    <div>
+      <button id="sendMessage">run</button>
+      <button id="clear-context">Clear Context</button>
+    </div>
+    <div id="receivedMessage"></div>
+    <div>Sent: <span id="sentMessages">0</span> Success: <span id="success">0</span></div>
+  </section>
+</article>
+</body>
+</html>

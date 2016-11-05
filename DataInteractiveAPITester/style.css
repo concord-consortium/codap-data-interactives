@@ -1,0 +1,64 @@
+body {
+  font-family: sans-serif;
+  font-size: small;
+  background-color: #fffaf0;
+  color: rgb(110,109,95);
+}
+
+section {
+  padding: 0.5em;
+}
+
+label textarea {
+  display:block;
+}
+
+label {
+  font-size: smaller;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+button {
+  margin: 0.25em 0.5em;
+}
+
+#ctl {
+  height: 12em;
+  overflow-y: scroll;
+  background-color: white;
+  border: thin solid grey;
+}
+.di-req {
+  background-color: rgba(0,255,0,0.1);
+  /*text-overflow: ellipsis;*/
+}
+
+.di-resp {
+  background-color: rgba(0,0,255,0.1);
+  /*text-overflow: ellipsis;*/
+}
+
+.di-resp.fail { /* jshint ignore:line */
+  color: red;
+}
+
+.di-comment {
+
+}
+
+.di-expect {
+  background-color: rgba(128,128,128,0.1);
+}
+
+.di-req,.di-resp,.di-comment,.di-expect {
+  padding: 2px 0 2px;
+}
+
+#receivedMessage, label textarea {
+  height: 12em;
+  overflow-y: scroll;
+  border: thin solid darkslategrey;
+  background-color: white;
+  /*white-space: nowrap;*/
+}

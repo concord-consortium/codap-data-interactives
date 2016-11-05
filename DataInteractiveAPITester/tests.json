@@ -1,0 +1,338 @@
+[
+  {
+    "name": "Update Interactive Frame",
+    "repeatable": true,
+    "message": {
+      "action": "update",
+      "resource": "interactiveFrame",
+      "values": {
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        }
+      }
+    }
+  },
+  {
+    "name": "Get Interactive Frame",
+    "repeatable": true,
+    "message": {
+      "action": "get",
+      "resource": "interactiveFrame"
+    }
+  },
+  {
+    "name": "Create Data Context",
+    "message": [
+      {
+        "action": "create",
+        "resource": "dataContext",
+        "values": {
+          "name": "DataContext1",
+          "title": "My Data Context",
+          "description": "Toons"
+        }
+      },
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection",
+        "values": {
+          "name": "Toons",
+          "title": "Poeple"
+        }
+      },
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection[Toons].attribute",
+        "values": [
+          {
+            "name": "Name",
+            "type": "categorical"
+          },
+          {
+            "name": "Species",
+            "type": "categorical"
+          },
+          {
+            "name": "Gender",
+            "type": "categorical"
+          },
+          {
+            "name": "Studio",
+            "type": "categorical"
+          },
+          {
+            "name": "Release_Date",
+            "type": "date"
+          },
+          {
+            "name": "Movie"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Update Data Context",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1]",
+      "values": {
+        "title": "Data, Data, Data"
+      }
+    }
+  },
+  {
+    "name": "Get Data Context List",
+    "message": {
+      "action": "get",
+      "resource": "dataContextList"
+    }
+  },
+  {
+    "name": "Get Data Context",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1]"
+    }
+  },
+  {
+    "name": "Update Collection",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Toons]",
+      "values": {
+        "title": "People"
+      }
+    }
+  },
+  {
+    "name": "Get Collection List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collectionList"
+    }
+  },
+  {
+    "name": "Get Collection",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons]"
+    }
+  },
+  {
+    "name": "Update Attribute",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]",
+      "values": {
+        "title": "Name"
+      }
+    }
+  },
+  {
+    "name": "Get Attribute",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
+    }
+  },
+  {
+    "name": "Get Attribute List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].attributeList"
+    }
+  },
+  {
+    "name": "Create Cases",
+    "message": [
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection[Toons].case",
+        "values": {
+          "values": {
+            "name": "Mickey",
+            "age": 88,
+            "height": 40
+          }
+        }
+      },
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection[Toons].case",
+        "values": [
+          {
+            "values": {
+              "name": "Minnie",
+              "age": 88,
+              "height": 38
+            }
+          },
+          {
+            "values": {
+              "name": "Donald",
+              "age": 82,
+              "height": 51
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Create Items",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].item",
+      "values": [
+        {
+          "Name": "Daffy Duck",
+          "Species": "Duck",
+          "Gender": "Male",
+          "Studio": "Warner Bros.",
+          "Release_Date": "1937",
+          "Movie": "Porky's Duck Hunt"
+        },
+        {
+          "Name": "Elmer Fudd",
+          "Species": "Human",
+          "Gender": "Male",
+          "Studio": "Warner Bros.",
+          "Release_Date": "1937",
+          "Movie": "Egghead Rides Again"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Get Case Count",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseCount"
+    }
+  },
+  {
+    "name": "Get Case By Index",
+    "message": [{
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[0]"
+    },
+      {
+        "action": "get",
+        "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[1]"
+      }]
+  },
+  {
+    "name": "Create Calculator",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "calculator"
+      }
+    }
+  },
+  {
+    "name": "Create Map",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "map"
+      }
+    }
+  },
+  {
+    "name": "Create Slider",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "slider"
+      }
+    }
+  },
+  {
+    "name": "Create Text",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "text"
+      }
+    }
+  },
+  {
+    "name": "Create Graph",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "DataContext1",
+        "xAttributeName": "height",
+        "yAttributeName": "age"
+      }
+    }
+  },
+  {
+    "name": "Create Case Tables",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseTable"
+      }
+    }
+  },
+  {
+    "name": "Create Web View",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "webView",
+        "title": "Concord",
+        "url": "http://www.concord.org"
+      }
+    }
+  },
+  {
+    "name": "Create Selection List",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        9
+      ]
+    }
+  },
+  {
+    "name": "Update Selection List",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        10
+      ]
+    }
+  },
+  {
+    "name": "Get Selection List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].selectionList"
+    }
+  }
+]
