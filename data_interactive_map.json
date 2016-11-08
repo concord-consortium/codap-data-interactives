@@ -1,0 +1,246 @@
+{ "data_interactives": [
+    {
+      "title": "Ocean Tracks Selector",
+      "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project. Note that this interactive will not load in SSL.",
+      "width": 550,
+      "height": 500,
+      "path": "https://oceantracks.org/map/trackmenu_1.html",
+      "visible":true,
+      "categories":["Partners"]
+    },
+    {
+      "title": "SRRI Ship Odyssey Data Game",
+      "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "width": 290,
+      "height": 304,
+      "path": "/ShipOdyssey/index.html",
+      "visible":true,
+      "categories":["Partners", "Data Games"]
+    },
+    {
+      "title": "SRRI Chainsaw Data Game",
+      "description": "Fire up a chainsaw and see how many logs you can cut to the right length. <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "width": 290,
+      "height": 304,
+      "path": "/Chainsaw/index.html",
+      "visible":true,
+      "categories":["Partners", "Data Games"]
+    },
+    {
+      "title": "SRRI Inference Data Game",
+      "description": "Another <a target=\"_blank\" href=\"http://www.srri.umass.edu/\">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.",
+      "width": 290,
+      "height": 304,
+      "path": "/Inference/index.html",
+      "visible":true,
+      "categories":["Partners", "Data Games"]
+    },
+    {
+      "title": "Cart Weight",
+      "description": "Win by predicting the total weight of a cart stacked with bricks.",
+      "width": 290,
+      "height": 304,
+      "path": "/CartWeight/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Ramp Game",
+      "description": "Win by landing on the target.",
+      "width": 500,
+      "height": 734,
+      "path": "/RampGame/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Floyd's of Fargo",
+      "description": "Make big money running your own car insurance business!",
+      "width": 570,
+      "height": 480,
+      "path": "/FloydsFargo/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Lunar Lander",
+      "description": "You and your friends land spacecrafts, then rate your landings.",
+      "width": 357,
+      "height": 541,
+      "path": "/LunarLander/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Markov",
+      "description": "Play Rock, Paper, Scissor with the evil Dr. Markov to save the dog.",
+      "width": 550,
+      "height": 315,
+      "path": "/Markov/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Proximity",
+      "description": "Get high scores by shooting a ball to land as close to a target as possible.",
+      "width": 463,
+      "height": 344,
+      "path": "/Proximity/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Shuffleboard",
+      "description": "Live on the edge-Land a disk on each pad without sliding off to score big!",
+      "width": 520,
+      "height": 350,
+      "path": "/Shuffleboard/index.html",
+      "visible":true,
+      "categories":["Data Games"]
+    },
+    {
+      "title": "Guess My Number",
+      "description": "As the title says.",
+      "width": 400,
+      "height": 250,
+      "path": "/GuessMyNumber/GuessMyNumber.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Random Numbers",
+      "description": "An extremely simple interactive. It generates random numbers between 1 and 100.",
+      "width": 300,
+      "height": 150,
+      "path": "/RandomNumbers/RandomNumbers.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Fast Plants",
+      "description": "Simulate growth of fast plants for use in cognitive interviews.",
+      "width": 400,
+      "height": 250,
+      "path": "/FastPlants/FastPlants.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Performance Harness",
+      "description": "A way to generate data while testing the performance of CODAP.",
+      "width": 400,
+      "height": 250,
+      "path": "/PerformanceHarness/PerformanceHarness.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Sampler",
+      "description": "A way to generate a sample data set.",
+      "width": 400,
+      "height": 300,
+      "path": "/Sampler/Sampler.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Importer",
+      "description": "Interactive for importing JSON, comma delimited or tab delimited files into CODAP",
+      "width": 750,
+      "height": 450,
+      "path": "/Importer/Importer.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "TerraPop Interactive",
+      "description": "Interactive for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
+      "width": 550,
+      "height": 500,
+      "path": "/TerraPopInteractive/TPI.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "GeoJSON Importer",
+      "description": "Interactive for importing GeoJSON",
+      "width": 450,
+      "height": 200,
+      "path": "/GeoJSONImporter/GeoJSONImporter.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Wolf-Sheep Predation",
+      "description": "<a target=\"blank\" href=\"https://ccl.northwestern.edu/netlogo/\">Netlogo</a> model that explores the stability of predator-prey ecosystems.",
+      "width": 550,
+      "height": 500,
+      "path": "/WolfSheep/index.html",
+      "visible":true,
+      "categories":["Partners"]
+    },
+    {
+      "title": "Ants",
+      "description": "<a target=\"blank\" href=\"https://ccl.northwestern.edu/netlogo/\">Netlogo</a> model of an ant colony seeking nearby food.",
+      "width": 550,
+      "height": 500,
+      "path": "/Ants/ants.html",
+      "visible":true,
+      "categories":["Partners"]
+    },
+    {
+      "title": "Virus Growth",
+      "description": "<a target=\"blank\" href=\"https://ccl.northwestern.edu/netlogo/\">Netlogo</a> model that explores the effect of infectiousness, chance of recovery, and duration of the cycle on infection in a population.",
+      "width": 780,
+      "height": 620,
+      "path": "/Virus/Virus.html",
+      "visible":true,
+      "categories":["Partners"]
+    },
+    {
+      "title": "Data Card",
+      "description": "Data Card permits the user to browse and modify a data set one case at a time.",
+      "width": 780,
+      "height": 620,
+      "path": "/DataCard/DataCard.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Track Generator",
+      "description": "Simulate OceanTracks data with a simple random walk.",
+      "width": 400,
+      "height": 300,
+      "path": "/Movement/Movement.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Pivotal Tracker Importer",
+      "description": "Import stories and activities from any project in Pivotal Tracker.",
+      "width": 400,
+      "height": 250,
+      "path": "/PivotalImporter/PTImporter.html",
+      "visible":true,
+      "categories":["Support"]
+    },
+    {
+      "title": "Spring Mass Model",
+      "description": "hysics model that simulate a mass suspended on a spring created by the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace</a> project.",
+      "width": 600,
+      "height": 400,
+      "path": "https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json",
+      "visible":true,
+      "categories":["Partners"]
+    },
+    {
+      "title": "DropHTMLTable",
+      "description": "A basic screen scraper. Drop the contents of an HTML page. The interactive will find the tables to transfer to CODAP.",
+      "width": 600,
+      "height": 400,
+      "path": "/drop-html-table.html",
+      "visible":true,
+      "categories":["Support"]
+    }
+  ]
+}
