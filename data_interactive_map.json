@@ -73,7 +73,7 @@
     },
     {
       "title": "Markov",
-      "description": "Play Rock, Paper, Scissor with the evil Dr. Markov to save the dog.",
+      "description": "Play Rock, Paper, Scissors with the evil Dr. Markov to save the dog.",
       "width": 550,
       "height": 315,
       "path": "/Markov/index.html",
@@ -105,25 +105,25 @@
       "height": 250,
       "path": "/GuessMyNumber/GuessMyNumber.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
-      "title": "Random Numbers",
+      "title": "Random Number Generator",
       "description": "An extremely simple interactive. It generates random numbers between 1 and 100.",
       "width": 300,
       "height": 150,
       "path": "/RandomNumbers/RandomNumbers.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
-      "title": "Fast Plants",
+      "title": "Fast Plants Simulator",
       "description": "Simulate growth of fast plants for use in cognitive interviews.",
       "width": 400,
       "height": 250,
       "path": "/FastPlants/FastPlants.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Performance Harness",
@@ -132,7 +132,7 @@
       "height": 250,
       "path": "/PerformanceHarness/PerformanceHarness.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Sampler",
@@ -141,7 +141,7 @@
       "height": 300,
       "path": "/Sampler/Sampler.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Importer",
@@ -150,7 +150,7 @@
       "height": 450,
       "path": "/Importer/Importer.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "TerraPop Interactive",
@@ -159,7 +159,7 @@
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "GeoJSON Importer",
@@ -168,7 +168,7 @@
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Wolf-Sheep Predation",
@@ -204,7 +204,7 @@
       "height": 620,
       "path": "/DataCard/DataCard.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Track Generator",
@@ -213,7 +213,7 @@
       "height": 300,
       "path": "/Movement/Movement.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Pivotal Tracker Importer",
@@ -222,11 +222,11 @@
       "height": 250,
       "path": "/PivotalImporter/PTImporter.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     },
     {
       "title": "Spring Mass Model",
-      "description": "hysics model that simulate a mass suspended on a spring created by the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace</a> project.",
+      "description": "Physics model that simulate a mass suspended on a spring created by the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace</a> project.",
       "width": 600,
       "height": 400,
       "path": "https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json",
@@ -240,7 +240,7 @@
       "height": 400,
       "path": "/drop-html-table.html",
       "visible":true,
-      "categories":["Support"]
+      "categories":["Utilities"]
     }
   ]
 }
