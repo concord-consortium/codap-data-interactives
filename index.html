@@ -1,308 +1,83 @@
 <?DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href ="./Common/css/site.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="./listing.js" language="javascript"></script>
     <title>Data Interactives</title>
-    <style type="text/css">
-        body {
-            font-family: 'Lato', georgia, times, "times new roman", serif;
-            color: #555;
-        }
-
-        #header {
-            background: #98D1DD;
-            background: -moz-linear-gradient(top,  #0797A8 1%, #98D1DD 100%);
-            background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#0797A8), color-stop(100%,#98D1DD));
-            background: -webkit-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
-            background: -o-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
-            background: -ms-linear-gradient(top,  #0797A8 1%,#98D1DD 100%);
-            background: linear-gradient(to bottom,  #0797A8 1%,#98D1DD 100%);
-            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0797A8', endColorstr='#98D1DD',GradientType=0 );
-            color: white;
-            padding: 0.5em 1em;
-            font-size: 1em;
-            font-weight: 600;
-        }
-
-        #credits {
-            font-size: 0.8em;
-            color: #777;
-        }
-
-        #credits p {
-            padding-left: 2em;
-            margin-bottom: -0.5em;
-        }
-
-        .interactive-collection div {
-            background-color:#EEE;
-            border-radius: 10px;
-            border: #CCC 1px solid;
-            width: 1030px;
-            margin: 7px;
-            padding-left:10px;
-        }
-
-        .interactive-title {
-            font-weight: bold;
-            font-size: 18px;
-            -webkit-margin-before:.1em;
-            -webkit-margin-after:.1em;
-            width:248px;
-            max-width:248px;
-        }
-
-        .interactive-description {
-            -webkit-margin-before:.1em;
-            -webkit-margin-after:.1em;
-            width:620px;
-        }
-
-        .interactive-table {
-            width:100%;
-        }
-
-        .interactive-table tr:nth-child(odd) {
-            color:#000000;
-            background-color:#D6EDF1;
-        }
-
-        ul {
-            list-style-type: none;
-        }
-
-        a {
-            color: #3a878b;
-            font-weight: 600;
-            text-decoration: none;
-        }
-        a:hover {
-            color: #da5936;
-        }
-    </style>
-    <script type="text/javascript">
-//        var CODAP_URL = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html';
-        var map = {
-            ShipOdyssey: {
-              name: 'ShipOdyssey',
-              dimensions: '{"width":290,"height":304}',
-              path: 'ShipOdyssey/index.html'
-            },
-            Chainsaw: {
-                name: 'Chainsaw',
-                dimensions: '{"width":290,"height":304}',
-                path: 'Chainsaw/index.html'
-            },
-            Inference: {
-                name: 'Inference',
-                dimensions: '{"width":290,"height":304}',
-                path: 'Inference/index.html'
-            },
-            CartWeight: {
-                name: 'Cart Weight',
-                dimensions: '{"width":290,"height":304}',
-                path: 'CartWeight/index.html'
-            },
-            RampGame: {
-                name: 'Ramp Game',
-                dimensions: '{"width":500,"height":734}',
-                path: 'RampGame/index.html'
-            },
-            FloydsFargo: {name: 'Floyd\'s of Fargo',
-                dimensions: '{"width":570,"height":480}',
-                path: 'FloydsFargo/index.html'
-            },
-            LunarLander: {
-                name: 'Lunar Lander',
-                dimensions: '{"width":357,"height":541}',
-                path: 'LunarLander/index.html'
-            },
-            Markov: {
-                name: 'Markov',
-                dimensions: '{"width":550,"height":315}',
-                path: 'Markov/index.html'
-            },
-            Proximity: {
-                name: 'Proximity',
-                dimensions: '{"width":463,"height":344}',
-                path: 'Proximity/index.html'
-            },
-            Shuffleboard: {
-                name: 'Shuffleboard',
-                dimensions: '{"width":520,"height":350}',
-                path: 'Shuffleboard/index.html'
-            },
-            GuessMyNumber: {
-                name: 'Guess My Number',
-                dimensions: '{"width":400,"height":250}',
-                path: 'GuessMyNumber/GuessMyNumber.html'
-            },
-            RandomNumbers: {
-                name: 'Random Numbers',
-                dimensions: '{"width":300,"height":150}',
-                path: 'RandomNumbers/RandomNumbers.html'
-            },
-            FastPlants: {
-                name: 'Fast Plants',
-                dimensions: '{"width":400,"height":250}',
-                path: 'FastPlants/FastPlants.html'
-            },
-            PerformanceHarness: {
-                name: 'Performance Harness',
-                dimensions: '{"width":400,"height":250}',
-                path: 'PerformanceHarness/PerformanceHarness.html'
-            },
-            Sampler: {
-                name: 'Sampler',
-                dimensions: '{"width":400,"height":300}',
-                path: 'Sampler/Sampler.html'
-            },
-            Importer: {
-                name: 'Importer',
-                dimensions: '{"width":750,"height":450}',
-                path: 'Importer/Importer.html'
-            },
-            TerraPop: {
-                name: 'TerraPop Interactive',
-                dimensions: '{"width":550,"height":500}',
-                path: 'TerraPopInteractive/TPI.html'
-            },
-            GeoJSONImporter: {
-                name: 'GeoJSON Importer',
-                dimensions: '{"width":450,"height":200}',
-                path: 'GeoJSONImporter/GeoJSONImporter.html'
-            },
-            WolfSheep: {
-                name: 'Wolf-Sheep Predation',
-                dimensions: '{"width":550,"height":500}',
-                path: 'WolfSheep/index.html'
-            },
-            OceanTracks: {
-                name: 'Ocean Tracks Selector',
-                dimensions: '{"width":550,"height":500}',
-                url: 'https://oceantracks.org/map/trackmenu_1.html'
-            },
-            Ants: {
-                name: 'Ants',
-                dimensions: '{"width":550,"height":500}',
-                path: 'Ants/ants.html'
-            },
-            Virus: {
-                name: 'Virus NetLogo Simulation',
-                dimensions: '{"width":780,"height":620}',
-                path: 'Virus/Virus.html'
-            },
-            DataCard: {
-                name: 'Data Card',
-                dimensions: '{"width":780,"height":620}',
-                path: 'DataCard/DataCard.html'
-            },
-            TrackGenerator: {
-                name: 'Track Generator',
-                dimensions: '{"width":400,"height":300}',
-                path: 'Movement/Movement.html'
-            },
-            OceanTracks: {
-                name: 'Ocean Tracks Selector',
-                dimensions: '{"width":550,"height":500}',
-                url: 'https://oceantracks.org/map/trackmenu_1.html'
-            },
-            PhET: {
-                name: 'PhET Simulation',
-                dimensions: '{"width":550,"height":500}',
-                url: 'https://phetsims.github.io/together/examples/codap-hierarchy.html'
-            },
-            PivotalImporter: {
-                name: 'Pivotal Tracker Importer',
-                dimensions: '{"width":400,"height":250}',
-                path: 'PivotalImporter/PTImporter.html'
-            },
-            SpringMass: {
-                name: 'Spring Mass',
-                dimensions: '{"width":600,"height":400}',
-                url: 'https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json'
-            },
-            DropHTMLTable: {
-                name: 'DropHTMLTable',
-                dimensions: '{"width":600,"height":400}',
-                path: 'drop-html-table.html'
-            }
-        };
-        function launch(url) {
-            window.open( url, '_blank');
-        }
-        function invokeDataInteractive(name) {
-            var codapURL = document.getElementById('codap-url').value,
-                    docserverURL = document.getElementById('doc-server-url').value,
-                    oldLocation = location.href,
-                    newLoc = oldLocation.replace(/index.html.*/, ''),
-                    path = map[name].path,
-                    newLocSSL = "",
-                    url = "",
-                    moreGames="";
-
-            //if codapURL is SSL, then newLoc should be SSL and url should use newLocSSL. Because codapURL will already be https if github.io/codap-data-interactive is SSL, not need to check if location.href is SSL. This check is only if the user changes the codapURL to SSL manually.  Also changes the docserver URL to SSL
-            if (codapURL.indexOf("https") > -1) {
-                //check if location.href is already https. If it not then replace http with https, else do nothing.
-                if (newLoc.indexOf("https") > -1) {
-                    newLocSSL=newLoc;
-                } else {
-                    newLocSSL = newLoc.replace("http", "https");
-                }
-                url = map[name].url || newLocSSL + '/' + path;
-                if (docserverURL) {
-                    if (docserverURL.indexOf("https") === -1){
-                       oldDocServerURL = docserverURL;
-                       docserverURL = oldDocServerURL.replace("http","https");
-                    }
-                }
-            } else {
-                url = map[name].url || newLoc + '/' + path;
-            }
-            moreGames= 'moreGames=[{"name":"' + map[name].name +
-                        '","dimensions":' + map[name].dimensions +
-                        ',"url":"' + url + '"}]';
-        /*    moreGames= 'moreGames=[{"name":"' + map[name].name +
-                    '","dimensions":' + map[name].dimensions +
-                    ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*/
-
-            if (docserverURL) {
-                //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
-                launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
-            } else {
-                launch(codapURL + '?di=' + url) //encodeURIComponent(moreGames));
-            }
-        }
-    </script>
 </head>
 <body>
-<div id="header">
-    <h1>Data Interactives</h1>
-</div>
+<header id="header">
+    <div>
+        <img src="http://codap.concord.org/_assets/img/codap-logo@2x.png" alt="Common Online Data Analysis Program">
+        <div id="cc">
+            a product of
+            <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, math, and engineering"><img src="http://codap.concord.org/_assets/img/cc-logo.png" alt="The Concord Consortium">
+            </a>
+        </div>
+    </div>
+</header>
+<div id="home-content">
+    <h1> CODAP Data Interactives</h1>
+    <p>This site has a list of interactives that can be used with CODAP.</p>
+    <p><b>Instructions:</b> Click on the title to open a CODAP document with the interactive, or drag the "Embeddable Link" into CODAP.</p>
+    <div id = 'top-nav-bar'>
+        <nav class='nav-bar'></nav>
+    </div>
 
+    <div id = "listing_container"></div>
+
+    <div class = "form_container"></div>
+    <label>CODAP:
+        <input id="codap-url" size="75" type="text" value="" />
+    </label>
+    <br>
+    <label>Document Server:</label>
+    <input id="doc-server-url" size="75" type="text" value="" />
+    <script type="text/javascript">
+        var pageLoc = location.href;
+        if (pageLoc.indexOf("https") > -1) {
+            $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+            // $("#doc-server-url").val("https://document-store.concord.org");
+        } else {
+            $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+            //  $("#doc-server-url").val("http://document-store.concord.org");
+        }
+    </script>
+</div>
 <div id="credits">
     <!--<p>Data Interactives repository: <a href="https://github.com/backspaces/agentscript">github.com/backspaces/agentscript</a></p>-->
     <p>Concord Consortium's CODAP data interactives repository: <a target="blank" href="https://github.com/concord-consortium/codap-data-interactives">github.com/concord-consortium/codap-data-interactives</a></p>
     <p>Concord Consortium's CODAP project repository: <a target="blank" href="https://github.com/concord-consortium/codap">github.com/concord-consortium/codap</a></p>
     <p>To find out more about the CODAP project: <a target="blank" href="http://concord.org/projects/codap">About CODAP</a></p>
 </div>
+
+<footer>
+    <p>© Copyright 2016 <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, amth, and engineering">The Concord Consortium</a>. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
+
+<!--
+
 <br>
 <p>This site has a list of interactives that can be used with CODAP.</p>
 <p> You can click on <span style="font-weight:bold">Launch</span> to launch the interactive in CODAP.
-<br>You can also drag <span style="font-weight:bold">Link</span> into an open CODAP document to add the interactive into the document.</p>
+    <br>You can also drag <span style="font-weight:bold">Link</span> into an open CODAP document to add the interactive into the document.</p>
 <p>
     <label>CODAP:</label><input id="codap-url" size="75" type="text" value=""/>
     <br>
     <label>Document Server: </label><input id="doc-server-url" size="75" type="text" value=""/>
     <script type="text/javascript">
-                var pageLoc = location.href;
-                if (pageLoc.indexOf("https") > -1) {
-                    $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                   // $("#doc-server-url").val("https://document-store.concord.org");
-                } else {
-                    $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
-                  //  $("#doc-server-url").val("http://document-store.concord.org");
-                }
+        var pageLoc = location.href;
+        if (pageLoc.indexOf("https") > -1) {
+            $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+            // $("#doc-server-url").val("https://document-store.concord.org");
+        } else {
+            $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+            //  $("#doc-server-url").val("http://document-store.concord.org");
+        }
     </script>
 </p>
 
@@ -332,54 +107,54 @@
                 <td><a target="_blank" href="./Chainsaw/index.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">SRRI Inference Data Game</td>
-                <td class="interactive-description">Another <a target="_blank" href="http://www.srri.umass.edu/">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.</td>
+                <td class="interactive-description">Another <a target="_blank" href="http://www.srri.umass.edu/">SRRI</a> game. See if you can beat a conservative statistician at his own game &#45;&#45; making good guesses from samples.</td>
                 <td><a href="javascript:invokeDataInteractive('Inference')">Launch</a></td>
                 <td><a target="_blank" href="./Inference/index.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Spring Mass Model</td>
-                    <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="https://concord.org/projects/inquiryspace">InquirySpace</a>
-                        project.</td>
-                    <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
-                    <td><a target="_blank" href='https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'>Link</a></td>
-                </tr>
+                <td class="interactive-description">Physics model that simulate a mass suspended on a spring created by the <a target="_blank" href="https://concord.org/projects/inquiryspace">InquirySpace</a>
+                    project.</td>
+                <td><a href="javascript:invokeDataInteractive('SpringMass')">Launch</a></td>
+                <td><a target="_blank" href='https://lab.concord.org/embeddable.html?codap=true#interactives/inquiry-space/2-spring.json'>Link</a></td>
+            </tr>
             <tr><td class = "interactive-title">TerraPop Interactive</td>
                 <td class="interactive-description">Interactive for importing
-                  <a target="_blank" href="http://www.terrapop.org/">TerraPop</a>
-                  data sets.</td>
+                    <a target="_blank" href="http://www.terrapop.org/">TerraPop</a>
+                    data sets.</td>
                 <td><a href="javascript:invokeDataInteractive('TerraPop')">Launch</a></td>
                 <td><a target="_blank" href="./TerraPopInteractive/TPI.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Ants</td>
                 <td class="interactive-description">
-                  <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
-                  model of an ant colony seeking nearby food.</td>
+                    <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
+                    model of an ant colony seeking nearby food.</td>
                 <td><a href="javascript:invokeDataInteractive('Ants')">Launch</a></td>
                 <td><a target="blank" href="./Ants/ants.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Wolf-Sheep Predation</td>
                 <td class="interactive-description">
-                  <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
-                  model that explores the stability of predator-prey ecosystems.</td>
+                    <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
+                    model that explores the stability of predator-prey ecosystems.</td>
                 <td><a href="javascript:invokeDataInteractive('WolfSheep')">Launch</a></td>
                 <td><a target="_blank" href="./WolfSheep/index.html">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Virus Growth</td>
                 <td class="interactive-description">
-                  <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
-                  model that explores the effect of infectiousness, chance of recovery, and duration of the cycle on infection in a population.</td>
+                    <a target="blank" href="https://ccl.northwestern.edu/netlogo/">Netlogo</a>
+                    model that explores the effect of infectiousness, chance of recovery, and duration of the cycle on infection in a population.</td>
                 <td><a href="javascript:invokeDataInteractive('Virus')">Launch</a></td>
                 <td><a target="_blank" href="./Virus/Virus.html">Link</a></td>
             </tr>
-            <!--PhET interactives currently does not load.  Will uncomment when it works again-->
-<!--            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
-                <td class="interactive-description">Learn about conservation of
-                  energy with a skater duel with this
-                  <a target="blank" href="https://phet.colorado.edu/">PhET</a>
-                  interactive.</td>
-                <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
-                &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
-                <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
-            </tr>-->
+            &lt;!&ndash;PhET interactives currently does not load.  Will uncomment when it works again&ndash;&gt;
+            &lt;!&ndash;            <tr><td class = "interactive-title">PhET Energy Skate Park Integration</td>
+                            <td class="interactive-description">Learn about conservation of
+                              energy with a skater duel with this
+                              <a target="blank" href="https://phet.colorado.edu/">PhET</a>
+                              interactive.</td>
+                            <td><a target = "blank" href='http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/
+                            &moreGames=%5B%7B"name":"Energy%20Skate%20Park:%20Basics","dimensions":%7B"width":600,"height":350%7D,%0A"url":"http://phetsims.github.io/together/examples/codap-hierarchy.html"%7D%5D'>Launch</a></td>
+                            <td><a href="http://phetsims.github.io/together/examples/codap-hierarchy.html">Link</a></td>
+                        </tr>&ndash;&gt;
             <tr><td class = "interactive-title">Track Generator</td>
                 <td class="interactive-description">Simulate OceanTracks data with a simple
                     random walk.</td>
@@ -395,49 +170,49 @@
     </div>
     <div>
         <p>These interactives involve playing games Playing computer games
-          creates a lot of data, which usually disappear when the game is over.
-          But in Data Games, you learn to analyze data that are saved, learning
-          math and data skills that help you win!</p>
+            creates a lot of data, which usually disappear when the game is over.
+            But in Data Games, you learn to analyze data that are saved, learning
+            math and data skills that help you win!</p>
         <table class="interactive-table">
             <tr><td class = "interactive-title">Cart Weight</td>
                 <td class="interactive-description">Win by predicting the total
-                  weight of a cart stacked with bricks.</td>
+                    weight of a cart stacked with bricks.</td>
                 <td><a href="javascript:invokeDataInteractive('CartWeight')">Launch</a></td>
                 <td><a target="_blank" href="./CartWeight/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Ramp Game</td>
                 <td class="interactive-description">Win by landing
-                  on the target.</td>
+                    on the target.</td>
                 <td><a href="javascript:invokeDataInteractive('RampGame')">Launch</a></td>
                 <td><a target="_blank" href="./RampGame/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Floyd's of Fargo</td>
                 <td class="interactive-description">Make big money running your
-                  own car insurance business!</td>
+                    own car insurance business!</td>
                 <td><a href="javascript:invokeDataInteractive('FloydsFargo')">Launch</a></td>
                 <td><a target="_blank" href="./FloydsFargo/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Lunar Lander</td>
                 <td class="interactive-description">You and your friends land
-                  spacecrafts, then rate your landings.</td>
+                    spacecrafts, then rate your landings.</td>
                 <td><a href="javascript:invokeDataInteractive('LunarLander')">Launch</a></td>
                 <td><a target="_blank" href="./LunarLander/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Markov</td>
                 <td class="interactive-description"> Play Rock, Paper, Scissors
-                  with the evil Dr. Markov to save the dog.</td>
+                    with the evil Dr. Markov to save the dog.</td>
                 <td><a href="javascript:invokeDataInteractive('Markov')">Launch</a></td>
                 <td><a target="_blank" href="./Markov/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Proximity</td>
                 <td class="interactive-description">Get high scores by shooting
-                  a ball to land as close to a target as possible.</td>
+                    a ball to land as close to a target as possible.</td>
                 <td><a href="javascript:invokeDataInteractive('Proximity')">Launch</a></td>
                 <td><a target="_blank" href="./Proximity/">Link</a></td>
             </tr>
             <tr><td class = "interactive-title">Shuffleboard</td>
                 <td class="interactive-description">Live on the edge-Land a disk
-                  on each pad without sliding off to score big!</td>
+                    on each pad without sliding off to score big!</td>
                 <td><a href="javascript:invokeDataInteractive('Shuffleboard')">Launch</a></td>
                 <td><a target="_blank" href="./Shuffleboard/">Link</a></td>
             </tr>
@@ -464,7 +239,7 @@
             </tr>
             <tr><td class = "interactive-title">Performance Harness</td>
                 <td class="interactive-description">A way to generate data while
-                  testing the performance of CODAP.</td>
+                    testing the performance of CODAP.</td>
                 <td><a href="javascript:invokeDataInteractive('PerformanceHarness')">Launch</a></td>
                 <td><a target="_blank" href="./PerformanceHarness/PerformanceHarness.html">Link</a></td>
             </tr>
@@ -499,7 +274,4 @@
     </div>
 
 </div>
-
-
-</body>
-</html>
+-->
