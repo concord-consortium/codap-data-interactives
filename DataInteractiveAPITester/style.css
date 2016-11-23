@@ -6,11 +6,7 @@ body {
 }
 
 section {
-  padding: 0.5em;
-}
-
-label textarea {
-  display:block;
+  padding: 0.5em 0;
 }
 
 label {
@@ -24,14 +20,16 @@ button {
 }
 
 #ctl {
-  height: 12em;
+  min-height: 3em;
+  height: 6em;
   overflow-y: scroll;
   background-color: white;
   border: thin solid grey;
+  resize: both;
 }
+
 .di-req {
   background-color: rgba(0,255,0,0.1);
-  /*text-overflow: ellipsis;*/
 }
 
 .di-resp {
@@ -53,12 +51,62 @@ button {
 
 .di-req,.di-resp,.di-comment,.di-expect {
   padding: 2px 0 2px;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 1em;
+  line-height: 1.1;
+}
+
+.di-req:hover,.di-resp:hover,.di-comment:hover,.di-expect:hover {
+  height: auto;
+  overflow: auto;
+  position: relative;
+  white-space: pre;
 }
 
 #receivedMessage, label textarea {
+  resize: both;
+  min-height: 3em;
   height: 12em;
   overflow-y: scroll;
   border: thin solid darkslategrey;
   background-color: white;
-  /*white-space: nowrap;*/
+  margin: 0;
+  padding: 0;
 }
+
+.di-test-message-field {
+  padding: 3px;
+}
+.di-test-message-field.toggleOpen {
+  white-space: pre;
+  border: thin solid gray;
+  background-color: white;
+}
+
+.di-test-message-field.toggleClosed{
+  display: none;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 1.1em;
+}
+#test-table {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+#test-table td {
+  vertical-align: top;
+}
+#test-table tr:nth-child(even) {
+  background-color: #e2e2e2;
+}
+#test-table tr:nth-child(odd) {
+  background-color: #e8e8e8;
+}
+/*.di-run-field, .di-count-field, .di-open-field{*/
+  /*width: 5%;*/
+/*}*/
+/*.di-name-field {*/
+  /*width: 15%;*/
+/*}*/

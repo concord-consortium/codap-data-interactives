@@ -40,10 +40,24 @@
       {
         "action": "create",
         "resource": "dataContext[DataContext1].collection",
-        "values": {
-          "name": "Toons",
-          "title": "Poeple"
-        }
+        "values": [
+          {
+            "name": "Toons",
+            "title": "Poeple"
+          },
+          {
+            "name": "Movies",
+            "attributes": [
+              {
+                "name": "Release_Date",
+                "type": "date"
+              },
+              {
+                "name": "Movie"
+              }
+            ]
+          }
+        ]
       },
       {
         "action": "create",
@@ -64,15 +78,37 @@
           {
             "name": "Studio",
             "type": "categorical"
-          },
-          {
-            "name": "Release_Date",
-            "type": "date"
-          },
-          {
-            "name": "Movie"
           }
         ]
+      },
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection",
+        "values": {
+          "name": "Movies",
+          "attributes": [
+            {
+              "name": "Release_Date",
+              "type": "date"
+            },
+            {
+              "name": "Movie"
+            }
+          ]
+        }
+      },
+      {
+        "action": "create",
+        "resource": "dataContext[DataContext1].collection",
+        "values": {
+          "name": "Scene",
+          "parent": "Movies",
+          "attributes": [
+            {
+              "name": "Timestamp"
+            }
+          ]
+        }
       }
     ]
   },
@@ -97,7 +133,7 @@
     "name": "Get Data Context",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1]"
+      "resource": "dataContext[Data_Set_1]"
     }
   },
   {
@@ -156,31 +192,28 @@
         "resource": "dataContext[DataContext1].collection[Toons].case",
         "values": {
           "values": {
-            "name": "Mickey",
-            "age": 88,
-            "height": 40
+            "Name": "Mickey",
+            "Species": "Mouse",
+            "Gender": "Male",
+            "Studio": "Disney",
+            "Release_Date": "11/18/1928",
+            "Movie": "Steamboat Willie"
           }
         }
       },
       {
         "action": "create",
         "resource": "dataContext[DataContext1].collection[Toons].case",
-        "values": [
-          {
-            "values": {
-              "name": "Minnie",
-              "age": 88,
-              "height": 38
-            }
-          },
-          {
-            "values": {
-              "name": "Donald",
-              "age": 82,
-              "height": 51
-            }
+        "values": {
+          "values": {
+            "Name": "Minnie",
+            "Species": "Mouse",
+            "Gender": "Female",
+            "Studio": "Disney",
+            "Release_Date": "11/18/1928",
+            "Movie": "Steamboat Willie"
           }
-        ]
+        }
       }
     ]
   },
@@ -263,7 +296,12 @@
       "action": "create",
       "resource": "component",
       "values": {
-        "type": "text"
+        "type": "text",
+        "componentStorage": {
+          "name": "name-abc",
+          "text": "T'was brillig and the slithy toves..."
+        }
+
       }
     }
   },
@@ -309,6 +347,20 @@
     }
   },
   {
+    "name": "Get Component List",
+    "message": {
+      "action": "get",
+      "resource": "componentList"
+    }
+  },
+  {
+    "name": "Get Component",
+    "message": {
+      "action": "get",
+      "resource": "HeightAge"
+    }
+  },
+  {
     "name": "Create Selection List",
     "message": {
       "action": "create",
@@ -333,6 +385,36 @@
     "message": {
       "action": "get",
       "resource": "dataContext[DataContext1].selectionList"
+    }
+  },
+  {
+    "name": "Undo Change",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "undoChangeNotice"
+      }
+    }
+  },
+  {
+    "name": "Undo Button Press",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "undoButtonPress"
+      }
+    }
+  },
+  {
+    "name": "Redo Button Press",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "redoButtonPress"
+      }
     }
   }
 ]
