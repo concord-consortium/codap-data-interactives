@@ -23,7 +23,7 @@
 
   "latedef": true,    // Vars must be declared before first use
 
-  "newcap": true,     // capitalize constructor functions
+  "newcap": false,     // capitalize constructor functions
 
   "noarg": true,      // disallow arguments.caller and arguments.callee
 
