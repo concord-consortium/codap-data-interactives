@@ -185,7 +185,36 @@ $(function () {
         resourceSpec: RegExp(resourceSpec),
         handler: handler
       });
-    }
+    },
+
+    /**
+     * Parses a resource selector returning a hash of named resource names to
+     * resource values. The last clause is identified as the resource type.
+     * E.g. converts 'dataContext[abc].collection[def].case'
+     * to {dataContext: 'abc', collection: 'def', type: 'case'}
+     * @param iResource
+     * @returns {{}}
+     */
+    parseResourceSelector: function (iResource) {
+      var selectorRE = /([A-Za-z0-9_-]+)\[([^\]]+)]/;
+      var result = {};
+      var selectors = iResource.split('.');
+      selectors.forEach(function (selector) {
+        var resourceType, resourceName;
+        var match = selectorRE.exec(selector);
+        if (selectorRE.test(selector)) {
+          resourceType = match[1];
+          resourceName = match[2];
+          result[resourceType] = resourceName;
+          result.type = resourceType;
+        } else {
+          result.type = selector;
+        }
+      });
+
+      return result;
+    },
+
   });
 
   var kSrcStackSelector = '#src-stack';
@@ -271,6 +300,18 @@ $(function () {
     codapInterface.sendRequest(req, handleResponse)
   }
 
+  function makeStackingTable($table) {
+    var $categoryInput = $('<input>').prop({type: 'text', value:'category', title: kCategoryMessage});
+    var $categoryCell = $('<th>').append($categoryInput);
+    var $baseRow = $('<tr>').append($categoryCell);
+    $table.empty().append($baseRow);
+    extent = {rows: 0, cols: 0};
+
+    makeNewColumn($table, extent);
+    makeNewRow($table, extent);
+
+  }
+
   function makeItems(dataSetName) {
     function handleResponse(req, resp) {
       var values = resp && resp.values;
@@ -333,11 +374,14 @@ $(function () {
   }
 
   function activateColumn($tableEl, ix) {
-    $tableEl.find('tr:first th:nth-of-type('+(ix+2)+') input').removeClass('inactive');
+    $tableEl.find('tr:first th:nth-of-type('+(ix+2)+') input')
+        .removeClass('inactive');
   }
 
   function activateRow($tableEl, ix, droppedItemName) {
-    $tableEl.find('tr:nth-of-type('+(ix+2)+') input').removeClass('inactive').val(droppedItemName);
+    $tableEl.find('tr:nth-of-type('+(ix+2)+') input')
+        .removeClass('inactive')
+        .val(droppedItemName);
 
   }
 
@@ -425,100 +469,170 @@ $(function () {
   }
 
   function getOriginalCollectionName(originalDataSet) {
-    var numCollections = originalDataSet.collections? originalDataSet.collections.length: 0;
-    var lastCollection = numCollections && originalDataSet.collections[numCollections - 1];
+    var numCollections = originalDataSet.collections
+        ? originalDataSet.collections.length
+        : 0;
+    var lastCollection = numCollections &&
+        originalDataSet.collections[numCollections - 1];
     return lastCollection.name;
+  }
+
+  /**
+   * Returns an array of names from a collection of draggable attribute
+   * elements.
+   * @param $items {$} An array of "item" elements.
+   * @returns {[{string}]}
+   */
+  function makeItemNamesArray($items) {
+    var names = [];
+    $items.each(function (ix, item) {
+      names.push($(item).text());
+    });
+    return names;
+  }
+
+  /**
+   * Returns an array of potential values for the "category" attribute we
+   * will be creating. In the stacking table this is the zero-th column of
+   * the table body. We ignore the last row because it is guaranteed to be
+   * empty.
+   *
+   * @param $table {$} The stacking table jquery element.
+   * @returns {[{String}]}
+   */
+  function makeTypeList($table) {
+    var rtn = [];
+    $('tr', $table).each(function(ix, row) {
+      if (ix !== 0) {
+        rtn.push($('td,th input', row).val());
+      }
+    });
+    // remove the last (must be empty row)
+    if (rtn.length > 0) { rtn.pop(); }
+    return rtn;
+  }
+
+  /**
+   * Returns the names of the new stacking attributes we will be creating.
+   * In the stacking table, these are the values of the on zero-th elements
+   * of the header row.
+   *
+   * @param $table {$} The stacking table jquery element.
+   * @returns {[{String}]}
+   */
+  function makeStackingAttributes($table) {
+    var result = [];
+    var $headerRow = $($table.find('tr')[0]);
+    $headerRow.find('th input:not(.inactive)').each(function(ix, el) {
+      if (ix !== 0) {
+        result.push($(el).val());
+      }
+    });
+    return result;
+  }
+
+  /**
+   * Makes an array of arrays of mappings from the name of the source data set
+   * attribute to the new, stacked, data set attribute. The parent array is
+   * indexed row in the table body. The child array is indexed by column.
+   *
+   * @param $table {$} The stacking table jquery element.
+   * @param iStackingAttributes
+   * @returns {[[{fromAttr: {string}, toAttr: {string}}]]}
+   */
+  function makeAttributeMappings($table, iStackingAttributes) {
+    rslt = [];
+    $table.find('tr').each(function(ix, el1) {
+      var typeMapping = [];
+      if (ix !== 0) {
+        $(el1).find('td').each(function (ix, el2) {
+          var $item = $(el2).find('.item');
+          if ($item.length > 0) {
+            typeMapping.push({
+              fromAttr: $item.text(),
+              toAttr: iStackingAttributes[ix]
+            });
+          }
+        });
+        rslt.push(typeMapping);
+      }
+    });
+    return rslt;
+  }
+
+  function copyDataSet(iSourceDataSetDef, iTargetDataSet, iStackedAttributeMapping) {
+    // find the number of cases in the top collection, then clone each case and
+    // its children until the children in the last
+
   }
 
   function handleSubmitStacking(ev) {
     if (!getSourceDataSetName()) { return; }
 
-    function makeUnassignedAttributesList($items) {
-      var names = [];
-      $items.each(function (ix, item) {
-        names.push($(item).text());
-      });
-      return names;
-    }
+    /**
+     * Creates a dataContext object for submission to CODAP that will define
+     * the structure of the new stacked data set.
+     *
+     * @param iBasisDefinition {object} The data set definition that of the data
+     *          set that forms the basis for this data set.
+     * @param iDataSetName
+     * @param iParentAttributes
+     * @param iChildCollectionName
+     * @param iCategoryName
+     * @param iStackingAttributes
+     * @returns {{name: *, collections: *[]}}
+     */
+    function createStackedDataSetDefinition(iBasisDefinition, iDataSetName,
+        iParentAttributes, iChildCollectionName, iCategoryName,
+        iStackingAttributes) {
 
-    function makeTypeList($table) {
-      // the goal is to return an array of type names, corresponding to the
-      //zeroeth cell in the non-header parts of the table.
-      var rtn = [];
-      $('tr', $table).each(function(ix, row) {
-        if (ix !== 0) {
-          rtn.push($('td,th input', row).val());
-        }
-      });
-      // remove the last (must be empty row)
-      if (rtn.length > 0) { rtn.pop(); }
-      return rtn;
-    }
-
-    function makeStackingAttributes($table) {
-      var result = [];
-      var $headerRow = $($table.find('tr')[0]);
-      $headerRow.find('th input:not(.inactive)').each(function(ix, el) {
-        if (ix !== 0) {
-          result.push($(el).val());
-        }
-      });
-      return result;
-    }
-
-    function makeAttributeMappings($table, typeList, stackingAttributes) {
-      rslt = [];
-      $table.find('tr').each(function(ix, el1) {
-        var typeMapping = [];
-        if (ix !== 0) {
-          $(el1).find('td').each(function (ix, el2) {
-            var $item = $(el2).find('.item');
-            if ($item.length > 0) {
-              typeMapping.push({fromAttr: $item.text(), toAttr: stackingAttributes[ix]});
-            }
-          });
-          rslt.push(typeMapping);
-        }
-      });
-      return rslt;
-    }
-
-    function createStackedDataSetDefinition(iDataSetName, iParentCollectionName,
-        iParentAttributes, iChildCollectionName, iCategoryName, iStackingAttributes) {
-      var parentCollection = {
-        name: iParentCollectionName,
-        attrs: iParentAttributes.map(function (attrName) {return {name: attrName}})
-      }
-
-      var childCollection = {
-        name: iChildCollectionName,
-        parent: iParentCollectionName,
-        attrs: []
+      function copyAttributeDefinition(attributeDefinition) {
+        var cpy = Object.assign({}, attributeDefinition);
+        delete cpy.id;
+        delete cpy.guid;
+        return cpy;
       }
 
       var dataSetDefinition = {
         name: iDataSetName,
-        collections: [
-            parentCollection,
-            childCollection
-        ]
+        collections: []
       };
+      var lastCollectionIx = iBasisDefinition.collections.length - 1;
+      var lastCollection = iBasisDefinition.collections[lastCollectionIx]
 
-      childCollection.attrs = [{name: iCategoryName}]
-          .concat(iStackingAttributes.map(function (attrName) {
-            return {name: attrName};
-          }));
+      // clone existing collections
+      dataSetDefinition.collections = iBasisDefinition.collections.map(
+          function (collectionDef, ix) {
+            var newCollectionDef = {
+              name: collectionDef.name,
+              title: collectionDef.title,
+              attrs: []
+            };
+            collectionDef.attrs.forEach(function (attr) {
+              if ((ix !== lastCollectionIx)
+                  || iParentAttributes.indexOf(attr.name) >= 0) {
+                newCollectionDef.attrs.push( copyAttributeDefinition(attr));
+              }
+            });
+            return newCollectionDef;
+          });
+
+      dataSetDefinition.collections.push({
+        name: iChildCollectionName,
+        parent: lastCollection.name,
+        attrs: [{name: iCategoryName}]
+            .concat(iStackingAttributes.map(function (attrName) {
+              return {name: attrName};
+            }))
+      });
+
       return dataSetDefinition;
     }
 
 
-    function copySourceDataSetToStackedDataSet() {
-      var numCollections = sourceDataSetDefinition.collections?sourceDataSetDefinition.collections.length: 0;
-      var lastCollection = numCollections && sourceDataSetDefinition.collections[numCollections - 1];
-      var caseResourcePrefix = 'dataContext[' + getSourceDataSetName() + '].collection[' + lastCollection.name + ']';
-      var caseCount;
-      var caseIx = 0;
-
+    function copySourceDataSetToStackedDataSet(iStackedDataSetName,
+        iCategoryName, iParentCollectionName, iChildCollectionName,
+        iParentAttributes, iTypeList, iAttributeMappings) {
       function requestCase() {
         if (caseIx < caseCount) {
           codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix
@@ -536,32 +650,50 @@ $(function () {
           var parentID = resp.success && resp.values[0].id;
           var childCases = [];
           if (parentID !== null && parentID !== undefined) {
-            typeList.forEach(function (type, ix) {
+            iTypeList.forEach(function (type, ix) {
               var newCase = {parent:parentID, values: {}};
-              newCase.values[categoryName] = type;
-              attributeMappings[ix].forEach(function (mapping) {
+              newCase.values[iCategoryName] = type;
+              iAttributeMappings[ix].forEach(function (mapping) {
                 newCase.values[mapping.toAttr] = myCase.values[mapping.fromAttr];
               });
               childCases.push(newCase);
             });
-            codapInterface.sendRequest({action: 'create', resource: childResourceSpec, values: childCases}, function (req, resp) {
+            codapInterface.sendRequest({
+              action: 'create',
+              resource: childResourceSpec,
+              values: childCases}, function (req, resp) {
               requestCase();
             });
           }
         }
         var myCase = v.case;
         var parentCase = {values: {}};
-        var parentResourceSpec = 'dataContext['+stackedDataSetName+'].collection['+ parentCollectionName + '].case';
-        var childResourceSpec = 'dataContext['+stackedDataSetName+'].collection[' + childCollectionName + '].case';
 
-        parentAttributes.forEach(function (attrName) {
+        iParentAttributes.forEach(function (attrName) {
           parentCase.values[attrName] = myCase.values[attrName];
         });
-        codapInterface.sendRequest({action: 'create', resource: parentResourceSpec, values: parentCase}, createChildren)
+        codapInterface.sendRequest({
+          action: 'create',
+          resource: parentResourceSpec,
+          values: parentCase}, createChildren)
       }
 
-      codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix + '.caseCount'},
-          function (req, resp) {
+      var parentResourceSpec = 'dataContext[' + iStackedDataSetName +
+          '].collection[' + iParentCollectionName + '].case';
+      var childResourceSpec = 'dataContext[' + iStackedDataSetName +
+          '].collection[' + iChildCollectionName + '].case';
+      var numCollections = sourceDataSetDefinition.collections
+          ? sourceDataSetDefinition.collections.length
+          : 0;
+      var lastCollection = numCollections &&
+          sourceDataSetDefinition.collections[numCollections - 1];
+      var caseResourcePrefix = 'dataContext[' + getSourceDataSetName() +
+          '].collection[' + lastCollection.name + ']';
+      var caseCount;
+      var caseIx = 0;
+
+      codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix +
+            '.caseCount'}, function (req, resp) {
             caseCount = resp.values;
             requestCase();
           }
@@ -574,22 +706,27 @@ $(function () {
 
     var stackedDataSetName = makeDataSetName(sourceDataSetDefinition);
 
-    // categoryName is the name of the attribute that classifies the stacking attributes
+    // categoryName is the name of the attribute that classifies the stacking
+    // attributes
     var categoryName = $targetTable.find('tr th input').val();
+
     // parent attributes are the unstacked attributes
     var parentCollectionName = getOriginalCollectionName(sourceDataSetDefinition);
+
     var childCollectionName = categoryName + 's';
-    var parentAttributes = makeUnassignedAttributesList($stackItems.find('.item'));
+    var parentAttributes = makeItemNamesArray($stackItems.find('.item'));
     // typeList is a list of the values of the category attribute
     var typeList = makeTypeList($targetTable);
-    // stacking attributes are the new attributes factored by the stacking operation
+    // stacking attributes are the new attributes factored by the stacking
+    // operation
     var stackingAttributes = makeStackingAttributes($targetTable);
     // we map the original attribute to its stacking attribute
-    var attributeMappings = makeAttributeMappings($targetTable, typeList,
+    var attributeMappings = makeAttributeMappings($targetTable,
         stackingAttributes);
 
-    var dataSetDefinition = createStackedDataSetDefinition(stackedDataSetName, parentCollectionName,
-        parentAttributes, childCollectionName, categoryName, stackingAttributes);
+    var dataSetDefinition = createStackedDataSetDefinition(
+        sourceDataSetDefinition, stackedDataSetName, parentAttributes,
+        childCollectionName, categoryName, stackingAttributes);
 
     codapInterface.sendRequest({
           action: 'create',
@@ -598,21 +735,11 @@ $(function () {
         },
         function (req, resp) {
           console.log('create dataset resp: ' + JSON.stringify(resp));
-          copySourceDataSetToStackedDataSet()
+          copySourceDataSetToStackedDataSet(stackedDataSetName, categoryName,
+              parentCollectionName, childCollectionName, parentAttributes,
+              typeList, attributeMappings)
         }
     );
-
-  }
-
-  function makeStackingTable($table) {
-    var $categoryInput = $('<input>').prop({type: 'text', value:'category', title: kCategoryMessage});
-    var $categoryCell = $('<th>').append($categoryInput);
-    var $baseRow = $('<tr>').append($categoryCell);
-    $table.empty().append($baseRow);
-    extent = {rows: 0, cols: 0};
-
-    makeNewColumn($table, extent);
-    makeNewRow($table, extent);
 
   }
 
