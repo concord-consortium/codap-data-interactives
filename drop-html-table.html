@@ -168,29 +168,30 @@ $(document).ready(function () {
         }]
       }
     }, function () {
+      var cases = [];
+      $rows.each(function (ix, row) {
+        if (stats.headerRows.indexOf(ix) >= 0) return;
+        var values = {};
+        $('td,th', row).each(function(ix, cell) {
+          values[attrs[ix].name] = $(cell).text();
+        });
+        cases.push ({values: values});
+      });
       sendRequest({
         action: 'create',
-        resource: 'component',
-        values: {
-          type: 'caseTable'
-        }
-      })
+        resource: 'dataContext[' + contextName + '].collection[' + contextName + '].case',
+        values: cases
+      }, function () {
+        sendRequest({
+          action: 'create',
+          resource: 'component',
+          values: {
+            type: 'caseTable'
+          }
+        })
+      });
     });
 
-    var cases = [];
-    $rows.each(function (ix, row) {
-      if (stats.headerRows.indexOf(ix) >= 0) return;
-      var values = {};
-      $('td,th', row).each(function(ix, cell) {
-        values[attrs[ix].name] = $(cell).text();
-      });
-      cases.push ({values: values});
-    });
-    sendRequest({
-      action: 'create',
-      resource: 'case',
-      values: cases
-    });
 //    $(parentEl).remove();
   }
 
