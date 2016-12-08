@@ -174,6 +174,13 @@ var dataManager = Object.create({
     }, {}, handler);
   },
 
+  requestDeleteAllCases: function (contextName, handler) {
+    dispatcher.sendRequest({
+      action: 'delete',
+      resource: 'dataContext[' + contextName + '].allCases',
+    }, {}, handler);
+  },
+
   setContextList: function (contextList) {
     this.state.contextList = contextList;
     if (this.state.wizardStep === 'showActiveUsers') {
@@ -431,25 +438,10 @@ var dataManager = Object.create({
     }
     collaborativeCollection.deletedLocalCases = true;
 
-    this.requestCaseCount(contextName, collectionName, function (request, result) {
-      var count = (result && result.success ? result.values : 0 ) || 0,
-          deleteFirstCase;
-
-      deleteFirstCase = function () {
-        if (count === 0) {
-          // now that all the saved cases have been deleted start listening to firebase for changes
-          self.addFirebaseListeners(contextName, collectionName);
-          done();
-          return;
-        }
-        else {
-          self.requestDeleteCaseByIndex(contextName, collectionName, 0, function (request, result) {
-            count--;
-            deleteFirstCase();
-          });
-        }
-      };
-      deleteFirstCase();
+    this.requestDeleteAllCases(contextName, function (request, result) {
+      // now that all the saved cases have been deleted start listening to firebase for changes
+      self.addFirebaseListeners(contextName, collectionName);
+      done();
     });
   },
 
