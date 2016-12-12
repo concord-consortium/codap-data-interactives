@@ -1,4 +1,28 @@
 $(function () {
+  var kTrianglePointsRight = '\u25B6';
+  var kTrianglePointsDown = '\u25BC';
+
+  var seq = 0;
+  var successes = 0;
+
+  var actions = [
+      'get',
+      'create',
+      'update',
+      'delete',
+      'notify'
+    ];
+  var resourceTypes = [
+      'interactiveFrame',
+      'component',
+      'dataContext',
+      'collection',
+      'attribute',
+      'case',
+      'item',
+      'selection',
+      'undoFrame'
+    ];
 
   function isSuccess(obj) {
     if (!obj) { return false;}
@@ -9,10 +33,56 @@ $(function () {
     });
     return rslt;
   }
-  var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function () {
+
+  var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function (iRequest, callback) {
+    logMessage('notify', ' ', iRequest);
+    callback({success: true});
   }, "data-interactive", window.parent);
-  var seq = 0;
-  var successes = 0;
+
+
+  function logMessage(type, id, message) {
+    if (message === null || message === undefined) {
+      return;
+    }
+    var lookupLongType={
+      comment: 'Comment',
+      req: 'Request',
+      expect: 'Expect',
+      resp: 'Response',
+      notify: 'Notify'
+    }
+    var myClass = 'di-' + type;
+    var expandEl = $('<span>').addClass('expandToggle').text(kTrianglePointsRight);
+    var idEl = $('<span>').text((id|'') + ' ');
+    var typeEl = $('<span>').addClass('messageType').text(lookupLongType[type] + ': ');
+    var domID = (id !== null && id !== undefined)? 'r' + id: undefined;
+    var messageEl = $('<span>').addClass('log-message').text(JSON.stringify(message, null, "  "));
+    var el = $('<div>').append(expandEl).append(idEl).append(typeEl).append(messageEl);
+    el.addClass(myClass).addClass('di-log-line').addClass('toggleClosed');
+    if (domID) el.prop('id', domID);
+    el.appendTo('#message-log');
+    return el;
+  }
+
+  var compareObj = function(obj1, obj2) {
+    var ret = {},variance;
+    for(var i in obj1) {
+      if (obj1.hasOwnProperty(i)) {
+        variance = {};
+        if (typeof obj1[i] === 'object'){
+          variance = compareObj (obj1[i], obj2[i]) ;
+          if (!$.isEmptyObject(variance) ){
+            ret[i]= variance
+          }
+        }else{
+          if(!obj2 || !obj2.hasOwnProperty(i) || obj1[i] !== obj2[i]) {
+            ret[i] = obj1[i];
+          }
+        }
+      }
+    }
+    return ret;
+  };
 
   function send(test) {
     try {
@@ -22,30 +92,8 @@ $(function () {
         parsedMessages = [parsedMessages];
       }
 
-      var compareObj = function(obj1, obj2) {
-        var ret = {},rett;
-        for(var i in obj1) {
-          rett = {};
-          if (typeof obj1[i] === 'object'){
-            rett = compareObj (obj1[i], obj2[i]) ;
-            if (!$.isEmptyObject(rett) ){
-              ret[i]= rett
-            }
-          }else{
-            if(!obj2 || !obj2.hasOwnProperty(i) || obj1[i] !== obj2[i]) {
-              ret[i] = obj1[i];
-            }
-          }
-        }
-        return ret;
-      };
-
       function logComment(id, comment) {
-        if (comment) {
-          $('<div>').prop('id', 'r' + id).addClass('di-comment').text('#' + id +
-                  ' Test: ' + comment)
-              .appendTo('#receivedMessage');
-        }
+        logMessage('comment', id, comment);
       }
 
       function sendOneMessage(msgNum) {
@@ -56,16 +104,9 @@ $(function () {
         var testName = parsedMessages[msgNum].name;
         console.log('Message: ' + JSON.stringify(parsedMessage));
         logComment(id, testName);
-        $('<div>')
-            .prop('id', 'r' + id)
-            .addClass('di-req')
-            .text('#' + id + ' Request: ' + JSON.stringify(parsedMessage, null, '  '))
-            .appendTo('#receivedMessage');
+        logMessage('req', id, parsedMessage);
         if (expected) {
-          $('<div>')
-              .addClass('di-expect')
-              .text('#' + id + ' Expect: ' + JSON.stringify(expected), null, '  ')
-              .appendTo('#receivedMessage');
+          logMessage('expect', id, expected);
         }
         codapPhone.call(parsedMessage, function (result) {
           var failClass = '';
@@ -82,11 +123,8 @@ $(function () {
           } else {
             failClass = 'fail'
           }
-          var respEl = $('<div>')
-              .addClass('di-resp').addClass(failClass)
-              .text('#' + id + ' Response: ' + JSON.stringify(result, null, '  '))
-              .appendTo('#receivedMessage');
-          $('#receivedMessage')[0].scrollTop = $('#receivedMessage')[0].scrollHeight;
+          var respEl = logMessage('resp', id, result);
+          $('#message-log')[0].scrollTop = $('#message-log')[0].scrollHeight;
           $('#success').text(successes);
 //              console.log('Reply: ' + JSON.stringify(result));
           sendOneMessage(msgNum+1);
@@ -95,13 +133,44 @@ $(function () {
       }
       sendOneMessage(0);
     } catch (e) {
-      $('#receivedMessage').prepend($('<div>').text('' + (++seq) + ': ' + e));
+      logMessage('err', null, '' + (++seq) + ': ' + e);
+      throw e;
     }
   }
 
+  function makeRequestBuilder(resourceTypes, actions) {
+    var $requestBuilder = $('<div>').addClass('di-request-builder')
+    var $actionList = $('<div>').addClass('di-action-list').addClass('di-request-builder-item');
+    var $resourceTypeList = $('<div>').addClass('di-resource-type-list').addClass('di-request-builder-item');
+    var $templateList = $('<div>').addClass('di-template-list').addClass('di-request-builder-item');
+
+    resourceTypes.forEach(function(resourceType) {
+      $('<div>').addClass('di-item').text(resourceType).appendTo($resourceTypeList);
+    });
+
+    actions.forEach(function(actionName) {
+      $('<div>').addClass('di-item').text(actionName).appendTo($actionList);
+    });
+
+    $requestBuilder.append($resourceTypeList).append($actionList).append($templateList);
+
+    return $requestBuilder;
+  }
+
+
   $.get('./tests.json', function (data) {
     var $testSection = $("#ctl");
+
     var $table = $('<table id="test-table">');
+
+    makeRequestBuilder(resourceTypes, actions).appendTo($testSection);
+
+    $('.di-request-builder').on('click', '.di-request-builder-item .di-item', function (ev) {
+      $('.di-request-builder').find('.di-selected').removeClass('di-selected');
+      $(this).addClass('di-selected');
+    });
+
+
     $('<tr>')
         .append($('<th>').addClass('di-run-field').text(''))
         .append($('<th>').addClass('di-count-field').text('ct'))
@@ -162,6 +231,20 @@ $(function () {
       } else {
         $this.text('open');
         $row.find('.di-test-message-field').removeClass('toggleOpen').addClass('toggleClosed');
+      }
+    });
+
+    $('#message-log').on('click', '.expandToggle', function () {
+      var $this = $(this);
+      var text = $this.text();
+      var $div = $this.parent('div');
+
+      if ($div.hasClass('toggleClosed')) {
+        $this.text(kTrianglePointsDown);
+        $div.removeClass('toggleClosed').addClass('toggleOpen');
+      } else {
+        $this.text(kTrianglePointsRight);
+        $div.removeClass('toggleOpen').addClass('toggleClosed');
       }
     });
   })

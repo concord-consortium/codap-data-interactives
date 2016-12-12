@@ -1,7 +1,13 @@
 [
   {
+    "name": "Delete Data Set",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1]"
+    }
+  },
+  {
     "name": "Update Interactive Frame",
-    "repeatable": true,
     "message": {
       "action": "update",
       "resource": "interactiveFrame",
@@ -19,7 +25,6 @@
   },
   {
     "name": "Get Interactive Frame",
-    "repeatable": true,
     "message": {
       "action": "get",
       "resource": "interactiveFrame"
@@ -27,64 +32,28 @@
   },
   {
     "name": "Create Data Context",
-    "message": [
-      {
-        "action": "create",
-        "resource": "dataContext",
-        "values": {
-          "name": "DataContext1",
-          "title": "My Data Context",
-          "description": "Toons"
-        }
-      },
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection",
-        "values": [
-          {
-            "name": "Toons",
-            "title": "Poeple"
-          },
-          {
-            "name": "Movies",
-            "attributes": [
-              {
-                "name": "Release_Date",
-                "type": "date"
-              },
-              {
-                "name": "Movie"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection[Toons].attribute",
-        "values": [
-          {
-            "name": "Name",
-            "type": "categorical"
-          },
-          {
-            "name": "Species",
-            "type": "categorical"
-          },
-          {
-            "name": "Gender",
-            "type": "categorical"
-          },
-          {
-            "name": "Studio",
-            "type": "categorical"
-          }
-        ]
-      },
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection",
-        "values": {
+    "message": {
+      "action": "create",
+      "resource": "dataContext",
+      "values": {
+        "name": "DataContext1",
+        "title": "My Data Context",
+        "description": "Toons"
+      }
+    }
+  },
+  {
+    "name": "Create Collection",
+    "message":
+    {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection",
+      "values": [
+        {
+          "name": "Toons",
+          "title": "Poeple"
+        },
+        {
           "name": "Movies",
           "attributes": [
             {
@@ -96,21 +65,68 @@
             }
           ]
         }
-      },
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection",
-        "values": {
-          "name": "Scene",
-          "parent": "Movies",
-          "attributes": [
-            {
-              "name": "Timestamp"
-            }
-          ]
+      ]
+    }
+  },
+  {
+    "name": "Create attributes",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+      "values": [
+        {
+          "name": "Name",
+          "type": "categorical"
+        },
+        {
+          "name": "Species",
+          "type": "categorical"
+        },
+        {
+          "name": "Gender",
+          "type": "categorical"
+        },
+        {
+          "name": "Studio",
+          "type": "categorical"
         }
+      ]
+    }
+  },
+  {
+    "name": "Create Child Collection",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection",
+      "values": {
+        "name": "Movies",
+        "attributes": [
+          {
+            "name": "Release_Date",
+            "type": "date"
+          },
+          {
+            "name": "Movie"
+          }
+        ]
       }
-    ]
+    }
+  },
+  {
+    "name": "create collection",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection",
+      "values": {
+        "name": "Scene",
+        "parent": "Movies",
+        "attributes": [
+          {
+            "name": "Timestamp"
+          }
+        ]
+      }
+    }
   },
   {
     "name": "Update Data Context",
@@ -133,7 +149,7 @@
     "name": "Get Data Context",
     "message": {
       "action": "get",
-      "resource": "dataContext[Data_Set_1]"
+      "resource": "dataContext[DataContext1]"
     }
   },
   {

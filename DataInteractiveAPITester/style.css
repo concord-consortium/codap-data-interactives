@@ -28,6 +28,40 @@ button {
   resize: both;
 }
 
+.di-request-builder {
+  display: flex;
+}
+.di-request-builder-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-color: grey;
+  border-width: thin;
+  border-style: solid;
+  margin: 0 .25em;
+}
+
+.di-template-list {
+  flex-grow: 1;
+}
+
+.di-request-builder-item .di-item {
+  padding: 0 0.25em;
+  background-color: lightblue;
+  border-bottom-color: grey;
+  border-bottom-width: thin;
+  border-bottom-style: solid;
+}
+
+.di-request-builder-item .di-item.di-disabled {
+  background-color: lightgrey;
+}
+
+.di-request-builder-item .di-item.di-selected{
+  background-color: blue;
+  color: white;
+}
+
 .di-req {
   background-color: rgba(0,255,0,0.1);
 }
@@ -49,23 +83,34 @@ button {
   background-color: rgba(128,128,128,0.1);
 }
 
-.di-req,.di-resp,.di-comment,.di-expect {
+.di-notify {
+  background-color: lightgoldenrodyellow;
+}
+
+.di-log-line {
   padding: 2px 0 2px;
+  line-height: 1.1;
+}
+.di-log-line.toggleClosed {
   text-overflow: ellipsis;
   overflow-x: hidden;
   overflow-y: hidden;
   height: 1em;
-  line-height: 1.1;
 }
 
-.di-req:hover,.di-resp:hover,.di-comment:hover,.di-expect:hover {
+.di-log-line.toggleOpen {
+  height: auto;
+  position: relative;
+}
+
+.di-log-line.toggleOpen .log-message {
   height: auto;
   overflow: auto;
-  position: relative;
+  display: block;
   white-space: pre;
 }
 
-#receivedMessage, label textarea {
+#message-log, label textarea {
   resize: both;
   min-height: 3em;
   height: 12em;
@@ -103,6 +148,10 @@ button {
 }
 #test-table tr:nth-child(odd) {
   background-color: #e8e8e8;
+}
+#message-log .expandToggle {
+  margin: 3px;
+  background-color: white ;
 }
 /*.di-run-field, .di-count-field, .di-open-field{*/
   /*width: 5%;*/
