@@ -1,9 +1,13 @@
 $(function () {
   var kTrianglePointsRight = '\u25B6';
   var kTrianglePointsDown = '\u25BC';
+  var kResourceTypeSelector = '.di-resource-type-list .di-item';
+  var kActionSelector = '.di-action-list .di-item';
 
-  var seq = 0;
-  var successes = 0;
+  var stats = {
+    seq: 0,
+    successes: 0
+  }
 
   var actions = [
       'get',
@@ -21,8 +25,10 @@ $(function () {
       'case',
       'item',
       'selection',
-      'undoFrame'
+      'undoChangeNotice'
     ];
+  var templates = [];
+  var templateMap = {};
 
   function isSuccess(obj) {
     if (!obj) { return false;}
@@ -34,12 +40,22 @@ $(function () {
     return rslt;
   }
 
+  /**
+   * Connection to CODAP.
+   */
   var codapPhone = new iframePhone.IframePhoneRpcEndpoint(function (iRequest, callback) {
     logMessage('notify', ' ', iRequest);
     callback({success: true});
   }, "data-interactive", window.parent);
 
-
+  /**
+   * Form a log-message
+   * @param type {'comment'||'req'||'resp'||'expect'||'notice''}
+   * @param id {number} sequence number of user action. CODAP initiated actions
+   *                    have id 0
+   * @param message {string}
+   * @returns {null|jQuery} Element for insertion.
+   */
   function logMessage(type, id, message) {
     if (message === null || message === undefined) {
       return;
@@ -64,7 +80,16 @@ $(function () {
     return el;
   }
 
-  var compareObj = function(obj1, obj2) {
+  /**
+   * Compare two objects.
+   *
+   * Returns the portions of obj1 that vary from obj2.
+   *
+   * @param obj1
+   * @param obj2
+   * @returns {{}}
+   */
+  function compareObj(obj1, obj2) {
     var ret = {},variance;
     for(var i in obj1) {
       if (obj1.hasOwnProperty(i)) {
@@ -84,6 +109,10 @@ $(function () {
     return ret;
   };
 
+  /**
+   * Initiate a test by sending a request ot CODAP.
+   * @param test {object}
+   */
   function send(test) {
     try {
       var parsedMessages = test;
@@ -98,7 +127,7 @@ $(function () {
 
       function sendOneMessage(msgNum) {
         if (msgNum >= parsedMessages.length) { return; }
-        var id = ++seq;
+        var id = ++stats.seq;
         var parsedMessage = parsedMessages[msgNum].message;
         var expected = parsedMessages[msgNum].expect;
         var testName = parsedMessages[msgNum].name;
@@ -114,32 +143,40 @@ $(function () {
           if (result && expected) {
             diff = compareObj(expected, result);
             if ($.isEmptyObject(diff)) {
-              successes++;
+              stats.successes++;
             } else {
               failClass = 'fail';
             }
           } else if (isSuccess(result)) {
-            successes++;
+            stats.successes++;
           } else {
             failClass = 'fail'
           }
           var respEl = logMessage('resp', id, result);
           $('#message-log')[0].scrollTop = $('#message-log')[0].scrollHeight;
-          $('#success').text(successes);
+          $('#success').text(stats.successes);
 //              console.log('Reply: ' + JSON.stringify(result));
           sendOneMessage(msgNum+1);
         });
-        $('#sentMessages').text(seq);
+        $('#sentMessages').text(stats.seq);
       }
       sendOneMessage(0);
     } catch (e) {
-      logMessage('err', null, '' + (++seq) + ': ' + e);
+      logMessage('err', null, '' + (++stats.seq) + ': ' + e);
       throw e;
     }
   }
 
+  /**
+   * Build request builder section of page.
+   *
+   * Run once.
+   * @param resourceTypes {[string]}
+   * @param actions {[string]}
+   * @returns {jQuery} Element for insertion.
+   */
   function makeRequestBuilder(resourceTypes, actions) {
-    var $requestBuilder = $('<div>').addClass('di-request-builder')
+    var $requestBuilder = $('<div>').addClass('di-request-builder');
     var $actionList = $('<div>').addClass('di-action-list').addClass('di-request-builder-item');
     var $resourceTypeList = $('<div>').addClass('di-resource-type-list').addClass('di-request-builder-item');
     var $templateList = $('<div>').addClass('di-template-list').addClass('di-request-builder-item');
@@ -157,19 +194,56 @@ $(function () {
     return $requestBuilder;
   }
 
+  function selectResourceType(resourceTypeName) {
+    // disable unsupported actions
+    var actionTemplates = templateMap[resourceTypeName];
+    $(kActionSelector).each(function (ix, el) {
+      var $el = $(el);
+      var elText = $el.text();
+      $el.removeClass('di-disabled');
+      if (!actionTemplates || !actionTemplates[elText]) {
+        $el.addClass('di-disabled');
+        $el.removeClass('di-selected');
+      }
+    })
 
-  $.get('./tests.json', function (data) {
-    var $testSection = $("#ctl");
 
-    var $table = $('<table id="test-table">');
+    // display supported templates
+  }
 
-    makeRequestBuilder(resourceTypes, actions).appendTo($testSection);
+  function selectAction (actionName) {
+    // if resource type is selected, display supported templates
+  }
 
-    $('.di-request-builder').on('click', '.di-request-builder-item .di-item', function (ev) {
-      $('.di-request-builder').find('.di-selected').removeClass('di-selected');
-      $(this).addClass('di-selected');
+  function selectTemplate() {
+
+  }
+
+  function makeRequestBuilderSection($el, resourceTypes, actions, templates) {
+    var $requestBuilderSection = makeRequestBuilder(resourceTypes, actions);
+
+    $requestBuilderSection.appendTo($el);
+
+    $requestBuilderSection.on('click', '.di-request-builder-item .di-item', function (ev) {
+      $this = $(this);
+      $parent = $(this.parentElement);
+      $parent.find('.di-selected').removeClass('di-selected');
+      if (!$this.hasClass('di-disabled')) {
+        $this.addClass('di-selected');
+      }
+      if ($parent.hasClass('di-resource-type-list')) {
+        selectResourceType($this.text());
+      } else if ($parent.hasClass('di-action-list')) {
+        selectAction($this.text());
+      } else if ($parent.hasClass('di-template-list')) {
+        selectTemplate()
+      }
     });
 
+  }
+
+  function makeTemplateTable($el, data) {
+    var $table = $('<table id="test-table">');
 
     $('<tr>')
         .append($('<th>').addClass('di-run-field').text(''))
@@ -203,10 +277,10 @@ $(function () {
               .attr('contentEditable', true)
               .addClass('toggleClosed')
               .text( messageString)
-      ).appendTo($row);
+          ).appendTo($row);
       $row.appendTo($table);
     })
-    $table.appendTo($testSection);
+    $table.appendTo($el);
 
     $('#test-table .runButton').on('click', function () {
       console.log('click! ' + $(this).parents('tr').data('test').name);
@@ -234,18 +308,80 @@ $(function () {
       }
     });
 
-    $('#message-log').on('click', '.expandToggle', function () {
-      var $this = $(this);
-      var text = $this.text();
-      var $div = $this.parent('div');
+  }
 
-      if ($div.hasClass('toggleClosed')) {
-        $this.text(kTrianglePointsDown);
-        $div.removeClass('toggleClosed').addClass('toggleOpen');
-      } else {
-        $this.text(kTrianglePointsRight);
-        $div.removeClass('toggleOpen').addClass('toggleClosed');
+  function classifyTemplateData(templateData) {
+    // make sure templates have a message field that is a normal object;
+    templateData.filter(function (template) {
+      var message = template.message;
+      var isMessage = (message && (typeof message === 'object') && !Array.isArray(message));
+      if (!isMessage) {
+        console.log('Disqualifying template: ' + JSON.stringify(message));
       }
+      return isMessage;
+    }).forEach( function (template) {
+      var message = template.message;
+      var resource = message.resource;
+      template.action = message.action;
+      template.resourceType = resource
+          .replace(/\[[^]*\]/g, '')
+          .replace(/.*\./, '')
+          .replace(/(List|ByID|ByIndex|Count)$/, '');
     });
+  }
+
+  /**
+   * Make a map of resourceTypes -> actions -> templates;
+   * @param templateData
+   */
+  function makeTemplateMap(templateData) {
+    var map = {};
+    templateData.forEach(function (template) {
+      var resourceType = template.resourceType;
+      var action = template.action;
+      if (!resourceType) {
+        console.log('empty resource type: ' + JSON.stringify(template));
+        return;
+      }
+      var actions = map[resourceType];
+      if (!actions) {
+        actions = {};
+        map[resourceType] = actions;
+      }
+      if (!actions[action]) {
+        actions[action] = [];
+      }
+      actions[action].push(template);
+    });
+    return map;
+  };
+
+  // request template repository
+  $.get('./tests.json', function (data) {
+    var $testSection = $("#ctl");
+
+    templates = data;
+
+    classifyTemplateData(templates);
+
+    templateMap = makeTemplateMap(templates);
+
+    makeRequestBuilderSection($testSection, resourceTypes, actions, templates);
+
+    makeTemplateTable($testSection, templates);
   })
+
+  $('#message-log').on('click', '.expandToggle', function () {
+    var $this = $(this);
+    var text = $this.text();
+    var $div = $this.parent('div');
+
+    if ($div.hasClass('toggleClosed')) {
+      $this.text(kTrianglePointsDown);
+      $div.removeClass('toggleClosed').addClass('toggleOpen');
+    } else {
+      $this.text(kTrianglePointsRight);
+      $div.removeClass('toggleOpen').addClass('toggleClosed');
+    }
+  });
 });

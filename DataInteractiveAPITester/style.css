@@ -35,7 +35,7 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  border-color: grey;
+  border-color: white;
   border-width: thin;
   border-style: solid;
   margin: 0 .25em;
@@ -47,10 +47,12 @@ button {
 
 .di-request-builder-item .di-item {
   padding: 0 0.25em;
-  background-color: lightblue;
-  border-bottom-color: grey;
+  background-color: lightgoldenrodyellow;
+  border-bottom-color: white;
   border-bottom-width: thin;
   border-bottom-style: solid;
+  user-select: none;
+  margin-bottom: 0.125em;
 }
 
 .di-request-builder-item .di-item.di-disabled {

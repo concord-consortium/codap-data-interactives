@@ -202,11 +202,11 @@
   },
   {
     "name": "Create Cases",
-    "message": [
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection[Toons].case",
-        "values": {
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Toons].case",
+      "values": [
+        {
           "values": {
             "Name": "Mickey",
             "Species": "Mouse",
@@ -215,12 +215,8 @@
             "Release_Date": "11/18/1928",
             "Movie": "Steamboat Willie"
           }
-        }
-      },
-      {
-        "action": "create",
-        "resource": "dataContext[DataContext1].collection[Toons].case",
-        "values": {
+        },
+        {
           "values": {
             "Name": "Minnie",
             "Species": "Mouse",
@@ -230,8 +226,8 @@
             "Movie": "Steamboat Willie"
           }
         }
-      }
-    ]
+      ]
+    }
   },
   {
     "name": "Create Items",
@@ -267,14 +263,10 @@
   },
   {
     "name": "Get Case By Index",
-    "message": [{
+    "message": {
       "action": "get",
       "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[0]"
-    },
-      {
-        "action": "get",
-        "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[1]"
-      }]
+    }
   },
   {
     "name": "Create Calculator",
@@ -373,7 +365,7 @@
     "name": "Get Component",
     "message": {
       "action": "get",
-      "resource": "HeightAge"
+      "resource": "component[HeightAge]"
     }
   },
   {
