@@ -29,17 +29,21 @@ button {
 
 .di-request-builder {
   display: flex;
-  height: 10em;
+  height: 8em;
 }
+
 .di-request-builder-item {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  flex-shrink: 0;
+
   border-color: white;
   border-width: thin;
   border-style: solid;
+
   margin: 0 .25em;
-  height: 9.5em;
+  height: 7.5em;
   overflow-y: scroll;
 }
 
@@ -55,14 +59,32 @@ button {
   font-weight: bold;
 }
 
+.di-message-area {
+  white-space: pre;
+
+  height: 6em;
+  max-width: 60em;
+  overflow: scroll;
+
+  border-color: grey;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 3px;
+
+  padding: .5em;
+  margin-top: .5em;
+}
 .di-request-builder-item .di-item {
-  padding: 0 0.25em;
   background-color: lightgoldenrodyellow;
+
+  user-select: none;
+
   border-bottom-color: white;
   border-bottom-width: thin;
   border-bottom-style: solid;
-  user-select: none;
+
   margin-bottom: 0.125em;
+  padding: 0 0.25em;
 }
 
 .di-action-list .di-item {

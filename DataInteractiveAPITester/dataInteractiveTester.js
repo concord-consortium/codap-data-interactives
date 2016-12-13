@@ -168,6 +168,60 @@ $(function () {
     }
   }
 
+  function selectResourceType(resourceTypeName) {
+    // disable unsupported actions
+    var actionTemplates = templateMap[resourceTypeName];
+    $(kActionSelector).each(function (ix, el) {
+      var $el = $(el);
+      var elText = $el.text();
+      $el.removeClass('di-disabled');
+      if (!actionTemplates || !actionTemplates[elText]) {
+        $el.addClass('di-disabled');
+        $el.removeClass('di-selected');
+      }
+    })
+
+    // display selected templates
+    displaySelectedTemplates();
+  }
+
+  function selectAction (actionName) {
+    // if resource type is selected, display selected templates
+    displaySelectedTemplates();
+  }
+
+  function selectTemplate(el) {
+    var $el = $(el);
+    $('.di-message-area').text($el.find('.di-template-text').text());
+  }
+
+  function displaySelectedTemplates() {
+    var resourceType = $(kResourceTypeSelector + '.di-selected').text();
+    var action = $(kActionSelector + '.di-selected').text();
+    var actionMap = templateMap[resourceType];
+    var templateList;
+    console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
+    $(kTemplateSelector).remove();
+    if (actionMap) {
+      if (action) {
+        templateList = actionMap[action];
+      } else {
+        templateList = [];
+        Object.values(actionMap).forEach(function (templateArray) {
+          templateList = templateList.concat(templateArray);
+        });
+      }
+    }
+    templateList && templateList.forEach(function (template) {
+      var $div = $('<div>').addClass('di-item');
+      if (template.name) {
+        $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
+      }
+      $('<div>').addClass('di-template-text').text(JSON.stringify(template.message, null, '  ')).appendTo($div);
+      $div.appendTo('.di-template-list');
+    })
+  }
+
   /**
    * Build request builder section of page.
    *
@@ -195,63 +249,10 @@ $(function () {
     return $requestBuilder;
   }
 
-  function selectResourceType(resourceTypeName) {
-    // disable unsupported actions
-    var actionTemplates = templateMap[resourceTypeName];
-    $(kActionSelector).each(function (ix, el) {
-      var $el = $(el);
-      var elText = $el.text();
-      $el.removeClass('di-disabled');
-      if (!actionTemplates || !actionTemplates[elText]) {
-        $el.addClass('di-disabled');
-        $el.removeClass('di-selected');
-      }
-    })
-
-    // display selected templates
-    displaySelectedTemplates();
-  }
-
-  function selectAction (actionName) {
-    // if resource type is selected, display selected templates
-    displaySelectedTemplates();
-  }
-
-  function displaySelectedTemplates() {
-    var resourceType = $(kResourceTypeSelector + '.di-selected').text();
-    var action = $(kActionSelector + '.di-selected').text();
-    var actionMap = templateMap[resourceType];
-    var templateList;
-    console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
-    $(kTemplateSelector).remove();
-    if (actionMap) {
-      if (action) {
-        templateList = actionMap[action];
-      } else {
-        templateList = [];
-        Object.values(actionMap).forEach(function (templateArray) {
-          templateList = templateList.concat(templateArray);
-        });
-      }
-    }
-    templateList && templateList.forEach(function (template) {
-      var $div = $('<div>').addClass('di-item');
-      if (template.name) {
-        $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
-      }
-      $('<pre>').text(JSON.stringify(template.message, null, '  ')).appendTo($div);
-      $div.appendTo('.di-template-list');
-    })
-  }
-
-  function selectTemplate() {
-
-  }
-
   function makeRequestBuilderSection($el, resourceTypes, actions, templates) {
-    var $requestBuilderSection = makeRequestBuilder(resourceTypes, actions);
-
-    $requestBuilderSection.appendTo($el);
+    var $requestBuilderSection = makeRequestBuilder(resourceTypes, actions).appendTo($el);
+    var $editArea = $('<div>').addClass('di-message-area').prop('contentEditable', true).appendTo($el);
+    var $sendButton = $('<div>').append($('<button>').addClass('di-send-button').text('send')).appendTo($el);
 
     $requestBuilderSection.on('click', '.di-request-builder-item .di-item', function (ev) {
       $this = $(this);
@@ -265,10 +266,15 @@ $(function () {
       } else if ($parent.hasClass('di-action-list')) {
         selectAction($this.text());
       } else if ($parent.hasClass('di-template-list')) {
-        selectTemplate()
+        selectTemplate($this)
       }
     });
+    $sendButton.on('click', function () {
+      var message = $(this.parentElement).text();
+      if (message) {
 
+      }
+    });
   }
 
   function makeTemplateTable($el, data) {
