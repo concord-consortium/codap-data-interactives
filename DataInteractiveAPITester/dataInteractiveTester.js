@@ -3,6 +3,7 @@ $(function () {
   var kTrianglePointsDown = '\u25BC';
   var kResourceTypeSelector = '.di-resource-type-list .di-item';
   var kActionSelector = '.di-action-list .di-item';
+  var kTemplateSelector = '.di-template-list .di-item';
 
   var stats = {
     seq: 0,
@@ -49,7 +50,7 @@ $(function () {
   }, "data-interactive", window.parent);
 
   /**
-   * Form a log-message
+   * Form a log message
    * @param type {'comment'||'req'||'resp'||'expect'||'notice''}
    * @param id {number} sequence number of user action. CODAP initiated actions
    *                    have id 0
@@ -68,13 +69,13 @@ $(function () {
       notify: 'Notify'
     }
     var myClass = 'di-' + type;
-    var expandEl = $('<span>').addClass('expandToggle').text(kTrianglePointsRight);
+    var expandEl = $('<span>').addClass('di-expand-toggle').text(kTrianglePointsRight);
     var idEl = $('<span>').text((id|'') + ' ');
-    var typeEl = $('<span>').addClass('messageType').text(lookupLongType[type] + ': ');
+    var typeEl = $('<span>').addClass('di-message-type').text(lookupLongType[type] + ': ');
     var domID = (id !== null && id !== undefined)? 'r' + id: undefined;
-    var messageEl = $('<span>').addClass('log-message').text(JSON.stringify(message, null, "  "));
+    var messageEl = $('<span>').addClass('di-log-message').text(JSON.stringify(message, null, "  "));
     var el = $('<div>').append(expandEl).append(idEl).append(typeEl).append(messageEl);
-    el.addClass(myClass).addClass('di-log-line').addClass('toggleClosed');
+    el.addClass(myClass).addClass('di-log-line').addClass('di-toggle-closed');
     if (domID) el.prop('id', domID);
     el.appendTo('#message-log');
     return el;
@@ -145,12 +146,12 @@ $(function () {
             if ($.isEmptyObject(diff)) {
               stats.successes++;
             } else {
-              failClass = 'fail';
+              failClass = 'di-fail';
             }
           } else if (isSuccess(result)) {
             stats.successes++;
           } else {
-            failClass = 'fail'
+            failClass = 'di-fail'
           }
           var respEl = logMessage('resp', id, result);
           $('#message-log')[0].scrollTop = $('#message-log')[0].scrollHeight;
@@ -207,12 +208,40 @@ $(function () {
       }
     })
 
-
-    // display supported templates
+    // display selected templates
+    displaySelectedTemplates();
   }
 
   function selectAction (actionName) {
-    // if resource type is selected, display supported templates
+    // if resource type is selected, display selected templates
+    displaySelectedTemplates();
+  }
+
+  function displaySelectedTemplates() {
+    var resourceType = $(kResourceTypeSelector + '.di-selected').text();
+    var action = $(kActionSelector + '.di-selected').text();
+    var actionMap = templateMap[resourceType];
+    var templateList;
+    console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
+    $(kTemplateSelector).remove();
+    if (actionMap) {
+      if (action) {
+        templateList = actionMap[action];
+      } else {
+        templateList = [];
+        Object.values(actionMap).forEach(function (templateArray) {
+          templateList = templateList.concat(templateArray);
+        });
+      }
+    }
+    templateList && templateList.forEach(function (template) {
+      var $div = $('<div>').addClass('di-item');
+      if (template.name) {
+        $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
+      }
+      $('<pre>').text(JSON.stringify(template.message, null, '  ')).appendTo($div);
+      $div.appendTo('.di-template-list');
+    })
   }
 
   function selectTemplate() {
@@ -275,7 +304,7 @@ $(function () {
           .append($('<div>')
               .addClass('di-test-message-field')
               .attr('contentEditable', true)
-              .addClass('toggleClosed')
+              .addClass('di-toggle-closed')
               .text( messageString)
           ).appendTo($row);
       $row.appendTo($table);
@@ -301,10 +330,10 @@ $(function () {
 
       if (text === 'open') {
         $this.text('close');
-        $row.find('.di-test-message-field').removeClass('toggleClosed').addClass('toggleOpen');
+        $row.find('.di-test-message-field').removeClass('di-toggle-closed').addClass('di-toggle-open');
       } else {
         $this.text('open');
-        $row.find('.di-test-message-field').removeClass('toggleOpen').addClass('toggleClosed');
+        $row.find('.di-test-message-field').removeClass('di-toggle-open').addClass('di-toggle-closed');
       }
     });
 
@@ -324,7 +353,7 @@ $(function () {
       var resource = message.resource;
       template.action = message.action;
       template.resourceType = resource
-          .replace(/\[[^]*\]/g, '')
+          .replace(/\[[^\]]*]/g, '')
           .replace(/.*\./, '')
           .replace(/(List|ByID|ByIndex|Count)$/, '');
     });
@@ -371,17 +400,17 @@ $(function () {
     makeTemplateTable($testSection, templates);
   })
 
-  $('#message-log').on('click', '.expandToggle', function () {
+  $('#message-log').on('click', '.di-expand-toggle', function () {
     var $this = $(this);
     var text = $this.text();
     var $div = $this.parent('div');
 
-    if ($div.hasClass('toggleClosed')) {
+    if ($div.hasClass('di-toggle-closed')) {
       $this.text(kTrianglePointsDown);
-      $div.removeClass('toggleClosed').addClass('toggleOpen');
+      $div.removeClass('di-toggle-closed').addClass('di-toggle-open');
     } else {
       $this.text(kTrianglePointsRight);
-      $div.removeClass('toggleOpen').addClass('toggleClosed');
+      $div.removeClass('di-toggle-open').addClass('di-toggle-closed');
     }
   });
 });

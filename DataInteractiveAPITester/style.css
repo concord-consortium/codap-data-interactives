@@ -20,8 +20,7 @@ button {
 }
 
 #ctl {
-  min-height: 3em;
-  height: 6em;
+  height: 10em;
   overflow-y: scroll;
   background-color: white;
   border: thin solid grey;
@@ -30,6 +29,7 @@ button {
 
 .di-request-builder {
   display: flex;
+  height: 10em;
 }
 .di-request-builder-item {
   display: flex;
@@ -39,10 +39,20 @@ button {
   border-width: thin;
   border-style: solid;
   margin: 0 .25em;
+  height: 9.5em;
+  overflow-y: scroll;
+}
+
+.di-template-list .di-item pre {
+  margin: 0.25em 1em;
 }
 
 .di-template-list {
   flex-grow: 1;
+}
+
+.di-template-name {
+  font-weight: bold;
 }
 
 .di-request-builder-item .di-item {
@@ -53,6 +63,10 @@ button {
   border-bottom-style: solid;
   user-select: none;
   margin-bottom: 0.125em;
+}
+
+.di-action-list .di-item {
+  text-align: center;
 }
 
 .di-request-builder-item .di-item.di-disabled {
@@ -73,7 +87,7 @@ button {
   /*text-overflow: ellipsis;*/
 }
 
-.di-resp.fail { /* jshint ignore:line */
+.di-resp.di-fail { /* jshint ignore:line */
   color: red;
 }
 
@@ -93,19 +107,19 @@ button {
   padding: 2px 0 2px;
   line-height: 1.1;
 }
-.di-log-line.toggleClosed {
+.di-log-line.di-toggle-closed {
   text-overflow: ellipsis;
   overflow-x: hidden;
   overflow-y: hidden;
   height: 1em;
 }
 
-.di-log-line.toggleOpen {
+.di-log-line.di-toggle-open {
   height: auto;
   position: relative;
 }
 
-.di-log-line.toggleOpen .log-message {
+.di-log-line.di-toggle-open .di-log-message {
   height: auto;
   overflow: auto;
   display: block;
@@ -126,13 +140,13 @@ button {
 .di-test-message-field {
   padding: 3px;
 }
-.di-test-message-field.toggleOpen {
+.di-test-message-field.di-toggle-open {
   white-space: pre;
   border: thin solid gray;
   background-color: white;
 }
 
-.di-test-message-field.toggleClosed{
+.di-test-message-field.di-toggle-closed{
   display: none;
   white-space: nowrap;
   overflow: hidden;
@@ -151,7 +165,7 @@ button {
 #test-table tr:nth-child(odd) {
   background-color: #e8e8e8;
 }
-#message-log .expandToggle {
+#message-log .di-expand-toggle {
   margin: 3px;
   background-color: white ;
 }
