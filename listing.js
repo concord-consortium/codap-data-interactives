@@ -136,7 +136,7 @@ $(document).ready(function () {
             linkLink = '',
             url_root = window.location.origin+window.location.pathname;
 
-        if (obj.path.match('^http') || obj.path.match('^HTTP')) {
+        if (obj.path.match('^http',"i")) {
             path = obj.path;
         }
         else {
@@ -175,6 +175,7 @@ $(document).ready(function () {
 
     function buildListing(listing){
         //check if item is visible
+        $('.listing').remove();
         for (var i=0; i<listing.length; i++) {
             if (listing[i].visible) {
                 AddListingObj(listing[i]);
