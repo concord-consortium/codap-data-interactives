@@ -136,7 +136,7 @@ $(document).ready(function () {
             linkLink = '',
             url_root = window.location.origin+window.location.pathname;
 
-        if (obj.path.match('^http',"i")) {
+        if (obj.path.match(/^http/i)) {
             path = obj.path;
         }
         else {
@@ -144,8 +144,12 @@ $(document).ready(function () {
             path = url_root+obj.path;
         }
 
+        if (url.match(/^https/i) && !path.match(/^https/i)) {
+            path=path.replace(/http/i,'https');
+        }
 
-        for (var i=0; i<category.length;i++) {
+
+            for (var i=0; i<category.length;i++) {
             if (category[i].includes('/')) {
                 console.log("In category split");
 
