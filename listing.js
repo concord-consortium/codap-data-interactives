@@ -133,17 +133,23 @@ $(document).ready(function () {
             listing_desc ='',
             query_param = '?di=',
             launchLink = '',
-            linkLink = '';
+            linkLink = '',
+            url_root = window.location.origin+window.location.pathname;
 
-        if (obj.path.match('http')) {
+        if (obj.path.match(/^http/i)) {
             path = obj.path;
         }
         else {
-            path = "https://concord-consortium.github.io/codap-data-interactives/"+obj.path;
+            url_root=url_root.replace(/index.html$/, '');
+            path = url_root+obj.path;
+        }
+
+        if (url.match(/^https/i) && !path.match(/^https/i)) {
+            path=path.replace(/http/i,'https');
         }
 
 
-        for (var i=0; i<category.length;i++) {
+            for (var i=0; i<category.length;i++) {
             if (category[i].includes('/')) {
                 console.log("In category split");
 
@@ -173,6 +179,7 @@ $(document).ready(function () {
 
     function buildListing(listing){
         //check if item is visible
+        $('.listing').remove();
         for (var i=0; i<listing.length; i++) {
             if (listing[i].visible) {
                 AddListingObj(listing[i]);
@@ -185,58 +192,12 @@ $(document).ready(function () {
         var di_list = response.data_interactives;
         buildListingDivs(categories_obj);
         buildListing(di_list);
+
+        $('form').submit(function(){buildListing(di_list); return false;});
     }
 
     fetchObjList();
 });
 
 
-/*
-//        var CODAP_URL = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html';
 
-function launch(url) {
-    window.open( url, '_blank');
-}
-function invokeDataInteractive(name) {
-    var codapURL = document.getElementById('codap-url').value,
-        docserverURL = document.getElementById('doc-server-url').value,
-        oldLocation = location.href,
-        newLoc = oldLocation.replace(/index.html.*!/, ''),
-        path = map[name].path,
-        newLocSSL = "",
-        url = "",
-        moreGames="";
-
-    //if codapURL is SSL, then newLoc should be SSL and url should use newLocSSL. Because codapURL will already be https if github.io/codap-data-interactive is SSL, not need to check if location.href is SSL. This check is only if the user changes the codapURL to SSL manually.  Also changes the docserver URL to SSL
-    if (codapURL.indexOf("https") > -1) {
-        //check if location.href is already https. If it not then replace http with https, else do nothing.
-        if (newLoc.indexOf("https") > -1) {
-            newLocSSL=newLoc;
-        } else {
-            newLocSSL = newLoc.replace("http", "https");
-        }
-        url = map[name].url || newLocSSL + '/' + path;
-        if (docserverURL) {
-            if (docserverURL.indexOf("https") === -1){
-                oldDocServerURL = docserverURL;
-                docserverURL = oldDocServerURL.replace("http","https");
-            }
-        }
-    } else {
-        url = map[name].url || newLoc + '/' + path;
-    }
-    moreGames= 'moreGames=[{"name":"' + map[name].name +
-        '","dimensions":' + map[name].dimensions +
-        ',"url":"' + url + '"}]';
-    /!*    moreGames= 'moreGames=[{"name":"' + map[name].name +
-     '","dimensions":' + map[name].dimensions +
-     ',"url":"http://concord-consortium.github.io/codap-data-interactives/' + '/' + map[name].path + '"}]';*!/
-
-    if (docserverURL) {
-        //Check if location.href is SSL or codapURL is SSL then docserverURL should be SSL
-        launch(codapURL + '?documentServer=' + encodeURI(docserverURL) + '&' + encodeURI(moreGames) );
-    } else {
-        launch(codapURL + '?di=' + url) //encodeURIComponent(moreGames));
-    }
-}
-*/
