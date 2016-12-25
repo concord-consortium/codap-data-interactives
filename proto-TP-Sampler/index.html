@@ -2,25 +2,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
-  <style>
-    body {
-      background-color: white;
-    }
-  </style>
-  <title>TP-Proto-Sampler</title>
+    <meta charset="UTF-8">
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <style>
+        body {
+            background-color: white;
+        }
+    </style>
+    <title>Proto-TP-Sampler</title>
 </head>
 
 <body>
-  <h1>TP-Proto-Sampler</h1>
-  <form name="form1">
-    <label>Elements (comma-separated) to draw from: <input type="text" name="elements" value="H,T"></label><br>
+<form name="form1">
+    <select id="drawFromChoice" onchange="ProtoTPSampler.handleDrawFromChange()">
+        <option value="drawElements">Draw Elements</option>
+        <option value="sampleCollection">Sample from Collection</option>
+    </select>
+    <div id="drawFrom">
+
+    </div>
     <label>Draw: <input type="text" name="draws" value="2"></label> at a time<br>
     <label>Runs: <input type="text" name="runs" value="5"></label><br>
     <input type="button" onClick="ProtoTPSampler.doRuns();" value="Run">
-  </form>
-  <p><span id="message">Ready</span> </p>
-  <script src="proto-tp-sampler.js"></script>
+</form>
+<p><span id="message">Ready</span></p>
+<script src="proto-tp-sampler.js"></script>
 </body>
 </html>
