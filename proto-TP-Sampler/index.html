@@ -21,9 +21,9 @@
     <div id="drawFrom">
 
     </div>
-    <label>Draw: <input type="text" name="draws" value="2"></label> at a time<br>
-    <label>Runs: <input type="text" name="runs" value="5"></label><br>
-    <input type="button" onClick="ProtoTPSampler.doRuns();" value="Run">
+    <label>Draw: <input type="text" name="draws" size="5" value="2"></label> at a time<br>
+    <label>Repeat: <input type="text" name="runs" size="4" value="5"></label> times<br>
+    <input type="button" onClick="ProtoTPSampler.conductExperiment();" value="Conduct Experiment">
 </form>
 <p><span id="message">Ready</span></p>
 <script src="proto-tp-sampler.js"></script>
