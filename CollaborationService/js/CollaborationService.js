@@ -210,6 +210,7 @@ var dataManager = Object.create({
         this.requestDataContext(dataContextName);
         break;
       case 'createCases':
+      case 'createCase':
       case 'updateCases':
       case 'deleteCases':
         if (action.result.cases) {

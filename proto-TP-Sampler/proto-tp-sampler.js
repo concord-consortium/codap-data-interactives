@@ -273,7 +273,16 @@ codapInterface.sendRequest({
         name: "Sampler_Results",
         collections: [  // There are two collections: a parent and a child
           {
+            name: 'experiments',
+            attrs: [
+              {name: "experiment", type: 'categorical'},
+              {name: "draws", type: 'categorical'}
+            ],
+            childAttrName: "experiment"
+          },
+          {
             name: 'runs',
+            parent: 'experiments',
             // The parent collection has just one attribute
             attrs: [{name: "run", type: 'categorical'}],
             childAttrName: "run"
@@ -296,10 +305,63 @@ codapInterface.sendRequest({
 
 // This object handles the semantics of the page. It generates random numbers.
 var ProtoTPSampler = {
+  experimentNumber: 0,
   runNumber: 0,
+  drawFromChoice: 'drawElements',
+  collectionInfo: null,
+
+  init: function () {
+    this.collectionInfo = {
+      contextName: null,
+      collectionName: null,
+      caseCount: null
+    };
+    this.updateChoiceElement();
+  },
+
+  handleDrawFromChange: function () {
+    var tDrawFrom = document.getElementById('drawFromChoice');
+    this.drawFromChoice = tDrawFrom.value;
+    this.updateChoiceElement();
+  },
+
+  updateChoiceElement: function () {
+    var tChoiceHTML, tPopulateFunc;
+    switch (this.drawFromChoice) {
+      case 'drawElements':
+        tChoiceHTML = '<label>Elements (comma-separated) to draw from: <input type="text" name="elements" value="H,T"></label><br>';
+        break;
+      case 'sampleCollection':
+        tChoiceHTML = 'Choose Collection: <select id="collectionChoice" ></select>';
+        tPopulateFunc = this.populateCollectionChoices;
+        break;
+    }
+    document.getElementById('drawFrom').innerHTML = tChoiceHTML;
+    if (tPopulateFunc)
+      tPopulateFunc();
+  },
+
+  populateCollectionChoices: function () {
+
+    var handleList = function (iRequest, iResult) {
+      if (iResult.success) {
+        iResult.values.forEach(function (iContext) {
+          if (iContext.name !== 'Sampler_Results')
+            tPopup.innerHTML += '<option value="' + iContext.name + '">' + iContext.name + "</option>";
+        });
+      }
+    }.bind(this);
+
+    var tPopup = document.getElementById('collectionChoice');
+    tPopup.innerHTML = '';
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContextList'
+    }, handleList);
+  },
 
   // Here is the function that is triggered when the user presses the button
-  doRuns: function () {
+  conductExperiment: function () {
     // If we're not embedded in CODAP, we bring up an alert and don't draw the sample
     if (!codapInterface.connection.isConnected()) {
       window.alert('Please embed this in CODAP')
@@ -307,54 +369,200 @@ var ProtoTPSampler = {
     }
 
     var doRun = function () {
-      var tNumDraws = 0;
+          var tNumDraws = 0;
 
-      // This function is called once the parent case is opened
-      var doSample = function (iRequest, iResult) {
-        var tID = iResult.values[0].id;
-        tNumDraws = document.forms.form1.draws.value.trim();
+          // This function is called once the parent case is opened
+          var doSample = function (iRequest, iResult) {
+            var tID = iResult.values[0].id;
+            tNumDraws = tSampleSize;
 
-        var addOneCase = function () {
-              var tChoice = tElements[Math.floor(Math.random() * tElements.length)];
-              tNumDraws--;
-              // Tell CODAP to create a case in the child collection
-              codapInterface.sendRequest({
-                action: 'create',
-                resource: 'collection[draws].case',
-                values: {
-                  parent: tID,
-                  values: {value: tChoice}
+            var formulateCase = function (iRequest, iResult) {
+                  if (iResult.success) {
+                    addOneCase(iResult.values.case.values);
+                  }
+                }.bind(this),
+
+                chooseFromCollection = function () {
+                  var tCaseIndex = Math.floor(Math.random() * this.collectionInfo.caseCount),
+                      tResource = 'dataContext[' + this.collectionInfo.contextName + '].collection[' +
+                          this.collectionInfo.collectionName + '].caseByIndex[' + tCaseIndex + ']';
+                  codapInterface.sendRequest({
+                    action: 'get',
+                    resource: tResource
+                  }, formulateCase);
+                }.bind(this),
+
+                makeChoice = function () {
+                  switch (this.drawFromChoice) {
+                    case 'drawElements':
+                      addOneCase({value: tElements[Math.floor(Math.random() * tElements.length)]});
+                      break;
+                    case 'sampleCollection':
+                      chooseFromCollection();
+                  }
+                }.bind(this),
+
+                addOneCase = function (iChoice) {
+                  tNumDraws--;
+                  // Tell CODAP to create a case in the child collection
+                  codapInterface.sendRequest({
+                    action: 'create',
+                    resource: 'collection[draws].case',
+                    values: {
+                      parent: tID,
+                      values: iChoice
+                    }
+                  }, (tNumDraws > 0) ? makeChoice : doRun);
+                }.bind(this);
+
+            makeChoice(); // This starts an asynchronous recursion
+          }.bind(this);
+
+          // doRun starts here
+          if (tNumRuns > 0) {
+            this.runNumber++;
+            document.getElementById('message').innerHTML = this.runNumber;
+
+            // Tell CODAP to open a parent case and call doSample when done
+            codapInterface.sendRequest({
+              action: 'create',
+              resource: 'collection[runs].case',
+              values: {
+                parent: tExperimentCaseID,
+                values: {run: this.runNumber}
+              }
+            }, doSample);
+            tNumRuns--;
+          }
+          else {
+            document.getElementById('message').innerHTML = 'Ready';
+          }
+
+        }.bind(this), // end doRun
+
+        prepareToSampleFromCollection = function () {
+          this.collectionInfo.contextName = document.getElementById('collectionChoice').value;
+
+          var
+              deleteValueAttribute = function() {
+                // We don't need to monitor the result
+                codapInterface.sendRequest({
+                  action: 'delete',
+                  resource: 'collection[draws].attribute[value]'
+                },
+                function( iRequest, iResult) {
+                  console.log('deleteValueAttribute: ' + iResult.success);
+                });
+              }.bind( this),
+
+              setCountAndAttributes = function (iRequest, iResults) {
+                var tCountResult = iResults[0],
+                    tAttributeListResult = iResults[1];
+                if (tCountResult.success) {
+                  this.collectionInfo.caseCount = tCountResult.values;
                 }
-              }, (tNumDraws > 0) ? addOneCase : doRun);
-            };
+                if (tAttributeListResult.success) {
+                  this.addSampleAttributes(tAttributeListResult.values);
+                }
+                doRun();
+              }.bind(this),
 
-        addOneCase(); // This starts an asynchronous recursion
-      }.bind(this);
+              setCollection = function (iRequest, iResult) {
+                if (iResult.success) {
+                  this.collectionInfo.collectionName = iResult.values[0].name;
+                  var tCollectionResource = 'dataContext[' + this.collectionInfo.contextName + '].collection[' +
+                      this.collectionInfo.collectionName + ']';
+                  codapInterface.sendRequest([
+                    {
+                      action: 'get',
+                      resource: tCollectionResource + '.caseCount'
+                    },
+                    {
+                      action: 'get',
+                      resource: tCollectionResource + '.attributeList'
+                    }
+                  ], setCountAndAttributes);
+                }
+              }.bind(this);
 
-      // doRun starts here
-      if( tNumRuns > 0) {
-        this.runNumber++;
-        document.getElementById('message').innerHTML = this.runNumber;
+          deleteValueAttribute(); // May be left over from drawing elements
 
-        // Tell CODAP to open a parent case and call doSample when done
-        codapInterface.sendRequest({
-          action: 'create',
-          resource: 'collection[runs].case',
-          values: {values: {run: this.runNumber}}
-        }, doSample);
-        tNumRuns--;
-      }
-      else {
-        document.getElementById('message').innerHTML = 'Ready';
-      }
+          codapInterface.sendRequest({
+            action: 'get',
+            resource: 'dataContext[' + this.collectionInfo.contextName + '].collectionList'
+          }, setCollection);
+          return false;
+        }.bind(this),
 
-    }.bind(this); // end doRun
-    // doRuns starts here
+        doRuns = function () {
+          var
+              tReadyToRun = false;
+          switch (this.drawFromChoice) {
+            case 'drawElements':
+              tElements = document.forms.form1.elements.value.trim().split(/\s*,\s*/);
+              tReadyToRun = true;
+              break;
+            case 'sampleCollection':
+              tReadyToRun = prepareToSampleFromCollection();
+          }
+          if (tReadyToRun)
+            doRun();
+        }.bind(this);
+
+    // conductExperiment starts here
+    this.experimentNumber++;
+    this.runNumber = 0; // Each experiment starts the runNumber afresh
     var
         tNumRuns = document.forms.form1.runs.value.trim(),
-        tRawElements = document.forms.form1.elements.value.trim(),
-        tSep = /\s*,\s*/, // separates by comma and removes any extra spaces
-        tElements = tRawElements.split(tSep);
-    doRun();
+        tSampleSize = document.forms.form1.draws.value.trim(),
+        tExperimentCaseID,
+        tElements;
+    codapInterface.sendRequest({
+      action: 'create',
+      resource: 'collection[experiments].case',
+      values: [{
+        values: {
+          experiment: this.experimentNumber,
+          draws: tSampleSize
+        }
+      }]
+    }, function (iRequest, iResult) {
+      if (iResult.success) {
+        tExperimentCaseID = iResult.values[0].id;
+        doRuns();
+      }
+      else {
+        window.alert('Unable to begin experiment');
+      }
+    });
+  },
+
+  addSampleAttributes: function (iAttributeList) {
+    iAttributeList.forEach(function (iAttributeSpec) {
+      codapInterface.sendRequest({
+            action: 'get',
+            resource: 'collection[draws].attribute[' +
+            iAttributeSpec.name + ']'
+          },
+          function (iRequest, iResult) {
+            if (!iResult.success) {
+              codapInterface.sendRequest({
+                    action: 'create',
+                    resource: 'collection[draws].attribute',
+                    values: [
+                      {
+                        name: iAttributeSpec.name
+                      }
+                    ]
+                  },
+                  function (iRequest, iResult) {
+                    if (!iResult.success)
+                      console.log(iResult.values);
+                  })
+            }
+          })
+    });
   }
 };
+
+ProtoTPSampler.init();
