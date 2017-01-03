@@ -145,7 +145,7 @@
     },
     {
       "title": "Importer",
-      "description": "plugin for importing JSON, comma delimited or tab delimited files into CODAP",
+      "description": "Plugin for importing JSON, comma delimited or tab delimited files into CODAP",
       "width": 750,
       "height": 450,
       "path": "/Importer/Importer.html",
@@ -153,8 +153,8 @@
       "categories":["Utilities"]
     },
     {
-      "title": "TerraPop plugin",
-      "description": "plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
+      "title": "TerraPop Plugin",
+      "description": "Plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
@@ -163,7 +163,7 @@
     },
     {
       "title": "GeoJSON Importer",
-      "description": "plugin for importing GeoJSON",
+      "description": "Plugin for importing GeoJSON",
       "width": 450,
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
