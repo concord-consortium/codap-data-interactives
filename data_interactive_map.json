@@ -1,7 +1,7 @@
 { "data_interactives": [
     {
       "title": "Ocean Tracks Selector",
-      "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project. Note that this interactive will not load in SSL.",
+      "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project. Note that this plugin will not load in SSL.",
       "width": 550,
       "height": 500,
       "path": "https://oceantracks.org/map/trackmenu_1.html",
@@ -109,7 +109,7 @@
     },
     {
       "title": "Random Number Generator",
-      "description": "An extremely simple interactive. It generates random numbers between 1 and 100.",
+      "description": "An extremely simple plugin. It generates random numbers between 1 and 100.",
       "width": 300,
       "height": 150,
       "path": "/RandomNumbers/RandomNumbers.html",
@@ -145,7 +145,7 @@
     },
     {
       "title": "Importer",
-      "description": "Interactive for importing JSON, comma delimited or tab delimited files into CODAP",
+      "description": "plugin for importing JSON, comma delimited or tab delimited files into CODAP",
       "width": 750,
       "height": 450,
       "path": "/Importer/Importer.html",
@@ -153,8 +153,8 @@
       "categories":["Utilities"]
     },
     {
-      "title": "TerraPop Interactive",
-      "description": "Interactive for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
+      "title": "TerraPop plugin",
+      "description": "plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
@@ -163,7 +163,7 @@
     },
     {
       "title": "GeoJSON Importer",
-      "description": "Interactive for importing GeoJSON",
+      "description": "plugin for importing GeoJSON",
       "width": 450,
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
@@ -235,7 +235,7 @@
     },
     {
       "title": "DropHTMLTable",
-      "description": "A basic screen scraper. Drop the contents of an HTML page. The interactive will find the tables to transfer to CODAP.",
+      "description": "A basic screen scraper. Drop the contents of an HTML page. The plugin will find the tables to transfer to CODAP.",
       "width": 600,
       "height": 400,
       "path": "/drop-html-table.html",

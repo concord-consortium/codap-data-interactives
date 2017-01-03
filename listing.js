@@ -187,6 +187,7 @@ $(document).ready(function () {
         }
     }
 
+
     function buildPage(response) {
         var categories_obj = getCategories(response);
         var di_list = response.data_interactives;
