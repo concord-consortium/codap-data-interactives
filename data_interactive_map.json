@@ -241,6 +241,15 @@
       "path": "/drop-html-table.html",
       "visible":true,
       "categories":["Utilities"]
+    },
+    {
+      "title": "Questionnaire",
+      "description": "Allows the creation of a document with a questionnaire through which data can be added to CODAP.",
+      "width": 400,
+      "height": 600,
+      "path": "/questionnaire/index.html",
+      "visible":true,
+      "categories":["Utilities"]
     }
   ]
 }
