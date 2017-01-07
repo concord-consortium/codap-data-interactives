@@ -110,6 +110,7 @@ var codapInterface = Object.create({
           var receivedFrame = success && resp[1].values;
           var savedState = receivedFrame && receivedFrame.savedState;
           this_.updateInteractiveState(savedState);
+        if (success) {
           if (callback) {
             callback(savedState);
           }
@@ -118,6 +119,15 @@ var codapInterface = Object.create({
             config.stateHandler(savedState);
           }
           resolve(savedState);
+        } else {
+          if (!resp) {
+            reject('Connection request to CODAP timed out.');
+          } else {
+            reject(
+                (resp[1] && resp[1].values && resp[1].values.error)
+                || 'unknown failure');
+          }
+        }
       }
 
       var getFrameReq = {action: 'get', resource: 'interactiveFrame'};
@@ -147,7 +157,8 @@ var codapInterface = Object.create({
       }.bind(this));
 
       // update, then get the interactiveFrame.
-      this.sendRequest([updateFrameReq, getFrameReq]).then(getFrameRespHandler);
+      this.sendRequest([updateFrameReq, getFrameReq])
+          .then(getFrameRespHandler);
     }.bind(this));
   },
 
