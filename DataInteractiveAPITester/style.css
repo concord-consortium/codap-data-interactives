@@ -20,7 +20,7 @@ button {
 }
 
 #ctl {
-  height: 10em;
+  height: 19em;
   overflow-y: scroll;
   background-color: white;
   border: thin solid grey;
@@ -29,7 +29,6 @@ button {
 
 .di-request-builder {
   display: flex;
-  height: 8em;
 }
 
 .di-request-builder-item {
@@ -37,13 +36,7 @@ button {
   flex-direction: column;
   justify-content: flex-start;
   flex-shrink: 0;
-
-  border-color: white;
-  border-width: thin;
-  border-style: solid;
-
   margin: 0 .25em;
-  height: 7.5em;
   overflow-y: scroll;
 }
 
@@ -62,7 +55,7 @@ button {
 .di-message-area {
   white-space: pre;
 
-  height: 6em;
+  height: 3em;
   max-width: 60em;
   overflow: scroll;
 
@@ -72,21 +65,21 @@ button {
   border-radius: 3px;
 
   padding: .5em;
-  margin-top: .5em;
+  margin: .5em .5em 0;
 }
 .di-request-builder-item .di-item {
-  background-color: lightgoldenrodyellow;
-
-  user-select: none;
-
-  border-bottom-color: white;
-  border-bottom-width: thin;
-  border-bottom-style: solid;
-
+  background-color: goldenrod;
+  border-radius: 6px;
   margin-bottom: 0.125em;
   padding: 0 0.25em;
+  color: white;
+  user-select: none;
+  overflow-x: hidden;
 }
 
+.di-resource-type-list .di-item {
+  text-align: center;
+}
 .di-action-list .di-item {
   text-align: center;
 }
@@ -151,7 +144,7 @@ button {
 #message-log, label textarea {
   resize: both;
   min-height: 3em;
-  height: 12em;
+  height: 8em;
   overflow-y: scroll;
   border: thin solid darkslategrey;
   background-color: white;

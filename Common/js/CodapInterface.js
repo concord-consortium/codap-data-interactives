@@ -94,7 +94,8 @@ var codapInterface = Object.create({
    * Initialize connection.
    *
    * Start connection. Request interactiveFrame to get prior state, if any.
-   * Update interactive frame to set name and dimensions.
+   * Update interactive frame to set name and dimensions and other configuration
+   * information.
    *
    * @param config {object} Configuration. Optional properties: title {string},
    *                        version {string}, dimensions {object}
