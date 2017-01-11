@@ -7,27 +7,27 @@
           "type": "radiogroup",
           "choices": [
             {
-              "value": "aa",
-              "text": "Amino Acid"
+              "value": "Amino Acids",
+              "text": "Amino Acids"
             },
             {
-              "value": "cookie",
+              "value": "Cookie",
               "text": "Cookie"
             },
             {
-              "value": "sugar",
+              "value": "Sugar",
               "text": "Sugar"
             },
             {
-              "value": "water",
+              "value": "Water",
               "text": "Water"
             },
             {
-              "value": "oliveOil",
+              "value": "Olive Oil",
               "text": "Olive Oil"
             },
             {
-              "value": "salt",
+              "value": "Salt",
               "text": "Salt"
             }
           ],

@@ -68,9 +68,16 @@
           "title": "Describe the Habitat"
         },
         {
-          "type": "text",
-          "name": "Biome",
-          "title": "What is the biome?"
+          "type": "dropdown",
+          "choices": [
+            "Desert",
+            "Grassland/Cold desert",
+            "Temperate seasonal forest",
+            "Tropical rainforest",
+            "Tropical seasonal forest/Savanna",
+            "Woodland/Shrubland"
+          ],
+          "name": "Biome"
         }
       ]
     }
