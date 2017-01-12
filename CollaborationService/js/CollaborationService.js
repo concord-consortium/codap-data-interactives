@@ -167,10 +167,10 @@ var dataManager = Object.create({
     }, {}, handler);
   },
 
-  requestCaseById: function (contextName, collectionName, caseID, handler) {
+  requestCaseById: function (contextName, caseID, handler) {
     dispatcher.sendRequest({
       action: 'get',
-      resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].caseByID[' + caseID + ']',
+      resource: 'dataContext[' + contextName + '].caseByID[' + caseID + ']',
     }, {}, handler);
   },
 
@@ -213,21 +213,26 @@ var dataManager = Object.create({
       case 'createCase':
       case 'updateCases':
       case 'deleteCases':
-        if (action.result.cases) {
-          this.codapDidChangeCases(operation, action.result.cases);
+        if (action.result.caseIDs) {
+          this.codapDidChangeCases(dataContextName, operation, action.result.caseIDs);
         }
         break;
     }
     return true;
   },
 
-  codapDidChangeCases: function (operation, cases) {
+  codapDidChangeCases: function (dataContextName, operation, caseIDs) {
     var self = this,
+        cases,
         processCases;
 
     processCases = function () {
       var _case = cases.shift(),
-          collaborationCollection = _case && self.collaborationContexts[_case.context.name] ? self.collaborationContexts[_case.context.name].collections[_case.collection.name] : null,
+          collectionName = _case && _case.collection.name,
+          collaborationCollection = _case
+              && self.collaborationContexts[dataContextName]
+                ? self.collaborationContexts[dataContextName].collections[collectionName]
+                : null,
           values = {},
           updates = {},
           processNextCase = true,
@@ -241,12 +246,12 @@ var dataManager = Object.create({
             if (!firebaseKeyValue) {
               pushRef = collaborationCollection.casesRef.push();
               values[collaborationCollection.firebaseKey] = pushRef.key;
-              values['Collaborator_' + _case.collection.name] = self.state.username;
-              _case.values['Collaborator_' + _case.collection.name] = self.state.username;
+              values['Collaborator_' + collectionName] = self.state.username;
+              _case.values['Collaborator_' + collectionName] = self.state.username;
 
               updateRequest = {
                 action: 'update',
-                resource: 'dataContext[' + _case.context.name + '].collection[' + _case.collection.name + '].caseByID[' + _case.id + ']',
+                resource: 'dataContext[' + dataContextName + '].collection[' + collectionName + '].caseByID[' + _case.id + ']',
                 values: {
                   values: values // thats a lot of values :)
                 }
@@ -256,11 +261,12 @@ var dataManager = Object.create({
                 processNextCase = false;
                 updateRequest.parent = _case.parent;
 
-                self.requestCaseById(_case.context.name, _case.collection.parent.name, _case.parent, function (request, result) {
-                  var parentCollection = self.collaborationContexts[_case.context.name].collections[_case.collection.parent.name],
+                self.requestCaseById(dataContextName, _case.parent, function (request, result) {
+                  var parentCollectionName = result.values.case.collection.name,
+                      parentCollection = self.collaborationContexts[dataContextName].collections[parentCollectionName],
                       parent = {};
 
-                  parent[FIREBASE_PARENT_COLLECTION_NAME_KEY] = _case.collection.parent.name;
+                  parent[FIREBASE_PARENT_COLLECTION_NAME_KEY] = parentCollectionName;
                   parent[FIREBASE_PARENT_COLLABORATION_KEY_VALUE_KEY] = result.values.case.values[parentCollection.firebaseKey];
 
                   dispatcher.sendRequest(updateRequest, {}, function (request, result) {
@@ -303,8 +309,18 @@ var dataManager = Object.create({
         }
       }
     };
-
-    processCases();
+    var caseRequests = caseIDs.map( function( iID) {
+      return {
+        action: 'get',
+        resource: 'dataContext[' + dataContextName + '].caseByID[' + iID + ']',
+      }
+    });
+    dispatcher.sendRequest( caseRequests, null,     function (iRequests, iResults) {
+          cases = iResults.map( function( iResult) {
+            return iResult.success ? iResult.values.case : null;
+          });
+          processCases();
+        });
   },
 
   updateStateProperty: function (property, value, skipNotify) {
@@ -679,38 +695,47 @@ var dispatcher = Object.create({ // jshint ignore:line
     },
 
     handleResponse: function (request, result, handlingOptions) {
-      var resourceObj = this.parseResourceSelector(request.resource),
-          STARTING_CONNECTION_STATE = this.connectionState;
+      function handleOneResponse(iRequest, iResult, iResourceType) {
+        if (!iResult.success) {
+          console.log('Request to CODAP Failed: ' + JSON.stringify(request));
+        } else if (request.action === 'get') {
+          switch (iResourceType) {
+            case 'interactiveFrame':
+              dataManager.setInteractiveFrame(iResult.values);
+              if (iResult.values.savedState && iResult.values.savedState.wizardStep) {
+                dataManager.setWizardStep(iResult.values.savedState.wizardStep);
+              }
+              dataManager.requestDataContextList();
+              break;
+            case 'dataContextList':
+              dataManager.setContextList(iResult.values);
+              break;
+          }
+        } else if (request.action === 'update') {
+          switch (iResourceType) {
+            case 'interactiveFrame':
+              dataManager.requestDataContextList();
+              break;
+          }
+        } else {
+        }
+      }
+      var resourceObj;
+      var STARTING_CONNECTION_STATE = this.connectionState;
 
       if (!result) {
         console.log('Request to CODAP timed out: ' + JSON.stringify(request));
         this.connectionState = TIMEDOUT_CONNECTION_STATE;
-      } else if (!result.success) {
-        console.log('Request to CODAP Failed: ' + JSON.stringify(request));
+      } else if (Array.isArray(result)) {
         this.connectionState = ACTIVE_CONNECTION_STATE;
-      } else if (request.action === 'get') {
-        this.connectionState = ACTIVE_CONNECTION_STATE;
-        switch (resourceObj.type) {
-          case 'interactiveFrame':
-            dataManager.setInteractiveFrame(result.values);
-            if (result.values.savedState && result.values.savedState.wizardStep) {
-              dataManager.setWizardStep(result.values.savedState.wizardStep);
-            }
-            dataManager.requestDataContextList();
-            break;
-          case 'dataContextList':
-            dataManager.setContextList(result.values);
-            break;
-        }
-      } else if (request.action === 'update') {
-        this.connectionState = ACTIVE_CONNECTION_STATE;
-        switch (resourceObj.type) {
-          case 'interactiveFrame':
-            dataManager.requestDataContextList();
-            break;
-        }
+        request.forEach(function (rq, rqix) {
+          resourceObj  = this.parseResourceSelector(rq.resource);
+          handleOneResponse(rq, result[rqix], resourceObj.type);
+        }.bind(this));
       } else {
         this.connectionState = ACTIVE_CONNECTION_STATE;
+        resourceObj  = this.parseResourceSelector(request.resource);
+        handleOneResponse(request, result, resourceObj.type)
       }
       if (STARTING_CONNECTION_STATE !== this.connectionState) {
         dataManager.setConnectionState(this.connectionState);
