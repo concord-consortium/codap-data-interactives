@@ -269,6 +269,13 @@
     }
   },
   {
+    "name": "Get Case By ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].caseByID[20]"
+    }
+  },
+  {
     "name": "Create Calculator",
     "message": {
       "action": "create",
