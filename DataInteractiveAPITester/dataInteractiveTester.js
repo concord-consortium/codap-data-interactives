@@ -158,15 +158,15 @@ $(function () {
           }
           var respEl = logMessage('resp', id, result);
           $('#message-log')[0].scrollTop = $('#message-log')[0].scrollHeight;
-          $('#success').text(stats.successes);
+          $('#success').text('' + stats.successes);
 //              console.log('Reply: ' + JSON.stringify(result));
           sendOneMessage(msgNum+1);
         });
-        $('#sentMessages').text(stats.seq);
+        $('#sentMessages').text('' + stats.seq);
       }
       sendOneMessage(0);
     } catch (e) {
-      logMessage('err', null, '' + (++stats.seq) + ': ' + e);
+      logMessage('err', null, '' + (stats.seq) + ': ' + e);
       throw e;
     }
   }
@@ -249,8 +249,9 @@ $(function () {
    * @param actions {[string]}
    * @returns {jQuery} Element for insertion.
    */
-  function makeRequestBuilder(resourceTypes, actions) {
-    var $requestBuilder = $('<div>').addClass('di-request-builder');
+  function makeTemplateSelector(resourceTypes, actions) {
+    var $templateLabel = $('<div>').addClass('di-label').text('templates');
+    var $templateSelector = $('<div>').addClass('di-request-builder');
     var $actionList = $('<div>').addClass('di-action-list').addClass('di-request-builder-item');
     var $resourceTypeList = $('<div>').addClass('di-resource-type-list').addClass('di-request-builder-item');
     var $templateList = $('<div>').addClass('di-template-list').addClass('di-request-builder-item');
@@ -263,17 +264,18 @@ $(function () {
       $('<div>').addClass('di-item').text(actionName).appendTo($actionList);
     });
 
-    $requestBuilder.append($resourceTypeList).append($actionList).append($templateList);
+    $templateSelector.append($resourceTypeList).append($actionList).append($templateList);
 
-    return $requestBuilder;
+    return $templateLabel.after($templateSelector);
   }
 
   function makeRequestBuilderSection($el, resourceTypes, actions, templates) {
-    var $requestBuilderSection = makeRequestBuilder(resourceTypes, actions).appendTo($el);
+    var $templateSelectorSection = makeTemplateSelector(resourceTypes, actions).appendTo($el);
+    var $editAreaLabel = $('<div>').addClass('di-label').text('message prep').appendTo($el);
     var $editArea = $('<div>').addClass('di-message-area').prop('contentEditable', true).appendTo($el);
     var $sendButton = $('<div>').append($('<button>').addClass('di-send-button').text('send')).appendTo($el);
 
-    $requestBuilderSection.on('click', '.di-request-builder-item .di-item', function (ev) {
+    $templateSelectorSection.on('click', '.di-request-builder-item .di-item', function (ev) {
       $this = $(this);
       $parent = $(this.parentElement);
       $parent.find('.di-selected').removeClass('di-selected');
@@ -289,22 +291,21 @@ $(function () {
       }
     });
     $sendButton.on('click', function () {
-      var id = ++stats.seq;
       var message = $('.di-message-area').text();
-      logMessage('req', id, message);
       var messageObj;
       if (message && message.length > 0) {
         // parse
         try {
           messageObj = JSON.parse(message);
         } catch (ex) {
-          logMessage('error', id, ex)
+          logMessage('error', i-1, ex)
         }
-        sendMessage(messageObj).then(function (result) {
-          logMessage('resp', id, result);
-        }).catch(function (message) {
-          logMessage('error', id, message);
-        })
+        send([{message: messageObj}]);
+        // sendMessage(messageObj).then(function (result) {
+        //   logMessage('resp', id, result);
+        // }).catch(function (message) {
+        //   logMessage('error', id, message);
+        // })
       }
     });
   }
@@ -456,5 +457,8 @@ $(function () {
     name: 'CODAP API Tester',
     version: 0.1,
     dimensions: { height: 640, width: 430}
+  });
+  codapInterface.on('notify', /.*/, function (notice) {
+    logMessage('notify', 0, notice);
   });
 });
