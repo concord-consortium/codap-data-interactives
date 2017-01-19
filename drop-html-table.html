@@ -97,7 +97,7 @@ $(document).ready(function () {
   }
 
   function handleSend(ev) {
-    function hasHeaderRow(firstRow) {
+    function treatFirstRowAsHeader(firstRow) {
       var hasHeader = $('.first-line-header', parentEl).is(':checked');
       console.log('hasHeader: ' + hasHeader);
       return hasHeader;
@@ -181,12 +181,21 @@ $(document).ready(function () {
       return attrs;
     }
 
+    function updateTableName(name) {
+      var match = /^.*_([0-9]+)$/.exec(name);
+      var ext = match && match[1];
+      if (match) {
+        return name.replace(RegExp(ext + '$'), '' + (Number(ext) + 1));
+      } else {
+        return name + '_1';
+      }
+    }
     // --- --- begin handleSend --- ---
     var parentEl = ev.target.parentNode.parentNode;
     var $srcTable = $('table', ev.target.parentNode.parentNode);
     var $rows = $('tr', $srcTable);
     var stats = getTableStats($rows);
-    var headerRowIndex = hasHeaderRow()? inferAttributeHeaderRowIndex(stats, $rows): null;
+    var headerRowIndex = treatFirstRowAsHeader()? inferAttributeHeaderRowIndex(stats, $rows): null;
     var $headerRow = headerRowIndex !== null && $rows[headerRowIndex];
     var headerNames;
     var contextName = $('.table-title', parentEl).val() || 'DropTarget';
@@ -204,7 +213,7 @@ $(document).ready(function () {
     }, function () {
       var cases = [];
       $rows.each(function (ix, row) {
-        if (hasHeaderRow() && (stats.headerRows.indexOf(ix) >= 0 || (ix === headerRowIndex))) {
+        if (treatFirstRowAsHeader() && (stats.headerRows.indexOf(ix) >= 0 || (ix === headerRowIndex))) {
           return;
         }
         var values = {};
@@ -224,6 +233,7 @@ $(document).ready(function () {
         resource: 'dataContext[' + contextName + '].collection[' + contextName + '].case',
         values: cases
       }, function () {
+        $('.table-title', parentEl).val(updateTableName(contextName));
         sendRequest({
           action: 'create',
           resource: 'component',
@@ -243,7 +253,7 @@ $(document).ready(function () {
       function makeTableHeader(targetEl, ix) {
         var titleEl = $('<input>')
             .addClass('table-title')
-            .val('Table_' + (++tableID));
+            .val('Table' + (++tableID));
         var removeButton = $('<button>')
             .addClass('remove-button')
             .text('Remove');
