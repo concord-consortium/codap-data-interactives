@@ -28,6 +28,17 @@
     "message": {
       "action": "get",
       "resource": "interactiveFrame"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "title": "CODAP API Tester",
+        "version": 0.1,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
     }
   },
   {
@@ -163,6 +174,13 @@
     }
   },
   {
+    "name": "Delete Collection",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].collection[Toons]"
+    }
+  },
+  {
     "name": "Get Collection List",
     "message": {
       "action": "get",
@@ -199,6 +217,10 @@
       "action": "get",
       "resource": "dataContext[DataContext1].collection[Toons].attributeList"
     }
+  },
+  {
+    "action": "get",
+    "resource": "dataContext[DataContext1].collection[Toons].attributeList"
   },
   {
     "name": "Create Cases",
@@ -274,6 +296,19 @@
       "action": "get",
       "resource": "dataContext[DataContext1].caseByID[20]"
     }
+  },
+  {
+    "action": "update",
+    "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
+    "values": {
+      "values": {
+        "Species": "Duck"
+      }
+    }
+  },
+  {
+    "action": "delete",
+    "resource": "dataContext[DataCard].collection[Toons].cases[15]"
   },
   {
     "name": "Create Calculator",
@@ -408,7 +443,7 @@
       "action": "notify",
       "resource": "undoChangeNotice",
       "values": {
-        "operation": "undoChangeNotice"
+        "operation": "undoableActionPerformed"
       }
     }
   },
@@ -430,6 +465,31 @@
       "values": {
         "operation": "redoButtonPress"
       }
+    }
+  },
+  {
+    "name": "Log a Message",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "formatStr": "Launched rocket with %@ engine toward %@",
+        "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+  {
+    "name": "Delete all cases in dataContext",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].allCases"
+    }
+  },
+  {
+    "name": "Case search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseSearch[name==Mickey]"
     }
   }
 ]

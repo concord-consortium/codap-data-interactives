@@ -26,7 +26,8 @@ $(function () {
       'case',
       'item',
       'selection',
-      'undoChangeNotice'
+      'undoChangeNotice',
+      'logMessage'
     ];
   var templates = [];
   var templateMap = {};
