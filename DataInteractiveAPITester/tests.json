@@ -12,6 +12,7 @@
       "action": "update",
       "resource": "interactiveFrame",
       "values": {
+        "name": "Tester",
         "title": "DI-API Test",
         "version": "0.1",
         "preventBringToFront": false,
@@ -298,17 +299,23 @@
     }
   },
   {
-    "action": "update",
-    "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
-    "values": {
+    "name": "Update Case By ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
       "values": {
-        "Species": "Duck"
+        "values": {
+          "Species": "Duck"
+        }
       }
     }
   },
   {
-    "action": "delete",
-    "resource": "dataContext[DataCard].collection[Toons].cases[15]"
+    "name": "Delete Case",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataCard].collection[Toons].caseByID[15]"
+    }
   },
   {
     "name": "Create Calculator",
@@ -316,6 +323,8 @@
       "action": "create",
       "resource": "component",
       "values": {
+        "name": "name-calculator",
+        "title": "title-calculator",
         "type": "calculator"
       }
     }
@@ -326,7 +335,11 @@
       "action": "create",
       "resource": "component",
       "values": {
-        "type": "map"
+        "type": "map",
+        "name": "name-map",
+        "title": "title-map",
+        "dataContextName": "DataContext1",
+        "legendAttributeName": "Legend"
       }
     }
   },
@@ -336,7 +349,13 @@
       "action": "create",
       "resource": "component",
       "values": {
-        "type": "slider"
+        "name": "name-slider",
+        "title": "title-slider",
+        "type": "slider",
+        "globalValueName": "g1",
+        "lowerBound": -10,
+        "upperBound": 10,
+        "value": 0
       }
     }
   },
@@ -347,11 +366,17 @@
       "resource": "component",
       "values": {
         "type": "text",
-        "componentStorage": {
-          "name": "name-abc",
-          "text": "T'was brillig and the slithy toves..."
+        "name": "name-text",
+        "title": "title-text",
+        "text": "T'was brillig and the slithy toves...",
+        "dimensions": {
+          "width": 60,
+          "height": 200
+        },
+        "position": {
+          "left": 300,
+          "top": 100
         }
-
       }
     }
   },
@@ -391,6 +416,7 @@
       "resource": "component",
       "values": {
         "type": "webView",
+        "name": "name-webview",
         "title": "Concord",
         "URL": "http://www.concord.org",
         "dimensions": {"width": 400, "height": 300}
