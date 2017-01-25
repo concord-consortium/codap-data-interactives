@@ -1,8 +1,28 @@
 /*Style sheet for concord-consortium.github.io/codap-data-interactive site*/
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.svg') format('svg');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.svg') format('svg');}
 
 body {
     background-color: #FFFAE6;
-    font: 100% museo-sans, lato,verdana,arial,sans-serif;
+    font: 100% "MuseoSans-500", lato,verdana,arial,sans-serif;
     margin: 0;
     padding: 1em;
 }
@@ -52,7 +72,8 @@ header #cc img {
 
 h1 {
     color: #e16a3e;
-    font: 300 2em museo-sans,verdana,arial,helvetica,sans-serif;
+    font: 2.5em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
+    text-align: center;
 }
 
 footer {
@@ -83,7 +104,7 @@ footer p {
 
 p {
     color: #777;
-    font: 100 1em museo-sans, lato, verdana, helvetica, sans-serif;
+    font: 100 1em "MuseoSans-500", lato, verdana, helvetica, sans-serif;
     line-height: 125%;
     margin-bottom: .5em;
 }
@@ -120,6 +141,15 @@ p {
 
 #top-nav-bar a:hover {
     background-color: #0797A8;
+}
+
+#top-nav-bar {
+
+}
+
+.center {
+    margin: auto;
+    width: 50%;
 }
 
 .nav-bar {
