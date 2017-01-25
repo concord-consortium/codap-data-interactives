@@ -76,6 +76,11 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    color: #777;
+    font: 1.75em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
+}
+
 footer {
     background: #72bfca;
     color: #fff;
@@ -109,32 +114,12 @@ p {
     margin-bottom: .5em;
 }
 
-.listing-title {
-    font-weight: bold;
-    font-size: 16px;
-    -webkit-margin-before:.1em;
-    -webkit-margin-after:.1em;
-    width:150px;
-    max-width:150px;
-}
-
-.listing-desc {
-    -webkit-margin-before:.1em;
-    -webkit-margin-after:.1em;
-    font-size: 12px;
-}
-
-.listing-link {
-    font-size: 10px;
-    position: absolute;
-    bottom:10px;
-}
 
 #top-nav-bar a {
     width:165px;
     background-color: #7fb2be;
     color: white;
-    font-size: 13px;
+    font-size: 16px;
     padding: 0.2em 0.5em;
     border-right: 1px solid white;
 }
@@ -155,6 +140,7 @@ p {
 .nav-bar {
     width:100%;
     margin: 0;
+    font-size: 16px;
 }
 
 .nav-bar a {
@@ -237,4 +223,24 @@ ul {
     position: relative;
     width: 25%;
     background-color:white;
+}
+
+.listing-title {
+    font-size: 16px;
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    width:150px;
+    max-width:150px;
+}
+
+.listing-desc {
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    font-size: 12px;
+}
+
+.listing-link {
+    font-size: 10px;
+    position: absolute;
+    bottom:10px;
 }
