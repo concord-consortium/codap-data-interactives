@@ -93,16 +93,13 @@ footer p {
     width: 800px;
 }
 
-.form_container {
-    margin-top: 1em;
-}
-
-.credits {
+#credits {
+    margin-left: 20px;
     font-size: 0.8em;
     color: #777;
 }
 
-.credits p {
+#credits p {
     padding-left: 2em;
     margin-bottom: 0.01em;
 }
@@ -243,4 +240,20 @@ ul {
     font-size: 10px;
     position: absolute;
     bottom:10px;
+}
+
+.form_container {
+    margin-top: 1em;
+    padding-left: 2em;
+    position: absolute;
+    margin-bottom: 2em;
+}
+
+.form_container input[type=text] {
+    border: 1px solid #aaa;
+    border-radius: .375em;
+    color: black;
+    font-size: 1em;
+    font-weight: 200;
+    width: 650px;
 }
