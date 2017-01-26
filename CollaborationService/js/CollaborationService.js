@@ -141,7 +141,8 @@ var dataManager = Object.create({
       resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].attribute',
       values: [{
         name: attrName,
-        title: attrTitle
+        title: attrTitle,
+        hidden: true
       }]
     }, {}, handler);
   },
