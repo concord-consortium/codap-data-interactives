@@ -1,8 +1,28 @@
 /*Style sheet for concord-consortium.github.io/codap-data-interactive site*/
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.svg') format('svg');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.svg') format('svg');}
 
 body {
     background-color: #FFFAE6;
-    font: 100% museo-sans, lato,verdana,arial,sans-serif;
+    font: 100% "MuseoSans-500", lato,verdana,arial,sans-serif;
     margin: 0;
     padding: 1em;
 }
@@ -52,7 +72,13 @@ header #cc img {
 
 h1 {
     color: #e16a3e;
-    font: 300 2em museo-sans,verdana,arial,helvetica,sans-serif;
+    font: 2.5em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
+    text-align: center;
+}
+
+h2 {
+    color: #777;
+    font: 1.75em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
 }
 
 footer {
@@ -67,53 +93,30 @@ footer p {
     width: 800px;
 }
 
-.form_container {
-    margin-top: 1em;
-}
-
-.credits {
+#credits {
+    margin-left: 20px;
     font-size: 0.8em;
     color: #777;
 }
 
-.credits p {
+#credits p {
     padding-left: 2em;
     margin-bottom: 0.01em;
 }
 
 p {
     color: #777;
-    font: 100 1em museo-sans, lato, verdana, helvetica, sans-serif;
+    font: 100 1em "MuseoSans-500", lato, verdana, helvetica, sans-serif;
     line-height: 125%;
     margin-bottom: .5em;
 }
 
-.listing-title {
-    font-weight: bold;
-    font-size: 16px;
-    -webkit-margin-before:.1em;
-    -webkit-margin-after:.1em;
-    width:150px;
-    max-width:150px;
-}
-
-.listing-desc {
-    -webkit-margin-before:.1em;
-    -webkit-margin-after:.1em;
-    font-size: 12px;
-}
-
-.listing-link {
-    font-size: 10px;
-    position: absolute;
-    bottom:10px;
-}
 
 #top-nav-bar a {
     width:165px;
     background-color: #7fb2be;
     color: white;
-    font-size: 13px;
+    font-size: 16px;
     padding: 0.2em 0.5em;
     border-right: 1px solid white;
 }
@@ -122,9 +125,19 @@ p {
     background-color: #0797A8;
 }
 
+#top-nav-bar {
+
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+}
+
 .nav-bar {
     width:100%;
     margin: 0;
+    font-size: 16px;
 }
 
 .nav-bar a {
@@ -205,6 +218,42 @@ ul {
     min-height: 140px;
     padding: 1%;
     position: relative;
-    width: 25%;
+    width: 200px;
     background-color:white;
+}
+
+.listing-title {
+    font-size: 16px;
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    width:150px;
+    max-width:150px;
+}
+
+.listing-desc {
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    font-size: 12px;
+}
+
+.listing-link {
+    font-size: 10px;
+    position: absolute;
+    bottom:10px;
+}
+
+.form_container {
+    margin-top: 1em;
+    padding-left: 2em;
+    position: absolute;
+    margin-bottom: 2em;
+}
+
+.form_container input[type=text] {
+    border: 1px solid #aaa;
+    border-radius: .375em;
+    color: black;
+    font-size: 1em;
+    font-weight: 200;
+    width: 650px;
 }

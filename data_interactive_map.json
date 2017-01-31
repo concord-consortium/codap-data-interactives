@@ -104,7 +104,7 @@
       "width": 400,
       "height": 250,
       "path": "/GuessMyNumber/GuessMyNumber.html",
-      "visible":true,
+      "visible":false,
       "categories":["Utilities"]
     },
     {
@@ -112,7 +112,7 @@
       "description": "An extremely simple plugin. It generates random numbers between 1 and 100.",
       "width": 300,
       "height": 150,
-      "path": "/RandomNumbers/RandomNumbers.html",
+      "path": "/NewRandomNumbers/index.html",
       "visible":true,
       "categories":["Utilities"]
     },
@@ -135,8 +135,8 @@
       "categories":["Utilities"]
     },
     {
-      "title": "Sampler",
-      "description": "A way to generate a sample data set.",
+      "title": "Normal Distribution Sampler",
+      "description": "A way to generate a sample data set from a normal distribution.",
       "width": 400,
       "height": 300,
       "path": "/Sampler/Sampler.html",
@@ -149,7 +149,7 @@
       "width": 750,
       "height": 450,
       "path": "/Importer/Importer.html",
-      "visible":true,
+      "visible":false,
       "categories":["Utilities"]
     },
     {
@@ -158,7 +158,7 @@
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
-      "visible":true,
+      "visible":false,
       "categories":["Utilities"]
     },
     {
@@ -167,7 +167,7 @@
       "width": 450,
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
-      "visible":true,
+      "visible":false,
       "categories":["Utilities"]
     },
     {
@@ -221,7 +221,7 @@
       "width": 400,
       "height": 250,
       "path": "/PivotalImporter/PTImporter.html",
-      "visible":true,
+      "visible":false,
       "categories":["Utilities"]
     },
     {
@@ -250,6 +250,33 @@
       "path": "/questionnaire/index.html",
       "visible":true,
       "categories":["Utilities"]
+    },
+    {
+      "title": "Collaboration Service",
+      "description": "Allows multiple users to add data to specified data contexts.",
+      "width": 300,
+      "height":200,
+      "path": "/CollaborationService/CollaborationService.html",
+      "visible": true,
+      "categories": ["Utilities"]
+    },
+    {
+      "title": "Attribute Stacker",
+      "description": "Allows user to tidy the data set",
+      "width": 600,
+      "height":400,
+      "path": "/AttributeStacker/index.html",
+      "visible": true,
+      "categories": ["Utilities"]
+    },
+    {
+      "title": "Discrete Collection Sampler",
+      "description": "Allows user to rearrange the data set",
+      "width": 450,
+      "height":200,
+      "path": "/proto-TP-Sampler/index.html",
+      "visible": true,
+      "categories": ["Utilities"]
     }
-  ]
+]
 }
