@@ -12,9 +12,9 @@
       iframe {
         position:fixed;
         top:50px;
-        left:0px;
-        bottom:0px;
-        right:0px;
+        left:0;
+        bottom:0;
+        right:0;
         width:100%;
         height:0;
         border:none;
@@ -22,14 +22,13 @@
         padding:0;
         overflow:hidden;
         background: transparent;
-        pointer-events: none;
       }
       #app {
         position:fixed;
-        top:0px;
-        left:0px;
-        bottom:0px;
-        right:0px;
+        top:0;
+        left:0;
+        bottom:0;
+        right:0;
         overflow:hidden;
         display: none;
       }
@@ -37,7 +36,7 @@
         position:fixed;
         top:50px;
         left:20px;
-        bottom:0px;
+        bottom:0;
         right:20px;
         white-space: pre-line;
       }
@@ -48,6 +47,9 @@
       button {
         float: right;
         margin: 10px 10px 0 0;
+      }
+      .no-pointer-events {
+        pointer-events: none;
       }
     </style>
     <script src="../Common/js/iframe-phone.js"></script>
@@ -72,6 +74,22 @@
         document.getElementById("codapIFrame").style.height = height - 50;
       }
 
+      function sendMessage(message) {
+        return new Promise(function (resolve, reject) {
+          codap.call(message, function (reply) {
+            if (!reply) {
+              reject('Request timeout');
+            }
+            if (reply.success) {
+              resolve(reply)
+            } else {
+              var error_message = (reply.values && reply.values.error) || "unknown error";
+              reject(error_message);
+            }
+          });
+        });
+      }
+
       function setupCODAP() {
         var done = function () {
               resizeIFrame();
@@ -81,7 +99,7 @@
               document.getElementById("app").style.display = "block";
             };
 
-        codap.call({
+        sendMessage({
           action: 'create',
           resource: 'dataContext',
           values: {
@@ -101,9 +119,8 @@
               ]
             }]
           }
-        }, function (result) {
-          if (result && result.success) {
-            codap.call({
+        }).then(function (reply) {
+            return sendMessage({
               action: 'create',
               resource: 'dataContext[Samples].collection[Sample].case',
               values:[
@@ -133,17 +150,14 @@
                   }
                 }
               ]
-            }, function (result) {
-              done();
-            });
-          }
-        });
+            })
+        }).then(done);
       }
 
       function addGraph() {
-        codap.call({
+        sendMessage({
           action: 'create',
-          resource: 'dataContext[Samples].component',
+          resource: 'component',
           values: {
             type: 'graph',
             name: 'HeightWeightGraph',
@@ -152,17 +166,24 @@
               height: 240
             },
             position: 'bottom',
-            dataContext: 'dataContext[Samples].collection[Sample]',
+            dataContext: 'Samples',
             xAttributeName: 'Name',
             yAttributeName: 'Height'
           }
+        }).then(function (result) {
+          return sendMessage({
+            action: 'get',
+            resource: 'component[HeightWeightGraph]'
         })
+        }).then(function (result) {
+          console.log(JSON.stringify(result));
+        });
       }
 
       function addTable() {
-        codap.call({
+        sendMessage({
           action: 'create',
-          resource: 'dataContext[Samples].component',
+          resource: 'component',
           values: {
             type: 'caseTable',
             name: 'HeightWeightTable',
@@ -171,14 +192,21 @@
               height: 240
             },
             position: 'bottom',
-            dataContext: 'dataContext[Samples].collection[Sample]'
+            dataContext: 'Samples'
           }
+        }).then(function (result) {
+          return sendMessage({
+            action: 'get',
+            resource: 'component[HeightWeightTable]'
         })
+        }).then(function (result) {
+            console.log(JSON.stringify(result));
+        });
       }
 
       var personNumber = 5;
       function addSample() {
-        codap.call({
+        sendMessage({
           action: 'create',
           resource: 'dataContext[Samples].collection[Sample].case',
           values:[
@@ -203,12 +231,16 @@
   <body>
     <div id="app">
       <h1>Transparent CODAP Test</h1>
-      <input type="checkbox" onclick="setGraphSelection(event)"> Allow interaction with CODAP components
+      <label><input type="checkbox" onclick="setGraphSelection(event)" >
+        Allow interaction with CODAP components</label>
       <button onClick="addSample()">Add Sample</button>
       <button onClick="addTable()">Add Table</button>
       <button onClick="addGraph()">Add Graph</button>
       <div id="lorem">
-        <strong>Instructions: use the "Add Graph" or "Add Table" button in the upper right to add a new CODAP component on top of the filler text below.  Use the "Add Sample" button to dynamically add a random sample to the data. By default the CODAP components cannot be selected or moved but you can change this by checking the "Allow interaction with CODAP components" checkbox above.</strong>
+        <strong>Instructions: use the "Add Graph" or "Add Table" button in the
+          upper right to add a new CODAP component on top of the filler text
+          below.  Use the "Add Sample" button to dynamically add a random
+          sample to the data. </strong>
 
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent hendrerit ante non tellus facilisis posuere. Praesent consequat velit commodo, porta tortor eu, suscipit tellus. Nulla elementum et sapien a porta. Quisque eget dapibus eros, quis mattis arcu. Quisque egestas nibh facilisis consequat vulputate. Etiam augue justo, ultrices et molestie vel, viverra id nibh. Morbi vitae nisl consequat ex rutrum facilisis. In tempus tempor lectus non sagittis. Praesent condimentum libero eu ipsum accumsan congue a id enim. Donec eget ultrices turpis. Duis eu neque mollis, tincidunt magna a, auctor sem. Suspendisse eu nibh id quam congue sagittis. Nam faucibus euismod aliquam.
 
@@ -231,6 +263,8 @@
         Aliquam vitae tristique odio, eu elementum magna. Sed semper vulputate enim, id posuere risus lacinia at. Quisque condimentum lorem a facilisis ultrices. Vivamus volutpat, leo ac laoreet efficitur, mi orci scelerisque nisl, eu sollicitudin est eros quis massa. Duis efficitur dapibus justo nec consectetur. Curabitur ut ligula laoreet, aliquet mi vel, mollis velit. Aenean sit amet eleifend nunc.
       </div>
     </div>
-    <iframe id="codapIFrame" allowTransparency="true" src="https://codap.concord.org/~dmartin/transparent/static/dg/en/cert/index.html?embeddedMode=yes"></iframe>
+    <iframe id="codapIFrame" allowTransparency="true"
+            src="http://localhost:4020/dg?embeddedMode=yes"></iframe>
+    <div class="no-pointer-events pointer-manager"></div>
   </body>
 </html>
