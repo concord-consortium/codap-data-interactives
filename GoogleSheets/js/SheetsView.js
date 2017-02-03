@@ -26,7 +26,7 @@ var STATE_STARTING = 'initialized',
     STATE_ERROR = 'error',
     STATE_TIMEOUT = 'timed-out',
     STATE_READY = 'ready',
-    POLLING_INTERVAL = 5000;
+    POLLING_INTERVAL = 10000;
 
 var dataManager = Object.create({
   lastHash: "",

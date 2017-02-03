@@ -8,8 +8,8 @@ var codapConnector = Object.create({
 
   initConnection: function() {
     this.connection = new iframePhone.IframePhoneRpcEndpoint(this.handleCODAPRequest, "data-interactive", window.parent);
-    this.getIframe();
-    this.createDataContext();
+    this.initIframe();
+    this.getDataContext() ;
   },
 
   handleError: function(data) {
@@ -65,7 +65,25 @@ var codapConnector = Object.create({
       { name: 'b', type: 'numeric' }
     ]
   },
-    
+
+  getDataContext: function() {
+    var message = {
+      action: 'get',
+      resource: 'dataContext[' + this.dataContextName + ']'
+    };
+    this.sendRequest(
+      message,
+      this.didGetDataContext.bind(this),
+      // create a new DataContext if we can't find ours.
+      this.createDataContext.bind(this)
+    );
+  },
+
+  didGetDataContext: function(response) {
+    console.log('didGetDataContext');
+    this.setConnected();
+  },
+
   createDataContext: function()  {
     var message = {
       action: 'create',
@@ -106,6 +124,7 @@ var codapConnector = Object.create({
 
   didGetIframe: function(response) {
     dataManager.setPersistentState(response.values.savedState);
+    dataManager.register(this);
   },
 
   initIframe: function() {
@@ -119,25 +138,37 @@ var codapConnector = Object.create({
         dimensions: this.dataManager.state.dimensions
       }
     };
-    this.sendRequest(message, this.didSaveIframe.bind(this));
+    this.sendRequest(message, this.didInitIframe.bind(this));
   },
-  initIframe: function(response) {
+
+  didInitIframe: function(response) {
     console.log("didInitIframe");
     this.setConnected();
     this.getIframe();
   },
 
-  requestDeleteAllCases: function() {
-    dispatcher.sendRequest({
+  requestDeleteAllCases: function(_callback) {
+    var callBack = _callback || this.didDeleteAllCases();
+    this.sendRequest({
       action: 'delete',
-      resource: 'dataContext[' + contextName + '].allCases'
+      resource: 'dataContext[' + this.dataContextName + '].allCases'
     }, this.didDeleteAllCases);
   },
 
   didDeleteAllCases: function(response) {
+  },
 
+  addCases: function(rows) {
+    debugger;
+  },
+
+  replaceCases: function(rows) {
+    this.requestDeleteAllCases(this.addCases.bind(this));
+  },
+
+  setState: function(state) {
+    // this.replaceCases(state.rows);
   }
-
 
 
 });
