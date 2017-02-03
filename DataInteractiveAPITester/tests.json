@@ -392,7 +392,8 @@
       "values": {
         "type": "webView",
         "title": "Concord",
-        "url": "http://www.concord.org"
+        "URL": "http://www.concord.org",
+        "dimensions": {"width": 400, "height": 300}
       }
     }
   },
