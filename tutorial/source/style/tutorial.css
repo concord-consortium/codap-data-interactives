@@ -1,0 +1,87 @@
+body {
+    background-color: #fffaf0;
+    font-family: sans-serif;
+    color: rgb(110, 109, 95);
+}
+
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+}
+
+.App-header-movie {
+    background-color: #222;
+    height: 150px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.App-header-welcome {
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
+}
+
+.App-movie {
+    height: 170px;
+}
+
+.App-intro {
+    font-size: large;
+}
+
+.App-list {
+    text-align: left;
+    line-height: 200%;
+    margin-left: 5%;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.App-link {
+    cursor: move;
+}
+
+.App-help {
+    color: blue;
+    text-decoration: underline;
+    cursor: help;
+}
+
+.App-feedback {
+    position: fixed;
+    top: 150px;
+    margin: 0 auto;
+    max-width: 350px;
+    height: 200px;
+    background: #ffffff;
+    right: 0;
+    left: 0;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: gray;
+    text-align: left;
+    padding: 5px;
+}
+
+.App-feedback-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.App-glyph {
+    height: 20px;
+}
