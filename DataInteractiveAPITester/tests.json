@@ -355,6 +355,7 @@
         "globalValueName": "g1",
         "lowerBound": -10,
         "upperBound": 10,
+        "dimensions": { "height": 200, "width": 600},
         "value": 0
       }
     }
