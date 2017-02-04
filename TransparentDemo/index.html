@@ -2,240 +2,23 @@
   <head>
     <title>Transparent CODAP test app</title>
     <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: sans-serif;
-      }
-      iframe {
-        position:fixed;
-        top:50px;
-        left:0;
-        bottom:0;
-        right:0;
-        width:100%;
-        height:0;
-        border:none;
-        margin:0;
-        padding:0;
-        overflow:hidden;
-        background: transparent;
-      }
-      #app {
-        position:fixed;
-        top:0;
-        left:0;
-        bottom:0;
-        right:0;
-        overflow:hidden;
-        display: none;
-      }
-      #lorem {
-        position:fixed;
-        top:50px;
-        left:20px;
-        bottom:0;
-        right:20px;
-        white-space: pre-line;
-      }
-      h1 {
-        margin: 10px;
-        display: inline-block;
-      }
-      button {
-        float: right;
-        margin: 10px 10px 0 0;
-      }
-      .no-pointer-events {
-        pointer-events: none;
-      }
+      @import "style.css";
     </style>
+    <script src="../Common/js/jquery.js"></script>
     <script src="../Common/js/iframe-phone.js"></script>
-    <script>
-      var codap;
-
-      document.addEventListener('DOMContentLoaded', function() {
-        codap = new iframePhone.IframePhoneRpcEndpoint(iframePhoneHandler, "data-interactive", document.getElementById("codapIFrame"));
-      }, false);
-
-      function iframePhoneHandler(command, callback) {
-        var success = false;
-        if (command && (command.message == 'codap-present')) {
-          setupCODAP();
-          success = true;
-        }
-        callback({success: success});
-      }
-
-      function resizeIFrame() {
-        var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-        document.getElementById("codapIFrame").style.height = height - 50;
-      }
-
-      function sendMessage(message) {
-        return new Promise(function (resolve, reject) {
-          codap.call(message, function (reply) {
-            if (!reply) {
-              reject('Request timeout');
-            }
-            if (reply.success) {
-              resolve(reply)
-            } else {
-              var error_message = (reply.values && reply.values.error) || "unknown error";
-              reject(error_message);
-            }
-          });
-        });
-      }
-
-      function setupCODAP() {
-        var done = function () {
-              resizeIFrame();
-              window.onresize = function (e) {
-                resizeIFrame();
-              };
-              document.getElementById("app").style.display = "block";
-            };
-
-        sendMessage({
-          action: 'create',
-          resource: 'dataContext',
-          values: {
-            name: 'Samples',
-            title: 'Samples',
-            collections: [ {
-              name: 'Sample',
-              title: 'A sample',
-              labels: {
-                singleCase: 'sample',
-                pluralCase: 'samples'
-              },
-              attrs: [
-                { name: 'Name' },
-                { name: 'Height', type: 'numeric', precision: 0 },
-                { name: 'Weight', type: 'numeric', precision: 0 }
-              ]
-            }]
-          }
-        }).then(function (reply) {
-            return sendMessage({
-              action: 'create',
-              resource: 'dataContext[Samples].collection[Sample].case',
-              values:[
-                {
-                  values: {
-                    Name: 'Joe',
-                    Height: 72,
-                    Weight: 180
-                  }
-                }, {
-                  values: {
-                    Name: 'Jill',
-                    Height: 66,
-                    Weight: 120
-                  }
-                }, {
-                  values: {
-                    Name: 'Jose',
-                    Height: 78,
-                    Weight: 220
-                  }
-                }, {
-                  values: {
-                    Name: 'Prisha',
-                    Height: 60,
-                    Weight: 105
-                  }
-                }
-              ]
-            })
-        }).then(done);
-      }
-
-      function addGraph() {
-        sendMessage({
-          action: 'create',
-          resource: 'component',
-          values: {
-            type: 'graph',
-            name: 'HeightWeightGraph',
-            dimensions: {
-              width: 240,
-              height: 240
-            },
-            position: 'bottom',
-            dataContext: 'Samples',
-            xAttributeName: 'Name',
-            yAttributeName: 'Height'
-          }
-        }).then(function (result) {
-          return sendMessage({
-            action: 'get',
-            resource: 'component[HeightWeightGraph]'
-        })
-        }).then(function (result) {
-          console.log(JSON.stringify(result));
-        });
-      }
-
-      function addTable() {
-        sendMessage({
-          action: 'create',
-          resource: 'component',
-          values: {
-            type: 'caseTable',
-            name: 'HeightWeightTable',
-            dimensions: {
-              width: 240,
-              height: 240
-            },
-            position: 'bottom',
-            dataContext: 'Samples'
-          }
-        }).then(function (result) {
-          return sendMessage({
-            action: 'get',
-            resource: 'component[HeightWeightTable]'
-        })
-        }).then(function (result) {
-            console.log(JSON.stringify(result));
-        });
-      }
-
-      var personNumber = 5;
-      function addSample() {
-        sendMessage({
-          action: 'create',
-          resource: 'dataContext[Samples].collection[Sample].case',
-          values:[
-            {
-              values: {
-                Name: 'Person #' + (personNumber++),
-                Height: 48 + Math.round(Math.random() * 36),
-                Weight: 80 + Math.round(Math.random() * 200)
-              }
-            }
-          ]
-        });
-      }
-
-      function setGraphSelection(e) {
-        var allow = e.target.checked;
-        document.getElementById("codapIFrame").style.pointerEvents = allow ? 'auto' : 'none';
-      }
-
-    </script>
+    <script src="transparent-demo.js"></script>
   </head>
   <body>
     <div id="app">
       <h1>Transparent CODAP Test</h1>
-      <label><input type="checkbox" onclick="setGraphSelection(event)" >
+      <label><input type="checkbox" id="setGraphSelectionCheckbox" >
         Allow interaction with CODAP components</label>
-      <button onClick="addSample()">Add Sample</button>
-      <button onClick="addTable()">Add Table</button>
-      <button onClick="addGraph()">Add Graph</button>
+      <button id="addSliderButton">Add Slider</button>
+      <button id="addCalculatorButton">Add Calculator</button>
+      <button id="addTesterButton">Add Tester</button>
+      <!--<button onClick="addSample()">Add Sample</button>-->
+      <!--<button onClick="addTable()">Add Table</button>-->
+      <!--<button onClick="addGraph()">Add Graph</button>-->
       <div id="lorem">
         <strong>Instructions: use the "Add Graph" or "Add Table" button in the
           upper right to add a new CODAP component on top of the filler text
@@ -263,7 +46,7 @@
         Aliquam vitae tristique odio, eu elementum magna. Sed semper vulputate enim, id posuere risus lacinia at. Quisque condimentum lorem a facilisis ultrices. Vivamus volutpat, leo ac laoreet efficitur, mi orci scelerisque nisl, eu sollicitudin est eros quis massa. Duis efficitur dapibus justo nec consectetur. Curabitur ut ligula laoreet, aliquet mi vel, mollis velit. Aenean sit amet eleifend nunc.
       </div>
     </div>
-    <iframe id="codapIFrame" allowTransparency="true"
+    <iframe id="codapIFrame" class="no-pointer-events" allowTransparency="true"
             src="http://localhost:4020/dg?embeddedMode=yes"></iframe>
     <div class="no-pointer-events pointer-manager"></div>
   </body>
