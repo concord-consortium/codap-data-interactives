@@ -92,6 +92,23 @@ $(function (){
         dimensions: { width: 400, height: 300}
       }
     },
+    createText: {
+      action: 'create', resource: 'component',
+      values: {
+        type: 'text', name: 'name-text', title: 'title-text',
+        text: 'T\'was brillig and the slithy toves...',
+        dimensions: { width: 60, height: 200},
+        position: { left: 300, top: 100}
+      }
+    },
+    createWebview: {
+      action: 'create', resource: 'component',
+      values: {
+        type: 'webView', name: 'name-webview', title: 'Concord',
+        URL: 'http://www.concord.org',
+        dimensions: { width: 400, height: 300}
+      }
+    },
     getComponentList: {action: 'get', resource: 'componentList'},
     getComponent: {action: 'get', resource: 'component'}
   };
@@ -125,6 +142,11 @@ $(function (){
     });
   }
 
+  function positionRandomly(dims) {
+    var wHeight = window.innerHeight, wWidth = window.innerWidth;
+    var aHeight = wHeight - dims.height, aWidth = wWidth - dims.width;
+    return {left: Math.random() * aWidth, top: Math.random() * aHeight};
+  }
 
   /**
    *
@@ -138,7 +160,7 @@ $(function (){
   }
 
   function isInComponentRectangles(pt) {
-    return componentCoordinates.every(function (rect) {
+    return componentCoordinates.some(function (rect) {
       return isInRect(pt, rect);
     });
   }
@@ -235,11 +257,28 @@ $(function (){
   }
 
   $('#addSliderButton').on('click', function () {
-    sendMessageLogResult(messageTemplates.createSlider);
+    var template = messageTemplates.createSlider;
+    var msg = Object.assign({}, template);
+    msg.values.position = positionRandomly( template.values.dimensions);
+    sendMessageLogResult(msg);
   });
 
   $('#addCalculatorButton').on('click', function () {
     sendMessageLogResult(messageTemplates.createCalculator);
+  });
+
+  $('#addTextButton').on('click', function () {
+    var template = messageTemplates.createText;
+    var msg = Object.assign({}, template);
+    msg.values.position = positionRandomly(template.values.dimensions);
+    sendMessageLogResult(msg);
+  });
+
+  $('#addWebviewButton').on('click', function () {
+    var template = messageTemplates.createWebview;
+    var msg = Object.assign({}, template)
+    msg.values.position = positionRandomly( template.values.dimensions);
+    sendMessageLogResult(msg);
   });
 
   $('#addTesterButton').on('click', function () {
