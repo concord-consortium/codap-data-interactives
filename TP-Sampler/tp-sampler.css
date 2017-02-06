@@ -1,0 +1,8 @@
+#model {
+  position: absolute;
+  left: 20vw;
+  top: 5vw;
+  width: 60vw;
+  height: 30vw;
+  border: 1px solid black;
+}
