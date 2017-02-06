@@ -290,7 +290,7 @@ var SheetsView = React.createFactory(React.createClass({
           {
             type: "text",
             ref: "indexColumn",
-            value: this.state.range,
+            value: this.state.indexColumn,
             onChange: indexColumnChangedF
           })
       ),

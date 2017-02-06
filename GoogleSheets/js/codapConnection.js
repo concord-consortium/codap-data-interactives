@@ -155,14 +155,15 @@ var codapConnector = Object.create({
   },
 
   requestDeleteAllCases: function(_callback) {
-    var callBack = _callback || this.didDeleteAllCases();
+    var callBack = _callback || this.didDeleteAllCases;
     this.sendRequest({
       action: 'delete',
-      resource: this.collectionIdentifier +'.allCases'
+      resource: this.dataContextIdentifier +'.allCases'
     }, callBack.bind(this));
   },
 
   didDeleteAllCases: function(response) {
+    // not used at the moment
   },
 
   addCases: function() {
@@ -171,22 +172,25 @@ var codapConnector = Object.create({
     var columns  = this.dataManager.state.columnNames;
     for(var i=0; i < rows.length; i++) {
       var cells = rows[i];
-      var value = {};
+      var value = {
+        id: i,
+        values: {}
+      };
       for(var j = 0; j < cells.length; j++) {
-        value[columns[j]] = cells[j];
+        value.values[columns[j]] = cells[j];
       }
       data.push(value);
     };
     var message = {
       action: 'create',
-      action: 'create',
-      resource: this.collectionIdentifier + '.item',
+      resource: this.collectionIdentifier + '.case',
       values: data
     }
     this.sendRequest(message,this.didAddCases.bind(this));
     console.log("addCases");
   },
-  didAddCases: function(){
+  didAddCases: function(result){
+    debugger;
     console.log('didCreateCase');
   },
 
@@ -207,6 +211,8 @@ var codapConnector = Object.create({
     this.addCases();
   },
 
+  // 1. Remove All Cases
+  // 5. Add  New Cases
   replaceCases: function() {
     if(this.dataManager.state.connected == true) {
       this.requestDeleteAllCases(this.createAttributes.bind(this));
