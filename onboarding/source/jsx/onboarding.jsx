@@ -207,6 +207,7 @@ class TutorialView extends React.Component {
     this.handleMovieEnded = this.handleMovieEnded.bind(this);
     this.handleCodapNotification = this.handleCodapNotification.bind(this);
     this.handleFeedbackExit = this.handleFeedbackExit.bind(this);
+    this.handleInfoClick = this.handleInfoClick.bind(this);
 
     codapInterface.on(/notify/, /documentChangeNotice/, this.handleCodapNotification);
     codapInterface.on(/notify/, /component/, this.handleCodapNotification);
@@ -312,8 +313,16 @@ class TutorialView extends React.Component {
           <p>This onboarding plugin for CODAP was created to help new CODAP users get started
               using CODAP. It lives in CODAP as an iFrame. Certain user actions cause CODAP to
               notify the plugin. The plugin responds by providing feedback to the user.</p>
-          <p>The open source code is at </p>
+          <p>The open source code is at<br/>
+            <a href="https://github.com/concord-consortium/codap-data-interactives/tree/master/onboarding">
+              CODAP's data interactive GitHub repository</a>. </p>
+          <p>This plugin makes use of the CODAP data interactive plugin API whose documentation is at<br/>
+            <a href="https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API">
+              CODAP Data Interactive API</a>.</p>
         </div>
+    this.setState({
+      feedbackText: tFeedback
+    })
   }
 
   render() {
