@@ -4,5 +4,32 @@
   top: 5vw;
   width: 60vw;
   height: 30vw;
-  border: 1px solid black;
+}
+
+#model-controls {
+  position: absolute;
+  left: 20vw;
+  top: 33vw;
+}
+
+button {
+    background-color: #dbf6ff;
+    border: 0.3vw solid #008cba;
+    border-radius: 0.5vw;
+    color: black;
+    min-width: 6vw;
+    padding: 1vw 2vw;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 3vw;
+    margin: 3vw 0vw;
+    cursor: pointer;
+    -webkit-transition: background-color 0.4s color 0.4s; /* Safari */
+    transition: background-color 0.4s color 0.4s;
+}
+
+button:hover {
+    background-color: #008cba;
+    color: white;
 }
