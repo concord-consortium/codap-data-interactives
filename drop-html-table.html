@@ -17,6 +17,9 @@
     margin-left: auto;
     margin-right: auto;
   }
+  .drop-region:hover {
+    background-color: lightyellow;
+  }
   .output-region {
     background-color: lightgrey;
     border: thin darkgray solid;
@@ -58,6 +61,13 @@ $(document).ready(function () {
   //                     |     |                            |       |   +git and either decimal digits or
   //                     v     v                            v       v   v        v grouped decimal digits
   var kIsEuroNumberRE = /^[-+]?(([0-9]{1,3}([. ][0-9]{3})*)|([0-9]*))(,(([0-9]*)|([0-9]{3}[. ])[0-9]{1,3}))?$/;
+  // a grouped number is...
+  //                        + optional sign value
+  //                        |     + a grouped whole number using commas or spaces for grouping
+  //                        |     |                           + followed optionally by a dot decimal separator
+  //                        |     |                           |   +git and either decimal digits or
+  //                        v     v                           v   v        v grouped decimal digits
+  var kIsGroupedNumberRE = /^[-+]?([0-9]{1,3}([, ][0-9]{3})*)(\.(([0-9]*)|([0-9]{3}[. ])[0-9]{1,3}))?$/
 
   function isEuroNumber(v) {
     if (typeof v !== 'string') {
@@ -71,6 +81,23 @@ $(document).ready(function () {
       return false;
     }
     return str.replace(/[. ]/g, '').replace(/,/, '.');
+  }
+
+  function isGroupedNumber(v) {
+    if (typeof v !== 'string') {
+      return false;
+    }
+    return kIsGroupedNumberRE.test(v);
+  }
+
+  /**
+   * Convert a number that has commas to group  triplets of digits.
+   */
+  function convertGroupedNumber(str) {
+    if (typeof str !== 'string') {
+      return false;
+    }
+    return str.replace(/[, ]/g, '');
   }
 
   function sendRequest(request, callback) {
@@ -224,6 +251,9 @@ $(document).ready(function () {
               value = convertEuroNumber(value);
             }
           }
+          else if (isGroupedNumber(value)) {
+            value = convertGroupedNumber(value);
+          }
           values[attrs[ix].name] = value;
         });
         cases.push ({values: values});
@@ -330,11 +360,23 @@ $(document).ready(function () {
   $dropRegion.on('drop paste', function (ev) {
     var originalEvent = ev.originalEvent;
     var dataTransfer = originalEvent.clipboardData || originalEvent.dataTransfer;
-    originalEvent.preventDefault();
-    var data = dataTransfer.getData('text/html');
+    var data;
+
+    var uriList = dataTransfer.getData('text/uri-list');
+    if (uriList && uriList.length>0) {
+      console.log('URI: ' + uriList);
+      uriList = uriList.split(/\r\n/);
+
+      $.get(uriList, {type:'text/html'}).then(function (data) {
+        formatTables(data, $('.output-region'));
+      });
+    } else {
+      data = dataTransfer.getData('text/html');
 //    var data1 = dataTransfer.getData('text');
 //    console.log('dropped text: ' + data1);
     formatTables(data, $('.output-region'));
+    }
+    originalEvent.preventDefault();
   });
 
   init();
@@ -343,7 +385,7 @@ $(document).ready(function () {
 </head>
 <body>
 <h1>Drag and Drop HTML Tables</h1>
-<p class="drop-region">Drop or paste tablular data here.</p>
+<p class="drop-region" contenteditable="true">Drop or paste tabular data here.</p>
 <div class="output-region" id="drag-to-region"></div>
 <p>Drag HTML content to the above white region.
   Any tables in the page will be displayed.
