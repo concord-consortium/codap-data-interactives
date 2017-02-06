@@ -23,9 +23,6 @@ var STATE_STARTING = 'initialized',
     STATE_GOOGLE_AUTHENTICATING = 'authenticating',
     STATE_GOOGLE_AUTHENTICATED  = 'authenticated',
     STATE_GOOGLE_SIGNEDOUT = "signedout",
-    STATE_ERROR = 'error',
-    STATE_TIMEOUT = 'timed-out',
-    STATE_READY = 'ready',
     POLLING_INTERVAL = 10000;
 
 var dataManager = Object.create({
@@ -42,10 +39,10 @@ var dataManager = Object.create({
         height: 200
       },
       wizardStep: 'getData',
-      googleDocId: "",
-      range: "",
+      googleDocId: "1MvggTC120l680AWiu3bl7ThHCiDC2WIqEuRZjydOS3U",
+      range: "A:B",
       googleState: STATE_STARTING,
-      connected: true,
+      connected: false,
       rows: [],
       indexColumn: 0,
       columnNames: []
@@ -120,23 +117,6 @@ var dataManager = Object.create({
   },
 
 
-  deleteLocalCases: function (contextName, collectionName, done) {
-    var self = this,
-        collaborativeCollection = this.collaborationContexts[contextName].collections[collectionName];
-
-    // only delete local cases once per collection
-    if (collaborativeCollection.deletedLocalCases) {
-      done();
-      return;
-    }
-    collaborativeCollection.deletedLocalCases = true;
-
-    this.requestDeleteAllCases(contextName, function (request, result) {
-      // now that all the saved cases have been deleted start listening to firebase for changes
-      self.addFirebaseListeners(contextName, collectionName);
-      done();
-    });
-  },
 }).init();
 
 
@@ -262,11 +242,10 @@ var SheetsView = React.createFactory(React.createClass({
     var range = response.result;
     var rows = [];
     var columnNames = [];
-    var json = ""
     if (range.values && range.values.length > 1) {
-      columnNames = range.values.slice(0,1);
+      columnNames = range.values[0];
       rows = range.values.slice(1);
-      dataManager.updateStateProperty('rows', rows);
+      dataManager.updateStateProperty('rows', rows, true);
       dataManager.updateStateProperty('columnNames', columnNames);
     }
     setTimeout(this.requestSheetData,POLLING_INTERVAL);
@@ -279,6 +258,7 @@ var SheetsView = React.createFactory(React.createClass({
     }).then(this.loadSheetData, this.error);
   },
 
+  // this method is dynamically invoked based on wizard step name.
   getDataCard: function () {
     var docChangedF         = function(evt) { dataManager.updateStateProperty('googleDocId', evt.target.value) };
     var rangeChangedF       = function(evt) { dataManager.updateStateProperty('range', evt.target.value) };
@@ -332,12 +312,6 @@ var SheetsView = React.createFactory(React.createClass({
   render: function () {
     var wizardStep = this.state.wizardStep;
     var googleState = this.state.googleState;
-    // if (this.state.googleState === STARTING_CONNECTION_STATE) {
-    //   return div({}, "Waiting to connect with CODAP...");
-    // }
-    // else if ((this.state.googleState === CONNECTING_STATE) && (window.location.search.indexOf('testOutsideOfCODAP') === -1)) {
-    //   return div({}, "Could not connect with CODAP!");
-    // }
     var renderFunctionName = wizardStep + "Card";
     var renderCardFunc = this[renderFunctionName];
     if (googleState === STATE_GOOGLE_AUTHENTICATED) {

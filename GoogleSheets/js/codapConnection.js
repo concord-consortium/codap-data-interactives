@@ -3,13 +3,16 @@ var codapConnector = Object.create({
     this.connection = null;
     this.dataManager = dataStore;
     this.dataContextName = "Google Sheets";
+    this.dataContextIdentifier = 'dataContext['+ this.dataContextName + ']';
+    this.collectionName = "Sheet Rows";
+    this.collectionIdentifier = this.dataContextIdentifier + '.collection[' + this.collectionName + ']';
     this.initConnection();
   },
 
   initConnection: function() {
     this.connection = new iframePhone.IframePhoneRpcEndpoint(this.handleCODAPRequest, "data-interactive", window.parent);
     this.initIframe();
-    this.getDataContext() ;
+    // this.getDataContext() ;
   },
 
   handleError: function(data) {
@@ -19,10 +22,11 @@ var codapConnector = Object.create({
 
   setConnected: function() {
     this.dataManager.updateStateProperty('connected', true);
+    this.dataManager.register(this);
   },
 
   getConnected: function() {
-    return this.dataManager.connected
+    return this.dataManager.state.connected
   },
 
 
@@ -60,16 +64,18 @@ var codapConnector = Object.create({
   },
 
   getAttributes: function() {
-    return [
-      { name: 'a', type: 'numeric' },
-      { name: 'b', type: 'numeric' }
-    ]
+    var columns=dataManager.state.columnNames;
+    var attributes = []
+    for(var i = 0; i < columns.length; i++) {
+      attributes.push({name: columns[i], type: 'nominal'});
+    }
+    return attributes;
   },
 
   getDataContext: function() {
     var message = {
       action: 'get',
-      resource: 'dataContext[' + this.dataContextName + ']'
+      resource: this.dataContextIdentifier
     };
     this.sendRequest(
       message,
@@ -93,13 +99,13 @@ var codapConnector = Object.create({
         title: this.dataContextName,
         collections: [
           {
-            name: 'Google Sheets',
-            title: 'Google Sheets',
+            name: this.collectionName,
+            title: this.collectionName,
             labels: {
               singleCase: 'rows',
               pluralCase: 'row'
-            },
-            attrs: this.getAttributes()
+            }
+            // attrs: this.getAttributes()
           }
         ]
       }
@@ -123,8 +129,10 @@ var codapConnector = Object.create({
   },
 
   didGetIframe: function(response) {
-    dataManager.setPersistentState(response.values.savedState);
-    dataManager.register(this);
+    if(response && response.values && response.values.savedState) {
+      this.dataManager.setPersistentState(response.values.savedState);
+    }
+    this.getDataContext();
   },
 
   initIframe: function() {
@@ -143,7 +151,6 @@ var codapConnector = Object.create({
 
   didInitIframe: function(response) {
     console.log("didInitIframe");
-    this.setConnected();
     this.getIframe();
   },
 
@@ -151,23 +158,64 @@ var codapConnector = Object.create({
     var callBack = _callback || this.didDeleteAllCases();
     this.sendRequest({
       action: 'delete',
-      resource: 'dataContext[' + this.dataContextName + '].allCases'
-    }, this.didDeleteAllCases);
+      resource: this.collectionIdentifier +'.allCases'
+    }, callBack.bind(this));
   },
 
   didDeleteAllCases: function(response) {
   },
 
-  addCases: function(rows) {
-    debugger;
+  addCases: function() {
+    var data = []
+    var rows  = this.dataManager.state.rows;
+    var columns  = this.dataManager.state.columnNames;
+    for(var i=0; i < rows.length; i++) {
+      var cells = rows[i];
+      var value = {};
+      for(var j = 0; j < cells.length; j++) {
+        value[columns[j]] = cells[j];
+      }
+      data.push(value);
+    };
+    var message = {
+      action: 'create',
+      action: 'create',
+      resource: this.collectionIdentifier + '.item',
+      values: data
+    }
+    this.sendRequest(message,this.didAddCases.bind(this));
+    console.log("addCases");
+  },
+  didAddCases: function(){
+    console.log('didCreateCase');
   },
 
-  replaceCases: function(rows) {
-    this.requestDeleteAllCases(this.addCases.bind(this));
+  createAttributes: function() {
+    var attr = this.getAttributes();
+    if (attr.length > 0) {
+      var message = {
+        action: 'create',
+        resource: this.collectionIdentifier + '.attribute',
+        values: attr
+      }
+      this.sendRequest(message, this.didCreateAttributes.bind(this));
+      console.log("createAttributes");
+    }
+  },
+  didCreateAttributes: function() {
+    console.log("didCreateAttributes");
+    this.addCases();
+  },
+
+  replaceCases: function() {
+    if(this.dataManager.state.connected == true) {
+      this.requestDeleteAllCases(this.createAttributes.bind(this));
+      console.log("replaceCases");
+    }
   },
 
   setState: function(state) {
-    // this.replaceCases(state.rows);
+    this.replaceCases();
   }
 
 
