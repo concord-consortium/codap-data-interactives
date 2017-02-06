@@ -55,9 +55,11 @@ class Feedback extends React.Component {
       return null;
     }
     else {
+      let tCheckbox = /*this.props.allAccomplished ? null :*/
+          <img src="./resources/x.png" className="App-feedback-close"/>;
       return (
           <div className="App-feedback" onMouseDown={this.props.handleFeedbackExit}>
-            <img src="./resources/x.png" className="App-feedback-close"/>
+            {tCheckbox}
             {this.props.feedbackText}
           </div>
       )
@@ -94,14 +96,15 @@ class DraggableLink extends React.Component {
 
   handleDragStart(event) {
     let dt = event.dataTransfer,
-        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/cars.csv";
+        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/mammals.csv";
     dt.setData("text/uri-list", tUrl);
   }
 
   render() {
     return (
         <span className="App-link">
-          <img src={'./resources/text-icon.png'} alt="link" width={50} onDragStart={this.handleDragStart}/>
+          <img src={'./resources/text-icon.png'} alt="link" width={50}
+               onDragStart={this.handleDragStart}/>
         </span>
     )
   }
@@ -112,40 +115,40 @@ var taskDescriptions = {
     {
       key: 'Drag', label: 'Drag this data file into CODAP', url: './resources/DragCSV.mp4',
       feedback: <div>
-        <p>You've got data!</p>
-        <p>The case table displays your data. Each row is a 'case' and each column
-          represents an attribute.</p>
-        <p>Another way to get data into CODAP is to use the <em>Import</em> command in
-          the <img src={'./resources/hamburger.png'} alt="menu"
-                   className="App-glyph"/> menu.</p>
+        <p>You've got data! It appears in a <em>case table</em>.</p>
+        <p>Each row in the table represents a <em>case</em> and each column
+          represents an <em>attribute</em>.</p>
+        <p>This data set contains data about mammals. Each case represents a different
+          mammal. The attributes provide information about lifespan, height, and so on.</p>
       </div>
     },
     {
       key: 'MakeGraph', label: 'Make a graph', url: './resources/MakeGraph.mp4',
       feedback: <div>
         <p>Very nice graph! Each point represents one of the cases in your data set.</p>
-        <p>Of course it will make a bit more sense when you drag an attribute from a case table
-          to one of its axes.</p>
+        <p>The points are scattered randomly for the moment because you haven't yet
+          specified how they should be arranged.</p>
       </div>,
       alt_feedback: <div>
         <p>Very nice graph!</p>
         <p>There are no points in it because you haven't yet dragged any
-          data in.</p>
+          data in yet.</p>
       </div>
     },
     {
       key: 'MoveComponent', label: 'Move a table or graph', url: './resources/MoveGraph.mp4',
       feedback: <div>
-        <p>You moved that component using its title bar!</p>
-        <p>You can also resize a component by dragging an edge or lower corner.</p>
+        <p>You <em>moved</em> that component by clicking and dragging on its title bar!</p>
+        <p>You can also <em>resize</em> a component by dragging an edge or lower corner.</p>
       </div>
     },
     {
-      key: 'AssignAttribute', label: 'Drag an attribute to graph\'s axis', url: './resources/DragAttribute.mp4',
+      key: 'AssignAttribute', label: 'Drag an attribute to a graph\'s axis', url: './resources/DragAttribute.mp4',
       feedback: <div>
         <p>Way to go! You dragged an attribute from the case table to a graph axis.</p>
         <p>Now the points have arranged themselves along the axis according to their attribute values.</p>
-        <p>You can replace this attribute with another one, or drag an attribute to the other graph axis.</p>
+        <p>You can replace this attribute with another one, or drag an attribute to the other graph
+          axis to make a scatter plot.</p>
       </div>
     }
   ],
@@ -161,13 +164,20 @@ var taskDescriptions = {
  * Shows the list of tasks as checkbox items, checking the ones that have so far been completed.
  */
 class TaskList extends React.Component {
+
+  disableClick() {
+    return false;
+  }
+
   render() {
     let checkBoxes = taskDescriptions.descriptions.map(function (iAction, iIndex) {
       let tIcon = iIndex === 0 ? <DraggableLink/> : '', // Special case the data file checkbox
           tChecked = this.props.accomplished.indexOf(iAction.key) >= 0;
       return (
           <div key={iAction.key}>
-            <input type="checkbox" disabled name={iAction.key} checked={tChecked}
+            <input type="checkbox" onClick={function () {
+              return false;
+            }} name={iAction.key} checked={tChecked}
             />{tIcon}
             {iAction.label} <HelpLink helpURL={iAction.url}
                                       handleHelpClick={this.props.handleHelpClick}/> <br/>
@@ -185,13 +195,14 @@ class TaskList extends React.Component {
 class TutorialView extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       accomplished: [],
       codapPresent: false,
       movieURL: '',
-      feedbackText: ''
-    }
-    ;
+      feedbackText: '',
+      allAccomplished: false
+    };
     this.handleHelpClick = this.handleHelpClick.bind(this);
     this.handleMovieEnded = this.handleMovieEnded.bind(this);
     this.handleCodapNotification = this.handleCodapNotification.bind(this);
@@ -237,7 +248,10 @@ class TutorialView extends React.Component {
   }
 
   handleHelpClick(movieURL) {
-    this.setState({movieURL: movieURL});
+    this.setState({movieURL: ''});
+    setTimeout( function() {
+      this.setState({movieURL: movieURL});
+    }.bind(this), 10);
   }
 
   addAccomplishment(iKey) {
@@ -249,14 +263,21 @@ class TutorialView extends React.Component {
   }
 
   handleMovieEnded() {
-    setTimeout(function () {
-      this.setState({movieURL: ''});
-    }.bind(this), 2000);
+    /*
+     setTimeout(function () {
+     this.setState({movieURL: ''});
+     }.bind(this), 2000);
+     */
+  }
+
+  startOver() {
+    window.parent.location.reload();
   }
 
   handleFeedbackExit() {
 
     let tText = '',
+        tAllAccomplished = false,
         allAccomplished = function () {
           return taskDescriptions.descriptions.every(function (iDesc) {
             return this.state.accomplished.indexOf(iDesc.key) >= 0;
@@ -264,13 +285,35 @@ class TutorialView extends React.Component {
         }.bind(this);
 
     if (allAccomplished()) {
+      tAllAccomplished = true;
       tText = <div>
-        <p>Congratulations! You've mastered the basics!</p>
+        <p>Congratulations! You've done the following:</p>
+        <ul>
+          <li>Dragged data into CODAP</li>
+          <li>Made a graph</li>
+          <li>Moved a component</li>
+          <li>Plotted an attribute on a graph axis</li>
+        </ul>
+        <p>You can do a <em>lot</em> with just those four skills!</p>
         <p>For more information about how to work with CODAP, visit the
           <a href="https://codap.concord.org/help/" target="_blank"> CODAP Help</a> page. </p>
+        <button onClick={this.startOver}>Start Over</button>
       </div>
     }
-    this.setState({feedbackText: tText});
+    this.setState({
+      allAccomplished: tAllAccomplished,
+      feedbackText: tText
+    });
+  }
+
+  handleInfoClick() {
+    let tFeedback =
+        <div>
+          <p>This onboarding plugin for CODAP was created to help new CODAP users get started
+              using CODAP. It lives in CODAP as an iFrame. Certain user actions cause CODAP to
+              notify the plugin. The plugin responds by providing feedback to the user.</p>
+          <p>The open source code is at </p>
+        </div>
   }
 
   render() {
@@ -284,21 +327,24 @@ class TutorialView extends React.Component {
         <div className="App">
           <HelpWelcomeArea movieURL={this.state.movieURL} handleEnded={this.handleMovieEnded}/>
           <p className="App-intro">
-            Here are some CODAP basics.
+            Figure out how to accomplish each of these basic CODAP tasks:
           </p>
           {this.taskList}
           <Feedback
               feedbackText={this.state.feedbackText}
+              allAccomplished={this.state.allAccomplished}
               handleFeedbackExit={this.handleFeedbackExit}
           />
+          <img src="./resources/infoIcon.png" className="App-info"
+              onClick={this.handleInfoClick}/>
         </div>
     );
   }
 }
 
 codapInterface.init({
-  title: "Tutorial",
-  version: "0.1",
+  title: "Getting on board CODAP",
+  version: "0.3",
   dimensions: {
     width: 400,
     height: 500

@@ -9,7 +9,7 @@ body {
 }
 
 .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    /*animation: App-logo-spin infinite 20s linear;*/
     height: 80px;
 }
 
@@ -65,7 +65,7 @@ body {
     top: 150px;
     margin: 0 auto;
     max-width: 350px;
-    height: 200px;
+    height: 250px;
     background: #ffffff;
     right: 0;
     left: 0;
@@ -80,6 +80,14 @@ body {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.App-info {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 20px;
+    cursor: pointer;
 }
 
 .App-glyph {
