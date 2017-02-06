@@ -157,8 +157,10 @@ var codapInterface = Object.create({
       }.bind(this));
 
       // update, then get the interactiveFrame.
-      this.sendRequest([updateFrameReq, getFrameReq])
-          .then(getFrameRespHandler);
+      return this.sendRequest([updateFrameReq, getFrameReq])
+          .then(getFrameRespHandler).catch( function(msg) {
+            reject(msg);
+          });
     }.bind(this));
   },
 

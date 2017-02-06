@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "babelify": "^7.3.0",
+    "babel-preset-react": "^6.22.0"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+
+    "build-onboarding": "browserify -t [ babelify --presets [ react ] ] source/jsx/onboarding.jsx -o target/onboarding.js",
+    "build-onboarding-pre": "mkdir target",
+    "build": "bin/build",
+    "clean": "rm -rf target",
+    "zip": "zip -rv onboarding.zip target"
+  }
+}
