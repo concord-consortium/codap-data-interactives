@@ -299,7 +299,7 @@ $(function () {
         try {
           messageObj = JSON.parse(message);
         } catch (ex) {
-          logMessage('error', i-1, ex)
+          logMessage('error', stats.seq, ex)
         }
         send([{message: messageObj}]);
         // sendMessage(messageObj).then(function (result) {

@@ -6,7 +6,7 @@ body {
 }
 
 section {
-  padding: 0.5em 0;
+  margin: 0.5em 0 0 0;
 }
 
 label {
@@ -149,7 +149,8 @@ button {
 
 #message-log, label textarea {
   resize: vertical;
-  height: 20em;
+  min-height: 2em;
+  height: 10em;
   overflow-y: scroll;
   border: thin solid darkslategrey;
   background-color: white;
