@@ -21,9 +21,12 @@ $(function (){
   var codap= new iframePhone.IframePhoneRpcEndpoint(iframePhoneHandler,
       "data-interactive", document.getElementById("codapIFrame"));
 
+  // The coordinates of all CODAP components.
   var componentCoordinates = [];
+  // width of the border surrounding each component.
   var kBufferWidth = 10;
   var inIframe = false;
+
   var messageTemplates = {
     createCalculator: {
       action: 'create', resource: 'component',
@@ -113,20 +116,24 @@ $(function (){
     getComponent: {action: 'get', resource: 'component'}
   };
 
-  function iframePhoneHandler(command, callback) {
+  function iframePhoneHandler(notice, callback) {
     var success = false;
-    if (command && (command.message == 'codap-present')) {
+    var values = notice && notice.values;
+    var operation = values && values.operation;
+    if (!notice) {
+      return
+    }
+    if (notice.message == 'codap-present') {
       setupCODAP();
       success = true;
+    } else {
+      if (notice.action === 'notify' && notice.resource === 'component') {
+        if (operation === 'move' || operation === 'resize') {
+          updatePointerMgtLayer();
+        }
+      }
     }
     callback({success: success});
-  }
-
-  function resizeIFrame() {
-    var height = window.innerHeight
-        || document.documentElement.clientHeight
-        || document.body.clientHeight;
-    document.getElementById("codapIFrame").style.height = height;
   }
 
   function sendMessage(message) {
@@ -165,6 +172,14 @@ $(function (){
     });
   }
 
+  function resizeIFrame() {
+    var height = window.innerHeight
+        || document.documentElement.clientHeight
+        || document.body.clientHeight;
+    document.getElementById("codapIFrame").style.height = height;
+  }
+
+  // We set the page to keep its size and create an initial data set.
   function setupCODAP() {
     var done = function () {
       resizeIFrame();
@@ -179,7 +194,8 @@ $(function (){
     }).then(done).catch(function (msg) {console.log(msg)});
   }
 
-  function updatePointerManager() {
+  // We find the location of all components and recreate buffer regions
+  function updatePointerMgtLayer() {
     sendMessage(messageTemplates.getComponentList)
       .then(function (result) {
         var gets;
@@ -247,69 +263,74 @@ $(function (){
       });
   }
   
-  function sendMessageLogResult(message) {
+  function sendMessageAndLogResult(message) {
     sendMessage(message).then(function (result) {
       console.log(JSON.stringify(result));
-      updatePointerManager();
+      updatePointerMgtLayer();
     }).catch(function(e){
       console.warn(e);
     });
   }
 
+  function activateCODAPLayer() {
+    console.log('activateCODAPLayer');
+    $('#codapIFrame')
+        .removeClass('no-pointer-events')
+        .addClass('pointer-events');
+  }
+
+  function activateAppLayer() {
+    console.log('activateAppLayer');
+    $('#codapIFrame')
+        .removeClass('pointer-events')
+        .addClass('no-pointer-events');
+  }
+
+  // button handlers
   $('#addSliderButton').on('click', function () {
     var template = messageTemplates.createSlider;
     var msg = Object.assign({}, template);
     msg.values.position = positionRandomly( template.values.dimensions);
-    sendMessageLogResult(msg);
+    sendMessageAndLogResult(msg);
   });
 
   $('#addCalculatorButton').on('click', function () {
-    sendMessageLogResult(messageTemplates.createCalculator);
+    sendMessageAndLogResult(messageTemplates.createCalculator);
   });
 
   $('#addTextButton').on('click', function () {
     var template = messageTemplates.createText;
     var msg = Object.assign({}, template);
     msg.values.position = positionRandomly(template.values.dimensions);
-    sendMessageLogResult(msg);
+    sendMessageAndLogResult(msg);
   });
 
   $('#addWebviewButton').on('click', function () {
     var template = messageTemplates.createWebview;
     var msg = Object.assign({}, template)
     msg.values.position = positionRandomly( template.values.dimensions);
-    sendMessageLogResult(msg);
+    sendMessageAndLogResult(msg);
   });
 
   $('#addTesterButton').on('click', function () {
-    sendMessageLogResult(messageTemplates.createTester);
+    sendMessageAndLogResult(messageTemplates.createTester);
   });
 
-  function addGraph() {
-    sendMessage(messageTemplates.createGraph).then(function (result) {
-      return sendMessage({
-        action: 'get',
-        resource: 'component[HeightWeightGraph]'
-      })
-    }).then(function (result) {
-      console.log(JSON.stringify(result));
-    });
-  }
+  $('#addGraphButton').on('click', function () {
+    var template = messageTemplates.createGraph;
+    sendMessageAndLogResult(template);
+  });
 
-  function addTable() {
-    sendMessage(messageTemplates.createTable).then(function (result) {
-      return sendMessage({
-        action: 'get',
-        resource: 'component[HeightWeightTable]'
-      })
-    }).then(function (result) {
-      console.log(JSON.stringify(result));
-    });
-  }
+  $('#addTableButton').on('click', function () {
+    var template = messageTemplates.createTable;
+    var msg = Object.assign({}, template)
+    msg.values.position = positionRandomly( template.values.dimensions);
+    sendMessageAndLogResult(msg);
+  });
 
   var personNumber = 5;
-  function addSample() {
-    sendMessage({
+  $('#addSampleButton').on('click', function () {
+    sendMessageAndLogResult({
       action: 'create',
       resource: 'dataContext[Samples].collection[Sample].case',
       values:[
@@ -322,33 +343,9 @@ $(function (){
         }
       ]
     });
-  }
-
-  $('#setGraphSelectionCheckbox').on('click', function (e) {
-    var allow = e.target.checked;
-    document.getElementById("codapIFrame").style.pointerEvents = allow ? 'auto' : 'none';
   });
 
-  function makeElementName (el) {
-    var tag = el.nodeName? el.nodeName.toLowerCase():'unknown';
-    var id = el.id? ('#' + el.id): '';
-    var classes = el.className? ('.' + el.className.split(/ +/).join('.')): '';
-    return tag + id + classes;
-  }
-
-  function activateCODAPLayer() {
-    console.log('activateCODAPLayer');
-    $('#codapIFrame')
-        .removeClass('no-pointer-events')
-        .addClass('pointer-events');
-  }
-  function activateAppLayer() {
-    console.log('activateAppLayer');
-    $('#codapIFrame')
-        .removeClass('pointer-events')
-        .addClass('no-pointer-events');
-  }
-
+  // handler to manage the transition between the main page and CODAP
   $('.pointer-manager').on('mouseleave', '.overlay', function (ev) {
     if (isInComponentRectangles({x:ev.pageX, y:ev.pageY})) {
       activateCODAPLayer();
