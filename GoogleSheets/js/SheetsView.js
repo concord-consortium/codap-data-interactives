@@ -293,8 +293,7 @@ var SheetsView = React.createFactory(React.createClass({
             value: this.state.indexColumn,
             onChange: indexColumnChangedF
           })
-      ),
-      div({className: "techinfo"}, "Doc & range: " + this.state.googleDocId + ":" + this.state.range)
+      )
     );
   },
 
@@ -302,11 +301,11 @@ var SheetsView = React.createFactory(React.createClass({
     this.requestSheetData();
     var rows = this.state.rows;
     var columnNames = this.state.columnNames;
-    return div({}, rows.map( function(row) {
-      return row.map(function(cell) {
-        return div({}, cell);
-      })
-    }));
+    // return div({}, rows.map( function(row) {
+    //    return row.map(function(cell) {
+    //      return div({}, cell);
+    //  })
+    // }));
   },
 
   render: function () {

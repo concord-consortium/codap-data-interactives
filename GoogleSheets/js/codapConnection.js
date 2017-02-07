@@ -190,7 +190,6 @@ var codapConnector = Object.create({
     console.log("addCases");
   },
   didAddCases: function(result){
-    debugger;
     console.log('didCreateCase');
   },
 
