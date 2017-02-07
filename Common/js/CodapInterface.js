@@ -1,5 +1,5 @@
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
@@ -158,7 +158,7 @@ var codapInterface = Object.create({
 
       // update, then get the interactiveFrame.
       this.sendRequest([updateFrameReq, getFrameReq])
-          .then(getFrameRespHandler);
+          .then(getFrameRespHandler, function(err){ console.log(err); });
     }.bind(this));
   },
 
