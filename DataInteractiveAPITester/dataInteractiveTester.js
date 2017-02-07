@@ -5,10 +5,14 @@ $(function () {
   var kActionSelector = '.di-action-list .di-item';
   var kTemplateSelector = '.di-template-list .di-item';
 
+  var interactiveState = null;
+
   var stats = {
     seq: 0,
     successes: 0
   }
+
+  var history = [];
 
   var actions = [
       'get',
@@ -62,6 +66,7 @@ $(function () {
     if (message === null || message === undefined) {
       return;
     }
+    history.push({type: type, id: id, message: message});
     var lookupLongType={
       comment: 'Comment',
       req: 'Request',
@@ -79,9 +84,11 @@ $(function () {
     var messageStr = (typeof message === 'string')?message:JSON.stringify(message, null, "  ");
     var messageEl = $('<span>').addClass('di-log-message').text(messageStr);
     var el = $('<div>').append(expandEl).append(idEl).append(typeEl).append(messageEl);
+    var $messageLog = $('#message-log');
     el.addClass(myClass).addClass('di-log-line').addClass('di-toggle-closed');
     if (domID) el.prop('id', domID);
-    el.appendTo('#message-log');
+    el.appendTo($messageLog);
+    $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
     return el;
   }
 
@@ -298,86 +305,13 @@ $(function () {
         // parse
         try {
           messageObj = JSON.parse(message);
+          send([{message: messageObj}]);
         } catch (ex) {
-          logMessage('error', stats.seq, ex)
+          logMessage('error', stats.seq, ex.toString());
         }
-        send([{message: messageObj}]);
-        // sendMessage(messageObj).then(function (result) {
-        //   logMessage('resp', id, result);
-        // }).catch(function (message) {
-        //   logMessage('error', id, message);
-        // })
       }
     });
   }
-
-  // function makeTemplateTable($el, data) {
-  //   var $table = $('<table id="test-table">');
-  //
-  //   $('<tr>')
-  //       .append($('<th>').addClass('di-run-field').text(''))
-  //       .append($('<th>').addClass('di-count-field').text('ct'))
-  //       .append($('<th>').addClass('di-name-field').text('name'))
-  //       .append($('<th>').addClass('di-open-field').text(''))
-  //       .append($('<th>').text(''))
-  //       .appendTo($table);
-  //   data.forEach(function (test, ix) {
-  //     var $row = $('<tr>').attr({id: 'test' + ix}).data('test', test);
-  //     var messageString = (typeof test.message === 'string')?test.message: JSON.stringify(test.message, null, '  ');
-  //     test.count = 0;
-  //     $('<td>')
-  //         .addClass('di-run-field')
-  //         .append($('<button>').addClass('runButton').text('run'))
-  //         .appendTo($row);
-  //     $('<td>')
-  //         .addClass('di-count-field')
-  //         .addClass('count').append(0)
-  //         .appendTo($row);
-  //     $('<td>')
-  //         .addClass('di-name-field')
-  //         .text(test.name).appendTo($row);
-  //     $('<td>')
-  //         .addClass('di-open-field')
-  //         .append($('<button>').addClass('openToggle').text('open'))
-  //         .appendTo($row);
-  //     $('<td>')
-  //         .append($('<div>')
-  //             .addClass('di-test-message-field')
-  //             .attr('contentEditable', true)
-  //             .addClass('di-toggle-closed')
-  //             .text( messageString)
-  //         ).appendTo($row);
-  //     $row.appendTo($table);
-  //   })
-  //   $table.appendTo($el);
-
-    // $('#test-table .runButton').on('click', function () {
-    //   console.log('click! ' + $(this).parents('tr').data('test').name);
-    //   var $this = $(this);
-    //   var $row = $this.parents('tr');
-    //   var test = $row.find('.di-test-message-field').text();
-    //   var testData = $row.data('test');
-    //   testData.message = JSON.parse(test);
-    //   testData.count++;
-    //   $row.find('.count').text(testData.count);
-    //   send(testData);
-    // });
-    //
-    // $('#test-table .openToggle').on('click', function () {
-    //   var $this = $(this);
-    //   var text = $this.text();
-    //   var $row = $this.parents('tr');
-    //
-    //   if (text === 'open') {
-    //     $this.text('close');
-    //     $row.find('.di-test-message-field').removeClass('di-toggle-closed').addClass('di-toggle-open');
-    //   } else {
-    //     $this.text('open');
-    //     $row.find('.di-test-message-field').removeClass('di-toggle-open').addClass('di-toggle-closed');
-    //   }
-    // });
-
-  // }
 
   function classifyTemplateData(templateData) {
     // make sure templates have a message field that is a normal object;
@@ -444,6 +378,7 @@ $(function () {
     var $this = $(this);
     var text = $this.text();
     var $div = $this.parent('div');
+    var $messageLog = $('#message-log');
 
     if ($div.hasClass('di-toggle-closed')) {
       $this.text(kTrianglePointsDown);
@@ -452,14 +387,30 @@ $(function () {
       $this.text(kTrianglePointsRight);
       $div.removeClass('di-toggle-open').addClass('di-toggle-closed');
     }
+    if ($div.is(':last-of-type')) {
+      $messageLog[0].scrollTop = $div[0].offsetTop;
+    }
   });
 
   codapInterface.init({
     name: 'CODAP API Tester',
-    version: 0.1,
+    version: 0.2,
     dimensions: { height: 640, width: 430}
+  }).then(function () {
+    interactiveState = codapInterface.getInteractiveState();
+    if (!interactiveState.stats) {
+      interactiveState.stats = { seq: 0, successes: 0};
+    }
+    stats = interactiveState.stats;
+    if (!interactiveState.history) {
+      interactiveState.history = [];
+    }
+    history = interactiveState.history;
+    history.forEach(function (item) {
+      logMessage(item.type, item.id, item.message);
+    });
   });
-  codapInterface.on('notify', /.*/, function (notice) {
+  codapInterface.on('notify', '*', function (notice) {
     logMessage('notify', 0, notice);
   });
 });
