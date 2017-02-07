@@ -17,6 +17,7 @@
 //  limitations under the License.
 // ==========================================================================
 
+
 /**
  * This class is intended to provide an abstraction layer for managing
  * a CODAP Data Interactive's connection with CODAP. It is not required. It is
@@ -26,9 +27,9 @@
  * This object provides the following services:
  *   1. Initiates the iFramePhone interaction with CODAP.
  *   2. Provides information on the status of the connection.
- *   3. Provides a sendRequest method. It accepts a callback and/or returns a Promise
- *      for handling the responses from CODAP.
- *   4. Provides an event-like subscriber interface to receive selected notifications from
+ *   3. Provides a sendRequest method. It accepts a callback or returns a Promise
+ *      for handling the results from CODAP.
+ *   4. Provides a subscriber interface to receive selected notifications from
  *      CODAP.
  *   5. Provides automatic handling of Data Interactive State. Prior to saving
  *      a document CODAP requests state from the Data Interactive, where state
@@ -37,84 +38,99 @@
  *      is reopened.
  *   6. Provides a utility to parse a resource selector into its component parts.
  *
- * To use:
- *   ES 6:
- *     import codapInterface from 'CodapInterface';
- *   require:
- *     var codapInterface = require('CodapInterface');
- *   direct:
- *     <script src="CodapInterface.js"></script>
- *
- * Example: keeps count of undoable requests issued to codap.
- *
- *   var state;
- *   codapInterface.init({
- *       name:'sample',
- *       version: '0.1',
- *       preventBringToFront: false
- *     }).then(function(interactiveState) {
- *       state = interactiveState;
- *     });
- *
  * @type {Object}
  */
 
-(function (global, iframePhone) {
+(function (global) {
   'use strict';
 
-  var codapInterface = Object.create({
-    /**
-     * The CODAP Connection
-     * @type {iframePhone.IframePhoneRpcEndpoint}
-     */
-    connection: null,
+  var config = null;
 
-    /**
-     * Current known state of the connection
-     * @type {'preinit' || 'init' || 'active' || 'inactive' || 'closed'}
-     */
-    connectionState: 'preinit',
+  /**
+   * The CODAP Connection
+   * @param {iframePhone.IframePhoneRpcEndpoint}
+   */
+  var connection = null;
 
+  var connectionState = 'preinit';
+
+  var stats = {
+    countDiReq: 0,
+    countDiRplSuccess: 0,
+    countDiRplFail: 0,
+    countDiRplTimeout: 0,
+    countCodapReq: 0,
+    countCodapUnhandledReq: 0,
+    countCodapRplSuccess: 0,
+    countCodapRplFail: 0,
+    timeDiFirstReq: null,
+    timeDiLastReq: null,
+    timeCodapFirstReq: null,
+    timeCodapLastReq: null
+  };
+
+  /**
+   * A serializable object shared with CODAP. This is saved as a part of the
+   * CODAP document. It is intended for the data interactive's use to store
+   * any information it may need to reestablish itself when a CODAP document
+   * is saved and restored.
+   *
+   * This object will be initially empty. It will be updated during the process
+   * initiated by the init method if CODAP was started from a previously saved
+   * document.
+   */
+  var interactiveState = {};
+
+  /**
+   * A list of subscribers to messages from CODAP
+   * @param {[{actionSpec: {RegExp}, resourceSpec: {RegExp}, handler: {function}}]}
+   */
+  var notificationSubscribers = [];
+
+  function matchResource(resourceName, resourceSpec) {
+    return resourceSpec === '*' || resourceName === resourceSpec;
+  }
+
+  function notificationHandler (request, callback) {
+    var action = request.action;
+    var resource = request.resource;
+    var values = request.values;
+
+    connectionState = 'active';
+    stats.countCodapReq++;
+    stats.timeCodapLastReq = new Date();
+    if (!stats.timeCodapFirstReq) {
+      stats.timeCodapFirstReq = stats.timeCodapLastReq;
+    }
+
+    var handled = false;
+
+    notificationSubscribers.forEach(function (subscription) {
+      if ((subscription.actionSpec === action) &&
+          matchResource(resource, subscription.resourceSpec) &&
+          (!subscription.operation || (subscription.operation === values.operation))) {
+        var rtn = subscription.handler(request);
+        if (rtn && rtn.success) {
+          stats.countCodapRplSuccess++;
+        } else {
+          stats.countCodapRplFail++;
+        }
+        callback(rtn);
+        return true;
+      }
+      return false;
+    });
+    if (!handled) {
+      stats.countCodapUnhandledReq++;
+      callback({success: true});
+    }
+  }
+
+  var codapInterface = {
     /**
      * Connection statistics
-     * @type {Object}
      */
-    stats: {
-      countDiReq: 0,
-      countDiRplSuccess: 0,
-      countDiRplFail: 0,
-      countDiRplTimeout: 0,
-      countCodapReq: 0,
-      countCodapUnhandledReq: 0,
-      countCodapRplSuccess: 0,
-      countCodapRplFail: 0,
-      timeDiFirstReq: null,
-      timeDiLastReq: null,
-      timeCodapFirstReq: null,
-      timeCodapLastReq: null
-    },
-
-    /**
-     * A serializable object shared with CODAP. This is saved as a part of the
-     * CODAP document. It is intended for the data interactive's use to store
-     * any information it may need to reestablish itself when a CODAP document
-     * is saved and restored.
-     *
-     * This object will be initially empty. It will be updated during the process
-     * initiated by the init method if CODAP was started from a previously saved
-     * document.
-     *
-     * @type {object}
-     */
-    interactiveState: {},
-
-    /**
-     * A list of subscribers to messages from CODAP
-     * @type {[{actionSpec: RegExp, resourceSpec: RegExp, handler: Function}]}
-     */
-    notificationSubscribers: [],
-
-    config: null,
+    stats: stats,
 
     /**
      * Initialize connection.
@@ -123,12 +139,13 @@
      * Update interactive frame to set name and dimensions and other configuration
      * information.
      *
-     * @param config {{title: String, version: String, dimenstions: Object}} Configuration.
+     * @param iConfig {object} Configuration. Optional properties: title {string},
+     *                        version {string}, dimensions {object}
      *
-     * @param callback {function(interactiveState)}
+     * @param iCallback {function(interactiveState)}
      * @return {Promise} Promise of interactiveState;
      */
-    init: function (config, callback) {
+    init: function (iConfig, iCallback) {
       return new Promise(function (resolve, reject) {
         function getFrameRespHandler(resp) {
           var success = resp && resp[1] && resp[1].success;
@@ -136,12 +153,12 @@
           var savedState = receivedFrame && receivedFrame.savedState;
           this_.updateInteractiveState(savedState);
           if (success) {
-            if (callback) {
-              callback(savedState);
+            if (iCallback) {
+              iCallback(savedState);
             }
             // deprecated way of conveying state
-            if (config.stateHandler) {
-              config.stateHandler(savedState);
+            if (iConfig.stateHandler) {
+              iConfig.stateHandler(savedState);
             }
             resolve(savedState);
           } else {
@@ -157,11 +174,11 @@
 
         var getFrameReq = {action: 'get', resource: 'interactiveFrame'};
         var newFrame = {
-          name: config.name,
-          title: config.title,
-          version: config.version,
-          dimensions: config.dimensions,
-          preventBringToFront: config.preventBringToFront
+          name: iConfig.name,
+          title: iConfig.title,
+          version: iConfig.version,
+          dimensions: iConfig.dimensions,
+          preventBringToFront: iConfig.preventBringToFront
         };
         var updateFrameReq = {
           action: 'update',
@@ -170,51 +187,63 @@
         };
         var this_ = this;
 
-        this.config = config;
+        config = iConfig;
 
         // initialize connection
-        this.connection = new iframePhone.IframePhoneRpcEndpoint(
-            this._notificationHandler.bind(this), "data-interactive", window.parent);
+        connection = new iframePhone.IframePhoneRpcEndpoint(
+            notificationHandler, "data-interactive", window.parent);
 
         this.on('get', 'interactiveState', function () {
-          console.log('sending interactiveState: ' + JSON.stringify(this.interactiveState));
           return ({success: true, values: this.getInteractiveState()});
         }.bind(this));
 
-      // update, then get the interactiveFrame.
-      return this.sendRequest([updateFrameReq, getFrameReq])
+        console.log('sending interactiveState: ' + JSON.stringify(this.getInteractiveState));
+        // update, then get the interactiveFrame.
+        return this.sendRequest([updateFrameReq, getFrameReq])
           .then(getFrameRespHandler).catch( function(msg) {
             reject(msg);
           });
-    }.bind(this));
-  },
+      }.bind(this));
+    },
+
+    /**
+     * Current known state of the connection
+     * @param {'preinit' || 'init' || 'active' || 'inactive' || 'closed'}
+     */
+    getConnectionState: function () {return connectionState;},
 
     getStats: function () {
-      return this.stats;
+      return stats;
+    },
+
+    getConfig: function () {
+      return config;
     },
 
     /**
      * Returns the interactive state.
      *
-     * @returns {Object}
+     * @returns {object}
      */
     getInteractiveState: function () {
-      return this.interactiveState;
+      return interactiveState;
     },
 
     /**
      * Updates the interactive state.
-     * @param interactiveState {Object}
+     * @param iInteractiveState {Object}
      */
-    updateInteractiveState: function (interactiveState) {
-      if (!interactiveState) {
+    updateInteractiveState: function (iInteractiveState) {
+      if (!iInteractiveState) {
         return;
       }
-      this.interactiveState = Object.assign(this.interactiveState, interactiveState);
-
+      interactiveState = Object.assign(interactiveState, iInteractiveState);
     },
 
-    destroy: function () {},
+    destroy: function () {
+      // todo : more to do?
+      connection = null;
+    },
 
     /**
      * Sends a request to CODAP. The format of the message is as defined in
@@ -233,89 +262,73 @@
           if (response === undefined) {
             console.warn('handleResponse: CODAP request timed out');
             reject('handleResponse: CODAP request timed out: ' + JSON.stringify(request));
-            this_.stats.countDiRplTimeout++;
+            stats.countDiRplTimeout++;
           } else {
-            this_.connectionState = 'active';
-            response.success? this_.stats.countDiRplSuccess++: this_.stats.countDiRplFail++;
+            connectionState = 'active';
+            response.success? stats.countDiRplSuccess++: stats.countDiRplFail++;
             resolve(response);
           }
           if (callback) {
             callback(response, request);
           }
         }
-        var this_ = this;
-        switch (this.connectionState) {
+        switch (connectionState) {
           case 'closed': // log the message and ignore
             console.warn('sendRequest on closed CODAP connection: ' + JSON.stringify(message));
             reject('sendRequest on closed CODAP connection: ' + JSON.stringify(message));
             break;
           case 'preinit': // warn, but issue request.
-            console.warn('sendRequest on not yet initialized CODAP connection: '
+            console.log('sendRequest on not yet initialized CODAP connection: '
                 + JSON.stringify(message));
             // fallthrough intentional
           default:
-            if (this.connection) {
-              this.stats.countDiReq++;
-              this.stats.timeDiLastReq = new Date();
-              if (!this.stats.timeDiFirstReq) {
-                this.stats.timeCodapFirstReq = this.stats.timeDiLastReq;
+            if (connection) {
+              stats.countDiReq++;
+              stats.timeDiLastReq = new Date();
+              if (!stats.timeDiFirstReq) {
+                stats.timeCodapFirstReq = stats.timeDiLastReq;
               }
 
-              this.connection.call(message, function (response) {
+              connection.call(message, function (response) {
                 handleResponse(message, response, callback)
               });
             } else {
               console.error('sendRequest on non-existent CODAP connection');
             }
         }
-      }.bind(this));
-    },
-
-    _notificationHandler: function (request, callback) {
-      var action = request.action;
-      var resource = request.resource;
-      var stats = this.stats;
-
-      this.connectionState = 'active';
-      stats.countCodapReq++;
-      stats.timeCodapLastReq = new Date();
-      if (!stats.timeCodapFirstReq) {
-        stats.timeCodapFirstReq = stats.timeCodapLastReq;
-      }
-
-      var handled = this.notificationSubscribers.some(function (subscription) {
-        if (subscription.actionSpec.test(action)
-            && subscription.resourceSpec.test(resource)) {
-          var rtn = subscription.handler(request);
-          if (rtn && rtn.success) {
-            stats.countCodapRplSuccess++;
-          } else {
-            stats.countCodapRplFail++;
-          }
-          callback(rtn);
-          return true;
-        }
-        return false;
       });
-      if (!handled) {
-        stats.countCodapUnhandledReq++;
-        callback({success: true});
-      }
     },
 
     /**
      * Registers a handler to respond to CODAP-initiated requests and
      * notifications. See {@link https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API#codap-initiated-actions}
      *
-     * @param actionSpec {RegExp} A regular expression to qualify actions.
-     * @param resourceSpec {RegExp} A regular expression to qualify resources.
-     * @param handler {Function} Function taking the CODAP message as an argument.
+     * @param actionSpec {'get' || 'notify'} (optional) Action to handle. Defaults to 'notify'.
+     * @param resourceSpec {String} A resource string.
+     * @param operation {String} (optional) name of operation, e.g. 'create', 'delete',
+     *   'move', 'resize', .... If not specified, all operations will be reported.
+     * @param handler {Function} A handler to receive the notifications.
      */
-    on: function (actionSpec, resourceSpec, handler) {
-      this.notificationSubscribers.push({
-        actionSpec: RegExp(actionSpec),
-        resourceSpec: RegExp(resourceSpec),
-        handler: handler
+    on: function (actionSpec, resourceSpec, operation, handler) {
+      var as = 'notify',
+          rs,
+          os,
+          hn;
+      var args = Array.prototype.slice.call(arguments);
+      if (args[0] === 'get' || args[0] === 'notify') {
+        as = args.shift();
+      }
+      rs = args.shift();
+      if (typeof args[0] !== 'function') {
+        os = args.shift();
+      }
+      hn = args.shift();
+
+      notificationSubscribers.push({
+        actionSpec: as,
+        resourceSpec: rs,
+        operation: os,
+        handler: hn
       });
     },
 
@@ -345,9 +358,8 @@
       });
 
       return result;
-    },
-
-  });
+    }
+  };
 
   if (typeof module !== 'undefined') {
     module.exports = codapInterface;
