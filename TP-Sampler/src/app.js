@@ -20,7 +20,42 @@ var s = Snap("#model svg"),
     runCaseID,
 
     variables = ["a", "b", "a"],
-    balls = [];
+    balls = [],
+    sampleSlots = [];
+
+function render() {
+  s.clear();
+  createSampleSlots();
+  createMixer();
+}
+
+function createSampleSlots() {
+  var y = containerY / 2,
+      centerX = containerX + (containerWidth/2),
+      stroke = border / 2,
+      padding = 2,
+      maxWidth = 20,
+      minWidth = (containerWidth/sampleSize)
+      slotWidth = Math.min(minWidth, maxWidth),
+      slotSize = slotWidth - padding - (stroke*2),
+      maxSlotHeight = 4,
+      minSlotHeight = slotSize/3,
+      slotHeight = Math.min(minSlotHeight, maxSlotHeight),
+      stroke = (slotWidth < maxWidth) ? stroke / 2 : stroke,
+      totalWidth = slotWidth * sampleSize,
+      x = centerX - (totalWidth / 2);
+
+  for (var i = 0; i < sampleSize; i++) {
+    var mx = x + padding + (slotWidth * i),
+        pathStr = "m"+mx+","+y+" v "+slotHeight+" h "+slotSize+" v -"+slotHeight;
+
+    sampleSlots.push(s.path(pathStr).attr({
+        fill: "none",
+        stroke: "#333",
+        strokeWidth: stroke
+    }));
+  }
+}
 
 function createMixer() {
   var halfb = (border/2),
@@ -32,7 +67,6 @@ function createMixer() {
       h = containerHeight - capHeight - halfb,
       pathStr = "m"+mx+","+my+" h "+shoulder+" v -"+cap+" h "+capWidth+" v "+cap+" h "+shoulder+" v "+h+" h -"+w+" z";
 
-  s.clear();
   s.path(pathStr).attr({
         fill: "none",
         stroke: "#333",
@@ -75,12 +109,12 @@ function getNextVariable() {
 
 function addVariable() {
   variables.push(getNextVariable());
-  createMixer();
+  render();
 }
 
 function removeVariable() {
   variables.pop();
-  createMixer();
+  render();
 }
 
 /**
@@ -158,8 +192,7 @@ document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = run;
 
-
-createMixer();
+render();
 
 // connect to CODAP
 
@@ -299,6 +332,3 @@ function addValueToCODAP(draw, val) {
     _addValue();
   }
 }
-
-// draw element
-var s2 = Snap("#model svg");
