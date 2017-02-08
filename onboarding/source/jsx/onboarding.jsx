@@ -55,10 +55,11 @@ class Feedback extends React.Component {
       return null;
     }
     else {
-      let tCheckbox = /*this.props.allAccomplished ? null :*/
-          <img src="./resources/x.png" className="App-feedback-close"/>;
+      let tCheckbox = this.props.allAccomplished ? null :
+          <img src="./resources/x.png" className="App-feedback-close"
+               onMouseDown={this.props.handleFeedbackExit}/>;
       return (
-          <div className="App-feedback" onMouseDown={this.props.handleFeedbackExit}>
+          <div className="App-feedback">
             {tCheckbox}
             {this.props.feedbackText}
           </div>
@@ -104,7 +105,8 @@ class DraggableLink extends React.Component {
     return (
         <span className="App-link">
           <img src={'./resources/text-icon.png'} alt="link" width={50}
-               onDragStart={this.handleDragStart}/>
+               onDragStart={this.handleDragStart}
+          />
         </span>
     )
   }
@@ -204,7 +206,6 @@ class TutorialView extends React.Component {
       allAccomplished: false
     };
     this.handleHelpClick = this.handleHelpClick.bind(this);
-    this.handleMovieEnded = this.handleMovieEnded.bind(this);
     this.handleCodapNotification = this.handleCodapNotification.bind(this);
     this.handleFeedbackExit = this.handleFeedbackExit.bind(this);
     this.handleInfoClick = this.handleInfoClick.bind(this);
@@ -228,12 +229,28 @@ class TutorialView extends React.Component {
             tFeedback = taskDescriptions.getFeedbackFor(iAccomplishment, iQualifier);
             this.setState({feedbackText: tFeedback})
           }
+        }.bind(this),
+
+        handleDataContextCountChanged = function () {
+          codapInterface.sendRequest({
+            action: 'get',
+            resource: 'dataContextList'
+          }).then( function( iResult) {
+            if(iResult.success && iResult.values.length > 1) {
+              let tName = iResult.values[0].name;
+              codapInterface.sendRequest({
+                action: 'delete',
+                resource: 'dataContext[' + tName + ']'
+              });
+            }
+          });
+          handleAccomplishment('Drag');
         }.bind(this);
 
     let tFeedback = '';
     switch (iRequest.values.operation) {
       case 'dataContextCountChanged':
-        handleAccomplishment('Drag');
+        handleDataContextCountChanged();
         break;
       case 'create':
         handleAccomplishment('MakeGraph', !isAccomplished('Drag'));
@@ -250,7 +267,7 @@ class TutorialView extends React.Component {
 
   handleHelpClick(movieURL) {
     this.setState({movieURL: ''});
-    setTimeout( function() {
+    setTimeout(function () {
       this.setState({movieURL: movieURL});
     }.bind(this), 10);
   }
@@ -261,14 +278,6 @@ class TutorialView extends React.Component {
     if (index < 0)
       accomplished.push(iKey);
     this.setState({accomplished: accomplished})
-  }
-
-  handleMovieEnded() {
-    /*
-     setTimeout(function () {
-     this.setState({movieURL: ''});
-     }.bind(this), 2000);
-     */
   }
 
   startOver() {
@@ -311,13 +320,14 @@ class TutorialView extends React.Component {
     let tFeedback =
         <div>
           <p>This onboarding plugin for CODAP was created to help new CODAP users get started
-              using CODAP. It lives in CODAP as an iFrame. Certain user actions cause CODAP to
-              notify the plugin. The plugin responds by providing feedback to the user.</p>
+            using CODAP. It lives in CODAP as an iFrame. Certain user actions cause CODAP to
+            notify the plugin. The plugin responds by providing feedback to the user.</p>
           <p>The open source code is at<br/>
-            <a href="https://github.com/concord-consortium/codap-data-interactives/tree/master/onboarding">
+            <a href="https://github.com/concord-consortium/codap-data-interactives/tree/master/onboarding"
+               target="_blank">
               CODAP's data interactive GitHub repository</a>. </p>
           <p>This plugin makes use of the CODAP data interactive plugin API whose documentation is at<br/>
-            <a href="https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API">
+            <a href="https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API" target="_blank">
               CODAP Data Interactive API</a>.</p>
         </div>
     this.setState({
@@ -326,6 +336,14 @@ class TutorialView extends React.Component {
   }
 
   render() {
+    if ('ontouchstart' in window) {
+      return (
+          <div>
+            <p>Sorry, this CODAP plugin does not yet work with touch devices.</p>
+          </div>
+      )
+    }
+
     this.taskList =
         <TaskList
             accomplished={this.state.accomplished}
@@ -334,7 +352,7 @@ class TutorialView extends React.Component {
 
     return (
         <div className="App">
-          <HelpWelcomeArea movieURL={this.state.movieURL} handleEnded={this.handleMovieEnded}/>
+          <HelpWelcomeArea movieURL={this.state.movieURL}/>
           <p className="App-intro">
             Figure out how to accomplish each of these basic CODAP tasks:
           </p>
@@ -345,19 +363,20 @@ class TutorialView extends React.Component {
               handleFeedbackExit={this.handleFeedbackExit}
           />
           <img src="./resources/infoIcon.png" className="App-info"
-              onClick={this.handleInfoClick}/>
+               onClick={this.handleInfoClick}/>
         </div>
     );
   }
 }
 
 codapInterface.init({
-  title: "Getting on board CODAP",
-  version: "0.3",
+  title: "Getting started with CODAP",
+  version: "1.0",
   dimensions: {
     width: 400,
     height: 500
-  }
+  },
+  preventDataContextReorg: false
 }).catch(function (msg) {
   console.log(msg);
 });
