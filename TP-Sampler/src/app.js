@@ -47,6 +47,8 @@ function createSampleSlots() {
       my = y + (maxSlotHeight - slotHeight),
       x = centerX - (totalWidth / 2);
 
+  sampleSlots = [];
+
   for (var i = 0; i < sampleSize; i++) {
     var mx = x + padding + (slotWidth * i),
         pathStr = "m"+mx+","+my+" v "+slotHeight+" h "+slotSize+" v -"+slotHeight,
@@ -187,15 +189,16 @@ function run() {
 
         selectionMadeCallback(draw, variables[selection]);
         ball.animate({transform: "T0,0"}, 500);
-      });
-      if (draw == 0) {
-        // move!
-        if (samples.length) {
-          for (var i = 0, ii = samples.length; i < ii; i++) {
-            samples[i].remove();
-          }
+
+        if (draw == sampleSize-1) {
+          // move this!
+          setTimeout(function() {
+            for (var i = 0, ii = samples.length; i < ii; i++) {
+              samples[i].remove();
+            }
+          }, 700);
         }
-      }
+      });
     }
 
     function scheduleNextSelection() {
@@ -227,6 +230,14 @@ function run() {
 document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = run;
+document.getElementById("draws").addEventListener('input', function (evt) {
+    sampleSize = this.value;
+    render();
+});
+document.getElementById("repeat").addEventListener('input', function (evt) {
+    numRuns = this.value;
+    render();
+});
 
 render();
 

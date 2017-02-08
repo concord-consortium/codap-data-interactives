@@ -13,6 +13,18 @@
   top: 50vw;
 }
 
+#draw-field {
+  position: absolute;
+  left: 4vw;
+  top: 30vw;
+  font-size: 3vw;
+}
+
+#draw-field input {
+  width: 12vw;
+  font-size: 3vw;
+}
+
 button {
     background-color: #dbf6ff;
     border: 0.3vw solid #008cba;
