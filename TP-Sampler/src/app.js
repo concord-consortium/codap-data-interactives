@@ -1,7 +1,15 @@
 var s = Snap("#model svg"),
-    width = 200,      // svg units
-    height = 100,
+
+    width = 250,      // svg units
+    height = 125,
+    containerX = 50,
+    containerY = 25,
+    containerWidth = 200,
+    containerHeight = 100,
+    capHeight = 6,
+    capWidth = 40,
     border = 2,
+
     experimentNumber = 0,
     runNumber = 0,
 
@@ -15,11 +23,20 @@ var s = Snap("#model svg"),
     balls = [];
 
 function createMixer() {
+  var halfb = (border/2),
+      mx = containerX + halfb,
+      my = containerY + capHeight,
+      w = containerWidth - border,
+      shoulder = (w - capWidth) / 2,
+      cap = capHeight - halfb,
+      h = containerHeight - capHeight - halfb,
+      pathStr = "m"+mx+","+my+" h "+shoulder+" v -"+cap+" h "+capWidth+" v "+cap+" h "+shoulder+" v "+h+" h -"+w+" z";
+
   s.clear();
-  s.path("m1,6 h 79 v -5 h 40 v 5 h 79 v 93 h -198 z").attr({
+  s.path(pathStr).attr({
         fill: "none",
         stroke: "#333",
-        strokeWidth: 2
+        strokeWidth: border
     });
 
   addMixerVariables();
@@ -29,12 +46,12 @@ function addMixerVariables() {
   balls = [];
 
   var minRadius = 15,
-      maxRadius = (width - border * 2) / (variables.length * 2),
+      maxRadius = (containerWidth - border * 2) / (variables.length * 2),
       radius = Math.min(minRadius, maxRadius);
   // other calcs...
   for (var i = 0, ii=variables.length; i<ii; i++) {
-    var x = border + radius + (i * radius * 2),
-        y = height - border - radius;
+    var x = containerX + border + radius + (i * radius * 2),
+        y = containerY + containerHeight - border - radius;
     // render ball to the screen
     balls.push(s.group(
       s.circle(x, y, radius).attr({
@@ -104,7 +121,7 @@ function run() {
       var selection = sequence[run][draw],
           ball = balls[selection],
           circle = ball.select("circle"),
-          trans = getTransformForMovingTo(100, circle.attr("r") * 1, circle);
+          trans = getTransformForMovingTo(containerX + (containerWidth/2), containerY + circle.attr("r") * 1, circle);
       ball.animate({transform: trans}, 500, function() {
         selectionMadeCallback(draw, variables[selection]);
         ball.animate({transform: "T0,0"}, 500);
@@ -282,3 +299,6 @@ function addValueToCODAP(draw, val) {
     _addValue();
   }
 }
+
+// draw element
+var s2 = Snap("#model svg");

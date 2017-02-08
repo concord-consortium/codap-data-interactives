@@ -1,15 +1,16 @@
 #model {
   position: absolute;
-  left: 20vw;
+  left: 2vw;
   top: 5vw;
-  width: 76vw;
-  height: 38vw;
+  width: 95vw;
+  height: 47.5vw;
+  z-index: -1;
 }
 
 #model-controls {
   position: absolute;
-  left: 20vw;
-  top: 41vw;
+  left: 21vw;
+  top: 50vw;
 }
 
 button {
