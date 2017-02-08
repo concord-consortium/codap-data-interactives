@@ -21,7 +21,8 @@ var s = Snap("#model svg"),
 
     variables = ["a", "b", "a"],
     balls = [],
-    sampleSlots = [];
+    sampleSlots = [],
+    samples = [];
 
 function render() {
   s.clear();
@@ -43,17 +44,29 @@ function createSampleSlots() {
       slotHeight = Math.min(minSlotHeight, maxSlotHeight),
       stroke = (slotWidth < maxWidth) ? stroke / 2 : stroke,
       totalWidth = slotWidth * sampleSize,
+      my = y + (maxSlotHeight - slotHeight),
       x = centerX - (totalWidth / 2);
 
   for (var i = 0; i < sampleSize; i++) {
     var mx = x + padding + (slotWidth * i),
-        pathStr = "m"+mx+","+y+" v "+slotHeight+" h "+slotSize+" v -"+slotHeight;
+        pathStr = "m"+mx+","+my+" v "+slotHeight+" h "+slotSize+" v -"+slotHeight,
+        r = slotSize/2,
+        letterCenterX = mx + (slotSize / 2),
+        letterCenterY = y + slotHeight - r;
 
-    sampleSlots.push(s.path(pathStr).attr({
+    // first we make circles to mark the spot for letter movement
+    sampleSlots.push(s.circle(letterCenterX, letterCenterY, r).attr({
+      fill: "#fff",
+      stroke: "#fff",
+      strokeWidth: 0
+    }));
+
+    // then the slots
+    s.path(pathStr).attr({
         fill: "none",
         stroke: "#333",
         strokeWidth: stroke
-    }));
+    });
   }
 }
 
@@ -155,11 +168,34 @@ function run() {
       var selection = sequence[run][draw],
           ball = balls[selection],
           circle = ball.select("circle"),
+          variable = ball.select("text"),
           trans = getTransformForMovingTo(containerX + (containerWidth/2), containerY + circle.attr("r") * 1, circle);
       ball.animate({transform: trans}, 500, function() {
+        // move variable to slot
+        var letter = variable.clone();
+        samples.push(letter);
+        ball.before(letter);
+        letter.attr({transform: trans});
+        // trans = "t"+0+",-"+5
+        var origin = letter.getBBox();
+        var target = sampleSlots[draw].getBBox();
+        matrix = letter.transform().localMatrix;
+        letterTrans = "t"+(target.cx)+","+(target.cy);
+        matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
+        // matrix.scale(2);
+        letter.animate({transform: matrix, fontSize: sampleSlots[draw].attr("r")*2}, 200);
+
         selectionMadeCallback(draw, variables[selection]);
         ball.animate({transform: "T0,0"}, 500);
       });
+      if (draw == 0) {
+        // move!
+        if (samples.length) {
+          for (var i = 0, ii = samples.length; i < ii; i++) {
+            samples[i].remove();
+          }
+        }
+      }
     }
 
     function scheduleNextSelection() {
