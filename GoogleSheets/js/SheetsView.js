@@ -23,8 +23,16 @@ var STATE_STARTING = 'initialized',
     STATE_GOOGLE_AUTHENTICATING = 'authenticating',
     STATE_GOOGLE_AUTHENTICATED  = 'authenticated',
     STATE_GOOGLE_SIGNEDOUT = "signedout",
-    POLLING_INTERVAL = 10000;
+    POLLING_INTERVAL = 10000,
+    STEP_LOGIN="login",
+    STEP_GET_DATA="getData",
+    STEP_READY="ready";
 
+var WIZARD_STEPS = [
+  STEP_LOGIN,
+  STEP_GET_DATA,
+  STEP_READY
+];
 var dataManager = Object.create({
   lastHash: "",
   state: null,
@@ -190,6 +198,7 @@ var SheetsView = React.createFactory(React.createClass({
   getInitialState: function () {
     return dataManager.getState();
   },
+
   getInitialState: function () {
     return dataManager.getState();
   },
@@ -206,12 +215,15 @@ var SheetsView = React.createFactory(React.createClass({
     this.nextWizardStep("backward");
   },
 
-  nextWizardStep: function (direction, _currentStep) {
-    var wizardSteps = ["login", "getData", "ready", "bonk"],
-        currentStep = _currentStep || this.state.wizardStep,
-        currentIndex = wizardSteps.indexOf(currentStep) || 0,
-        newIndex = direction === "forward" ? Math.min(wizardSteps.length - 1, currentIndex + 1) : Math.max(0, currentIndex - 1),
-        newStep = wizardSteps[newIndex];
+  onLastStep: function() {
+    var lastIndex = WIZARD_STEPS.length -1;
+    return this.state.wizardStep == WIZARD_STEPS[lastIndex];
+  },
+
+  nextWizardStep: function (direction) {
+    var currentIndex = WIZARD_STEPS.indexOf(this.state.wizardStep) || 0;
+    var newIndex = direction === "forward" ? currentIndex + 1 : Math.max(0, currentIndex - 1);
+    var newStep = WIZARD_STEPS[newIndex];
 
       dataManager.setWizardStep(newStep, false);
   },
@@ -262,7 +274,7 @@ var SheetsView = React.createFactory(React.createClass({
   getDataCard: function () {
     var docChangedF         = function(evt) { dataManager.updateStateProperty('googleDocId', evt.target.value) };
     var rangeChangedF       = function(evt) { dataManager.updateStateProperty('range', evt.target.value) };
-    var indexColumnChangedF = function(evt) { dataManager.updateStateProperty('indexColumn', evt.target.value) };
+    // var indexColumnChangedF = function(evt) { dataManager.updateStateProperty('indexColumn', evt.target.value) };
     return div({},
       div({className: 'formRow'},
         label({}, "document ID:"),
@@ -283,17 +295,18 @@ var SheetsView = React.createFactory(React.createClass({
             value: this.state.range,
             onChange: rangeChangedF
           })
-      ),
-      div({className: 'formRow'},
-        label({}, "Index Column:"),
-        input(
-          {
-            type: "text",
-            ref: "indexColumn",
-            value: this.state.indexColumn,
-            onChange: indexColumnChangedF
-          })
       )
+      // , TODO: Can we create an ID for this data to use for synchronization?
+      // div({className: 'formRow'},
+      //   label({}, "Index Column:"),
+      //   input(
+      //     {
+      //       type: "text",
+      //       ref: "indexColumn",
+      //       value: this.state.indexColumn,
+      //       onChange: indexColumnChangedF
+      //     })
+      // )
     );
   },
 
@@ -301,6 +314,8 @@ var SheetsView = React.createFactory(React.createClass({
     this.requestSheetData();
     var rows = this.state.rows;
     var columnNames = this.state.columnNames;
+    var intervalSeconds = Math.round(POLLING_INTERVAL / 1000);
+    return div({}, "Now loading your sheet into CODAP every " + intervalSeconds + " seconds.")
     // return div({}, rows.map( function(row) {
     //    return row.map(function(cell) {
     //      return div({}, cell);
@@ -313,11 +328,13 @@ var SheetsView = React.createFactory(React.createClass({
     var googleState = this.state.googleState;
     var renderFunctionName = wizardStep + "Card";
     var renderCardFunc = this[renderFunctionName];
+    var disableForward = (! (this.validDocId() && this.validRange()));
+    var forward = this.onLastStep() ? null : this.stepForward;
     if (googleState === STATE_GOOGLE_AUTHENTICATED) {
       return WizardStepView({
-          forward: this.stepForward,
+          forward: forward,
           back: this.stepBack,
-          disableForward: (! (this.validDocId() && this.validRange()))
+          disableForward: disableForward
         },
         div({className: 'techinfo'}, wizardStep),
         renderCardFunc()

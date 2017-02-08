@@ -52,13 +52,17 @@ var codapConnector = Object.create({
 
   sendRequest: function (request, handler, _errorHandler) {
     var errorHandler = _errorHandler || this.handleError;
+    var action = request && request.action;
+    var resource = request && request.resource;
     this.connection.call(request, function(response) {
-      if(response.success) {
-
+      if(response && response.success) {
         handler(response);
       }
-      else {
+      else if (response) {
         errorHandler(response);
+      }
+      else {  // timeout
+        console.log("Time out in " + action + " " + resource);
       }
     }.bind(this));
   },
