@@ -78,3 +78,12 @@ iframe {
 .overlay {
   background-color: green;
 }
+.monitor {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background-color: red;
+}
+.monitor.in-codap {
+  background-color:green;
+}

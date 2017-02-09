@@ -26,6 +26,7 @@ $(function (){
   // width of the border surrounding each component.
   var kBufferWidth = 10;
   var inIframe = false;
+  var inMoveOrResize = false;
 
   var messageTemplates = {
     createCalculator: {
@@ -130,6 +131,11 @@ $(function (){
       if (notice.action === 'notify' && notice.resource === 'component') {
         if (operation === 'move' || operation === 'resize') {
           updatePointerMgtLayer();
+          inMoveOrResize = false;
+        }
+        if (operation === 'beginMoveOrResize') {
+          inMoveOrResize = true;
+          activateCODAPLayer();
         }
       }
     }
@@ -274,12 +280,14 @@ $(function (){
 
   function activateCODAPLayer() {
     console.log('activateCODAPLayer');
+    $('.monitor').addClass('in-codap');
     $('#codapIFrame')
         .removeClass('no-pointer-events')
         .addClass('pointer-events');
   }
 
   function activateAppLayer() {
+    $('.monitor').removeClass('in-codap');
     console.log('activateAppLayer');
     $('#codapIFrame')
         .removeClass('pointer-events')
@@ -347,6 +355,9 @@ $(function (){
 
   // handler to manage the transition between the main page and CODAP
   $('.pointer-manager').on('mouseleave', '.overlay', function (ev) {
+    if (inMoveOrResize) {
+      return;
+    }
     if (isInComponentRectangles({x:ev.pageX, y:ev.pageY})) {
       activateCODAPLayer();
     } else {
