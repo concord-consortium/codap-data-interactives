@@ -200,7 +200,9 @@ var SheetsView = React.createFactory(React.createClass({
   },
 
   getInitialState: function () {
-    return dataManager.getState();
+    var state = dataManager.getState();
+    state.pollingInterval = POLLING_INTERVAL;
+    return state;
   },
 
   componentDidMount: function () {
@@ -260,14 +262,37 @@ var SheetsView = React.createFactory(React.createClass({
       dataManager.updateStateProperty('rows', rows, true);
       dataManager.updateStateProperty('columnNames', columnNames);
     }
-    setTimeout(this.requestSheetData,POLLING_INTERVAL);
+    if (this.state.pollingInterval > POLLING_INTERVAL) { this.backOn(); }
+    this.timeout = null;
+    this.requestSheetData();
+  },
+
+  failSheetData: function(response) {
+    this.error(response);
+    this.backOff();
+    this.timeout = null;
+    this.requestSheetData();
+  },
+
+  backOff: function() {
+    var pollingInterval = this.state.pollingInterval * 2;
+    this.setState({pollingInterval: pollingInterval});
+  },
+
+  backOn: function() {
+    var pollingInterval = Math.max(POLLING_INTERVAL, this.state.pollingInterval / 2);
+    this.setState({pollingInterval: pollingInterval});
   },
 
   requestSheetData: function() {
-    gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: this.state.googleDocId,
-      range: this.state.range
-    }).then(this.loadSheetData, this.error);
+    if (this.timeout) { return; }
+    var request = function() {
+      gapi.client.sheets.spreadsheets.values.get({
+        spreadsheetId: this.state.googleDocId,
+        range: this.state.range
+      }).then(this.loadSheetData, this.failSheetData);
+    }.bind(this);
+    this.timeout = setTimeout(request, this.state.pollingInterval);
   },
 
   // this method is dynamically invoked based on wizard step name.
@@ -312,10 +337,10 @@ var SheetsView = React.createFactory(React.createClass({
 
   readyCard: function (){
     this.requestSheetData();
-    var rows = this.state.rows;
-    var columnNames = this.state.columnNames;
-    var intervalSeconds = Math.round(POLLING_INTERVAL / 1000);
+    var intervalSeconds = Math.round(this.state.pollingInterval / 1000);
     return div({}, "Now loading your sheet into CODAP every " + intervalSeconds + " seconds.")
+    // var rows = this.state.rows;
+    // var columnNames = this.state.columnNames;
     // return div({}, rows.map( function(row) {
     //    return row.map(function(cell) {
     //      return div({}, cell);
