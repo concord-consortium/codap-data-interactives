@@ -404,11 +404,11 @@ codapInterface.init({
 
 function startNewExperimentInCODAP() {
   return new Promise(function(resolve, reject) {
-    if (!codapInterface.connection.isConnected()) {
-      console.log('Not in CODAP')
-      resolve();
-      return;
-    }
+    // if (!codapInterface.connection.isConnected()) {
+    //   console.log('Not in CODAP')
+    //   resolve();
+    //   return;
+    // }
 
     experimentNumber++;
     runNumber = 0; // Each experiment starts the runNumber afresh
@@ -435,9 +435,9 @@ function startNewExperimentInCODAP() {
 }
 
 function addValueToCODAP(run, vals) {
-  if (!codapInterface.connection.isConnected()) {
-    return;
-  }
+  // if (!codapInterface.connection.isConnected()) {
+  //   return;
+  // }
 
   let valsArray = vals.map(function(v) {
     return {
