@@ -10,6 +10,9 @@ var s = Snap("#model svg"),
     capWidth = 40,
     border = 2,
 
+    running = false,
+    animationRequest = null,
+
     experimentNumber = 0,
     runNumber = 0,
 
@@ -122,6 +125,14 @@ function addMixerVariables() {
       })
     ));
   }
+
+  // setup animation
+  for (var i = 0, ii = balls.length; i < ii; i++) {
+    let speed = 2 + (Math.random() * 3),
+        direction = Math.PI + (Math.random() * Math.PI);
+    balls[i].vx = Math.cos(direction) * speed;
+    balls[i].vy = Math.sin(direction) * speed;
+  }
 }
 
 function getNextVariable() {
@@ -169,69 +180,123 @@ function getTransformForMovingTo(x, y, circ) {
 }
 
 function run() {
-  startNewExperimentInCODAP().then(function() {
-    var sequence = createRandomSequence(sampleSize, numRuns);
+  if (!running) {
+    running = true;
+    startNewExperimentInCODAP().then(function() {
+      var sequence = createRandomSequence(sampleSize, numRuns);
 
-    // selection animation
-    function select(run, draw, selectionMadeCallback) {
-      var selection = sequence[run][draw],
-          ball = balls[selection],
-          circle = ball.select("circle"),
-          variable = ball.select("text"),
-          trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
-      ball.animate({transform: trans}, 500, function() {
-        // move variable to slot
-        var letter = variable.clone();
-        samples.push(letter);
-        ball.before(letter);
-        letter.attr({transform: trans});
-        // trans = "t"+0+",-"+5
-        var origin = letter.getBBox();
-        var target = sampleSlots[draw].getBBox();
-        matrix = letter.transform().localMatrix;
-        letterTrans = "t"+(target.cx)+","+(target.cy);
-        matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-        // matrix.scale(2);
-        letter.animate({transform: matrix, fontSize: sampleSlots[draw].attr("r")*2}, 200);
+      // selection animation
+      function select(run, draw, selectionMadeCallback) {
+        var selection = sequence[run][draw],
+            ball = balls[selection],
+            circle = ball.select("circle"),
+            variable = ball.select("text"),
+            trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
 
-        selectionMadeCallback(draw, variables[selection]);
-        ball.animate({transform: "T0,0"}, 500);
-
-        if (draw == sampleSize-1) {
-          // move this!
-          setTimeout(function() {
-            for (var i = 0, ii = samples.length; i < ii; i++) {
-              samples[i].remove();
-            }
-          }, 700);
+        ball.beingSelected = true;
+        if (ball.getBBox().y > containerY + (containerHeight/2)) {
+          ball.vy = -Math.abs(ball.vy);
+        } else {
+          ball.vy = Math.abs(ball.vy);
         }
-      });
-    }
 
-    function scheduleNextSelection() {
-      // for now just assume every 1000ms
-      setTimeout(selectNext, 1000);
-    }
+        ball.animate({transform: trans}, 500, function() {
+          // move variable to slot
+          var letter = variable.clone();
+          samples.push(letter);
+          ball.before(letter);
+          letter.attr({transform: trans});
+          // trans = "t"+0+",-"+5
+          var origin = letter.getBBox();
+          var target = sampleSlots[draw].getBBox();
+          matrix = letter.transform().localMatrix;
+          matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
+          // matrix.scale(2);
+          letter.animate({transform: matrix, fontSize: sampleSlots[draw].attr("r")*2}, 200);
 
-    var run = 0,
-        draw = 0;
+          selectionMadeCallback(draw, variables[selection]);
+          ball.beingSelected = false;
 
-    function selectNext() {
-      select(run, draw, addValueToCODAP);
-
-      if (draw < sequence[run].length - 1) {
-        draw++;
-      } else {
-        run++;
-        draw = 0;
+          if (draw == sampleSize-1) {
+            // move this!
+            setTimeout(function() {
+              for (var i = 0, ii = samples.length; i < ii; i++) {
+                samples[i].remove();
+              }
+            }, 700);
+          }
+        });
       }
-      if (sequence[run]) {
-        scheduleNextSelection();
-      }
-    }
 
-    selectNext();
-  });
+      function scheduleNextSelection() {
+        // for now just assume every 1000ms
+        setTimeout(selectNext, 1000);
+      }
+
+      function endAnimation() {
+        running = false;
+        for (var i = 0, ii = balls.length; i < ii; i++) {
+          balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300));
+        }
+      }
+
+      var run = 0,
+          draw = 0;
+
+      function selectNext() {
+        select(run, draw, addValueToCODAP);
+
+        if (draw < sequence[run].length - 1) {
+          draw++;
+        } else {
+          run++;
+          draw = 0;
+        }
+        if (sequence[run]) {
+          scheduleNextSelection();
+        } else {
+          setTimeout(endAnimation, 1000);
+        }
+      }
+
+      function animationStep() {
+        for (var i = 0, ii = balls.length; i < ii; i++) {
+          if (!balls[i].beingSelected) {
+            let ball = balls[i],
+                matrix = ball.transform().localMatrix;
+            matrix.translate(ball.vx, ball.vy);
+            ball.attr({transform: matrix});
+
+            let bbox = ball.getBBox();
+            if (bbox.x < (containerX + border)) {
+              ball.vx = Math.abs(ball.vx);
+              matrix.translate(ball.vx * 2, ball.vy);
+              ball.attr({transform: matrix});
+            } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
+              ball.vx = -Math.abs(ball.vx);
+              matrix.translate(ball.vx * 2, ball.vy);
+              ball.attr({transform: matrix});
+            }
+            if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
+              ball.vy *= -1;
+              matrix.translate(ball.vx, ball.vy * 2);
+              ball.attr({transform: matrix});
+            }
+          }
+        }
+      }
+
+      function animate() {
+        if (running) {
+          animationRequest = requestAnimationFrame(animate);
+        }
+        animationStep();
+      }
+      animate();
+
+      selectNext();
+    });
+  }
 }
 
 document.getElementById("add-variable").onclick = addVariable;
