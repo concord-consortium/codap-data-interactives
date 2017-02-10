@@ -95,13 +95,19 @@ function createMixer() {
 function addMixerVariables() {
   balls = [];
 
-  var minRadius = 15,
-      maxRadius = (containerWidth - capHeight - (border * 2)) / (variables.length * 2),
-      radius = Math.min(minRadius, maxRadius);
+  var w = containerWidth - capHeight - (border * 2),
+      radius = 14,
+      maxInRow = Math.floor(w / (radius*2)),
+      rows = Math.floor(variables.length/maxInRow),
+      radius = rows > 6 ? 9 : 14,      // repeat these to recalculate once
+      maxInRow = Math.floor(w / (radius*2));
   // other calcs...
   for (var i = 0, ii=variables.length; i<ii; i++) {
-    var x = containerX + border + radius + (i * radius * 2),
-        y = containerY + containerHeight - border - radius;
+    var rowNumber = Math.floor(i/maxInRow),
+        rowIndex = i % maxInRow,
+        rowHeight = rows < 3 ? (radius * 2) : rows < 5 ? (radius * 1.5) : radius,
+        x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
+        y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
     // render ball to the screen
     balls.push(s.group(
       s.circle(x, y, radius).attr({
