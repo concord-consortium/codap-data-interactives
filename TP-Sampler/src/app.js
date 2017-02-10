@@ -24,16 +24,17 @@ var s = Snap("#model svg"),
 
     variables = ["a", "b", "a"],
     balls = [],
+    sampleSlotTargets = [],
     sampleSlots = [],
     samples = [];
 
 function render() {
   s.clear();
-  createSampleSlots();
+  createsampleSlots();
   createMixer();
 }
 
-function createSampleSlots() {
+function createsampleSlots() {
   var x = containerWidth + ((width - containerWidth)  / 3),
       centerY = containerY + (containerHeight/2),
       stroke = border / 2,
@@ -50,6 +51,7 @@ function createSampleSlots() {
       mx = x + (maxSlotDepth - slotDepth),
       y = centerY - (totalHeight / 2);
 
+  sampleSlotTargets = [];
   sampleSlots = [];
 
   for (var i = 0; i < sampleSize; i++) {
@@ -60,18 +62,18 @@ function createSampleSlots() {
         letterCenterY = my + (slotSize / 2);
 
     // first we make circles to mark the spot for letter movement
-    sampleSlots.push(s.circle(letterCenterX, letterCenterY, r).attr({
+    sampleSlotTargets.push(s.circle(letterCenterX, letterCenterY, r).attr({
       fill: "#fff",
       stroke: "#fff",
       strokeWidth: 0
     }));
 
     // then the slots
-    s.path(pathStr).attr({
-        fill: "none",
-        stroke: "#333",
-        strokeWidth: stroke
-    });
+    sampleSlots.push(s.path(pathStr).attr({
+      fill: "none",
+      stroke: "#333",
+      strokeWidth: stroke
+    }));
   }
 }
 
@@ -208,11 +210,11 @@ function run() {
           letter.attr({transform: trans});
           // trans = "t"+0+",-"+5
           var origin = letter.getBBox();
-          var target = sampleSlots[draw].getBBox();
+          var target = sampleSlotTargets[draw].getBBox();
           matrix = letter.transform().localMatrix;
           matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
           // matrix.scale(2);
-          letter.animate({transform: matrix, fontSize: sampleSlots[draw].attr("r")*2}, 200);
+          letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200);
 
           selectionMadeCallback(draw, variables[selection]);
           ball.beingSelected = false;
@@ -220,10 +222,28 @@ function run() {
           if (draw == sampleSize-1) {
             // move this!
             setTimeout(function() {
-              for (var i = 0, ii = samples.length; i < ii; i++) {
-                samples[i].remove();
+              for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+                let sampleSlot = sampleSlots[i],
+                    letter = samples[i],
+                    sampleMatrix = sampleSlot.transform().localMatrix,
+                    letterMatrix = letter.transform().localMatrix;
+                sampleMatrix.translate(20, 0);
+                letterMatrix.translate(40, 0);
+                sampleSlot.animate({transform: sampleMatrix}, 200);
+                letter.animate({transform: letterMatrix}, 200, function() {
+                  letter.remove();
+                  samples = [];
+                });
               }
-            }, 700);
+            }, 300);
+            setTimeout(function() {
+              for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+                let sampleSlot = sampleSlots[i],
+                    sampleMatrix = sampleSlot.transform().localMatrix;
+                sampleMatrix.translate(-20, 0);
+                sampleSlot.animate({transform: sampleMatrix}, 200);
+              }
+            }, 600);
           }
         });
       }
