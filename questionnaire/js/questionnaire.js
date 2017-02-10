@@ -18,10 +18,10 @@ var kStartupSurvey = {
         {
           "type": "html",
           "html": "This is a questionnaire plugin to " +
-              "<a href=\"http://codap.concord.org\">CODAP</a>. It is built on " +
-              "<a href=\"http://surveyjs.org/\">Survey.js</a>. You can design " +
+              "<a target=\"_blank\" href=\"http://codap.concord.org\">CODAP</a>. It is built on " +
+              "<a target=\"_blank\" href=\"http://surveyjs.org/\">Survey.js</a>. You can design " +
               "surveys using the design tool found " +
-              "<a href=\"http://surveyjs.org/builder/\">here</a>. Be sure to " +
+              "<a target=\"_blank\" href=\"http://surveyjs.org/builder/\">here</a>. Be sure to " +
               "select the option \"Generate Valid JSON\". When you have designed " +
               "a survey, click on the \"JSON Editor\" tab. Select the JSON " +
               "text, copy it and paste it into a text document.  The " +
