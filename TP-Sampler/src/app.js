@@ -1,11 +1,11 @@
 var s = Snap("#model svg"),
 
-    width = 250,      // svg units
-    height = 125,
-    containerX = 50,
-    containerY = 25,
-    containerWidth = 200,
-    containerHeight = 100,
+    width = 190,      // svg units
+    height = 250,
+    containerX = 10,
+    containerY = 0,
+    containerWidth = 130,
+    containerHeight = 250,
     capHeight = 6,
     capWidth = 40,
     border = 2,
@@ -31,30 +31,30 @@ function render() {
 }
 
 function createSampleSlots() {
-  var y = containerY / 2,
-      centerX = containerX + (containerWidth/2),
+  var x = containerWidth + ((width - containerWidth)  / 3),
+      centerY = containerY + (containerHeight/2),
       stroke = border / 2,
       padding = 2,
-      maxWidth = 20,
-      minWidth = (containerWidth/sampleSize)
-      slotWidth = Math.min(minWidth, maxWidth),
-      slotSize = slotWidth - padding - (stroke*2),
-      maxSlotHeight = 4,
-      minSlotHeight = slotSize/3,
-      slotHeight = Math.min(minSlotHeight, maxSlotHeight),
-      stroke = (slotWidth < maxWidth) ? stroke / 2 : stroke,
-      totalWidth = slotWidth * sampleSize,
-      my = y + (maxSlotHeight - slotHeight),
-      x = centerX - (totalWidth / 2);
+      maxHeight = 20,
+      minHeight = (containerHeight/sampleSize)
+      slotHeight = Math.min(minHeight, maxHeight),
+      slotSize = slotHeight - padding - (stroke*2),
+      maxSlotDepth = 4,
+      minSlotDepth = slotSize/3,
+      slotDepth = Math.min(minSlotDepth, maxSlotDepth),
+      stroke = (slotHeight < maxHeight) ? stroke / 2 : stroke,
+      totalHeight = slotHeight * sampleSize,
+      mx = x + (maxSlotDepth - slotDepth),
+      y = centerY - (totalHeight / 2);
 
   sampleSlots = [];
 
   for (var i = 0; i < sampleSize; i++) {
-    var mx = x + padding + (slotWidth * i),
-        pathStr = "m"+mx+","+my+" v "+slotHeight+" h "+slotSize+" v -"+slotHeight,
+    var my = y + padding + (slotHeight * i),
+        pathStr = "m"+mx+","+my+" h -"+slotDepth+" v "+slotSize+" h "+slotDepth,
         r = slotSize/2,
-        letterCenterX = mx + (slotSize / 2),
-        letterCenterY = y + slotHeight - r;
+        letterCenterX = x + r,
+        letterCenterY = my + (slotSize / 2);
 
     // first we make circles to mark the spot for letter movement
     sampleSlots.push(s.circle(letterCenterX, letterCenterY, r).attr({
@@ -75,12 +75,13 @@ function createSampleSlots() {
 function createMixer() {
   var halfb = (border/2),
       mx = containerX + halfb,
-      my = containerY + capHeight,
-      w = containerWidth - border,
-      shoulder = (w - capWidth) / 2,
+      my = containerY + halfb,
+      h = containerHeight - border,
+      shoulder = (h - capWidth) / 2,
       cap = capHeight - halfb,
-      h = containerHeight - capHeight - halfb,
-      pathStr = "m"+mx+","+my+" h "+shoulder+" v -"+cap+" h "+capWidth+" v "+cap+" h "+shoulder+" v "+h+" h -"+w+" z";
+      w = containerWidth - capHeight - halfb,
+      // pathStr = "m"+mx+","+my+" h "+shoulder+" v -"+cap+" h "+capWidth+" v "+cap+" h "+shoulder+" v "+h+" h -"+w+" z";
+      pathStr = "m"+mx+","+my+" h "+w+" v "+shoulder+" h "+cap+" v "+capWidth+" h -"+cap+" v "+shoulder+" h -"+w+" z";
 
   s.path(pathStr).attr({
         fill: "none",
@@ -95,7 +96,7 @@ function addMixerVariables() {
   balls = [];
 
   var minRadius = 15,
-      maxRadius = (containerWidth - border * 2) / (variables.length * 2),
+      maxRadius = (containerWidth - capHeight - (border * 2)) / (variables.length * 2),
       radius = Math.min(minRadius, maxRadius);
   // other calcs...
   for (var i = 0, ii=variables.length; i<ii; i++) {
@@ -171,7 +172,7 @@ function run() {
           ball = balls[selection],
           circle = ball.select("circle"),
           variable = ball.select("text"),
-          trans = getTransformForMovingTo(containerX + (containerWidth/2), containerY + circle.attr("r") * 1, circle);
+          trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
       ball.animate({transform: trans}, 500, function() {
         // move variable to slot
         var letter = variable.clone();
@@ -251,7 +252,7 @@ codapInterface.on('get', 'interactiveState', function () {
 codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
-    dimensions: {width: 350, height: 250},
+    dimensions: {width: 250, height: 420},
     version: '0.1',
     stateHandler: function (state) {
       console.log('stateHandler: ' + (state && JSON.stringify(state)));
