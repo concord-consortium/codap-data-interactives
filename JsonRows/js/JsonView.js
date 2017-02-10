@@ -19,15 +19,12 @@
 /* jshint strict: false */
 /*global console:true,iframePhone:true,React:true, ReactDOM:true, firebase:true */
 
-var STATE_STARTING = 'initialized',
-    POLLING_INTERVAL = 10000,
+var POLLING_INTERVAL = 10000,
     STEP_GET_DATA="getData",
     STEP_READY="ready";
 
-var WIZARD_STEPS = [
-  STEP_GET_DATA,
-  STEP_READY
-];
+var WIZARD_STEPS = [STEP_GET_DATA, STEP_READY ];
+
 var dataManager = Object.create({
   lastHash: "",
   state: null,
@@ -41,13 +38,10 @@ var dataManager = Object.create({
         width: 300,
         height: 200
       },
-      wizardStep: 'getData',
-      googleDocId: "1MvggTC120l680AWiu3bl7ThHCiDC2WIqEuRZjydOS3U",
-      range: "A:B",
-      googleState: STATE_STARTING,
+      wizardStep: STEP_GET_DATA,
       connected: false,
+      url: "https://staff.concord.org/~emcelroy/dset-app/data.php",
       rows: [],
-      indexColumn: 0,
       columnNames: []
     };
     return this;
@@ -57,17 +51,13 @@ var dataManager = Object.create({
     var state = this.state;
     return {
       wizardStep: state.wizardStep,
-      googleDocId: state.googleDocId,
-      range: state.range,
-      indexColumn: state.indexColumn
+      url: state.url
     };
   },
 
   setPersistentState: function(state) {
     this.updateStateProperty('wizardStep', state.wizardStep);
-    this.updateStateProperty('googleDocId', state.googleDocId);
-    this.updateStateProperty('range', state.range);
-    this.updateStateProperty('indexColumn', state.indexColumn);
+    this.updateStateProperty('url', state.url);
   },
 
   register: function (listener) {
@@ -103,14 +93,6 @@ var dataManager = Object.create({
   },
 
   setWizardStep: function (wizardStep) {
-    if (wizardStep === 'promptForGroupname') {
-      this.getOrGenerateCollaborationKey();
-    }
-    else if ((wizardStep === 'promptForUsername') || (wizardStep === 'showActiveUsers')) {
-      if (wizardStep === 'showActiveUsers') {
-        this.initializeCollaboration();
-      }
-    }
     this.updateStateProperty('wizardStep', wizardStep);
   },
 
@@ -123,35 +105,7 @@ var dataManager = Object.create({
 }).init();
 
 
-// Client ID and API key from the Developer Console
-var CLIENT_ID = '976953547401-38erll1421901bs0m00c77lr19sj5km7.apps.googleusercontent.com';
-// Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
-var SCOPES = "https://www.googleapis.com/auth/spreadsheets.readonly";
-
-var dispatcher = Object.create({
-  initClient: function () {
-    var self = this;
-    gapi.client.init({
-      discoveryDocs: DISCOVERY_DOCS,
-      clientId: CLIENT_ID,
-      scope: SCOPES
-    }).then(function () {
-      // Listen for sign-in state changes.
-      gapi.auth2.getAuthInstance().isSignedIn.listen(self.updateSigninStatus);
-
-      // Handle the initial sign-in state
-      self.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-
-    });
-  },
-
-
-  init: function () {
-    this.connection = codapConnector.init(dataManager);
-    return this;
-  }
-}).init();
+codapConnector.init(dataManager)
 
 var div = React.DOM.div,
     form = React.DOM.form,
@@ -222,7 +176,7 @@ var SheetsView = React.createFactory(React.createClass({
     console.log(response);
   },
 
-  loadSheetData: function(response) {
+  loadData: function(response) {
     var values = JSON.parse(response);
     var rows = [];
     var columnNames = [];
@@ -234,14 +188,14 @@ var SheetsView = React.createFactory(React.createClass({
     }
     if (this.state.pollingInterval > POLLING_INTERVAL) { this.backOn(); }
     this.timeout = null;
-    this.requestSheetData();
+    this.requestData();
   },
 
-  failSheetData: function(response) {
+  failData: function(response) {
     this.error(response);
     this.backOff();
     this.timeout = null;
-    this.requestSheetData();
+    this.requestData();
   },
 
   backOff: function() {
@@ -254,14 +208,14 @@ var SheetsView = React.createFactory(React.createClass({
     this.setState({pollingInterval: pollingInterval});
   },
 
-  requestSheetData: function() {
+  requestData: function() {
     var url = "https://staff.concord.org/~emcelroy/dset-app/data.php"
     if (this.timeout) { return; }
     var request = function() {
       $.ajax({
         url: url,
-        success: this.loadSheetData,
-        error: this.failSheetData
+        success: this.loadData,
+        error: this.failData
       });
     };
     this.timeout = setTimeout(request.bind(this), this.state.pollingInterval);
@@ -269,35 +223,24 @@ var SheetsView = React.createFactory(React.createClass({
 
   // this method is dynamically invoked based on wizard step name.
   getDataCard: function () {
-    var docChangedF         = function(evt) { dataManager.updateStateProperty('googleDocId', evt.target.value) };
-    var rangeChangedF       = function(evt) { dataManager.updateStateProperty('range', evt.target.value) };
-    // var indexColumnChangedF = function(evt) { dataManager.updateStateProperty('indexColumn', evt.target.value) };
+    var urlChangedF = function(evt) { dataManager.updateStateProperty('url', evt.target.value) };
     return div({},
       div({className: 'formRow'},
-        label({}, "document ID:"),
+        div({}, "CORS Enabled URL:"),
         input(
           {
             type: "text",
-            ref: "googleDocId",
-            value: this.state.googleDocId,
-            onChange: docChangedF
-          })
-      ),
-      div({className: 'formRow'},
-        label({}, "Value Range:"),
-        input(
-          {
-            type: "text",
-            ref: "range",
-            value: this.state.range,
-            onChange: rangeChangedF
+            ref: "url",
+            value: this.state.url,
+            width: 70,
+            onChange: urlChangedF
           })
       )
     );
   },
 
   readyCard: function (){
-    this.requestSheetData();
+    this.requestData();
     var intervalSeconds = Math.round(this.state.pollingInterval / 1000);
     return div({}, "Now polling your json rows into CODAP every " + intervalSeconds + " seconds.");
   },
@@ -315,7 +258,6 @@ var SheetsView = React.createFactory(React.createClass({
         back: this.stepBack,
         disableForward: disableForward
       },
-      div({className: 'techinfo'}, wizardStep),
       renderCardFunc()
     );
   }

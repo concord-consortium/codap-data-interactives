@@ -2,9 +2,9 @@ var codapConnector = Object.create({
   init: function (dataStore) {
     this.connection = null;
     this.dataManager = dataStore;
-    this.dataContextName = "Google Sheets";
+    this.dataContextName = "Json source";
     this.dataContextIdentifier = 'dataContext['+ this.dataContextName + ']';
-    this.collectionName = "Sheet Rows";
+    this.collectionName = "Json Rows";
     this.collectionIdentifier = this.dataContextIdentifier + '.collection[' + this.collectionName + ']';
     this.initConnection();
   },
@@ -37,6 +37,7 @@ var codapConnector = Object.create({
     var resourceType = getResourceType(request.resource);
     var success = false;
     var values = null;
+
     switch (resourceType) {
       case 'interactiveState':
         if (request.action === 'get') {
@@ -226,6 +227,5 @@ var codapConnector = Object.create({
   setState: function(state) {
     this.replaceCases();
   }
-
 
 });

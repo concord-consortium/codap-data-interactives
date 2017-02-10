@@ -26,3 +26,7 @@ div.nav-buttons button.next-button, button.done-button {
 div.wizard-step div {
   margin: 10px 0;
 }
+
+input[type=text] {
+  width: 250px;
+}
