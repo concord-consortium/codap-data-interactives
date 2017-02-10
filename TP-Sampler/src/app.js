@@ -216,7 +216,6 @@ function run() {
           // matrix.scale(2);
           letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200);
 
-          selectionMadeCallback(draw, variables[selection]);
           ball.beingSelected = false;
 
           if (draw == sampleSize-1) {
@@ -246,6 +245,14 @@ function run() {
             }, 600);
           }
         });
+        if (draw == sampleSize-1) {
+          setTimeout(function() {
+            let vars = sequence[run].map(function(i) {
+              return variables[i];
+            });
+            selectionMadeCallback(run+1, vars);
+          }, 800);
+        }
       }
 
       function scheduleNextSelection() {
@@ -427,47 +434,25 @@ function startNewExperimentInCODAP() {
   });
 }
 
-function startNewRunInCODAP() {
+function addValueToCODAP(run, vals) {
   if (!codapInterface.connection.isConnected()) {
-    resolve();
     return;
   }
 
-  runNumber++;
-  return new Promise(function(resolve) {
-    codapInterface.sendRequest({
-      action: 'create',
-      resource: 'collection[runs].case',
-      values: {
-        parent: experimentCaseID,
-        values: {run: runNumber}
-      }
-    }, function(result) {
-      runCaseID = result.values[0].id;
-      resolve()
-    });
+  let valsArray = vals.map(function(v) {
+    return {
+      "experiment": experimentNumber,
+      "draws": sampleSize,
+      "run": run,
+      "value": v
+    }
   });
-}
-
-function addValueToCODAP(draw, val) {
-  if (!codapInterface.connection.isConnected()) {
-    return;
-  }
+  console.log(valsArray)
 
 
-  function _addValue() {
-    codapInterface.sendRequest({
-      action: 'create',
-      resource: 'collection[draws].case',
-      values: {
-        parent: runCaseID,
-        values: {value: val}
-      }
-    });
-  }
-  if (draw === 0) {
-    startNewRunInCODAP().then(_addValue);
-  } else {
-    _addValue();
-  }
+  codapInterface.sendRequest({
+    "action": "create",
+    "resource": "dataContext[Sampler].item",
+    "values": valsArray
+  });
 }
