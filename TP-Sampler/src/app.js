@@ -181,7 +181,7 @@ function getShortVariableName(i) {
   if (name.length < 4) {
     return name;
   } else {
-    return name.substr(0,2) + "...";
+    return name.substr(0,2) + "…";
   }
 }
 
@@ -479,20 +479,29 @@ function addValueToCODAP(run, vals) {
     return;
   }
 
-  let valsArray = vals.map(function(v) {
-    return {
-      "experiment": experimentNumber,
-      "draws": sampleSize,
-      "run": run,
-      "value": v
-    }
-  });
-  console.log(valsArray)
-
-
   codapInterface.sendRequest({
-    "action": "create",
-    "resource": "dataContext[Sampler].item",
-    "values": valsArray
+    action: 'create',
+    resource: 'collection[runs].case',
+    values: [
+     {
+      parent: experimentCaseID,
+      values: { run: run }
+     }
+    ]
+  }, function (result) {
+      if (result.success) {
+        var runCaseID = result.values[0].id,
+            valuesArray = vals.map(function(v) {
+              return  {
+                parent: runCaseID,
+                values: { value: v }
+               }
+            });
+        codapInterface.sendRequest({
+          action: 'create',
+          resource: 'collection[draws].case',
+          values: valuesArray
+        });
+      }
   });
 }
