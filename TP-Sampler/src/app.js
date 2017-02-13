@@ -10,6 +10,8 @@ var s = Snap("#model svg"),
     capWidth = 40,
     border = 2,
 
+    codapConnected = true,
+
     running = false,
     animationRequest = null,
 
@@ -440,11 +442,15 @@ codapInterface.init({
         }
       }
     );
-  });
+  },
+  function (err) {
+    codapConnected = false;
+  }
+);
 
 function startNewExperimentInCODAP() {
   return new Promise(function(resolve, reject) {
-    if (!codapInterface.connection.isConnected()) {
+    if (!codapConnected) {
       console.log('Not in CODAP')
       resolve();
       return;
@@ -462,11 +468,10 @@ function startNewExperimentInCODAP() {
         }
       }]
     }, function (result) {
-      if (result.success) {
+      if (result && result.success) {
         experimentCaseID = result.values[0].id;
         resolve();
-      }
-      else {
+      } else {
         window.alert('Unable to begin experiment');
         reject();
       }
@@ -475,7 +480,7 @@ function startNewExperimentInCODAP() {
 }
 
 function addValueToCODAP(run, vals) {
-  if (!codapInterface.connection.isConnected()) {
+  if (!codapConnected) {
     return;
   }
 
