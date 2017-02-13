@@ -4,7 +4,6 @@
   top: 8vh;
   width: 64vh;
   height: 84vh;
-  z-index: -1;
 }
 
 #top-bar {
@@ -29,6 +28,14 @@
   position: absolute;
   left: 3.2vh;
   bottom: -2vh;
+}
+
+#variable-name-change {
+  position: absolute;
+  display: none;
+  font-size: 4vh;
+  width: 10vh;
+  transform: translate(-50%, -50%);
 }
 
 button {

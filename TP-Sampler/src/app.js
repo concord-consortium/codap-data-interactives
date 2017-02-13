@@ -26,7 +26,10 @@ var s = Snap("#model svg"),
     balls = [],
     sampleSlotTargets = [],
     sampleSlots = [],
-    samples = [];
+    samples = [],
+
+    editingVariable,
+    variableNameInput = document.getElementById("variable-name-change");
 
 function render() {
   s.clear();
@@ -113,19 +116,22 @@ function addMixerVariables() {
         rowHeight = rows < 3 ? (radius * 2) : rows < 5 ? (radius * 1.5) : radius,
         x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
         y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
+
     // render ball to the screen
-    balls.push(s.group(
+    var ball = s.group(
       s.circle(x, y, radius).attr({
           fill: "#ddd",
           stroke: "#000",
           strokeWidth: 1
       }),
-      s.text(x, y, variables[i]).attr({
+      s.text(x, y, getShortVariableName(i)).attr({
         fontSize: radius,
         textAnchor: "middle",
         dy: ".25em"
       })
-    ));
+    );
+    balls.push(ball);
+    ball.click(showVariableNameInput(i));
   }
 
   // setup animation
@@ -150,6 +156,33 @@ function addVariable() {
 function removeVariable() {
   variables.pop();
   render();
+}
+
+function showVariableNameInput(i) {
+  return function() {
+    var loc = this.node.getClientRects()[0];
+    variableNameInput.style.display = "block";
+    variableNameInput.style.top = (loc.top + loc.height/2) + "px";
+    variableNameInput.style.left = (loc.left + loc.width/2) + "px";
+    variableNameInput.value = variables[i];
+    variableNameInput.focus();
+    editingVariable = i;
+  }
+}
+
+function setVariableName() {
+  variables[editingVariable] = variableNameInput.value;
+  variableNameInput.style.display = "none";
+  render();
+}
+
+function getShortVariableName(i) {
+  var name = variables[i];
+  if (name.length < 4) {
+    return name;
+  } else {
+    return name.substr(0,2) + "...";
+  }
 }
 
 /**
@@ -337,6 +370,13 @@ document.getElementById("repeat").addEventListener('input', function (evt) {
     numRuns = this.value;
     render();
 });
+variableNameInput.onblur = setVariableName;
+variableNameInput.onkeypress = function(e) {
+  if (e.keyCode == 13) {
+    setVariableName();
+    return false;
+  }
+}
 
 render();
 
