@@ -1,0 +1,29 @@
+<html>
+<head>
+    <title>Simple Sampling</title>
+    <style>
+        @import "style.css";
+    </style>
+    <script src="../Common/js/jquery.js"></script>
+    <script src="../Common/js/iframe-phone.js"></script>
+    <script src="embedded-mode-demo.js"></script>
+</head>
+<body>
+<div id="app">
+    <div id="sampler" class="reserved-sampler"></div>
+    <h1>An Exploration of Sampling</h1>
+    <p>At left is a sampler. Press its <em>Run</em> button to see it work.</p>
+    <p>It mixes the labeled balls and chooses or <em>draws</em>, one at a time at random.
+        After the ball's label is recorded, the ball returns to the mix.</p>
+    <p>After the sampler has drawn two balls, it puts the results in a data set.
+    You can see a table of the data by pressing this button: <button id="addTableButton">Add Table</button>.</p>
+    <p>Press the <em>Run</em> button again and watch the draws added to the table.</p>
+    <p>Notice that each time you press Run, you get a new <em>experiment</em>.</p>
+    <p>To make a graph of the Runs, press this button: <button id="addGraphButton">Add Graph</button> </p>
+</div>
+<iframe id="codapIFrame" class="no-pointer-events" allowTransparency="true"
+        src="//codap.concord.org/releases/staging/static/dg/en/cert/index.html?embeddedMode=yes#shared=16791"></iframe>
+<div class="no-pointer-events pointer-manager"></div>
+<div class="monitor"></div>
+</body>
+</html>
