@@ -1,0 +1,54 @@
+#model {
+  position: absolute;
+  left: 0;
+  top: 8vh;
+  width: 64vh;
+  height: 84vh;
+  z-index: -1;
+}
+
+#top-bar {
+  position: absolute;
+  left: 3.2vh;
+  top: -1.5vh;
+  display: flex;
+  align-items: center;
+}
+
+#draw-settings {
+  padding-left: 3vh;
+  font-size: 3vh;
+}
+
+#draw-settings input {
+  width: 6vh;
+  font-size: 3vh;
+}
+
+#model-controls {
+  position: absolute;
+  left: 3.2vh;
+  bottom: -2vh;
+}
+
+button {
+    background-color: #dbf6ff;
+    border: 0.3vh solid #008cba;
+    border-radius: 0.5vh;
+    color: black;
+    min-width: 6vh;
+    padding: 1vh 2vh;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 3vh;
+    margin: 3vh 0vh;
+    cursor: pointer;
+    -webkit-transition: background-color 0.4s color 0.4s; /* Safari */
+    transition: background-color 0.4s color 0.4s;
+}
+
+button:hover {
+    background-color: #008cba;
+    color: white;
+}
