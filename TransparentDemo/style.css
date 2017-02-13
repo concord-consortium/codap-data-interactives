@@ -79,11 +79,17 @@ iframe {
   background-color: green;
 }
 .monitor {
+  top: 0;
+  left: 0;
   position: fixed;
   width: 5px;
   height: 5px;
   background-color: red;
+  border: thin solid transparent;
 }
 .monitor.in-codap {
   background-color:green;
+}
+.monitor.in-move-or-resize {
+  border: thin solid black;
 }
