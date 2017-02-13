@@ -30,12 +30,6 @@ $(function () {
       dataContextList = [],
 
       messageTemplates = {
-        createCalculator: {
-          action: 'create', resource: 'component',
-          values: {
-            name: 'calculator', type: 'calculator'
-          }
-        },
         createGraph: {
           action: 'create', resource: 'component',
           values: {
@@ -44,16 +38,6 @@ $(function () {
             position: 'bottom',
             dataContext: 'Sampler',
             xAttributeName: 'value'
-          }
-        },
-        createSlider: {
-          action: 'create', resource: 'component',
-          values: {
-            name: 'slider', type: 'slider',
-            lowerBound: -10, upperBound: 10,
-            dimensions: {height: 100, width: 300},
-            position: {left: 0, top: 50},
-            value: 0
           }
         },
         createTable: {
@@ -65,30 +49,8 @@ $(function () {
             dataContext: 'Sampler'
           }
         },
-        createTester: {
-          action: 'create', resource: 'component',
-          values: {
-            type: 'game', name: 'name-gameview',
-            URL: 'http://localhost/~jsandoe/codap-data-interactives/DataInteractiveAPITester/',
-            dimensions: {width: 400, height: 300}
-          }
-        },
-        createText: {
-          action: 'create', resource: 'component',
-          values: {
-            type: 'text', name: 'name-text', title: 'title-text',
-            text: 'T\'was brillig and the slithy toves...',
-            dimensions: {width: 60, height: 200},
-            position: {left: 300, top: 100}
-          }
-        },
-        createWebview: {
-          action: 'create', resource: 'component',
-          values: {
-            type: 'webView', name: 'name-webview', title: 'Concord',
-            URL: 'http://www.concord.org',
-            dimensions: {width: 400, height: 300}
-          }
+        clearData: {
+          action: 'delete', resource: 'dataContext[Sampler].allCases',
         },
         getComponentList: {action: 'get', resource: 'componentList'},
         getComponent: {action: 'get', resource: 'component'},
@@ -206,7 +168,7 @@ $(function () {
                 id: values.id,
                 left: values.position.left,
                 top: values.position.top + top,
-                width: values.dimensions.width,
+                width: values.dimensions.width + 50,
                 height: values.dimensions.height
               })
             }
@@ -269,33 +231,10 @@ $(function () {
   }
 
 // button handlers
-  $('#addSliderButton').on('click', function () {
-    var template = messageTemplates.createSlider;
-    var msg = Object.assign({}, template);
-    msg.values.position = positionRandomly(template.values.dimensions);
-    sendMessageAndLogResult(msg);
-  });
-
-  $('#addCalculatorButton').on('click', function () {
-    sendMessageAndLogResult(messageTemplates.createCalculator);
-  });
-
-  $('#addTextButton').on('click', function () {
-    var template = messageTemplates.createText;
-    var msg = Object.assign({}, template);
-    msg.values.position = positionRandomly(template.values.dimensions);
-    sendMessageAndLogResult(msg);
-  });
-
-  $('#addWebviewButton').on('click', function () {
-    var template = messageTemplates.createWebview;
+  $('#clearDataButton').on('click', function () {
+    var template = messageTemplates.clearData;
     var msg = Object.assign({}, template)
-    msg.values.position = positionRandomly(template.values.dimensions);
     sendMessageAndLogResult(msg);
-  });
-
-  $('#addTesterButton').on('click', function () {
-    sendMessageAndLogResult(messageTemplates.createTester);
   });
 
   $('#addGraphButton').on('click', function () {
@@ -308,23 +247,6 @@ $(function () {
     var msg = Object.assign({}, template)
     // msg.values.position = positionRandomly(template.values.dimensions);
     sendMessageAndLogResult(msg);
-  });
-
-  var personNumber = 5;
-  $('#addSampleButton').on('click', function () {
-    sendMessageAndLogResult({
-      action: 'create',
-      resource: 'dataContext[Samples].collection[Sample].case',
-      values: [
-        {
-          values: {
-            Name: 'Person #' + (personNumber++),
-            Height: 48 + Math.round(Math.random() * 36),
-            Weight: 80 + Math.round(Math.random() * 200)
-          }
-        }
-      ]
-    });
   });
 
 // handler to manage the transition between the main page and CODAP
