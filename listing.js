@@ -194,7 +194,7 @@ $(document).ready(function () {
         buildListingDivs(categories_obj);
         buildListing(di_list);
 
-        $('form').submit(function(){buildListing(di_list); return false;});
+        $('#codap-url').on('input', function(){buildListing(di_list); return false;});
     }
 
     fetchObjList();
