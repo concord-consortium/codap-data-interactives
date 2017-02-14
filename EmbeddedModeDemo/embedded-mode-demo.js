@@ -37,7 +37,7 @@ $(function () {
             dimensions: {width: 240, height: 240},
             position: 'bottom',
             dataContext: 'Sampler',
-            xAttributeName: 'value'
+            xAttributeName: 'combinations'
           }
         },
         createTable: {
