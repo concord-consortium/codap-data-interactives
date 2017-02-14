@@ -1,10 +1,20 @@
+body {
+  /* No text-selection on any element */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+}
+
 #model {
   position: absolute;
   left: 0;
   top: 8vh;
   width: 64vh;
   height: 84vh;
-  z-index: -1;
 }
 
 #top-bar {
@@ -31,6 +41,14 @@
   bottom: -2vh;
 }
 
+#variable-name-change {
+  position: absolute;
+  display: none;
+  font-size: 4vh;
+  width: 10vh;
+  transform: translate(-50%, -50%);
+}
+
 button {
     background-color: #dbf6ff;
     border: 0.3vh solid #008cba;
@@ -51,4 +69,12 @@ button {
 button:hover {
     background-color: #008cba;
     color: white;
+}
+
+button.disabled {
+  background-color: #eaf8fd;
+  border: 0.3vh solid #cfd7da;
+  color: #a3babd;
+  cursor: default;
+  pointer-events: none;
 }

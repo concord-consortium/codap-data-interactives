@@ -10,6 +10,8 @@ var s = Snap("#model svg"),
     capWidth = 40,
     border = 2,
 
+    codapConnected = true,
+
     running = false,
     animationRequest = null,
 
@@ -26,7 +28,10 @@ var s = Snap("#model svg"),
     balls = [],
     sampleSlotTargets = [],
     sampleSlots = [],
-    samples = [];
+    samples = [],
+
+    editingVariable,
+    variableNameInput = document.getElementById("variable-name-change");
 
 function render() {
   s.clear();
@@ -113,24 +118,27 @@ function addMixerVariables() {
         rowHeight = rows < 3 ? (radius * 2) : rows < 5 ? (radius * 1.5) : radius,
         x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
         y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
+
     // render ball to the screen
-    balls.push(s.group(
+    var ball = s.group(
       s.circle(x, y, radius).attr({
           fill: "#ddd",
           stroke: "#000",
           strokeWidth: 1
       }),
-      s.text(x, y, variables[i]).attr({
+      s.text(x, y, getShortVariableName(i)).attr({
         fontSize: radius,
         textAnchor: "middle",
         dy: ".25em"
       })
-    ));
+    );
+    balls.push(ball);
+    ball.click(showVariableNameInput(i));
   }
 
   // setup animation
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    let speed = 2 + (Math.random() * 3),
+    let speed = 5 + (Math.random() * 7),
         direction = Math.PI + (Math.random() * Math.PI);
     balls[i].vx = Math.cos(direction) * speed;
     balls[i].vy = Math.sin(direction) * speed;
@@ -143,13 +151,42 @@ function getNextVariable() {
 }
 
 function addVariable() {
+  if (running) return;
   variables.push(getNextVariable());
   render();
 }
 
 function removeVariable() {
+  if (running) return;
   variables.pop();
   render();
+}
+
+function showVariableNameInput(i) {
+  return function() {
+    var loc = this.node.getClientRects()[0];
+    variableNameInput.style.display = "block";
+    variableNameInput.style.top = (loc.top + loc.height/2) + "px";
+    variableNameInput.style.left = (loc.left + loc.width/2) + "px";
+    variableNameInput.value = variables[i];
+    variableNameInput.focus();
+    editingVariable = i;
+  }
+}
+
+function setVariableName() {
+  variables[editingVariable] = variableNameInput.value;
+  variableNameInput.style.display = "none";
+  render();
+}
+
+function getShortVariableName(i) {
+  var name = variables[i];
+  if (name.length < 4) {
+    return name;
+  } else {
+    return name.substr(0,2) + "…";
+  }
 }
 
 /**
@@ -181,154 +218,186 @@ function getTransformForMovingTo(x, y, circ) {
   return "T"+t.dx+","+t.dy;
 }
 
-function run() {
+function runOrStop() {
   if (!running) {
     running = true;
-    startNewExperimentInCODAP().then(function() {
-      var sequence = createRandomSequence(sampleSize, numRuns);
+    disableAddButtons();
+    document.getElementById("run").innerHTML = "STOP";
+    run();
+  } else {
+    running = false;
+    document.getElementById("run").innerHTML = "RUN";
+    for (let i = 0, ii = samples.length; i < ii; i++) {
+      if (samples[i].remove) {
+        samples[i].remove();
+      }
+    }
+    samples = [];
+    endAnimation();
+  }
+}
 
-      // selection animation
-      function select(run, draw, selectionMadeCallback) {
-        var selection = sequence[run][draw],
-            ball = balls[selection],
-            circle = ball.select("circle"),
-            variable = ball.select("text"),
-            trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
+function run() {
+  startNewExperimentInCODAP().then(function() {
+    var sequence = createRandomSequence(sampleSize, numRuns);
 
-        ball.beingSelected = true;
-        if (ball.getBBox().y > containerY + (containerHeight/2)) {
-          ball.vy = -Math.abs(ball.vy);
-        } else {
-          ball.vy = Math.abs(ball.vy);
-        }
+    // selection animation
+    function select(run, draw, selectionMadeCallback) {
+      if (!running) return;
 
-        ball.animate({transform: trans}, 500, function() {
-          // move variable to slot
-          var letter = variable.clone();
-          samples.push(letter);
-          ball.before(letter);
-          letter.attr({transform: trans});
-          // trans = "t"+0+",-"+5
-          var origin = letter.getBBox();
-          var target = sampleSlotTargets[draw].getBBox();
-          matrix = letter.transform().localMatrix;
-          matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-          // matrix.scale(2);
-          letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200);
+      var selection = sequence[run][draw],
+          ball = balls[selection],
+          circle = ball.select("circle"),
+          variable = ball.select("text"),
+          trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
 
-          ball.beingSelected = false;
+      ball.beingSelected = true;
+      if (ball.getBBox().y > containerY + (containerHeight/2)) {
+        ball.vy = -Math.abs(ball.vy);
+      } else {
+        ball.vy = Math.abs(ball.vy);
+      }
 
-          if (draw == sampleSize-1) {
-            // move this!
-            setTimeout(function() {
-              for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-                let sampleSlot = sampleSlots[i],
-                    letter = samples[i],
-                    sampleMatrix = sampleSlot.transform().localMatrix,
-                    letterMatrix = letter.transform().localMatrix;
-                sampleMatrix.translate(20, 0);
-                letterMatrix.translate(40, 0);
-                sampleSlot.animate({transform: sampleMatrix}, 200);
-                letter.animate({transform: letterMatrix}, 200, function() {
-                  letter.remove();
-                  samples = [];
-                });
-              }
-            }, 300);
-            setTimeout(function() {
-              for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-                let sampleSlot = sampleSlots[i],
-                    sampleMatrix = sampleSlot.transform().localMatrix;
-                sampleMatrix.translate(-20, 0);
-                sampleSlot.animate({transform: sampleMatrix}, 200);
-              }
-            }, 600);
-          }
-        });
+      ball.animate({transform: trans}, 500, function() {
+        if (!running) return;
+        // move variable to slot
+        var letter = variable.clone();
+        samples.push(letter);
+        ball.before(letter);
+        letter.attr({transform: trans});
+        // trans = "t"+0+",-"+5
+        var origin = letter.getBBox();
+        var target = sampleSlotTargets[draw].getBBox();
+        matrix = letter.transform().localMatrix;
+        matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
+        // matrix.scale(2);
+        letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200);
+
+        ball.beingSelected = false;
+
         if (draw == sampleSize-1) {
+          // move this!
           setTimeout(function() {
-            let vars = sequence[run].map(function(i) {
-              return variables[i];
-            });
-            selectionMadeCallback(run+1, vars);
-          }, 800);
+            if (!running) return;
+            for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+              let sampleSlot = sampleSlots[i],
+                  letter = samples[i],
+                  sampleMatrix = sampleSlot.transform().localMatrix,
+                  letterMatrix = letter.transform().localMatrix;
+              sampleMatrix.translate(20, 0);
+              letterMatrix.translate(40, 0);
+              sampleSlot.animate({transform: sampleMatrix}, 200);
+              letter.animate({transform: letterMatrix}, 200, function() {
+                letter.remove();
+                samples = [];
+              });
+            }
+          }, 300);
+          setTimeout(function() {
+            for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+              let sampleSlot = sampleSlots[i];
+              sampleSlot.animate({transform: "T0,0"}, 200);
+            }
+          }, 600);
         }
+      });
+      if (draw == sampleSize-1) {
+        setTimeout(function() {
+          let vars = sequence[run].map(function(i) {
+            return variables[i];
+          });
+          selectionMadeCallback(run+1, vars);
+        }, 800);
       }
+    }
 
-      function scheduleNextSelection() {
-        // for now just assume every 1000ms
-        setTimeout(selectNext, 1000);
+    function scheduleNextSelection() {
+      setTimeout(selectNext, 1000);
+    }
+
+    var run = 0,
+        draw = 0;
+
+    function selectNext() {
+      select(run, draw, addValueToCODAP);
+
+      if (draw < sequence[run].length - 1) {
+        draw++;
+      } else {
+        run++;
+        draw = 0;
       }
-
-      function endAnimation() {
-        running = false;
-        for (var i = 0, ii = balls.length; i < ii; i++) {
-          balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300));
-        }
-      }
-
-      var run = 0,
-          draw = 0;
-
-      function selectNext() {
-        select(run, draw, addValueToCODAP);
-
-        if (draw < sequence[run].length - 1) {
-          draw++;
-        } else {
-          run++;
-          draw = 0;
-        }
+      if (running) {
         if (sequence[run]) {
           scheduleNextSelection();
         } else {
           setTimeout(endAnimation, 1000);
         }
       }
+    }
 
-      function animationStep() {
-        for (var i = 0, ii = balls.length; i < ii; i++) {
-          if (!balls[i].beingSelected) {
-            let ball = balls[i],
-                matrix = ball.transform().localMatrix;
-            matrix.translate(ball.vx, ball.vy);
+    function animationStep() {
+      for (var i = 0, ii = balls.length; i < ii; i++) {
+        if (!balls[i].beingSelected) {
+          let ball = balls[i],
+              matrix = ball.transform().localMatrix;
+          matrix.translate(ball.vx, ball.vy);
+          ball.attr({transform: matrix});
+
+          let bbox = ball.getBBox();
+          if (bbox.x < (containerX + border)) {
+            ball.vx = Math.abs(ball.vx);
+            matrix.translate(ball.vx * 2, ball.vy);
             ball.attr({transform: matrix});
-
-            let bbox = ball.getBBox();
-            if (bbox.x < (containerX + border)) {
-              ball.vx = Math.abs(ball.vx);
-              matrix.translate(ball.vx * 2, ball.vy);
-              ball.attr({transform: matrix});
-            } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
-              ball.vx = -Math.abs(ball.vx);
-              matrix.translate(ball.vx * 2, ball.vy);
-              ball.attr({transform: matrix});
-            }
-            if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
-              ball.vy *= -1;
-              matrix.translate(ball.vx, ball.vy * 2);
-              ball.attr({transform: matrix});
-            }
+          } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
+            ball.vx = -Math.abs(ball.vx);
+            matrix.translate(ball.vx * 2, ball.vy);
+            ball.attr({transform: matrix});
+          }
+          if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
+            ball.vy *= -1;
+            matrix.translate(ball.vx, ball.vy * 2);
+            ball.attr({transform: matrix});
           }
         }
       }
+    }
 
-      function animate() {
-        if (running) {
+    function animate() {
+      if (running) {
+        setTimeout(function() {
           animationRequest = requestAnimationFrame(animate);
-        }
-        animationStep();
+        }, 30);
       }
-      animate();
+      animationStep();
+    }
+    animate();
 
-      selectNext();
-    });
+    selectNext();
+  });
+}
+
+function endAnimation() {
+  running = false;
+  if (animationRequest) cancelAnimationFrame(animationRequest);
+  enableAddButtons();
+  for (var i = 0, ii = balls.length; i < ii; i++) {
+    balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300), mina.bounce);
   }
+  setTimeout(reset, 350);
+}
+
+function reset() {
+  balls = [];
+  sampleSlotTargets = [];
+  sampleSlots = [];
+  samples = [];
+  render();
 }
 
 document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
-document.getElementById("run").onclick = run;
+document.getElementById("run").onclick = runOrStop;
 document.getElementById("draws").addEventListener('input', function (evt) {
     sampleSize = this.value;
     render();
@@ -337,13 +406,40 @@ document.getElementById("repeat").addEventListener('input', function (evt) {
     numRuns = this.value;
     render();
 });
+variableNameInput.onblur = setVariableName;
+variableNameInput.onkeypress = function(e) {
+  if (e.keyCode == 13) {
+    setVariableName();
+    return false;
+  }
+}
+function addClass(el, className) {
+  if (el.classList)
+    el.classList.add(className);
+  else
+    el.className += ' ' + className;
+}
+function removeClass(el, className) {
+  if (el.classList)
+    el.classList.remove(className);
+  else
+    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+}
+function disableAddButtons() {
+  addClass(document.getElementById("add-variable"), "disabled");
+  addClass(document.getElementById("remove-variable"), "disabled");
+}
+function enableAddButtons() {
+  removeClass(document.getElementById("add-variable"), "disabled");
+  removeClass(document.getElementById("remove-variable"), "disabled");
+}
 
 render();
 
 // connect to CODAP
 
 codapInterface.on('get', 'interactiveState', function () {
-  return {success: true, values: {}};
+  return {success: true, values: { experimentNumber: experimentNumber }};
 });
 
 // initialize the codapInterface
@@ -354,6 +450,9 @@ codapInterface.init({
     version: '0.1',
     stateHandler: function (state) {
       console.log('stateHandler: ' + (state && JSON.stringify(state)));
+      if (state && state.experimentNumber) {
+        experimentNumber = state.experimentNumber;
+      }
     }
   }).then(function () {
     // Determine if CODAP already has the Data Context we need.
@@ -400,15 +499,19 @@ codapInterface.init({
         }
       }
     );
-  });
+  },
+  function (err) {
+    codapConnected = false;
+  }
+);
 
 function startNewExperimentInCODAP() {
   return new Promise(function(resolve, reject) {
-    // if (!codapInterface.connection.isConnected()) {
-    //   console.log('Not in CODAP')
-    //   resolve();
-    //   return;
-    // }
+    if (!codapConnected) {
+      console.log('Not in CODAP')
+      resolve();
+      return;
+    }
 
     experimentNumber++;
     runNumber = 0; // Each experiment starts the runNumber afresh
@@ -422,11 +525,10 @@ function startNewExperimentInCODAP() {
         }
       }]
     }, function (result) {
-      if (result.success) {
+      if (result && result.success) {
         experimentCaseID = result.values[0].id;
         resolve();
-      }
-      else {
+      } else {
         window.alert('Unable to begin experiment');
         reject();
       }
@@ -435,24 +537,33 @@ function startNewExperimentInCODAP() {
 }
 
 function addValueToCODAP(run, vals) {
-  // if (!codapInterface.connection.isConnected()) {
-  //   return;
-  // }
-
-  let valsArray = vals.map(function(v) {
-    return {
-      "experiment": experimentNumber,
-      "draws": sampleSize,
-      "run": run,
-      "value": v
-    }
-  });
-  console.log(valsArray)
-
+  if (!codapConnected) {
+    return;
+  }
 
   codapInterface.sendRequest({
-    "action": "create",
-    "resource": "dataContext[Sampler].item",
-    "values": valsArray
+    action: 'create',
+    resource: 'collection[runs].case',
+    values: [
+     {
+      parent: experimentCaseID,
+      values: { run: run }
+     }
+    ]
+  }, function (result) {
+      if (result.success) {
+        var runCaseID = result.values[0].id,
+            valuesArray = vals.map(function(v) {
+              return  {
+                parent: runCaseID,
+                values: { value: v }
+               }
+            });
+        codapInterface.sendRequest({
+          action: 'create',
+          resource: 'collection[draws].case',
+          values: valuesArray
+        });
+      }
   });
 }
