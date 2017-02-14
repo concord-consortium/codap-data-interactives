@@ -37,6 +37,8 @@ function render() {
   s.clear();
   createsampleSlots();
   createMixer();
+  document.getElementById("draws").value = sampleSize;
+  document.getElementById("repeat").value = numRuns;
 }
 
 function createsampleSlots() {
@@ -439,7 +441,12 @@ render();
 // connect to CODAP
 
 codapInterface.on('get', 'interactiveState', function () {
-  return {success: true, values: { experimentNumber: experimentNumber }};
+  return {success: true, values: {
+    experimentNumber: experimentNumber,
+    variables: variables,
+    draw: sampleSize,
+    repeat: numRuns
+  }};
 });
 
 // initialize the codapInterface
@@ -449,9 +456,12 @@ codapInterface.init({
     dimensions: {width: 250, height: 420},
     version: '0.1',
     stateHandler: function (state) {
-      console.log('stateHandler: ' + (state && JSON.stringify(state)));
       if (state && state.experimentNumber) {
         experimentNumber = state.experimentNumber;
+        variables = state.variables;
+        sampleSize = state.draw;
+        numRuns = state.repeat;
+        render();
       }
     }
   }).then(function () {
