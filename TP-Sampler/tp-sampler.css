@@ -35,6 +35,11 @@ body {
   font-size: 3vh;
 }
 
+#draw-settings #speed {
+  width: 10vh;
+  height: 2vh;
+}
+
 #model-controls {
   position: absolute;
   left: 3.2vh;
