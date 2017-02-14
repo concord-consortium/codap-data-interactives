@@ -151,11 +151,13 @@ function getNextVariable() {
 }
 
 function addVariable() {
+  if (running) return;
   variables.push(getNextVariable());
   render();
 }
 
 function removeVariable() {
+  if (running) return;
   variables.pop();
   render();
 }
@@ -219,6 +221,7 @@ function getTransformForMovingTo(x, y, circ) {
 function run() {
   if (!running) {
     running = true;
+    disableAddButtons();
     startNewExperimentInCODAP().then(function() {
       var sequence = createRandomSequence(sampleSize, numRuns);
 
@@ -297,8 +300,9 @@ function run() {
 
       function endAnimation() {
         running = false;
+        enableAddButtons();
         for (var i = 0, ii = balls.length; i < ii; i++) {
-          balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300));
+          balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300), mina.bounce);
         }
       }
 
@@ -380,6 +384,26 @@ variableNameInput.onkeypress = function(e) {
     setVariableName();
     return false;
   }
+}
+function addClass(el, className) {
+  if (el.classList)
+    el.classList.add(className);
+  else
+    el.className += ' ' + className;
+}
+function removeClass(el, className) {
+  if (el.classList)
+    el.classList.remove(className);
+  else
+    el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+}
+function disableAddButtons() {
+  addClass(document.getElementById("add-variable"), "disabled");
+  addClass(document.getElementById("remove-variable"), "disabled");
+}
+function enableAddButtons() {
+  removeClass(document.getElementById("add-variable"), "disabled");
+  removeClass(document.getElementById("remove-variable"), "disabled");
 }
 
 render();
