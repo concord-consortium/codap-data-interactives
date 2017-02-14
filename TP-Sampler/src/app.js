@@ -14,6 +14,7 @@ var s = Snap("#model svg"),
 
     running = false,
     animationRequest = null,
+    speed = 1,  //  0.5, 1, 2, 3=inf
 
     experimentNumber = 0,
     runNumber = 0,
@@ -39,6 +40,8 @@ function render() {
   createMixer();
   document.getElementById("draws").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
+  let sliderSpeed = speed > 0.5 ? speed : 0;
+  document.getElementById("speed").value = sliderSpeed;
 }
 
 function createsampleSlots() {
@@ -241,6 +244,11 @@ function runOrStop() {
 function run() {
   startNewExperimentInCODAP().then(function() {
     var sequence = createRandomSequence(sampleSize, numRuns);
+    if (speed === 3) {
+      sendSequenceDirectlyToCODAP(sequence);
+      reset();
+      return;
+    }
 
     // selection animation
     function select(run, draw, selectionMadeCallback) {
@@ -259,7 +267,7 @@ function run() {
         ball.vy = Math.abs(ball.vy);
       }
 
-      ball.animate({transform: trans}, 500, function() {
+      ball.animate({transform: trans}, 300/speed, function() {
         if (!running) return;
         // move variable to slot
         var letter = variable.clone();
@@ -272,7 +280,7 @@ function run() {
         matrix = letter.transform().localMatrix;
         matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
         // matrix.scale(2);
-        letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200);
+        letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200/speed);
 
         ball.beingSelected = false;
 
@@ -287,19 +295,19 @@ function run() {
                   letterMatrix = letter.transform().localMatrix;
               sampleMatrix.translate(20, 0);
               letterMatrix.translate(40, 0);
-              sampleSlot.animate({transform: sampleMatrix}, 200);
-              letter.animate({transform: letterMatrix}, 200, function() {
+              sampleSlot.animate({transform: sampleMatrix}, 200/speed);
+              letter.animate({transform: letterMatrix}, 200/speed, function() {
                 letter.remove();
                 samples = [];
               });
             }
-          }, 300);
+          }, 300/speed);
           setTimeout(function() {
             for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
               let sampleSlot = sampleSlots[i];
-              sampleSlot.animate({transform: "T0,0"}, 200);
+              sampleSlot.animate({transform: "T0,0"}, 200/speed);
             }
-          }, 600);
+          }, 600/speed);
         }
       });
       if (draw == sampleSize-1) {
@@ -308,12 +316,12 @@ function run() {
             return variables[i];
           });
           selectionMadeCallback(run+1, vars);
-        }, 800);
+        }, 600/speed);
       }
     }
 
     function scheduleNextSelection() {
-      setTimeout(selectNext, 1000);
+      setTimeout(selectNext, 1000/speed);
     }
 
     var run = 0,
@@ -332,7 +340,7 @@ function run() {
         if (sequence[run]) {
           scheduleNextSelection();
         } else {
-          setTimeout(endAnimation, 1000);
+          setTimeout(endAnimation, 1000/speed);
         }
       }
     }
@@ -342,7 +350,7 @@ function run() {
         if (!balls[i].beingSelected) {
           let ball = balls[i],
               matrix = ball.transform().localMatrix;
-          matrix.translate(ball.vx, ball.vy);
+          matrix.translate(ball.vx*speed, ball.vy*speed);
           ball.attr({transform: matrix});
 
           let bbox = ball.getBBox();
@@ -380,16 +388,16 @@ function run() {
 
 function endAnimation() {
   running = false;
-  document.getElementById("run").innerHTML = "RUN";
-  if (animationRequest) cancelAnimationFrame(animationRequest);
-  enableAddButtons();
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    balls[i].animate({transform: "T0,0"}, 300 + (Math.random() * 300), mina.bounce);
+    balls[i].animate({transform: "T0,0"}, (300 + (Math.random() * 300))/speed, mina.bounce);
   }
-  setTimeout(reset, 350);
+  setTimeout(reset, 350/speed);
 }
 
 function reset() {
+  if (animationRequest) cancelAnimationFrame(animationRequest);
+  enableAddButtons();
+  document.getElementById("run").innerHTML = "RUN";
   balls = [];
   sampleSlotTargets = [];
   sampleSlots = [];
@@ -401,11 +409,15 @@ document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = runOrStop;
 document.getElementById("draws").addEventListener('input', function (evt) {
-    sampleSize = this.value;
+    sampleSize = this.value * 1;
     render();
 });
 document.getElementById("repeat").addEventListener('input', function (evt) {
-    numRuns = this.value;
+    numRuns = this.value * 1;
+    render();
+});
+document.getElementById("speed").addEventListener('input', function (evt) {
+    speed = (this.value * 1) || 0.5;
     render();
 });
 variableNameInput.onblur = setVariableName;
@@ -445,7 +457,8 @@ codapInterface.on('get', 'interactiveState', function () {
     experimentNumber: experimentNumber,
     variables: variables,
     draw: sampleSize,
-    repeat: numRuns
+    repeat: numRuns,
+    speed: speed
   }};
 });
 
@@ -456,11 +469,13 @@ codapInterface.init({
     dimensions: {width: 250, height: 420},
     version: '0.1',
     stateHandler: function (state) {
-      if (state && state.experimentNumber) {
-        experimentNumber = state.experimentNumber;
-        variables = state.variables;
-        sampleSize = state.draw;
-        numRuns = state.repeat;
+      if (state) {
+        experimentNumber = state.experimentNumber || experimentNumber;
+        variables = state.variables || variables;
+        sampleSize = state.draw || sampleSize;
+        numRuns = state.repeat || numRuns;
+        speed = state.speed || speed;
+
         render();
       }
     }
@@ -576,4 +591,13 @@ function addValueToCODAP(run, vals) {
         });
       }
   });
+}
+
+function sendSequenceDirectlyToCODAP(sequence) {
+  for (let i = 0, ii = sequence.length; i < ii; i++) {
+    let values = sequence[i].map(function(v) {
+      return variables[v];
+    })
+    addValueToCODAP(i+1, values)
+  }
 }
