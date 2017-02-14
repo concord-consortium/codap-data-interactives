@@ -138,7 +138,7 @@ function addMixerVariables() {
 
   // setup animation
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    let speed = 2 + (Math.random() * 3),
+    let speed = 5 + (Math.random() * 7),
         direction = Math.PI + (Math.random() * Math.PI);
     balls[i].vx = Math.cos(direction) * speed;
     balls[i].vy = Math.sin(direction) * speed;
@@ -350,7 +350,9 @@ function run() {
 
       function animate() {
         if (running) {
-          animationRequest = requestAnimationFrame(animate);
+          setTimeout(function() {
+            animationRequest = requestAnimationFrame(animate);
+          }, 30);
         }
         animationStep();
       }
