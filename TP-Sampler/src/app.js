@@ -439,7 +439,7 @@ render();
 // connect to CODAP
 
 codapInterface.on('get', 'interactiveState', function () {
-  return {success: true, values: {}};
+  return {success: true, values: { experimentNumber: experimentNumber }};
 });
 
 // initialize the codapInterface
@@ -450,6 +450,9 @@ codapInterface.init({
     version: '0.1',
     stateHandler: function (state) {
       console.log('stateHandler: ' + (state && JSON.stringify(state)));
+      if (state && state.experimentNumber) {
+        experimentNumber = state.experimentNumber;
+      }
     }
   }).then(function () {
     // Determine if CODAP already has the Data Context we need.
