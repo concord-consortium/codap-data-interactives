@@ -228,7 +228,6 @@ function runOrStop() {
     run();
   } else {
     running = false;
-    document.getElementById("run").innerHTML = "RUN";
     for (let i = 0, ii = samples.length; i < ii; i++) {
       if (samples[i].remove) {
         samples[i].remove();
@@ -381,6 +380,7 @@ function run() {
 
 function endAnimation() {
   running = false;
+  document.getElementById("run").innerHTML = "RUN";
   if (animationRequest) cancelAnimationFrame(animationRequest);
   enableAddButtons();
   for (var i = 0, ii = balls.length; i < ii; i++) {
