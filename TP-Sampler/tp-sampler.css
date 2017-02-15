@@ -1,4 +1,5 @@
 body {
+  font-size: 4vh;
   /* No text-selection on any element */
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -12,9 +13,9 @@ body {
 #model {
   position: absolute;
   left: 0;
-  top: 8vh;
+  top: 14vh;
   width: 64vh;
-  height: 84vh;
+  height: 78vh;
 }
 
 #top-bar {
@@ -25,25 +26,42 @@ body {
   align-items: center;
 }
 
-#draw-settings {
-  padding-left: 3vh;
+#top-bar input {
+  width: 12vh;
+  height: 2vh;
   font-size: 3vh;
+  margin-left: 3vh;
+}
+
+#top-bar span {
+  margin-left: 2vh;
+}
+
+#top-bar button {
+  margin-right: 1vh;
+  min-width: 13vh;
+}
+
+#draw-settings {
+  position: absolute;
+  left: 3.2vh;
+  top: 8vh;
 }
 
 #draw-settings input {
-  width: 6vh;
+  width: 8vh;
   font-size: 3vh;
-}
-
-#draw-settings #speed {
-  width: 10vh;
-  height: 2vh;
+  margin-left: 1.5vh;
 }
 
 #model-controls {
   position: absolute;
   left: 3.2vh;
-  bottom: -2vh;
+  bottom: 0vh;
+}
+
+#model-controls button {
+  margin: 1vh 0vh;
 }
 
 #variable-name-change {
