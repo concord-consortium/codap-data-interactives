@@ -1,6 +1,6 @@
 var s = Snap("#model svg"),
 
-    width = 190,      // svg units
+    width = 205,      // svg units
     height = 250,
     containerX = 10,
     containerY = 0,
@@ -15,6 +15,7 @@ var s = Snap("#model svg"),
     running = false,
     animationRequest = null,
     speed = 1,  //  0.5, 1, 2, 3=inf
+    speedText = ["Slow", "Medium", "Fast", "Fastest"],
 
     experimentNumber = 0,
     runNumber = 0,
@@ -42,6 +43,7 @@ function render() {
   document.getElementById("repeat").value = numRuns;
   let sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
+  document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
 }
 
 function createsampleSlots() {
@@ -226,7 +228,7 @@ function getTransformForMovingTo(x, y, circ) {
 function runOrStop() {
   if (!running) {
     running = true;
-    disableAddButtons();
+    disableButtons();
     document.getElementById("run").innerHTML = "STOP";
     run();
   } else {
@@ -389,14 +391,14 @@ function run() {
 function endAnimation() {
   running = false;
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    balls[i].animate({transform: "T0,0"}, (300 + (Math.random() * 300))/speed, mina.bounce);
+    balls[i].animate({transform: "T0,0"}, (800 + (Math.random() * 300))/speed, mina.bounce);
   }
-  setTimeout(reset, 350/speed);
+  setTimeout(reset, 800/speed);
 }
 
 function reset() {
   if (animationRequest) cancelAnimationFrame(animationRequest);
-  enableAddButtons();
+  enableButtons();
   document.getElementById("run").innerHTML = "RUN";
   balls = [];
   sampleSlotTargets = [];
@@ -418,6 +420,7 @@ document.getElementById("repeat").addEventListener('input', function (evt) {
 });
 document.getElementById("speed").addEventListener('input', function (evt) {
     speed = (this.value * 1) || 0.5;
+    document.getElementById("speed-text").innerHTML = speedText[this.value * 1];
     render();
 });
 variableNameInput.onblur = setVariableName;
@@ -439,13 +442,15 @@ function removeClass(el, className) {
   else
     el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 }
-function disableAddButtons() {
+function disableButtons() {
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
+  document.getElementById("speed").setAttribute("disabled", "disabled");
 }
-function enableAddButtons() {
+function enableButtons() {
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
+  document.getElementById("speed").removeAttribute("disabled");
 }
 
 render();
@@ -466,7 +471,7 @@ codapInterface.on('get', 'interactiveState', function () {
 codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
-    dimensions: {width: 250, height: 420},
+    dimensions: {width: 250, height: 400},
     version: '0.1',
     stateHandler: function (state) {
       if (state) {
