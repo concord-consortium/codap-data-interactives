@@ -40,7 +40,7 @@ var dataManager = Object.create({
       },
       wizardStep: STEP_GET_DATA,
       connected: false,
-      url: "https://staff.concord.org/~emcelroy/dset-app/data.php",
+      url: "https://dset.concord.org/app/data.php",
       rows: [],
       columnNames: []
     };
@@ -209,7 +209,7 @@ var SheetsView = React.createFactory(React.createClass({
   },
 
   requestData: function() {
-    var url = "https://staff.concord.org/~emcelroy/dset-app/data.php"
+    var url = dataManager.state.url;
     if (this.timeout) { return; }
     var request = function() {
       $.ajax({
