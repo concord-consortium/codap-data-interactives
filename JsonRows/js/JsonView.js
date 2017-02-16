@@ -32,7 +32,7 @@ var dataManager = Object.create({
     this.listeners = [];
     this.collaborationContexts = {};
     this.state = {
-      title: "Sheet Service",
+      title: "Json Service",
       version: "0.1",
       dimensions: {
         width: 300,
@@ -40,7 +40,7 @@ var dataManager = Object.create({
       },
       wizardStep: STEP_GET_DATA,
       connected: false,
-      url: "https://dset.concord.org/app/data.php",
+      url: "",
       rows: [],
       columnNames: []
     };
@@ -177,18 +177,24 @@ var SheetsView = React.createFactory(React.createClass({
   },
 
   loadData: function(response) {
-    var values = JSON.parse(response);
-    var rows = [];
-    var columnNames = [];
-    if (values && values.length > 1) {
-      columnNames = values[0];
-      rows = values.slice(1);
-      dataManager.updateStateProperty('rows', rows, true);
-      dataManager.updateStateProperty('columnNames', columnNames);
+    var values = null;
+    try {
+      values = JSON.parse(response);
+      var rows = [];
+      var columnNames = [];
+      if (values && values.length > 1) {
+        columnNames = values[0];
+        rows = values.slice(1);
+        dataManager.updateStateProperty('rows', rows, true);
+        dataManager.updateStateProperty('columnNames', columnNames);
+      }
+      if (this.state.pollingInterval > POLLING_INTERVAL) { this.backOn(); }
+      this.timeout = null;
+      this.requestData();
     }
-    if (this.state.pollingInterval > POLLING_INTERVAL) { this.backOn(); }
-    this.timeout = null;
-    this.requestData();
+    catch (exp) {
+      this.failData(exp);
+    }
   },
 
   failData: function(response) {
@@ -210,6 +216,7 @@ var SheetsView = React.createFactory(React.createClass({
 
   requestData: function() {
     var url = dataManager.state.url;
+    if(!(url && url.length > 1)) { return; }
     if (this.timeout) { return; }
     var request = function() {
       $.ajax({
