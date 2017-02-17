@@ -30,7 +30,7 @@ body {
   width: 12vh;
   height: 2vh;
   font-size: 3vh;
-  margin-left: 3vh;
+  margin-left: 1vh;
 }
 
 #top-bar span {
@@ -39,7 +39,7 @@ body {
 
 #top-bar button {
   margin-right: 1vh;
-  min-width: 13vh;
+  min-width: 14vh;
 }
 
 #draw-settings {
