@@ -1,11 +1,32 @@
+Snap.plugin(function (Snap, Element) {
+
+  Element.prototype.pause = function () {
+    let anims = this.inAnim();
+    for (let i = 0; i < anims.length; i ++) {
+      anims[i].mina.pause();
+    }
+  };
+
+  Element.prototype.resume = function () {
+    let anims = this.inAnim();
+    for (let i = 0; i < anims.length; i ++) {
+      this.animate({ dummy: 0 } ,1);
+      anims[i].mina.resume();
+    }
+  };
+
+});
+
 var s = Snap("#model svg"),
 
-    width = 205,      // svg units
-    height = 250,
+    device = "mixer",       // ..."spinner"
+
+    width = 205,            // svg units
+    height = 220,
     containerX = 10,
     containerY = 0,
     containerWidth = 130,
-    containerHeight = 250,
+    containerHeight = 220,
     capHeight = 6,
     capWidth = 40,
     border = 2,
@@ -13,6 +34,7 @@ var s = Snap("#model svg"),
     codapConnected = true,
 
     running = false,
+    paused = false,
     animationRequest = null,
     speed = 1,  //  0.5, 1, 2, 3=inf
     speedText = ["Slow", "Medium", "Fast", "Fastest"],
@@ -37,16 +59,21 @@ var s = Snap("#model svg"),
 
 function render() {
   s.clear();
-  createsampleSlots();
-  createMixer();
   document.getElementById("draws").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
   let sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
   document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
+
+  createSampleSlots();
+  if (device == "mixer") {
+    createMixer();
+  } else {
+    createSpinner();
+  }
 }
 
-function createsampleSlots() {
+function createSampleSlots() {
   var x = containerWidth + ((width - containerWidth)  / 3),
       centerY = containerY + (containerHeight/2),
       stroke = border / 2,
@@ -158,15 +185,23 @@ function getNextVariable() {
 }
 
 function addVariable() {
+  this.blur();
   if (running) return;
   variables.push(getNextVariable());
   render();
+  removeClass(document.getElementById("remove-variable"), "disabled");
 }
 
 function removeVariable() {
+  this.blur();
   if (running) return;
+  if (variables.length === 1) return;
   variables.pop();
   render();
+
+  if (variables.length < 2) {
+    addClass(document.getElementById("remove-variable"), "disabled");
+  }
 }
 
 function showVariableNameInput(i) {
@@ -225,22 +260,30 @@ function getTransformForMovingTo(x, y, circ) {
   return "T"+t.dx+","+t.dy;
 }
 
-function runOrStop() {
+function runButtonPressed() {
+  this.blur();
   if (!running) {
     running = true;
     disableButtons();
-    document.getElementById("run").innerHTML = "STOP";
     run();
   } else {
-    running = false;
-    for (let i = 0, ii = samples.length; i < ii; i++) {
-      if (samples[i].remove) {
-        samples[i].remove();
-      }
-    }
-    samples = [];
-    endAnimation();
+    paused = !paused;
+    pauseSnapAnimations(paused);
+    setRunButton(paused);
   }
+}
+
+function stopButtonPressed() {
+  this.blur();
+  running = false;
+  paused = false;
+  for (let i = 0, ii = samples.length; i < ii; i++) {
+    if (samples[i].remove) {
+      samples[i].remove();
+    }
+  }
+  samples = [];
+  endAnimation();
 }
 
 function run() {
@@ -269,7 +312,9 @@ function run() {
         ball.vy = Math.abs(ball.vy);
       }
 
-      ball.animate({transform: trans}, 300/speed, function() {
+      ball.animate({transform: trans}, 300/speed, ballArrived);
+
+      function ballArrived() {
         if (!running) return;
         // move variable to slot
         var letter = variable.clone();
@@ -288,8 +333,15 @@ function run() {
 
         if (draw == sampleSize-1) {
           // move this!
-          setTimeout(function() {
+          setTimeout(pushLettersOut, 300/speed);
+          setTimeout(returnSlots, 600/speed);
+
+          function pushLettersOut() {
             if (!running) return;
+            if (paused) {
+              setTimeout(pushLettersOut, 200);
+              return;
+            }
             for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
               let sampleSlot = sampleSlots[i],
                   letter = samples[i],
@@ -303,44 +355,53 @@ function run() {
                 samples = [];
               });
             }
-          }, 300/speed);
-          setTimeout(function() {
+          }
+          function returnSlots() {
+            if (paused) {
+              setTimeout(returnSlots, 200);
+              return;
+            }
             for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
               let sampleSlot = sampleSlots[i];
               sampleSlot.animate({transform: "T0,0"}, 200/speed);
             }
-          }, 600/speed);
+          }
         }
-      });
+      }
+
       if (draw == sampleSize-1) {
-        setTimeout(function() {
+        setTimeout(sendRunToCODAP, 600/speed);
+
+        function sendRunToCODAP() {
+          if (paused) {
+            setTimeout(sendRunToCODAP, 200);
+            return;
+          }
           let vars = sequence[run].map(function(i) {
             return variables[i];
           });
           selectionMadeCallback(run+1, vars);
-        }, 600/speed);
+        }
       }
-    }
-
-    function scheduleNextSelection() {
-      setTimeout(selectNext, 1000/speed);
     }
 
     var run = 0,
         draw = 0;
 
     function selectNext() {
-      select(run, draw, addValueToCODAP);
+      if (!paused) {
+        select(run, draw, addValueToCODAP);
 
-      if (draw < sequence[run].length - 1) {
-        draw++;
-      } else {
-        run++;
-        draw = 0;
+        if (draw < sequence[run].length - 1) {
+          draw++;
+        } else {
+          run++;
+          draw = 0;
+        }
       }
       if (running) {
         if (sequence[run]) {
-          scheduleNextSelection();
+          setTimeout(selectNext, 1000/speed);
         } else {
           setTimeout(endAnimation, 1000/speed);
         }
@@ -348,27 +409,29 @@ function run() {
     }
 
     function animationStep() {
-      for (var i = 0, ii = balls.length; i < ii; i++) {
-        if (!balls[i].beingSelected) {
-          let ball = balls[i],
-              matrix = ball.transform().localMatrix;
-          matrix.translate(ball.vx*speed, ball.vy*speed);
-          ball.attr({transform: matrix});
+      if (!paused) {
+        for (var i = 0, ii = balls.length; i < ii; i++) {
+          if (!balls[i].beingSelected) {
+            let ball = balls[i],
+                matrix = ball.transform().localMatrix;
+            matrix.translate(ball.vx*speed, ball.vy*speed);
+            ball.attr({transform: matrix});
 
-          let bbox = ball.getBBox();
-          if (bbox.x < (containerX + border)) {
-            ball.vx = Math.abs(ball.vx);
-            matrix.translate(ball.vx * 2, ball.vy);
-            ball.attr({transform: matrix});
-          } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
-            ball.vx = -Math.abs(ball.vx);
-            matrix.translate(ball.vx * 2, ball.vy);
-            ball.attr({transform: matrix});
-          }
-          if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
-            ball.vy *= -1;
-            matrix.translate(ball.vx, ball.vy * 2);
-            ball.attr({transform: matrix});
+            let bbox = ball.getBBox();
+            if (bbox.x < (containerX + border)) {
+              ball.vx = Math.abs(ball.vx);
+              matrix.translate(ball.vx * 2, ball.vy);
+              ball.attr({transform: matrix});
+            } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
+              ball.vx = -Math.abs(ball.vx);
+              matrix.translate(ball.vx * 2, ball.vy);
+              ball.attr({transform: matrix});
+            }
+            if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
+              ball.vy *= -1;
+              matrix.translate(ball.vx, ball.vy * 2);
+              ball.attr({transform: matrix});
+            }
           }
         }
       }
@@ -389,6 +452,10 @@ function run() {
 }
 
 function endAnimation() {
+  if (paused) {
+    setTimeout(endAnimation, 200);
+    return;
+  }
   running = false;
   for (var i = 0, ii = balls.length; i < ii; i++) {
     balls[i].animate({transform: "T0,0"}, (800 + (Math.random() * 300))/speed, mina.bounce);
@@ -396,20 +463,87 @@ function endAnimation() {
   setTimeout(reset, 800/speed);
 }
 
+function pauseSnapAnimations(doPause) {
+  func = doPause ? "pause" : "resume";
+  let animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
+  for (let i = 0, ii = animatedObjects.length; i < ii; i++) {
+    animatedObjects[i][func]();
+  }
+}
+
 function reset() {
   if (animationRequest) cancelAnimationFrame(animationRequest);
   enableButtons();
-  document.getElementById("run").innerHTML = "RUN";
   balls = [];
   sampleSlotTargets = [];
   sampleSlots = [];
   samples = [];
+  paused = false;
   render();
+}
+
+function createSpinner() {
+  let x = containerX + (containerWidth/2),
+      y = containerY + (containerHeight/2),
+      radius = Math.min(containerWidth, containerHeight)/2;
+
+  if (variables.length === 1) {
+    s.circle(x, y, radius).attr({
+      fill: getSliceColor(0, 0)
+    });
+  } else {
+    let slicePercent = 1 / variables.length;
+
+    for (let i = 0, ii = variables.length; i < ii; i++) {
+      s.path(getSpinnerSlicePath(i, slicePercent, x, y, radius)).attr({
+        fill: getSliceColor(i, ii),
+        stroke: "#fff",
+        strokeWidth: i == ii - 1 ? 0.5 : 1
+      });
+    }
+  }
+}
+
+function getSpinnerSlicePath(i, slicePercent, x, y, radius) {
+  let perc1 = (i * slicePercent) + 0.75,   // rotate 3/4 to start at top
+      perc2 = perc1 + slicePercent,
+      p1 = getCoordinatesForPercent(x, y, radius, perc1),
+      p2 = getCoordinatesForPercent(x, y, radius, perc2);
+  return "M "+p1+" A "+radius+" "+radius+" 0 0 1 "+p2+" L "+x+" "+y;
+}
+
+function getCoordinatesForPercent(x, y, radius, percent) {
+  const x1 = x + (Math.cos(2 * Math.PI * percent) * radius);
+  const y1 = y + (Math.sin(2 * Math.PI * percent) * radius);
+
+  return x1+" "+y1;
+}
+
+function getSliceColor(i, slices) {
+  let baseColorHue = 173,
+      hueDiff = Math.min(20, 360/slices),
+      hue = (baseColorHue + (hueDiff * i)) % 360,
+      huePerc = (hue / 360) * 100;
+  return "hsl("+huePerc+"%, 71%, 61%)"
+}
+
+function switchState() {
+  this.blur();
+  let selectedDevice = this.id;
+  if (selectedDevice !== device) {
+    removeClass(document.getElementById(device), "active");
+    addClass(document.getElementById(selectedDevice), "active");
+    device = selectedDevice;
+    render();
+  }
 }
 
 document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
-document.getElementById("run").onclick = runOrStop;
+document.getElementById("run").onclick = runButtonPressed;
+document.getElementById("stop").onclick = stopButtonPressed;
+document.getElementById("mixer").onclick = switchState;
+document.getElementById("spinner").onclick = switchState;
 document.getElementById("draws").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
     render();
@@ -443,16 +577,29 @@ function removeClass(el, className) {
     el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
 }
 function disableButtons() {
+  setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
   document.getElementById("speed").setAttribute("disabled", "disabled");
+  removeClass(document.getElementById("stop"), "disabled");
 }
 function enableButtons() {
+  setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
   document.getElementById("speed").removeAttribute("disabled");
+  addClass(document.getElementById("stop"), "disabled");
+}
+function setRunButton(showRun) {
+  if (showRun) {
+    document.getElementById("run").innerHTML = "RUN";
+  } else {
+    document.getElementById("run").innerHTML = "PAUSE";
+  }
 }
 
+
+reset();
 render();
 
 // connect to CODAP
