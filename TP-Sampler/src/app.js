@@ -19,12 +19,14 @@ Snap.plugin(function (Snap, Element) {
 
 var s = Snap("#model svg"),
 
-    width = 205,      // svg units
-    height = 250,
+    device = "mixer",       // ..."spinner"
+
+    width = 205,            // svg units
+    height = 220,
     containerX = 10,
     containerY = 0,
     containerWidth = 130,
-    containerHeight = 250,
+    containerHeight = 220,
     capHeight = 6,
     capWidth = 40,
     border = 2,
@@ -57,16 +59,21 @@ var s = Snap("#model svg"),
 
 function render() {
   s.clear();
-  createsampleSlots();
-  createMixer();
   document.getElementById("draws").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
   let sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
   document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
+
+  createSampleSlots();
+  if (device == "mixer") {
+    createMixer();
+  } else {
+    createSpinner();
+  }
 }
 
-function createsampleSlots() {
+function createSampleSlots() {
   var x = containerWidth + ((width - containerWidth)  / 3),
       centerY = containerY + (containerHeight/2),
       stroke = border / 2,
@@ -475,10 +482,68 @@ function reset() {
   render();
 }
 
+function createSpinner() {
+  let x = containerX + (containerWidth/2),
+      y = containerY + (containerHeight/2),
+      radius = Math.min(containerWidth, containerHeight)/2;
+
+  if (variables.length === 1) {
+    s.circle(x, y, radius).attr({
+      fill: getSliceColor(0, 0)
+    });
+  } else {
+    let slicePercent = 1 / variables.length;
+
+    for (let i = 0, ii = variables.length; i < ii; i++) {
+      s.path(getSpinnerSlicePath(i, slicePercent, x, y, radius)).attr({
+        fill: getSliceColor(i, ii),
+        stroke: "#fff",
+        strokeWidth: i == ii - 1 ? 0.5 : 1
+      });
+    }
+  }
+}
+
+function getSpinnerSlicePath(i, slicePercent, x, y, radius) {
+  let perc1 = (i * slicePercent) + 0.75,   // rotate 3/4 to start at top
+      perc2 = perc1 + slicePercent,
+      p1 = getCoordinatesForPercent(x, y, radius, perc1),
+      p2 = getCoordinatesForPercent(x, y, radius, perc2);
+  return "M "+p1+" A "+radius+" "+radius+" 0 0 1 "+p2+" L "+x+" "+y;
+}
+
+function getCoordinatesForPercent(x, y, radius, percent) {
+  const x1 = x + (Math.cos(2 * Math.PI * percent) * radius);
+  const y1 = y + (Math.sin(2 * Math.PI * percent) * radius);
+
+  return x1+" "+y1;
+}
+
+function getSliceColor(i, slices) {
+  let baseColorHue = 173,
+      hueDiff = Math.min(20, 360/slices),
+      hue = (baseColorHue + (hueDiff * i)) % 360,
+      huePerc = (hue / 360) * 100;
+  return "hsl("+huePerc+"%, 71%, 61%)"
+}
+
+function switchState() {
+  this.blur();
+  let selectedDevice = this.id;
+  if (selectedDevice !== device) {
+    removeClass(document.getElementById(device), "active");
+    addClass(document.getElementById(selectedDevice), "active");
+    device = selectedDevice;
+    render();
+  }
+}
+
 document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = runButtonPressed;
 document.getElementById("stop").onclick = stopButtonPressed;
+document.getElementById("mixer").onclick = switchState;
+document.getElementById("spinner").onclick = switchState;
 document.getElementById("draws").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
     render();

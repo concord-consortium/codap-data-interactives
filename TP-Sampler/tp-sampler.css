@@ -15,7 +15,7 @@ body {
   left: 0;
   top: 14vh;
   width: 64vh;
-  height: 78vh;
+  height: 69vh;
 }
 
 #top-bar {
@@ -57,11 +57,21 @@ body {
 #model-controls {
   position: absolute;
   left: 3.2vh;
-  bottom: 0vh;
+  bottom: 8vh;
 }
 
-#model-controls button {
+#model-controls button, #device-selection button {
   margin: 1vh 0vh;
+}
+
+#device-selection {
+  position: absolute;
+  left: 0;
+  padding-left: 3.2vh;
+  bottom: 0vh;
+  width: 100%;
+  border-top: 1px solid #777;
+  background-color: #ddd;
 }
 
 #variable-name-change {
@@ -89,7 +99,7 @@ button {
     transition: background-color 0.4s color 0.4s;
 }
 
-button:hover {
+button:hover, button.active:hover {
     background-color: #008cba;
     color: white;
 }
@@ -100,4 +110,11 @@ button.disabled {
   color: #a3babd;
   cursor: default;
   pointer-events: none;
+}
+
+button.active {
+  background-color: #b8edff;
+  -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+     -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+          box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
 }
