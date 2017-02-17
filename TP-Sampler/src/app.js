@@ -178,15 +178,23 @@ function getNextVariable() {
 }
 
 function addVariable() {
+  this.blur();
   if (running) return;
   variables.push(getNextVariable());
   render();
+  removeClass(document.getElementById("remove-variable"), "disabled");
 }
 
 function removeVariable() {
+  this.blur();
   if (running) return;
+  if (variables.length === 1) return;
   variables.pop();
   render();
+
+  if (variables.length < 2) {
+    addClass(document.getElementById("remove-variable"), "disabled");
+  }
 }
 
 function showVariableNameInput(i) {
@@ -246,6 +254,7 @@ function getTransformForMovingTo(x, y, circ) {
 }
 
 function runButtonPressed() {
+  this.blur();
   if (!running) {
     running = true;
     disableButtons();
@@ -258,6 +267,7 @@ function runButtonPressed() {
 }
 
 function stopButtonPressed() {
+  this.blur();
   running = false;
   paused = false;
   for (let i = 0, ii = samples.length; i < ii; i++) {
@@ -522,6 +532,7 @@ function setRunButton(showRun) {
     document.getElementById("run").innerHTML = "PAUSE";
   }
 }
+
 
 reset();
 render();
