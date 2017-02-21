@@ -31,6 +31,10 @@ var s = Snap("#model svg"),
     capWidth = 40,
     border = 2,
 
+    spinnerRadius = Math.min(containerWidth, containerHeight)/2,
+    spinnerX = containerX + (containerWidth/2),
+    spinnerY = containerY + (containerHeight/2),
+
     codapConnected = true,
 
     running = false,
@@ -53,6 +57,9 @@ var s = Snap("#model svg"),
     sampleSlotTargets = [],
     sampleSlots = [],
     samples = [],
+
+    needle,
+    needleTurns = 0,
 
     editingVariable,
     variableNameInput = document.getElementById("variable-name-change");
@@ -339,7 +346,9 @@ function animateSelectNextVariable(selection, draw, selectionMadeCallback) {
   if (!running) return;
 
   if (device == "mixer") {
-    animateMixerSelection(selection, draw, selectionMadeCallback)
+    animateMixerSelection(selection, draw, selectionMadeCallback);
+  } else {
+    animateSpinnerSelection(selection, draw, selectionMadeCallback)
   }
 }
 
@@ -484,6 +493,8 @@ function reset() {
   if (animationRequest) cancelAnimationFrame(animationRequest);
   enableButtons();
   balls = [];
+  needle = null;
+  needleTurns = 0;
   sampleSlotTargets = [];
   sampleSlots = [];
   samples = [];
@@ -493,16 +504,12 @@ function reset() {
 }
 
 function createSpinner() {
-  let x = containerX + (containerWidth/2),
-      y = containerY + (containerHeight/2),
-      radius = Math.min(containerWidth, containerHeight)/2;
-
   if (variables.length === 1) {
-    s.circle(x, y, radius).attr({
+    s.circle(spinnerX, spinnerY, spinnerRadius).attr({
       fill: getSliceColor(0, 0)
     });
-    s.text(x, y, variables[0]).attr({
-      fontSize: radius/2,
+    s.text(spinnerX, spinnerY, variables[0]).attr({
+      fontSize: spinnerRadius/2,
       textAnchor: "middle",
       dy: ".25em"
     });
@@ -510,8 +517,8 @@ function createSpinner() {
     let slicePercent = 1 / variables.length;
 
     for (let i = 0, ii = variables.length; i < ii; i++) {
-      let slice = getSpinnerSliceCoords(i, slicePercent, x, y, radius),
-          textSize = radius / (3 + (ii * 0.1));
+      let slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius),
+          textSize = spinnerRadius / (3 + (ii * 0.1));
 
       // wedge color
       s.path(slice.path).attr({
@@ -541,25 +548,26 @@ function createSpinner() {
   }
 }
 
-function getSpinnerSliceCoords(i, slicePercent, x, y, radius) {
-  const perc1 = (i * slicePercent) + 0.75,   // rotate 3/4 to start at top
+function getSpinnerSliceCoords(i, slicePercent, radius) {
+  const perc1 = i * slicePercent,
         perc2 = perc1 + slicePercent,
-        p1 = getCoordinatesForPercent(x, y, radius, perc1),
-        p2 = getCoordinatesForPercent(x, y, radius, perc2),
-        centerP = getCoordinatesForPercent(x, y, radius, (perc1+perc2)/2);
+        p1 = getCoordinatesForPercent(radius, perc1),
+        p2 = getCoordinatesForPercent(radius, perc2),
+        centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2);
 
   return {
-    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+x+" "+y,
+    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
     center: {
-      x: (x + centerP[0]) / 2,
-      y: (y + centerP[1]) / 2
+      x: (spinnerX + centerP[0]) / 2,
+      y: (spinnerY + centerP[1]) / 2
     }
   };
 }
 
-function getCoordinatesForPercent(centX, centY, radius, percent) {
-  const x = centX + (Math.cos(2 * Math.PI * percent) * radius),
-        y = centY + (Math.sin(2 * Math.PI * percent) * radius);
+function getCoordinatesForPercent(radius, percent) {
+  let perc = percent + 0.75,    // rotate 3/4 to start at top
+      x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius),
+      y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius);
 
   return [x, y];
 }
@@ -570,6 +578,49 @@ function getSliceColor(i, slices) {
       hue = (baseColorHue + (hueDiff * i)) % 360,
       huePerc = (hue / 360) * 100;
   return "hsl("+huePerc+"%, 71%, 61%)"
+}
+
+function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
+  if (!needle) {
+    // draw initial needle
+    let needleNorthLength = spinnerRadius * 2/3,
+        needleSouthLength = spinnerRadius / 5,
+        needleWidth = spinnerRadius / 15,
+        n = getCoordinatesForPercent(needleNorthLength, 0),
+        e = getCoordinatesForPercent(needleWidth, 0.25),
+        so = getCoordinatesForPercent(needleSouthLength, 0.5),
+        w = getCoordinatesForPercent(needleWidth, 0.75),
+        path = "M "+n.join(" ")+" L "+e.join(" ")+" L "+so.join(" ")+" L "+w.join(" ")+" Z";
+
+    needle = s.group(
+      s.path(path).attr({
+        fill: "#000"
+      }),
+      s.circle(spinnerX, spinnerY, needleWidth/2).attr({
+        fill: "#fff"
+      })
+    );
+  }
+
+  needleTurns += 2;
+
+  let wedgePerc = 0.1 + Math.random() * 0.8,
+      targetPerc = (selection + wedgePerc) / variables.length,
+      targetAngle = (needleTurns * 360) + (360 * targetPerc);
+
+  needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 800, mina.easeinout);
+
+  if (draw == sampleSize-1) {
+    // move this!
+    setTimeout(selectionMade, 600/speed);
+    function selectionMade() {
+      if (paused) {
+        setTimeout(selectionMade, 200);
+      } else {
+        selectionMadeCallback();
+      }
+    }
+  }
 }
 
 function switchState() {
