@@ -295,102 +295,21 @@ function run() {
       return;
     }
 
-    // selection animation
-    function select(run, draw, selectionMadeCallback) {
-      if (!running) return;
-
-      var selection = sequence[run][draw],
-          ball = balls[selection],
-          circle = ball.select("circle"),
-          variable = ball.select("text"),
-          trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
-
-      ball.beingSelected = true;
-      if (ball.getBBox().y > containerY + (containerHeight/2)) {
-        ball.vy = -Math.abs(ball.vy);
-      } else {
-        ball.vy = Math.abs(ball.vy);
-      }
-
-      ball.animate({transform: trans}, 300/speed, ballArrived);
-
-      function ballArrived() {
-        if (!running) return;
-        // move variable to slot
-        var letter = variable.clone();
-        samples.push(letter);
-        ball.before(letter);
-        letter.attr({transform: trans});
-        // trans = "t"+0+",-"+5
-        var origin = letter.getBBox();
-        var target = sampleSlotTargets[draw].getBBox();
-        matrix = letter.transform().localMatrix;
-        matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-        // matrix.scale(2);
-        letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200/speed);
-
-        ball.beingSelected = false;
-
-        if (draw == sampleSize-1) {
-          // move this!
-          setTimeout(pushLettersOut, 300/speed);
-          setTimeout(returnSlots, 600/speed);
-
-          function pushLettersOut() {
-            if (!running) return;
-            if (paused) {
-              setTimeout(pushLettersOut, 200);
-              return;
-            }
-            for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-              let sampleSlot = sampleSlots[i],
-                  letter = samples[i],
-                  sampleMatrix = sampleSlot.transform().localMatrix,
-                  letterMatrix = letter.transform().localMatrix;
-              sampleMatrix.translate(20, 0);
-              letterMatrix.translate(40, 0);
-              sampleSlot.animate({transform: sampleMatrix}, 200/speed);
-              letter.animate({transform: letterMatrix}, 200/speed, function() {
-                letter.remove();
-                samples = [];
-              });
-            }
-          }
-          function returnSlots() {
-            if (paused) {
-              setTimeout(returnSlots, 200);
-              return;
-            }
-            for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-              let sampleSlot = sampleSlots[i];
-              sampleSlot.animate({transform: "T0,0"}, 200/speed);
-            }
-          }
-        }
-      }
-
-      if (draw == sampleSize-1) {
-        setTimeout(sendRunToCODAP, 600/speed);
-
-        function sendRunToCODAP() {
-          if (paused) {
-            setTimeout(sendRunToCODAP, 200);
-            return;
-          }
-          let vars = sequence[run].map(function(i) {
-            return variables[i];
-          });
-          selectionMadeCallback(run+1, vars);
-        }
-      }
-    }
-
     var run = 0,
-        draw = 0;
+        draw = 0,
+        sentRun = 0;
+
+    function addNextSequenceRunToCODAP() {
+      let vars = sequence[sentRun].map(function(i) {
+        return variables[i];
+      });
+      addValuesToCODAP(sentRun+1, vars);
+      sentRun++;
+    }
 
     function selectNext() {
       if (!paused) {
-        select(run, draw, addValueToCODAP);
+        animateSelectNextVariable(sequence[run][draw], draw, addNextSequenceRunToCODAP);
 
         if (draw < sequence[run].length - 1) {
           draw++;
@@ -408,47 +327,137 @@ function run() {
       }
     }
 
-    function animationStep() {
-      if (!paused) {
-        for (var i = 0, ii = balls.length; i < ii; i++) {
-          if (!balls[i].beingSelected) {
-            let ball = balls[i],
-                matrix = ball.transform().localMatrix;
-            matrix.translate(ball.vx*speed, ball.vy*speed);
-            ball.attr({transform: matrix});
-
-            let bbox = ball.getBBox();
-            if (bbox.x < (containerX + border)) {
-              ball.vx = Math.abs(ball.vx);
-              matrix.translate(ball.vx * 2, ball.vy);
-              ball.attr({transform: matrix});
-            } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
-              ball.vx = -Math.abs(ball.vx);
-              matrix.translate(ball.vx * 2, ball.vy);
-              ball.attr({transform: matrix});
-            }
-            if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
-              ball.vy *= -1;
-              matrix.translate(ball.vx, ball.vy * 2);
-              ball.attr({transform: matrix});
-            }
-          }
-        }
-      }
+    if (device == "mixer") {
+      animateMixer();
     }
-
-    function animate() {
-      if (running) {
-        setTimeout(function() {
-          animationRequest = requestAnimationFrame(animate);
-        }, 30);
-      }
-      animationStep();
-    }
-    animate();
 
     selectNext();
   });
+}
+
+function animateSelectNextVariable(selection, draw, selectionMadeCallback) {
+  if (!running) return;
+
+  if (device == "mixer") {
+    animateMixerSelection(selection, draw, selectionMadeCallback)
+  }
+}
+
+function animateMixerSelection(selection, draw, selectionMadeCallback) {
+  var ball = balls[selection],
+      circle = ball.select("circle"),
+      variable = ball.select("text"),
+      trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
+
+  ball.beingSelected = true;
+  if (ball.getBBox().y > containerY + (containerHeight/2)) {
+    ball.vy = -Math.abs(ball.vy);
+  } else {
+    ball.vy = Math.abs(ball.vy);
+  }
+
+  ball.animate({transform: trans}, 300/speed, ballArrived);
+
+  function ballArrived() {
+    if (!running) return;
+    // move variable to slot
+    var letter = variable.clone();
+    samples.push(letter);
+    ball.before(letter);
+    letter.attr({transform: trans});
+    // trans = "t"+0+",-"+5
+    var origin = letter.getBBox();
+    var target = sampleSlotTargets[draw].getBBox();
+    matrix = letter.transform().localMatrix;
+    matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
+    // matrix.scale(2);
+    letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200/speed);
+
+    ball.beingSelected = false;
+
+    if (draw == sampleSize-1) {
+      // move this!
+      setTimeout(pushLettersOut, 300/speed);
+      setTimeout(returnSlots, 600/speed);
+      setTimeout(selectionMade, 600/speed);
+      function selectionMade() {
+        if (paused) {
+          setTimeout(selectionMade, 200);
+        } else {
+          selectionMadeCallback();
+        }
+      }
+
+      function pushLettersOut() {
+        if (!running) return;
+        if (paused) {
+          setTimeout(pushLettersOut, 200);
+          return;
+        }
+        for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+          let sampleSlot = sampleSlots[i],
+              letter = samples[i],
+              sampleMatrix = sampleSlot.transform().localMatrix,
+              letterMatrix = letter.transform().localMatrix;
+          sampleMatrix.translate(20, 0);
+          letterMatrix.translate(40, 0);
+          sampleSlot.animate({transform: sampleMatrix}, 200/speed);
+          letter.animate({transform: letterMatrix}, 200/speed, function() {
+            letter.remove();
+            samples = [];
+          });
+        }
+      }
+      function returnSlots() {
+        if (paused) {
+          setTimeout(returnSlots, 200);
+          return;
+        }
+        for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+          let sampleSlot = sampleSlots[i];
+          sampleSlot.animate({transform: "T0,0"}, 200/speed);
+        }
+      }
+    }
+  }
+}
+
+function animateMixer() {
+  if (running) {
+    setTimeout(function() {
+      animationRequest = requestAnimationFrame(animateMixer);
+    }, 30);
+  }
+  mixerAnimationStep();
+}
+
+function mixerAnimationStep() {
+  if (!paused) {
+    for (var i = 0, ii = balls.length; i < ii; i++) {
+      if (!balls[i].beingSelected) {
+        let ball = balls[i],
+            matrix = ball.transform().localMatrix;
+        matrix.translate(ball.vx*speed, ball.vy*speed);
+        ball.attr({transform: matrix});
+
+        let bbox = ball.getBBox();
+        if (bbox.x < (containerX + border)) {
+          ball.vx = Math.abs(ball.vx);
+          matrix.translate(ball.vx * 2, ball.vy);
+          ball.attr({transform: matrix});
+        } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
+          ball.vx = -Math.abs(ball.vx);
+          matrix.translate(ball.vx * 2, ball.vy);
+          ball.attr({transform: matrix});
+        }
+        if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
+          ball.vy *= -1;
+          matrix.translate(ball.vx, ball.vy * 2);
+          ball.attr({transform: matrix});
+        }
+      }
+    }
+  }
 }
 
 function endAnimation() {
@@ -478,6 +487,7 @@ function reset() {
   sampleSlotTargets = [];
   sampleSlots = [];
   samples = [];
+  running = false;
   paused = false;
   render();
 }
@@ -713,7 +723,7 @@ function startNewExperimentInCODAP() {
   });
 }
 
-function addValueToCODAP(run, vals) {
+function addValuesToCODAP(run, vals) {
   if (!codapConnected) {
     return;
   }
@@ -750,6 +760,6 @@ function sendSequenceDirectlyToCODAP(sequence) {
     let values = sequence[i].map(function(v) {
       return variables[v];
     })
-    addValueToCODAP(i+1, values)
+    addValuesToCODAP(i+1, values)
   }
 }
