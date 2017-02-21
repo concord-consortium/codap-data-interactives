@@ -1,12 +1,14 @@
 /*
  * Manages a questionnaire dialog. Sends the questionnaire results to CODAP.
  */
-/* global Survey*/
+/*global Survey, codapInterface, Promise, $*/
 
 /**
  * Helper to connect to CODAP.
  * @type {Object}
  */
+
+var inStartup = true;
 
 var kStartupSurvey = {
   "completedHtml": '<button class="restart-setup">Redo setup</button> ' +
@@ -76,7 +78,7 @@ var kSurvey2CompletionHTML = '<button class="survey-2-complete">Enter Another Ob
 var contextDef;
 
 var survey; // will contain a reference to the currently running survey
-var surveyDocs = {}; // will contain specifications for the two surveys we
+// var surveyDocs = {}; // will contain specifications for the two surveys we
                      // will be using.
 var myState = null; // current state of the DI form data so far
 
@@ -111,9 +113,9 @@ function getSurveyAttributeNames(surveys) {
     survey && survey.pages && survey.pages.forEach(function (page) {
       page.questions && page.questions.forEach(function (question) {
         attrs.push(question.name);
-      })
-    })
-  })
+      });
+    });
+  });
   return attrs;
 }
 
@@ -152,7 +154,7 @@ function prepareDataContext() {
         if (reply && !reply.success) {
           contextDef = inferContextFromSurveys(myState, myState.dataSetName );
           codapInterface.sendRequest({action:'create', resource: 'dataContext', values: contextDef});
-          return Promise.resolve([])
+          return Promise.resolve([]);
         } else {
           return Promise.resolve(findMissingAttributes([myState.survey1, myState.survey2], reply.values));
         }
@@ -176,30 +178,6 @@ function removeSurvey() {
    $('#surveyAttachPoint>*').remove();
 }
 
-$('body').on('click', '.survey-1-complete', function () {
-  removeSurvey();
-  addSurvey(myState.survey2, survey2CompletionHandler);
-});
-
-$('body').on('click', '.survey-2-complete', function () {
-  removeSurvey();
-  addSurvey(myState.survey2, survey2CompletionHandler);
-});
-
-$('body').on('click', '.survey-2-complete-restart', function () {
-  removeSurvey();
-  addSurvey(myState.survey1, survey1CompletionHandler);
-});
-
-$('body').on('click', '.start-up-complete', function () {
-  removeSurvey();
-  addSurvey(myState.survey1, survey1CompletionHandler);
-});
-
-$('body').on('click', '.restart-setup', function () {
-  removeSurvey();
-  addSurvey(kStartupSurvey, startupSurveyCompletionHandler);
-});
 
 
 function survey1CompletionHandler(formData) {
@@ -215,11 +193,35 @@ function survey2CompletionHandler(formData) {
         if (result.values && result.values.length > 0) {
           return codapInterface.sendRequest({action:'create',
             resource: 'dataContext[' + myState.dataSetName  + '].selectionList',
-            values: result.values})
+            values: result.values});
         }
       }
     });
   console.log("The results are:" + JSON.stringify(formData.data));
+}
+
+/**
+ * Utility to attempt convert DataURI to JSON.
+ *
+ * If conversion fails, will return null and log to console.
+ *
+ * @param dataURI
+ */
+function convertDataURIToJSON(dataURI) {
+  var dataUriRE = /^data:[^;]*;base64,/;
+  if (!dataURI) {
+    return;
+  }
+  if (dataUriRE.test(dataURI)) {
+    var x = atob(dataURI.replace(dataUriRE, ''));
+    try {
+      return JSON.parse(x);
+    } catch (ex) {
+      console.warn('Error parsing json file: ' + ex);
+    }
+  } else {
+    console.warn('Attempted to convert file that does not appear to be a json file.');
+  }
 }
 
 function startupSurveyCompletionHandler(data) {
@@ -230,7 +232,7 @@ function startupSurveyCompletionHandler(data) {
     myState = codapInterface.getInteractiveState();
   }
   var answers = data.data;
-  var surveyAttributes;
+  // var surveyAttributes;
 
   // Apply name of data set. If new, we have to find it in a different field.
   if (answers.dataSetName === 'other') {
@@ -260,6 +262,7 @@ function startupSurveyCompletionHandler(data) {
       }
 
     });
+  inStartup = false;
 }
 
 // function loadSurvey1() {
@@ -275,30 +278,6 @@ function startupSurveyCompletionHandler(data) {
 //       survey2CompletionHandler);
 // }
 
-/**
- * Utility to attempt convert DataURI to JSON.
- *
- * If conversion fails, will return null and log to console.
- *
- * @param dataURI
- */
-function convertDataURIToJSON(dataURI) {
-  dataUriRE = /^data:[^;]*;base64,/
-  if (!dataURI) {
-    return;
-  }
-  if (dataUriRE.test(dataURI)) {
-    var x = atob(dataURI.replace(dataUriRE, ''));
-    try {
-      return JSON.parse(x);
-    } catch (ex) {
-      console.warn('Error parsing json file: ' + ex);
-    }
-  } else {
-    console.warn('Attempted to convert file that does not appear to be a json file.');
-  }
-}
-
 // update data set names in survey based on list returned by CODAP
 function updateDataSetList(survey) {
   // locate the data set question in the survey
@@ -307,7 +286,7 @@ function updateDataSetList(survey) {
   return codapInterface.sendRequest({action: 'get', resource: 'dataContextList'})
     .then(function (data) {
         if (data) {
-          var choices = data.values.map(function (dataContext) {return dataContext.name;})
+          var choices = data.values.map(function (dataContext) {return dataContext.name;});
           dataSetQuestion.choices = choices;
         }
       }
@@ -329,7 +308,7 @@ codapInterface.init({name: "Questionnaire",
       myState = codapInterface.getInteractiveState();
       prepareDataContext().then(function () {
         addSurvey(myState.survey1, survey1CompletionHandler);
-      })
+      });
     } else {
       updateDataSetList(kStartupSurvey)
         .then(function () {
@@ -337,4 +316,39 @@ codapInterface.init({name: "Questionnaire",
         });
     }
   })
-  .catch( function (msg) { console.warn(msg)});
+  .catch( function (msg) { console.warn(msg);});
+
+codapInterface.on('documentChangeNotice', 'dataContextCountChanged', function () {
+  if (inStartup) {
+    updateDataSetList(kStartupSurvey).then(function () {
+      removeSurvey();
+      addSurvey(kStartupSurvey, startupSurveyCompletionHandler);
+    });
+  }
+});
+
+
+$('body').on('click', '.survey-1-complete', function () {
+  removeSurvey();
+  addSurvey(myState.survey2, survey2CompletionHandler);
+});
+
+$('body').on('click', '.survey-2-complete', function () {
+  removeSurvey();
+  addSurvey(myState.survey2, survey2CompletionHandler);
+});
+
+$('body').on('click', '.survey-2-complete-restart', function () {
+  removeSurvey();
+  addSurvey(myState.survey1, survey1CompletionHandler);
+});
+
+$('body').on('click', '.start-up-complete', function () {
+  removeSurvey();
+  addSurvey(myState.survey1, survey1CompletionHandler);
+});
+
+$('body').on('click', '.restart-setup', function () {
+  removeSurvey();
+  addSurvey(kStartupSurvey, startupSurveyCompletionHandler);
+});
