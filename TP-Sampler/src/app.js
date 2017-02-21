@@ -501,12 +501,39 @@ function createSpinner() {
     s.circle(x, y, radius).attr({
       fill: getSliceColor(0, 0)
     });
+    s.text(x, y, variables[0]).attr({
+      fontSize: radius/2,
+      textAnchor: "middle",
+      dy: ".25em"
+    });
   } else {
     let slicePercent = 1 / variables.length;
 
     for (let i = 0, ii = variables.length; i < ii; i++) {
-      s.path(getSpinnerSlicePath(i, slicePercent, x, y, radius)).attr({
+      let slice = getSpinnerSliceCoords(i, slicePercent, x, y, radius),
+          textSize = radius / (3 + (ii * 0.1));
+
+      // wedge color
+      s.path(slice.path).attr({
         fill: getSliceColor(i, ii),
+        stroke: "none"
+      });
+
+      // label
+      let labelClipping = s.path(slice.path),
+
+          label = s.text(slice.center.x, slice.center.y, variables[i]).attr({
+            fontSize: textSize,
+            textAnchor: "middle",
+            dy: ".25em",
+            clipPath: labelClipping
+          });
+
+      label.click(showVariableNameInput(i));
+
+      // white stroke on top of label
+      s.path(slice.path).attr({
+        fill: "none",
         stroke: "#fff",
         strokeWidth: i == ii - 1 ? 0.5 : 1
       });
@@ -514,19 +541,27 @@ function createSpinner() {
   }
 }
 
-function getSpinnerSlicePath(i, slicePercent, x, y, radius) {
-  let perc1 = (i * slicePercent) + 0.75,   // rotate 3/4 to start at top
-      perc2 = perc1 + slicePercent,
-      p1 = getCoordinatesForPercent(x, y, radius, perc1),
-      p2 = getCoordinatesForPercent(x, y, radius, perc2);
-  return "M "+p1+" A "+radius+" "+radius+" 0 0 1 "+p2+" L "+x+" "+y;
+function getSpinnerSliceCoords(i, slicePercent, x, y, radius) {
+  const perc1 = (i * slicePercent) + 0.75,   // rotate 3/4 to start at top
+        perc2 = perc1 + slicePercent,
+        p1 = getCoordinatesForPercent(x, y, radius, perc1),
+        p2 = getCoordinatesForPercent(x, y, radius, perc2),
+        centerP = getCoordinatesForPercent(x, y, radius, (perc1+perc2)/2);
+
+  return {
+    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+x+" "+y,
+    center: {
+      x: (x + centerP[0]) / 2,
+      y: (y + centerP[1]) / 2
+    }
+  };
 }
 
-function getCoordinatesForPercent(x, y, radius, percent) {
-  const x1 = x + (Math.cos(2 * Math.PI * percent) * radius);
-  const y1 = y + (Math.sin(2 * Math.PI * percent) * radius);
+function getCoordinatesForPercent(centX, centY, radius, percent) {
+  const x = centX + (Math.cos(2 * Math.PI * percent) * radius),
+        y = centY + (Math.sin(2 * Math.PI * percent) * radius);
 
-  return x1+" "+y1;
+  return [x, y];
 }
 
 function getSliceColor(i, slices) {
