@@ -60,6 +60,7 @@ var s = Snap("#model svg"),
 
     needle,
     needleTurns = 0,
+    wedges = [],
 
     editingVariable,
     variableNameInput = document.getElementById("variable-name-change");
@@ -352,6 +353,69 @@ function animateSelectNextVariable(selection, draw, selectionMadeCallback) {
   }
 }
 
+function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans, selectionMadeCallback) {
+  if (!running) return;
+  // move variable to slot
+  var letter = sourceLetter.clone();
+  samples.push(letter);
+  insertBeforeElement.before(letter);
+  if (initialTrans) {
+    letter.attr({transform: initialTrans});
+  }
+  // trans = "t"+0+",-"+5
+  var origin = letter.getBBox();
+  var target = sampleSlotTargets[slot].getBBox();
+  matrix = letter.transform().localMatrix;
+  matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
+  // matrix.scale(2);
+  letter.animate({transform: matrix, fontSize: sampleSlotTargets[slot].attr("r")*2}, 200/speed);
+
+  if (slot == sampleSize-1) {
+    // move this!
+    setTimeout(pushLettersOut, 300/speed);
+    setTimeout(returnSlots, 600/speed);
+    setTimeout(selectionMade, 600/speed);
+    function selectionMade() {
+      if (paused) {
+        setTimeout(selectionMade, 200);
+      } else {
+        selectionMadeCallback();
+      }
+    }
+
+    function pushLettersOut() {
+      if (!running) return;
+      if (paused) {
+        setTimeout(pushLettersOut, 200);
+        return;
+      }
+      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+        let sampleSlot = sampleSlots[i],
+            letter = samples[i],
+            sampleMatrix = sampleSlot.transform().localMatrix,
+            letterMatrix = letter.transform().localMatrix;
+        sampleMatrix.translate(20, 0);
+        letterMatrix.translate(40, 0);
+        sampleSlot.animate({transform: sampleMatrix}, 200/speed);
+        letter.animate({transform: letterMatrix}, 200/speed, function() {
+          letter.remove();
+          samples = [];
+        });
+      }
+    }
+    function returnSlots() {
+      if (paused) {
+        setTimeout(returnSlots, 200);
+        return;
+      }
+      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
+        let sampleSlot = sampleSlots[i];
+        sampleSlot.animate({transform: "T0,0"}, 200/speed);
+      }
+    }
+  }
+}
+
 function animateMixerSelection(selection, draw, selectionMadeCallback) {
   var ball = balls[selection],
       circle = ball.select("circle"),
@@ -365,70 +429,10 @@ function animateMixerSelection(selection, draw, selectionMadeCallback) {
     ball.vy = Math.abs(ball.vy);
   }
 
-  ball.animate({transform: trans}, 300/speed, ballArrived);
-
-  function ballArrived() {
-    if (!running) return;
-    // move variable to slot
-    var letter = variable.clone();
-    samples.push(letter);
-    ball.before(letter);
-    letter.attr({transform: trans});
-    // trans = "t"+0+",-"+5
-    var origin = letter.getBBox();
-    var target = sampleSlotTargets[draw].getBBox();
-    matrix = letter.transform().localMatrix;
-    matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-    // matrix.scale(2);
-    letter.animate({transform: matrix, fontSize: sampleSlotTargets[draw].attr("r")*2}, 200/speed);
-
+  ball.animate({transform: trans}, 300/speed, function() {
+    moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
     ball.beingSelected = false;
-
-    if (draw == sampleSize-1) {
-      // move this!
-      setTimeout(pushLettersOut, 300/speed);
-      setTimeout(returnSlots, 600/speed);
-      setTimeout(selectionMade, 600/speed);
-      function selectionMade() {
-        if (paused) {
-          setTimeout(selectionMade, 200);
-        } else {
-          selectionMadeCallback();
-        }
-      }
-
-      function pushLettersOut() {
-        if (!running) return;
-        if (paused) {
-          setTimeout(pushLettersOut, 200);
-          return;
-        }
-        for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-          let sampleSlot = sampleSlots[i],
-              letter = samples[i],
-              sampleMatrix = sampleSlot.transform().localMatrix,
-              letterMatrix = letter.transform().localMatrix;
-          sampleMatrix.translate(20, 0);
-          letterMatrix.translate(40, 0);
-          sampleSlot.animate({transform: sampleMatrix}, 200/speed);
-          letter.animate({transform: letterMatrix}, 200/speed, function() {
-            letter.remove();
-            samples = [];
-          });
-        }
-      }
-      function returnSlots() {
-        if (paused) {
-          setTimeout(returnSlots, 200);
-          return;
-        }
-        for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-          let sampleSlot = sampleSlots[i];
-          sampleSlot.animate({transform: "T0,0"}, 200/speed);
-        }
-      }
-    }
-  }
+  });
 }
 
 function animateMixer() {
@@ -484,6 +488,9 @@ function endAnimation() {
 function pauseSnapAnimations(doPause) {
   func = doPause ? "pause" : "resume";
   let animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
+  if (needle) {
+    animatedObjects.push(needle);
+  }
   for (let i = 0, ii = animatedObjects.length; i < ii; i++) {
     animatedObjects[i][func]();
   }
@@ -495,6 +502,7 @@ function reset() {
   balls = [];
   needle = null;
   needleTurns = 0;
+  wedges = [];
   sampleSlotTargets = [];
   sampleSlots = [];
   samples = [];
@@ -504,15 +512,18 @@ function reset() {
 }
 
 function createSpinner() {
+  wedges = [];
   if (variables.length === 1) {
     s.circle(spinnerX, spinnerY, spinnerRadius).attr({
       fill: getSliceColor(0, 0)
     });
-    s.text(spinnerX, spinnerY, variables[0]).attr({
+    let label = s.text(spinnerX, spinnerY, variables[0]).attr({
       fontSize: spinnerRadius/2,
       textAnchor: "middle",
       dy: ".25em"
     });
+    wedges.push(label);
+    label.click(showVariableNameInput(0));
   } else {
     let slicePercent = 1 / variables.length;
 
@@ -536,6 +547,7 @@ function createSpinner() {
             clipPath: labelClipping
           });
 
+      wedges.push(label);
       label.click(showVariableNameInput(i));
 
       // white stroke on top of label
@@ -608,19 +620,9 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
       targetPerc = (selection + wedgePerc) / variables.length,
       targetAngle = (needleTurns * 360) + (360 * targetPerc);
 
-  needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 800, mina.easeinout);
-
-  if (draw == sampleSize-1) {
-    // move this!
-    setTimeout(selectionMade, 600/speed);
-    function selectionMade() {
-      if (paused) {
-        setTimeout(selectionMade, 200);
-      } else {
-        selectionMadeCallback();
-      }
-    }
-  }
+  needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
+    moveLetterToSlot(draw, wedges[selection], wedges[selection], null, selectionMadeCallback);
+  });
 }
 
 function switchState() {
