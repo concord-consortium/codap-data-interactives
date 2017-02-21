@@ -708,7 +708,8 @@ codapInterface.on('get', 'interactiveState', function () {
     variables: variables,
     draw: sampleSize,
     repeat: numRuns,
-    speed: speed
+    speed: speed,
+    device: device
   }};
 });
 
@@ -725,6 +726,7 @@ codapInterface.init({
         sampleSize = state.draw || sampleSize;
         numRuns = state.repeat || numRuns;
         speed = state.speed || speed;
+        device = state.device || device;
 
         render();
       }
