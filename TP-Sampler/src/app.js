@@ -161,6 +161,7 @@ function addMixerVariables() {
         x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
         y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
 
+    var labelClipping = s.circle(x, y, radius);
     // render ball to the screen
     var ball = s.group(
       s.circle(x, y, radius).attr({
@@ -168,10 +169,12 @@ function addMixerVariables() {
           stroke: "#000",
           strokeWidth: 1
       }),
-      s.text(x, y, getShortVariableName(i)).attr({
+      s.text(x, y, variables[i]).attr({
         fontSize: radius,
         textAnchor: "middle",
-        dy: ".25em"
+        dy: ".25em",
+        dx: getTextShift(variables[i], 4),
+        clipPath: labelClipping
       })
     );
     balls.push(ball);
@@ -228,15 +231,6 @@ function setVariableName() {
   variables[editingVariable] = variableNameInput.value;
   variableNameInput.style.display = "none";
   render();
-}
-
-function getShortVariableName(i) {
-  var name = variables[i];
-  if (name.length < 4) {
-    return name;
-  } else {
-    return name.substr(0,2) + "…";
-  }
 }
 
 /**
@@ -357,21 +351,24 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   if (!running) return;
   // move variable to slot
   var letter = sourceLetter.clone();
+  letter.attr({
+    textAnchor: "start",
+    clipPath: "none"
+  });
   samples.push(letter);
   insertBeforeElement.before(letter);
   if (initialTrans) {
     letter.attr({transform: initialTrans});
   }
-  // trans = "t"+0+",-"+5
+
   var origin = letter.getBBox();
   var target = sampleSlotTargets[slot].getBBox();
   matrix = letter.transform().localMatrix;
-  matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-  // matrix.scale(2);
+  matrix.translate((target.x-origin.x), (target.cy-origin.cy));
+
   letter.animate({transform: matrix, fontSize: sampleSlotTargets[slot].attr("r")*2}, 200/speed);
 
   if (slot == sampleSize-1) {
-    // move this!
     setTimeout(pushLettersOut, 300/speed);
     setTimeout(returnSlots, 600/speed);
     setTimeout(selectionMade, 600/speed);
@@ -511,17 +508,26 @@ function reset() {
   render();
 }
 
+function getTextShift(text, maxLetters) {
+  const lettersOver = Math.max(0, text.length - maxLetters);
+  return (0.25 * lettersOver) + "em";
+}
+
 function createSpinner() {
   wedges = [];
   if (variables.length === 1) {
     s.circle(spinnerX, spinnerY, spinnerRadius).attr({
       fill: getSliceColor(0, 0)
     });
-    let label = s.text(spinnerX, spinnerY, variables[0]).attr({
-      fontSize: spinnerRadius/2,
-      textAnchor: "middle",
-      dy: ".25em"
-    });
+    let text = variables[0],
+        labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
+        label = s.text(spinnerX, spinnerY, text).attr({
+          fontSize: spinnerRadius/2,
+          textAnchor: "middle",
+          dy: ".25em",
+          dx: getTextShift(text, 9),
+          clipPath: labelClipping
+        });
     wedges.push(label);
     label.click(showVariableNameInput(0));
   } else {
@@ -538,12 +544,13 @@ function createSpinner() {
       });
 
       // label
-      let labelClipping = s.path(slice.path),
-
-          label = s.text(slice.center.x, slice.center.y, variables[i]).attr({
+      let text = variables[i],
+          labelClipping = s.path(slice.path),
+          label = s.text(slice.center.x, slice.center.y, text).attr({
             fontSize: textSize,
             textAnchor: "middle",
             dy: ".25em",
+            dx: getTextShift(text, Math.max(1, 8 - (variables.length - 2))),
             clipPath: labelClipping
           });
 
