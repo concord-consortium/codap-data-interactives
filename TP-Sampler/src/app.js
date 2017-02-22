@@ -711,7 +711,7 @@ function enableButtons() {
 }
 function setRunButton(showRun) {
   if (showRun) {
-    document.getElementById("run").innerHTML = "RUN";
+    document.getElementById("run").innerHTML = "START";
   } else {
     document.getElementById("run").innerHTML = "PAUSE";
   }
