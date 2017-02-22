@@ -165,22 +165,36 @@ function addMixerVariables() {
 
     var labelClipping = s.circle(x, y, radius);
     // render ball to the screen
-    var ball = s.group(
-      s.circle(x, y, radius).attr({
+    var circle = s.circle(x, y, radius).attr({
           fill: "#ddd",
           stroke: "#000",
           strokeWidth: 1
-      }),
-      s.text(x, y, variables[i]).attr({
-        fontSize: radius,
-        textAnchor: "middle",
-        dy: ".25em",
-        dx: getTextShift(variables[i], 4),
-        clipPath: labelClipping
-      })
-    );
+        }),
+        label = s.text(x, y, variables[i]).attr({
+          fontSize: radius,
+          textAnchor: "middle",
+          dy: ".25em",
+          dx: getTextShift(variables[i], 4),
+          clipPath: labelClipping
+        })
+        ball = s.group(
+          circle,
+          label
+        );
     balls.push(ball);
     ball.click(showVariableNameInput(i));
+    ball.hover((function(circ, lab) {
+      return function() {
+        if (running) return;
+        circ.attr({ fill: "#f5fcff" });
+        lab.attr({ fontSize: radius + 2, dy: ".26em", });
+      }
+    })(circle, label), (function(circ, lab) {
+      return function() {
+        circ.attr({ fill: "#f0f0f0" });
+        lab.attr({ fontSize: radius, dy: ".25em", });
+      }
+    })(circle, label));
   }
 
   // setup animation
@@ -219,13 +233,21 @@ function removeVariable() {
 
 function showVariableNameInput(i) {
   return function() {
-    var loc = this.node.getClientRects()[0];
+    if (running) return;
+
+    var loc = this.node.getClientRects()[0],
+        text = variables[i],
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
     variableNameInput.style.display = "block";
     variableNameInput.style.top = (loc.top + loc.height/2) + "px";
-    variableNameInput.style.left = (loc.left + loc.width/2) + "px";
-    variableNameInput.value = variables[i];
+    variableNameInput.style.left = (loc.left) + "px";
+    variableNameInput.style.width = width;
+    variableNameInput.value = text;
     variableNameInput.focus();
     editingVariable = i;
+
+    variables[editingVariable] = "";
+    render();
   }
 }
 
@@ -524,13 +546,13 @@ function reset() {
 
 function getTextShift(text, maxLetters) {
   const lettersOver = Math.max(0, text.length - maxLetters);
-  return (0.25 * lettersOver) + "em";
+  return (0.2 * lettersOver) + "em";
 }
 
 function createSpinner() {
   wedges = [];
   if (variables.length === 1) {
-    s.circle(spinnerX, spinnerY, spinnerRadius).attr({
+    let circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
       fill: getSliceColor(0, 0)
     });
     let text = variables[0],
@@ -544,6 +566,13 @@ function createSpinner() {
         });
     wedges.push(label);
     label.click(showVariableNameInput(0));
+    label.hover(function() {
+      this.attr({ fontSize: (spinnerRadius/2) + 2, dy: ".26em", });
+      circle.attr({ fill: getSliceColor(0, 0, true) });
+    }, function() {
+      this.attr({ fontSize: spinnerRadius/2, dy: ".25em", });
+      circle.attr({ fill: getSliceColor(0, 0) });
+    });
   } else {
     let slicePercent = 1 / variables.length;
 
@@ -552,7 +581,7 @@ function createSpinner() {
           textSize = spinnerRadius / (3 + (ii * 0.1));
 
       // wedge color
-      s.path(slice.path).attr({
+      let wedge = s.path(slice.path).attr({
         fill: getSliceColor(i, ii),
         stroke: "none"
       });
@@ -570,6 +599,18 @@ function createSpinner() {
 
       wedges.push(label);
       label.click(showVariableNameInput(i));
+      label.hover((function(wedg, _i, _ii) {
+        return function() {
+          if (running) return;
+          this.attr({ fontSize: textSize + 2, dy: ".25em", });
+          wedg.attr({ fill: getSliceColor(_i, _ii, true) });
+        }
+      })(wedge, i, ii), (function(wedg, _i, _ii) {
+        return function() {
+          this.attr({ fontSize: textSize, dy: ".25em", });
+          wedg.attr({ fill: getSliceColor(_i, _ii) });
+        }
+      })(wedge, i, ii));
 
       // white stroke on top of label
       s.path(slice.path).attr({
@@ -605,12 +646,13 @@ function getCoordinatesForPercent(radius, percent) {
   return [x, y];
 }
 
-function getSliceColor(i, slices) {
+function getSliceColor(i, slices, lighten) {
   let baseColorHue = 173,
       hueDiff = Math.min(20, 360/slices),
       hue = (baseColorHue + (hueDiff * i)) % 360,
-      huePerc = (hue / 360) * 100;
-  return "hsl("+huePerc+"%, 71%, 61%)"
+      huePerc = (hue / 360) * 100,
+      lightPerc = 61 + (lighten ? 10 : 0);
+  return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)"
 }
 
 function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
