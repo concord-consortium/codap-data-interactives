@@ -87,7 +87,7 @@ function createSampleSlots() {
       stroke = border / 2,
       padding = 2,
       maxHeight = 20,
-      minHeight = (containerHeight/sampleSize)
+      minHeight = Math.max(10, (containerHeight/sampleSize)),
       slotHeight = Math.min(minHeight, maxHeight),
       slotSize = slotHeight - padding - (stroke*2),
       maxSlotDepth = 4,
@@ -96,7 +96,7 @@ function createSampleSlots() {
       stroke = (slotHeight < maxHeight) ? stroke / 2 : stroke,
       totalHeight = slotHeight * sampleSize,
       mx = x + (maxSlotDepth - slotDepth),
-      y = centerY - (totalHeight / 2);
+      y = Math.max(containerY, centerY - (totalHeight / 2));
 
   sampleSlotTargets = [];
   sampleSlots = [];
@@ -105,7 +105,7 @@ function createSampleSlots() {
     var my = y + padding + (slotHeight * i),
         pathStr = "m"+mx+","+my+" h -"+slotDepth+" v "+slotSize+" h "+slotDepth,
         r = slotSize/2,
-        letterCenterX = x + r,
+        letterCenterX = mx + r,
         letterCenterY = my + (slotSize / 2);
 
     // first we make circles to mark the spot for letter movement
@@ -366,7 +366,9 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   matrix = letter.transform().localMatrix;
   matrix.translate((target.x-origin.x), (target.cy-origin.cy));
 
-  letter.animate({transform: matrix, fontSize: sampleSlotTargets[slot].attr("r")*2}, 200/speed);
+  let size = sampleSlotTargets[slot].attr("r")*2;
+
+  letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
   if (slot == sampleSize-1) {
     setTimeout(pushLettersOut, 300/speed);
