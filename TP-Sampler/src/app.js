@@ -45,6 +45,8 @@ var s = Snap("#model svg"),
 
     experimentNumber = 0,
     runNumber = 0,
+    sentRun = 0,
+    sequence = [],
 
     numRuns = 5,
     sampleSize = 2,
@@ -288,9 +290,19 @@ function stopButtonPressed() {
   endAnimation();
 }
 
+function addNextSequenceRunToCODAP() {
+  if (!sequence[sentRun]) return;
+
+  let vars = sequence[sentRun].map(function(i) {
+    return variables[i];
+  });
+  addValuesToCODAP(sentRun+1, vars);
+  sentRun++;
+}
+
 function run() {
   startNewExperimentInCODAP().then(function() {
-    var sequence = createRandomSequence(sampleSize, numRuns);
+    sequence = createRandomSequence(sampleSize, numRuns);
     if (speed === 3) {
       sendSequenceDirectlyToCODAP(sequence);
       reset();
@@ -298,16 +310,8 @@ function run() {
     }
 
     var run = 0,
-        draw = 0,
-        sentRun = 0;
-
-    function addNextSequenceRunToCODAP() {
-      let vars = sequence[sentRun].map(function(i) {
-        return variables[i];
-      });
-      addValuesToCODAP(sentRun+1, vars);
-      sentRun++;
-    }
+        draw = 0;
+    sentRun = 0;
 
     function selectNext() {
       if (!paused) {
@@ -357,6 +361,7 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   });
   samples.push(letter);
   insertBeforeElement.before(letter);
+
   if (initialTrans) {
     letter.attr({transform: initialTrans});
   }
@@ -469,6 +474,13 @@ function mixerAnimationStep() {
         }
       }
     }
+  }
+}
+
+function fastforwardToEnd() {
+  endAnimation();
+  while (sequence[sentRun]) {
+    addNextSequenceRunToCODAP();
   }
 }
 
@@ -662,7 +674,9 @@ document.getElementById("repeat").addEventListener('input', function (evt) {
 document.getElementById("speed").addEventListener('input', function (evt) {
     speed = (this.value * 1) || 0.5;
     document.getElementById("speed-text").innerHTML = speedText[this.value * 1];
-    render();
+    if (running && !paused && speed == 3) {
+      fastforwardToEnd();
+    }
 });
 variableNameInput.onblur = setVariableName;
 variableNameInput.onkeypress = function(e) {
@@ -687,14 +701,12 @@ function disableButtons() {
   setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("speed").setAttribute("disabled", "disabled");
   removeClass(document.getElementById("stop"), "disabled");
 }
 function enableButtons() {
   setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("speed").removeAttribute("disabled");
   addClass(document.getElementById("stop"), "disabled");
 }
 function setRunButton(showRun) {
