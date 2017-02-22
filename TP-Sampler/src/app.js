@@ -804,6 +804,7 @@ codapInterface.init({
 );
 
 function startNewExperimentInCODAP() {
+  openTable();
   return new Promise(function(resolve, reject) {
     if (!codapConnected) {
       console.log('Not in CODAP')
@@ -873,4 +874,14 @@ function sendSequenceDirectlyToCODAP(sequence) {
     })
     addValuesToCODAP(i+1, values)
   }
+}
+
+function openTable() {
+  codapInterface.sendRequest({
+    action: 'create',
+    resource: 'component',
+    values: {
+      type: 'caseTable'
+    }
+  });
 }
