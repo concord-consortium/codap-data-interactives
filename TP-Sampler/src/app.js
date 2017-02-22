@@ -688,10 +688,11 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
   });
 }
 
-function switchState() {
-  this.blur();
-  let selectedDevice = this.id;
+function switchState(evt, state) {
+  if (this.blur) this.blur();
+  let selectedDevice = state || this.id;
   if (selectedDevice !== device) {
+    reset();
     removeClass(document.getElementById(device), "active");
     addClass(document.getElementById(selectedDevice), "active");
     device = selectedDevice;
@@ -789,7 +790,9 @@ codapInterface.init({
         sampleSize = state.draw || sampleSize;
         numRuns = state.repeat || numRuns;
         speed = state.speed || speed;
-        device = state.device || device;
+        if (state.device) {
+          switchState(null, state.device)
+        }
 
         render();
       }
