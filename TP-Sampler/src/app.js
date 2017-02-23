@@ -63,8 +63,9 @@ var s = Snap("#model svg"),
     needle,
     needleTurns = 0,
     wedges = [],
+    uniqueVariables,
 
-    editingVariable,
+    editingVariable = false,    // then the id of the var
     variableNameInput = document.getElementById("variable-name-change");
 
 function render() {
@@ -246,15 +247,37 @@ function showVariableNameInput(i) {
     variableNameInput.focus();
     editingVariable = i;
 
-    variables[editingVariable] = "";
+    if (device == "mixer") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] == v) {
+          variables[j] = "";
+          editingVariable.push(j);
+        }
+      }
+    }
     render();
   }
 }
 
 function setVariableName() {
-  variables[editingVariable] = variableNameInput.value;
-  variableNameInput.style.display = "none";
-  render();
+  if (editingVariable !== false) {
+    var newName = variableNameInput.value;
+    if (!newName) newName = "_";
+    if (Array.isArray(editingVariable)) {
+      for (var i = 0, ii = editingVariable.length; i < ii; i++) {
+        variables[editingVariable[i]] = newName;
+      }
+    } else {
+      variables[editingVariable] = newName;
+    }
+    variableNameInput.style.display = "none";
+    render();
+    editingVariable = false;
+  }
 }
 
 /**
@@ -551,32 +574,64 @@ function getTextShift(text, maxLetters) {
   return (0.2 * lettersOver) + "em";
 }
 
+// permanently sorts variables so identical ones are next to each other
+function sortVariablesForSpinner() {
+  var sortedVariables = [];
+  uniqueVariables = variables.length;
+  for (var i = 0, ii = variables.length; i < ii; i++) {
+    var v = variables[i],
+        inserted = false,
+        j = -1;
+    while (!inserted && ++j < sortedVariables.length) {
+      if (sortedVariables[j] == v) {
+        sortedVariables.splice(j, 0, v);
+        inserted = true;
+        uniqueVariables--;
+      }
+    }
+    if (!inserted) {
+      sortedVariables.push(v);
+    }
+  }
+  variables = sortedVariables;
+}
+
 function createSpinner() {
   wedges = [];
-  if (variables.length === 1) {
+  sortVariablesForSpinner();
+  if (uniqueVariables === 1) {
     var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
           fill: getSliceColor(0, 0)
         }),
         labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
-        label = createSpinnerLabel(0, spinnerX, spinnerY,
+        label = createSpinnerLabel(0, 0, spinnerX, spinnerY,
                   spinnerRadius/2, labelClipping, 9, circle);
     wedges.push(label);
   } else {
-    var slicePercent = 1 / variables.length;
+    var slicePercent = 1 / variables.length,
+        lastVariable = "",
+        mergeCount = 0,
+        offsetDueToMerge = 0;
 
     for (var i = 0, ii = variables.length; i < ii; i++) {
-      var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius),
+      var merge = variables[i] == lastVariable,
+          mergeCount = merge ? mergeCount + 1 : 0,
+          slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount),
           textSize = spinnerRadius / (3 + (ii * 0.1));
+
+      lastVariable = variables[i];
+      if (merge) offsetDueToMerge++;
+
 
       // wedge color
       var wedge = s.path(slice.path).attr({
-        fill: getSliceColor(i, ii),
+        fill: getSliceColor((i - offsetDueToMerge), uniqueVariables),
         stroke: "none"
       });
 
       // label
       var labelClipping = s.path(slice.path),
-          label = createSpinnerLabel(i, slice.center.x, slice.center.y, textSize,
+          label = createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
                     labelClipping, Math.max(1, 10 - variables.length), wedge);
       wedges.push(label);
 
@@ -590,7 +645,7 @@ function createSpinner() {
   }
 }
 
-function createSpinnerLabel(variable, x, y, fontSize, clipping, maxLength, parent) {
+function createSpinnerLabel(variable, uniqueVariable, x, y, fontSize, clipping, maxLength, parent) {
   var text = variables[variable],
       label = s.text(x, y, text).attr({
         fontSize: fontSize,
@@ -603,23 +658,25 @@ function createSpinnerLabel(variable, x, y, fontSize, clipping, maxLength, paren
   label.click(showVariableNameInput(variable));
   label.hover(function() {
     this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-    parent.attr({ fill: getSliceColor(variable, variables.length, true) });
+    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables, true) });
   }, function() {
     this.attr({ fontSize: fontSize, dy: ".25em", });
-    parent.attr({ fill: getSliceColor(variable, variables.length) });
+    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables) });
   });
   return label;
 }
 
-function getSpinnerSliceCoords(i, slicePercent, radius) {
-  var perc1 = i * slicePercent,
-      perc2 = perc1 + slicePercent,
+function getSpinnerSliceCoords(i, slicePercent, radius, mergeCount) {
+  var startIndex = i - mergeCount,
+      perc1 = startIndex * slicePercent,
+      perc2 = (i + 1) * slicePercent,
       p1 = getCoordinatesForPercent(radius, perc1),
       p2 = getCoordinatesForPercent(radius, perc2),
-      centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2);
+      centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2),
+      largeArc = perc2 - perc1 > 0.5 ? 1 : 0;
 
   return {
-    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
+    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 "+largeArc+" 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
     center: {
       x: (spinnerX + centerP[0]) / 2,
       y: (spinnerY + centerP[1]) / 2
@@ -673,7 +730,8 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
       targetAngle = (needleTurns * 360) + (360 * targetPerc);
 
   needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
-    moveLetterToSlot(draw, wedges[selection], wedges[selection], null, selectionMadeCallback);
+    var letter = wedges[selection] || wedges[0];
+    moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback);
   });
 }
 
