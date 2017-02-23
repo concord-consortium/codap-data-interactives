@@ -1,15 +1,15 @@
 Snap.plugin(function (Snap, Element) {
 
   Element.prototype.pause = function () {
-    let anims = this.inAnim();
-    for (let i = 0; i < anims.length; i ++) {
+    var anims = this.inAnim();
+    for (var i = 0; i < anims.length; i ++) {
       anims[i].mina.pause();
     }
   };
 
   Element.prototype.resume = function () {
-    let anims = this.inAnim();
-    for (let i = 0; i < anims.length; i ++) {
+    var anims = this.inAnim();
+    for (var i = 0; i < anims.length; i ++) {
       this.animate({ dummy: 0 } ,1);
       anims[i].mina.resume();
     }
@@ -45,6 +45,8 @@ var s = Snap("#model svg"),
 
     experimentNumber = 0,
     runNumber = 0,
+    sentRun = 0,
+    sequence = [],
 
     numRuns = 5,
     sampleSize = 2,
@@ -61,15 +63,16 @@ var s = Snap("#model svg"),
     needle,
     needleTurns = 0,
     wedges = [],
+    uniqueVariables,
 
-    editingVariable,
+    editingVariable = false,    // then the id of the var
     variableNameInput = document.getElementById("variable-name-change");
 
 function render() {
   s.clear();
   document.getElementById("draws").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
-  let sliderSpeed = speed > 0.5 ? speed : 0;
+  var sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
   document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
 
@@ -87,7 +90,7 @@ function createSampleSlots() {
       stroke = border / 2,
       padding = 2,
       maxHeight = 20,
-      minHeight = (containerHeight/sampleSize)
+      minHeight = Math.max(10, (containerHeight/sampleSize)),
       slotHeight = Math.min(minHeight, maxHeight),
       slotSize = slotHeight - padding - (stroke*2),
       maxSlotDepth = 4,
@@ -96,7 +99,7 @@ function createSampleSlots() {
       stroke = (slotHeight < maxHeight) ? stroke / 2 : stroke,
       totalHeight = slotHeight * sampleSize,
       mx = x + (maxSlotDepth - slotDepth),
-      y = centerY - (totalHeight / 2);
+      y = Math.max(containerY, centerY - (totalHeight / 2));
 
   sampleSlotTargets = [];
   sampleSlots = [];
@@ -105,7 +108,7 @@ function createSampleSlots() {
     var my = y + padding + (slotHeight * i),
         pathStr = "m"+mx+","+my+" h -"+slotDepth+" v "+slotSize+" h "+slotDepth,
         r = slotSize/2,
-        letterCenterX = x + r,
+        letterCenterX = mx + r,
         letterCenterY = my + (slotSize / 2);
 
     // first we make circles to mark the spot for letter movement
@@ -161,26 +164,43 @@ function addMixerVariables() {
         x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
         y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
 
+    var labelClipping = s.circle(x, y, radius);
     // render ball to the screen
-    var ball = s.group(
-      s.circle(x, y, radius).attr({
+    var circle = s.circle(x, y, radius).attr({
           fill: "#ddd",
           stroke: "#000",
           strokeWidth: 1
-      }),
-      s.text(x, y, getShortVariableName(i)).attr({
-        fontSize: radius,
-        textAnchor: "middle",
-        dy: ".25em"
-      })
-    );
+        }),
+        label = s.text(x, y, variables[i]).attr({
+          fontSize: radius,
+          textAnchor: "middle",
+          dy: ".25em",
+          dx: getTextShift(variables[i], 4),
+          clipPath: labelClipping
+        })
+        ball = s.group(
+          circle,
+          label
+        );
     balls.push(ball);
     ball.click(showVariableNameInput(i));
+    ball.hover((function(circ, lab) {
+      return function() {
+        if (running) return;
+        circ.attr({ fill: "#f5fcff" });
+        lab.attr({ fontSize: radius + 2, dy: ".26em", });
+      }
+    })(circle, label), (function(circ, lab) {
+      return function() {
+        circ.attr({ fill: "#f0f0f0" });
+        lab.attr({ fontSize: radius, dy: ".25em", });
+      }
+    })(circle, label));
   }
 
   // setup animation
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    let speed = 5 + (Math.random() * 7),
+    var speed = 5 + (Math.random() * 7),
         direction = Math.PI + (Math.random() * Math.PI);
     balls[i].vx = Math.cos(direction) * speed;
     balls[i].vy = Math.sin(direction) * speed;
@@ -214,28 +234,49 @@ function removeVariable() {
 
 function showVariableNameInput(i) {
   return function() {
-    var loc = this.node.getClientRects()[0];
+    if (running) return;
+
+    var loc = this.node.getClientRects()[0],
+        text = variables[i],
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
     variableNameInput.style.display = "block";
     variableNameInput.style.top = (loc.top + loc.height/2) + "px";
-    variableNameInput.style.left = (loc.left + loc.width/2) + "px";
-    variableNameInput.value = variables[i];
+    variableNameInput.style.left = (loc.left) + "px";
+    variableNameInput.style.width = width;
+    variableNameInput.value = text;
     variableNameInput.focus();
     editingVariable = i;
+
+    if (device == "mixer") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] == v) {
+          variables[j] = "";
+          editingVariable.push(j);
+        }
+      }
+    }
+    render();
   }
 }
 
 function setVariableName() {
-  variables[editingVariable] = variableNameInput.value;
-  variableNameInput.style.display = "none";
-  render();
-}
-
-function getShortVariableName(i) {
-  var name = variables[i];
-  if (name.length < 4) {
-    return name;
-  } else {
-    return name.substr(0,2) + "…";
+  if (editingVariable !== false) {
+    var newName = variableNameInput.value;
+    if (!newName) newName = "_";
+    if (Array.isArray(editingVariable)) {
+      for (var i = 0, ii = editingVariable.length; i < ii; i++) {
+        variables[editingVariable[i]] = newName;
+      }
+    } else {
+      variables[editingVariable] = newName;
+    }
+    variableNameInput.style.display = "none";
+    render();
+    editingVariable = false;
   }
 }
 
@@ -285,7 +326,7 @@ function stopButtonPressed() {
   this.blur();
   running = false;
   paused = false;
-  for (let i = 0, ii = samples.length; i < ii; i++) {
+  for (var i = 0, ii = samples.length; i < ii; i++) {
     if (samples[i].remove) {
       samples[i].remove();
     }
@@ -294,9 +335,19 @@ function stopButtonPressed() {
   endAnimation();
 }
 
+function addNextSequenceRunToCODAP() {
+  if (!sequence[sentRun]) return;
+
+  var vars = sequence[sentRun].map(function(i) {
+    return variables[i];
+  });
+  addValuesToCODAP(sentRun+1, vars);
+  sentRun++;
+}
+
 function run() {
   startNewExperimentInCODAP().then(function() {
-    var sequence = createRandomSequence(sampleSize, numRuns);
+    sequence = createRandomSequence(sampleSize, numRuns);
     if (speed === 3) {
       sendSequenceDirectlyToCODAP(sequence);
       reset();
@@ -304,16 +355,8 @@ function run() {
     }
 
     var run = 0,
-        draw = 0,
-        sentRun = 0;
-
-    function addNextSequenceRunToCODAP() {
-      let vars = sequence[sentRun].map(function(i) {
-        return variables[i];
-      });
-      addValuesToCODAP(sentRun+1, vars);
-      sentRun++;
-    }
+        draw = 0;
+    sentRun = 0;
 
     function selectNext() {
       if (!paused) {
@@ -357,21 +400,27 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   if (!running) return;
   // move variable to slot
   var letter = sourceLetter.clone();
+  letter.attr({
+    textAnchor: "start",
+    clipPath: "none"
+  });
   samples.push(letter);
   insertBeforeElement.before(letter);
+
   if (initialTrans) {
     letter.attr({transform: initialTrans});
   }
-  // trans = "t"+0+",-"+5
+
   var origin = letter.getBBox();
   var target = sampleSlotTargets[slot].getBBox();
   matrix = letter.transform().localMatrix;
-  matrix.translate((target.cx-origin.cx), (target.cy-origin.cy));
-  // matrix.scale(2);
-  letter.animate({transform: matrix, fontSize: sampleSlotTargets[slot].attr("r")*2}, 200/speed);
+  matrix.translate((target.x-origin.x), (target.cy-origin.cy));
+
+  var size = sampleSlotTargets[slot].attr("r")*2;
+
+  letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
   if (slot == sampleSize-1) {
-    // move this!
     setTimeout(pushLettersOut, 300/speed);
     setTimeout(returnSlots, 600/speed);
     setTimeout(selectionMade, 600/speed);
@@ -389,18 +438,20 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
         setTimeout(pushLettersOut, 200);
         return;
       }
-      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-        let sampleSlot = sampleSlots[i],
+      for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+        var sampleSlot = sampleSlots[i],
             letter = samples[i],
             sampleMatrix = sampleSlot.transform().localMatrix,
             letterMatrix = letter.transform().localMatrix;
         sampleMatrix.translate(20, 0);
         letterMatrix.translate(40, 0);
         sampleSlot.animate({transform: sampleMatrix}, 200/speed);
-        letter.animate({transform: letterMatrix}, 200/speed, function() {
-          letter.remove();
-          samples = [];
-        });
+        letter.animate({transform: letterMatrix}, 200/speed, (function(lett) {
+          return function() {
+            lett.remove();
+            samples = [];
+          }
+        })(letter));
       }
     }
     function returnSlots() {
@@ -408,8 +459,8 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
         setTimeout(returnSlots, 200);
         return;
       }
-      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-        let sampleSlot = sampleSlots[i];
+      for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+        var sampleSlot = sampleSlots[i];
         sampleSlot.animate({transform: "T0,0"}, 200/speed);
       }
     }
@@ -448,12 +499,12 @@ function mixerAnimationStep() {
   if (!paused) {
     for (var i = 0, ii = balls.length; i < ii; i++) {
       if (!balls[i].beingSelected) {
-        let ball = balls[i],
+        var ball = balls[i],
             matrix = ball.transform().localMatrix;
         matrix.translate(ball.vx*speed, ball.vy*speed);
         ball.attr({transform: matrix});
 
-        let bbox = ball.getBBox();
+        var bbox = ball.getBBox();
         if (bbox.x < (containerX + border)) {
           ball.vx = Math.abs(ball.vx);
           matrix.translate(ball.vx * 2, ball.vy);
@@ -473,6 +524,13 @@ function mixerAnimationStep() {
   }
 }
 
+function fastforwardToEnd() {
+  endAnimation();
+  while (sequence[sentRun]) {
+    addNextSequenceRunToCODAP();
+  }
+}
+
 function endAnimation() {
   if (paused) {
     setTimeout(endAnimation, 200);
@@ -487,11 +545,11 @@ function endAnimation() {
 
 function pauseSnapAnimations(doPause) {
   func = doPause ? "pause" : "resume";
-  let animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
+  var animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
   if (needle) {
     animatedObjects.push(needle);
   }
-  for (let i = 0, ii = animatedObjects.length; i < ii; i++) {
+  for (var i = 0, ii = animatedObjects.length; i < ii; i++) {
     animatedObjects[i][func]();
   }
 }
@@ -511,44 +569,71 @@ function reset() {
   render();
 }
 
+function getTextShift(text, maxLetters) {
+  var lettersOver = Math.max(0, text.length - maxLetters);
+  return (0.2 * lettersOver) + "em";
+}
+
+// permanently sorts variables so identical ones are next to each other
+function sortVariablesForSpinner() {
+  var sortedVariables = [];
+  uniqueVariables = variables.length;
+  for (var i = 0, ii = variables.length; i < ii; i++) {
+    var v = variables[i],
+        inserted = false,
+        j = -1;
+    while (!inserted && ++j < sortedVariables.length) {
+      if (sortedVariables[j] == v) {
+        sortedVariables.splice(j, 0, v);
+        inserted = true;
+        uniqueVariables--;
+      }
+    }
+    if (!inserted) {
+      sortedVariables.push(v);
+    }
+  }
+  variables = sortedVariables;
+}
+
 function createSpinner() {
   wedges = [];
-  if (variables.length === 1) {
-    s.circle(spinnerX, spinnerY, spinnerRadius).attr({
-      fill: getSliceColor(0, 0)
-    });
-    let label = s.text(spinnerX, spinnerY, variables[0]).attr({
-      fontSize: spinnerRadius/2,
-      textAnchor: "middle",
-      dy: ".25em"
-    });
+  sortVariablesForSpinner();
+  if (uniqueVariables === 1) {
+    var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
+          fill: getSliceColor(0, 0)
+        }),
+        labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
+        label = createSpinnerLabel(0, 0, spinnerX, spinnerY,
+                  spinnerRadius/2, labelClipping, 9, circle);
     wedges.push(label);
-    label.click(showVariableNameInput(0));
   } else {
-    let slicePercent = 1 / variables.length;
+    var slicePercent = 1 / variables.length,
+        lastVariable = "",
+        mergeCount = 0,
+        offsetDueToMerge = 0;
 
-    for (let i = 0, ii = variables.length; i < ii; i++) {
-      let slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius),
+    for (var i = 0, ii = variables.length; i < ii; i++) {
+      var merge = variables[i] == lastVariable,
+          mergeCount = merge ? mergeCount + 1 : 0,
+          slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount),
           textSize = spinnerRadius / (3 + (ii * 0.1));
 
+      lastVariable = variables[i];
+      if (merge) offsetDueToMerge++;
+
+
       // wedge color
-      s.path(slice.path).attr({
-        fill: getSliceColor(i, ii),
+      var wedge = s.path(slice.path).attr({
+        fill: getSliceColor((i - offsetDueToMerge), uniqueVariables),
         stroke: "none"
       });
 
       // label
-      let labelClipping = s.path(slice.path),
-
-          label = s.text(slice.center.x, slice.center.y, variables[i]).attr({
-            fontSize: textSize,
-            textAnchor: "middle",
-            dy: ".25em",
-            clipPath: labelClipping
-          });
-
+      var labelClipping = s.path(slice.path),
+          label = createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
+                    labelClipping, Math.max(1, 10 - variables.length), wedge);
       wedges.push(label);
-      label.click(showVariableNameInput(i));
 
       // white stroke on top of label
       s.path(slice.path).attr({
@@ -560,15 +645,38 @@ function createSpinner() {
   }
 }
 
-function getSpinnerSliceCoords(i, slicePercent, radius) {
-  const perc1 = i * slicePercent,
-        perc2 = perc1 + slicePercent,
-        p1 = getCoordinatesForPercent(radius, perc1),
-        p2 = getCoordinatesForPercent(radius, perc2),
-        centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2);
+function createSpinnerLabel(variable, uniqueVariable, x, y, fontSize, clipping, maxLength, parent) {
+  var text = variables[variable],
+      label = s.text(x, y, text).attr({
+        fontSize: fontSize,
+        textAnchor: "middle",
+        dy: ".25em",
+        dx: getTextShift(text, maxLength),
+        clipPath: clipping
+      });
+
+  label.click(showVariableNameInput(variable));
+  label.hover(function() {
+    this.attr({ fontSize: fontSize + 2, dy: ".26em", });
+    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables, true) });
+  }, function() {
+    this.attr({ fontSize: fontSize, dy: ".25em", });
+    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables) });
+  });
+  return label;
+}
+
+function getSpinnerSliceCoords(i, slicePercent, radius, mergeCount) {
+  var startIndex = i - mergeCount,
+      perc1 = startIndex * slicePercent,
+      perc2 = (i + 1) * slicePercent,
+      p1 = getCoordinatesForPercent(radius, perc1),
+      p2 = getCoordinatesForPercent(radius, perc2),
+      centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2),
+      largeArc = perc2 - perc1 > 0.5 ? 1 : 0;
 
   return {
-    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
+    path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 "+largeArc+" 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
     center: {
       x: (spinnerX + centerP[0]) / 2,
       y: (spinnerY + centerP[1]) / 2
@@ -577,25 +685,26 @@ function getSpinnerSliceCoords(i, slicePercent, radius) {
 }
 
 function getCoordinatesForPercent(radius, percent) {
-  let perc = percent + 0.75,    // rotate 3/4 to start at top
+  var perc = percent + 0.75,    // rotate 3/4 to start at top
       x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius),
       y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius);
 
   return [x, y];
 }
 
-function getSliceColor(i, slices) {
-  let baseColorHue = 173,
+function getSliceColor(i, slices, lighten) {
+  var baseColorHue = 173,
       hueDiff = Math.min(20, 360/slices),
       hue = (baseColorHue + (hueDiff * i)) % 360,
-      huePerc = (hue / 360) * 100;
-  return "hsl("+huePerc+"%, 71%, 61%)"
+      huePerc = (hue / 360) * 100,
+      lightPerc = 61 + (lighten ? 10 : 0);
+  return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)"
 }
 
 function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
   if (!needle) {
     // draw initial needle
-    let needleNorthLength = spinnerRadius * 2/3,
+    var needleNorthLength = spinnerRadius * 2/3,
         needleSouthLength = spinnerRadius / 5,
         needleWidth = spinnerRadius / 15,
         n = getCoordinatesForPercent(needleNorthLength, 0),
@@ -616,19 +725,21 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
 
   needleTurns += 2;
 
-  let wedgePerc = 0.1 + Math.random() * 0.8,
+  var wedgePerc = 0.1 + Math.random() * 0.8,
       targetPerc = (selection + wedgePerc) / variables.length,
       targetAngle = (needleTurns * 360) + (360 * targetPerc);
 
   needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
-    moveLetterToSlot(draw, wedges[selection], wedges[selection], null, selectionMadeCallback);
+    var letter = wedges[selection] || wedges[0];
+    moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback);
   });
 }
 
-function switchState() {
-  this.blur();
-  let selectedDevice = this.id;
+function switchState(evt, state) {
+  if (this.blur) this.blur();
+  var selectedDevice = state || this.id;
   if (selectedDevice !== device) {
+    reset();
     removeClass(document.getElementById(device), "active");
     addClass(document.getElementById(selectedDevice), "active");
     device = selectedDevice;
@@ -653,7 +764,9 @@ document.getElementById("repeat").addEventListener('input', function (evt) {
 document.getElementById("speed").addEventListener('input', function (evt) {
     speed = (this.value * 1) || 0.5;
     document.getElementById("speed-text").innerHTML = speedText[this.value * 1];
-    render();
+    if (running && !paused && speed == 3) {
+      fastforwardToEnd();
+    }
 });
 variableNameInput.onblur = setVariableName;
 variableNameInput.onkeypress = function(e) {
@@ -678,19 +791,17 @@ function disableButtons() {
   setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("speed").setAttribute("disabled", "disabled");
   removeClass(document.getElementById("stop"), "disabled");
 }
 function enableButtons() {
   setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("speed").removeAttribute("disabled");
   addClass(document.getElementById("stop"), "disabled");
 }
 function setRunButton(showRun) {
   if (showRun) {
-    document.getElementById("run").innerHTML = "RUN";
+    document.getElementById("run").innerHTML = "START";
   } else {
     document.getElementById("run").innerHTML = "PAUSE";
   }
@@ -717,7 +828,7 @@ codapInterface.on('get', 'interactiveState', function () {
 codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
-    dimensions: {width: 250, height: 400},
+    dimensions: {width: 230, height: 400},
     version: '0.1',
     stateHandler: function (state) {
       if (state) {
@@ -726,7 +837,9 @@ codapInterface.init({
         sampleSize = state.draw || sampleSize;
         numRuns = state.repeat || numRuns;
         speed = state.speed || speed;
-        device = state.device || device;
+        if (state.device) {
+          switchState(null, state.device)
+        }
 
         render();
       }
@@ -783,6 +896,7 @@ codapInterface.init({
 );
 
 function startNewExperimentInCODAP() {
+  openTable();
   return new Promise(function(resolve, reject) {
     if (!codapConnected) {
       console.log('Not in CODAP')
@@ -846,10 +960,20 @@ function addValuesToCODAP(run, vals) {
 }
 
 function sendSequenceDirectlyToCODAP(sequence) {
-  for (let i = 0, ii = sequence.length; i < ii; i++) {
-    let values = sequence[i].map(function(v) {
+  for (var i = 0, ii = sequence.length; i < ii; i++) {
+    var values = sequence[i].map(function(v) {
       return variables[v];
     })
     addValuesToCODAP(i+1, values)
   }
+}
+
+function openTable() {
+  codapInterface.sendRequest({
+    action: 'create',
+    resource: 'component',
+    values: {
+      type: 'caseTable'
+    }
+  });
 }
