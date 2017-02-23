@@ -1,15 +1,15 @@
 Snap.plugin(function (Snap, Element) {
 
   Element.prototype.pause = function () {
-    let anims = this.inAnim();
-    for (let i = 0; i < anims.length; i ++) {
+    var anims = this.inAnim();
+    for (var i = 0; i < anims.length; i ++) {
       anims[i].mina.pause();
     }
   };
 
   Element.prototype.resume = function () {
-    let anims = this.inAnim();
-    for (let i = 0; i < anims.length; i ++) {
+    var anims = this.inAnim();
+    for (var i = 0; i < anims.length; i ++) {
       this.animate({ dummy: 0 } ,1);
       anims[i].mina.resume();
     }
@@ -71,7 +71,7 @@ function render() {
   s.clear();
   document.getElementById("draws").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
-  let sliderSpeed = speed > 0.5 ? speed : 0;
+  var sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
   document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
 
@@ -199,7 +199,7 @@ function addMixerVariables() {
 
   // setup animation
   for (var i = 0, ii = balls.length; i < ii; i++) {
-    let speed = 5 + (Math.random() * 7),
+    var speed = 5 + (Math.random() * 7),
         direction = Math.PI + (Math.random() * Math.PI);
     balls[i].vx = Math.cos(direction) * speed;
     balls[i].vy = Math.sin(direction) * speed;
@@ -303,7 +303,7 @@ function stopButtonPressed() {
   this.blur();
   running = false;
   paused = false;
-  for (let i = 0, ii = samples.length; i < ii; i++) {
+  for (var i = 0, ii = samples.length; i < ii; i++) {
     if (samples[i].remove) {
       samples[i].remove();
     }
@@ -315,7 +315,7 @@ function stopButtonPressed() {
 function addNextSequenceRunToCODAP() {
   if (!sequence[sentRun]) return;
 
-  let vars = sequence[sentRun].map(function(i) {
+  var vars = sequence[sentRun].map(function(i) {
     return variables[i];
   });
   addValuesToCODAP(sentRun+1, vars);
@@ -393,7 +393,7 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   matrix = letter.transform().localMatrix;
   matrix.translate((target.x-origin.x), (target.cy-origin.cy));
 
-  let size = sampleSlotTargets[slot].attr("r")*2;
+  var size = sampleSlotTargets[slot].attr("r")*2;
 
   letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
@@ -415,8 +415,8 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
         setTimeout(pushLettersOut, 200);
         return;
       }
-      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-        let sampleSlot = sampleSlots[i],
+      for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+        var sampleSlot = sampleSlots[i],
             letter = samples[i],
             sampleMatrix = sampleSlot.transform().localMatrix,
             letterMatrix = letter.transform().localMatrix;
@@ -436,8 +436,8 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
         setTimeout(returnSlots, 200);
         return;
       }
-      for (let i = 0, ii = sampleSlots.length; i < ii; i++) {
-        let sampleSlot = sampleSlots[i];
+      for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+        var sampleSlot = sampleSlots[i];
         sampleSlot.animate({transform: "T0,0"}, 200/speed);
       }
     }
@@ -476,12 +476,12 @@ function mixerAnimationStep() {
   if (!paused) {
     for (var i = 0, ii = balls.length; i < ii; i++) {
       if (!balls[i].beingSelected) {
-        let ball = balls[i],
+        var ball = balls[i],
             matrix = ball.transform().localMatrix;
         matrix.translate(ball.vx*speed, ball.vy*speed);
         ball.attr({transform: matrix});
 
-        let bbox = ball.getBBox();
+        var bbox = ball.getBBox();
         if (bbox.x < (containerX + border)) {
           ball.vx = Math.abs(ball.vx);
           matrix.translate(ball.vx * 2, ball.vy);
@@ -522,11 +522,11 @@ function endAnimation() {
 
 function pauseSnapAnimations(doPause) {
   func = doPause ? "pause" : "resume";
-  let animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
+  var animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
   if (needle) {
     animatedObjects.push(needle);
   }
-  for (let i = 0, ii = animatedObjects.length; i < ii; i++) {
+  for (var i = 0, ii = animatedObjects.length; i < ii; i++) {
     animatedObjects[i][func]();
   }
 }
@@ -547,14 +547,14 @@ function reset() {
 }
 
 function getTextShift(text, maxLetters) {
-  const lettersOver = Math.max(0, text.length - maxLetters);
+  var lettersOver = Math.max(0, text.length - maxLetters);
   return (0.2 * lettersOver) + "em";
 }
 
 function createSpinner() {
   wedges = [];
   if (variables.length === 1) {
-    let circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
+    var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
           fill: getSliceColor(0, 0)
         }),
         labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
@@ -562,20 +562,20 @@ function createSpinner() {
                   spinnerRadius/2, labelClipping, 9, circle);
     wedges.push(label);
   } else {
-    let slicePercent = 1 / variables.length;
+    var slicePercent = 1 / variables.length;
 
-    for (let i = 0, ii = variables.length; i < ii; i++) {
-      let slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius),
+    for (var i = 0, ii = variables.length; i < ii; i++) {
+      var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius),
           textSize = spinnerRadius / (3 + (ii * 0.1));
 
       // wedge color
-      let wedge = s.path(slice.path).attr({
+      var wedge = s.path(slice.path).attr({
         fill: getSliceColor(i, ii),
         stroke: "none"
       });
 
       // label
-      let labelClipping = s.path(slice.path),
+      var labelClipping = s.path(slice.path),
           label = createSpinnerLabel(i, slice.center.x, slice.center.y, textSize,
                     labelClipping, Math.max(1, 10 - variables.length), wedge);
       wedges.push(label);
@@ -591,14 +591,14 @@ function createSpinner() {
 }
 
 function createSpinnerLabel(variable, x, y, fontSize, clipping, maxLength, parent) {
-  const text = variables[variable],
-        label = s.text(x, y, text).attr({
-          fontSize: fontSize,
-          textAnchor: "middle",
-          dy: ".25em",
-          dx: getTextShift(text, maxLength),
-          clipPath: clipping
-        });
+  var text = variables[variable],
+      label = s.text(x, y, text).attr({
+        fontSize: fontSize,
+        textAnchor: "middle",
+        dy: ".25em",
+        dx: getTextShift(text, maxLength),
+        clipPath: clipping
+      });
 
   label.click(showVariableNameInput(variable));
   label.hover(function() {
@@ -612,11 +612,11 @@ function createSpinnerLabel(variable, x, y, fontSize, clipping, maxLength, paren
 }
 
 function getSpinnerSliceCoords(i, slicePercent, radius) {
-  const perc1 = i * slicePercent,
-        perc2 = perc1 + slicePercent,
-        p1 = getCoordinatesForPercent(radius, perc1),
-        p2 = getCoordinatesForPercent(radius, perc2),
-        centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2);
+  var perc1 = i * slicePercent,
+      perc2 = perc1 + slicePercent,
+      p1 = getCoordinatesForPercent(radius, perc1),
+      p2 = getCoordinatesForPercent(radius, perc2),
+      centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2);
 
   return {
     path: "M "+p1.join(" ")+" A "+radius+" "+radius+" 0 0 1 "+p2.join(" ")+" L "+spinnerX+" "+spinnerY,
@@ -628,7 +628,7 @@ function getSpinnerSliceCoords(i, slicePercent, radius) {
 }
 
 function getCoordinatesForPercent(radius, percent) {
-  let perc = percent + 0.75,    // rotate 3/4 to start at top
+  var perc = percent + 0.75,    // rotate 3/4 to start at top
       x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius),
       y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius);
 
@@ -636,7 +636,7 @@ function getCoordinatesForPercent(radius, percent) {
 }
 
 function getSliceColor(i, slices, lighten) {
-  let baseColorHue = 173,
+  var baseColorHue = 173,
       hueDiff = Math.min(20, 360/slices),
       hue = (baseColorHue + (hueDiff * i)) % 360,
       huePerc = (hue / 360) * 100,
@@ -647,7 +647,7 @@ function getSliceColor(i, slices, lighten) {
 function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
   if (!needle) {
     // draw initial needle
-    let needleNorthLength = spinnerRadius * 2/3,
+    var needleNorthLength = spinnerRadius * 2/3,
         needleSouthLength = spinnerRadius / 5,
         needleWidth = spinnerRadius / 15,
         n = getCoordinatesForPercent(needleNorthLength, 0),
@@ -668,7 +668,7 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
 
   needleTurns += 2;
 
-  let wedgePerc = 0.1 + Math.random() * 0.8,
+  var wedgePerc = 0.1 + Math.random() * 0.8,
       targetPerc = (selection + wedgePerc) / variables.length,
       targetAngle = (needleTurns * 360) + (360 * targetPerc);
 
@@ -679,7 +679,7 @@ function animateSpinnerSelection(selection, draw, selectionMadeCallback) {
 
 function switchState(evt, state) {
   if (this.blur) this.blur();
-  let selectedDevice = state || this.id;
+  var selectedDevice = state || this.id;
   if (selectedDevice !== device) {
     reset();
     removeClass(document.getElementById(device), "active");
@@ -902,8 +902,8 @@ function addValuesToCODAP(run, vals) {
 }
 
 function sendSequenceDirectlyToCODAP(sequence) {
-  for (let i = 0, ii = sequence.length; i < ii; i++) {
-    let values = sequence[i].map(function(v) {
+  for (var i = 0, ii = sequence.length; i < ii; i++) {
+    var values = sequence[i].map(function(v) {
       return variables[v];
     })
     addValuesToCODAP(i+1, values)
