@@ -828,7 +828,7 @@ codapInterface.on('get', 'interactiveState', function () {
 codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
-    dimensions: {width: 230, height: 400},
+    dimensions: {width: 233, height: 400},
     version: '0.1',
     stateHandler: function (state) {
       if (state) {
@@ -969,6 +969,10 @@ function sendSequenceDirectlyToCODAP(sequence) {
 }
 
 function openTable() {
+  if (!codapConnected) {
+    return;
+  }
+
   codapInterface.sendRequest({
     action: 'create',
     resource: 'component',
