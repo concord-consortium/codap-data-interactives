@@ -13,9 +13,9 @@ body {
 #model {
   position: absolute;
   left: 0;
-  top: 14vh;
-  width: 64vh;
-  height: 69vh;
+  top: 15vh;
+  width: 62vh;
+  height: 67vh;
 }
 
 #top-bar {
@@ -34,7 +34,8 @@ body {
 }
 
 #top-bar span {
-  margin-left: 2vh;
+  font-size: 3.4vh;
+  margin-left: 1.6vh;
 }
 
 #top-bar button {
@@ -69,7 +70,7 @@ body {
   left: 0;
   padding-left: 3.2vh;
   bottom: 0vh;
-  width: 100%;
+  width: 95%;
   border-top: 1px solid #777;
   background-color: #ddd;
 }

@@ -423,10 +423,12 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
         sampleMatrix.translate(20, 0);
         letterMatrix.translate(40, 0);
         sampleSlot.animate({transform: sampleMatrix}, 200/speed);
-        letter.animate({transform: letterMatrix}, 200/speed, function() {
-          letter.remove();
-          samples = [];
-        });
+        letter.animate({transform: letterMatrix}, 200/speed, (function(lett) {
+          return function() {
+            lett.remove();
+            samples = [];
+          }
+        })(letter));
       }
     }
     function returnSlots() {
@@ -553,26 +555,12 @@ function createSpinner() {
   wedges = [];
   if (variables.length === 1) {
     let circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
-      fill: getSliceColor(0, 0)
-    });
-    let text = variables[0],
+          fill: getSliceColor(0, 0)
+        }),
         labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
-        label = s.text(spinnerX, spinnerY, text).attr({
-          fontSize: spinnerRadius/2,
-          textAnchor: "middle",
-          dy: ".25em",
-          dx: getTextShift(text, 9),
-          clipPath: labelClipping
-        });
+        label = createSpinnerLabel(0, spinnerX, spinnerY,
+                  spinnerRadius/2, labelClipping, 9, circle);
     wedges.push(label);
-    label.click(showVariableNameInput(0));
-    label.hover(function() {
-      this.attr({ fontSize: (spinnerRadius/2) + 2, dy: ".26em", });
-      circle.attr({ fill: getSliceColor(0, 0, true) });
-    }, function() {
-      this.attr({ fontSize: spinnerRadius/2, dy: ".25em", });
-      circle.attr({ fill: getSliceColor(0, 0) });
-    });
   } else {
     let slicePercent = 1 / variables.length;
 
@@ -587,30 +575,10 @@ function createSpinner() {
       });
 
       // label
-      let text = variables[i],
-          labelClipping = s.path(slice.path),
-          label = s.text(slice.center.x, slice.center.y, text).attr({
-            fontSize: textSize,
-            textAnchor: "middle",
-            dy: ".25em",
-            dx: getTextShift(text, Math.max(1, 8 - (variables.length - 2))),
-            clipPath: labelClipping
-          });
-
+      let labelClipping = s.path(slice.path),
+          label = createSpinnerLabel(i, slice.center.x, slice.center.y, textSize,
+                    labelClipping, Math.max(1, 10 - variables.length), wedge);
       wedges.push(label);
-      label.click(showVariableNameInput(i));
-      label.hover((function(wedg, _i, _ii) {
-        return function() {
-          if (running) return;
-          this.attr({ fontSize: textSize + 2, dy: ".25em", });
-          wedg.attr({ fill: getSliceColor(_i, _ii, true) });
-        }
-      })(wedge, i, ii), (function(wedg, _i, _ii) {
-        return function() {
-          this.attr({ fontSize: textSize, dy: ".25em", });
-          wedg.attr({ fill: getSliceColor(_i, _ii) });
-        }
-      })(wedge, i, ii));
 
       // white stroke on top of label
       s.path(slice.path).attr({
@@ -620,6 +588,27 @@ function createSpinner() {
       });
     }
   }
+}
+
+function createSpinnerLabel(variable, x, y, fontSize, clipping, maxLength, parent) {
+  const text = variables[variable],
+        label = s.text(x, y, text).attr({
+          fontSize: fontSize,
+          textAnchor: "middle",
+          dy: ".25em",
+          dx: getTextShift(text, maxLength),
+          clipPath: clipping
+        });
+
+  label.click(showVariableNameInput(variable));
+  label.hover(function() {
+    this.attr({ fontSize: fontSize + 2, dy: ".26em", });
+    parent.attr({ fill: getSliceColor(variable, variables.length, true) });
+  }, function() {
+    this.attr({ fontSize: fontSize, dy: ".25em", });
+    parent.attr({ fill: getSliceColor(variable, variables.length) });
+  });
+  return label;
 }
 
 function getSpinnerSliceCoords(i, slicePercent, radius) {
@@ -781,7 +770,7 @@ codapInterface.on('get', 'interactiveState', function () {
 codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
-    dimensions: {width: 250, height: 400},
+    dimensions: {width: 230, height: 400},
     version: '0.1',
     stateHandler: function (state) {
       if (state) {
