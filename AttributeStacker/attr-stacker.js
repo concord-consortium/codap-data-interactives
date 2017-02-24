@@ -2,7 +2,7 @@
 //  
 //  Author:   jsandoe
 //
-//  Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
+//  Copyright (c) 2016-2017 by The Concord Consortium, Inc. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+/*global $:true, iframePhone:true */
 $(function () {
   var codapInterface = Object.create({
     /**
@@ -109,6 +110,7 @@ $(function () {
           break;
         case 'preinit': // warn, but issue request.
           console.warn('sendRequest on not yet initialized CODAP connection: ' + JSON.stringify(message));
+          /* fall through */
         default:
           if (this.connection) {
             this.stats.countDiReq++;
@@ -118,7 +120,7 @@ $(function () {
             }
 
             this.connection.call(message, function (response) {
-              this.handleResponse(message, response, callback)
+              this.handleResponse(message, response, callback);
             }.bind(this));
           } else {
             console.error('sendRequest on non-existent CODAP connection');
@@ -288,7 +290,7 @@ $(function () {
         });
 
         $selEl.appendTo($label);
-        $label.appendTo($root)
+        $label.appendTo($root);
         $selEl.on('change', handleDataSetSelection);
         if (!dataSetName) {
           $selEl.change();
@@ -297,7 +299,7 @@ $(function () {
     }
 
     var req = {action: 'get', resource: 'dataContextList'};
-    codapInterface.sendRequest(req, handleResponse)
+    codapInterface.sendRequest(req, handleResponse);
   }
 
   function makeStackingTable($table) {
@@ -325,7 +327,7 @@ $(function () {
       var attributes = lastCollection.attrs;
       var $srcStack = $(kSrcStackItemsSelector);
       $(kItemSelector).remove();
-      makeStackingTable($(kTargetTableSelector))
+      makeStackingTable($(kTargetTableSelector));
       attributes.forEach(function (attr) {
         var itemID = 'item' + itemCtr++;
         $('<div>')
@@ -333,11 +335,11 @@ $(function () {
             .prop('id', itemID)
             .text(attr.name)
             .appendTo($srcStack);
-      })
+      });
     }
 
     var req = {action: 'get', resource: 'dataContext[' + dataSetName + ']'};
-    codapInterface.sendRequest(req, handleResponse)
+    codapInterface.sendRequest(req, handleResponse);
   }
 
   function getTableCoordinate($cellEl) {
@@ -348,7 +350,7 @@ $(function () {
     return {row: row, col: col};
   }
 
-  function getTableDimensions($tableEl) {
+  function getTableDimensions(/*$tableEl*/) {
     return extent;
   }
 
@@ -362,10 +364,10 @@ $(function () {
     return (coord.col === dimensions.cols - 1);
   }
 
-  function isLeftmostColumn($tableEl, $cellEl) {
-    var coord = getTableCoordinate($cellEl);
-    return(Number(coord.col) === 0);
-  }
+  // function isLeftmostColumn($tableEl, $cellEl) {
+  //   var coord = getTableCoordinate($cellEl);
+  //   return(Number(coord.col) === 0);
+  // }
 
   function isBottomRow($tableEl, $cellEl) {
     var coord = getTableCoordinate($cellEl);
@@ -387,7 +389,7 @@ $(function () {
 
   function updateTable($cellEl, droppedItemName) {
     var $tableEl = $(kTargetTableSelector);
-    var coords = getTableCoordinate($cellEl)
+    var coords = getTableCoordinate($cellEl);
     if (isRightmostColumn($tableEl, $cellEl)) {
       makeNewColumn($tableEl, extent);
       activateColumn($tableEl, coords.col);
@@ -398,7 +400,7 @@ $(function () {
     }
   }
 
-  function handleDataSetSelection(ev) {
+  function handleDataSetSelection() {
     makeItems(getSourceDataSetName());
   }
 
@@ -407,13 +409,14 @@ $(function () {
     var oev = ev.originalEvent;
     oev.dataTransfer.effectAllowed = 'move';
     oev.dataTransfer.setData('text/html', this.outerHTML);
+    oev.dataTransfer.setData('text', this.id);
     $(this).addClass('drag-active');
-    $(kTargetTableSelector + ',' + kSrcStackSelector).addClass('drag-in-progress')
+    $(kTargetTableSelector + ',' + kSrcStackSelector).addClass('drag-in-progress');
   }
 
-  function handleDragEnd(ev) {
+  function handleDragEnd() {
     $(this).removeClass('drag-active');
-    $(kTargetTableSelector + ',' + kSrcStackSelector).removeClass('drag-in-progress')
+    $(kTargetTableSelector + ',' + kSrcStackSelector).removeClass('drag-in-progress');
   }
 
   function handleDragEnter(ev) {
@@ -422,6 +425,7 @@ $(function () {
       $(this).addClass('over');
     }
     ev.preventDefault();
+    ev.stopPropagation();
   }
 
   function handleDragOver(ev) {
@@ -430,10 +434,11 @@ $(function () {
       return;
     }
     ev.preventDefault();
+    ev.stopPropagation();
     return false;
   }
 
-  function handleDragLeave(ev) {
+  function handleDragLeave() {
 //        console.log('leave');
     $(this).removeClass('over');
   }
@@ -447,7 +452,8 @@ $(function () {
     var oev = ev.originalEvent;
     var target = this;
     var $srcStack = $(kSrcStackSelector);
-    var $item = $(oev.dataTransfer.getData('text/html'));
+    var itemID = oev.dataTransfer.getData('text');
+    var $item = $('#' + itemID);
 
     if ($.contains($srcStack[0], this)) {
       target = $srcStack.find('.items');
@@ -455,7 +461,7 @@ $(function () {
       updateTable($this, $item.text());
     }
 
-    $('#' + $item[1].id).detach().appendTo(target);
+    $item.detach().appendTo(target);
 
     $this.removeClass('over');
     $item.removeClass('drag-active');
@@ -541,7 +547,7 @@ $(function () {
    * @returns {[[{fromAttr: {string}, toAttr: {string}}]]}
    */
   function makeAttributeMappings($table, iStackingAttributes) {
-    rslt = [];
+    var rslt = [];
     $table.find('tr').each(function(ix, el1) {
       var typeMapping = [];
       if (ix !== 0) {
@@ -560,13 +566,7 @@ $(function () {
     return rslt;
   }
 
-  function copyDataSet(iSourceDataSetDef, iTargetDataSet, iStackedAttributeMapping) {
-    // find the number of cases in the top collection, then clone each case and
-    // its children until the children in the last
-
-  }
-
-  function handleSubmitStacking(ev) {
+  function handleSubmitStacking(/*ev*/) {
     if (!getSourceDataSetName()) { return; }
 
     /**
@@ -598,7 +598,7 @@ $(function () {
         collections: []
       };
       var lastCollectionIx = iBasisDefinition.collections.length - 1;
-      var lastCollection = iBasisDefinition.collections[lastCollectionIx]
+      var lastCollection = iBasisDefinition.collections[lastCollectionIx];
 
       // clone existing collections
       dataSetDefinition.collections = iBasisDefinition.collections.map(
@@ -633,7 +633,7 @@ $(function () {
     function copySourceDataSetToStackedDataSet(iStackedDataSetName,
         iCategoryName, iParentCollectionName, iChildCollectionName,
         iParentAttributes, iTypeList, iAttributeMappings) {
-      function requestCase() {
+      function requestCaseOrCreateTable() {
         if (caseIx < caseCount) {
           codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix
           + '.caseByIndex[' + caseIx + ']'}, function (req, resp) {
@@ -642,7 +642,17 @@ $(function () {
             }
           });
           caseIx += 1;
+        } else {
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: 'component',
+            values: {
+              type: 'caseTable',
+              dataContext: iStackedDataSetName
+            }
+          });
         }
+
       }
 
       function cloneCase(v) {
@@ -661,8 +671,8 @@ $(function () {
             codapInterface.sendRequest({
               action: 'create',
               resource: childResourceSpec,
-              values: childCases}, function (req, resp) {
-              requestCase();
+              values: childCases}, function (/*req, resp*/) {
+              requestCaseOrCreateTable();
             });
           }
         }
@@ -675,7 +685,7 @@ $(function () {
         codapInterface.sendRequest({
           action: 'create',
           resource: parentResourceSpec,
-          values: parentCase}, createChildren)
+          values: parentCase}, createChildren);
       }
 
       var parentResourceSpec = 'dataContext[' + iStackedDataSetName +
@@ -695,9 +705,9 @@ $(function () {
       codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix +
             '.caseCount'}, function (req, resp) {
             caseCount = resp.values;
-            requestCase();
+            requestCaseOrCreateTable();
           }
-      )
+      );
     }
 
     var $stackItems = $(kSrcStackItemsSelector);
@@ -737,7 +747,7 @@ $(function () {
           console.log('create dataset resp: ' + JSON.stringify(resp));
           copySourceDataSetToStackedDataSet(stackedDataSetName, categoryName,
               parentCollectionName, childCollectionName, parentAttributes,
-              typeList, attributeMappings)
+              typeList, attributeMappings);
         }
     );
 
@@ -752,7 +762,7 @@ $(function () {
       preventBringToFront: false
     });
 
-    codapInterface.on(/notify/, /documentChangeNotice/, function (request) {
+    codapInterface.on('notify', 'documentChangeNotice', function () {
         makeDataSetSelector();
         return {success: true};
       });
@@ -775,4 +785,4 @@ $(function () {
   }
 
   init();
-})
+});
