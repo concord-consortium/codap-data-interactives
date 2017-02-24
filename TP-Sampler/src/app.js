@@ -42,6 +42,7 @@ var s = Snap("#model svg"),
     animationRequest = null,
     speed = 1,  //  0.5, 1, 2, 3=inf
     speedText = ["Slow", "Medium", "Fast", "Fastest"],
+    animationSpeed = 1,
 
     experimentNumber = 0,
     runNumber = 0,
@@ -156,7 +157,7 @@ function addMixerVariables() {
       rows = Math.floor(variables.length/maxInRow),
       radius = rows > 6 ? 9 : 14,      // repeat these to recalculate once
       maxInRow = Math.floor(w / (radius*2));
-  // other calcs...
+
   for (var i = 0, ii=variables.length; i<ii; i++) {
     var rowNumber = Math.floor(i/maxInRow),
         rowIndex = i % maxInRow,
@@ -254,7 +255,7 @@ function showVariableNameInput(i) {
       editingVariable = [];
       for (var j = 0, jj = variables.length; j < jj; j++) {
         if (variables[j] == v) {
-          variables[j] = "";
+          variables[j] = " ";
           editingVariable.push(j);
         }
       }
@@ -488,9 +489,11 @@ function animateMixerSelection(selection, draw, selectionMadeCallback) {
 
 function animateMixer() {
   if (running) {
+    var timeout = Math.max(30, variables.length * 1.5);
+    animationSpeed = timeout / 30;
     setTimeout(function() {
       animationRequest = requestAnimationFrame(animateMixer);
-    }, 30);
+    }, timeout);
   }
   mixerAnimationStep();
 }
@@ -500,25 +503,26 @@ function mixerAnimationStep() {
     for (var i = 0, ii = balls.length; i < ii; i++) {
       if (!balls[i].beingSelected) {
         var ball = balls[i],
-            matrix = ball.transform().localMatrix;
-        matrix.translate(ball.vx*speed, ball.vy*speed);
-        ball.attr({transform: matrix});
+            matrix = ball.transform().localMatrix,
+            dx = ball.vx*speed*animationSpeed,
+            dy = ball.vy*speed*animationSpeed,
+            bbox = ball.getBBox();
 
-        var bbox = ball.getBBox();
-        if (bbox.x < (containerX + border)) {
+
+        if ((bbox.x + dx) < (containerX + border)) {
           ball.vx = Math.abs(ball.vx);
-          matrix.translate(ball.vx * 2, ball.vy);
-          ball.attr({transform: matrix});
-        } else if ((bbox.x + bbox.w) > containerX + (containerWidth - capHeight - border)) {
+          dx = ball.vx*speed*animationSpeed;
+        } else if ((bbox.x + bbox.w + dx) > containerX + (containerWidth - capHeight - border)) {
           ball.vx = -Math.abs(ball.vx);
-          matrix.translate(ball.vx * 2, ball.vy);
-          ball.attr({transform: matrix});
+          dx = ball.vx*speed*animationSpeed;
         }
-        if (bbox.y < (containerY + border) || (bbox.y + bbox.h) > containerY + containerHeight - border) {
+        if (bbox.y + dy < (containerY + border) || (bbox.y + bbox.h + dy) > containerY + containerHeight - border) {
           ball.vy *= -1;
-          matrix.translate(ball.vx, ball.vy * 2);
-          ball.attr({transform: matrix});
+          dy = ball.vy*speed*animationSpeed;
         }
+
+        matrix.translate(dx, dy);
+        ball.attr({transform: matrix});
       }
     }
   }
@@ -697,7 +701,7 @@ function getVariableColor(i, slices, lighten) {
       hueDiff = Math.min(15, 60/slices),
       hue = (baseColorHue + (hueDiff * i)) % 360,
       huePerc = (hue / 360) * 100,
-      lightPerc = 61 + (lighten ? 20 : 0);
+      lightPerc = 66 + (lighten ? 15 : 0);
   return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)"
 }
 
