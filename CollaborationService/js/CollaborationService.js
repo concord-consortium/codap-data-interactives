@@ -243,6 +243,7 @@ var dataManager = Object.create({
         firebaseKeyValue = _case.values[collaborationCollection.firebaseKey];
 
         switch (operation) {
+          case 'createCase':
           case 'createCases':
             if (!firebaseKeyValue) {
               pushRef = collaborationCollection.casesRef.push();
