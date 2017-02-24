@@ -167,7 +167,7 @@ function addMixerVariables() {
     var labelClipping = s.circle(x, y, radius);
     // render ball to the screen
     var circle = s.circle(x, y, radius).attr({
-          fill: "#ddd",
+          fill: getVariableColor(i, ii, true),
           stroke: "#000",
           strokeWidth: 1
         }),
@@ -184,18 +184,18 @@ function addMixerVariables() {
         );
     balls.push(ball);
     ball.click(showVariableNameInput(i));
-    ball.hover((function(circ, lab) {
+    ball.hover((function(circ, lab, _i) {
       return function() {
         if (running) return;
-        circ.attr({ fill: "#f5fcff" });
+        circ.attr({ fill: getVariableColor(_i, ii) });
         lab.attr({ fontSize: radius + 2, dy: ".26em", });
       }
-    })(circle, label), (function(circ, lab) {
+    })(circle, label, i), (function(circ, lab, _i) {
       return function() {
-        circ.attr({ fill: "#f0f0f0" });
+        circ.attr({ fill: getVariableColor(_i, ii, true) });
         lab.attr({ fontSize: radius, dy: ".25em", });
       }
-    })(circle, label));
+    })(circle, label, i));
   }
 
   // setup animation
@@ -601,7 +601,7 @@ function createSpinner() {
   sortVariablesForSpinner();
   if (uniqueVariables === 1) {
     var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
-          fill: getSliceColor(0, 0)
+          fill: getVariableColor(0, 0)
         }),
         labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
         label = createSpinnerLabel(0, 0, spinnerX, spinnerY,
@@ -625,7 +625,7 @@ function createSpinner() {
 
       // wedge color
       var wedge = s.path(slice.path).attr({
-        fill: getSliceColor((i - offsetDueToMerge), uniqueVariables),
+        fill: getVariableColor((i - offsetDueToMerge), uniqueVariables),
         stroke: "none"
       });
 
@@ -658,10 +658,10 @@ function createSpinnerLabel(variable, uniqueVariable, x, y, fontSize, clipping, 
   label.click(showVariableNameInput(variable));
   label.hover(function() {
     this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables, true) });
+    parent.attr({ fill: getVariableColor(uniqueVariable, uniqueVariables, true) });
   }, function() {
     this.attr({ fontSize: fontSize, dy: ".25em", });
-    parent.attr({ fill: getSliceColor(uniqueVariable, uniqueVariables) });
+    parent.attr({ fill: getVariableColor(uniqueVariable, uniqueVariables) });
   });
   return label;
 }
@@ -692,12 +692,12 @@ function getCoordinatesForPercent(radius, percent) {
   return [x, y];
 }
 
-function getSliceColor(i, slices, lighten) {
+function getVariableColor(i, slices, lighten) {
   var baseColorHue = 173,
-      hueDiff = Math.min(20, 360/slices),
+      hueDiff = Math.min(15, 60/slices),
       hue = (baseColorHue + (hueDiff * i)) % 360,
       huePerc = (hue / 360) * 100,
-      lightPerc = 61 + (lighten ? 10 : 0);
+      lightPerc = 61 + (lighten ? 20 : 0);
   return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)"
 }
 
