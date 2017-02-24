@@ -16,208 +16,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-/*global $:true, iframePhone:true */
+/*global $:true, codapInterface */
 $(function () {
-  var codapInterface = Object.create({
-    /**
-     * The CODAP Connection
-     * @param {iframePhone.IframePhoneRpcEndpoint}
-     */
-    connection: null,
-
-    /**
-     * Current known state of the connection
-     * @param {'preinit' || 'init' || 'active' || 'inactive' || 'closed'}
-     */
-    connectionState: 'preinit',
-
-    /**
-     * Connection statistics
-     */
-    stats: {
-      countDiReq: 0,
-      countDiRplSuccess: 0,
-      countDiRplFail: 0,
-      countDiRplTimeout: 0,
-      countCodapReq: 0,
-      countCodapUnhandledReq: 0,
-      countCodapRplSuccess: 0,
-      countCodapRplFail: 0,
-      timeDiFirstReq: null,
-      timeDiLastReq: null,
-      timeCodapFirstReq: null,
-      timeCodapLastReq: null
-    },
-
-    /**
-     * A list of subscribers to messages from CODAP
-     * @param {[{actionSpec: {RegExp}, resourceSpec: {RegExp}, handler: {function}}]}
-     */
-    notificationSubscribers: [],
-
-    config: null,
-
-    /**
-     * Initialize connection.
-     *
-     * Start connection. Request interactiveFrame to get prior state, if any.
-     * Update interactive frame to set name and dimensions.
-     *
-     * @param config {object} Configuration. Optional properties: title {string},
-     *                        version {string}, dimensions {object},
-     *                        stateHandler {function}
-     */
-    init: function (config) {
-      function getFrameRespHandler(req, resp) {
-        var values = resp && resp.values;
-        var stateHandler = this.config && this.config.stateHandler;
-        var newFrame = {
-          name: config.name,
-          title: config.title,
-          version: config.version,
-          dimensions: config.dimensions,
-          preventBringToFront: config.preventBringToFront
-        };
-        //Object.assign(newFrame, values);
-        updateFrameReq.values = newFrame;
-        _this.sendRequest(updateFrameReq);
-
-        if (values && values.state && stateHandler ) {
-          _this.config.stateHandler(values.state);
-        }
-      }
-
-      var getFrameReq = {action: 'get', resource: 'interactiveFrame'};
-      var updateFrameReq = {action: 'update', resource: 'interactiveFrame'};
-      var _this = this;
-
-      this.config = config;
-      this.connection = new iframePhone.IframePhoneRpcEndpoint(
-        this.notificationHandler.bind(this), "data-interactive", window.parent);
-      this.sendRequest(getFrameReq, getFrameRespHandler);
-    },
-
-    getStats: function () {
-      return this.stats;
-    },
-
-    destroy: function () {},
-
-    sendRequest: function (message, callback) {
-      switch (this.connectionState) {
-        case 'closed': // log the message and ignore
-          console.warn('sendRequest on closed CODAP connection: ' + JSON.stringify(message));
-          break;
-        case 'preinit': // warn, but issue request.
-          console.warn('sendRequest on not yet initialized CODAP connection: ' + JSON.stringify(message));
-          /* fall through */
-        default:
-          if (this.connection) {
-            this.stats.countDiReq++;
-            this.stats.timeDiLastReq = new Date();
-            if (!this.stats.timeDiFirstReq) {
-              this.stats.timeCodapFirstReq = this.stats.timeDiLastReq;
-            }
-
-            this.connection.call(message, function (response) {
-              this.handleResponse(message, response, callback);
-            }.bind(this));
-          } else {
-            console.error('sendRequest on non-existent CODAP connection');
-          }
-      }
-    },
-
-    handleResponse: function (request, response, callback) {
-      if (response === undefined) {
-        console.warn('handleResponse: CODAP request timed out');
-        this.stats.countDiRplTimeout++;
-      } else {
-        this.connectionState = 'active';
-        response.success? this.stats.countDiRplSuccess++: this.stats.countDiRplFail++;
-      }
-      if (callback) {
-        callback(request, response);
-      }
-    },
-
-    notificationHandler: function (request, callback) {
-      var action = request.action;
-      var resource = request.resource;
-      var stats = this.stats;
-
-      this.connectionState = 'active';
-      stats.countCodapReq++;
-      stats.timeCodapLastReq = new Date();
-      if (!stats.timeCodapFirstReq) {
-        stats.timeCodapFirstReq = stats.timeCodapLastReq;
-      }
-
-      var handled = this.notificationSubscribers.some(function (subscription) {
-        if (subscription.actionSpec.test(action)
-            && subscription.resourceSpec.test(resource)) {
-          var rtn = subscription.handler(request);
-          if (rtn && rtn.success) {
-            stats.countCodapRplSuccess++;
-          } else {
-            stats.countCodapRplFail++;
-          }
-          callback(rtn);
-          return true;
-        }
-        return false;
-      });
-      if (handled) {
-        stats.countCodapUnhandledReq++;
-        callback({success: true});
-      }
-    },
-
-    /**
-     * Registers a handler to respond to CODAP-initiated requests and
-     * notifications.
-     *
-     * @param actionSpec {regex} A regular expression to qualify actions.
-     * @param resourceSpec {regex} A regular expression to qualify resources.
-     * @param handler
-     */
-    on: function (actionSpec, resourceSpec, handler) {
-      this.notificationSubscribers.push({
-        actionSpec: RegExp(actionSpec),
-        resourceSpec: RegExp(resourceSpec),
-        handler: handler
-      });
-    },
-
-    /**
-     * Parses a resource selector returning a hash of named resource names to
-     * resource values. The last clause is identified as the resource type.
-     * E.g. converts 'dataContext[abc].collection[def].case'
-     * to {dataContext: 'abc', collection: 'def', type: 'case'}
-     * @param iResource
-     * @returns {{}}
-     */
-    parseResourceSelector: function (iResource) {
-      var selectorRE = /([A-Za-z0-9_-]+)\[([^\]]+)]/;
-      var result = {};
-      var selectors = iResource.split('.');
-      selectors.forEach(function (selector) {
-        var resourceType, resourceName;
-        var match = selectorRE.exec(selector);
-        if (selectorRE.test(selector)) {
-          resourceType = match[1];
-          resourceName = match[2];
-          result[resourceType] = resourceName;
-          result.type = resourceType;
-        } else {
-          result.type = selector;
-        }
-      });
-
-      return result;
-    },
-
-  });
 
   var kSrcStackSelector = '#src-stack';
   var kSrcStackItemsSelector = kSrcStackSelector + ' .items';
@@ -269,7 +69,7 @@ $(function () {
   }
 
   function makeDataSetSelector() {
-    function handleResponse(req, resp) {
+    function handleResponse(resp) {
       var values = resp && resp.values;
       var $root = $('#dataset-selection');
       var dataSetName = $root.find('select').val();
@@ -315,7 +115,7 @@ $(function () {
   }
 
   function makeItems(dataSetName) {
-    function handleResponse(req, resp) {
+    function handleResponse(resp) {
       var values = resp && resp.values;
       var itemCtr = 0;
       if (!values) {
@@ -635,12 +435,15 @@ $(function () {
         iParentAttributes, iTypeList, iAttributeMappings) {
       function requestCaseOrCreateTable() {
         if (caseIx < caseCount) {
-          codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix
-          + '.caseByIndex[' + caseIx + ']'}, function (req, resp) {
-            if (resp.success) {
-              cloneCase(resp.values);
+          codapInterface.sendRequest({
+              action: 'get',
+              resource: caseResourcePrefix + '.caseByIndex[' + caseIx + ']'
+            }, function (resp) {
+              if (resp.success) {
+                cloneCase(resp.values);
+              }
             }
-          });
+          );
           caseIx += 1;
         } else {
           codapInterface.sendRequest({
@@ -656,7 +459,7 @@ $(function () {
       }
 
       function cloneCase(v) {
-        function createChildren(req, resp) {
+        function createChildren(resp) {
           var parentID = resp.success && resp.values[0].id;
           var childCases = [];
           if (parentID !== null && parentID !== undefined) {
@@ -671,7 +474,7 @@ $(function () {
             codapInterface.sendRequest({
               action: 'create',
               resource: childResourceSpec,
-              values: childCases}, function (/*req, resp*/) {
+              values: childCases}, function (/*resp, req*/) {
               requestCaseOrCreateTable();
             });
           }
@@ -703,7 +506,7 @@ $(function () {
       var caseIx = 0;
 
       codapInterface.sendRequest({action: 'get', resource: caseResourcePrefix +
-            '.caseCount'}, function (req, resp) {
+            '.caseCount'}, function (resp) {
             caseCount = resp.values;
             requestCaseOrCreateTable();
           }
@@ -743,7 +546,7 @@ $(function () {
           resource: 'dataContext',
           values: dataSetDefinition
         },
-        function (req, resp) {
+        function (resp) {
           console.log('create dataset resp: ' + JSON.stringify(resp));
           copySourceDataSetToStackedDataSet(stackedDataSetName, categoryName,
               parentCollectionName, childCollectionName, parentAttributes,
