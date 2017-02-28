@@ -17,7 +17,6 @@
 //  limitations under the License.
 // ==========================================================================
 
-
 /**
  * This class is intended to provide an abstraction layer for managing
  * a CODAP Data Interactive's connection with CODAP. It is not required. It is
@@ -39,10 +38,45 @@
  *   6. Provides a utility to parse a resource selector into its component parts.
  *
  * @type {Object}
+ *
+ * Usage Notes:
+ *
+ *  * With plain ol' script tags:
+ *
+ *    * In HTML
+ *
+ *      <script src=".../iframe-phone.js"></script>
+ *      <script src=".../CodapInterface.js"></script>
+ *      ...
+ *
+ *    * In Javascript
+ *
+ *      codapInterface.init({...});
+ *      ...
+ *
+ *  * In a module packager (e.g. webpack):
+ *
+ *    * Installation
+ *
+ *      % npm install --save iframe-phone
+ *
+ *    * In calling module (e.g. my-module.js)
+ *
+ *      var iframePhone = require('.../CodapInterface');
+ *      ...
+ *      codapInterface.init({...});
+ *
+ *    * Packaging
+ *
+ *      % webpack my-module.js app.js
+ *
  */
 
+/*global require, iframePhone, Promise, module */
+
 (function (global) {
-  'use strict';
+
+  var iframePh = (typeof module !== 'undefined')? require('iframe-phone') : iframePhone;
 
   var config = null;
 
@@ -94,36 +128,67 @@
   function notificationHandler (request, callback) {
     var action = request.action;
     var resource = request.resource;
-    var values = request.values;
+    var requestValues = request.values;
+    var returnMessage = {success: true};
 
     connectionState = 'active';
-    stats.countCodapReq++;
+    stats.countCodapReq += 1;
     stats.timeCodapLastReq = new Date();
     if (!stats.timeCodapFirstReq) {
       stats.timeCodapFirstReq = stats.timeCodapLastReq;
     }
 
-    var handled = false;
-
-    notificationSubscribers.forEach(function (subscription) {
-      if ((subscription.actionSpec === action) &&
-          matchResource(resource, subscription.resourceSpec) &&
-          (!subscription.operation || (subscription.operation === values.operation))) {
-        var rtn = subscription.handler(request);
-        if (rtn && rtn.success) {
-          stats.countCodapRplSuccess++;
-        } else {
-          stats.countCodapRplFail++;
-        }
-        callback(rtn);
-        return true;
-      }
-      return false;
-    });
-    if (!handled) {
-      stats.countCodapUnhandledReq++;
-      callback({success: true});
+    if (action === 'notify' && !Array.isArray(requestValues)) {
+      requestValues = [requestValues];
     }
+
+    var handled = false;
+    var success = true;
+
+    if (action === 'get') {
+      // get assumes only one subscriber because it expects only one response.
+      notificationSubscribers.some(function (subscription) {
+        var result = false;
+        try {
+          if ((subscription.actionSpec === action) &&
+              matchResource(resource, subscription.resourceSpec)) {
+            var rtn = subscription.handler(request);
+            if (rtn && rtn.success) { stats.countCodapRplSuccess++; } else{ stats.countCodapRplFail++; }
+            returnMessage = rtn;
+            result = true;
+          }
+        } catch (ex) {
+          console.log('DI Plugin notification handler exception: ' + ex);
+          result = true;
+        }
+        return result;
+      });
+      if (!handled) {
+        stats.countCodapUnhandledReq++;
+      }
+    } else if (action === 'notify') {
+      requestValues.forEach(function (value) {
+        notificationSubscribers.forEach(function (subscription) {
+          // pass this notification to matching subscriptions
+          handled = false;
+          if ((subscription.actionSpec === action) && matchResource(resource,
+                  subscription.resourceSpec) && (!subscription.operation ||
+              (subscription.operation === value.operation) && subscription.handler)) {
+            var rtn = subscription.handler(
+                {action: action, resource: resource, values: value});
+            if (rtn && rtn.success) { stats.countCodapRplSuccess++; } else{ stats.countCodapRplFail++; }
+            success = (success && (rtn ? rtn.success : false));
+            handled = true;
+          }
+        });
+        if (!handled) {
+          stats.countCodapUnhandledReq++;
+        }
+      });
+    } else {
+      console.log("DI Plugin received unknown message: " + JSON.stringify(request));
+    }
+    return callback(returnMessage);
   }
 
   var codapInterface = {
@@ -153,9 +218,6 @@
           var savedState = receivedFrame && receivedFrame.savedState;
           this_.updateInteractiveState(savedState);
           if (success) {
-            if (iCallback) {
-              iCallback(savedState);
-            }
             // deprecated way of conveying state
             if (iConfig.stateHandler) {
               iConfig.stateHandler(savedState);
@@ -166,9 +228,12 @@
               reject('Connection request to CODAP timed out.');
             } else {
               reject(
-                  (resp[1] && resp[1].values && resp[1].values.error)
-                  || 'unknown failure');
+                  (resp[1] && resp[1].values && resp[1].values.error) ||
+                  'unknown failure');
             }
+          }
+          if (iCallback) {
+            iCallback(savedState);
           }
         }
 
@@ -190,7 +255,7 @@
         config = iConfig;
 
         // initialize connection
-        connection = new iframePhone.IframePhoneRpcEndpoint(
+        connection = new iframePh.IframePhoneRpcEndpoint(
             notificationHandler, "data-interactive", window.parent);
 
         this.on('get', 'interactiveState', function () {
@@ -200,9 +265,7 @@
         console.log('sending interactiveState: ' + JSON.stringify(this.getInteractiveState));
         // update, then get the interactiveFrame.
         return this.sendRequest([updateFrameReq, getFrameReq])
-          .then(getFrameRespHandler).catch( function(msg) {
-            reject(msg);
-          });
+          .then(getFrameRespHandler, reject);
       }.bind(this));
     },
 
@@ -265,7 +328,7 @@
             stats.countDiRplTimeout++;
           } else {
             connectionState = 'active';
-            response.success? stats.countDiRplSuccess++: stats.countDiRplFail++;
+            if (response.success) { stats.countDiRplSuccess++; } else { stats.countDiRplFail++; }
             resolve(response);
           }
           if (callback) {
@@ -278,9 +341,9 @@
             reject('sendRequest on closed CODAP connection: ' + JSON.stringify(message));
             break;
           case 'preinit': // warn, but issue request.
-            console.log('sendRequest on not yet initialized CODAP connection: '
-                + JSON.stringify(message));
-            // fallthrough intentional
+            console.log('sendRequest on not yet initialized CODAP connection: ' +
+                JSON.stringify(message));
+            /* falls through */
           default:
             if (connection) {
               stats.countDiReq++;
@@ -290,7 +353,7 @@
               }
 
               connection.call(message, function (response) {
-                handleResponse(message, response, callback)
+                handleResponse(message, response, callback);
               });
             } else {
               console.error('sendRequest on non-existent CODAP connection');
@@ -309,7 +372,7 @@
      *   'move', 'resize', .... If not specified, all operations will be reported.
      * @param handler {Function} A handler to receive the notifications.
      */
-    on: function (actionSpec, resourceSpec, operation, handler) {
+    on: function (actionSpec, resourceSpec, operation, handler) { // eslint-disable-line no-unused-vars
       var as = 'notify',
           rs,
           os,
@@ -337,8 +400,9 @@
      * resource values. The last clause is identified as the resource type.
      * E.g. converts 'dataContext[abc].collection[def].case'
      * to {dataContext: 'abc', collection: 'def', type: 'case'}
-     * @param iResource {String}
-     * @returns {Object}
+     *
+     * @param {String} iResource
+     * @return {Object}
      */
     parseResourceSelector: function (iResource) {
       var selectorRE = /([A-Za-z0-9_-]+)\[([^\]]+)]/;
@@ -366,4 +430,4 @@
   } else {
     global.codapInterface = codapInterface;
   }
-})(this);
+}(this));
