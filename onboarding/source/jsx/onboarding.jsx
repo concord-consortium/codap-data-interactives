@@ -210,8 +210,8 @@ class TutorialView extends React.Component {
     this.handleFeedbackExit = this.handleFeedbackExit.bind(this);
     this.handleInfoClick = this.handleInfoClick.bind(this);
 
-    codapInterface.on(/notify/, /documentChangeNotice/, this.handleCodapNotification);
-    codapInterface.on(/notify/, /component/, this.handleCodapNotification);
+    codapInterface.on('notify', 'documentChangeNotice', this.handleCodapNotification);
+    codapInterface.on('notify', 'component', this.handleCodapNotification);
 
   }
 
@@ -336,7 +336,7 @@ class TutorialView extends React.Component {
   }
 
   render() {
-    if ('ontouchstart' in window) {
+    if (!hasMouse) {
       return (
           <div>
             <p>Sorry, this CODAP plugin does not yet work with touch devices.</p>
@@ -371,7 +371,7 @@ class TutorialView extends React.Component {
 
 codapInterface.init({
   title: "Getting started with CODAP",
-  version: "1.0",
+  version: "1.01",
   dimensions: {
     width: 400,
     height: 500
@@ -381,6 +381,11 @@ codapInterface.init({
   console.log(msg);
 });
 
+var hasMouse = !('ontouchstart' in window);
+window.onmousemove = function() {
+  hasMouse = true;
+}
 ReactDOM.render(<TutorialView />,
     document.getElementById('container'));
+
 
