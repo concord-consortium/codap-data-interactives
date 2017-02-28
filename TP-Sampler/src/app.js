@@ -20,6 +20,7 @@ Snap.plugin(function (Snap, Element) {
 var s = Snap("#model svg"),
 
     device = "mixer",       // ..."spinner"
+    isCollector = false,
 
     width = 205,            // svg units
     height = 220,
@@ -55,7 +56,10 @@ var s = Snap("#model svg"),
     experimentCaseID,
     runCaseID,
 
-    variables = ["a", "b", "a"],
+    userVariables = ["a", "b", "a"],
+    caseVariables = [],
+    variables = userVariables,
+
     balls = [],
     sampleSlotTargets = [],
     sampleSlots = [],
@@ -78,7 +82,7 @@ function render() {
   document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
 
   createSampleSlots();
-  if (device == "mixer") {
+  if (device == "mixer" || device == "collector") {
     createMixer();
   } else {
     createSpinner();
@@ -187,7 +191,7 @@ function addMixerVariables() {
     ball.click(showVariableNameInput(i));
     ball.hover((function(circ, lab, _i) {
       return function() {
-        if (running) return;
+        if (running || device == "collector") return;
         circ.attr({ fill: getVariableColor(_i, ii) });
         lab.attr({ fontSize: radius + 2, dy: ".26em", });
       }
@@ -235,7 +239,7 @@ function removeVariable() {
 
 function showVariableNameInput(i) {
   return function() {
-    if (running) return;
+    if (running || device == "collector") return;
 
     var loc = this.node.getClientRects()[0],
         text = variables[i],
@@ -248,7 +252,7 @@ function showVariableNameInput(i) {
     variableNameInput.focus();
     editingVariable = i;
 
-    if (device == "mixer") {
+    if (device == "mixer" || device == "collector") {
       variables[editingVariable] = "";
     } else {
       var v = variables[editingVariable];
@@ -379,7 +383,7 @@ function run() {
       }
     }
 
-    if (device == "mixer") {
+    if (device == "mixer" || device == "collector") {
       animateMixer();
     }
 
@@ -390,7 +394,7 @@ function run() {
 function animateSelectNextVariable(selection, draw, selectionMadeCallback) {
   if (!running) return;
 
-  if (device == "mixer") {
+  if (device == "mixer" || device == "collector") {
     animateMixerSelection(selection, draw, selectionMadeCallback);
   } else {
     animateSpinnerSelection(selection, draw, selectionMadeCallback)
@@ -661,6 +665,7 @@ function createSpinnerLabel(variable, uniqueVariable, x, y, fontSize, clipping, 
 
   label.click(showVariableNameInput(variable));
   label.hover(function() {
+    if (running) return;
     this.attr({ fontSize: fontSize + 2, dy: ".26em", });
     parent.attr({ fill: getVariableColor(uniqueVariable, uniqueVariables, true) });
   }, function() {
@@ -743,13 +748,22 @@ function switchState(evt, state) {
   if (this.blur) this.blur();
   var selectedDevice = state || this.id;
   if (selectedDevice !== device) {
-    reset();
     removeClass(document.getElementById(device), "active");
     addClass(document.getElementById(selectedDevice), "active");
     device = selectedDevice;
-    render();
+    isCollector = device == "collector";
+    variables = isCollector ? caseVariables : userVariables;
+    renderVariableControls();
+    if (isCollector) {
+      getCollections().then(populateCollectionList);
+    }
+    reset();
   }
 }
+
+reset();
+
+/** ******** HTML handlers and class modification ******** **/
 
 document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
@@ -757,6 +771,10 @@ document.getElementById("run").onclick = runButtonPressed;
 document.getElementById("stop").onclick = stopButtonPressed;
 document.getElementById("mixer").onclick = switchState;
 document.getElementById("spinner").onclick = switchState;
+document.getElementById("collector").onclick = switchState;
+document.getElementById("refresh-list").onclick = function() {
+  getCollections().then(populateCollectionList)
+};
 document.getElementById("draws").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
     render();
@@ -810,12 +828,38 @@ function setRunButton(showRun) {
     document.getElementById("run").innerHTML = "PAUSE";
   }
 }
+function renderVariableControls() {
+  if (device !== "collector") {
+    removeClass(document.getElementById("add-variable"), "hidden");
+    removeClass(document.getElementById("remove-variable"), "hidden");
+    addClass(document.getElementById("select-collection"), "hidden");
+    addClass(document.getElementById("refresh-list"), "hidden");
+  } else {
+    addClass(document.getElementById("add-variable"), "hidden");
+    addClass(document.getElementById("remove-variable"), "hidden");
+    removeClass(document.getElementById("select-collection"), "hidden");
+    removeClass(document.getElementById("refresh-list"), "hidden");
+  }
+}
+function populateCollectionList(collections) {
+  var sel = document.getElementById("select-collection");
+  sel.innerHTML = "";
+  collections.forEach(function (col) {
+    if (col.name !== 'Sampler')
+      sel.innerHTML += '<option value="' + col.name + '">' + col.name + "</option>";
+  });
+
+  if (!sel.innerHTML) {
+    sel.innerHTML += "<option>No collections</option>";
+    sel.setAttribute("disabled", "disabled");
+  } else {
+    sel.removeAttribute("disabled")
+  }
+}
 
 
-reset();
-render();
 
-// connect to CODAP
+/** ******** CODAP Communication ********** **/
 
 codapInterface.on('get', 'interactiveState', function () {
   return {success: true, values: {
@@ -983,5 +1027,26 @@ function openTable() {
     values: {
       type: 'caseTable'
     }
+  });
+}
+
+function getCollections() {
+  return new Promise(function(resolve, reject) {
+    if (!codapConnected) {
+      console.log('Not in CODAP')
+      resolve([]);
+      return;
+    }
+
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContextList'
+    }, function(result) {
+      if (result && result.success) {
+        resolve(result.values);
+      } else {
+        resolve([]);
+      }
+    });
   });
 }

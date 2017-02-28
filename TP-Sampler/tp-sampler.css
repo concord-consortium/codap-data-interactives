@@ -65,6 +65,15 @@ body {
   margin: 1vh 0vh;
 }
 
+#model-controls select {
+  margin: 2vh 0vh;
+  font-size: 3vh;
+}
+
+#model-controls #refresh-list {
+  margin-left: 3vh;
+}
+
 #device-selection {
   position: absolute;
   left: 0;
@@ -81,6 +90,10 @@ body {
   font-size: 4vh;
   width: 10vh;
   transform: translate(0%, -50%);
+}
+
+.hidden {
+  display: none;
 }
 
 button {

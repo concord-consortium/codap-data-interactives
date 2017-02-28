@@ -30,10 +30,15 @@
     <div id="model-controls">
       <button id="add-variable">+</button>
       <button id="remove-variable">-</button>
+      <select id="select-collection" class="hidden" name="select">
+        <option selected>Loading collections...</option>
+      </select>
+      <button id="refresh-list" class="hidden">Refresh list</button>
     </div>
     <div id="device-selection">
       <button id="mixer" class="active">Mixer</button>
       <button id="spinner">Spinner</button>
+      <button id="collector">Collector</button>
     </div>
     <input id="variable-name-change" type="text"></input>
     <script src="src/app.js"></script>
