@@ -886,6 +886,7 @@ function populateContextsList(collections) {
   if (!sel.innerHTML) {
     sel.innerHTML += "<option>No collections</option>";
     sel.setAttribute("disabled", "disabled");
+    return;
   } else {
     sel.removeAttribute("disabled")
   }
