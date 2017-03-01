@@ -8,8 +8,6 @@
  * @type {Object}
  */
 
-var inStartup = true;
-
 var kStartupSurvey = {
   "completedHtml": '<button class="restart-setup">Redo setup</button> ' +
       '<button class="start-up-complete">Begin</button>',
@@ -262,7 +260,7 @@ function startupSurveyCompletionHandler(data) {
       }
 
     });
-  inStartup = false;
+  myState.inStartup = false;
 }
 
 // function loadSurvey1() {
@@ -303,13 +301,15 @@ codapInterface.init({name: "Questionnaire",
   // then, determine whether we are starting fresh or have already loaded
   // data-acquisition surveys. If the later, start the survey, if the former
   // start the startup dialog.
-  .then(function (interactiveState) {
-    if (interactiveState && interactiveState.survey1) {
-      myState = codapInterface.getInteractiveState();
+  .then(function () {
+    myState = codapInterface.getInteractiveState();
+    if (myState && myState.survey1) {
       prepareDataContext().then(function () {
         addSurvey(myState.survey1, survey1CompletionHandler);
       });
+      myState.inStartup = false;
     } else {
+      myState.inStartup = true;
       updateDataSetList(kStartupSurvey)
         .then(function () {
           addSurvey(kStartupSurvey, startupSurveyCompletionHandler);
@@ -319,7 +319,7 @@ codapInterface.init({name: "Questionnaire",
   .catch( function (msg) { console.warn(msg);});
 
 codapInterface.on('documentChangeNotice', 'dataContextCountChanged', function () {
-  if (inStartup) {
+  if (myState && myState.inStartup) {
     updateDataSetList(kStartupSurvey).then(function () {
       removeSurvey();
       addSurvey(kStartupSurvey, startupSurveyCompletionHandler);

@@ -29,7 +29,12 @@
   </style>
 </head>
 <body>
-<div id="surveyAttachPoint" ></div>
+<div id="surveyAttachPoint" ><script type="text/javascript">
+  document.write('This page is meant to be embedded in <a href="//codap.concord.org">CODAP</a>');
+  if (location.protocol !== 'file') {
+    document.write(' like <a href="//codap.concord.org/releases/latest?di=' + window.location + '">this</a>.');
+  }
+</script></div>
 <div id="messages"></div>
 <script type="application/javascript" src="js/questionnaire.js"></script>
 </body>
