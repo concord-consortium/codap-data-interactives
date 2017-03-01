@@ -892,12 +892,12 @@ function populateContextsList(collections) {
   }
 
   if (sel.childNodes.length == 1) {
-    setCasesFromContext(sel.childNodes[0].value).then(addMixerVariables)
+    setCasesFromContext(sel.childNodes[0].value).then(render)
   } else {
     sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
     sel.onchange = function(evt) {
       if(evt.target.value) {
-        setCasesFromContext(evt.target.value).then(addMixerVariables)
+        setCasesFromContext(evt.target.value).then(render)
       }
     }
   }
