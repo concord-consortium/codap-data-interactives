@@ -184,7 +184,6 @@ function addMixerVariables() {
       }, 0),
       fontScaling = 1 - Math.min(Math.max((maxVariableLength - 5) * 0.1, 0), 0.4),
       fontSize = radius * fontScaling;
-      console.log(maxVariableLength)
 
   for (var i = 0, ii=variables.length; i<ii; i++) {
     var rowNumber = Math.floor(i/maxInRow),
@@ -247,7 +246,11 @@ function addVariable() {
   if (running) return;
   variables.push(getNextVariable());
   render();
+
   removeClass(document.getElementById("remove-variable"), "disabled");
+  if (variables.length > 119) {
+    addClass(document.getElementById("add-variable"), "disabled");
+  }
 }
 
 function removeVariable() {
@@ -257,6 +260,7 @@ function removeVariable() {
   variables.pop();
   render();
 
+  removeClass(document.getElementById("add-variable"), "disabled");
   if (variables.length < 2) {
     addClass(document.getElementById("remove-variable"), "disabled");
   }
@@ -1110,7 +1114,7 @@ function setCasesFromContext(contextName) {
         // clear caseVariables while leaving variables reference intact
         caseVariables.length = 0;
 
-        var count = results.values,
+        var count = Math.min(results.values, 120),
             reqs = [];
         for (var i = 0; i < count; i++) {
           reqs.push({
