@@ -144,15 +144,6 @@
       "categories":["Utilities"]
     },
     {
-      "title": "Importer",
-      "description": "Plugin for importing JSON, comma delimited or tab delimited files into CODAP",
-      "width": 750,
-      "height": 450,
-      "path": "/Importer/Importer.html",
-      "visible":false,
-      "categories":["Utilities"]
-    },
-    {
       "title": "TerraPop Plugin",
       "description": "Plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
       "width": 550,
