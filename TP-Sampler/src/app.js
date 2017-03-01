@@ -60,6 +60,10 @@ var s = Snap("#model svg"),
     caseVariables = [],
     variables = userVariables,
 
+    collectionResourceName,
+    collectionAttributes,
+    drawAttributes,
+
     balls = [],
     sampleSlotTargets = [],
     sampleSlots = [],
@@ -152,6 +156,19 @@ function createMixer() {
   addMixerVariables();
 }
 
+function getLabelForIndex(i) {
+  return getLabelForVariable(variables[i]);
+}
+
+function getLabelForVariable(v) {
+  if (typeof v == "object"){
+    var firstKey = Object.keys(v)[0];
+    return v[firstKey];
+  } else {
+    return v;
+  }
+}
+
 function addMixerVariables() {
   balls = [];
 
@@ -160,7 +177,14 @@ function addMixerVariables() {
       maxInRow = Math.floor(w / (radius*2)),
       rows = Math.floor(variables.length/maxInRow),
       radius = rows > 6 ? 9 : 14,      // repeat these to recalculate once
-      maxInRow = Math.floor(w / (radius*2));
+      maxInRow = Math.floor(w / (radius*2)),
+      maxVariableLength = variables.reduce(function(max, v) {
+        var length = getLabelForVariable(v).length;
+        return Math.max(max, length);
+      }, 0),
+      fontScaling = 1 - Math.min(Math.max((maxVariableLength - 5) * 0.1, 0), 0.4),
+      fontSize = radius * fontScaling;
+      console.log(maxVariableLength)
 
   for (var i = 0, ii=variables.length; i<ii; i++) {
     var rowNumber = Math.floor(i/maxInRow),
@@ -171,16 +195,17 @@ function addMixerVariables() {
 
     var labelClipping = s.circle(x, y, radius);
     // render ball to the screen
-    var circle = s.circle(x, y, radius).attr({
+    var text = getLabelForIndex(i),
+        circle = s.circle(x, y, radius).attr({
           fill: getVariableColor(i, ii, true),
           stroke: "#000",
           strokeWidth: 1
         }),
-        label = s.text(x, y, variables[i]).attr({
-          fontSize: radius,
+        label = s.text(x, y, text).attr({
+          fontSize: fontSize,
           textAnchor: "middle",
           dy: ".25em",
-          dx: getTextShift(variables[i], 4),
+          dx: getTextShift(text, (3.8*(radius/fontSize))),
           clipPath: labelClipping
         })
         ball = s.group(
@@ -189,18 +214,18 @@ function addMixerVariables() {
         );
     balls.push(ball);
     ball.click(showVariableNameInput(i));
-    ball.hover((function(circ, lab, _i) {
+    ball.hover((function(circ, lab, size, _i) {
       return function() {
         if (running || device == "collector") return;
         circ.attr({ fill: getVariableColor(_i, ii) });
-        lab.attr({ fontSize: radius + 2, dy: ".26em", });
+        lab.attr({ fontSize: size + 2, dy: ".26em", });
       }
-    })(circle, label, i), (function(circ, lab, _i) {
+    })(circle, label, fontSize, i), (function(circ, lab, size, _i) {
       return function() {
         circ.attr({ fill: getVariableColor(_i, ii, true) });
-        lab.attr({ fontSize: radius, dy: ".25em", });
+        lab.attr({ fontSize: size, dy: ".25em", });
       }
-    })(circle, label, i));
+    })(circle, label, fontSize, i));
   }
 
   // setup animation
@@ -407,7 +432,8 @@ function moveLetterToSlot(slot, sourceLetter, insertBeforeElement, initialTrans,
   var letter = sourceLetter.clone();
   letter.attr({
     textAnchor: "start",
-    clipPath: "none"
+    clipPath: "none",
+    dx: 0
   });
   samples.push(letter);
   insertBeforeElement.before(letter);
@@ -755,7 +781,7 @@ function switchState(evt, state) {
     variables = isCollector ? caseVariables : userVariables;
     renderVariableControls();
     if (isCollector) {
-      getCollections().then(populateCollectionList);
+      getContexts().then(populateContextsList);
     }
     reset();
   }
@@ -773,7 +799,7 @@ document.getElementById("mixer").onclick = switchState;
 document.getElementById("spinner").onclick = switchState;
 document.getElementById("collector").onclick = switchState;
 document.getElementById("refresh-list").onclick = function() {
-  getCollections().then(populateCollectionList)
+  getContexts().then(populateContextsList)
 };
 document.getElementById("draws").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
@@ -841,7 +867,7 @@ function renderVariableControls() {
     removeClass(document.getElementById("refresh-list"), "hidden");
   }
 }
-function populateCollectionList(collections) {
+function populateContextsList(collections) {
   var sel = document.getElementById("select-collection");
   sel.innerHTML = "";
   collections.forEach(function (col) {
@@ -854,6 +880,17 @@ function populateCollectionList(collections) {
     sel.setAttribute("disabled", "disabled");
   } else {
     sel.removeAttribute("disabled")
+  }
+
+  if (sel.childNodes.length == 1) {
+    setCasesFromContext(sel.childNodes[0].value).then(addMixerVariables)
+  } else {
+    sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
+    sel.onchange = function(evt) {
+      if(evt.target.value) {
+        setCasesFromContext(evt.target.value).then(addMixerVariables)
+      }
+    }
   }
 }
 
@@ -980,6 +1017,16 @@ function addValuesToCODAP(run, vals) {
     return;
   }
 
+  // process values into map of columns and value
+  var values;
+  values = vals.map(function(v) {
+    if (!isCollector) {
+      return {value : v}
+    } else {
+      return v;    // case is already in `key: value` structure
+    }
+  });
+
   codapInterface.sendRequest({
     action: 'create',
     resource: 'collection[runs].case',
@@ -992,10 +1039,10 @@ function addValuesToCODAP(run, vals) {
   }, function (result) {
       if (result.success) {
         var runCaseID = result.values[0].id,
-            valuesArray = vals.map(function(v) {
+            valuesArray = values.map(function(v) {
               return  {
                 parent: runCaseID,
-                values: { value: v }
+                values: v
                }
             });
         codapInterface.sendRequest({
@@ -1030,7 +1077,7 @@ function openTable() {
   });
 }
 
-function getCollections() {
+function getContexts() {
   return new Promise(function(resolve, reject) {
     if (!codapConnected) {
       console.log('Not in CODAP')
@@ -1048,5 +1095,83 @@ function getCollections() {
         resolve([]);
       }
     });
+  });
+}
+
+function setCasesFromContext(contextName) {
+  return new Promise(function(resolve, reject) {
+
+    function setCasesGivenCount (results) {
+      if (results.success) {
+        // clear caseVariables while leaving variables reference intact
+        caseVariables.length = 0;
+
+        var count = results.values,
+            reqs = [];
+        for (var i = 0; i < count; i++) {
+          reqs.push({
+            action: 'get',
+            resource: collectionResourceName + '.caseByIndex['+i+']'
+          });
+        }
+        codapInterface.sendRequest(reqs).then(function(results) {
+          results.forEach(function(res) {
+            caseVariables.push(res.values.case.values);
+          });
+          resolve();
+       });
+      }
+    }
+
+    function addAttributes() {
+      collectionAttributes.forEach(function (attr) {
+        if (drawAttributes.indexOf(attr) < 0) {
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: 'collection[draws].attribute',
+            values: [
+              {
+                name: attr
+              }
+            ]
+          });
+        }
+      });
+    }
+
+    function setCollection (result) {
+      if (result.success) {
+        collectionResourceName = "dataContext[" + contextName + "].collection[" +
+            result.values[0].name + "]";
+        codapInterface.sendRequest([
+          {     // get the existing columns in the draw table
+            action: 'get',
+            resource: 'collection[draws].attributeList'
+          },
+          {     // get the columns we'll be needing
+            action: 'get',
+            resource: collectionResourceName + '.attributeList'
+          },
+          {     // get the number of cases
+            action: 'get',
+            resource: collectionResourceName + '.caseCount'
+          }
+        ]).then(function(results) {
+          drawAttributes = results[0].values.map(function (res) {
+            return res.name;
+          });
+          collectionAttributes = results[1].values.map(function (res) {
+            return res.name;
+          });
+          addAttributes();    // throw this over the wall
+          return results[2];
+        }).then(setCasesGivenCount);
+      }
+    }
+
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext[' + contextName + '].collectionList'
+    }).then(setCollection);
   });
 }
