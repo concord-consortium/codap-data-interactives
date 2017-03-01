@@ -1,4 +1,5 @@
 body {
+  overflow: hidden;
   font-size: 4vh;
   /* No text-selection on any element */
   -webkit-touch-callout: none; /* iOS Safari */
@@ -8,12 +9,17 @@ body {
       -ms-user-select: none; /* Internet Explorer/Edge */
           user-select: none; /* Non-prefixed version, currently
                                 supported by Chrome and Opera */
+  font-family: system-ui,
+    -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
 #model {
   position: absolute;
   left: 0;
-  top: 15vh;
+  top: 18.6vh;
   width: 62vh;
   height: 67vh;
 }
@@ -27,15 +33,19 @@ body {
 }
 
 #top-bar input {
-  width: 12vh;
-  height: 2vh;
+  width: 11.9vh;
+  height: 2.2vh;
   font-size: 3vh;
   margin-left: 1vh;
+  margin-left: 0;
+}
+
+span {
+  font-size: 3.4vh;
 }
 
 #top-bar span {
-  font-size: 3.4vh;
-  margin-left: 1.6vh;
+  margin-left: 0.2vh;
 }
 
 #top-bar button {
@@ -51,8 +61,13 @@ body {
 
 #draw-settings input {
   width: 8vh;
-  font-size: 3vh;
   margin-left: 1.5vh;
+  font-size: 2.7vh;
+  padding: 0;
+}
+
+input[disabled="disabled"] {
+  background-color:#fbfbfb;
 }
 
 #model-controls {
@@ -62,7 +77,16 @@ body {
 }
 
 #model-controls button, #device-selection button {
-  margin: 1vh 0vh;
+  margin: 0vh 0vh;
+}
+
+#model-controls select {
+  margin: 0 0;
+  font-size: 3vh;
+}
+
+#model-controls #refresh-list {
+  margin-left: 2.5vh;
 }
 
 #device-selection {
@@ -83,13 +107,17 @@ body {
   transform: translate(0%, -50%);
 }
 
+.hidden {
+  display: none;
+}
+
 button {
     background-color: #dbf6ff;
     border: 0.3vh solid #008cba;
     border-radius: 0.5vh;
     color: black;
     min-width: 6vh;
-    padding: 1vh 2vh;
+    padding: 0.8vh 2vh 0.9vh 2vh;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -118,6 +146,38 @@ button.active {
   -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
      -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
           box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* Make ticks for FF and Safari */
+
+input[type='range'] {
+  background: -webkit-repeating-linear-gradient(90deg, transparent 0vh, transparent 2.3vh, #777, #777 2.5vh);
+  background: -moz-repeating-linear-gradient(90deg, transparent 0vh, transparent 2.3vh, #777, #777 2.5vh);
+  background: repeating-linear-gradient(90deg, transparent 0vh, transparent 2.3vh, #777, #777 2.5vh);
+}
+input[type='range'],
+input[type='range']::-webkit-slider-runnable-track,
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 1vh;
+  border-radius: 1vh;
+  background: #777;
+}
+input[type='range']::-webkit-slider-thumb {
+  box-sizing: border-box;
+  padding: 0;
+  height: 3.5vh;
+  width: 3.5vh;
+  border-radius: 200px;
+  border: 1px solid #AAA;
+  margin-top: -1.3vh;
+  background: #FFF;
+}
+input[type='range']:focus{
+  outline: none;
 }
 
 circle:hover{
