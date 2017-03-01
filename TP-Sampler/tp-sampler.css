@@ -55,6 +55,10 @@ body {
   margin-left: 1.5vh;
 }
 
+input[disabled="disabled"] {
+  background-color:#fbfbfb;
+}
+
 #model-controls {
   position: absolute;
   left: 3.2vh;

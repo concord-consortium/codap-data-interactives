@@ -839,12 +839,16 @@ function disableButtons() {
   setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
+  document.getElementById("draws").setAttribute("disabled", "disabled");
+  document.getElementById("repeat").setAttribute("disabled", "disabled");
   removeClass(document.getElementById("stop"), "disabled");
 }
 function enableButtons() {
   setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
+  document.getElementById("draws").removeAttribute("disabled");
+  document.getElementById("repeat").removeAttribute("disabled");
   addClass(document.getElementById("stop"), "disabled");
 }
 function setRunButton(showRun) {
