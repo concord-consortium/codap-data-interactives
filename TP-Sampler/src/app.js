@@ -196,7 +196,7 @@ function addMixerVariables() {
     // render ball to the screen
     var text = getLabelForIndex(i),
         circle = s.circle(x, y, radius).attr({
-          fill: getVariableColor(i, ii, true),
+          fill: getVariableColor(0, 0, true),
           stroke: "#000",
           strokeWidth: 1
         }),
@@ -213,18 +213,18 @@ function addMixerVariables() {
         );
     balls.push(ball);
     ball.click(showVariableNameInput(i));
-    ball.hover((function(circ, lab, size, _i) {
+    ball.hover((function(circ, lab, size) {
       return function() {
         if (running || device == "collector") return;
-        circ.attr({ fill: getVariableColor(_i, ii) });
+        circ.attr({ fill: getVariableColor(0, 0) });
         lab.attr({ fontSize: size + 2, dy: ".26em", });
       }
-    })(circle, label, fontSize, i), (function(circ, lab, size, _i) {
+    })(circle, label, fontSize), (function(circ, lab, size) {
       return function() {
-        circ.attr({ fill: getVariableColor(_i, ii, true) });
+        circ.attr({ fill: getVariableColor(0, 0, true) });
         lab.attr({ fontSize: size, dy: ".25em", });
       }
-    })(circle, label, fontSize, i));
+    })(circle, label, fontSize));
   }
 
   // setup animation
