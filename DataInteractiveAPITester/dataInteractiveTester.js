@@ -1,3 +1,4 @@
+/*global $:true, codapInterface:true */
 $(function () {
   var kTrianglePointsRight = '\u25B6';
   var kTrianglePointsDown = '\u25BC';
@@ -62,7 +63,7 @@ $(function () {
    * @param message {string}
    * @returns {null|jQuery} Element for insertion.
    */
-  function logMessage(type, id, message) {
+  function logMessage(type, id, message, isError) {
     if (message === null || message === undefined) {
       return;
     }
@@ -76,6 +77,7 @@ $(function () {
       err: 'Error',
       error: 'Error'
     }
+
     var myClass = 'di-' + type;
     var expandEl = $('<span>').addClass('di-expand-toggle').text(kTrianglePointsRight);
     var idEl = $('<span>').text((id|'') + ' ');
@@ -86,6 +88,9 @@ $(function () {
     var el = $('<div>').append(expandEl).append(idEl).append(typeEl).append(messageEl);
     var $messageLog = $('#message-log');
     el.addClass(myClass).addClass('di-log-line').addClass('di-toggle-closed');
+    if (isError) {
+      el.addClass('di-fail');
+    }
     if (domID) el.prop('id', domID);
     el.appendTo($messageLog);
     $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
@@ -119,7 +124,46 @@ $(function () {
       }
     }
     return ret;
-  };
+  }
+
+  function logComment(id, comment) {
+    logMessage('comment', id, comment);
+  }
+
+  function sendNextMessage(parsedMessages, msgNum) {
+    if (msgNum >= parsedMessages.length) { return; }
+    var id = ++stats.seq;
+    var parsedMessage = parsedMessages[msgNum].message;
+    var expected = parsedMessages[msgNum].expect;
+    var testName = parsedMessages[msgNum].name;
+    console.log('Message: ' + JSON.stringify(parsedMessage));
+    logComment(id, testName);
+    logMessage('req', id, parsedMessage);
+    if (expected) {
+      logMessage('expect', id, expected);
+    }
+    codapInterface.sendRequest(parsedMessage, function (result) {
+      var isError = false;
+      var diff;
+      if (result && expected) {
+        diff = compareObj(expected, result);
+        if ($.isEmptyObject(diff)) {
+          stats.successes++;
+        } else {
+          isError = true;
+        }
+      } else if (isSuccess(result)) {
+        stats.successes++;
+      } else {
+        isError = true;
+      }
+      logMessage('resp', id, result, isError);
+      $('#success').text('' + stats.successes);
+//              console.log('Reply: ' + JSON.stringify(result));
+      sendNextMessage(parsedMessages, msgNum+1);
+    });
+    $('#sentMessages').text('' + stats.seq);
+  }
 
   /**
    * Initiate a test by sending a request ot CODAP.
@@ -133,68 +177,29 @@ $(function () {
         parsedMessages = [parsedMessages];
       }
 
-      function logComment(id, comment) {
-        logMessage('comment', id, comment);
-      }
-
-      function sendOneMessage(msgNum) {
-        if (msgNum >= parsedMessages.length) { return; }
-        var id = ++stats.seq;
-        var parsedMessage = parsedMessages[msgNum].message;
-        var expected = parsedMessages[msgNum].expect;
-        var testName = parsedMessages[msgNum].name;
-        console.log('Message: ' + JSON.stringify(parsedMessage));
-        logComment(id, testName);
-        logMessage('req', id, parsedMessage);
-        if (expected) {
-          logMessage('expect', id, expected);
-        }
-        codapInterface.sendRequest(parsedMessage, function (result) {
-          var failClass = '';
-          var diff;
-          if (result && expected) {
-            diff = compareObj(expected, result);
-            if ($.isEmptyObject(diff)) {
-              stats.successes++;
-            } else {
-              failClass = 'di-fail';
-            }
-          } else if (isSuccess(result)) {
-            stats.successes++;
-          } else {
-            failClass = 'di-fail'
-          }
-          var respEl = logMessage('resp', id, result);
-          $('#message-log')[0].scrollTop = $('#message-log')[0].scrollHeight;
-          $('#success').text('' + stats.successes);
-//              console.log('Reply: ' + JSON.stringify(result));
-          sendOneMessage(msgNum+1);
-        });
-        $('#sentMessages').text('' + stats.seq);
-      }
-      sendOneMessage(0);
+      sendNextMessage(parsedMessages, 0);
     } catch (e) {
       logMessage('err', null, '' + (stats.seq) + ': ' + e);
       throw e;
     }
   }
 
-  function sendMessage(message) {
-    return new Promise(function (resolve, reject) {
-      codapInterface.sendRequest(message, function (reply) {
-        if (!reply) {
-          reject('Request timeout');
-        }
-        if (reply.success) {
-          resolve(reply)
-        } else {
-          var error_message = (reply.values && reply.values.error) || "unknown error";
-          reject(error_message);
-        }
-      });
-    });
-  }
-
+  // function sendMessage(message) {
+  //   return new Promise(function (resolve, reject) {
+  //     codapInterface.sendRequest(message, function (reply) {
+  //       if (!reply) {
+  //         reject('Request timeout');
+  //       }
+  //       if (reply.success) {
+  //         resolve(reply)
+  //       } else {
+  //         var error_message = (reply.values && reply.values.error) || "unknown error";
+  //         reject(error_message);
+  //       }
+  //     });
+  //   });
+  // }
+  //
   function selectResourceType(resourceTypeName) {
     // disable unsupported actions
     var actionTemplates = templateMap[resourceTypeName];
@@ -212,7 +217,7 @@ $(function () {
     displaySelectedTemplates();
   }
 
-  function selectAction (actionName) {
+  function selectAction (/*actionName*/) {
     // if resource type is selected, display selected templates
     displaySelectedTemplates();
   }
@@ -277,15 +282,15 @@ $(function () {
     return $templateLabel.after($templateSelector);
   }
 
-  function makeRequestBuilderSection($el, resourceTypes, actions, templates) {
+  function makeRequestBuilderSection($el, resourceTypes, actions/*, templates*/) {
     var $templateSelectorSection = makeTemplateSelector(resourceTypes, actions).appendTo($el);
-    var $editAreaLabel = $('<div>').addClass('di-label').text('message prep').appendTo($el);
-    var $editArea = $('<div>').addClass('di-message-area').prop('contentEditable', true).appendTo($el);
+    /*var $editAreaLabel = */$('<div>').addClass('di-label').text('message prep').appendTo($el);
+    /*var $editArea = */$('<div>').addClass('di-message-area').prop('contentEditable', true).appendTo($el);
     var $sendButton = $('<div>').append($('<button>').addClass('di-send-button').text('send')).appendTo($el);
 
-    $templateSelectorSection.on('click', '.di-request-builder-item .di-item', function (ev) {
-      $this = $(this);
-      $parent = $(this.parentElement);
+    $templateSelectorSection.on('click', '.di-request-builder-item .di-item', function (/*ev*/) {
+      var $this = $(this);
+      var $parent = $(this.parentElement);
       $parent.find('.di-selected').removeClass('di-selected');
       if (!$this.hasClass('di-disabled')) {
         $this.addClass('di-selected');
@@ -357,10 +362,10 @@ $(function () {
       actions[action].push(template);
     });
     return map;
-  };
+  }
 
   // request template repository
-  $.get('./tests.json', function (data) {
+  $.get('./resources/tests.json', function (data) {
     var $testSection = $("#ctl");
 
     templates = data;
@@ -369,14 +374,13 @@ $(function () {
 
     templateMap = makeTemplateMap(templates);
 
-    makeRequestBuilderSection($testSection, resourceTypes, actions, templates);
+    makeRequestBuilderSection($testSection, resourceTypes, actions/*, templates*/);
 
     // makeTemplateTable($testSection, templates);
   })
 
   $('#message-log').on('click', '.di-expand-toggle', function () {
     var $this = $(this);
-    var text = $this.text();
     var $div = $this.parent('div');
     var $messageLog = $('#message-log');
 
