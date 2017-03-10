@@ -92,12 +92,14 @@ function inferContextFromSurveys(surveys, contextName) {
       return;
     }
     var attributes = [];
-    var collection = {name: survey.title, attrs: attributes};
+    var collectionName = survey.title || surveyName;
+    var collection = {name: collectionName, attrs: attributes};
     collection.parent = lastCollectionName;
-    lastCollectionName = survey.title;
+    lastCollectionName = collectionName;
     survey.pages.forEach(function (page) {
-      page.questions.forEach(function (question) {
-        attributes.push({name: question.name});
+      page.questions.forEach(function (question, ix) {
+        var attrName = question.name = question.name || 'q' + ix;
+        attributes.push({name: attrName});
       });
     });
     collections.push(collection);
@@ -150,10 +152,12 @@ function prepareDataContext() {
   return codapInterface.sendRequest({action: 'get', resource: 'dataContext[' + myState.dataSetName  + ']'})
       .then(function (reply) {
         if (reply && !reply.success) {
+          // not found, so create it///
           contextDef = inferContextFromSurveys(myState, myState.dataSetName );
           codapInterface.sendRequest({action:'create', resource: 'dataContext', values: contextDef});
           return Promise.resolve([]);
         } else {
+          // found, so figure out if there are inconsistencies
           return Promise.resolve(findMissingAttributes([myState.survey1, myState.survey2], reply.values));
         }
       });
@@ -205,7 +209,7 @@ function survey2CompletionHandler(formData) {
  *
  * @param dataURI
  */
-function convertDataURIToJSON(dataURI) {
+function convertDataURIToJSON(dataURI, fn) {
   var dataUriRE = /^data:[^;]*;base64,/;
   if (!dataURI) {
     return;
@@ -215,10 +219,12 @@ function convertDataURIToJSON(dataURI) {
     try {
       return JSON.parse(x);
     } catch (ex) {
-      console.warn('Error parsing json file: ' + ex);
+      console.warn('Error parsing json for ' + fn + ': ' + ex);
+      $("#messages").html('Error parsing json file: ' + ex);
     }
   } else {
-    console.warn('Attempted to convert file that does not appear to be a json file.');
+    console.warn('Attempted to convert ' + fn + '. It does not appear to be a json file.');
+    $("#messages").html('Attempted to convert ' + fn + '. It does not appear to be a json file.');
   }
 }
 
@@ -241,26 +247,28 @@ function startupSurveyCompletionHandler(data) {
   // survey.js doesn't give us direct access to the survey file. Instead it creates
   // a data uri with the file information. Here, we base64 decode the dataURI, then
   // attempt to parse.
-  myState.survey1 = convertDataURIToJSON(answers.survey1);
+  myState.survey1 = convertDataURIToJSON(answers.survey1, 'file1');
   myState.survey1.completedHtml = kSurvey1CompletionHTML;
-  myState.survey2 = convertDataURIToJSON(answers.survey2);
+  myState.survey2 = convertDataURIToJSON(answers.survey2, 'file2');
   myState.survey2.completedHtml = kSurvey2CompletionHTML;
-  //surveyAttributes = getSurveyAttributes([myState.survey1, myState.survey2]);
-  prepareDataContext()
-    .then(function (reply) {
-      // addSurvey(myState.survey1, survey1CompletionHandler);
-      if (reply.length > 0) {
-        $("#messages").html('<span class="error">Warning:</span> the following ' +
-            'items are defined in the questionnaire, but not known to CODAP, so ' +
-            'will not be submitted: ' + reply.join());
-      } else {
-        $("#messages").text('At any time after this point you can save and/or share ' +
-            'this document. When the document is reopened it will show the ' +
-            'questionnaire dialog and not the foregoing setup dialog.');
-      }
+  if (myState.survey1 && myState.survey2) {
+    //surveyAttributes = getSurveyAttributes([myState.survey1, myState.survey2]);
+    prepareDataContext()
+        .then(function (reply) {
+          // addSurvey(myState.survey1, survey1CompletionHandler);
+          if (reply.length > 0) {
+            $("#messages").html('<span class="error">Warning:</span> the following ' +
+                'items are defined in the questionnaire, but not known to CODAP, so ' +
+                'will not be submitted: ' + reply.join());
+          } else {
+            $("#messages").text('At any time after this point you can save and/or share ' +
+                'this document. When the document is reopened it will show the ' +
+                'questionnaire dialog and not the foregoing setup dialog.');
+          }
 
-    });
-  myState.inStartup = false;
+        });
+    myState.inStartup = false;
+  }
 }
 
 // function loadSurvey1() {
