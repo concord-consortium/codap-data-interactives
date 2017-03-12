@@ -162,19 +162,21 @@ $(function () {
     logMessage('comment', id, comment);
   }
 
-  function sendNextMessage(parsedMessages, msgNum) {
+  function sendNextTest(parsedMessages, msgNum) {
     if (msgNum >= parsedMessages.length) { return; }
     var id = ++stats.seq;
-    var parsedMessage = parsedMessages[msgNum].message;
-    var expected = parsedMessages[msgNum].expect;
-    var testName = parsedMessages[msgNum].name;
-    console.log('Message: ' + JSON.stringify(parsedMessage));
+
+    var parsedMessage = parsedMessages[msgNum];
+    var message = parsedMessage.message || parsedMessage;
+    var expected = parsedMessage.expect;
+    var testName = parsedMessage.name;
+    console.log('Message: ' + JSON.stringify(message));
     logComment(id, testName);
-    logMessage('req', id, parsedMessage);
+    logMessage('req', id, message);
     if (expected) {
       logMessage('expect', id, expected);
     }
-    codapInterface.sendRequest(parsedMessage, function (result) {
+    codapInterface.sendRequest(message, function (result) {
       var isError = false;
       var diff;
       if (result && expected) {
@@ -192,7 +194,7 @@ $(function () {
       logMessage('resp', id, result, isError);
       $('#success').text('' + stats.successes);
 //              console.log('Reply: ' + JSON.stringify(result));
-      sendNextMessage(parsedMessages, msgNum+1);
+      sendNextTest(parsedMessages, msgNum+1);
     });
     $('#sentMessages').text('' + stats.seq);
   }
@@ -201,7 +203,7 @@ $(function () {
    * Initiate a test by sending a request ot CODAP.
    * @param test {object}
    */
-  function send(test) {
+  function sendTest(test) {
     try {
       var parsedMessages = test;
 
@@ -209,13 +211,18 @@ $(function () {
         parsedMessages = [parsedMessages];
       }
 
-      sendNextMessage(parsedMessages, 0);
+      sendNextTest(parsedMessages, 0);
     } catch (e) {
       logMessage('err', null, '' + (stats.seq) + ': ' + e);
       throw e;
     }
   }
 
+  /**
+   * Sends a plain message to CODAP.
+   * @param message
+   * @return {Promise}
+   */
   function sendMessage(message) {
     return new Promise(function (resolve, reject) {
       codapInterface.sendRequest(message, function (reply) {
@@ -347,7 +354,7 @@ $(function () {
         // parse
         try {
           messageObj = JSON.parse(message);
-          send([{message: messageObj}]);
+          sendTest(messageObj);
         } catch (ex) {
           logMessage('error', stats.seq, ex.toString());
         }
@@ -404,7 +411,7 @@ $(function () {
   function clearMessageLog() {
     codapInterface.getInteractiveState().history = history = [];
     stats.seq = 0;
-    stats.success = 0;
+    stats.successes = 0;
     $('#message-log').empty();
   }
 
