@@ -101,6 +101,7 @@ button {
 
 .di-req {
   background-color: rgba(0,255,0,0.1);
+  position: relative;
 }
 
 .di-resp {
@@ -172,6 +173,19 @@ button {
   white-space: nowrap;
   overflow: hidden;
   height: 1.1em;
+}
+.di-copy-button {
+  position: absolute;
+  display: block;
+  top: 0;
+  right: 0;
+  padding: 1px 2px 2px;
+  line-height: 1;
+  background-color: green;
+  color: lightgray;
+  border: solid darkgreen thin;
+  border-radius: 5px;
+  font-size: smaller;
 }
 #test-table {
   table-layout: fixed;

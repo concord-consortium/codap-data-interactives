@@ -316,7 +316,7 @@ var dataManager = Object.create({
     return this.state.collectionInfoList.find(function (collectionInfo) {
       var collection = collectionInfo.collection;
       var attr = collection.attrs.find(function (attr) { return attr.name === iAttributeName; });
-      return attr != undefined;
+      return attr !== undefined;
     });
   },
 
@@ -604,7 +604,7 @@ var dispatcher = Object.create({
 
     handleCODAPRequest: function (request, callback) {
       function getResourceType(resourceSelector) {
-        return resourceSelector && resourceSelector.match(/^[^[]*/)[0]
+        return resourceSelector && resourceSelector.match(/^[^[]*/)[0];
       }
       function getContext(resourceSelector) {
         var match = resourceSelector.match(/^[^[]*\[([^\]]*)]/);
@@ -621,7 +621,7 @@ var dispatcher = Object.create({
         case 'interactiveState':
           if (request.action === 'get') {
             success = true;
-            values = dataManager.getPersistentState()
+            values = dataManager.getPersistentState();
           } else {
             console.log('Unsupported interactiveState action, CODAP to DI: ' +
                 JSON.stringify(request));
@@ -632,7 +632,7 @@ var dispatcher = Object.create({
           success = true;
           request.values.forEach(function(action) {
             dataManager.dataContextDidChange(contextName, action);
-          })
+          });
           break;
         case 'documentChangeNotice':
           if (request.values.operation === 'dataContextCountChanged') {
@@ -640,7 +640,7 @@ var dispatcher = Object.create({
             success = true;
           }
           break;
-        case 'undoChangeNotice':
+        // case 'undoChangeNotice':
         default:
           console.log('Unsupported request from CODAP to DI: ' +
               JSON.stringify(request));
