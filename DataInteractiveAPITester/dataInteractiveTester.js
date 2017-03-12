@@ -1,4 +1,4 @@
-/*global $:true, codapInterface:true */
+/*global $:true, codapInterface:true, Promise:true */
 $(function () {
   var kTrianglePointsRight = '\u25B6';
   var kTrianglePointsDown = '\u25BC';
@@ -67,7 +67,7 @@ $(function () {
     if (message === null || message === undefined) {
       return;
     }
-    history.push({type: type, id: id, message: message});
+
     var lookupLongType={
       comment: 'Comment',
       req: 'Request',
@@ -79,21 +79,53 @@ $(function () {
     }
 
     var myClass = 'di-' + type;
-    var expandEl = $('<span>').addClass('di-expand-toggle').text(kTrianglePointsRight);
-    var idEl = $('<span>').text((id|'') + ' ');
-    var typeEl = $('<span>').addClass('di-message-type').text(lookupLongType[type] + ': ');
+    var $expandEl = $('<span>')
+        .addClass('di-expand-toggle')
+        .text(kTrianglePointsRight);
+    var $idEl = $('<span>')
+        .text(( id || '' ) + ' ');
+    var $typeEl = $('<span>')
+        .addClass('di-message-type')
+        .text(lookupLongType[type] + ': ');
     var domID = (id !== null && id !== undefined)? 'r' + id: undefined;
     var messageStr = (typeof message === 'string')?message:JSON.stringify(message, null, "  ");
-    var messageEl = $('<span>').addClass('di-log-message').text(messageStr);
-    var el = $('<div>').append(expandEl).append(idEl).append(typeEl).append(messageEl);
+    var $messageEl = $('<span>')
+        .addClass('di-log-message')
+        .text(messageStr);
+    var el = $('<div>')
+        .append($expandEl)
+        .append($idEl)
+        .append($typeEl)
+        .append($messageEl);
     var $messageLog = $('#message-log');
-    el.addClass(myClass).addClass('di-log-line').addClass('di-toggle-closed');
+
+    el.addClass(myClass)
+        .addClass('di-log-line')
+        .addClass('di-toggle-closed');
+
     if (isError) {
       el.addClass('di-fail');
     }
-    if (domID) el.prop('id', domID);
+
+    if (domID) {
+      el.prop('id', domID);
+    }
+
+    if (type === 'req') {
+      el.prepend(
+          $('<button>')
+              .addClass('di-copy-button')
+              .prop('title', 'copy to message prep')
+              .text('copy')
+      );
+    }
+
     el.appendTo($messageLog);
+
     $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
+
+    history.push({type: type, id: id, message: message});
+
     return el;
   }
 
@@ -184,22 +216,22 @@ $(function () {
     }
   }
 
-  // function sendMessage(message) {
-  //   return new Promise(function (resolve, reject) {
-  //     codapInterface.sendRequest(message, function (reply) {
-  //       if (!reply) {
-  //         reject('Request timeout');
-  //       }
-  //       if (reply.success) {
-  //         resolve(reply)
-  //       } else {
-  //         var error_message = (reply.values && reply.values.error) || "unknown error";
-  //         reject(error_message);
-  //       }
-  //     });
-  //   });
-  // }
-  //
+  function sendMessage(message) {
+    return new Promise(function (resolve, reject) {
+      codapInterface.sendRequest(message, function (reply) {
+        if (!reply) {
+          reject('Request timeout');
+        }
+        if (reply.success) {
+          resolve(reply)
+        } else {
+          var error_message = (reply.values && reply.values.error) || "unknown error";
+          reject(error_message);
+        }
+      });
+    });
+  }
+
   function selectResourceType(resourceTypeName) {
     // disable unsupported actions
     var actionTemplates = templateMap[resourceTypeName];
@@ -286,7 +318,12 @@ $(function () {
     var $templateSelectorSection = makeTemplateSelector(resourceTypes, actions).appendTo($el);
     /*var $editAreaLabel = */$('<div>').addClass('di-label').text('message prep').appendTo($el);
     /*var $editArea = */$('<div>').addClass('di-message-area').prop('contentEditable', true).appendTo($el);
-    var $sendButton = $('<div>').append($('<button>').addClass('di-send-button').text('send')).appendTo($el);
+    var $sendButton = $('<div>')
+        .append($('<button>')
+            .addClass('di-send-button')
+            .prop('title', 'send to CODAP')
+            .text('send')
+        ).appendTo($el);
 
     $templateSelectorSection.on('click', '.di-request-builder-item .di-item', function (/*ev*/) {
       var $this = $(this);
@@ -364,6 +401,41 @@ $(function () {
     return map;
   }
 
+  function clearMessageLog() {
+    codapInterface.getInteractiveState().history = history = [];
+    stats.seq = 0;
+    stats.success = 0;
+    $('#message-log').empty();
+  }
+
+  function extractNames(values) {
+    return values.map(function(value) {return value.name;});
+  }
+
+  function resetCODAP() {
+    sendMessage({
+      action: 'get',
+      resource: 'dataContextList'
+    }).then (function (result) {
+      var names = (result && result.success)? extractNames(result.values): null;
+      var msg = names.map(function(name) {
+        return {action: 'delete', resource: 'dataContext[' + name + ']'};
+      });
+      return sendMessage(msg);
+    }).then(function () {
+      return sendMessage({
+        action: 'get',
+        resource: 'componentList'
+      })
+    }).then(function (result) {
+      var names = (result && result.success)? extractNames(result.values): null;
+      var msg = names.map(function(name) {
+        return {action: 'delete', resource: 'component[' + name + ']'};
+      });
+      return sendMessage(msg);
+    });
+  }
+
   // request template repository
   $.get('./resources/tests.json', function (data) {
     var $testSection = $("#ctl");
@@ -396,6 +468,21 @@ $(function () {
     }
   });
 
+  $('#message-log').on('click', '.di-copy-button', function () {
+    var $this = $(this);
+    var $parent = $this.parent('div');
+    var message = $parent.find('.di-log-message').text();
+    $('.di-message-area').text(message);
+  })
+
+  $('#clear-log-button').on('click', function () {
+    clearMessageLog();
+  });
+
+  $('#reset-codap-button').on('click', function () {
+    resetCODAP();
+  });
+
   codapInterface.init({
     name: 'CODAP API Tester',
     version: 0.2,
@@ -411,9 +498,10 @@ $(function () {
     }
     history = interactiveState.history;
     history.forEach(function (item) {
-      logMessage(item.type, item.id, item.message);
+      logMessage(item.type, item.id, item.message, item.type === 'resp' && !item.message.success);
     });
   });
+
   codapInterface.on('notify', '*', function (notice) {
     logMessage('notify', 0, notice);
   });
