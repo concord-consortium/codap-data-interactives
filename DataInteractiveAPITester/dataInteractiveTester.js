@@ -13,8 +13,6 @@ $(function () {
     successes: 0
   }
 
-  var history = [];
-
   var actions = [
       'get',
       'create',
@@ -124,7 +122,7 @@ $(function () {
 
     $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
 
-    history.push({type: type, id: id, message: message});
+    interactiveState.history.push({type: type, id: id, message: message});
 
     return el;
   }
@@ -271,7 +269,7 @@ $(function () {
     var action = $(kActionSelector + '.di-selected').text();
     var actionMap = templateMap[resourceType];
     var templateList;
-    console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
+    // console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
     $(kTemplateSelector).remove();
     if (actionMap) {
       if (action) {
@@ -409,7 +407,7 @@ $(function () {
   }
 
   function clearMessageLog() {
-    codapInterface.getInteractiveState().history = history = [];
+    codapInterface.getInteractiveState().history = [];
     stats.seq = 0;
     stats.successes = 0;
     $('#message-log').empty();
@@ -441,6 +439,58 @@ $(function () {
       });
       return sendMessage(msg);
     });
+  }
+
+  function captureRequests() {
+    return interactiveState.history &&
+        interactiveState.history.filter &&
+        interactiveState.history.filter(function (item) {
+      return item.type === 'req';
+    }) || [];
+  }
+
+  function makeRecordingName(recordings) {
+    var ix = 1;
+    var baseName = 'recording';
+    var name = baseName + ix;
+    while (recordings.find(function (recording) {return name === recording.name;})) {
+      ix ++;
+      name = baseName + ix;
+    }
+    return name;
+  }
+
+  function addToRecordingListView(name, count, index) {
+    var $recordingList = $('#recordings');
+    // <div class="di-recording" data-recordIx="{num}" ><input value="{name}" /><button>replay</button></div>
+    var $input = $('<input>').prop('value', name);
+    var $count = $('<span>').text(' ' + count + ((count === 1)?' message':' messages'));
+    var $button = $('<button>').text('replay').addClass('replay-button');
+    var $div = $('<div>')
+        .addClass('di-recording')
+        .data('recordIndex', index)
+        .append($input)
+        .append($count)
+        .append($button);
+    $recordingList.append($div);
+  }
+
+  function makeRecordingOfHistory() {
+    if (!interactiveState.recordings) { interactiveState.recordings = []; }
+    var name = makeRecordingName(interactiveState.recordings);
+    var recording = {
+      name: name,
+      data: captureRequests()
+    };
+    interactiveState.recordings.push(recording);
+    addToRecordingListView(name, recording.data.length, interactiveState.recordings.length - 1);
+  }
+
+  /**
+   *
+   */
+  function replayRecording(recording) {
+    sendTest(recording.data);
   }
 
   // request template repository
@@ -482,30 +532,47 @@ $(function () {
     $('.di-message-area').text(message);
   })
 
-  $('#clear-log-button').on('click', function () {
-    clearMessageLog();
-  });
+  $('#clear-log-button').on('click', clearMessageLog);
 
-  $('#reset-codap-button').on('click', function () {
-    resetCODAP();
-  });
+  $('#reset-codap-button').on('click', resetCODAP);
+
+  $('#record-button').on('click', makeRecordingOfHistory)
+
+  $('#recordings').on('click', '.replay-button', function () {
+    var $parent = $(this.parentElement);
+    var recordIndex = $parent.data('recordIndex');
+    if (recordIndex !== undefined && recordIndex !== null) {
+      replayRecording(interactiveState.recordings[recordIndex]);
+    } else {
+      console.log('Can\'t find recording: ' + $parent.find('input').val());
+    }
+  })
 
   codapInterface.init({
     name: 'CODAP API Tester',
     version: 0.2,
     dimensions: { height: 640, width: 430}
   }).then(function () {
+    var priorHistory = [];
     interactiveState = codapInterface.getInteractiveState();
     if (!interactiveState.stats) {
       interactiveState.stats = { seq: 0, successes: 0};
     }
     stats = interactiveState.stats;
-    if (!interactiveState.history) {
-      interactiveState.history = [];
+    if (interactiveState.history) {
+      priorHistory = interactiveState.history;
     }
-    history = interactiveState.history;
-    history.forEach(function (item) {
-      logMessage(item.type, item.id, item.message, item.type === 'resp' && !item.message.success);
+    interactiveState.history = [];
+    priorHistory.forEach(function (item) {
+      logMessage(item.type, item.id, item.message,
+          item.type === 'resp' && !item.message.success);
+    });
+
+    if (!interactiveState.recordings) {
+      interactiveState.recordings = [];
+    }
+    interactiveState.recordings.forEach(function (recording, ix) {
+      addToRecordingListView(recording.name, recording.data.length, ix);
     });
   });
 
