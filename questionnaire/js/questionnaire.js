@@ -305,6 +305,7 @@ codapInterface.init({name: "Questionnaire",
       version: "0.1",
       dimensions: {width:480, height: 640},
       preventBringToFront: false,
+      preventDataContextReorg: false
     })
   // then, determine whether we are starting fresh or have already loaded
   // data-acquisition surveys. If the later, start the survey, if the former
