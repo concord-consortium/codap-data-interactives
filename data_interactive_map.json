@@ -1,12 +1,26 @@
-{ "data_interactives": [
+{
+  "data_interactives": [
     {
       "title": "Ocean Tracks Selector",
       "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project. Note that this plugin will not load in SSL.",
       "width": 550,
       "height": 500,
       "path": "https://oceantracks.org/map/trackmenu_1.html",
-      "visible":true,
-      "categories":["Partners"]
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Sampler",
+      "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"http:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
+      "width": 450,
+      "height": 200,
+      "path": "/TP-Sampler/index.html",
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
     },
     {
       "title": "SRRI Ship Odyssey Data Game",
@@ -14,8 +28,11 @@
       "width": 290,
       "height": 304,
       "path": "/ShipOdyssey/index.html",
-      "visible":true,
-      "categories":["Partners", "Data Games"]
+      "visible": true,
+      "categories": [
+        "Partners",
+        "Data Games"
+      ]
     },
     {
       "title": "SRRI Chainsaw Data Game",
@@ -23,8 +40,11 @@
       "width": 290,
       "height": 304,
       "path": "/Chainsaw/index.html",
-      "visible":true,
-      "categories":["Partners", "Data Games"]
+      "visible": true,
+      "categories": [
+        "Partners",
+        "Data Games"
+      ]
     },
     {
       "title": "SRRI Inference Data Game",
@@ -32,8 +52,11 @@
       "width": 290,
       "height": 304,
       "path": "/Inference/index.html",
-      "visible":true,
-      "categories":["Partners", "Data Games"]
+      "visible": true,
+      "categories": [
+        "Partners",
+        "Data Games"
+      ]
     },
     {
       "title": "Cart Weight",
@@ -41,8 +64,10 @@
       "width": 290,
       "height": 304,
       "path": "/CartWeight/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Ramp Game",
@@ -50,8 +75,10 @@
       "width": 500,
       "height": 734,
       "path": "/RampGame/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Floyd's of Fargo",
@@ -59,8 +86,10 @@
       "width": 570,
       "height": 480,
       "path": "/FloydsFargo/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Lunar Lander",
@@ -68,8 +97,10 @@
       "width": 357,
       "height": 541,
       "path": "/LunarLander/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Markov",
@@ -77,8 +108,10 @@
       "width": 550,
       "height": 315,
       "path": "/Markov/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Proximity",
@@ -86,8 +119,10 @@
       "width": 463,
       "height": 344,
       "path": "/Proximity/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Shuffleboard",
@@ -95,8 +130,10 @@
       "width": 520,
       "height": 350,
       "path": "/Shuffleboard/index.html",
-      "visible":true,
-      "categories":["Data Games"]
+      "visible": true,
+      "categories": [
+        "Data Games"
+      ]
     },
     {
       "title": "Guess My Number",
@@ -104,8 +141,10 @@
       "width": 400,
       "height": 250,
       "path": "/GuessMyNumber/GuessMyNumber.html",
-      "visible":false,
-      "categories":["Utilities"]
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Random Number Generator",
@@ -113,8 +152,10 @@
       "width": 300,
       "height": 150,
       "path": "/NewRandomNumbers/index.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Fast Plants Simulator",
@@ -122,8 +163,10 @@
       "width": 400,
       "height": 250,
       "path": "/FastPlants/FastPlants.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Performance Harness",
@@ -131,8 +174,10 @@
       "width": 400,
       "height": 250,
       "path": "/PerformanceHarness/PerformanceHarness.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Normal Distribution Sampler",
@@ -140,8 +185,10 @@
       "width": 400,
       "height": 300,
       "path": "/Sampler/Sampler.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "TerraPop Plugin",
@@ -149,8 +196,10 @@
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
-      "visible":false,
-      "categories":["Utilities"]
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "GeoJSON Importer",
@@ -158,8 +207,10 @@
       "width": 450,
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
-      "visible":false,
-      "categories":["Utilities"]
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Wolf-Sheep Predation",
@@ -167,8 +218,10 @@
       "width": 550,
       "height": 500,
       "path": "/WolfSheep/index.html",
-      "visible":true,
-      "categories":["Partners"]
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
     },
     {
       "title": "Ants",
@@ -176,8 +229,10 @@
       "width": 550,
       "height": 500,
       "path": "/Ants/ants.html",
-      "visible":true,
-      "categories":["Partners"]
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
     },
     {
       "title": "Virus Growth",
@@ -185,8 +240,10 @@
       "width": 780,
       "height": 620,
       "path": "/Virus/Virus.html",
-      "visible":true,
-      "categories":["Partners"]
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
     },
     {
       "title": "Data Card",
@@ -194,8 +251,10 @@
       "width": 780,
       "height": 620,
       "path": "/DataCard/DataCard.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Track Generator",
@@ -203,8 +262,10 @@
       "width": 400,
       "height": 300,
       "path": "/Movement/Movement.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Pivotal Tracker Importer",
@@ -212,8 +273,10 @@
       "width": 400,
       "height": 250,
       "path": "/PivotalImporter/PTImporter.html",
-      "visible":false,
-      "categories":["Utilities"]
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Spring Mass Model",
@@ -221,8 +284,10 @@
       "width": 600,
       "height": 400,
       "path": "https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json",
-      "visible":true,
-      "categories":["Partners"]
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
     },
     {
       "title": "DropHTMLTable",
@@ -230,8 +295,10 @@
       "width": 600,
       "height": 400,
       "path": "/drop-html-table.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Questionnaire",
@@ -239,35 +306,32 @@
       "width": 400,
       "height": 600,
       "path": "/questionnaire/index.html",
-      "visible":true,
-      "categories":["Utilities"]
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Collaboration Service",
       "description": "Allows multiple users to add data to specified data contexts.",
       "width": 300,
-      "height":200,
+      "height": 200,
       "path": "/CollaborationService/CollaborationService.html",
       "visible": true,
-      "categories": ["Utilities"]
+      "categories": [
+        "Utilities"
+      ]
     },
     {
       "title": "Attribute Stacker",
       "description": "Allows user to tidy the data set",
       "width": 600,
-      "height":400,
+      "height": 400,
       "path": "/AttributeStacker/index.html",
       "visible": true,
-      "categories": ["Utilities"]
-    },
-    {
-      "title": "Discrete Collection Sampler",
-      "description": "Allows user to rearrange the data set",
-      "width": 450,
-      "height":200,
-      "path": "/proto-TP-Sampler/index.html",
-      "visible": true,
-      "categories": ["Utilities"]
+      "categories": [
+        "Utilities"
+      ]
     }
-]
+  ]
 }

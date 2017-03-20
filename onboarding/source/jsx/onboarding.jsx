@@ -112,18 +112,31 @@ class DraggableLink extends React.Component {
   }
 }
 
-var taskDescriptions = {
+let hasMouse = !('ontouchstart' in window);
+
+let taskDescriptions = {
   descriptions: [
-    {
-      key: 'Drag', label: 'Drag this data file into CODAP', url: './resources/DragCSV.mp4',
-      feedback: <div>
-        <p>You've got data! It appears in a <em>case table</em>.</p>
-        <p>Each row in the table represents a <em>case</em> and each column
-          represents an <em>attribute</em>.</p>
-        <p>This data set contains data about mammals. Each case represents a different
-          mammal. The attributes provide information about lifespan, height, and so on.</p>
-      </div>
-    },
+    hasMouse ?
+        {
+          key: 'Drag', label: 'Drag this data file into CODAP', url: './resources/DragCSV.mp4',
+          feedback: <div>
+            <p>You've got data! It appears in a <em>case table</em>.</p>
+            <p>Each row in the table represents a <em>case</em> and each column
+              represents an <em>attribute</em>.</p>
+            <p>This data set contains data about mammals. Each case represents a different
+              mammal. The attributes provide information about lifespan, height, and so on.</p>
+          </div>
+        } :
+        {
+          key: 'MakeTable', label: 'Make a table showing Mammals data', url: './resources/MakeTable.mp4',
+          feedback: <div>
+            <p>You made a <em>case table</em> showing the pre-loaded data.</p>
+            <p>Each row in the table represents a <em>case</em> and each column
+              represents an <em>attribute</em>.</p>
+            <p>This data set contains data about mammals. Each case represents a different
+              mammal. The attributes provide information about lifespan, height, and so on.</p>
+          </div>
+        },
     {
       key: 'MakeGraph', label: 'Make a graph', url: './resources/MakeGraph.mp4',
       feedback: <div>
@@ -173,7 +186,7 @@ class TaskList extends React.Component {
 
   render() {
     let checkBoxes = taskDescriptions.descriptions.map(function (iAction, iIndex) {
-      let tIcon = iIndex === 0 ? <DraggableLink/> : '', // Special case the data file checkbox
+      let tIcon = (iIndex === 0 && hasMouse) ? <DraggableLink/> : '', // Special case the data file checkbox
           tChecked = this.props.accomplished.indexOf(iAction.key) >= 0;
       return (
           <div key={iAction.key}>
@@ -253,7 +266,10 @@ class TutorialView extends React.Component {
         handleDataContextCountChanged();
         break;
       case 'create':
-        handleAccomplishment('MakeGraph', !isAccomplished('Drag'));
+        if( iRequest.values.type === 'graph')
+          handleAccomplishment('MakeGraph', !isAccomplished('Drag'));
+        else if(iRequest.values.type === 'table')
+          handleAccomplishment('MakeTable');
         break;
       case 'move':
         handleAccomplishment('MoveComponent');
@@ -336,14 +352,6 @@ class TutorialView extends React.Component {
   }
 
   render() {
-    if (!hasMouse) {
-      return (
-          <div>
-            <p>Sorry, this CODAP plugin does not yet work with touch devices.</p>
-          </div>
-      )
-    }
-
     this.taskList =
         <TaskList
             accomplished={this.state.accomplished}
@@ -369,23 +377,41 @@ class TutorialView extends React.Component {
   }
 }
 
-codapInterface.init({
-  title: "Getting started with CODAP",
-  version: "1.01",
-  dimensions: {
-    width: 400,
-    height: 500
-  },
-  preventDataContextReorg: false
-}).catch(function (msg) {
-  console.log(msg);
-});
+function getStarted() {
 
-var hasMouse = !('ontouchstart' in window);
-window.onmousemove = function() {
-  hasMouse = true;
+/*
+  window.onmousemove = function() {
+    hasMouse = true;
+  }
+*/
+
+  codapInterface.init({
+    title: "Getting started with CODAP",
+    version: "1.01",
+    dimensions: {
+      width: 400,
+      height: 500
+    },
+    preventDataContextReorg: false
+  }).catch(function (msg) {
+    console.log(msg);
+  });
+
+  if( !hasMouse) {
+    codapInterface.sendRequest({
+      action: 'create',
+      resource: 'dataContextFromURL',
+      values: {
+        URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/mammals.csv"
+      }
+    }).then(function (iResult) {
+      console.log('Created data context from URL');
+    });
+  }
+
+  ReactDOM.render(<TutorialView />,
+      document.getElementById('container'));
+
 }
-ReactDOM.render(<TutorialView />,
-    document.getElementById('container'));
 
-
+getStarted();
