@@ -20,6 +20,7 @@ $(function () {
       'delete',
       'notify'
     ];
+
   var resourceTypes = [
       'interactiveFrame',
       'component',
@@ -32,6 +33,7 @@ $(function () {
       'undoChangeNotice',
       'logMessage'
     ];
+
   var templates = [];
   var templateMap = {};
 
@@ -90,27 +92,27 @@ $(function () {
     var $messageEl = $('<span>')
         .addClass('di-log-message')
         .text(messageStr);
-    var el = $('<div>')
+    var $entryEl = $('<div>')
         .append($expandEl)
         .append($idEl)
         .append($typeEl)
         .append($messageEl);
     var $messageLog = $('#message-log');
 
-    el.addClass(myClass)
+    $entryEl.addClass(myClass)
         .addClass('di-log-line')
         .addClass('di-toggle-closed');
 
     if (isError) {
-      el.addClass('di-fail');
+      $entryEl.addClass('di-fail');
     }
 
     if (domID) {
-      el.prop('id', domID);
+      $entryEl.prop('id', domID);
     }
 
     if (type === 'req') {
-      el.prepend(
+      $entryEl.prepend(
           $('<button>')
               .addClass('di-copy-button')
               .prop('title', 'copy to message prep')
@@ -118,13 +120,13 @@ $(function () {
       );
     }
 
-    el.appendTo($messageLog);
+    $entryEl.appendTo($messageLog);
 
     $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
 
     interactiveState.history.push({type: type, id: id, message: message});
 
-    return el;
+    return $entryEl;
   }
 
   /**
@@ -264,7 +266,24 @@ $(function () {
     $('.di-message-area').text($el.find('.di-template-text').text());
   }
 
+  function isConstructionMode() {
+    return $('#construction-mode-checkbox').is(':checked');
+  }
+
   function displaySelectedTemplates() {
+    function getTemplateMessage(template) {
+      var ret;
+      if (isConstructionMode()) {
+        ret = Object.assign({}, template);
+        delete ret.action;
+        delete ret.resourceType;
+      } else if (template.message) {
+        ret = template.message;
+      } else {
+        ret = template;
+      }
+      return ret;
+    }
     var resourceType = $(kResourceTypeSelector + '.di-selected').text();
     var action = $(kActionSelector + '.di-selected').text();
     var actionMap = templateMap[resourceType];
@@ -283,10 +302,11 @@ $(function () {
     }
     templateList && templateList.forEach(function (template) {
       var $div = $('<div>').addClass('di-item');
+      var message = getTemplateMessage(template);
       if (template.name) {
         $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
       }
-      $('<div>').addClass('di-template-text').text(JSON.stringify(template.message, null, '  ')).appendTo($div);
+      $('<div>').addClass('di-template-text').text(JSON.stringify(message, null, '  ')).appendTo($div);
       $div.appendTo('.di-template-list');
     })
   }
@@ -305,6 +325,9 @@ $(function () {
     var $actionList = $('<div>').addClass('di-action-list').addClass('di-request-builder-item');
     var $resourceTypeList = $('<div>').addClass('di-resource-type-list').addClass('di-request-builder-item');
     var $templateList = $('<div>').addClass('di-template-list').addClass('di-request-builder-item');
+    var $constructionModeCheckbox = $('<label>')
+        .append($('<input>').prop({id:'construction-mode-checkbox', type: 'checkbox'}))
+        .append($('<span>').text(' Test construction mode'));
 
     resourceTypes.forEach(function(resourceType) {
       $('<div>').addClass('di-item').text(resourceType).appendTo($resourceTypeList);
@@ -316,7 +339,7 @@ $(function () {
 
     $templateSelector.append($resourceTypeList).append($actionList).append($templateList);
 
-    return $templateLabel.after($templateSelector);
+    return $templateLabel.after($templateSelector).after($constructionModeCheckbox);
   }
 
   function makeRequestBuilderSection($el, resourceTypes, actions/*, templates*/) {
@@ -460,7 +483,7 @@ $(function () {
     return name;
   }
 
-  function addToRecordingListView(name, count, index) {
+  function makeRecordingView(name, count, index) {
     var $recordingList = $('#recordings');
     // <div class="di-recording" data-recordIx="{num}" ><input value="{name}" /><button>replay</button></div>
     var $input = $('<input>').prop('value', name);
@@ -475,7 +498,7 @@ $(function () {
     $recordingList.append($div);
   }
 
-  function makeRecordingOfHistory() {
+  function saveRecord() {
     if (!interactiveState.recordings) { interactiveState.recordings = []; }
     var name = makeRecordingName(interactiveState.recordings);
     var recording = {
@@ -483,11 +506,11 @@ $(function () {
       data: captureRequests()
     };
     interactiveState.recordings.push(recording);
-    addToRecordingListView(name, recording.data.length, interactiveState.recordings.length - 1);
+    makeRecordingView(name, recording.data.length, interactiveState.recordings.length - 1);
   }
 
   /**
-   *
+   * Replay a recording
    */
   function replayRecording(recording) {
     sendTest(recording.data);
@@ -536,7 +559,7 @@ $(function () {
 
   $('#reset-codap-button').on('click', resetCODAP);
 
-  $('#record-button').on('click', makeRecordingOfHistory)
+  $('#record-button').on('click', saveRecord)
 
   $('#recordings').on('click', '.replay-button', function () {
     var $parent = $(this.parentElement);
@@ -572,7 +595,7 @@ $(function () {
       interactiveState.recordings = [];
     }
     interactiveState.recordings.forEach(function (recording, ix) {
-      addToRecordingListView(recording.name, recording.data.length, ix);
+      makeRecordingView(recording.name, recording.data.length, ix);
     });
   });
 
