@@ -13,8 +13,6 @@ $(function () {
     successes: 0
   }
 
-  var history = [];
-
   var actions = [
       'get',
       'create',
@@ -22,6 +20,7 @@ $(function () {
       'delete',
       'notify'
     ];
+
   var resourceTypes = [
       'interactiveFrame',
       'component',
@@ -34,6 +33,7 @@ $(function () {
       'undoChangeNotice',
       'logMessage'
     ];
+
   var templates = [];
   var templateMap = {};
 
@@ -92,27 +92,27 @@ $(function () {
     var $messageEl = $('<span>')
         .addClass('di-log-message')
         .text(messageStr);
-    var el = $('<div>')
+    var $entryEl = $('<div>')
         .append($expandEl)
         .append($idEl)
         .append($typeEl)
         .append($messageEl);
     var $messageLog = $('#message-log');
 
-    el.addClass(myClass)
+    $entryEl.addClass(myClass)
         .addClass('di-log-line')
         .addClass('di-toggle-closed');
 
     if (isError) {
-      el.addClass('di-fail');
+      $entryEl.addClass('di-fail');
     }
 
     if (domID) {
-      el.prop('id', domID);
+      $entryEl.prop('id', domID);
     }
 
     if (type === 'req') {
-      el.prepend(
+      $entryEl.prepend(
           $('<button>')
               .addClass('di-copy-button')
               .prop('title', 'copy to message prep')
@@ -120,13 +120,13 @@ $(function () {
       );
     }
 
-    el.appendTo($messageLog);
+    $entryEl.appendTo($messageLog);
 
     $messageLog[0].scrollTop = $messageLog[0].scrollHeight;
 
-    history.push({type: type, id: id, message: message});
+    interactiveState.history.push({type: type, id: id, message: message});
 
-    return el;
+    return $entryEl;
   }
 
   /**
@@ -162,19 +162,21 @@ $(function () {
     logMessage('comment', id, comment);
   }
 
-  function sendNextMessage(parsedMessages, msgNum) {
+  function sendNextTest(parsedMessages, msgNum) {
     if (msgNum >= parsedMessages.length) { return; }
     var id = ++stats.seq;
-    var parsedMessage = parsedMessages[msgNum].message;
-    var expected = parsedMessages[msgNum].expect;
-    var testName = parsedMessages[msgNum].name;
-    console.log('Message: ' + JSON.stringify(parsedMessage));
+
+    var parsedMessage = parsedMessages[msgNum];
+    var message = parsedMessage.message || parsedMessage;
+    var expected = parsedMessage.expect;
+    var testName = parsedMessage.name;
+    console.log('Message: ' + JSON.stringify(message));
     logComment(id, testName);
-    logMessage('req', id, parsedMessage);
+    logMessage('req', id, message);
     if (expected) {
       logMessage('expect', id, expected);
     }
-    codapInterface.sendRequest(parsedMessage, function (result) {
+    codapInterface.sendRequest(message, function (result) {
       var isError = false;
       var diff;
       if (result && expected) {
@@ -192,7 +194,7 @@ $(function () {
       logMessage('resp', id, result, isError);
       $('#success').text('' + stats.successes);
 //              console.log('Reply: ' + JSON.stringify(result));
-      sendNextMessage(parsedMessages, msgNum+1);
+      sendNextTest(parsedMessages, msgNum+1);
     });
     $('#sentMessages').text('' + stats.seq);
   }
@@ -201,7 +203,7 @@ $(function () {
    * Initiate a test by sending a request ot CODAP.
    * @param test {object}
    */
-  function send(test) {
+  function sendTest(test) {
     try {
       var parsedMessages = test;
 
@@ -209,13 +211,18 @@ $(function () {
         parsedMessages = [parsedMessages];
       }
 
-      sendNextMessage(parsedMessages, 0);
+      sendNextTest(parsedMessages, 0);
     } catch (e) {
       logMessage('err', null, '' + (stats.seq) + ': ' + e);
       throw e;
     }
   }
 
+  /**
+   * Sends a plain message to CODAP.
+   * @param message
+   * @return {Promise}
+   */
   function sendMessage(message) {
     return new Promise(function (resolve, reject) {
       codapInterface.sendRequest(message, function (reply) {
@@ -259,12 +266,29 @@ $(function () {
     $('.di-message-area').text($el.find('.di-template-text').text());
   }
 
+  function isConstructionMode() {
+    return $('#construction-mode-checkbox').is(':checked');
+  }
+
   function displaySelectedTemplates() {
+    function getTemplateMessage(template) {
+      var ret;
+      if (isConstructionMode()) {
+        ret = Object.assign({}, template);
+        delete ret.action;
+        delete ret.resourceType;
+      } else if (template.message) {
+        ret = template.message;
+      } else {
+        ret = template;
+      }
+      return ret;
+    }
     var resourceType = $(kResourceTypeSelector + '.di-selected').text();
     var action = $(kActionSelector + '.di-selected').text();
     var actionMap = templateMap[resourceType];
     var templateList;
-    console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
+    // console.log('displaySelectedTemplates: resourceType/action: ' + resourceType + '/' + action);
     $(kTemplateSelector).remove();
     if (actionMap) {
       if (action) {
@@ -278,10 +302,11 @@ $(function () {
     }
     templateList && templateList.forEach(function (template) {
       var $div = $('<div>').addClass('di-item');
+      var message = getTemplateMessage(template);
       if (template.name) {
         $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
       }
-      $('<div>').addClass('di-template-text').text(JSON.stringify(template.message, null, '  ')).appendTo($div);
+      $('<div>').addClass('di-template-text').text(JSON.stringify(message, null, '  ')).appendTo($div);
       $div.appendTo('.di-template-list');
     })
   }
@@ -300,6 +325,9 @@ $(function () {
     var $actionList = $('<div>').addClass('di-action-list').addClass('di-request-builder-item');
     var $resourceTypeList = $('<div>').addClass('di-resource-type-list').addClass('di-request-builder-item');
     var $templateList = $('<div>').addClass('di-template-list').addClass('di-request-builder-item');
+    var $constructionModeCheckbox = $('<label>')
+        .append($('<input>').prop({id:'construction-mode-checkbox', type: 'checkbox'}))
+        .append($('<span>').text(' Test construction mode'));
 
     resourceTypes.forEach(function(resourceType) {
       $('<div>').addClass('di-item').text(resourceType).appendTo($resourceTypeList);
@@ -311,7 +339,7 @@ $(function () {
 
     $templateSelector.append($resourceTypeList).append($actionList).append($templateList);
 
-    return $templateLabel.after($templateSelector);
+    return $templateLabel.after($templateSelector).after($constructionModeCheckbox);
   }
 
   function makeRequestBuilderSection($el, resourceTypes, actions/*, templates*/) {
@@ -347,7 +375,7 @@ $(function () {
         // parse
         try {
           messageObj = JSON.parse(message);
-          send([{message: messageObj}]);
+          sendTest(messageObj);
         } catch (ex) {
           logMessage('error', stats.seq, ex.toString());
         }
@@ -402,9 +430,9 @@ $(function () {
   }
 
   function clearMessageLog() {
-    codapInterface.getInteractiveState().history = history = [];
+    codapInterface.getInteractiveState().history = [];
     stats.seq = 0;
-    stats.success = 0;
+    stats.successes = 0;
     $('#message-log').empty();
   }
 
@@ -434,6 +462,58 @@ $(function () {
       });
       return sendMessage(msg);
     });
+  }
+
+  function captureRequests() {
+    return interactiveState.history &&
+        interactiveState.history.filter &&
+        interactiveState.history.filter(function (item) {
+      return item.type === 'req';
+    }) || [];
+  }
+
+  function makeRecordingName(recordings) {
+    var ix = 1;
+    var baseName = 'recording';
+    var name = baseName + ix;
+    while (recordings.find(function (recording) {return name === recording.name;})) {
+      ix ++;
+      name = baseName + ix;
+    }
+    return name;
+  }
+
+  function makeRecordingView(name, count, index) {
+    var $recordingList = $('#recordings');
+    // <div class="di-recording" data-recordIx="{num}" ><input value="{name}" /><button>replay</button></div>
+    var $input = $('<input>').prop('value', name);
+    var $count = $('<span>').text(' ' + count + ((count === 1)?' message':' messages'));
+    var $button = $('<button>').text('replay').addClass('replay-button');
+    var $div = $('<div>')
+        .addClass('di-recording')
+        .data('recordIndex', index)
+        .append($input)
+        .append($count)
+        .append($button);
+    $recordingList.append($div);
+  }
+
+  function saveRecord() {
+    if (!interactiveState.recordings) { interactiveState.recordings = []; }
+    var name = makeRecordingName(interactiveState.recordings);
+    var recording = {
+      name: name,
+      data: captureRequests()
+    };
+    interactiveState.recordings.push(recording);
+    makeRecordingView(name, recording.data.length, interactiveState.recordings.length - 1);
+  }
+
+  /**
+   * Replay a recording
+   */
+  function replayRecording(recording) {
+    sendTest(recording.data);
   }
 
   // request template repository
@@ -475,30 +555,47 @@ $(function () {
     $('.di-message-area').text(message);
   })
 
-  $('#clear-log-button').on('click', function () {
-    clearMessageLog();
-  });
+  $('#clear-log-button').on('click', clearMessageLog);
 
-  $('#reset-codap-button').on('click', function () {
-    resetCODAP();
-  });
+  $('#reset-codap-button').on('click', resetCODAP);
+
+  $('#record-button').on('click', saveRecord)
+
+  $('#recordings').on('click', '.replay-button', function () {
+    var $parent = $(this.parentElement);
+    var recordIndex = $parent.data('recordIndex');
+    if (recordIndex !== undefined && recordIndex !== null) {
+      replayRecording(interactiveState.recordings[recordIndex]);
+    } else {
+      console.log('Can\'t find recording: ' + $parent.find('input').val());
+    }
+  })
 
   codapInterface.init({
     name: 'CODAP API Tester',
     version: 0.2,
     dimensions: { height: 640, width: 430}
   }).then(function () {
+    var priorHistory = [];
     interactiveState = codapInterface.getInteractiveState();
     if (!interactiveState.stats) {
       interactiveState.stats = { seq: 0, successes: 0};
     }
     stats = interactiveState.stats;
-    if (!interactiveState.history) {
-      interactiveState.history = [];
+    if (interactiveState.history) {
+      priorHistory = interactiveState.history;
     }
-    history = interactiveState.history;
-    history.forEach(function (item) {
-      logMessage(item.type, item.id, item.message, item.type === 'resp' && !item.message.success);
+    interactiveState.history = [];
+    priorHistory.forEach(function (item) {
+      logMessage(item.type, item.id, item.message,
+          item.type === 'resp' && !item.message.success);
+    });
+
+    if (!interactiveState.recordings) {
+      interactiveState.recordings = [];
+    }
+    interactiveState.recordings.forEach(function (recording, ix) {
+      makeRecordingView(recording.name, recording.data.length, ix);
     });
   });
 
