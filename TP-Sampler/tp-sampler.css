@@ -66,6 +66,14 @@ span {
   padding: 0;
 }
 
+#reset {
+    position: absolute;
+    margin-right: 1vh;
+    margin-top: 2.2vh;
+    left: 41vh;
+    top: 8vh;
+}
+
 input[disabled="disabled"] {
   background-color:#fbfbfb;
 }

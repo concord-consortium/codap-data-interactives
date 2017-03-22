@@ -369,6 +369,39 @@ function stopButtonPressed() {
   endAnimation();
 }
 
+function resetButtonPressed() {
+  this.blur();
+  // First delete all the cases
+  codapInterface.sendRequest({
+    action: 'delete',
+    resource: 'dataContext[Sampler].collection[experiments].allCases'
+  });
+  var structure = { experiments: [ 'experiment', 'number_selected'],
+                    repetitions: [ 'repetition'],
+                    items: ['value']};
+  Object.keys( structure).forEach( function( key) {
+    var tValidAttrs = structure[ key];
+    codapInterface.sendRequest( {
+      action: 'get',
+      resource: 'dataContext[Sampler].collection[' + key + '].attributeList'
+    }).then( function( iResult) {
+      var tMsgList = [];
+      if( iResult.success) {
+        iResult.values.forEach( function( iAttribute) {
+          if( tValidAttrs.indexOf( iAttribute.name) < 0) {
+            tMsgList.push( {
+              action: 'delete',
+              resource: 'dataContext[Sampler].collection[' + key + '].attribute[' + iAttribute.name + ']'
+            });
+          }
+        });
+        if( tMsgList.length > 0)
+          codapInterface.sendRequest( tMsgList);
+      }
+    });
+  });
+}
+
 function addNextSequenceRunToCODAP() {
   if (!sequence[sentRun]) return;
 
@@ -799,6 +832,7 @@ document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = runButtonPressed;
 document.getElementById("stop").onclick = stopButtonPressed;
+document.getElementById("reset").onclick = resetButtonPressed;
 document.getElementById("mixer").onclick = switchState;
 document.getElementById("spinner").onclick = switchState;
 document.getElementById("collector").onclick = switchState;
