@@ -135,14 +135,15 @@ var dataManager = Object.create({
     }, {}, handler);
   },
 
-  requestAttributeCreate: function (contextName, collectionName, attrName, attrTitle, handler) {
+  requestAttributeCreate: function (contextName, collectionName, attrName, attrTitle, attrHidden, handler) {
     dispatcher.sendRequest({
       action: 'create',
       resource: 'dataContext[' + contextName + '].collection[' + collectionName + '].attribute',
       values: [{
         name: attrName,
         title: attrTitle,
-        hidden: true
+        editable: false,
+        hidden: attrHidden
       }]
     }, {}, handler);
   },
@@ -416,9 +417,11 @@ var dataManager = Object.create({
             return;
           }
 
+          // is there a firebase attribute in this collection?
           fbAttr = collection.attrs.find(function (attr) {
             return attr.name.substr(0, FIREBASE_ATTRIBUTE_PREFIX.length) === FIREBASE_ATTRIBUTE_PREFIX;
           });
+          // get the firebase key, either from the attribute or by making a new one
           firebaseKey = fbAttr ? fbAttr.name : FIREBASE_ATTRIBUTE_PREFIX + "_" + Math.round(9007199254740991 * Math.random()); // 9007199254740991 is the max safe integer in Javascript
 
           if (!self.collaborationContexts[context.name].collections[collection.name]) {
@@ -429,12 +432,17 @@ var dataManager = Object.create({
             };
           }
 
+          // if we have a firebase attribute, delete local cases because we assume
+          // firebase will synch us.
           if (fbAttr) {
             self.deleteLocalCases(context.name, collection.name, processCollectionQueue);
           }
+          // if we do not have a firebase attribute, create attributes for the
+          // collaborator and the key, then delete the cases on the assumption
+          // that firebase will synch us.
           else {
-            self.requestAttributeCreate(context.name, collection.name, 'Collaborator_' + collection.name, 'Collaborator', function (request, result) {
-              self.requestAttributeCreate(context.name, collection.name, firebaseKey, 'Firebase Key', function (request, result) {
+            self.requestAttributeCreate(context.name, collection.name, 'Collaborator_' + collection.name, 'Collaborator', false, function (request, result) {
+              self.requestAttributeCreate(context.name, collection.name, firebaseKey, 'Firebase Key', true, function (request, result) {
                 self.deleteLocalCases(context.name, collection.name, processCollectionQueue);
               });
             });
@@ -451,7 +459,7 @@ var dataManager = Object.create({
         collaborativeCollection = this.collaborationContexts[contextName].collections[collectionName];
 
     // only delete local cases once per collection
-    if (collaborativeCollection.deletedLocalCases) {
+    if (collaborativeCollection.deletedLocalCases || collaborativeCollection.parent) {
       done();
       return;
     }
