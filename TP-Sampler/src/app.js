@@ -79,7 +79,7 @@ var s = Snap("#model svg"),
 
 function render() {
   s.clear();
-  document.getElementById("draws").value = sampleSize;
+  document.getElementById("number_selected").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
   var sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
@@ -319,7 +319,7 @@ function setVariableName() {
  * of the ball to be selected.
  *
  * @param {int} draw - The number of variables drawn per run
- * @param {int} repeat - The number of runs
+ * @param {int} repeat - The number of repetitions
  */
 function createRandomSequence(draw, repeat) {
   var seq = [],
@@ -805,7 +805,7 @@ document.getElementById("collector").onclick = switchState;
 document.getElementById("refresh-list").onclick = function() {
   getContexts().then(populateContextsList)
 };
-document.getElementById("draws").addEventListener('input', function (evt) {
+document.getElementById("number_selected").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
     render();
 });
@@ -843,7 +843,7 @@ function disableButtons() {
   setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("draws").setAttribute("disabled", "disabled");
+  document.getElementById("number_selected").setAttribute("disabled", "disabled");
   document.getElementById("repeat").setAttribute("disabled", "disabled");
   removeClass(document.getElementById("stop"), "disabled");
 }
@@ -851,7 +851,7 @@ function enableButtons() {
   setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("draws").removeAttribute("disabled");
+  document.getElementById("number_selected").removeAttribute("disabled");
   document.getElementById("repeat").removeAttribute("disabled");
   addClass(document.getElementById("stop"), "disabled");
 }
@@ -956,23 +956,23 @@ codapInterface.init({
                   name: 'experiments',
                   attrs: [
                     {name: "experiment", type: 'categorical'},
-                    {name: "draws", type: 'categorical'}
+                    {name: "number_selected", type: 'categorical'}
                   ],
                   childAttrName: "experiment"
                 },
                 {
-                  name: 'runs',
+                  name: 'repetitions',
                   parent: 'experiments',
                   // The parent collection has just one attribute
-                  attrs: [{name: "run", type: 'categorical'}],
-                  childAttrName: "run"
+                  attrs: [{name: "repetition", type: 'categorical'}],
+                  childAttrName: "repetition"
                 },
                 {
-                  name: 'draws',
-                  parent: 'runs',
+                  name: 'items',
+                  parent: 'repetitions',
                   labels: {
-                    pluralCase: "draws",
-                    setOfCasesWithArticle: "a draw"
+                    pluralCase: "items",
+                    setOfCasesWithArticle: "an item"
                   },
                   // The child collection also has just one attribute
                   attrs: [{name: "value"}]
@@ -1006,7 +1006,7 @@ function startNewExperimentInCODAP() {
       values: [{
         values: {
           experiment: experimentNumber,
-          draws: sampleSize
+          number_selected: sampleSize
         }
       }]
     }, function (result) {
@@ -1038,11 +1038,11 @@ function addValuesToCODAP(run, vals) {
 
   codapInterface.sendRequest({
     action: 'create',
-    resource: 'collection[runs].case',
+    resource: 'collection[repetitions].case',
     values: [
      {
       parent: experimentCaseID,
-      values: { run: run }
+      values: { repetition: run }
      }
     ]
   }, function (result) {
@@ -1056,7 +1056,7 @@ function addValuesToCODAP(run, vals) {
             });
         codapInterface.sendRequest({
           action: 'create',
-          resource: 'collection[draws].case',
+          resource: 'collection[items].case',
           values: valuesArray
         });
       }
@@ -1137,7 +1137,7 @@ function setCasesFromContext(contextName) {
         if (drawAttributes.indexOf(attr) < 0) {
           codapInterface.sendRequest({
             action: 'create',
-            resource: 'collection[draws].attribute',
+            resource: 'collection[items].attribute',
             values: [
               {
                 name: attr
@@ -1155,7 +1155,7 @@ function setCasesFromContext(contextName) {
         codapInterface.sendRequest([
           {     // get the existing columns in the draw table
             action: 'get',
-            resource: 'collection[draws].attributeList'
+            resource: 'collection[items].attributeList'
           },
           {     // get the columns we'll be needing
             action: 'get',
