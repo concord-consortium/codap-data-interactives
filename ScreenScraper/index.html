@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Drag and drop experiments</title>
+<style>
+  @import url(style.css);
+</style>
+<script type="text/javascript" src="../Common/js/jquery.js"></script>
+<script type="text/javascript" src="../Common/js/iframe-phone.js"></script>
+<script src="screen-scraper.js"></script>
+</head>
+<body>
+<h1>Drag and Drop HTML Tables</h1>
+<p class="drop-region" contenteditable="true">Drop or paste tabular data here.</p>
+<div class="output-region" id="drag-to-region"></div>
+<p>Drag HTML content to the above white region.
+  Any tables in the page will be displayed.
+  You can transfer to CODAP the ones you want.</p>
+<table id="x1" border="1">
+  <thead>
+  <tr><th>h1</th> <th>h2</th> <th>h3</th> </tr>
+  <tr> <th>hh1</th> <th>hh2</th> <th>hh3</th> </tr>
+  </thead>
+  <tbody>
+  <tr> <td colspan="2">1td1</td> <td rowspan="2">1td2</td> </tr>
+  <tr> <td>2td1</td> <td>2td2</td> </tr>
+  <tr> <td colspan="2">2td1</td> <td>2td1</td> </tr>
+  </tbody>
+</table>
+</body>
+</html>

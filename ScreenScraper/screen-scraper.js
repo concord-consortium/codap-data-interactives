@@ -1,50 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Drag and drop experiments</title>
-<style>
-  body {
-    background-color: lightslategray;
-    height: 100%;
-  }
-  .drop-region {
-    border: thin grey solid;
-    border-radius: 5px;
-    background-color: white;
-    padding: 1em;
-    text-align: center;
-    width: 30em;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .drop-region:hover {
-    background-color: lightyellow;
-  }
-  .output-region {
-    background-color: lightgrey;
-    border: thin darkgray solid;
-  }
-  label {
-    font-family: sans-serif;
-    font-size: small;
-    margin: 0 .5em;
-  }
-  .table-container {
-    background-color: white;
-    margin: .5em 0 0;
-  }
-  table td {
-    font-size:small;
-    border: thin solid gray;
-  }
-</style>
-<script type="text/javascript" src="Common/js/jquery.js"></script>
-<script type="text/javascript" src="Common/js/iframe-phone.js"></script>
-<script type="text/javascript">
+/*global $:true, iframePhone:true*/
 $(document).ready(function () {
   var tableID = 0;
   var connection;
-  var connectionState = 'unstarted';
+  // var connectionState = 'unstarted';
   var $dropRegion = $('.drop-region');
   var interactiveFrame = {
     name: 'TableDrop',
@@ -105,17 +63,17 @@ $(document).ready(function () {
   }
 
   function init() {
-    function handleCODAPRequest(request, callback) {
+    function handleCODAPRequest(/*request, callback*/) {
     }
 
     connection = new iframePhone.IframePhoneRpcEndpoint(
         handleCODAPRequest, "data-interactive", window.parent);
-    connectionState = 'initialized';
+    // connectionState = 'initialized';
     sendRequest({
       "action": "update",
       "resource": "interactiveFrame",
       "values": interactiveFrame
-    }, function (reply) { });
+    }, function (/*reply*/) { });
   }
 
   function handleRemove(ev) {
@@ -124,7 +82,7 @@ $(document).ready(function () {
   }
 
   function handleSend(ev) {
-    function treatFirstRowAsHeader(firstRow) {
+    function treatFirstRowAsHeader(/*firstRow*/) {
       var hasHeader = $('.first-line-header', parentEl).is(':checked');
       console.log('hasHeader: ' + hasHeader);
       return hasHeader;
@@ -224,7 +182,7 @@ $(document).ready(function () {
     var stats = getTableStats($rows);
     var headerRowIndex = treatFirstRowAsHeader()? inferAttributeHeaderRowIndex(stats, $rows): null;
     var $headerRow = headerRowIndex !== null && $rows[headerRowIndex];
-    var headerNames;
+    // var headerNames;
     var contextName = $('.table-title', parentEl).val() || 'DropTarget';
     var attrs = getAttributeDefinitions($headerRow, stats.maxCols);
     sendRequest({
@@ -277,10 +235,41 @@ $(document).ready(function () {
 //    $(parentEl).remove();
   }
 
+  /**
+   * Replicate cells with colspans and rowspans>1.
+   * Values will be copied.
+   * @param $table
+   */
+  function normalizeTable(ix, table) {
+    var $table = $(table);
+    $table.find('th[colspan], td[colspan]').each(function() {
+      var $cell = $(this);
+      var count = parseInt($cell.attr('colspan')) - 1;
+      $cell.removeAttr('colspan');
+      while (count > 0) {
+        $cell.after($cell.clone());
+        count--;
+      }
+    });
+    $table.find('th[rowspan], td[rowspan]').each(function() {
+      var $cell = $(this);
+      var $row = $cell.parent();
+      var count = parseInt($cell.attr('rowspan')) - 1;
+      var index = $cell[0].cellIndex;
+      $cell.removeAttr('rowspan');
+      while (count > 0) {
+        $row = $row.next();
+        $row.find('td:nth-child(' + (index) + '), th:nth-child(' + (index) + ')')
+            .after($cell.clone());
+        count--;
+      }
+    });
+  }
+
   function formatTables(data, target) {
 
     function formatTable(ix, el) {
-      function makeTableHeader(targetEl, ix) {
+      function makeTableHeader(targetEl/*, ix*/) {
         var titleEl = $('<input>')
             .addClass('table-title')
             .val('Table' + (++tableID));
@@ -338,6 +327,7 @@ $(document).ready(function () {
     } else {
       target.html('<div>Found no tables in dropped item</div>');
     }
+    tables.each(normalizeTable);
     tables.each(formatTable);
   }
 
@@ -346,7 +336,7 @@ $(document).ready(function () {
     originalEvent.preventDefault();
     return true;
   });
-  $dropRegion.on('dragleave', function (ev) {
+  $dropRegion.on('dragleave', function (/*ev*/) {
 //    var originalEvent = ev.originalEvent;
 //    originalEvent.preventDefault();
   });
@@ -374,21 +364,10 @@ $(document).ready(function () {
       data = dataTransfer.getData('text/html');
 //    var data1 = dataTransfer.getData('text');
 //    console.log('dropped text: ' + data1);
-    formatTables(data, $('.output-region'));
+      formatTables(data, $('.output-region'));
     }
     originalEvent.preventDefault();
   });
 
   init();
 });
-</script>
-</head>
-<body>
-<h1>Drag and Drop HTML Tables</h1>
-<p class="drop-region" contenteditable="true">Drop or paste tabular data here.</p>
-<div class="output-region" id="drag-to-region"></div>
-<p>Drag HTML content to the above white region.
-  Any tables in the page will be displayed.
-  You can transfer to CODAP the ones you want.</p>
-</body>
-</html>
