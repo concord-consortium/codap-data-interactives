@@ -294,7 +294,7 @@
       "description": "A basic screen scraper. Drop the contents of an HTML page. The plugin will find the tables to transfer to CODAP.",
       "width": 600,
       "height": 400,
-      "path": "/drop-html-table.html",
+      "path": "/ScreenScraper/index.html",
       "visible": true,
       "categories": [
         "Utilities"
