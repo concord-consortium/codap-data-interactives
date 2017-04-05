@@ -1,12 +1,5 @@
 [
   {
-    "name": "Delete Data Set",
-    "message": {
-      "action": "delete",
-      "resource": "dataContext[DataContext1]"
-    }
-  },
-  {
     "name": "Update Interactive Frame",
     "message": {
       "action": "update",
@@ -22,6 +15,9 @@
           "height": 500
         }
       }
+    },
+    "expect": {
+      "success": true
     }
   },
   {
@@ -33,8 +29,11 @@
     "expect": {
       "success": true,
       "values": {
-        "title": "CODAP API Tester",
-        "version": 0.1,
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
         "dimensions": {
         },
         "externalUndoAvailable": true,
@@ -42,6 +41,7 @@
       }
     }
   },
+
   {
     "name": "Create Data Context",
     "message": {
@@ -52,66 +52,103 @@
         "title": "My Data Context",
         "description": "Toons"
       }
+    },
+    "expect": {
+      "id": "%%",
+      "name": "DataContext1"
     }
   },
   {
-    "name": "Create Collection",
+    "name": "Create Data Context from URL",
+    "message": {
+      "action": "create",
+      "resource": "dataContextFromURL",
+      "values": {
+        "URL": "https://vincentarelbundock.github.io/Rdatasets/csv/datasets/AirPassengers.csv"
+      }
+    }
+  },
+  {
+    "name": "Update Data Context",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1]",
+      "values": {
+        "title": "A new title for the data set"
+      }
+    }
+  },
+  {
+    "name": "Get Data Context",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "%%",
+        "title": "%%",
+        "collections": []
+      }
+    }
+  },
+  {
+    "name": "Get Data Context List",
+    "message": {
+      "action": "get",
+      "resource": "dataContextList"
+    },
+    "expect": {
+      "success": true,
+      "values": [
+
+      ]
+    }
+  },
+  {
+    "name": "Delete Data Context",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1]"
+    }
+  },
+
+  {
+    "name": "Create Parent Collection",
     "message":
     {
       "action": "create",
       "resource": "dataContext[DataContext1].collection",
       "values": [
         {
-          "name": "Toons",
-          "title": "Poeple"
-        },
-        {
-          "name": "Movies",
-          "attributes": [
-            {
-              "name": "Release_Date",
-              "type": "date"
-            },
-            {
-              "name": "Movie"
-            }
-          ]
+          "name": "People",
+          "title": "Data about People",
+          "labels": {
+            "singleCase": "person",
+            "pluralCase": "people"
+          }
         }
       ]
-    }
-  },
-  {
-    "name": "Create attributes",
-    "message": {
-      "action": "create",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+    },
+    "expect": {
+      "success": true,
       "values": [
         {
-          "name": "Name",
-          "type": "categorical"
-        },
-        {
-          "name": "Species",
-          "type": "categorical"
-        },
-        {
-          "name": "Gender",
-          "type": "categorical"
-        },
-        {
-          "name": "Studio",
-          "type": "categorical"
+          "id": "%%",
+          "name": "People"
         }
       ]
     }
   },
   {
-    "name": "Create Child Collection",
+    "name": "Create Child Collection w/ Attributes",
     "message": {
       "action": "create",
       "resource": "dataContext[DataContext1].collection",
       "values": {
         "name": "Movies",
+        "parent": "People",
         "attributes": [
           {
             "name": "Release_Date",
@@ -122,46 +159,15 @@
           }
         ]
       }
-    }
-  },
-  {
-    "name": "create collection",
-    "message": {
-      "action": "create",
-      "resource": "dataContext[DataContext1].collection",
-      "values": {
-        "name": "Scene",
-        "parent": "Movies",
-        "attributes": [
-          {
-            "name": "Timestamp"
-          }
-        ]
-      }
-    }
-  },
-  {
-    "name": "Update Data Context",
-    "message": {
-      "action": "update",
-      "resource": "dataContext[DataContext1]",
-      "values": {
-        "title": "Data, Data, Data"
-      }
-    }
-  },
-  {
-    "name": "Get Data Context List",
-    "message": {
-      "action": "get",
-      "resource": "dataContextList"
-    }
-  },
-  {
-    "name": "Get Data Context",
-    "message": {
-      "action": "get",
-      "resource": "dataContext[DataContext1]"
+    },
+    "expect": {
+      "success": true,
+      "values": [
+        {
+          "id": "%%",
+          "name": "Movies"
+        }
+      ]
     }
   },
   {
@@ -175,10 +181,19 @@
     }
   },
   {
-    "name": "Delete Collection",
+    "name": "Get Collection",
     "message": {
-      "action": "delete",
+      "action": "get",
       "resource": "dataContext[DataContext1].collection[Toons]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "id": "%%",
+        "name": "Toons",
+        "title": "%%"
+      }
+
     }
   },
   {
@@ -186,13 +201,57 @@
     "message": {
       "action": "get",
       "resource": "dataContext[DataContext1].collectionList"
+    },
+    "expect": {
+      "success": true,
+      "values": [
+        {
+          "id": "%%",
+          "name": "%%"
+        }
+      ]
     }
   },
   {
-    "name": "Get Collection",
+    "name": "Delete Collection",
     "message": {
-      "action": "get",
+      "action": "delete",
       "resource": "dataContext[DataContext1].collection[Toons]"
+    }
+  },
+
+  {
+    "name": "Create Categorical Attribute",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+      "values": [
+        {
+          "name": "Name",
+          "type": "categorical",
+          "title": "Toon Name",
+          "description": "The full name of the toon",
+          "editable": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "Create Numeric Attribute",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+      "values": [
+        {
+          "name": "Year",
+          "type": "numeric",
+          "title": "Year of debut",
+          "description": "First year the toon appeared in a film",
+          "editable": false,
+          "precision": 0,
+          "unit": "years"
+        }
+      ]
     }
   },
   {
@@ -220,11 +279,15 @@
     }
   },
   {
-    "action": "get",
-    "resource": "dataContext[DataContext1].collection[Toons].attributeList"
+    "name": "Delete Attribute",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
+    }
   },
+
   {
-    "name": "Create Cases",
+    "name": "Create Parent Case",
     "message": {
       "action": "create",
       "resource": "dataContext[DataContext1].collection[Toons].case",
@@ -234,24 +297,83 @@
             "Name": "Mickey",
             "Species": "Mouse",
             "Gender": "Male",
-            "Studio": "Disney",
-            "Release_Date": "11/18/1928",
-            "Movie": "Steamboat Willie"
-          }
-        },
-        {
-          "values": {
-            "Name": "Minnie",
-            "Species": "Mouse",
-            "Gender": "Female",
-            "Studio": "Disney",
-            "Release_Date": "11/18/1928",
-            "Movie": "Steamboat Willie"
+            "Studio": "Disney"
           }
         }
       ]
     }
   },
+  {
+    "name": "Create Child Case",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Toons].case",
+      "values": [
+        {
+          "parent": "23",
+          "values": {
+            "FilmName": "Steamboat Willie",
+            "Release_Date": "11/18/1928"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Update Case By ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
+      "values": {
+        "values": {
+          "Species": "Duck"
+        }
+      }
+    }
+  },
+  {
+    "name": "Get Case Count",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseCount"
+    }
+  },
+  {
+    "name": "Get Case By Index",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[0]"
+    }
+  },
+  {
+    "name": "Get Case By ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].caseByID[20]"
+    }
+  },
+  {
+    "name": "Case search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Toons].caseSearch[name==Mickey]"
+    }
+  },
+  {
+    "name": "Delete Case",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataCard].collection[Toons].caseByID[15]"
+    }
+  },
+  {
+    "name": "Delete all cases in dataContext",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].allCases"
+    }
+  },
+
   {
     "name": "Create Items",
     "message": {
@@ -277,46 +399,35 @@
       ]
     }
   },
+
   {
-    "name": "Get Case Count",
+    "name": "Create Selection List",
     "message": {
-      "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseCount"
+      "action": "create",
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        9
+      ]
     }
   },
   {
-    "name": "Get Case By Index",
-    "message": {
-      "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[0]"
-    }
-  },
-  {
-    "name": "Get Case By ID",
-    "message": {
-      "action": "get",
-      "resource": "dataContext[DataContext1].caseByID[20]"
-    }
-  },
-  {
-    "name": "Update Case By ID",
+    "name": "Update Selection List",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
-      "values": {
-        "values": {
-          "Species": "Duck"
-        }
-      }
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        10
+      ]
     }
   },
   {
-    "name": "Delete Case",
+    "name": "Get Selection List",
     "message": {
-      "action": "delete",
-      "resource": "dataContext[DataCard].collection[Toons].caseByID[15]"
+      "action": "get",
+      "resource": "dataContext[DataContext1].selectionList"
     }
   },
+
   {
     "name": "Create Calculator",
     "message": {
@@ -425,10 +536,13 @@
     }
   },
   {
-    "name": "Get Component List",
+    "name": "Update Component",
     "message": {
-      "action": "get",
-      "resource": "componentList"
+      "action": "update",
+      "resource": "component[myMap]",
+      "values": {
+        "legendAttribute": "Height"
+      }
     }
   },
   {
@@ -439,32 +553,32 @@
     }
   },
   {
-    "name": "Create Selection List",
-    "message": {
-      "action": "create",
-      "resource": "dataContext[DataContext1].selectionList",
-      "values": [
-        9
-      ]
-    }
-  },
-  {
-    "name": "Update Selection List",
-    "message": {
-      "action": "update",
-      "resource": "dataContext[DataContext1].selectionList",
-      "values": [
-        10
-      ]
-    }
-  },
-  {
-    "name": "Get Selection List",
+    "name": "Get Component List",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].selectionList"
+      "resource": "componentList"
     }
   },
+  {
+    "name": "Delete Component",
+    "message": {
+      "action": "delete",
+      "resource": "component[mySlider]"
+    }
+  },
+
+  {
+    "name": "Log a Message",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "formatStr": "Launched rocket with %@ engine toward %@",
+        "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+
   {
     "name": "Undo Change",
     "message": {
@@ -493,41 +607,6 @@
       "values": {
         "operation": "redoButtonPress"
       }
-    }
-  },
-  {
-    "name": "Log a Message",
-    "message": {
-      "action": "notify",
-      "resource": "logMessage",
-      "values": {
-        "formatStr": "Launched rocket with %@ engine toward %@",
-        "replaceArgs": ["red", "satellite"]
-      }
-    }
-  },
-  {
-    "name": "Delete all cases in dataContext",
-    "message": {
-      "action": "delete",
-      "resource": "dataContext[DataContext1].allCases"
-    }
-  },
-  {
-    "name": "Case search",
-    "message": {
-      "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseSearch[name==Mickey]"
-    }
-  },
-  {
-    "action": "create",
-    "resource": "component",
-    "values": {
-      "type": "game",
-      "name": "name-webview",
-      "title": "Tester",
-      "URL": "http://localhost/~jsandoe/codap-data-interactives/DataInteractiveAPITester/"
     }
   }
 ]

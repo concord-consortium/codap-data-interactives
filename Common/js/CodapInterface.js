@@ -1,5 +1,5 @@
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.

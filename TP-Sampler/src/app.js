@@ -371,14 +371,13 @@ function stopButtonPressed() {
 
 function resetButtonPressed() {
   this.blur();
+  experimentNumber = 0;
   // First delete all the cases
   codapInterface.sendRequest({
     action: 'delete',
     resource: 'dataContext[Sampler].collection[experiments].allCases'
   });
-  var structure = { experiments: [ 'experiment', 'number_selected'],
-                    repetitions: [ 'repetition'],
-                    items: ['value']};
+  var structure = { items: ['value']};
   Object.keys( structure).forEach( function( key) {
     var tValidAttrs = structure[ key];
     codapInterface.sendRequest( {
@@ -957,7 +956,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: '0.1',
+    version: '0.2',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;

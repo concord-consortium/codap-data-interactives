@@ -132,25 +132,32 @@ $(function () {
   /**
    * Compare two objects.
    *
-   * Returns the portions of obj1 that vary from obj2.
+   * Returns the portions of expected that vary from result.
+   * If expected matches the pattern %.*%, then any value for the property is
+   * considered a match.
    *
-   * @param obj1
-   * @param obj2
+   * @param expected
+   * @param result
    * @returns {{}}
    */
-  function compareObj(obj1, obj2) {
-    var ret = {},variance;
-    for(var i in obj1) {
-      if (obj1.hasOwnProperty(i)) {
+  function compareObj(expected, result) {
+    var ret = {},variance, key;
+    for(key in expected) {
+      if (expected.hasOwnProperty(key)) {
         variance = {};
-        if (typeof obj1[i] === 'object'){
-          variance = compareObj (obj1[i], obj2[i]) ;
+        if (typeof expected[key] === 'object'){
+          variance = compareObj (expected[key], result[key]) ;
           if (!$.isEmptyObject(variance) ){
-            ret[i]= variance
+            ret[key]= variance
           }
-        }else{
-          if(!obj2 || !obj2.hasOwnProperty(i) || obj1[i] !== obj2[i]) {
-            ret[i] = obj1[i];
+        } else {
+          if(
+              !result || // result exists, ...
+              !result.hasOwnProperty(key) || // has the sought property...
+                                             // and matches value...
+              (!/^%.*%$/.test(expected[key]) && (expected[key] !== result[key]
+            ))) {
+            ret[key] = expected[key];
           }
         }
       }
@@ -383,6 +390,19 @@ $(function () {
     });
   }
 
+  var resourceMap = {
+          attributeList: 'attribute',
+          allCases: 'case',
+          caseByIndex: 'case',
+          caseByID: 'case',
+          caseCount: 'case',
+          caseSearch: 'case',
+          collectionList: 'collection',
+          componentList: 'component',
+          dataContextFromURL: 'dataContext',
+          dataContextList: 'dataContext',
+        };
+
   function classifyTemplateData(templateData) {
     // make sure templates have a message field that is a normal object;
     templateData.filter(function (template) {
@@ -395,11 +415,12 @@ $(function () {
     }).forEach( function (template) {
       var message = template.message;
       var resource = message.resource;
+      var resourceName = resource
+          .replace(/\[[^\]]*]/g, '') // remove qualifiers
+          .replace(/.*\./, '');  // remove leading elements
       template.action = message.action;
-      template.resourceType = resource
-          .replace(/\[[^\]]*]/g, '')
-          .replace(/.*\./, '')
-          .replace(/(List|ByID|ByIndex|Count)$/, '');
+      template.resourceType = resourceMap[resourceName] || resourceName;
+      // console.log('resourceName, type: ' + [resourceName, template.resourceType].join());
     });
   }
 
