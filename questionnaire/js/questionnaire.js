@@ -308,7 +308,7 @@ function updateDataSetList(survey) {
 // Start CODAP connection
 codapInterface.init({name: "Questionnaire",
       title: "Questionnaire",
-      version: "0.1",
+      version: "0.2",
       dimensions: {width:480, height: 640},
       preventBringToFront: false,
       preventDataContextReorg: false
