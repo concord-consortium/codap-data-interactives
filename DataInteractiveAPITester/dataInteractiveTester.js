@@ -349,6 +349,22 @@ $(function () {
     return $templateLabel.after($templateSelector).after($constructionModeCheckbox);
   }
 
+  function characterPositionToLineAndCol(str, pos) {
+    var rows = 1;
+    var cols = 0;
+    var ix;
+    for (ix = 0; ix < pos; ix += 1) {
+      if (str[ix] === undefined) {
+        break;
+      } else if (str[ix] === '\n') {
+        rows++;
+        cols = 0;
+      }
+      cols++;
+    }
+    return 'row: ' + rows + " col: " + cols;
+  }
+
   function makeRequestBuilderSection($el, resourceTypes, actions/*, templates*/) {
     var $templateSelectorSection = makeTemplateSelector(resourceTypes, actions).appendTo($el);
     /*var $editAreaLabel = */$('<div>').addClass('di-label').text('message prep').appendTo($el);
@@ -384,7 +400,13 @@ $(function () {
           messageObj = JSON.parse(message);
           sendTest(messageObj);
         } catch (ex) {
-          logMessage('error', stats.seq, ex.toString());
+          var match = ex.message.match(/^.*in JSON at position ([0-9]+)/)
+          if (match) {
+            logMessage('error', stats.seq, 'JSON Parse error at or before ' +
+                characterPositionToLineAndCol(message, match[1]))
+          } else {
+            logMessage('error', stats.seq, ex.toString());
+          }
         }
       }
     });
