@@ -1,3 +1,8 @@
+/*!
+ * surveyjs - Survey JavaScript library v0.12.6
+ * Copyright (c) 2015-2017 Devsoft Baltic OÜ  - http://surveyjs.org/
+ * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+ */
 .sv_window {
   position: fixed;
   bottom: 3px;
@@ -9,6 +14,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 1.42857143;
+  text-align: left;
   text-align: start;
   text-decoration: none;
   text-shadow: none;
@@ -18,10 +24,10 @@
   word-spacing: normal;
   word-wrap: normal;
   white-space: normal;
-  /*background-color: #fff;*/
+  background-color: #fff;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
-  /*border: 1px solid #ccc;*/
+  border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
@@ -49,7 +55,7 @@
 .sv_main {
   width: 100%; }
 
-.sv_body {
+sv_body {
   margin-bottom: 10px; }
 
 .sv_page_empty {
@@ -111,7 +117,7 @@
 .sv_q_rating_item {
   margin-left: -1px;
   padding: 6px 12px;
-  margin-bottom: 0;
+  margin-bottom: 0px;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
