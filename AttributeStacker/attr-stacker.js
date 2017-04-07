@@ -465,11 +465,18 @@ $(function () {
           if (parentID !== null && parentID !== undefined) {
             iTypeList.forEach(function (type, ix) {
               var newCase = {parent:parentID, values: {}};
+              var dirty = false;
               newCase.values[iCategoryName] = type;
               iAttributeMappings[ix].forEach(function (mapping) {
-                newCase.values[mapping.toAttr] = myCase.values[mapping.fromAttr];
+                var v = myCase.values[mapping.fromAttr];
+                if (v !== null && v !== undefined && v !== '') {
+                  newCase.values[mapping.toAttr] = myCase.values[mapping.fromAttr];
+                  dirty = true;
+                }
               });
-              childCases.push(newCase);
+              if (dirty) {
+                childCases.push(newCase);
+              }
             });
             codapInterface.sendRequest({
               action: 'create',
