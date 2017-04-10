@@ -149,12 +149,23 @@ $(document).ready(function () {
     }
 
     function getAttributeDefinitions($headerRow, attrCount) {
+      function makeUnique(name) {
+        var newName = name;
+        var ix = 1;
+        while (names[newName]) {
+          newName = name + ix;
+          ix++;
+        }
+        names[newName] = true;
+        return newName;
+      }
       // we assume the first row is either all th or all td.
+      var names = {};
       var attrs = [], ix, attrName;
       var $cols = $headerRow && $('th,td', $headerRow);
       for (ix = 0; ix < attrCount; ix += 1) {
         if ($cols && $cols[ix]) {
-          attrName = $($cols[ix]).text() || 'attr' + ix;
+          attrName = makeUnique($($cols[ix]).text()) || 'attr' + ix;
         } else {
           attrName = 'attr' + ix;
         }
@@ -350,6 +361,7 @@ $(document).ready(function () {
   $dropRegion.on('drop paste', function (ev) {
     var originalEvent = ev.originalEvent;
     var dataTransfer = originalEvent.clipboardData || originalEvent.dataTransfer;
+    console.log('drop or paste: types=' + dataTransfer.types.join());
     var data;
 
     var uriList = dataTransfer.getData('text/uri-list');
@@ -360,7 +372,7 @@ $(document).ready(function () {
       $.get(uriList, {type:'text/html'}).then(function (data) {
         formatTables(data, $('.output-region'));
       });
-    } else {
+    } else if (dataTransfer.types.indexOf('text/html')>=0) {
       data = dataTransfer.getData('text/html');
 //    var data1 = dataTransfer.getData('text');
 //    console.log('dropped text: ' + data1);
