@@ -21,7 +21,7 @@ body {
   left: 0;
   top: 18.6vh;
   width: 62vh;
-  height: 67vh;
+  height: 61vh;
 }
 
 #top-bar {
@@ -66,14 +66,6 @@ span {
   padding: 0;
 }
 
-#reset {
-    position: absolute;
-    margin-right: 1vh;
-    margin-top: 2.2vh;
-    left: 41vh;
-    top: 8vh;
-}
-
 input[disabled="disabled"] {
   background-color:#fbfbfb;
 }
@@ -81,7 +73,7 @@ input[disabled="disabled"] {
 #model-controls {
   position: absolute;
   left: 3.2vh;
-  bottom: 8vh;
+  bottom: 14vh;
 }
 
 #model-controls button, #device-selection button {
@@ -95,6 +87,12 @@ input[disabled="disabled"] {
 
 #model-controls #refresh-list {
   margin-left: 2.5vh;
+}
+
+#reset {
+    position: absolute;
+    left: 3.2vh;
+    bottom: 4vh;
 }
 
 #device-selection {
