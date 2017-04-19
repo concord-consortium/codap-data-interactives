@@ -14,7 +14,7 @@ var kStartupSurvey = {
   "pages": [
     {
       "name": "page1",
-      "questions": [
+      "elements": [
         {
           "type": "html",
           "html": "This is a questionnaire plugin to " +
@@ -94,10 +94,11 @@ function inferContextFromSurveys(surveys, contextName) {
     var attributes = [];
     var collectionName = survey.title || surveyName;
     var collection = {name: collectionName, attrs: attributes};
+    survey = fixUpSurvey(survey);
     collection.parent = lastCollectionName;
     lastCollectionName = collectionName;
     survey.pages.forEach(function (page) {
-      page.questions.forEach(function (question, ix) {
+      page.elements.forEach(function (question, ix) {
         var attrName = question.name = question.name || 'q' + ix;
         attributes.push({name: attrName});
       });
@@ -111,7 +112,7 @@ function getSurveyAttributeNames(surveys) {
   var attrs = [];
   surveys.forEach(function (survey) {
     survey && survey.pages && survey.pages.forEach(function (page) {
-      page.questions && page.questions.forEach(function (question) {
+      page.elements && page.elements.forEach(function (question) {
         attrs.push(question.name);
       });
     });
@@ -164,9 +165,10 @@ function prepareDataContext() {
 }
 
 function addSurvey(surveyDoc, onCompleteHandler) {
+  var fixedUpSurveyDoc = fixUpSurvey(surveyDoc);
   $('#messages').empty();
   Survey.Survey.cssType = "standard";
-  survey = new Survey.Survey(surveyDoc);
+  survey = new Survey.Survey(fixedUpSurveyDoc);
 
   survey.onComplete.add(function (formData) {
     onCompleteHandler(formData);
@@ -228,6 +230,24 @@ function convertDataURIToJSON(dataURI, fn) {
   }
 }
 
+// recent version of survey.js (0.12.6) changed survey.pages[].questions to
+// survey.pages[].elements. We fix up the JSON so the software sees both
+function fixUpSurvey(survey) {
+  if (!survey) {
+    return survey;
+  }
+  var newSurvey = Object.assign({}, survey);
+  newSurvey.pages.forEach(function (page) {
+    if (page.elements && !page.questions) {
+      page.questions = page.elements;
+    }
+    if (page.questions && !page.elements) {
+      page.elements = page.questions;
+    }
+  });
+  return newSurvey;
+}
+
 function startupSurveyCompletionHandler(data) {
   if (!data) {
     return;
@@ -236,7 +256,6 @@ function startupSurveyCompletionHandler(data) {
     myState = codapInterface.getInteractiveState();
   }
   var answers = data.data;
-  // var surveyAttributes;
 
   // Apply name of data set. If new, we have to find it in a different field.
   if (answers.dataSetName === 'other') {
@@ -271,23 +290,10 @@ function startupSurveyCompletionHandler(data) {
   }
 }
 
-// function loadSurvey1() {
-//   return loadSurvey('survey1', myState.surveyURL1,
-//       '<button class="survey-1-complete">Enter Observations</button>',
-//       survey1CompletionHandler);
-// }
-
-// function loadSurvey2() {
-//   return loadSurvey('survey2', myState.surveyURL2,
-//       '<button class="survey-2-complete">Enter Another Observation</button>' +
-//       '<button class="survey-2-complete-restart">Start over</button>',
-//       survey2CompletionHandler);
-// }
-
 // update data set names in survey based on list returned by CODAP
 function updateDataSetList(survey) {
   // locate the data set question in the survey
-  var dataSetQuestion = survey.pages[0].questions.find(function(question) { return question.name === 'dataSetName';});
+  var dataSetQuestion = survey.pages[0].elements.find(function(question) { return question.name === 'dataSetName';});
 
   return codapInterface.sendRequest({action: 'get', resource: 'dataContextList'})
     .then(function (data) {
@@ -302,7 +308,7 @@ function updateDataSetList(survey) {
 // Start CODAP connection
 codapInterface.init({name: "Questionnaire",
       title: "Questionnaire",
-      version: "0.1",
+      version: "0.2",
       dimensions: {width:480, height: 640},
       preventBringToFront: false,
       preventDataContextReorg: false

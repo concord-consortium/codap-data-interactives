@@ -369,6 +369,38 @@ function stopButtonPressed() {
   endAnimation();
 }
 
+function resetButtonPressed() {
+  this.blur();
+  experimentNumber = 0;
+  // First delete all the cases
+  codapInterface.sendRequest({
+    action: 'delete',
+    resource: 'dataContext[Sampler].collection[experiments].allCases'
+  });
+  var structure = { items: ['value']};
+  Object.keys( structure).forEach( function( key) {
+    var tValidAttrs = structure[ key];
+    codapInterface.sendRequest( {
+      action: 'get',
+      resource: 'dataContext[Sampler].collection[' + key + '].attributeList'
+    }).then( function( iResult) {
+      var tMsgList = [];
+      if( iResult.success) {
+        iResult.values.forEach( function( iAttribute) {
+          if( tValidAttrs.indexOf( iAttribute.name) < 0) {
+            tMsgList.push( {
+              action: 'delete',
+              resource: 'dataContext[Sampler].collection[' + key + '].attribute[' + iAttribute.name + ']'
+            });
+          }
+        });
+        if( tMsgList.length > 0)
+          codapInterface.sendRequest( tMsgList);
+      }
+    });
+  });
+}
+
 function addNextSequenceRunToCODAP() {
   if (!sequence[sentRun]) return;
 
@@ -799,6 +831,7 @@ document.getElementById("add-variable").onclick = addVariable;
 document.getElementById("remove-variable").onclick = removeVariable;
 document.getElementById("run").onclick = runButtonPressed;
 document.getElementById("stop").onclick = stopButtonPressed;
+document.getElementById("reset").onclick = resetButtonPressed;
 document.getElementById("mixer").onclick = switchState;
 document.getElementById("spinner").onclick = switchState;
 document.getElementById("collector").onclick = switchState;
@@ -923,7 +956,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: '0.1',
+    version: '0.2',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;

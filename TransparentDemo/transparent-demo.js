@@ -16,6 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+/*global $:true,iframePhone:true,Promise:true */
 $(function (){
 
   var codap= new iframePhone.IframePhoneRpcEndpoint(iframePhoneHandler,
@@ -25,7 +26,6 @@ $(function (){
   var componentCoordinates = [];
   // width of the border surrounding each component.
   var kBufferWidth = 10;
-  var inIframe = false;
   var inMoveOrResize = false;
 
   var messageTemplates = {
@@ -189,13 +189,13 @@ $(function (){
   function setupCODAP() {
     var done = function () {
       resizeIFrame();
-      window.onresize = function (e) {
+      window.onresize = function (/* e */) {
         resizeIFrame();
       };
       document.getElementById("app").style.display = "block";
     };
 
-    sendMessage(messageTemplates.createDataSet).then(function (reply) {
+    sendMessage(messageTemplates.createDataSet).then(function (/* reply */) {
       return sendMessage(messageTemplates.createData)
     }).then(done).catch(function (msg) {console.log(msg)});
   }
