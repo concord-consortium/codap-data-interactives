@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- ******************  BEGIN CODAP HEADER  ****************** -->
+  <!-- **  COPY From embeddedCODAP/static/dg/en/cert/index.html * -->
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge"  >
 
@@ -15,7 +16,6 @@
   </script>
 
   <meta http-equiv="Content-type" content="text/html; charset=utf-8"  >
-  <meta http-equiv="Content-Script-Type" content="text/javascript"  >
   <meta name="apple-mobile-web-app-capable" content="yes"  >
   <meta name="apple-mobile-web-app-status-bar-style" content="default"  >
   <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"  >
@@ -24,28 +24,10 @@
   <link rel="apple-touch-startup-image" media="screen and (orientation:portrait)" href=""  >
   <link rel="apple-touch-startup-image" media="screen and (orientation:landscape)" href=""  >
 
-  <link rel="shortcut icon" href="embedded-codap/static/dg/en/cert/resources/images/favicon.ico" type="image/x-icon"  >
-  <script src="embedded-codap/static/dg/en/cert/resources/build/codap-lib-bundle.js.ignore" type="text/javascript"></script>
-  <!-- https://www.html5rocks.com/en/tutorials/speed/script-loading/ -->
-  <script>
-    (function() {
-      // load the CFM here if cfmBaseUrl is not specified
-      // otherwise, we delay-load CFM using cfmBaseUrl in main.js
-      var loadCfm = window.location.search.indexOf('cfmBaseUrl=') < 0;
-      [
-        loadCfm ? "embedded-codap/static/dg/en/cert/resources/cloud-file-manager/js/globals.js.ignore" : null,
-        loadCfm ? "embedded-codap/static/dg/en/cert/resources/cloud-file-manager/js/app.js.ignore" : null
-      ].forEach(function(src) {
-        if (src) {
-          var script = document.createElement('script');
-          script.src = src;
-          script.async = false;
-          document.head.appendChild(script);
-        }
-      });
-    }());
-  </script>
-
+  <link rel="shortcut icon" href="embeddedCODAP/static/dg/en/cert/resources/images/favicon.ico" type="image/x-icon"  >
+  <script src="embeddedCODAP/static/dg/en/cert/resources/build/codap-lib-bundle.js.ignore" type="text/javascript"></script>
+  <script src="embeddedCODAP/static/dg/en/cert/resources/cloud-file-manager/js/globals.js.ignore"></script>
+  <script src="embeddedCODAP/static/dg/en/cert/resources/cloud-file-manager/js/app.js.ignore"></script>
 
   <script>
     window.SC = window.SC || { MODULE_INFO: {}, LAZY_INSTANTIATION: {} };
@@ -676,11 +658,11 @@
     (function() {
       var styles = [];
       if (window.devicePixelRatio == 2 || window.location.search.indexOf("2x") > -1) {
-        styles = ["embedded-codap/static/dg/en/cert/stylesheet@2x-packed.css"];
-        SC.APP_IMAGE_ASSETS = ["embedded-codap/static/sproutcore/desktop/en/cert/stylesheet-no-repeat@2x.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-no-repeat@2x.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-repeat-x@2x.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-repeat-y@2x.png"];
+        styles = ["embeddedCODAP/static/dg/en/cert/stylesheet@2x-packed.css"];
+        SC.APP_IMAGE_ASSETS = ["embeddedCODAP/static/sproutcore/desktop/en/cert/stylesheet-no-repeat@2x.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-no-repeat@2x.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-repeat-x@2x.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-repeat-y@2x.png"];
       } else {
-        styles = ["embedded-codap/static/dg/en/cert/stylesheet-packed.css"];
-        SC.APP_IMAGE_ASSETS = ["embedded-codap/static/sproutcore/desktop/en/cert/stylesheet-no-repeat.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-no-repeat.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-repeat-x.png","embedded-codap/static/sproutcore/ace/en/cert/stylesheet-repeat-y.png"];
+        styles = ["embeddedCODAP/static/dg/en/cert/stylesheet-packed.css"];
+        SC.APP_IMAGE_ASSETS = ["embeddedCODAP/static/sproutcore/desktop/en/cert/stylesheet-no-repeat.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-no-repeat.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-repeat-x.png","embeddedCODAP/static/sproutcore/ace/en/cert/stylesheet-repeat-y.png"];
       }
 
 
@@ -750,10 +732,21 @@ Here the hosted application is represented by a single button.</p>
   <button id="press-me">press-me</button>
   <div id="message-area"></div>
 </div>
-<!-- ******************  BEGIN CODAP BODY   ****************** -->
-<script type="text/javascript" src="embedded-codap/static/dg/en/cert/javascript-packed.js"></script>
-<!-- ******************   END CODAP BODY   ****************** -->
+
+<!-- create an anchor for CODAP -->
 <div id='codap'></div>
+
+<!-- ******************  BEGIN CODAP BODY   ****************** -->
+<!-- **  COPY From embeddedCODAP/static/dg/en/cert/index.html * -->
+<script type="text/javascript">
+  if (SC.setupBodyClassNames) {
+    SC.setupBodyClassNames()
+  }
+</script>
+<script type="text/javascript" src="embeddedCODAP/static/dg/en/cert/javascript-packed.js"></script>
+<!-- ******************   END CODAP BODY   ****************** -->
+
+<!-- Host page javascript. -->
 <script type="application/javascript">
   function onLoad() {
     function animationEndHandler(ev) {
@@ -786,12 +779,12 @@ Here the hosted application is represented by a single button.</p>
       callback({success: true});
     }
 
+    // create a connector to CODAP and connect
     var codapEndpoint = new DG.IFramePhoneEmulator(codapHandler, 'data-interactive', 'main-page')
     if (DG.localIFramePhoneEndpoint) {
       DG.localIFramePhoneEndpoint.connect(codapEndpoint);
     }
 
-    var pluginAPI = DG.DataInteractivePhoneHandler.create();
     var pressMeBtn = document.getElementById('press-me');
     var calculatorBtn = document.getElementById('create-calculator');
 
