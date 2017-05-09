@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Desmos Basic Calculator</title>
+  <style>
+    #desmos-anchor {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+  <script src="https://www.desmos.com/api/v0.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+  <script src="../Common/js/iframe-phone.js"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+</head>
+<body>
+<div id="desmos-anchor"></div>
+<script>
+  function pollState() {
+    interactiveState.desmos = desmos.getState();
+    console.log('Saving state: ' + JSON.stringify(interactiveState.desmos));
+    setTimeout(pollState, 10000);
+  }
+  var elt = document.getElementById('desmos-anchor');
+  var desmos = Desmos.ScientificCalculator(elt);
+  var interactiveState;
+  codapInterface.init({
+    name: 'Desmos Basic Calculator',
+    version: '0.1'
+  }).then(function () {
+    interactiveState = codapInterface.getInteractiveState();
+    if (interactiveState.desmos) {
+      desmos.setState(interactiveState.desmos);
+    }
+    setTimeout(pollState, 10000);
+  });
+</script>
+</body>
+</html>
