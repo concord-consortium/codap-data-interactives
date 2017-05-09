@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <!-- ******************  BEGIN CODAP HEADER  ****************** -->
+
   <meta http-equiv="X-UA-Compatible" content="IE=edge"  >
 
   <script>
@@ -724,6 +725,7 @@
       height: 100vh;
     }
 
+    /* BEGIN Embedded CODAP Styling */
     #codap {
       position: absolute;
       top: 0;
@@ -736,35 +738,67 @@
     #codap .dg-container-view .sc-view {
       pointer-events: auto;
     }
+    /* END Embedded CODAP Styling */
   </style>
 </head>
-<body class="sc-focus">
+<body class="sc-focus" onload="onLoad()">
 <h1>Embedded Mode - Shared Page</h1>
 <p>Demos CODAP in Embedded Mode sharing a page with the hosting web application.
 Here the hosted application is represented by a single button.</p>
+<button id="create-calculator">Create a Calculator</button>
 <div id="my-app">
   <button id="press-me">press-me</button>
   <div id="message-area"></div>
 </div>
+<!-- ******************  BEGIN CODAP BODY   ****************** -->
+<script type="text/javascript" src="embedded-codap/static/dg/en/cert/javascript-packed.js"></script>
+<!-- ******************   END CODAP BODY   ****************** -->
+<div id='codap'></div>
 <script type="application/javascript">
-  (function () {
+  function onLoad() {
     function animationEndHandler(ev) {
       this.removeEventListener('animationend', animationEndHandler)
       document.body.removeChild(this);
     }
-    var btn = document.getElementById('press-me');
-    btn.addEventListener('click', function (ev) {
+    function pressMeHandler(ev) {
       var el = document.createElement('div');
       el.id='here-and-gone';
       el.appendChild(document.createTextNode('Wow!'));
       document.body.appendChild(el);
-      el.addEventListener('animationend', animationEndHandler)
-    });
-  }());
+      el.addEventListener('animationend', animationEndHandler);
+    }
+    function calculatorBtnHandler(ev) {
+      codapEndpoint.call({
+        action: 'create',
+        resource: 'component',
+        values: {
+          type: 'calculator'
+        }}, function (reply) {
+
+        }
+      ), function () {
+        console.log('Created calculator');
+      };
+    }
+
+    function codapHandler(message, callback) {
+      console.log('main-page recieved: ' + message);
+      callback({success: true});
+    }
+
+    var codapEndpoint = new DG.IFramePhoneEmulator(codapHandler, 'data-interactive', 'main-page')
+    if (DG.localIFramePhoneEndpoint) {
+      DG.localIFramePhoneEndpoint.connect(codapEndpoint);
+    }
+
+    var pluginAPI = DG.DataInteractivePhoneHandler.create();
+    var pressMeBtn = document.getElementById('press-me');
+    var calculatorBtn = document.getElementById('create-calculator');
+
+    pressMeBtn && pressMeBtn.addEventListener('click', pressMeHandler);
+    calculatorBtn && calculatorBtn.addEventListener('click', calculatorBtnHandler);
+
+  }
 </script>
-<!-- ******************  BEGIN CODAP BODY   ****************** -->
-<script type="text/javascript" src="embedded-codap/static/dg/en/cert/javascript-packed.js"></script>
-<div id='codap'></div>
-<!-- ******************   END CODAP BODY   ****************** -->
 </body>
 </html>
