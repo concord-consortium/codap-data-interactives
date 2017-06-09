@@ -74,11 +74,12 @@ function addAttributesToContext(attribute, collection, context){
   newItem.className = collection +' hidden';
   newItem.id = attribute;
   newItem.appendChild(document.createTextNode(attribute));
-  newItem.onclick = function(){
+  newItem.onclick = function(event){
     getData(context, collection, attribute).then(
       function(caseList){
         populateData(caseList, attribute);
       });
+      event.stopPropagation();
   }
   attributeList.appendChild(newItem);
 }
@@ -146,13 +147,13 @@ function populateData(recieved, attribute){
 
 }
 function listenToChanges(){
-	// codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
+	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
 }
 //active listeners
 /*
 dataContext - countchanged
-collection - create, delete, update
-attribute - create, delete, move, update
+// collection - create, delete, update (./)
+attribute - create, delete, move, update 
 cases - update
 */
 function updateDataContext(){

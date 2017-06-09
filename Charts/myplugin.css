@@ -55,6 +55,7 @@ ul{
   list-style-type: none;
   padding: 0px;
   background-color: green;
+  /*display: block;*/
 }
 li{
   padding-left: 10px;
