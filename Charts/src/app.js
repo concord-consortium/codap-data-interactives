@@ -149,12 +149,9 @@ function populateData(recieved, attribute){
 function listenToChanges(){
 	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
 }
-//active listeners
+
 /*
-dataContext - countchanged
-// collection - create, delete, update (./)
 attribute - create, delete, move, update 
-cases - update
 */
 function updateDataContext(){
   getData().then(function(contextList){
