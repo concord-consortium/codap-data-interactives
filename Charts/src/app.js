@@ -38,30 +38,32 @@ function getInitialData(){
   getData().then(function(contextList){
     //for each context populate attributes
     contextList.forEach(function(context){
-      addContextToList(context.title);
-      getData(context.title).then(function(collectionList){
-        populateContextFromCollectionList(collectionList, context.title);
+      addContextToList(context.name);
+      getData(context.name).then(function(collectionList){
+        populateContextFromCollectionList(collectionList, context.name);
       });
     });
   });
 }
-function addContextToList(title){
+function addContextToList(context){
   var contextUI = document.getElementById('contextList');
-  info.contextList.push(title);
+  info.contextList.push(context);
   var newItem = document.createElement('ul');
-  newItem.className = title;
-  newItem.id = title;
-  newItem.appendChild(document.createTextNode(title));
+  newItem.className = context;
+  newItem.id = context;
+  newItem.appendChild(document.createTextNode(context));
   newItem.onclick= function(){
-    $(newItem).children().toggle(); //switches display from none to initial
+    $(newItem).children().toggle("slow"); //switches display from none to initial
   };
+  codapInterface.on('dataContextChangeNotice['+context+']', 'createCollection', function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'deleteCollection', function(){updateContextAttribtueList(context)});
   contextUI.appendChild(newItem);
 }
 function populateContextFromCollectionList(collectionList, context){
   collectionList.forEach(function(collection){
-    getData(context, collection.title).then(function(attributeList){
+    getData(context, collection.name).then(function(attributeList){
       attributeList.forEach(function(attribute){
-        addAttributesToContext(attribute.title, collection.title, context);
+        addAttributesToContext(attribute.name, collection.name, context);
       });
     });
   });
@@ -144,17 +146,32 @@ function populateData(recieved, attribute){
 
 }
 function listenToChanges(){
-	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
+	// codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
 }
+//active listeners
+/*
+dataContext - countchanged
+collection - create, delete, update
+attribute - create, delete, move, update
+cases - update
+*/
 function updateDataContext(){
   getData().then(function(contextList){
     contextList.forEach(function(context){
-      if($('#contextList').children("#"+context.title).length == 0){
-        addContextToList(context.title);
-        getData(context.title).then(function(collectionList){
-          populateContextFromCollectionList(collectionList, context.title);
+      if($('#contextList').children("#"+context.name).length == 0){
+        addContextToList(context.name);
+        getData(context.name).then(function(collectionList){
+          populateContextFromCollectionList(collectionList, context.name);
         });
       }
     });
+  });
+}
+function updateContextAttribtueList(context){
+  var contextUI = document.getElementById(context);
+  $('#'+context).empty();
+  contextUI.appendChild(document.createTextNode(context));
+  getData(context).then(function(collectionList){
+    populateContextFromCollectionList(collectionList, context);
   });
 }
