@@ -1,31 +1,39 @@
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="myplugin.css" />
     <script src="../Common/js/iframe-phone.js" language="javascript"></script>
     <script src="../Common/js/CodapInterface.js"></script>
     <script src="../Common/js/jquery.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+    <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
     <script src="src/app.js" language='javascript'></script>
+    <link rel="stylesheet" type="text/css" href="myplugin.css" />
   </head>
   <body>
     <div class="wrapper">
-      <div id="small-buttons" >
-        <button id="refresh" onclick='getInitialData()' class="material-icons">autorenew
-        </button>
-        <div id="info" class="material-icons tooltip">help_outline
-          <div class="tooltiptext">Click on a data context to see list of attributes</div>
-        </div>
-        <div id="help" class="material-icons tooltip">info_outline
-          <div class="tooltiptext">Author: Miguel Gutierrez</div>
-        </div>
-      </div>
       <div class="sidebar">
-        <select id="select-chart" name="collection"> </select>
+        <div id="small-buttons" >
+          <button id="refresh" onclick='getInitialData()' class="material-icons">
+            <a>Refresh</a> <br>
+            autorenew
+          </button>
+          <div id="chart">
+            Chart Types: <br>
+            <select id="select-chart" name="collection"> Select Chart: </select>
+          </div>
+        </div>
         <div id="contextList"> </div>
+        <!-- <div id="help" class="material-icons tooltip">help_outline
+          <div class="tooltiptext">Click on a data context to see list of attributes</div>
+        </div> -->
       </div>
-      <div class="main">
-        <canvas id="myChart" width="auto" height="auto"></canvas>
+      <div id="authorinfo">Author: Miguel Gutierrez</div>
+      <div class="main" >
+        <button id="info" class="material-icons tooltip">info_outline
+        </button>
+        <div class="chart-container">
+          <canvas id="myChart"></canvas>
+        </div>
         <script src="src/chart.js" language='javascript'> </script>
         <script> chart.initialize(); </script>
       </div>

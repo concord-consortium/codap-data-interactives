@@ -26,7 +26,7 @@ var info = {
 // initialize the codapInterface
 codapInterface.init({
     name: 'Graphs',
-    dimensions: {width: 500, height: 400},
+    dimensions: {width: 700, height: 500},
     title: 'Graphs',
     version: '0.1',
 });
@@ -53,10 +53,10 @@ function addContextToList(context){
   newItem.id = context;
   newItem.appendChild(document.createTextNode(context));
   newItem.onclick= function(){
-    $(newItem).children().toggle("slow"); //switches display from none to initial
+    $(newItem).children().toggle("fast"); //switches display from none to initial
   };
-  codapInterface.on('dataContextChangeNotice['+context+']', 'createCollection', function(){updateContextAttribtueList(context)});
-  codapInterface.on('dataContextChangeNotice['+context+']', 'deleteCollection', function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']',
+                                function(){updateContextAttribtueList(context)});
   contextUI.appendChild(newItem);
 }
 function populateContextFromCollectionList(collectionList, context){
@@ -80,6 +80,14 @@ function addAttributesToContext(attribute, collection, context){
         populateData(caseList, attribute);
       });
       event.stopPropagation();
+      codapInterface.on('dataContextChangeNotice['+context+']', 'updateCases',
+                                    function(){
+                                      getData(context, collection, attribute).then(
+                                        function(caseList){
+                                          populateData(caseList, attribute);
+                                        }
+                                      )
+                                    });
   }
   attributeList.appendChild(newItem);
 }
@@ -93,7 +101,8 @@ function getData(context, collection, attribute){
       src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
       break;
     case 3:
-      src = 'dataContext[' + context +'].collection['+ collection + '].caseSearch[' + attribute +' != \'\']';
+      src = 'dataContext[' + context +'].collection['+ collection + '].caseSearch['
+                                                              + attribute +' != \'\']';
       break;
     default:
       src = 'dataContextList';
@@ -112,6 +121,7 @@ function getData(context, collection, attribute){
 }
 
 function populateData(recieved, attribute){
+
   var attMembers = [];
   var attCount = [];
   var colors = [];
@@ -148,10 +158,15 @@ function populateData(recieved, attribute){
 }
 function listenToChanges(){
 	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
+  var info = document.getElementById('info');
+  info.onclick = function(){
+    var modal = document.getElementById('authorinfo');
+    modal.style.display = "block";
+  }
 }
 
 /*
-attribute - create, delete, move, update 
+  Change listeners
 */
 function updateDataContext(){
   getData().then(function(contextList){

@@ -26,7 +26,8 @@ var myChart = new Chart(ctx, {
         data: info.data,
       }],
       options: {
-        responsive: false
+        responsive: true,
+        maintainAspectRatio: false
       }
     }
 });
@@ -37,7 +38,6 @@ function drawChart(){
     data: {
         labels: info.attributeList,
         datasets: [{
-            label: '# of Votes',
             data: info.data,
             backgroundColor: info.colors,
             borderColor: info.backgroundColor,
@@ -45,13 +45,8 @@ function drawChart(){
         }]
     },
     options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
