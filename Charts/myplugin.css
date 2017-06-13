@@ -89,6 +89,9 @@ select{
     font-size: 12pt;
     font-family: serif;
 }
+ul, li{
+  cursor: pointer;
+}
 ul{
   list-style-type: none;
   background-color: rgba(255, 255, 255, .75);
@@ -99,9 +102,9 @@ ul{
   padding-bottom: 10px;
 }
 li{
-  border-style: dashed;
-  border-width: 3px;
-  border-color: #80B7C4;
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey;
 
   padding: 5px;
   padding-left: 20px;
@@ -111,7 +114,7 @@ li{
 
 }
 li:hover{
-  background-color: rgba(70, 130, 170, .5);
+  background-color: white;
 }
 .hidden{
   display: none;
@@ -125,17 +128,24 @@ li:hover{
   height: 90vh
 }
 
+#info{
+  z-index: 1;
+  position: fixed;
+  float: right;
+  border: none;
+  margin-left: 95vw;
+}
 #authorinfo{
   display: none;
-  width: 50vw;
-  height: 50vh;
+  width: 70vw;
+  height: 70vh;
   position: fixed;
   color: white;
   background-color: rgba(0, 0, 0, 0.8);
-  margin-top: 25vh;
-  margin-bottom: 25vh;
-  margin-left: 25vw;
-  margin-right: 25vw;
+  margin-top: 15vh;
+  margin-bottom: 15vh;
+  margin-left: 15vw;
+  margin-right: 15vw;
   z-index: 1;
   text-align: center;
 }
@@ -150,9 +160,13 @@ li:hover{
   color: lightblue;
 }
 #profile-pic{
+  margin-top: 5%;
   margin-left: 6vh;
   width: 30%;
   align: middle;
   border-radius: 50%;
+
+}
+img:hover{
 
 }

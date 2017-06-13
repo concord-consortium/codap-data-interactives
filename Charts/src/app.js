@@ -55,12 +55,29 @@ function addContextToList(context){
   newItem.onclick= function(){
     $(newItem).children().toggle("fast"); //switches display from none to initial
   };
-  codapInterface.on('dataContextChangeNotice['+context+']',
-                                function(){updateContextAttribtueList(context)});
+  addContextListeners(context);
   contextUI.appendChild(newItem);
 }
+function addContextListeners(context){
+  codapInterface.on('dataContextChangeNotice['+context+']', 'createCollection',
+    function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'deleteCollection',
+    function(){deleteCollection(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'moveAttribute',
+    function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'createAttribute',
+    function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'updateAttribute',
+    function(){updateContextAttribtueList(context)});
+  codapInterface.on('dataContextChangeNotice['+context+']', 'deleteAttribute',
+    function(){updateContextAttribtueList(context)});
+}
 function populateContextFromCollectionList(collectionList, context){
+  var count = 0;
+  var total = collectionList.length;
   collectionList.forEach(function(collection){
+    var color = "rgba(70, 130, 170, "+ (.5-(count/total)/2)+")";
+    count+=1;
     getData(context, collection.name).then(function(attributeList){
       attributeList.forEach(function(attribute){
         addAttributesToContext(attribute.name, collection.name, context);
@@ -68,26 +85,33 @@ function populateContextFromCollectionList(collectionList, context){
     });
   });
 }
-function addAttributesToContext(attribute, collection, context){
+function addAttributesToContext(attribute, collection, context, color){
   var attributeList = document.getElementById(context);
   var newItem = document.createElement('li');
   newItem.className = collection +' hidden';
   newItem.id = attribute;
   newItem.appendChild(document.createTextNode(attribute));
   newItem.onclick = function(event){
+    event.stopPropagation();
     getData(context, collection, attribute).then(
       function(caseList){
         populateData(caseList, attribute);
+        getNewColors();
+        chart.draw();
+    });
+    codapInterface.on('dataContextChangeNotice['+context+']', 'updateCases', function(){
+      getData(context, collection, attribute).then(
+        function(caseList){
+          populateData(caseList, attribute);
+          chart.draw();
       });
-      event.stopPropagation();
-      codapInterface.on('dataContextChangeNotice['+context+']', 'updateCases',
-                                    function(){
-                                      getData(context, collection, attribute).then(
-                                        function(caseList){
-                                          populateData(caseList, attribute);
-                                        }
-                                      )
-                                    });
+    });
+    info.selected.context = context;
+    info.selected.collection = collection;
+    info.selected.attribute = attribute;
+  }
+  if(arguments.length == 4){
+    newItem.style.backgroundColor = color;
   }
   attributeList.appendChild(newItem);
 }
@@ -120,14 +144,11 @@ function getData(context, collection, attribute){
     });
 }
 
-function populateData(recieved, attribute){
-
+function populateData(cases, attribute){
   var attMembers = [];
   var attCount = [];
-  var colors = [];
-  var backgroundColor = [];
 
-  recieved.forEach(function(val){
+  cases.forEach(function(val){
     var att = val.values[attribute];
     var contains = false, index = 0;
     for(i = 0; i < attMembers.length; i++){
@@ -142,30 +163,34 @@ function populateData(recieved, attribute){
     else {
       attCount.push(1);
       attMembers.push(att);
-      var r = Math.floor( 200 * Math.random()) + 55;
-      var g = Math.floor( 200 * Math.random()) + 55;
-      var b = Math.floor( 200 * Math.random()) + 55;
-      colors.push('rgba('+r+','+g+ ',' +b+ ',.6)');
-      backgroundColor.push('rgba('+r+','+g+ ',' +b+ ',1)')
     }
   });
   info.attributeList = attMembers;
   info.data = attCount;
+}
+function getNewColors(){
+  var colors = [];
+  var backgroundColor = [];
+  for (var i = 0; i < info.data.length; i++) {
+    var r = Math.floor( 200 * Math.random()) + 55;
+    var g = Math.floor( 200 * Math.random()) + 55;
+    var b = Math.floor( 200 * Math.random()) + 55;
+    colors.push('rgba('+r+','+g+ ',' +b+ ',.6)');
+    backgroundColor.push('rgba('+r+','+g+ ',' +b+ ',1)')
+  }
   info.colors = colors;
   info.backgroundColor = backgroundColor;
-  chart.draw();
-
 }
 function listenToChanges(){
 	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
   var info = document.getElementById('info');
   var modal = document.getElementById('authorinfo');
   info.onclick = function(){
-    modal.style.display = "block";
+    $(modal).fadeIn("fast");
   };
   var close = document.getElementById('close-author');
   close.onclick = function(){
-    modal.style.display = 'none';
+    $(modal).fadeOut("fast");
   };
 }
 
@@ -184,11 +209,26 @@ function updateDataContext(){
     });
   });
 }
+
 function updateContextAttribtueList(context){
-  var contextUI = document.getElementById(context);
-  $('#'+context).empty();
-  contextUI.appendChild(document.createTextNode(context));
   getData(context).then(function(collectionList){
+    var contextUI = document.getElementById(context);
+    $('#'+context).empty();
+    contextUI.appendChild(document.createTextNode(context));
     populateContextFromCollectionList(collectionList, context);
+  }, function(error){
+
+  });
+}
+function deleteCollection(context){
+  getData(context).then(function(collectionList){
+    var toDelete = $("#"+context).children();
+    var newList = collectionList.map(function(col){ return col.title})
+    for (var i = 0; i < toDelete.length; i++) {
+      var coll = $(toDelete[i]).attr('class').split(' ')[0];
+      if(!newList.includes(coll.toString())){
+        $('.'+coll.toString()).fadeOut("slow", function(){$(this).remove()});
+      }
+    }
   });
 }

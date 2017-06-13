@@ -3,15 +3,7 @@ var chart = {
   initialize : function(){
     getInitialData(),
     listenToChanges(),
-    // requestData(0).then(function(value){
-    //   populateList(value, 0)
-    // }),
-    // document.getElementById("select-collection").innerHTML =
-    //         '          <option selected>select collection</option>',
-    // document.getElementById("select-attribute").innerHTML =
-    //         '          <option selected>select attribute</option>',
     info.getGraphsList()
-	  // listenToChanges()
   },
   draw : function(){
     drawChart()
