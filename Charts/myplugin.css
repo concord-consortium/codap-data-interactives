@@ -39,16 +39,6 @@ a{
   padding: none;
   display: inline;
 }
-#authorinfo{
-  display: none;
-  width: 80vw;
-  height: 80vh;
-  position: fixed;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
-  margin: 10%;
-  /*visibility: hidden;*/
-}
 button{
   background-color: rgba(0,0,0, 0);
   border-style: inset;
@@ -133,4 +123,36 @@ li:hover{
   margin: auto;
   width: 80vw;
   height: 90vh
+}
+
+#authorinfo{
+  display: none;
+  width: 50vw;
+  height: 50vh;
+  position: fixed;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  margin-top: 25vh;
+  margin-bottom: 25vh;
+  margin-left: 25vw;
+  margin-right: 25vw;
+  z-index: 1;
+  text-align: center;
+}
+#close-author{
+  position: relative;
+  float:right;
+  color: white;
+  border: none;
+  font-size: 3vh;
+}
+#close-author:hover{
+  color: lightblue;
+}
+#profile-pic{
+  margin-left: 6vh;
+  width: 30%;
+  align: middle;
+  border-radius: 50%;
+
 }

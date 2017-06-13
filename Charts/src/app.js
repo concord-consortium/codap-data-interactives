@@ -159,10 +159,14 @@ function populateData(recieved, attribute){
 function listenToChanges(){
 	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
   var info = document.getElementById('info');
+  var modal = document.getElementById('authorinfo');
   info.onclick = function(){
-    var modal = document.getElementById('authorinfo');
     modal.style.display = "block";
-  }
+  };
+  var close = document.getElementById('close-author');
+  close.onclick = function(){
+    modal.style.display = 'none';
+  };
 }
 
 /*
