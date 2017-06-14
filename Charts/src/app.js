@@ -1,5 +1,5 @@
 var info = {
-  graph : ['bar', 'pie', 'doughnut','line', 'radar', 'polarArea','bubble', 'scales'],
+  graph : ['bar', 'pie', 'doughnut','line', 'radar', 'polarArea','bubble'],
   getGraphsList: function(){
     var charts = document.getElementById('select-chart');
     charts.innerHTML = "";
@@ -78,7 +78,7 @@ function populateContextFromCollectionList(collectionList, context){
   var count = 0;
   var total = collectionList.length;
   collectionList.forEach(function(collection){
-    var color = "rgba(70, 130, 170, "+ (.6-(count/total))+")";
+    var color = "rgba(100, 100, 170, "+ (.6-(count/total))+")";
     count+=1;
     getData(context, collection.name).then(function(attributeList){
       attributeList.forEach(function(attribute){
@@ -100,6 +100,7 @@ function addAttributesToContext(attribute, collection, context, color){
   newItem.appendChild(document.createTextNode(attribute));
   newItem.onclick = function(event){
     event.stopPropagation();
+    if(selected.graph == 'stacked')
     getData(context, collection, attribute).then(
       function(caseList){
         populateData(caseList, attribute);
@@ -113,17 +114,26 @@ function addAttributesToContext(attribute, collection, context, color){
           chart.draw();
       });
     });
+    if(selected.attribute !== null){ //revert the last selection to original functionality
+      $('#'+selected.attribute.att).mouseleave(function(){$(this).css("background", selected.attribute.clr)});
+      $('#'+selected.attribute.att).css("background", selected.attribute.clr);
+    }
+    $(newItem).mouseleave(function(){$(this).css("background", "white")});
+
     selected.context = context;
     selected.collection = collection;
-    selected.attribute = attribute;
+    selected.attribute = {
+      att: attribute,
+      clr: color
+    };
   }
   if(arguments.length == 4){
     newItem.style.backgroundColor = color;
     $(newItem).mouseenter(function() {
-    $(this).css("background", "white");
-}).mouseleave(function() {
-     $(this).css("background", color);
-});
+      $(this).css("background", "white"); })
+              .mouseleave(function() {
+      $(this).css("background", color);
+    });
   }
   attributeList.appendChild(newItem);
 }
