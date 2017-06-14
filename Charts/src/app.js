@@ -75,15 +75,15 @@ function addContextListeners(context){
     function(){updateContextAttribtueList(context)});
 }
 function populateContextFromCollectionList(collectionList, context){
-  // var count = 0;
-  // var total = collectionList.length;
+  var count = 0;
+  var total = collectionList.length;
   collectionList.forEach(function(collection){
-    // var color = "rgba(70, 130, 170, "+ (.5-(count/total)/2)+")";
-    // count+=1;
+    var color = "rgba(70, 130, 170, "+ (.75-(count/total))+")";
+    count+=1;
     getData(context, collection.name).then(function(attributeList){
       attributeList.forEach(function(attribute){
-        addAttributesToContext(attribute.name, collection.name, context);
-        // addAttributesToContext(attribute.name, collection.name, context, color);
+        // addAttributesToContext(attribute.name, collection.name, context);
+        addAttributesToContext(attribute.name, collection.name, context, color);
       });
     });
   });
@@ -117,9 +117,14 @@ function addAttributesToContext(attribute, collection, context, color){
     selected.collection = collection;
     selected.attribute = attribute;
   }
-  // if(arguments.length == 4){
-  //   newItem.style.backgroundColor = color;
-  // }
+  if(arguments.length == 4){
+    newItem.style.backgroundColor = color;
+    $(newItem).mouseenter(function() {
+    $(this).css("background", "white");
+}).mouseleave(function() {
+     $(this).css("background", color);
+});
+  }
   attributeList.appendChild(newItem);
 }
 function getData(context, collection, attribute){

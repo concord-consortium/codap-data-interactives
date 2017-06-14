@@ -50,7 +50,7 @@ function drawChart(){
 
 document.getElementById("select-chart").onchange = function(evt) {
   if(evt.target.value) {
-    info.selected.graph = evt.target.value;
+  selected.graph = evt.target.value;
   }
   chart.draw();
 }

@@ -113,9 +113,6 @@ li{
   width: 100%;
 
 }
-li:hover{
-  background-color: white;
-}
 .hidden{
   display: none;
 }
