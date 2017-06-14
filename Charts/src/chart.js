@@ -45,7 +45,7 @@ function drawChart(){
     options: {
       title:{
         display: true,
-        text: selected.attribute
+        text: selected.attribute.att
       },
       scales: {
         yAxes: [{
