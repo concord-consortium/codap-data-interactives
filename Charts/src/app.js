@@ -78,7 +78,7 @@ function populateContextFromCollectionList(collectionList, context){
   var count = 0;
   var total = collectionList.length;
   collectionList.forEach(function(collection){
-    var color = "rgba(70, 130, 170, "+ (.75-(count/total))+")";
+    var color = "rgba(70, 130, 170, "+ (.6-(count/total))+")";
     count+=1;
     getData(context, collection.name).then(function(attributeList){
       attributeList.forEach(function(attribute){

@@ -35,6 +35,7 @@ function drawChart(){
     data: {
         labels: selected.attributeList,
         datasets: [{
+            label: 'Count',
             data: selected.data,
             backgroundColor: selected.colors,
             borderColor: selected.backgroundColor,
@@ -42,6 +43,18 @@ function drawChart(){
         }]
     },
     options: {
+      title:{
+        display: true,
+        text: selected.attribute
+      },
+      scales: {
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Count'
+          }
+        }]
+      },
       responsive: true,
       maintainAspectRatio: false
     }
