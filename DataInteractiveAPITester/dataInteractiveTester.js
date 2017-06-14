@@ -68,6 +68,11 @@ $(function () {
       return;
     }
 
+    if (type === 'notify' && notifyFilterIsActive()) {
+      interactiveState.history.push({type: type, id: id, message: message});
+      return;
+    }
+
     var lookupLongType={
       comment: 'Comment',
       req: 'Request',
@@ -531,13 +536,16 @@ $(function () {
     // <div class="di-recording" data-recordIx="{num}" ><input value="{name}" /><button>replay</button></div>
     var $input = $('<input>').prop('value', name);
     var $count = $('<span>').text(' ' + count + ((count === 1)?' message':' messages'));
-    var $button = $('<button>').text('replay').addClass('replay-button');
+    var $replayButton = $('<button>').text('replay').addClass('replay-button');
+    var $deleteButton = $('<button>').text('delete').addClass('delete-button');
     var $div = $('<div>')
         .addClass('di-recording')
         .data('recordIndex', index)
         .append($input)
         .append($count)
-        .append($button);
+        .append($replayButton)
+        .append($deleteButton);
+
     $recordingList.append($div);
   }
 
@@ -552,11 +560,42 @@ $(function () {
     makeRecordingView(name, recording.data.length, interactiveState.recordings.length - 1);
   }
 
+  function removeNotifyFilter() {
+    regenerateLog();
+  }
+
+  function addNotifyFilter() {
+    regenerateLog();
+  }
+
+  function notifyFilterIsActive() {
+    return $('#filter-button').hasClass('filter-active');
+  }
+
+  function toggleNotifyFilter() {
+    var $filterButton = $('#filter-button');
+    var wasActive = $filterButton.hasClass('filter-active');
+    $filterButton.toggleClass('filter-active');
+    if (wasActive) {
+      removeNotifyFilter();
+    } else {
+      addNotifyFilter();
+    }
+  }
   /**
    * Replay a recording
    */
   function replayRecording(recording) {
     sendTest(recording.data);
+  }
+
+  function regenerateLog () {
+    var priorHistory = interactiveState.history;
+    clearMessageLog();
+    priorHistory.forEach(function (item) {
+      logMessage(item.type, item.id, item.message,
+          item.type === 'resp' && !item.message.success);
+    });
   }
 
   // request template repository
@@ -602,13 +641,26 @@ $(function () {
 
   $('#reset-codap-button').on('click', resetCODAP);
 
-  $('#record-button').on('click', saveRecord)
+  $('#record-button').on('click', saveRecord);
+
+  $('#filter-button').on('click', toggleNotifyFilter);
 
   $('#recordings').on('click', '.replay-button', function () {
     var $parent = $(this.parentElement);
     var recordIndex = $parent.data('recordIndex');
     if (recordIndex !== undefined && recordIndex !== null) {
       replayRecording(interactiveState.recordings[recordIndex]);
+    } else {
+      console.log('Can\'t find recording: ' + $parent.find('input').val());
+    }
+  })
+
+  $('#recordings').on('click', '.delete-button', function () {
+    var $parent = $(this.parentElement);
+    var recordIndex = $parent.data('recordIndex');
+    if (recordIndex !== undefined && recordIndex !== null) {
+      interactiveState.recordings.splice(recordIndex, 1);
+      $parent.remove();
     } else {
       console.log('Can\'t find recording: ' + $parent.find('input').val());
     }
