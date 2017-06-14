@@ -332,6 +332,17 @@
       "categories": [
         "Utilities"
       ]
+    },
+    {
+      "title": "Charts",
+      "description": "Allows user to create common charts for attributes on the data contexts",
+      "width": 600,
+      "height": 400,
+      "path": "/Charts/index.html",
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     }
   ]
 }
