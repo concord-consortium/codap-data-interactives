@@ -100,7 +100,7 @@ function addAttributesToContext(attribute, collection, context, color){
   newItem.appendChild(document.createTextNode(attribute));
   newItem.onclick = function(event){
     event.stopPropagation();
-    if(selected.graph == 'stacked')
+    // if(selected.graph == 'stacked')
     getData(context, collection, attribute).then(
       function(caseList){
         populateData(caseList, attribute);
