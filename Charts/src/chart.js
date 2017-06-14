@@ -10,29 +10,34 @@ var chart = {
   }
 }
 var ctx = document.getElementById("myChart");
-var myChart = new Chart(ctx, {
-  type: info.selected.graph,
-  data: {
-      labels: info.attributeList,
+var myChart;
+function initChart(){
+  myChart = new Chart(ctx, {
+    type: selected.graph,
+    data: {
+      labels: selected.attributeList,
       datasets: [{
-        data: info.data,
+        data: selected.data,
       }],
       options: {
         responsive: true,
         maintainAspectRatio: false
       }
     }
-});
+  });
+}
 function drawChart(){
-  myChart.destroy();
+  if(!(myChart === undefined)){
+    myChart.destroy();
+  }
   myChart = new Chart(ctx, {
-    type: info.selected.graph,
+    type: selected.graph,
     data: {
-        labels: info.attributeList,
+        labels: selected.attributeList,
         datasets: [{
-            data: info.data,
-            backgroundColor: info.colors,
-            borderColor: info.backgroundColor,
+            data: selected.data,
+            backgroundColor: selected.colors,
+            borderColor: selected.backgroundColor,
             borderWidth: 1
         }]
     },
