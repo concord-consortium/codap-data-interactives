@@ -28,6 +28,7 @@ codapInterface.init({
     initChart();
   }
   else{
+    document.getElementById('select-chart').value = selected.graph;
     chart.draw();
   }
   // loadInitialSettings();

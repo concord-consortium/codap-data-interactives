@@ -43,20 +43,23 @@ function drawChart(){
         }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       title:{
         display: true,
         text: selected.attribute.att
-      },
-      scales: {
-        yAxes: [{
-          scaleLabel: {
-            display: true,
-            labelString: 'Count'
-          }
-        }]
-      },
-      responsive: true,
-      maintainAspectRatio: false
+      }
+      // this should only be added if it is a bar graph or similar
+      // because it creates a line grid in the background that doesn't
+      // go well with the pie charts
+      // scales: {
+      //   yAxes: [{
+      //     scaleLabel: {
+      //       display: true,
+      //       labelString: 'Count'
+      //     }
+      //   }]
+      // }
     }
   });
 }
