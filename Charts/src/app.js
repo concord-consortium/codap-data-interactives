@@ -1,3 +1,25 @@
+//=================================================================
+//
+//   Author: Miguel Gutierrez
+//
+//  Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//=================================================================
+
+
+var selected;
+
 var info = {
   graph : ['bar', 'pie', 'doughnut','line', 'radar', 'polarArea','bubble'],
   getGraphsList: function(){
@@ -8,14 +30,12 @@ var info = {
     });
   }
 };
-var selected;
-
 // initialize the codapInterface
 codapInterface.init({
-    name: 'Graphs',
-    dimensions: {width: 700, height: 500},
-    title: 'Graphs',
-    version: '0.1',
+  name: 'Graphs',
+  dimensions: {width: 700, height: 500},
+  title: 'Graphs',
+  version: '0.1',
 }).then(function(iResult){
   selected = codapInterface.getInteractiveState();
   if(!selected.graph){
@@ -33,6 +53,7 @@ codapInterface.init({
   }
   // loadInitialSettings();
 });
+
 
 // pulll intiail data from CodapInterface
 function getInitialData(){
@@ -101,7 +122,18 @@ function addAttributesToContext(attribute, collection, context, color){
   newItem.appendChild(document.createTextNode(attribute));
   newItem.onclick = function(event){
     event.stopPropagation();
-    // if(selected.graph == 'stacked')
+    if(typeof selected.attribute !== 'undefined'){ //revert the last selection to original functionality
+      $('#'+selected.attribute.att).mouseleave(function(){$(this).css("background", selected.attribute.clr)});
+      $('#'+selected.attribute.att).css("background", selected.attribute.clr);
+    }
+    $(newItem).mouseleave(function(){$(this).css("background", "white")});
+
+    selected.context = context;
+    selected.collection = collection;
+    selected.attribute = {
+      att: attribute,
+      clr: color
+    };
     getData(context, collection, attribute).then(
       function(caseList){
         populateData(caseList, attribute);
@@ -115,18 +147,6 @@ function addAttributesToContext(attribute, collection, context, color){
           chart.draw();
       });
     });
-    if(selected.attribute !== null){ //revert the last selection to original functionality
-      $('#'+selected.attribute.att).mouseleave(function(){$(this).css("background", selected.attribute.clr)});
-      $('#'+selected.attribute.att).css("background", selected.attribute.clr);
-    }
-    $(newItem).mouseleave(function(){$(this).css("background", "white")});
-
-    selected.context = context;
-    selected.collection = collection;
-    selected.attribute = {
-      att: attribute,
-      clr: color
-    };
   }
   if(arguments.length == 4){
     newItem.style.backgroundColor = color;
@@ -233,7 +253,21 @@ function updateDataContext(){
     });
   });
 }
-
+function getContextAttributeCount(context){
+console.log("attempting count");
+  return new Promise(function(resolve, reject){
+    var count = 0;
+    getData(context).then(function(collectionList){
+      collectionList.forEach(function(col){
+        getData(context, col.title).then(function(attList){
+          count+=attList.length;
+          console.log(count);
+        });
+      });
+    });
+    resolve(count);
+  });
+}
 function updateContextAttribtueList(context){
   getData(context).then(function(collectionList){
     var contextUI = document.getElementById(context);
@@ -244,15 +278,39 @@ function updateContextAttribtueList(context){
 
   });
 }
+
 function deleteCollection(context){
-  getData(context).then(function(collectionList){
-    var toDelete = $("#"+context).children();
-    var newList = collectionList.map(function(col){ return col.title})
-    for (var i = 0; i < toDelete.length; i++) {
-      var coll = $(toDelete[i]).attr('class').split(' ')[0];
-      if(!newList.includes(coll.toString())){
-        $('.'+coll.toString()).slideUp("slow", function(){$(this).remove()});
-      }
-    }
+  getContextAttributeCount(context).then(function(total){
+    console.log("total "+total);
   });
+  // var count = 0;
+  // getData(context).then(function(collectionList){
+  //   collectionList.forEach(function(col){
+  //     getData(context, col.title).then(function(attList){
+  //       count+=attList.length;
+  //     });
+  //   });
+  // });
+  // getData().then(function(dataContextList){
+  //   console.log(dataContextList);
+  //   console.log( $('#'+context).children().length );
+  //   if(dataContextList.length == $('#'+context).children().length){
+  //     //then it was a move attribute and not a delete collection
+  //     console.log("move");
+  //   }
+  //   else{
+  //     //an attribute/s was deleted and should check
+  //     console.log("deletion");
+  //   }
+  // })
+  // getData(context).then(function(collectionList){
+  //   var toDelete = $("#"+context).children();
+  //   var newList = collectionList.map(function(col){ return col.title})
+  //   for (var i = 0; i < toDelete.length; i++) {
+  //     var coll = $(toDelete[i]).attr('class').split(' ')[0];
+  //     if(!newList.includes(coll.toString())){
+  //       $('.'+coll.toString()).slideUp("slow", function(){$(this).remove()});
+  //     }
+  //   }
+  // });
 }

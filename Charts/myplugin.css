@@ -3,6 +3,9 @@ body{
   padding: 0px;
   margin: 0px;
 }
+.info-links{
+  color: white;
+}
 .wrapper{
    position:relative;
    padding: 0px;
@@ -101,7 +104,7 @@ ul{
   padding-top: 10px;
   padding-bottom: 10px;
 }
-li{
+/*li{
   border-style: solid;
   border-width: 1px;
   border-color: grey;
@@ -112,7 +115,7 @@ li{
   color:black;
   width: 100%;
 
-}
+}*/
 .hidden{
   display: none;
 }
@@ -157,6 +160,8 @@ li{
   color: lightblue;
 }
 #profile-pic{
+  position: relative;
+  width: 100%;
   margin-top: 5%;
   margin-left: 6vh;
   width: 30%;

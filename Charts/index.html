@@ -13,7 +13,7 @@
     <div class="wrapper">
       <div class="sidebar">
         <div id="small-buttons" >
-          <button id="refresh" onclick='getInitialData()' class="material-icons">
+          <button id="refresh" onclick='getContextAttributeCount()' class="material-icons">
             <a>Refresh</a> <br>
             autorenew
           </button>
@@ -31,13 +31,16 @@
       <div id="authorinfo">
         <button id="close-author" class="material-icons">close</button>
         <a href="https://github.com/Mikelon15" target="_blank">
-          <img id="profile-pic" href="https://github.com/Mikelon15" src= "https://avatars1.githubusercontent.com/u/10087828?v=3&u=dc9d7bef01e86ef52f828672f76d1fd6ebeb0156&s=400" ></img>
+          <img id="profile-pic" href="https://github.com/Mikelon15" src= "https://avatars1.githubusercontent.com/u/10087828?v=3&u=dc9d7bef01e86ef52f828672f76d1fd6ebeb0156&s=400" >
+          </img>
+          <h2 id="profile-text"> Click for GitHub Profile </h2>
         </a>
         <br>
-        Author: Miguel Gutierrez  <br> <br>
-        I made this plug-in during the summer of 2017 in order to allow users to make charts in CODAP. This plugin implements <thead>
-          Chart.JS library to create good-looking charts.
-        </thead>
+        Author: <a class='info-links' href='mailto:miguelgutz95@gmail.com' style='color: white'> Miguel Gutierrez </a> <br> <br>
+        I made this <a class='info-links' href='http://concord-consortium.github.io/codap-data-interactives/'>Data Interactive</a>
+        plugin during the summer of 2017 in order to allow users to make charts in CODAP.
+        <br> This plugin uses <a class='info-links' href='http://www.chartjs.org/'>Chart.JS</a> library to create robusts data visualizations with animations and customization capabilities.
+          <br> <br>
       </div>
       <div class="main" >
         <div class="chart-container">
