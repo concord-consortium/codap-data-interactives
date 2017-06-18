@@ -17,21 +17,36 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //=================================================================
-var session_data = function(){
+var ChartModel = function(){
   this.contextList = [];
   this.totalContexts = 0;
   this.selected = {
     context: null,
 
   };
-}
+  this.init()
+};
+ChartModel.prototype = {
+  init: function(){
+    //add initial contexts
+
+    //add context change listener
+  	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', function(){
+      this.updateDataContextList(); 
+    });
+  },
+  updateDataContextList: function(){
+    console.log("data context added")
+  }
+
+};
 //This is the attribute object
 var Attribute = function(name, id, collection, color){
   this.name = name || '';
   this.id = id || -1;
   this.collection = collection || '';
   this.color = color || 'white';
-}
+};
 //this saves basic information for the context
 // the functions will allow access to information about
 // its attributes
@@ -43,4 +58,4 @@ var Context = function(name, title, id){
   this.totalCollections = 0;
   this.attributeList = [];
   this.totalAttributes = 0;
-}
+};

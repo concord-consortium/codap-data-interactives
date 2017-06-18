@@ -18,7 +18,31 @@
 //  limitations under the License.
 //=================================================================
 
-
+function initCodapInterface(){
+  // initialize the codapInterface
+  codapInterface.init({
+    name: 'Graphs',
+    dimensions: {width: 700, height: 500},
+    title: 'Graphs',
+    version: '0.1',
+  }).then(function(iResult){
+    // selected = codapInterface.getInteractiveState();
+    // if(!selected.graph){
+    //   console.log("hre");
+    //   selected.graph = "bar";
+    // }
+    // if(!selected.data || !selected.attributeList){
+    //   selected.data = [];
+    //   selected.attributeList = [];
+    //   initChart();
+    // }
+    // else{
+    //   document.getElementById('select-chart').value = selected.graph;
+    //   chart.draw();
+    // }
+    // loadInitialSettings();
+  });
+}
 function listenToChanges(){
   //when this happens, it should notify the event listeners that a context was created
 	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContex);
@@ -48,29 +72,7 @@ var info = {
     });
   }
 };
-// initialize the codapInterface
-codapInterface.init({
-  name: 'Graphs',
-  dimensions: {width: 700, height: 500},
-  title: 'Graphs',
-  version: '0.1',
-}).then(function(iResult){
-  selected = codapInterface.getInteractiveState();
-  if(!selected.graph){
-    console.log("hre");
-    selected.graph = "bar";
-  }
-  if(!selected.data || !selected.attributeList){
-    selected.data = [];
-    selected.attributeList = [];
-    initChart();
-  }
-  else{
-    document.getElementById('select-chart').value = selected.graph;
-    chart.draw();
-  }
-  // loadInitialSettings();
-});
+
 
 
 // pulll intiail data from CodapInterface
