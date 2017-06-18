@@ -1,9 +1,9 @@
 var chart = {
   hasDrawn : false,
   initialize : function(){
-    getInitialData(),
+    // getInitialData(),
     listenToChanges(),
-    info.getGraphsList()
+    // info.getGraphsList()
   },
   draw : function(){
     drawChart()

@@ -1,4 +1,4 @@
-//=================================================================
+``//=================================================================
 //
 //   Author: Miguel Gutierrez
 //   Date: June 2017
@@ -17,6 +17,23 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //=================================================================
+
+
+function listenToChanges(){
+  //when this happens, it should notify the event listeners that a context was created
+	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContex);
+
+  //listeners for author information
+  var info = document.getElementById('info');
+  var modal = document.getElementById('authorinfo');
+  info.onclick = function(){
+    $(modal).fadeIn("fast");
+  };
+  var close = document.getElementById('close-author');
+  close.onclick = function(){
+    $(modal).fadeOut("fast");
+  };
+}
 
 
 var selected;
@@ -224,19 +241,6 @@ function getNewColors(){
   }
   selected.colors = colors;
   selected.backgroundColor = backgroundColor;
-}
-function listenToChanges(){
-	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContext);
-  var info = document.getElementById('info');
-  var modal = document.getElementById('authorinfo');
-  info.onclick = function(){
-    $(modal).fadeIn("fast");
-  };
-  var close = document.getElementById('close-author');
-  close.onclick = function(){
-    $(modal).fadeOut("fast");
-  };
-
 }
 
 /*

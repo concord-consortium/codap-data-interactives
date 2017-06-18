@@ -25,8 +25,6 @@ var session_data = function(){
 
   };
 }
-
-
 //This is the attribute object
 var Attribute = function(name, id, collection, color){
   this.name = name || '';
