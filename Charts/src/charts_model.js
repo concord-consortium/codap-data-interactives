@@ -33,9 +33,10 @@ var ChartModel = function(){
     attribute: null,
     chartType: null
   };
+  //Event objects
   this.changeContextCountEvent = new Event(this);
-  this.addAttribute = new Event(this);
-  this.moveAttribute = new Event(this);
+  this.addAttributeEvent = new Event(this);
+  this.moveAttributeEvent = new Event(this);
 };
 ChartModel.prototype = {
   /**
@@ -43,12 +44,13 @@ ChartModel.prototype = {
    *           in order to add new ones and notifies its event listener
    */
   updateDataContextList: function(){
-        getData().then((newContextList) => {
-          for (var i = 0; i < newContextList.length; i++) {
-            if( !this.hasContext(newContextList[i].id) )
-              this.addNewContext(newContextList[i]);
-          }
-        });
+    getData().then((newContextList) => {
+      for (var i = 0; i < newContextList.length; i++) {
+        if( !this.hasContext(newContextList[i].id) ) {
+          this.addNewContext(newContextList[i]);
+        }
+      }
+    });
   },
   /**
    * @function addNewContext - adds context to the list and notifies event listeners
@@ -57,16 +59,12 @@ ChartModel.prototype = {
    *            2. notify changeContextCountEvent listeners
    *            3. add Events that listen to context changes
    *            4. add Attributes
-   * @param  {string} name
-   * @param  {title} title
-   * @param  {id} id
+   * @param  {Object} context - data context object returned from CODAP
    */
-  addNewContext: function(name, title, id){
-    var newContext = new Context(name, title, id);
-    this.model_context_list.push( newContext );  /* 1 */
-    this.changeContextCountEvent.notify(  {name: name} );  /* 2 */
-    this.contextEventHandlers(name);  /* 3 */
-    // newContext.initAttributeList();  /* 4 */
+  addNewContext: function(context){
+    this.model_context_list.push( context );  /* 1 */
+    this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
+
   },
   /** @function hasContext
   *   @param {number} context_id
@@ -81,26 +79,9 @@ ChartModel.prototype = {
     return false;
   },
   contextEventHandlers: function(context){
-  }
+  },
   getAttributesFromContext: function(context){
-
-  }
-};
-/**
- * @constructor This creates a context objects in order to track
- *              collections and attributes
- * @param {string} name
- * @param {string} title
- * @param {number} id
- */
-var Context = function(name, title, id){
-  this.name = name || '';
-  this.title = title || '';
-  this.id = id || '';
-  this.collectionList = [];
-  this.attributeList = [];
-};
-Context.prototype = {
+  },
   /**
    * @function initAttributeList - sets the context's collection list
    *           to the list recieved from CODAP
@@ -126,19 +107,4 @@ Context.prototype = {
 
     }, function(error){console.log(error);});
   }
-}
-
-/**
- * @constructor This creates an attribute object in order to track
- *              its collection and properties
- * @param {string} name
- * @param {number} id
- * @param {string} collection
- * @param {number[]} rgba_color
- */
-var Attribute = function(name, id, collection, rgba_color){
-  this.name = name || '';
-  this.id = id || -1;
-  this.collection = collection || '';
-  this.color = rgba_color || 'white';
 };
