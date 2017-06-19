@@ -2,12 +2,16 @@ var chart = {
   hasDrawn : false,
   initialize : function(){
     // getInitialData(),
-    // listenToChanges(),
     // info.getGraphsList()
-    initCodapInterface()
+    // initCodapInterface()
+    var model = new ChartModel(),
+        view = new ChartView(model),
+        controller = new ChartController(model, view)
+
   },
-  makeModel: function(){
-    var model = new ChartModel()
+  addContextsListen: function(){
+
+    //add context change listener
   }
   // ,
   // draw : function(){

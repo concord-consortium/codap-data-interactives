@@ -9,6 +9,10 @@
     <script src="src/app.js" language='javascript'></script>
     <link rel="stylesheet" type="text/css" href="myplugin.css" />
     <script src="src/charts_model.js" language='javascript'></script>
+    <script src="src/charts_view.js" language='javascript'></script>
+    <script src="src/charts_controller.js" language='javascript'></script>
+    <script src="src/EventDispatcher.js" language='javascript'></script>
+
   </head>
 
   <body>
@@ -47,8 +51,9 @@
           <canvas id="myChart"></canvas>
         </div>
         <script src="src/chart_interface.js" language='javascript'> </script>
-        <script> chart.initialize();
-                  chart.makeModel();
+        <script> initCodapInterface();
+
+                  chart.initialize();
 
         </script>
       </div>

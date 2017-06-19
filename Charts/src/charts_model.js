@@ -18,25 +18,35 @@
 //  limitations under the License.
 //=================================================================
 var ChartModel = function(){
-  this.contextList = [];
-  this.totalContexts = 0;
-  this.selected = {
-    context: null,
-
-  };
-  this.init()
+  this.contextList = ['some random val'];
+  // this.totalContexts = 0;
+  // this.selected = {
+  //   context: null,
+  //
+  // };
+  this.changeContextCountEvent = new Event(this);
+  // this.init()
 };
 ChartModel.prototype = {
-  init: function(){
-    //add initial contexts
+  // init: function(){
+  // },
+  updateDataContextList: function(data){
 
-    //add context change listener
-  	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', function(){
-      this.updateDataContextList(); 
-    });
+    console.log(data);
+    // getData().then(function(newContextList){
+      // newContextList.forEach(function(context){
+        // if(!this.hasContext(context)){
+          // this.contextList.push(new Context(context.name, context.title, context.id));
+          this.changeContextCountEvent.notify({
+            // contextName: context.name
+          });
+          console.log(this.contextList);
+        // }
+    //   });
+    // });
   },
-  updateDataContextList: function(){
-    console.log("data context added")
+  hasContext: function(context){
+    return false;
   }
 
 };
