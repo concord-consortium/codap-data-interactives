@@ -26,9 +26,6 @@ ChartController.prototype = {
     codapInterface.on('documentChangeNotice', 'dataContextCountChanged', this.contextHandler);
   },
   contextCountChanged: function(){
-    // var data = getData().then(function(contextList){return contextList;});
-//    getData().then(function(contextList){ data = contextList; });
-    // console.log(data);
     this.model.updateDataContextList();
   }
 };

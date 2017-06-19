@@ -19,48 +19,34 @@
 //=================================================================
 var ChartModel = function(){
   this.contextList = [];
-  // this.totalContexts = 0;
-  // this.selected = {
-  //   context: null,
-  //
-  // };
+  this.selected = {
+    context: null,
+    attribute: null,
+    chartType: null
+  };
   this.changeContextCountEvent = new Event(this);
-  // this.init()
 };
 ChartModel.prototype = {
-  // init: function(){
-  // },
   updateDataContextList: function(){
-
-    // console.log(data);
-    // getData() //function(newContextList){
-      // newContextList.forEach(function(context){
-        // if(!this.hasContext(context)){
-        // ).then(
         getData().then((newContextList) => {
           for (var i = 0; i < newContextList.length; i++) {
-            if(!this.hasContext(newContextList[i])){
-              // console.log(newContextList[i]);
+            if( !this.hasContext(newContextList[i]) ){
               this.contextList.push( new Context(newContextList[i].name, newContextList[i].title, newContextList[i].id));
               this.changeContextCountEvent.notify(
                 {name: newContextList[i].name}
               );
-              // console.log(this.contextList);
             }
           }
         });
-
-        // )
-            // contextName: context.name
-        //}
-        // }
-    //   });
-    // });
   },
   hasContext: function(context){
+    for(i = 0; i < this.contextList.length; i++){
+      if(this.contextList[i].id == context.id){
+        return true;
+      }
+    }
     return false;
   }
-
 };
 //This is the attribute object
 var Attribute = function(name, id, collection, color){
