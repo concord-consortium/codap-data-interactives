@@ -35,26 +35,49 @@ ChartView.prototype = {
   },
   setupHandlers: function(){
     this.contextHandler = this.contextCountHandler.bind(this);
+    this.addAttributeHandler = this.addAttributeEventHandler.bind(this);
     return this;
   },
   enable: function(){
     this.model.changeContextCountEvent.attach(this.contextHandler);
+    this.model.addAttributeEvent.attach(this.addAttributeHandler);
+
     return this;
   },
   contextCountHandler: function(sender, args){
     addContextDOM(args.name);
+  },
+  addAttributeEventHandler: function(sender, args){
+    // console.log(args);
+    addAttributeToContextDOM(args.name, args.collection, args.context);
   }
 }
 function addContextDOM(context){
-  var $unList = $("<ul>", {'id': 'context', 'class':'view-context-list'});
+  var $unList = $("<ul>", {'id': context, 'class':'view-context-list'});
   $unList.css("background-color", 'lightblue');
   $unList.hover(
     function(){ $(this).css("background-color", "white"); },
     function(){ $(this).css("background-color", "lightblue"); }
   );
   $unList.text(context);
-  $unList.click(function(){
+  $unList.click(function(event){
+    event.stopPropagation();
     $(this).children().toggle();
   })
   $('#contextList').append($unList);
+}
+function addAttributeToContextDOM(attribute, collection, context){
+  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
+  $item.css("background-color", 'lightblue');
+  $item.css("display", 'none');
+
+  $item.hover(
+    function(){ $(this).css("background-color", "white"); },
+    function(){ $(this).css("background-color", "lightblue"); }
+  );
+  $item.text(attribute);
+  $item.click(function(event){
+    event.stopPropagation();
+  })
+  $('#'+context).append($item);
 }

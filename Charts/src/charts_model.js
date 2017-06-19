@@ -28,6 +28,7 @@
  */
 var ChartModel = function(){
   this.model_context_list = [];
+  this.model_attribute_list = [];
   this.selected = {
     context: null,
     attribute: null,
@@ -64,7 +65,7 @@ ChartModel.prototype = {
   addNewContext: function(context){
     this.model_context_list.push( context );  /* 1 */
     this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
-
+    this.getAttributesFromContext(context);
   },
   /** @function hasContext
   *   @param {number} context_id
@@ -80,31 +81,37 @@ ChartModel.prototype = {
   },
   contextEventHandlers: function(context){
   },
-  getAttributesFromContext: function(context){
-  },
-  /**
-   * @function initAttributeList - sets the context's collection list
-   *           to the list recieved from CODAP
-   * @return {this} to allow chainning to attributes
-   */
 
-  initAttributeList: function(){
-    getData(this.name).then((collectionList) => {
-      this.collectionList = collectionList;
-      for (i = 0; i < this.collectionList.length; i++) {
-        var color = [150, 150, 150+(155*(i/this.collectionList.length)), 1];
-        this.getAttributesFromCollection(this.collectionList[i].title, color);
+  /**
+   * @function getAttributesFromContext - sets the context's collection list
+   *           to the list recieved from CODAP
+   * @param {Object} context - as recieved from CODAP
+   */
+  getAttributesFromContext: function(context){
+    getData(context.name).then((collectionList) => {
+      for (i = 0; i < collectionList.length; i++) {
+        this.getAttributesFromCollection(context, collectionList[i]);
       }
     });
   },
-  getAttributesFromCollection: function(collection, color){
-    getData(this.name, collection).then((attributeList)=>{
+  /**
+   * @function getAttributesFromCollection
+   * @param  {Object} collection
+   */
+  getAttributesFromCollection: function(context, collection){
+    getData(context.name, collection.name).then((attributeList)=>{
       for (var j = 0; j < attributeList.length; j++) {
-        var newAttribute = new Attribute(attributeList[j].name, attributeList[j].id,
-                                          collection, color);
-        this.attributeList.push(newAttribute);
+        var att = attributeList[j];
+        var attObject = {
+          name: att.name,
+          title: att.title,
+          id: att.id,
+          context: context,
+          collection: collection
+        }
+        this.model_attribute_list.push(attObject);
+        this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
       }
-
-    }, function(error){console.log(error);});
+    });
   }
 };
