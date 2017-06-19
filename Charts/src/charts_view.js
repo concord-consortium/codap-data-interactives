@@ -42,7 +42,6 @@ ChartView.prototype = {
     return this;
   },
   contextCountHandler: function(sender, args){
-    console.log(args.name);
     addContextDOM(args.name);
   }
 }
