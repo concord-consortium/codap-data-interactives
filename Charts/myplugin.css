@@ -95,15 +95,7 @@ select{
 ul, li{
   cursor: pointer;
 }
-ul{
-  list-style-type: none;
-  background-color: rgba(255, 255, 255, .75);
-  color: black;
-  padding-left: 0;
-  font-size: 14pt;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
+
 /*li{
   border-style: solid;
   border-width: 1px;

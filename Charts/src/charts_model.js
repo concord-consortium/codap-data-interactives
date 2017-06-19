@@ -18,7 +18,7 @@
 //  limitations under the License.
 //=================================================================
 var ChartModel = function(){
-  this.contextList = ['some random val'];
+  this.contextList = [];
   // this.totalContexts = 0;
   // this.selected = {
   //   context: null,
@@ -36,16 +36,21 @@ ChartModel.prototype = {
     // getData() //function(newContextList){
       // newContextList.forEach(function(context){
         // if(!this.hasContext(context)){
-        //   this.contextList.push(
         // ).then(
-        getData().then((contextList) => {
-          console.log(contextList);
-          this.changeContextCountEvent.notify();
-          console.log(this.contextList);
+        getData().then((newContextList) => {
+          for (var i = 0; i < newContextList.length; i++) {
+            if(!this.hasContext(newContextList[i])){
+              // console.log(newContextList[i]);
+              this.contextList.push( new Context(newContextList[i].name, newContextList[i].title, newContextList[i].id));
+              this.changeContextCountEvent.notify(
+                {name: newContextList[i].name}
+              );
+              // console.log(this.contextList);
+            }
+          }
         });
 
         // )
-          //new Context(context.name, context.title, context.id)
             // contextName: context.name
         //}
         // }

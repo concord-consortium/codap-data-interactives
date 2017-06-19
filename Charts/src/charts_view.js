@@ -21,8 +21,19 @@ ChartView.prototype = {
     this.model.changeContextCountEvent.attach(this.contextHandler);
     return this;
   },
-  // this.handler = this.contextCountHandler.bind(this);
-  contextCountHandler: function(){
-    console.log("in the view handler");
+  contextCountHandler: function(sender, args){
+    console.log(args.name);
+    addContextDOM(args.name);
   }
+}
+function addContextDOM(context){
+  var $unList = $("<ul>", {'id': 'context', 'class':'view-context-list'});
+  $unList.css("background-color", 'lightblue');
+  $unList.hover(
+    function(){ $(this).css("background-color", "white"); },
+    function(){ $(this).css("background-color", "lightblue"); }
+  );
+  $unList.text(context);
+  $('#contextList').append($unList);
+
 }
