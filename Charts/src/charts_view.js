@@ -62,7 +62,7 @@ function addContextDOM(context){
   $unList.text(context);
   $unList.click(function(event){
     event.stopPropagation();
-    $(this).children().toggle();
+    $(this).children().slideToggle('slow');
   })
   $('#contextList').append($unList);
 }
