@@ -30,17 +30,24 @@ var ChartModel = function(){
 ChartModel.prototype = {
   // init: function(){
   // },
-  updateDataContextList: function(data){
+  updateDataContextList: function(){
 
-    console.log(data);
-    // getData().then(function(newContextList){
+    // console.log(data);
+    // getData() //function(newContextList){
       // newContextList.forEach(function(context){
         // if(!this.hasContext(context)){
-          // this.contextList.push(new Context(context.name, context.title, context.id));
-          this.changeContextCountEvent.notify({
-            // contextName: context.name
-          });
+        //   this.contextList.push(
+        // ).then(
+        getData().then((contextList) => {
+          console.log(contextList);
+          this.changeContextCountEvent.notify();
           console.log(this.contextList);
+        });
+
+        // )
+          //new Context(context.name, context.title, context.id)
+            // contextName: context.name
+        //}
         // }
     //   });
     // });

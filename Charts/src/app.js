@@ -178,7 +178,7 @@ function addAttributesToContext(attribute, collection, context, color){
   }
   attributeList.appendChild(newItem);
 }
-getData: function(context, collection, attribute){
+function getData(context, collection, attribute){
   var src = "";
   switch (arguments.length){
     case 1:
