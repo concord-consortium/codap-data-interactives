@@ -61,9 +61,9 @@ ChartModel.prototype = {
       new Context(name, title, id)
     );
     this.changeContextCountEvent.notify(
-      {name: newContextList[i].name}
+      {name: name}
     );
-  }
+  },
   /** @function hasContext
   *   @param {number} context_id
   *   @return {boolean}

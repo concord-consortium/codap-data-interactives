@@ -54,5 +54,8 @@ function addContextDOM(context){
     function(){ $(this).css("background-color", "lightblue"); }
   );
   $unList.text(context);
+  $unList.click(function(){
+    $(this).children().toggle();
+  })
   $('#contextList').append($unList);
 }

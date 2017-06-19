@@ -1,13 +1,8 @@
 var chart = {
-  hasDrawn : false,
   initialize : function(){
-    // getInitialData(),
-    // info.getGraphsList()
-    // initCodapInterface()
     var model = new ChartModel(),
         view = new ChartView(model),
         controller = new ChartController(model, view)
-
   },
   addContextsListen: function(){
 
