@@ -41,11 +41,12 @@ function initCodapInterface(){
     //   chart.draw();
     // }
     // loadInitialSettings();
+    listenToChanges();
   });
 }
 function listenToChanges(){
   //when this happens, it should notify the event listeners that a context was created
-	codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContex);
+	// codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContex);
 
   //listeners for author information
   var info = document.getElementById('info');

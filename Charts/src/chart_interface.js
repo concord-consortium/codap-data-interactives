@@ -8,7 +8,6 @@ var chart = {
 
     //add context change listener
   }
-  // ,
   // draw : function(){
   //   drawChart()
   // }
@@ -30,7 +29,7 @@ var chart = {
 //     }
 //   });
 // }
-// function drawChart(){
+// function drawChart(labels, data){
 //   if(!(myChart === undefined)){
 //     myChart.destroy();
 //   }
@@ -53,17 +52,17 @@ var chart = {
 //         display: true,
 //         text: selected.attribute.att
 //       }
-//       // this should only be added if it is a bar graph or similar
-//       // because it creates a line grid in the background that doesn't
-//       // go well with the pie charts
-//       // scales: {
-//       //   yAxes: [{
-//       //     scaleLabel: {
-//       //       display: true,
-//       //       labelString: 'Count'
-//       //     }
-//       //   }]
-//       // }
+      // this should only be added if it is a bar graph or similar
+      // because it creates a line grid in the background that doesn't
+      // go well with the pie charts
+      // scales: {
+      //   yAxes: [{
+      //     scaleLabel: {
+      //       display: true,
+      //       labelString: 'Count'
+      //     }
+      //   }]
+      // }
 //     }
 //   });
 // }

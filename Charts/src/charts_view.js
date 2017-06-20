@@ -25,7 +25,7 @@ var ChartView = function(model){
   this.model = model;
 
   //user events
-  this.addSelectedAttributeEvent = new Event(this);
+  this.changeSelectedAttributeEvent = new Event(this);
 
   //chart events
   this.changeChartDataEvent = new Event(this);
@@ -46,43 +46,100 @@ ChartView.prototype = {
   },
   setupHandlers: function(){
     this.changeContextCountHandler = this.changeContextCount.bind(this);
+    this.deselectContextHandler = this.deselectContext.bind(this);
+
     this.addAttributeHandler = this.addAttribute.bind(this);
-    this.addSelectedAttributeHandler = this.addSelectedAttribute.bind(this);
+    this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
+    this.deselectAttributesHandler = this.deselectAttributes.bind(this);
+    this.updateChartHandler = this.updateChart.bind(this);
     return this;
   },
   enable: function(){
     this.model.changeContextCountEvent.attach(this.changeContextCountHandler);
     this.model.addAttributeEvent.attach(this.addAttributeHandler);
-
+    this.model.deselectContextEvent.attach(this.deselectContextHandler);
+    this.model.changeSelectedDataEvent.attach(this.updateChartHandler);
+    this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
     //Own event listeners
-    this.addSelectedAttributeEvent.attach(this.addSelectedAttributeHandler);
+    this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
+
 
     return this;
   },
+  /**
+   * @function changeContextCount - adds context to UI
+   * @param  {Object} sender
+   * @param  {Object} args   information about the new context
+   *                         {name, collection, context}
+   */
   changeContextCount: function(sender, args){
     addContextDOM(args.name);
   },
   /**
    * @function addAttribute - handles new attribute event
    * @param  {Object} sender
-   * @param  {Object[]} args   information about the new attribute
-   *                         (attribute name, collection name, and context name)
+   * @param  {Object} args   information about the new attribute
+   *                         {name, collection, context}
    */
   addAttribute: function(sender, args){
     addAttributeToContextDOM(args.name, args.collection, args.context);
     $('#'+args.name).on('click', (evt) => {
       evt.stopPropagation();
-      this.addSelectedAttributeEvent.notify(args);
+      this.changeSelectedAttributeEvent.notify(args);
     });
   },
   /**
-   * @function addSelectedAttribute - stylizes the attribute item after click
-   * @param {string} attribute
+   * @function changeSelectedAttribute - stylizes the attribute item after click
+   * @param  {Object} sender
+   * @param {Object} args  information about the new attribute
+   *                             {name, collection, context}
    */
-  addSelectedAttribute: function(sender, args){
+  changeSelectedAttribute: function(sender, args){
     $('#'+args.name).toggleClass("selected");
-  }
+  },
+  /**
+   * @function deselectContext - stylize unselected context back to original
+   * @param  {Object} sender
+   * @param  {Object} args   {context: string}
+   */
+  deselectContext: function(sender, args){
+    $('#'+args.context).find(".selected").toggleClass("selected");
+  },
+  updateChart: function (sender, args){
+    var ctx = document.getElementById("myChart");
+    var myChart;
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: args.labels,
+          datasets: [{
+            data: args.data,
+          }],
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        }
+      });
+    },
+    /**
+     * @function deselectAttributes
+     * @param  {Object} sender
+     * @param  {Object} args   {attributes: []}
+     */
+    deselectAttributes: function(sender, args){
+      var list = args.attributes;
+      for (var i =0; i < list.length; i++){
+        $('#'+list[i]).toggleClass("selected");
+      }
+    }
 }
+
+//================================================
+//
+//  Functions that manipulate the DOM
+//
+//================================================
 /**
  * @function addContextDOM - adds an unordered list with toggle and hover
  * @param {string} context context name

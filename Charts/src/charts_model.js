@@ -39,8 +39,10 @@ var ChartModel = function(){
   this.changeContextCountEvent = new Event(this);
   this.addAttributeEvent = new Event(this);
   this.moveAttributeEvent = new Event(this);
+  this.deselectAttributesEvent = new Event(this);
 
-  this.addSelectedAttribute = new Event(this);
+  this.changeSelectedAttributeEvent = new Event(this);
+  this.deselectContextEvent = new Event(this); //to have view reset colors
   this.changeSelectedDataEvent = new Event(this);
 };
 ChartModel.prototype = {
@@ -62,8 +64,7 @@ ChartModel.prototype = {
    *           responsabilities:
    *            1. add new context object to model_context_list
    *            2. notify changeContextCountEvent listeners
-   *            3. add Events that listen to context changes
-   *            4. add Attributes
+   *            3. add Attributes
    * @param  {Object} context - data context object returned from CODAP
    */
   addNewContext: function(context){
@@ -116,6 +117,106 @@ ChartModel.prototype = {
         this.model_attribute_list.push(attObject);
         this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
       }
+    });
+  },
+  /**
+   * @function getAttributeObject - return attribute object
+   * @param  {string} name of attribute
+   * @return {Object}      attribute object with context and collection data
+   */
+  getAttributeObject: function(name){
+    for(var i = 0; i < this.model_attribute_list.length; i++){
+      if(name == this.model_attribute_list[i].name){
+        return this.model_attribute_list[i];
+      }
+    }
+    return null;
+  },
+  /**
+   * @function isAttributeSelected - checks if given attribute is selected
+   * @param  {Object}  attribute {context, collection, name, id, etc,... }
+   * @return {number}  -1 if not in selected.atttributes array or index
+   */
+  isAttributeSelected: function(attribute){
+    for(var i = 0; i < this.selected.attributes.length; i++)
+      if (attribute == this.selected.attributes[i]) return i;
+    return (-1);
+  },
+  /**
+   * changeSelectedAttribute
+   * @param  {Object} args {name, collection, context}
+   */
+  changeSelectedAttribute: function(args){
+    var att = args.name;
+    var cxt = args.context;
+    //if its a different context or there is no selected context,
+    //      then start from scratch and this is first selection
+    var attObject = this.getAttributeObject(att);
+    if(this.selected.context == null || this.selected.context != cxt){
+      if(this.selected.context != null){
+        this.deselectContextEvent.notify({
+          context: this.selected.context
+        });
+      }
+      this.selected.attributes = [];
+      this.selected.context = attObject.context.name;
+      this.selected.attributes.push(attObject);
+
+    } else{ //if same context, then we are either changing, adding, or removing an attribute
+      //@TODO make sure to finish adding this functionality 
+      if(true){ //this is the limit, if stacked chart is not selected
+        var unselected = [];
+        for (var i = 0; i < this.selected.attributes.length; i++) {
+          unselected.push(this.selected.attributes[i].name);
+        }
+        this.deselectAttributesEvent.notify({
+          attributes: unselected
+        });
+        this.selected.attributes = [];
+        this.selected.attributes.push(attObject);
+      }else{
+        var index = this.isAttributeSelected(attObject);
+        if(index == -1){
+          this.selected.attributes.push(attObject);
+        } else{
+          this.selected.attributes.splice(index, 1);
+        }
+      }
+    }
+    //update the cases
+    if(this.selected.attributes.length != 0){
+      getData(this.selected.attributes[0].context.name, this.selected.attributes[0].collection.name,
+        this.selected.attributes[0].name).then((caseList) => {
+          this.updateCases(caseList, this.selected.attributes[0].name);
+        });
+    }
+  },
+  updateCases: function(cases, attribute){
+    var attMembers = [];
+    var attCount = [];
+
+    cases.forEach(function(val){
+      var att = val.values[attribute];
+      var contains = false, index = 0;
+      for(i = 0; i < attMembers.length; i++){
+        if (att == attMembers[i]){
+          contains = true;
+          index = i;
+        }
+      }
+      if (contains){
+        attCount[index] += 1;
+      }
+      else {
+        attCount.push(1);
+        attMembers.push(att);
+      }
+    });
+    this.selected.attributeList = attMembers;
+    this.selected.data = attCount;
+    this.changeSelectedDataEvent.notify({
+      labels: attMembers,
+      data: attCount
     });
   }
 };

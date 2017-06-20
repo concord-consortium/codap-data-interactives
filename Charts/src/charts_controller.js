@@ -53,7 +53,7 @@ ChartController.prototype = {
    */
   setupHandlers: function(){
     this.contextHandler = this.contextCountChanged.bind(this);
-    this.addSelectedAttribute = this.clickedAttribute.bind(this);
+    this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
     return this;
   },
   /**
@@ -61,7 +61,7 @@ ChartController.prototype = {
    * @return {Object} this
    */
   enable: function(){
-    this.view.addSelectedAttributeEvent.attach(this.addSelectedAttribute);
+    this.view.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
     return this;
   },
   /**
@@ -83,14 +83,14 @@ ChartController.prototype = {
    */
   contextCountChanged: function(){
     this.model.updateDataContextList();
-  }
+  },
   /**
-   * @function addSelectedAttribute
+   * @function changeelectedAttribute
    * @param  {Object} sender
-   * @param  {Object[]} args   array string of names [attribute, collection, context]
+   * @param  {Object} args   object string of names {name, collection, context{
    */
-  addSelectedAttribute: function(sender, args){
-    this.model.
-
+  changeSelectedAttribute: function(sender, args){
+    this.model.changeSelectedAttribute(args);
+    console.log(this.model.selected.attributes);
   }
 };
