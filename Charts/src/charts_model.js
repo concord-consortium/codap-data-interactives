@@ -163,7 +163,7 @@ ChartModel.prototype = {
       this.selected.attributes.push(attObject);
 
     } else{ //if same context, then we are either changing, adding, or removing an attribute
-      //@TODO make sure to finish adding this functionality 
+      //@TODO make sure to finish adding this functionality
       if(true){ //this is the limit, if stacked chart is not selected
         var unselected = [];
         for (var i = 0; i < this.selected.attributes.length; i++) {
@@ -214,9 +214,12 @@ ChartModel.prototype = {
     });
     this.selected.attributeList = attMembers;
     this.selected.data = attCount;
+    var clrs = getNewColors(attMembers.length);
     this.changeSelectedDataEvent.notify({
       labels: attMembers,
-      data: attCount
+      data: attCount,
+      colors: clrs.colors,
+      background_colors: clrs.bg_colors
     });
   }
 };

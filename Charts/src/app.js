@@ -232,18 +232,17 @@ function populateData(cases, attribute){
   selected.attributeList = attMembers;
   selected.data = attCount;
 }
-function getNewColors(){
+function getNewColors(amount){
   var colors = [];
   var backgroundColor = [];
-  for (var i = 0; i < selected.data.length; i++) {
+  for (var i = 0; i < amount; i++) {
     var r = Math.floor( 200 * Math.random()) + 55;
     var g = Math.floor( 200 * Math.random()) + 55;
     var b = Math.floor( 200 * Math.random()) + 55;
     colors.push('rgba('+r+','+g+ ',' +b+ ',1)');
     backgroundColor.push('rgba('+(r-40)+ ','+(g-40)+ ',' +(b-40)+ ',.8)')
   }
-  selected.colors = colors;
-  selected.backgroundColor = backgroundColor;
+  return {colors: colors, bg_colors: backgroundColor};
 }
 
 /*

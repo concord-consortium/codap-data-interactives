@@ -1,8 +1,24 @@
-var chart = {
+var ctx = document.getElementById("myChart");
+var view_chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [],
+    datasets: [{
+      data: [],
+    }],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  }
+});
+var ChartInterface = function(){
+    this.model = new ChartModel();
+    this.view = new ChartView(this.model);
+    this.controller = new ChartController(this.model, this.view);
+};
+Chart.prototype = {
   initialize : function(){
-    var model = new ChartModel(),
-        view = new ChartView(model),
-        controller = new ChartController(model, view)
   },
   addContextsListen: function(){
 
@@ -12,7 +28,6 @@ var chart = {
   //   drawChart()
   // }
 }
-// var ctx = document.getElementById("myChart");
 // var myChart;
 // function initChart(){
 //   myChart = new Chart(ctx, {

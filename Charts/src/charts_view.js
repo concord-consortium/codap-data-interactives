@@ -106,33 +106,36 @@ ChartView.prototype = {
     $('#'+args.context).find(".selected").toggleClass("selected");
   },
   updateChart: function (sender, args){
-    var ctx = document.getElementById("myChart");
-    var myChart;
-      myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: args.labels,
-          datasets: [{
-            data: args.data,
-          }],
-          options: {
-            responsive: true,
-            maintainAspectRatio: false
-          }
+    view_chart.destroy();
+    view_chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: args.labels,
+        datasets: [{
+          label: 'Count',
+          data: args.data,
+          backgroundColor: args.colors,
+          borderColor: args.background_colors,
+          borderWidth: 1
+        }],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
         }
-      });
-    },
-    /**
-     * @function deselectAttributes
-     * @param  {Object} sender
-     * @param  {Object} args   {attributes: []}
-     */
-    deselectAttributes: function(sender, args){
-      var list = args.attributes;
-      for (var i =0; i < list.length; i++){
-        $('#'+list[i]).toggleClass("selected");
       }
+    });
+  },
+  /**
+   * @function deselectAttributes
+   * @param  {Object} sender
+   * @param  {Object} args   {attributes: []}
+   */
+  deselectAttributes: function(sender, args){
+    var list = args.attributes;
+    for (var i =0; i < list.length; i++){
+      $('#'+list[i]).toggleClass("selected");
     }
+  }
 }
 
 //================================================
