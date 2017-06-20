@@ -37,18 +37,19 @@ ChartController.prototype = {
     this.createChildren()
     .setupHandlers()
     .enable()
+    .initializeMV()
     .codapListeners();
   },
   /**
    * creates the objects the class needs. In this case it doesn't need any
-   * @return this for chainning
+   * @return {Object} this for chainning
    */
   createChildren: function(){
     return this;
   },
   /**
    * @function binds the handlers with the functions
-   * @return this
+   * @return {Object} this
    */
   setupHandlers: function(){
     this.contextHandler = this.contextCountChanged.bind(this);
@@ -56,9 +57,17 @@ ChartController.prototype = {
   },
   /**
    * @function adds handler functions to the event listeners that are triggered by the user
-   * @return this
+   * @return {Object} this
    */
   enable: function(){
+    return this;
+  },
+  /**
+   * @function initializes model and view to get intial data from CODAP
+   * @return {Object} this
+   */
+  initializeMV: function(){
+    this.model.updateDataContextList();
     return this;
   },
   /**

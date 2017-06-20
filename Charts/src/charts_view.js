@@ -17,13 +17,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //=================================================================
-
+/**
+ * @constructor ChartView - focuses on what is displayed in the UI and listens to user actions
+ * @param  {Object} model - uses the model to communicate with CODAP
+ */
 var ChartView = function(model){
   this.model = model;
-  // this.changeContextCountEvent = new Event(this);
 
   this.init();
 };
+
 ChartView.prototype = {
   init: function(){
     this.createChildren()
@@ -47,11 +50,19 @@ ChartView.prototype = {
   contextCountHandler: function(sender, args){
     addContextDOM(args.name);
   },
+  /**
+   * @function addAttributeEventHandler - handles new attribute event
+   * @param  {Object} sender
+   * @param  {Object} args   information about the new attribute
+   */
   addAttributeEventHandler: function(sender, args){
-    // console.log(args);
     addAttributeToContextDOM(args.name, args.collection, args.context);
   }
 }
+/**
+ * @function addContextDOM - adds an unordered list with toggle and hover
+ * @param {string} context context name
+ */
 function addContextDOM(context){
   var $unList = $("<ul>", {'id': context, 'class':'view-context-list'});
   $unList.css("background-color", 'lightblue');
@@ -66,6 +77,12 @@ function addContextDOM(context){
   })
   $('#contextList').append($unList);
 }
+/**
+ * @function addAttributeToContextDOM - adds a single attribute element to context list
+ * @param {string} attribute
+ * @param {string} collection
+ * @param {string} context
+ */
 function addAttributeToContextDOM(attribute, collection, context){
   var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
   $item.css("background-color", 'lightblue');
@@ -78,6 +95,7 @@ function addAttributeToContextDOM(attribute, collection, context){
   $item.text(attribute);
   $item.click(function(event){
     event.stopPropagation();
-  })
+
+  });
   $('#'+context).append($item);
 }
