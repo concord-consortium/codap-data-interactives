@@ -24,6 +24,12 @@
 var ChartView = function(model){
   this.model = model;
 
+  //user events
+  this.addSelectedAttributeEvent = new Event(this);
+
+  //chart events
+  this.changeChartDataEvent = new Event(this);
+
   this.init();
 };
 
@@ -34,29 +40,47 @@ ChartView.prototype = {
     .enable();
   },
   createChildren: function(){
+
+    this.$attrElement = $('#contextList');
     return this;
   },
   setupHandlers: function(){
-    this.contextHandler = this.contextCountHandler.bind(this);
-    this.addAttributeHandler = this.addAttributeEventHandler.bind(this);
+    this.changeContextCountHandler = this.changeContextCount.bind(this);
+    this.addAttributeHandler = this.addAttribute.bind(this);
+    this.addSelectedAttributeHandler = this.addSelectedAttribute.bind(this);
     return this;
   },
   enable: function(){
-    this.model.changeContextCountEvent.attach(this.contextHandler);
+    this.model.changeContextCountEvent.attach(this.changeContextCountHandler);
     this.model.addAttributeEvent.attach(this.addAttributeHandler);
+
+    //Own event listeners
+    this.addSelectedAttributeEvent.attach(this.addSelectedAttributeHandler);
 
     return this;
   },
-  contextCountHandler: function(sender, args){
+  changeContextCount: function(sender, args){
     addContextDOM(args.name);
   },
   /**
-   * @function addAttributeEventHandler - handles new attribute event
+   * @function addAttribute - handles new attribute event
    * @param  {Object} sender
-   * @param  {Object} args   information about the new attribute
+   * @param  {Object[]} args   information about the new attribute
+   *                         (attribute name, collection name, and context name)
    */
-  addAttributeEventHandler: function(sender, args){
+  addAttribute: function(sender, args){
     addAttributeToContextDOM(args.name, args.collection, args.context);
+    $('#'+args.name).on('click', (evt) => {
+      evt.stopPropagation();
+      this.addSelectedAttributeEvent.notify(args);
+    });
+  },
+  /**
+   * @function addSelectedAttribute - stylizes the attribute item after click
+   * @param {string} attribute
+   */
+  addSelectedAttribute: function(sender, args){
+    $('#'+args.name).toggleClass("selected");
   }
 }
 /**
@@ -84,18 +108,8 @@ function addContextDOM(context){
  * @param {string} context
  */
 function addAttributeToContextDOM(attribute, collection, context){
-  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
-  $item.css("background-color", 'lightblue');
+  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list'});
   $item.css("display", 'none');
-
-  $item.hover(
-    function(){ $(this).css("background-color", "white"); },
-    function(){ $(this).css("background-color", "lightblue"); }
-  );
   $item.text(attribute);
-  $item.click(function(event){
-    event.stopPropagation();
-
-  });
   $('#'+context).append($item);
 }

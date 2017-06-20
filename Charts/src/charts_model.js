@@ -30,14 +30,18 @@ var ChartModel = function(){
   this.model_context_list = [];
   this.model_attribute_list = [];
   this.selected = {
+    chartType: null,
     context: null,
-    attribute: null,
-    chartType: null
+    attributes: [],
+    cases: []
   };
   //Event objects
   this.changeContextCountEvent = new Event(this);
   this.addAttributeEvent = new Event(this);
   this.moveAttributeEvent = new Event(this);
+
+  this.addSelectedAttribute = new Event(this);
+  this.changeSelectedDataEvent = new Event(this);
 };
 ChartModel.prototype = {
   /**

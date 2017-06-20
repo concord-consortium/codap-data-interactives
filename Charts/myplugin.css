@@ -114,7 +114,12 @@ li{
   background-color: #A4CBD1;
   color:black;
   width: 100%;
-
+}
+.view-attribute-list{
+  background-color: lightblue;
+}
+.view-attribute-list:hover{
+  background-color: white;
 }
 .hidden{
   display: none;
@@ -186,6 +191,10 @@ li{
 }
 .profile-container:hover #profile-overlay {
   opacity: .5;
+}
+.selected, .selected:hover{
+  background-color: black;
+  color: white;
 }
 
 #profile-text {
