@@ -71,9 +71,9 @@ ChartModel.prototype = {
   addNewContext: function(context){
     this.model_context_list.push( context );  /* 1 */
     this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
-    this.getAttributesFromContext(context);
+    this.getAttributesFromContext(true, context);
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
-      this.moveAttribute(context.name);
+      this.moveAttribute(context);
     });
   },
   /** @function hasContext
@@ -93,12 +93,12 @@ ChartModel.prototype = {
   },
   /**
    * @function moveAttribute
-   * @param  {string} context name
+   * @param  {Object} context
    */
   moveAttribute: function(context){
-    getData(context).then((collectionList)=>{
+    getData(context.name).then((collectionList)=>{
       var promises = [];
-      collectionList.forEach((collection)=>{ promises.push(getData(context, collection.name)); });
+      collectionList.forEach((collection)=>{ promises.push(getData(context.name, collection.name)); });
       Promise.all(promises).then((values)=>{
         return values;
       }).then( (result)=>{
@@ -106,26 +106,45 @@ ChartModel.prototype = {
         //populate new list
         for (var i = 0; i < result.length; i++) {
           for( var j = 0; j < result[i].length; j++){
-            newList.push({ attribute: result[i][j].name, collection: collectionList[i].name });
+            newList.push({ attribute: result[i][j].name, collection: collectionList[i] });
           }
         }
+        console.log(newList);
         this.moveAttributeEvent.notify({attribute: newList[0].attribute, after: "first_item_in_list"});
+        this.updateAttributeCollection(newList[0].attribute, newList[0].collection);
         for(var i = 1; i < newList.length; i++){
+          this.updateAttributeCollection(newList[i].attribute, newList[i].collection);
           this.moveAttributeEvent.notify( {attribute: newList[i].attribute, after: newList[i-1].attribute} );
         }
       });
     });
-
+    // this.getAttributesFromContext(false, context);
+  },
+  /**
+   * @function clearContextData
+   * @param  {String} attribute
+   * @param  {Object} collection
+   */
+  updateAttributeCollection: function(attribute, collection){
+    for(var i = 0; i < this.model_attribute_list.length; i++){
+      if(this.model_attribute_list[i].name == attribute){
+        // console.log(attribute);
+        // console.log(this.model_attribute_list[i].name);
+        this.model_attribute_list[i].collection = collection;
+      }
+    }
   },
   /**
    * @function getAttributesFromContext - sets the context's collection list
    *           to the list recieved from CODAP
+   * @param  {boolean} notify - whether it notifies addAttributeEvent or just
+   *                          updates its model
    * @param {Object} context - as recieved from CODAP
    */
-  getAttributesFromContext: function(context){
+  getAttributesFromContext: function(notify, context){
     getData(context.name).then((collectionList) => {
       for (i = 0; i < collectionList.length; i++) {
-        this.getAttributesFromCollection(context, collectionList[i]);
+        this.getAttributesFromCollection(notify, context, collectionList[i]);
       }
     });
   },
@@ -133,11 +152,11 @@ ChartModel.prototype = {
    * @function getAttributesFromCollection
    *
    * @param  {boolean} notify - whether it notifies addAttributeEvent or just
-   *                          updates its model 
+   *                          updates its model
    * @param  {Object} context
    * @param  {Object} collection
    */
-  getAttributesFromCollection: function(context, collection){
+  getAttributesFromCollection: function(notify, context, collection){
     getData(context.name, collection.name).then((attributeList)=>{
       for (var j = 0; j < attributeList.length; j++) {
         var att = attributeList[j];
@@ -149,7 +168,7 @@ ChartModel.prototype = {
           collection: collection
         }
         this.model_attribute_list.push(attObject);
-        this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
+        if(notify) this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
       }
     });
   },
