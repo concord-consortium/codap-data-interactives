@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
-    <script src="src/app.js" language='javascript'></script>
     <link rel="stylesheet" type="text/css" href="myplugin.css" />
 
   </head>
@@ -46,13 +45,14 @@
         <div class="chart-container">
           <canvas id="myChart"></canvas>
         </div>
+        <script src="src/app.js" language='javascript'></script>
         <script src="src/chart_interface.js" language='javascript'> </script>
         <script src="src/charts_model.js" language='javascript'></script>
         <script src="src/charts_view.js" language='javascript'></script>
         <script src="src/charts_controller.js" language='javascript'></script>
         <script src="src/EventDispatcher.js" language='javascript'></script>
-        <script>  initCodapInterface();
-                  my_chart = new ChartInterface();
+        <script>
+          // initCodapInterface();
         </script>
       </div>
     </div>

@@ -72,9 +72,14 @@ ChartModel.prototype = {
     this.model_context_list.push( context );  /* 1 */
     this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
     this.getAttributesFromContext(true, context);
+    //adding listeners
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
       this.moveAttribute(context);
     });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'createCollection', (evt)=>{
+      this.moveAttribute(context);
+    });
+
   },
   /** @function hasContext
   *   @param {number} context_id
@@ -109,7 +114,6 @@ ChartModel.prototype = {
             newList.push({ attribute: result[i][j].name, collection: collectionList[i] });
           }
         }
-        console.log(newList);
         this.moveAttributeEvent.notify({attribute: newList[0].attribute, after: "first_item_in_list"});
         this.updateAttributeCollection(newList[0].attribute, newList[0].collection);
         for(var i = 1; i < newList.length; i++){
@@ -121,15 +125,13 @@ ChartModel.prototype = {
     // this.getAttributesFromContext(false, context);
   },
   /**
-   * @function clearContextData
+   * @function updateAttributeCollection
    * @param  {String} attribute
    * @param  {Object} collection
    */
   updateAttributeCollection: function(attribute, collection){
     for(var i = 0; i < this.model_attribute_list.length; i++){
       if(this.model_attribute_list[i].name == attribute){
-        // console.log(attribute);
-        // console.log(this.model_attribute_list[i].name);
         this.model_attribute_list[i].collection = collection;
       }
     }

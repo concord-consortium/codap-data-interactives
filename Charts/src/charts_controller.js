@@ -37,7 +37,7 @@ ChartController.prototype = {
     this.createChildren()
     .setupHandlers()
     .enable()
-    .initializeMV()
+    .initializeModelView()
     .codapListeners();
   },
   /**
@@ -68,7 +68,7 @@ ChartController.prototype = {
    * @function initializes model and view to get intial data from CODAP
    * @return {Object} this
    */
-  initializeMV: function(){
+  initializeModelView: function(){
     this.model.updateDataContextList();
     return this;
   },
@@ -91,6 +91,5 @@ ChartController.prototype = {
    */
   changeSelectedAttribute: function(sender, args){
     this.model.changeSelectedAttribute(args);
-    console.log(this.model.model_attribute_list);
   }
 };
