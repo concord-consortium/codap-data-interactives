@@ -52,6 +52,7 @@ ChartView.prototype = {
     this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
     this.deselectAttributesHandler = this.deselectAttributes.bind(this);
     this.updateChartHandler = this.updateChart.bind(this);
+    this.moveAttributeHandler = this.moveAttribute.bind(this);
     return this;
   },
   enable: function(){
@@ -60,6 +61,7 @@ ChartView.prototype = {
     this.model.deselectContextEvent.attach(this.deselectContextHandler);
     this.model.changeSelectedDataEvent.attach(this.updateChartHandler);
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
+    this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
 
@@ -135,6 +137,15 @@ ChartView.prototype = {
     for (var i =0; i < list.length; i++){
       $('#'+list[i]).toggleClass("selected");
     }
+  },
+  /**
+   * attributeMove
+   * @param  {sender} sender
+   * @param  {Object} args   {attribute: name of attribute moved,
+   *                         after: name of attribute it is after}
+   */
+  moveAttribute: function(sender, args){
+    $("#"+args.attribute).insertAfter('#'+args.after);
   }
 }
 
@@ -157,7 +168,7 @@ function addContextDOM(context){
   $unList.text(context);
   $unList.click(function(event){
     event.stopPropagation();
-    $(this).children().slideToggle('slow');
+    $(this).children().slideToggle('fast');
   })
   $('#contextList').append($unList);
 }
@@ -168,7 +179,7 @@ function addContextDOM(context){
  * @param {string} context
  */
 function addAttributeToContextDOM(attribute, collection, context){
-  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list'});
+  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
   $item.css("display", 'none');
   $item.text(attribute);
   $('#'+context).append($item);

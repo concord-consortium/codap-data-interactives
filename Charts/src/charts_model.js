@@ -96,30 +96,26 @@ ChartModel.prototype = {
    * @param  {string} context name
    */
   moveAttribute: function(context){
-    //need to get new attribute list in order to see what changes were made
-    var oldList = [];
-    for (var i = 0; i < this.model_attribute_list.length; i++) {
-      if(context == this.model_attribute_list[i].context.name){
-        oldList.push(this.model_attribute_list[i].name, this.model_attribute_list[i].collection.name);
-      }
-    }
-    console.log(oldList);
-    getData(context).then((collectionList) =>{
-      for (var i = 0; i < collectionList.length; i++) {
-        getData(context, collectionList[i]).then((attributeList)=>{
-          for (var j = 0; j < attributeList.length; j++) {
-            console.log(oldList[j]);
-            if(attributeList[j] == oldList[j]){
-              oldList.splice(j, 1);
-            }
-            else{
-              //then it is in the wrong sport
-            }
+    getData(context).then((collectionList)=>{
+      var promises = [];
+      collectionList.forEach((collection)=>{ promises.push(getData(context, collection.name)); });
+      Promise.all(promises).then((values)=>{
+        return values;
+      }).then( (result)=>{
+        var newList = [];
+        //populate new list
+        for (var i = 0; i < result.length; i++) {
+          for( var j = 0; j < result[i].length; j++){
+            newList.push({ attribute: result[i][j].name, collection: collectionList[i].name });
           }
-        });
-      }
+        }
+        this.moveAttributeEvent.notify({attribute: newList[0].attribute, after: "first_item_in_list"});
+        for(var i = 1; i < newList.length; i++){
+          this.moveAttributeEvent.notify( {attribute: newList[i].attribute, after: newList[i-1].attribute} );
+        }
+      });
     });
-    // console.log(this.model_attribute_list);
+
   },
   /**
    * @function getAttributesFromContext - sets the context's collection list
@@ -135,6 +131,10 @@ ChartModel.prototype = {
   },
   /**
    * @function getAttributesFromCollection
+   *
+   * @param  {boolean} notify - whether it notifies addAttributeEvent or just
+   *                          updates its model 
+   * @param  {Object} context
    * @param  {Object} collection
    */
   getAttributesFromCollection: function(context, collection){
