@@ -65,12 +65,16 @@ ChartModel.prototype = {
    *            1. add new context object to model_context_list
    *            2. notify changeContextCountEvent listeners
    *            3. add Attributes
+   *            4. add context change listeners
    * @param  {Object} context - data context object returned from CODAP
    */
   addNewContext: function(context){
     this.model_context_list.push( context );  /* 1 */
     this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
     this.getAttributesFromContext(context);
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
+      this.moveAttribute(context.name);
+    });
   },
   /** @function hasContext
   *   @param {number} context_id
@@ -85,8 +89,38 @@ ChartModel.prototype = {
     return false;
   },
   contextEventHandlers: function(context){
-  },
 
+  },
+  /**
+   * @function moveAttribute
+   * @param  {string} context name
+   */
+  moveAttribute: function(context){
+    //need to get new attribute list in order to see what changes were made
+    var oldList = [];
+    for (var i = 0; i < this.model_attribute_list.length; i++) {
+      if(context == this.model_attribute_list[i].context.name){
+        oldList.push(this.model_attribute_list[i].name, this.model_attribute_list[i].collection.name);
+      }
+    }
+    console.log(oldList);
+    getData(context).then((collectionList) =>{
+      for (var i = 0; i < collectionList.length; i++) {
+        getData(context, collectionList[i]).then((attributeList)=>{
+          for (var j = 0; j < attributeList.length; j++) {
+            console.log(oldList[j]);
+            if(attributeList[j] == oldList[j]){
+              oldList.splice(j, 1);
+            }
+            else{
+              //then it is in the wrong sport
+            }
+          }
+        });
+      }
+    });
+    // console.log(this.model_attribute_list);
+  },
   /**
    * @function getAttributesFromContext - sets the context's collection list
    *           to the list recieved from CODAP

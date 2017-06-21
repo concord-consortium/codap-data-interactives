@@ -91,5 +91,6 @@ ChartController.prototype = {
    */
   changeSelectedAttribute: function(sender, args){
     this.model.changeSelectedAttribute(args);
+    console.log(this.model.model_attribute_list);
   }
 };
