@@ -53,6 +53,10 @@ ChartView.prototype = {
     this.deselectAttributesHandler = this.deselectAttributes.bind(this);
     this.updateChartHandler = this.updateChart.bind(this);
     this.moveAttributeHandler = this.moveAttribute.bind(this);
+    this.deleteAttributeHandler = this.deleteAttribute.bind(this);
+    this.createAttributeHandler = this.createAttribute.bind(this);
+
+
     return this;
   },
   enable: function(){
@@ -62,10 +66,11 @@ ChartView.prototype = {
     this.model.changeSelectedDataEvent.attach(this.updateChartHandler);
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
     this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
+    this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
+    this.model.createAttributeEvent.attach(this.createAttributeHandler);
+
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
-
-
     return this;
   },
   /**
@@ -146,7 +151,27 @@ ChartView.prototype = {
    */
   moveAttribute: function(sender, args){
     $("#"+args.attribute).insertAfter('#'+args.after);
-  }
+  },
+  /**
+   * @function deleteAttribute
+   * @param  {Object} sender [description]
+   * @param  {Object} args   {attribute: name}
+   */
+  deleteAttribute: function(sender, args){
+    $('#'+args.attribute).slideToggle('normal', function(){
+      $(this).remove();
+    });
+  },
+  // /**
+  //  * @function createAttribute
+  //  * @param  {Object} sender
+  //  * @param  {Object} args   {attribute: name, context: name}
+  //  */
+  // createAttribute: function(sender, args){
+  //   var $item = $("<li>", {'id': args.attribute, 'class': 'view-attribute-list '});
+  //   s=
+  //   $('#'+args.context).
+  // }
 }
 
 //================================================
