@@ -54,7 +54,7 @@ ChartView.prototype = {
     this.updateChartHandler = this.updateChart.bind(this);
     this.moveAttributeHandler = this.moveAttribute.bind(this);
     this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    this.createAttributeHandler = this.createAttribute.bind(this);
+    // this.createAttributeHandler = this.createAttribute.bind(this);
 
 
     return this;
@@ -205,7 +205,10 @@ function addContextDOM(context){
  */
 function addAttributeToContextDOM(attribute, collection, context){
   var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
-  $item.css("display", 'none');
+  var isVisible = $('#'+context).children().is(':visible');
+  if(!isVisible){
+    $item.css("display", 'none');
+  }
   $item.text(attribute);
   $('#'+context).append($item);
 }

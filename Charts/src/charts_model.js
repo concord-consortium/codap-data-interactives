@@ -109,8 +109,9 @@ ChartModel.prototype = {
                   // console.log(j);
                   // @TODO have it notify event
                   this.addAttribute(false, attributeList[y], collection, context);
-                  this.createAttributeEvent.notify({
-                    attribute: attributeList[y].name,
+                  this.addAttributeEvent.notify({
+                    name: attributeList[y].name,
+                    collection: collection.name,
                     context: context.name
                   });
                 }
