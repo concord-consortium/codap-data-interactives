@@ -54,7 +54,7 @@ ChartView.prototype = {
     this.updateChartHandler = this.updateChart.bind(this);
     this.moveAttributeHandler = this.moveAttribute.bind(this);
     this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    // this.createAttributeHandler = this.createAttribute.bind(this);
+    this.updateAttributeHandler = this.updateAttribute.bind(this);
 
 
     return this;
@@ -67,7 +67,7 @@ ChartView.prototype = {
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
     this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
-    this.model.createAttributeEvent.attach(this.createAttributeHandler);
+    this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
 
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
@@ -162,16 +162,15 @@ ChartView.prototype = {
       $(this).remove();
     });
   },
-  // /**
-  //  * @function createAttribute
-  //  * @param  {Object} sender
-  //  * @param  {Object} args   {attribute: name, context: name}
-  //  */
-  // createAttribute: function(sender, args){
-  //   var $item = $("<li>", {'id': args.attribute, 'class': 'view-attribute-list '});
-  //   s=
-  //   $('#'+args.context).
-  // }
+  /**
+   * @function updateAttribute
+   * @param  {object} sender
+   * @param  {args} args   {previous: string, new: string}
+   */
+  updateAttribute: function(sender, args){
+    console.log(args);
+    $('#'+args.previous).attr('id',args.new);
+  }
 }
 
 //================================================

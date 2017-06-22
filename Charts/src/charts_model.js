@@ -37,11 +37,11 @@ var ChartModel = function(){
   };
   //Event objects
   this.changeContextCountEvent = new Event(this);
-  this.addAttributeEvent = new Event(this); //this inserts into a context
-  this.createAttributeEvent = new Event(this); //when user creates an attribute
+  this.addAttributeEvent = new Event(this);
   this.moveAttributeEvent = new Event(this);
   this.deselectAttributesEvent = new Event(this);
   this.deleteAttributeEvent = new Event(this);
+  this.updateAttributeEvent = new Event(this);
 
   this.changeSelectedAttributeEvent = new Event(this);
   this.deselectContextEvent = new Event(this); //to have view reset colors
@@ -92,36 +92,64 @@ ChartModel.prototype = {
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'createAttributes', (evt)=>{
       var id_list = evt.values.result.attrIDs;
 
+
       getData(context.name).then((collectionList)=>{
         //go through each collection to find where the attribtue belongs
         collectionList.forEach((collection) => {
           getData(context.name, collection.name).then((attributeList)=>{
-            console.log(collectionList);
-            console.log(collection);
-            //find attribute that comes before it
-            var att_before = null;
             //iterate through list of created attributes
             for(var x = 0; x < id_list.length; x++){
               //iterate through list of collection's attributes
               for(var y = 0; y < attributeList.length; y++){
                 if(id_list[x]==attributeList[y].id){
                   //match was found
-                  // console.log(j);
-                  // @TODO have it notify event
                   this.addAttribute(false, attributeList[y], collection, context);
-                  this.addAttributeEvent.notify({
-                    name: attributeList[y].name,
-                    collection: collection.name,
-                    context: context.name
-                  });
+                  this.addAttributeEvent.notify(
+                    {name: attributeList[y].name, collection: collection.name, context: context.name });
                 }
               }
             }
-            // this.deleteAttributeEvent.notify( {attribute: attribute_name} );
           });
         });
       });
     });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'updateAttributes', (evt)=>{
+      var att_list = evt.values.result.attrs;
+      for (var i = 0; i < att_list.length; i++) {
+        for (var j = 0; j < this.model_attribute_list.length; j++) {
+          if(att_list[i].id == this.model_attribute_list[j].id){
+            var att_info = this.model_attribute_list[j];
+            // var att = {name: att_list[i].name, id: att_list[i].id, tittle: att_list[i].title};
+            //delete
+            this.deleteAttributeByID(att_list[i].id);
+            console.log(this.model_attribute_list[j].name);
+            this.deleteAttributeEvent.notify( {attribute: this.model_attribute_list[j].name} );
+            //add
+            // this.addAttribute(false, att,
+            //                           att_info.collection,
+            //                           att_info.context);
+            // this.addAttributeEvent.notify({
+            //                                name: att_list[i].name,
+            //                                collection: att_info.collection.name,
+            //                                context: att_info.context.name
+            //                              });
+
+            // this.updateAttributeEvent.notify({
+            //   previous: this.model_attribute_list[j].name,
+            //   new: att_list[i].name
+            // });
+            //
+            // this.model_attribute_list[j].id  = att_list[i];
+            // this.model_attribute_list[j].name = att_list[i];
+            // this.model_attribute_list[j].title = att_list[i];
+          }
+        }
+      }
+      //move to the right place
+      this.moveAttribute(context);
+
+    });
+
   },
   /**
    * @function deleteAttributeByID
