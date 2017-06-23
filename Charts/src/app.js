@@ -28,13 +28,11 @@ codapInterface.init({
   title: 'Graphs',
   version: '0.1',
 }).then(function(iResult){
-  console.log('loading codap int');
 
   my_chart = codapInterface.getInteractiveState();
 
-  console.log(my_chart);
-
   if(!my_chart.controller){
+      // my_chart.chart = new ChartInterface(); 
       my_chart.model = new ChartModel();
       my_chart.view = new ChartView(my_chart.model);
       my_chart.controller = new ChartController(my_chart.model, my_chart.view);

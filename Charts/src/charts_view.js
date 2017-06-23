@@ -22,11 +22,10 @@
  * @param  {Object} model - uses the model to communicate with CODAP
  */
 var ChartView = function(model){
-  this.model = model;
 
+  this.model = model;
   //user events
   this.changeSelectedAttributeEvent = new Event(this);
-
   //chart events
   this.changeChartDataEvent = new Event(this);
 
@@ -40,8 +39,6 @@ ChartView.prototype = {
     .enable();
   },
   createChildren: function(){
-
-    this.$attrElement = $('#contextList');
     return this;
   },
   setupHandlers: function(){
@@ -54,7 +51,7 @@ ChartView.prototype = {
     this.updateChartHandler = this.updateChart.bind(this);
     this.moveAttributeHandler = this.moveAttribute.bind(this);
     this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    this.updateAttributeHandler = this.updateAttribute.bind(this);
+    // this.updateAttributeHandler = this.updateAttribute.bind(this);
 
 
     return this;
@@ -67,7 +64,7 @@ ChartView.prototype = {
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
     this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
-    this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
+    // this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
 
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
@@ -112,26 +109,26 @@ ChartView.prototype = {
   deselectContext: function(sender, args){
     $('#'+args.context).find(".selected").toggleClass("selected");
   },
-  updateChart: function (sender, args){
-    view_chart.destroy();
-    view_chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: args.labels,
-        datasets: [{
-          label: 'Count',
-          data: args.data,
-          backgroundColor: args.colors,
-          borderColor: args.background_colors,
-          borderWidth: 1
-        }],
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      }
-    });
-  },
+  // updateChart: function (sender, args){
+  //   view_chart.destroy();
+  //   view_chart = new Chart(ctx, {
+  //     type: 'bar',
+  //     data: {
+  //       labels: args.labels,
+  //       datasets: [{
+  //         label: 'Count',
+  //         data: args.data,
+  //         backgroundColor: args.colors,
+  //         borderColor: args.background_colors,
+  //         borderWidth: 1
+  //       }],
+  //       options: {
+  //         responsive: true,
+  //         maintainAspectRatio: false
+  //       }
+  //     }
+  //   });
+  // },
   /**
    * @function deselectAttributes
    * @param  {Object} sender
