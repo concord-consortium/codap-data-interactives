@@ -19,178 +19,28 @@
 //=================================================================
 //
 
-var my_chart = null;
+var my_chart;
 
-// function initCodapInterface(){
-  // initialize the codapInterface
-  codapInterface.init({
-    name: 'Graphs',
-    dimensions: {width: 700, height: 500},
-    title: 'Graphs',
-    version: '0.1',
-  }).then(function(iResult){
-    console.log('loading codap int');
+// initialize the codapInterface
+codapInterface.init({
+  name: 'Graphs',
+  dimensions: {width: 700, height: 500},
+  title: 'Graphs',
+  version: '0.1',
+}).then(function(iResult){
+  console.log('loading codap int');
 
-    my_chart = codapInterface.getInteractiveState();
-    console.log(my_chart);
+  my_chart = codapInterface.getInteractiveState();
 
-    if(!my_chart.controller){
-        my_chart.model = new ChartModel();
-        my_chart.view = new ChartView(my_chart.model);
-        my_chart.controller = new ChartController(my_chart.model, my_chart.view);
-    }
+  console.log(my_chart);
 
-    //   console.log("hre");
-    //   selected.graph = "bar";
-    // }
-    // if(!selected.data || !selected.attributeList){
-    //   selected.data = [];
-    //   selected.attributeList = [];
-    //   initChart();
-    // }
-    // else{
-    //   document.getElementById('select-chart').value = selected.graph;
-    //   chart.draw();
-    // }
-    // loadInitialSettings();
-    // listenToChanges();
-  });
-// }
-// function listenToChanges(){
-//   //when this happens, it should notify the event listeners that a context was created
-// 	// codapInterface.on('documentChangeNotice', 'dataContextCountChanged', updateDataContex);
-//
-//   //listeners for author information
-//   var info = document.getElementById('info');
-//   var modal = document.getElementById('authorinfo');
-//   info.onclick = function(){
-//     $(modal).fadeIn("fast");
-//   };
-//   var close = document.getElementById('close-author');
-//   close.onclick = function(){
-//     $(modal).fadeOut("fast");
-//   };
-// }
-//
-//
-// var selected;
-//
-// var info = {
-//   graph : ['bar', 'pie', 'doughnut','line', 'radar', 'polarArea','bubble'],
-//   getGraphsList: function(){
-//     var charts = document.getElementById('select-chart');
-//     charts.innerHTML = "";
-//     info.graph.forEach(function (g) {
-//       charts.innerHTML += '<option value="' + g + '">' + g + "</option>";
-//     });
-//   }
-// };
-//
-//
-//
-// // pulll intiail data from CodapInterface
-// function getInitialData(){
-//   var contextUI = document.getElementById('contextList');
-//   contextUI.innerHTML = "";
-//   //get list of dataContext from CODAP
-//   getData().then(function(contextList){
-//     //for each context populate attributes
-//     contextList.forEach(function(context){
-//       addContextToList(context.name);
-//       getData(context.name).then(function(collectionList){
-//         populateContextFromCollectionList(collectionList, context.name);
-//       });
-//     });
-//   });
-// }
-// function addContextToList(context){
-//   var contextUI = document.getElementById('contextList');
-//   var newItem = document.createElement('ul');
-//   newItem.className = context;
-//   newItem.id = context;
-//   newItem.appendChild(document.createTextNode(context));
-//   newItem.onclick= function(){
-//     $(newItem).children().toggle("fast"); //switches display from none to initial
-//   };
-//   addContextListeners(context);
-//   contextUI.appendChild(newItem);
-// }
-// function addContextListeners(context){
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'createCollection',
-//     function(){updateContextAttribtueList(context)});
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'deleteCollection',
-//     function(){deleteCollection(context)});
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'moveAttribute',
-//     function(){updateContextAttribtueList(context)});
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'createAttributes',
-//     function(){updateContextAttribtueList(context)});
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'updateAttributes',
-//     function(){updateContextAttribtueList(context)});
-//   codapInterface.on('dataContextChangeNotice['+context+']', 'deleteAttributes',
-//     function(){updateContextAttribtueList(context)});
-// }
-// function populateContextFromCollectionList(collectionList, context){
-//   var count = 0;
-//   var total = collectionList.length;
-//   collectionList.forEach(function(collection){
-//     var color = "rgba(100, 100, 170, "+ (.6-(count/total))+")";
-//     count+=1;
-//     getData(context, collection.name).then(function(attributeList){
-//       attributeList.forEach(function(attribute){
-//         // addAttributesToContext(attribute.name, collection.name, context);
-//         addAttributesToContext(attribute.name, collection.name, context, color);
-//       });
-//     });
-//   });
-// }
-// function addAttributesToContext(attribute, collection, context, color){
-//   var attributeList = document.getElementById(context);
-//   var newItem = document.createElement('li');
-//   if (selected.context == context){
-//     newItem.className = collection;
-//   }else{
-//     newItem.className = collection +' hidden';
-//   }
-//   newItem.id = attribute;
-//   newItem.appendChild(document.createTextNode(attribute));
-//   newItem.onclick = function(event){
-//     event.stopPropagation();
-//     if(typeof selected.attribute !== 'undefined'){ //revert the last selection to original functionality
-//       $('#'+selected.attribute.att).mouseleave(function(){$(this).css("background", selected.attribute.clr)});
-//       $('#'+selected.attribute.att).css("background", selected.attribute.clr);
-//     }
-//     $(newItem).mouseleave(function(){$(this).css("background", "white")});
-//
-//     selected.context = context;
-//     selected.collection = collection;
-//     selected.attribute = {
-//       att: attribute,
-//       clr: color
-//     };
-//     getData(context, collection, attribute).then(
-//       function(caseList){
-//         populateData(caseList, attribute);
-//         getNewColors();
-//         chart.draw();
-//     });
-//     codapInterface.on('dataContextChangeNotice['+context+']', 'updateCases', function(){
-//       getData(context, collection, attribute).then(
-//         function(caseList){
-//           populateData(caseList, attribute);
-//           chart.draw();
-//       });
-//     });
-//   }
-//   if(arguments.length == 4){
-//     newItem.style.backgroundColor = color;
-//     $(newItem).mouseenter(function() {
-//       $(this).css("background", "white"); })
-//               .mouseleave(function() {
-//       $(this).css("background", color);
-//     });
-//   }
-//   attributeList.appendChild(newItem);
-// }
+  if(!my_chart.controller){
+      my_chart.model = new ChartModel();
+      my_chart.view = new ChartView(my_chart.model);
+      my_chart.controller = new ChartController(my_chart.model, my_chart.view);
+  }
+});
+
 function getData(context, collection, attribute){
   var src = "";
   switch (arguments.length){
@@ -219,31 +69,6 @@ function getData(context, collection, attribute){
       });
     });
 }
-//
-// function populateData(cases, attribute){
-//   var attMembers = [];
-//   var attCount = [];
-//
-//   cases.forEach(function(val){
-//     var att = val.values[attribute];
-//     var contains = false, index = 0;
-//     for(i = 0; i < attMembers.length; i++){
-//       if (att == attMembers[i]){
-//         contains = true;
-//         index = i;
-//       }
-//     }
-//     if (contains){
-//       attCount[index] += 1;
-//     }
-//     else {
-//       attCount.push(1);
-//       attMembers.push(att);
-//     }
-//   });
-//   selected.attributeList = attMembers;
-//   selected.data = attCount;
-// }
 function getNewColors(amount){
   var colors = [];
   var backgroundColor = [];
@@ -256,80 +81,3 @@ function getNewColors(amount){
   }
   return {colors: colors, bg_colors: backgroundColor};
 }
-//
-// /*
-//   Change listeners
-// */
-// function updateDataContext(){
-//   getData().then(function(contextList){
-//     contextList.forEach(function(context){
-//       if($('#contextList').children("#"+context.name).length == 0){
-//         addContextToList(context.name);
-//         getData(context.name).then(function(collectionList){
-//           populateContextFromCollectionList(collectionList, context.name);
-//         });
-//       }
-//     });
-//   });
-// }
-// function getContextAttributeCount(context){
-// console.log("attempting count");
-//   return new Promise(function(resolve, reject){
-//     var count = 0;
-//     getData(context).then(function(collectionList){
-//       collectionList.forEach(function(col){
-//         getData(context, col.title).then(function(attList){
-//           count+=attList.length;
-//           console.log(count);
-//         });
-//       });
-//     });
-//     resolve(count);
-//   });
-// }
-// function updateContextAttribtueList(context){
-//   getData(context).then(function(collectionList){
-//     var contextUI = document.getElementById(context);
-//     $('#'+context).empty();
-//     contextUI.appendChild(document.createTextNode(context));
-//     populateContextFromCollectionList(collectionList, context);
-//   }, function(error){
-//
-//   });
-// }
-//
-// function deleteCollection(context){
-//   getContextAttributeCount(context).then(function(total){
-//     console.log("total "+total);
-//   });
-//   // var count = 0;
-//   // getData(context).then(function(collectionList){
-//   //   collectionList.forEach(function(col){
-//   //     getData(context, col.title).then(function(attList){
-//   //       count+=attList.length;
-//   //     });
-//   //   });
-//   // });
-//   // getData().then(function(dataContextList){
-//   //   console.log(dataContextList);
-//   //   console.log( $('#'+context).children().length );
-//   //   if(dataContextList.length == $('#'+context).children().length){
-//   //     //then it was a move attribute and not a delete collection
-//   //     console.log("move");
-//   //   }
-//   //   else{
-//   //     //an attribute/s was deleted and should check
-//   //     console.log("deletion");
-//   //   }
-//   // })
-//   // getData(context).then(function(collectionList){
-//   //   var toDelete = $("#"+context).children();
-//   //   var newList = collectionList.map(function(col){ return col.title})
-//   //   for (var i = 0; i < toDelete.length; i++) {
-//   //     var coll = $(toDelete[i]).attr('class').split(' ')[0];
-//   //     if(!newList.includes(coll.toString())){
-//   //       $('.'+coll.toString()).slideUp("slow", function(){$(this).remove()});
-//   //     }
-//   //   }
-//   // });
-// }
