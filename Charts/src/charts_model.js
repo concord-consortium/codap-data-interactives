@@ -78,6 +78,37 @@ ChartModel.prototype = {
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
       this.moveAttribute(context);
     });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'deleteCollection', (evt)=>{
+      //get the current attributes
+      var current_att_names = [];
+      for(var i = 0; i < this.model_attribute_list.length; i++){
+        if(this.model_attribute_list[i].context.name == context.name){
+          current_att_names.push(this.model_attribute_list[i].name);
+        }
+      }
+      //get the new attributes
+      getData(context.name).then((collectionList)=>{
+        var promises = [];
+        collectionList.forEach((collection)=>{ promises.push(getData(context.name, collection.name)); });
+        Promise.all(promises).then((values)=>{
+          return values;
+        }).then( (result)=>{
+          var new_list = result[0].map(function(att){ return att.name });
+          //if we have the same number of attributes, then the attribute was moved
+          if(new_list.length == current_att_names.length){
+            this.moveAttribute(context);
+          } else{ //track which attributes are still around
+            for (var i = 0; i < current_att_names.length; i++) {
+              if(new_list.indexOf(current_att_names[i]) == -1){
+                this.deleteAttributeByName(current_att_names[i]);
+                this.deleteAttributeEvent.notify( {attribute: current_att_names[i]} );
+              }
+            }
+          }
+        });
+      });
+    });
+
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'createCollection', (evt)=>{
       this.moveAttribute(context);
     }); //collections are created by moving an attribute
@@ -119,34 +150,21 @@ ChartModel.prototype = {
         for (var j = 0; j < this.model_attribute_list.length; j++) {
           if(att_list[i].id == this.model_attribute_list[j].id){
             var att_info = this.model_attribute_list[j];
-            // var att = {name: att_list[i].name, id: att_list[i].id, tittle: att_list[i].title};
-            //delete
+            var att = {name: att_list[i].name, id: att_list[i].id, tittle: att_list[i].title};
+            //delete old
+            var toDelete = this.model_attribute_list[j];
             this.deleteAttributeByID(att_list[i].id);
-            console.log(this.model_attribute_list[j].name);
-            this.deleteAttributeEvent.notify( {attribute: this.model_attribute_list[j].name} );
-            //add
-            // this.addAttribute(false, att,
-            //                           att_info.collection,
-            //                           att_info.context);
-            // this.addAttributeEvent.notify({
-            //                                name: att_list[i].name,
-            //                                collection: att_info.collection.name,
-            //                                context: att_info.context.name
-            //                              });
-
-            // this.updateAttributeEvent.notify({
-            //   previous: this.model_attribute_list[j].name,
-            //   new: att_list[i].name
-            // });
-            //
-            // this.model_attribute_list[j].id  = att_list[i];
-            // this.model_attribute_list[j].name = att_list[i];
-            // this.model_attribute_list[j].title = att_list[i];
+            this.deleteAttributeEvent.notify( {attribute: toDelete.name} );
+            //add new
+            console.log(att_info);
+            console.log(att_info.collection);
+            this.addAttribute(true, att, att_info.collection, att_info.context);
+            //move to correct position
+            this.moveAttribute(context);
+             return;
           }
         }
       }
-      //move to the right place
-      this.moveAttribute(context);
 
     });
 
@@ -160,6 +178,21 @@ ChartModel.prototype = {
     var to_return = null;
     for (var i = 0; i < this.model_attribute_list.length; i++) {
       if(this.model_attribute_list[i].id == id){
+        var name = this.model_attribute_list[i].name;
+        this.model_attribute_list.splice(i, 1); //deletes from model
+        return name;
+      }
+    }
+  },
+  /**
+   * @function deleteAttributeByName
+   * @param  {number} id of attribute to be deleted
+   * @return {string}    name of attribute deleted
+   */
+  deleteAttributeByName: function(name){
+    var to_return = null;
+    for (var i = 0; i < this.model_attribute_list.length; i++) {
+      if(this.model_attribute_list[i].name == name){
         var name = this.model_attribute_list[i].name;
         this.model_attribute_list.splice(i, 1); //deletes from model
         return name;
@@ -250,7 +283,7 @@ ChartModel.prototype = {
       }
     });
   },
-  addAttribute(notify, attribute, collection, context){
+  addAttribute: function(notify, attribute, collection, context){
     var att = attribute;
     var attObject = {
       name: att.name,
