@@ -19,13 +19,15 @@
 //=================================================================
 /**
  * @constructor ChartController - this object communicates with the model object
- *              and the view object in order to update the data and the UI
+ *              and the view object in order to update the data, the UI, and the chart
  * @param  {Object} model - tracks the data in CODAP
  * @param  {Object} view - tracks the data the user sees
  */
-var ChartController = function(model, view){
+var ChartController = function(model, view, user_state){
+  this.user_state = user_state;
   this.model = model;
   this.view = view;
+  // this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
   this.init();
 };
 
@@ -69,7 +71,13 @@ ChartController.prototype = {
    * @return {Object} this
    */
   initializeModelView: function(){
-    this.model.updateDataContextList();
+    this.model.updateDataContextList()
+    .then((val)=>{
+      console.log("finished loading state");
+      console.log(this.user_state.selected);
+      this.model.changeSelectedAttribute(this.user_state.selected);
+    });
+
     return this;
   },
   /**
@@ -90,6 +98,7 @@ ChartController.prototype = {
    * @param  {Object} args   object string of names {name, collection, context{
    */
   changeSelectedAttribute: function(sender, args){
+    this.user_state.selected = args;
     this.model.changeSelectedAttribute(args);
   }
 };

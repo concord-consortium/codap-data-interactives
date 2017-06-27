@@ -8,30 +8,30 @@ var view_chart = new Chart(ctx, {
     datasets: [{
       data: [],
     }],
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false
   }
 });
 
 populateChartOptions(available_charts);
 
-// var ChartInterface = function(){
-//     // this.model = new ChartModel();
-//     // this.view = new ChartView(this.model);
-//     // this.controller = new ChartController(this.model, this.view);
-//
-//     this.initialize();
-// };
-// ChartInterface.prototype = {
-//   initialize : function(){
-//     console.log('here');
-//   },
-//   addContextsListen: function(){
-//   }
-// }
-//
+var ChartInterface = function(){
+    // this.model = new ChartModel();
+    // this.view = new ChartView(this.model);
+    // this.controller = new ChartController(this.model, this.view);
+
+    this.initialize();
+};
+ChartInterface.prototype = {
+  initialize : function(){
+    console.log('here');
+  },
+  addContextsListen: function(){
+  }
+}
+
 function populateChartOptions(available_charts){
   for(var i = 0; i < available_charts.length; i++){
     var $chart = $("<option>", {'id': available_charts[i]});

@@ -25,8 +25,8 @@ body{
 }
 .main{
   float: right;
-  height: 100%;
-  width: auto;
+  width: 80vw;
+  height: 100vh;
 }
 #small-buttons{
   height: auto;
@@ -127,10 +127,11 @@ li{
 
 
 .chart-container {
+  /*float: right;*/
   position: relative;
   margin: auto;
-  width: 80vw;
-  height: 100vh
+  height: 100%;
+  width: 100%;
 }
 
 #info{

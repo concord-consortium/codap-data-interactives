@@ -53,12 +53,14 @@ ChartModel.prototype = {
    *           in order to add new ones and notifies its event listener
    */
   updateDataContextList: function(){
-    getData().then((newContextList) => {
+    return getData().then((newContextList) => {
+      var promises = [];
       for (var i = 0; i < newContextList.length; i++) {
         if( !this.hasContext(newContextList[i].id) ) {
-          this.addNewContext(newContextList[i]);
+          promises.push(this.addNewContext(newContextList[i]));
         }
       }
+      return Promise.all(promises)
     });
   },
   /**
@@ -73,7 +75,6 @@ ChartModel.prototype = {
   addNewContext: function(context){
     this.model_context_list.push( context );  /* 1 */
     this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
-    this.getAttributesFromContext(true, context);
     //adding listeners
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
       this.moveAttribute(context);
@@ -108,7 +109,6 @@ ChartModel.prototype = {
         });
       });
     });
-
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'createCollection', (evt)=>{
       this.moveAttribute(context);
     }); //collections are created by moving an attribute
@@ -156,18 +156,17 @@ ChartModel.prototype = {
             this.deleteAttributeByID(att_list[i].id);
             this.deleteAttributeEvent.notify( {attribute: toDelete.name} );
             //add new
-            console.log(att_info);
-            console.log(att_info.collection);
             this.addAttribute(true, att, att_info.collection, att_info.context);
             //move to correct position
             this.moveAttribute(context);
-             return;
+            return;
           }
         }
       }
 
     });
 
+    return this.getAttributesFromContext(true, context);
   },
   /**
    * @function deleteAttributeByID
@@ -220,6 +219,7 @@ ChartModel.prototype = {
    */
   moveAttribute: function(context){
     getData(context.name).then((collectionList)=>{
+      console.log(collectionList);
       var promises = [];
       collectionList.forEach((collection)=>{ promises.push(getData(context.name, collection.name)); });
       Promise.all(promises).then((values)=>{
@@ -240,7 +240,6 @@ ChartModel.prototype = {
         }
       });
     });
-    // this.getAttributesFromContext(false, context);
   },
   /**
    * @function updateAttributeCollection
@@ -262,10 +261,20 @@ ChartModel.prototype = {
    * @param {Object} context - as recieved from CODAP
    */
   getAttributesFromContext: function(notify, context){
-    getData(context.name).then((collectionList) => {
-      for (i = 0; i < collectionList.length; i++) {
-        this.getAttributesFromCollection(notify, context, collectionList[i]);
-      }
+    return getData(context.name).then((context_info) => {
+      var att_list = [];
+      var cxt = {name:context.name,
+                     title: context.title,
+                     id: context.id };
+      context_info.collections.forEach((collection)=>{
+        var col = {name:collection.name,
+                       title: collection.title,
+                       id: collection.id };
+        collection.attrs.forEach((attribute)=>{
+          att_list.push( this.addAttribute(true, attribute, col, cxt) );
+        });
+      });
+      return att_list;
     });
   },
   /**
@@ -275,12 +284,14 @@ ChartModel.prototype = {
    *                          updates its model
    * @param  {Object} context
    * @param  {Object} collection
+   * @return {Object} attributeList objects
    */
   getAttributesFromCollection: function(notify, context, collection){
-    getData(context.name, collection.name).then((attributeList)=>{
+    return getData(context.name, collection.name).then((attributeList)=>{
       for (var j = 0; j < attributeList.length; j++) {
         this.addAttribute(notify, attributeList[j], collection, context);
       }
+      return attributeList;
     });
   },
   addAttribute: function(notify, attribute, collection, context){
@@ -294,6 +305,7 @@ ChartModel.prototype = {
     }
     this.model_attribute_list.push(attObject);
     if(notify) this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
+    return attObject;
   },
   /**
    * @function getAttributeObject - return attribute object

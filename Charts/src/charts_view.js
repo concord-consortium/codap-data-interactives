@@ -49,9 +49,8 @@ ChartView.prototype = {
     this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
     this.deselectAttributesHandler = this.deselectAttributes.bind(this);
     this.updateChartHandler = this.updateChart.bind(this);
-    this.moveAttributeHandler = this.moveAttribute.bind(this);
     this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    // this.updateAttributeHandler = this.updateAttribute.bind(this);
+    this.updateAttributeHandler = this.updateAttribute.bind(this);
 
 
     return this;
@@ -62,9 +61,8 @@ ChartView.prototype = {
     this.model.deselectContextEvent.attach(this.deselectContextHandler);
     this.model.changeSelectedDataEvent.attach(this.updateChartHandler);
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
-    this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
-    // this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
+    this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
 
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
@@ -77,17 +75,19 @@ ChartView.prototype = {
    *                         {name, collection, context}
    */
   changeContextCount: function(sender, args){
-    addContextDOM(args.name);
+    addContextDOM(args.attribute);
   },
   /**
    * @function addAttribute - handles new attribute event
    * @param  {Object} sender
    * @param  {Object} args   information about the new attribute
-   *                         {name, collection, context}
+   *                         {attribute, collection, context, after(optional)}
    */
   addAttribute: function(sender, args){
-    addAttributeToContextDOM(args.name, args.collection, args.context);
-    $('#'+args.name).on('click', (evt) => {
+    if(args.after){
+      addAttributeToContextDOM(args.attribute, args.collection, args.context, args.after);
+    }else addAttributeToContextDOM(args.attribute, args.collection, args.context);
+    $('#'+args.attribute).on('click', (evt) => {
       evt.stopPropagation();
       this.changeSelectedAttributeEvent.notify(args);
     });
@@ -96,10 +96,10 @@ ChartView.prototype = {
    * @function changeSelectedAttribute - stylizes the attribute item after click
    * @param  {Object} sender
    * @param {Object} args  information about the new attribute
-   *                             {name, collection, context}
+   *                             {attribute, collection, context}
    */
   changeSelectedAttribute: function(sender, args){
-    $('#'+args.name).toggleClass("selected");
+    $('#'+args.attribute).toggleClass("selected");
   },
   /**
    * @function deselectContext - stylize unselected context back to original
@@ -109,26 +109,26 @@ ChartView.prototype = {
   deselectContext: function(sender, args){
     $('#'+args.context).find(".selected").toggleClass("selected");
   },
-  // updateChart: function (sender, args){
-  //   view_chart.destroy();
-  //   view_chart = new Chart(ctx, {
-  //     type: 'bar',
-  //     data: {
-  //       labels: args.labels,
-  //       datasets: [{
-  //         label: 'Count',
-  //         data: args.data,
-  //         backgroundColor: args.colors,
-  //         borderColor: args.background_colors,
-  //         borderWidth: 1
-  //       }],
-  //       options: {
-  //         responsive: true,
-  //         maintainAspectRatio: false
-  //       }
-  //     }
-  //   });
-  // },
+  updateChart: function (sender, args){
+    view_chart.destroy();
+    view_chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: args.labels,
+        datasets: [{
+          label: 'Count',
+          data: args.data,
+          backgroundColor: args.colors,
+          borderColor: args.background_colors,
+          borderWidth: 1
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  },
   /**
    * @function deselectAttributes
    * @param  {Object} sender
@@ -139,15 +139,6 @@ ChartView.prototype = {
     for (var i =0; i < list.length; i++){
       $('#'+list[i]).toggleClass("selected");
     }
-  },
-  /**
-   * attributeMove
-   * @param  {sender} sender
-   * @param  {Object} args   {attribute: name of attribute moved,
-   *                         after: name of attribute it is after}
-   */
-  moveAttribute: function(sender, args){
-    $("#"+args.attribute).insertAfter('#'+args.after);
   },
   /**
    * @function deleteAttribute
@@ -199,12 +190,14 @@ function addContextDOM(context){
  * @param {string} collection
  * @param {string} context
  */
-function addAttributeToContextDOM(attribute, collection, context){
+function addAttributeToContextDOM(attribute, collection, context, attribute_after){
   var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
   var isVisible = $('#'+context).children().is(':visible');
   if(!isVisible){
     $item.css("display", 'none');
   }
   $item.text(attribute);
-  $('#'+context).append($item);
+  if(arguments.length == 4){ //insert after element
+    $item.insertAfter('#'+attribute_after);
+  }else $('#'+context).append($item);
 }

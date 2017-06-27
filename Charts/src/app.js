@@ -19,7 +19,7 @@
 //=================================================================
 //
 
-var my_chart;
+var user_state = null;
 
 // initialize the codapInterface
 codapInterface.init({
@@ -29,21 +29,27 @@ codapInterface.init({
   version: '0.1',
 }).then(function(iResult){
 
-  my_chart = codapInterface.getInteractiveState();
+  user_state = codapInterface.getInteractiveState();
 
-  if(!my_chart.controller){
-      // my_chart.chart = new ChartInterface(); 
-      my_chart.model = new ChartModel();
-      my_chart.view = new ChartView(my_chart.model);
-      my_chart.controller = new ChartController(my_chart.model, my_chart.view);
+  if(!user_state.selected){
+    console.log("InteractiveState: user does not have a save state");
+    user_state.selected = null;
+  } else {
+    console.log('InteractiveState: user has a save state')
+    console.log(user_state.selected);
   }
+
+  var my_chart = {};
+  my_chart.model = new ChartModel();
+  my_chart.view = new ChartView(my_chart.model);
+  my_chart.controller = new ChartController(my_chart.model, my_chart.view, user_state);
 });
 
 function getData(context, collection, attribute){
   var src = "";
   switch (arguments.length){
     case 1:
-      src = 'dataContext[' + context +'].collectionList';
+      src = 'dataContext[' + context +']';
       break;
     case 2:
       src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
