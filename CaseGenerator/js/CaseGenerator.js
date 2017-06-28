@@ -34,7 +34,7 @@ var dataManager = Object.create({
       title: "Case Generator",
       version: "0.1",
       dimensions: {
-        width: 300,
+        width: 350,
         height: 200
       },
 
