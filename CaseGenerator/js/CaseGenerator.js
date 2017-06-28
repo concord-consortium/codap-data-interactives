@@ -29,7 +29,6 @@ var dataManager = Object.create({
 
   init: function () {
     this.listeners = [];
-    this.attributes = [];
     this.state = {
       title: "Case Generator",
       version: "0.1",
@@ -100,6 +99,15 @@ var dataManager = Object.create({
     };
   },
 
+  isDataContextMissing: function (callback) {
+    dispatcher.sendRequest({
+      action: 'get',
+      resource: 'dataContext[CaseGenerator]'
+    }, {}, function (req, result) {
+      callback(!result || !result.success);
+    });
+  },
+
   createDataContext: function (handler) {
     var collections = [{
           name: 'GeneratedCases',
@@ -124,15 +132,7 @@ var dataManager = Object.create({
   },
 
   createAttributes: function (numAttributes, handler) {
-    var self = this,
-        i;
-    this.attributes = [];
-    for (i = 0; i < numAttributes; i++) {
-      this.attributes.push({
-        name: "attr" + (i + 1),
-        title: "attribute" + (i + 1)
-      });
-    }
+    var self = this;
     if (this.state.useParentCase) {
       dispatcher.sendRequest({
         action: 'create',
@@ -153,19 +153,20 @@ var dataManager = Object.create({
       dispatcher.sendRequest({
         action: 'create',
         resource: 'dataContext[CaseGenerator].collection[GeneratedCases].attribute',
-        values: this.attributes
+        values: this.getAttributesArray()
       }, {}, handler);
     }
   },
 
   createCases: function (numCases, handler) {
     var cases = [],
-        numAttributes = this.attributes.length,
+        attributes = this.getAttributesArray(),
+        numAttributes = attributes.length,
         i, j, attribute, values;
     for (i = 0; i < numCases; i++) {
       values = {};
       for (j = 0; j < numAttributes; j++) {
-        attribute = this.attributes[j];
+        attribute = attributes[j];
         values[attribute.name] = Math.round(Math.random() * 100);
       }
       cases.push({
@@ -204,19 +205,42 @@ var dataManager = Object.create({
     }
   },
 
+  getAttributesArray: function () {
+    var attributes = [],
+        i;
+    for (i = 0; i < this.state.numAttributes; i++) {
+      attributes.push({
+        name: "attr" + (i + 1),
+        title: "attribute" + (i + 1)
+      });
+    }
+    return attributes;
+  },
+
   setState: function (newState) {
     var self = this;
     Object.keys(newState).forEach(function (key) {
       self.state[key] = newState[key];
     });
 
-    if ((newState.wizardStep === "promptForNumCases") && (this.state.numCases > 0)) {
-      dataManager.createDataContext(function () {
-        dataManager.createAttributes(self.state.numAttributes);
+    if ((self.state.wizardStep === "promptForNumCases") && (this.state.numCases > 0)) {
+
+      dataManager.isDataContextMissing(function (missing) {
+        if (missing) {
+          dataManager.createDataContext(function () {
+            dataManager.createAttributes(self.state.numAttributes, function () {
+              self.notify();
+            });
+          });
+        }
+        else {
+          self.notify();
+        }
       });
     }
-
-    this.notify();
+    else {
+      this.notify();
+    }
   },
 
   getState: function () {
