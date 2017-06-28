@@ -94,10 +94,10 @@ ChartView.prototype = {
    * @function changeContextCount - adds context to UI
    * @param  {Object} sender
    * @param  {Object} args   information about the new context
-   *                         {name, collection, context}
+   *                         {name: string}
    */
   changeContextCount: function(sender, args){
-    addContextDOM(args.attribute);
+    addContextDOM(args.name);
   },
   /**
    * @function addAttribute - handles new attribute event
@@ -108,7 +108,9 @@ ChartView.prototype = {
   addAttribute: function(sender, args){
     if(args.after){
       addAttributeToContextDOM(args.attribute, args.collection, args.context, args.after);
-    }else addAttributeToContextDOM(args.attribute, args.collection, args.context);
+    } else {
+      addAttributeToContextDOM(args.attribute, args.collection, args.context);
+    }
     $('#'+args.attribute).on('click', (evt) => {
       evt.stopPropagation();
       this.changeSelectedAttributeEvent.notify(args);

@@ -26,11 +26,11 @@
 var ChartController = function(model, view, user_state){
   this.user_state = user_state;
   this.model = model;
-  // this.view = view;
+  this.view = view;
 
-  // this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
-  this.init();
-};
+    // this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
+    this.init();
+  };
 
 ChartController.prototype = {
   /**
@@ -73,7 +73,7 @@ ChartController.prototype = {
    */
   initializeModelView: function(){
     this.model.updateDataContextList().then((val)=>{
-      console.log("finished loading state: "+JSON.stringify(val));
+      // console.log("finished loading state: "+JSON.stringify(val));
       // console.log(this.user_state.selected);
     });
 
@@ -113,7 +113,7 @@ function getData(context, collection, attribute){
   var src = "";
   switch (arguments.length){
     case 1:
-      src = 'dataContext[' + context +']';
+      src = 'dataContext[' + context +'].collectionList';
       break;
     case 2:
       src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
@@ -136,6 +136,20 @@ function getData(context, collection, attribute){
         }
       });
     });
+}
+function getContext(context){
+  return new Promise(function(resolve, reject){
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext['+context+']',
+    }, function(result){
+      if (result && result.success){
+        resolve(result.values);
+      } else {
+        resolve([]);
+      }
+    });
+  });
 }
 function getNewColors(amount){
   var colors = [];

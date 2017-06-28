@@ -28,14 +28,15 @@
  */
 var ChartModel = function(){
   this.model_context_list = [];
-  this.model_attribute_list = [];
   this.selected = {
     context: null,
     attributes: [],
     cases: []
   };
   //context events
+  //@type {context: string}
   this.changeContextCountEvent = new Event(this);
+  //@type {selected: context-string, deselected: context-string}
   this.changedSelectedContextEvent = new Event(this); //to have view selected attributes
 
   //attribute events
@@ -54,6 +55,7 @@ ChartModel.prototype = {
   /**
    * @function updateDataContexList - requests context list from CODAP
    *           in order to add new ones and notifies its event listener
+   * @return {Promise[]} returns addNewContext promises
    */
   updateDataContextList: function(){
     return getData().then((newContextList) => {
@@ -65,53 +67,6 @@ ChartModel.prototype = {
       }
       return Promise.all(promises)
     });
-  },
-  /**
-   * @function addNewContext - adds context to the list and notifies event listeners
-   *           responsabilities:
-   *            1. add new context object to model_context_list
-   *            2. notify changeContextCountEvent listeners
-   *            4. add context change listeners
-   *            3. add Attributes
-   * @param  {Object} context - data context object returned from CODAP
-   * @return {Object[]} list of attribute objects added to the model
-   *                         as represented by the model
-   */
-  addNewContext: function(context){
-    this.model_context_list.push( context );  /* 1 */
-    this.changeContextCountEvent.notify( {name: context.name} );  /* 2 */
-    this.addContextChangeListeners(context); /* 3 */
-    return this.getAttributesFromContext(true, context); /* 4 */
-  },
-  /**
-   * @function deleteAttributeByID
-   * @param  {number} id of attribute to be deleted
-   * @return {string}    name of attribute deleted
-   */
-  deleteAttributeByID: function(id){
-    var to_return = null;
-    for (var i = 0; i < this.model_attribute_list.length; i++) {
-      if(this.model_attribute_list[i].id == id){
-        var name = this.model_attribute_list[i].name;
-        this.model_attribute_list.splice(i, 1); //deletes from model
-        return name;
-      }
-    }
-  },
-  /**
-   * @function deleteAttributeByName
-   * @param  {number} id of attribute to be deleted
-   * @return {string}    name of attribute deleted
-   */
-  deleteAttributeByName: function(name){
-    var to_return = null;
-    for (var i = 0; i < this.model_attribute_list.length; i++) {
-      if(this.model_attribute_list[i].name == name){
-        var name = this.model_attribute_list[i].name;
-        this.model_attribute_list.splice(i, 1); //deletes from model
-        return name;
-      }
-    }
   },
   /** @function hasContext
   *   @param {number} context_id
@@ -125,42 +80,36 @@ ChartModel.prototype = {
     }
     return false;
   },
-  contextEventHandlers: function(context){
-
-  },
   /**
-   * @function moveAttribute
-   * @param  {Object} context
+   * getContextByName
+   * @param  {string} context name
+   * @return {Object} context
    */
-  moveAttribute: function(context){
-    var eventlog = "Charts: move event triggered: ";
-    getData(context.name).then((context_info)=>{
-      var ctx = {name: context_info.name, title: context_info.title, id:context_info.id}; //build context object
-      context_info.collections.forEach((collection) => {
-        var attributes = collection.attrs; //attribute list
-        var col = {name: collection.name, title: collection.title, id:collection.id}; //collection object
-
-        for(var i = 0; i < attributes.length; i++){
-          var msg = {attribute: attributes[i].name}
-          if(i==0) msg.after = 'first_item'; else msg.after = attributes[i-1].name;
-          this.moveAttributeEvent.notify(msg);
-          this.updateAttributeCollection(attributes[i], col);
-        }
-      });
-    });
-    console.log(eventlog);
-  },
-  /**
-   * @function updateAttributeCollection
-   * @param  {String} attribute
-   * @param  {Object} collection
-   */
-  updateAttributeCollection: function(attribute, collection){
-    for(var i = 0; i < this.model_attribute_list.length; i++){
-      if(this.model_attribute_list[i].name == attribute){
-        this.model_attribute_list[i].collection = collection;
+  getContextByName: function(context){
+    for(var i = 0; i < this.model_context_list.length; i++){
+      if(this.model_context_list[i].name == context){
+        return this.model_context_list[i];
       }
     }
+  },
+  /**
+   * @function addNewContext - adds context to the list and notifies event listeners
+   *           responsabilities:
+   *            1. add new context object to model_context_list
+   *            2. notify changeContextCountEvent listeners
+   *            4. add context change listeners
+   *            3. add Attributes
+   * @param  {Object} context - data context object returned from CODAP
+   * @return {Object[]} list of attribute objects added to the model
+   *                         as represented by the model
+   */
+  addNewContext: function(context){
+    return getContext(context.name).then((newContext)=>{
+      this.model_context_list.push( newContext );  /* 1 */
+      this.changeContextCountEvent.notify( {name: newContext.name} );  /* 2 */
+      this.addContextChangeListeners( newContext); /* 3 */
+      return this.getAttributesFromContext(newContext); /* 4 */
+    });
   },
   /**
    * @function getAttributesFromContext - sets the context's collection list
@@ -168,53 +117,92 @@ ChartModel.prototype = {
    * @param  {boolean} notify - whether it notifies addAttributeEvent or just
    *                          updates its model
    * @param {Object} context - as recieved from CODAP
+   * @return {Object[]} att_list - list of object {attribute, collection, name}
    */
-  getAttributesFromContext: function(notify, context){
-    return getData(context.name).then((context_info) => {
+  getAttributesFromContext: function(context){
+    return getContext(context.name).then((context_info) => {
       var att_list = [];
-      var cxt = {name:context.name,
-                     title: context.title,
-                     id: context.id };
       context_info.collections.forEach((collection)=>{
-        var col = {name:collection.name,
-                       title: collection.title,
-                       id: collection.id };
         collection.attrs.forEach((attribute)=>{
-          att_list.push( this.addAttribute(true, attribute, col, cxt) );
+          att_list.push( this.addAttribute(attribute.name, collection.name, context.name) );
         });
       });
       return att_list;
     });
   },
-  /**
-   * @function getAttributesFromCollection
-   *
-   * @param  {boolean} notify - whether it notifies addAttributeEvent or just
-   *                          updates its model
-   * @param  {Object} context
-   * @param  {Object} collection
-   * @return {Object} attributeList objects
-   */
-  getAttributesFromCollection: function(notify, context, collection){
-    return getData(context.name, collection.name).then((attributeList)=>{
-      for (var j = 0; j < attributeList.length; j++) {
-        this.addAttribute(notify, attributeList[j], collection, context);
-      }
-      return attributeList;
-    });
-  },
-  addAttribute: function(notify, attribute, collection, context){
-    var att = attribute;
+  addAttribute: function(attribute, collection, context){
     var attObject = {
-      name: att.name,
-      title: att.title,
-      id: att.id,
+      attribute: attribute,
       context: context,
       collection: collection
     }
-    this.model_attribute_list.push(attObject);
-    if(notify) this.addAttributeEvent.notify( {name: att.name, collection: collection.name, context: context.name} );
+    this.addAttributeEvent.notify( attObject );
     return attObject;
+  },
+  /**
+   * @function deleteAttributeByID
+   * @param  {string} context of attribute to be deleted
+   * @param  {number} id of attribute to be deleted
+   * @return {string}    name of attribute deleted
+   */
+  deleteAttributeByID: function(context, id){
+    //get the context
+    var cxt = this.getContextByName(context);
+    var collections = cxt.collections;
+    //search through the collections for the right attribute
+    for (var j = 0; j < collections.length; j++) {
+      var collection = collections[j];
+      for(var i = 0; i < collection.attrs.length; i++){
+        if(collection.attrs[i].id == id){
+          var name = collection.attrs[i].name;
+          collection.attrs.splice(i, 1); //deletes from model
+          return name;
+        }
+      }
+    };
+  },
+  /**
+   * @function deleteAttributeByID
+   * @param  {string} context of attribute to be deleted
+   * @param  {number} name of attribute to be deleted
+   * @return {string}    name of attribute deleted
+   */
+  deleteAttributeByName: function(context, name){
+    //get the context
+    var cxt = this.getContextByName(context);
+    var collections = cxt.collections;
+    //search through the collections for the right attribute
+    for (var j = 0; j < collections.length; j++) {
+      var collection = collections[j];
+      for(var i = 0; i < collection.attrs.length; i++){
+        if(collection.attrs[i].name == name){
+          var name = collection.attrs[i].name;
+          collection.attrs.splice(i, 1); //deletes from model
+          return name;
+        }
+      }
+    };
+  },
+  /**
+   * @function moveAttribute
+   * @param  {Object} context
+   */
+  moveAttribute: function(context){
+    getContext(context.name).then((context_info)=>{
+      context.collections = context_info.collections; //update collections
+      //new attribute order
+      var newList = [];
+      context_info.collections.map((col)=>{
+        col.attrs.map((att)=>{
+          newList.push({attribute:att, collection: col});
+        });
+      });
+      for(var i = 0; i < newList.length; i++){
+        var msg = {attribute: newList[i].attribute.name}
+        if(i==0) msg.after = 'first_item'; else msg.after = newList[i-1].attribute.name;
+        this.moveAttributeEvent.notify(msg);
+      }
+    });
   },
   /**
    * @function getAttributeObject - return attribute object
@@ -325,93 +313,88 @@ ChartModel.prototype = {
    */
   addContextChangeListeners: function(context){
     //adding listeners
-    codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
-      this.moveAttribute(context);
-    });
-    codapInterface.on('dataContextChangeNotice['+context.name+']', 'createCollection', (evt)=>{
-      this.moveAttribute(context);
-    }); //collections are created by moving an attribute
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'deleteAttributes', (evt)=>{
       var id_list = evt.values.result.attrIDs;
-      var attribute_name = null;
       for(var i = 0; i < id_list.length; i++){
-        attribute_name = this.deleteAttributeByID(id_list[i]);
+        var attribute_name = this.deleteAttributeByID(context.name, id_list[i]);
+        this.deleteAttributeEvent.notify( {attribute: attribute_name} );
       }
-      this.deleteAttributeEvent.notify( {attribute: attribute_name} );
-    });
-    codapInterface.on('dataContextChangeNotice['+context.name+']', 'updateAttributes', (evt)=>{
-      var att_list = evt.values.result.attrs;
-      for (var i = 0; i < att_list.length; i++) {
-        for (var j = 0; j < this.model_attribute_list.length; j++) {
-          if(att_list[i].id == this.model_attribute_list[j].id){
-            var att_info = this.model_attribute_list[j];
-            var att = {name: att_list[i].name, id: att_list[i].id, tittle: att_list[i].title};
-            //delete old
-            var toDelete = this.model_attribute_list[j];
-            this.deleteAttributeByID(att_list[i].id);
-            this.deleteAttributeEvent.notify( {attribute: toDelete.name} );
-            //add new
-            this.addAttribute(true, att, att_info.collection, att_info.context);
-            //move to correct position
-            this.moveAttribute(context);
-            return;
-          }
-        }
-      }
-
-    });
-    codapInterface.on('dataContextChangeNotice['+context.name+']', 'deleteCollection', (evt)=>{
-      //get the current attributes
-      var current_att_names = [];
-      for(var i = 0; i < this.model_attribute_list.length; i++){
-        if(this.model_attribute_list[i].context.name == context.name){
-          current_att_names.push(this.model_attribute_list[i].name);
-        }
-      }
-      //get the new attributes
-      getData(context.name).then((collectionList)=>{
-        var promises = [];
-        collectionList.forEach((collection)=>{ promises.push(getData(context.name, collection.name)); });
-        Promise.all(promises).then((values)=>{
-          return values;
-        }).then( (result)=>{
-          var new_list = result[0].map(function(att){ return att.name });
-          //if we have the same number of attributes, then the attribute was moved
-          if(new_list.length == current_att_names.length){
-            this.moveAttribute(context);
-          } else{ //track which attributes are still around
-            for (var i = 0; i < current_att_names.length; i++) {
-              if(new_list.indexOf(current_att_names[i]) == -1){
-                this.deleteAttributeByName(current_att_names[i]);
-                this.deleteAttributeEvent.notify( {attribute: current_att_names[i]} );
-              }
-            }
-          }
-        });
-      });
     });
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'createAttributes', (evt)=>{
       var id_list = evt.values.result.attrIDs;
-
-
-      getData(context.name).then((collectionList)=>{
-        //go through each collection to find where the attribtue belongs
-        collectionList.forEach((collection) => {
-          getData(context.name, collection.name).then((attributeList)=>{
+      getContext(context.name).then((newContext)=>{
+        context.collections = newContext.collections; //update collections
+        newContext.collections.forEach((collection)=>{
+          collection.attrs.forEach((att)=>{
             //iterate through list of created attributes
             for(var x = 0; x < id_list.length; x++){
               //iterate through list of collection's attributes
-              for(var y = 0; y < attributeList.length; y++){
-                if(id_list[x]==attributeList[y].id){
-                  //match was found
-                  this.addAttribute(false, attributeList[y], collection, context);
-                  this.addAttributeEvent.notify(
-                    {name: attributeList[y].name, collection: collection.name, context: context.name });
-                }
+              if(id_list[x]==att.id){
+                //match was found
+                this.addAttribute(att.name, collection.name, context.name);
               }
             }
           });
         });
+      });
+    });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'createCollection', (evt)=>{
+      this.moveAttribute(context);
+    }); //collections are created by moving an attribute
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'moveAttribute', (evt)=>{
+      this.moveAttribute(context);
+    });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'updateAttributes', (evt)=>{
+      var att_list = evt.values.result.attrs;
+      getContext(context.name).then((newContext)=>{
+        //iterate through attribute list
+        context.collections.forEach((collection)=>{
+          collection.attrs.forEach((att)=>{
+            for (var i = 0; i < att_list.length; i++) { //iterate through updated list
+              if(att_list[i].id == att.id){
+                //delete old
+                this.deleteAttributeByID(context.name, att_list[i].id);
+                this.deleteAttributeEvent.notify( {attribute: att.name} );
+                //add new
+                this.addAttribute(att_list[i].name, collection.name, context.name);
+              }
+            }
+          });
+        });
+        //update context
+        context.collections = newContext.collections;
+        //move to correct position
+        this.moveAttribute(context);
+      });
+    });
+    codapInterface.on('dataContextChangeNotice['+context.name+']', 'deleteCollection', (evt)=>{
+      getContext(context.name).then((newContext)=>{
+        //get the new count of attributes
+        var new_att_list = [];
+        newContext.collections.map((collection)=>{
+          collection.attrs.map((att)=>{
+            new_att_list.push(att.name);
+          });
+        });
+        //get old count of attributes
+        var old_att_list = [];
+        context.collections.map((collection)=>{
+          collection.attrs.map((att)=>{
+            old_att_list.push(att.name);
+          });
+        });
+        //if same then attribute was moved
+        if(old_att_list.length == new_att_list.length){
+          this.moveAttribute(context);
+        } else{ //if an old attribute is not in the new list, then delete
+          for(var i = 0; i < old_att_list.length; i++){
+            var index = new_att_list.indexOf(old_att_list[i]);
+            if(index == -1){ //if index is -1 then not in new list
+              this.deleteAttributeByName(context.name, old_att_list[i]);
+              this.deleteAttributeEvent.notify( {attribute: old_att_list[i]} );
+            }
+          }
+        }
       });
     });
   }
