@@ -26,7 +26,8 @@
 var ChartController = function(model, view, user_state){
   this.user_state = user_state;
   this.model = model;
-  this.view = view;
+  // this.view = view;
+
   // this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
   this.init();
 };
@@ -63,7 +64,7 @@ ChartController.prototype = {
    * @return {Object} this
    */
   enable: function(){
-    this.view.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
+    // this.view.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
     return this;
   },
   /**
@@ -71,11 +72,9 @@ ChartController.prototype = {
    * @return {Object} this
    */
   initializeModelView: function(){
-    this.model.updateDataContextList()
-    .then((val)=>{
-      console.log("finished loading state");
-      console.log(this.user_state.selected);
-      this.model.changeSelectedAttribute(this.user_state.selected);
+    this.model.updateDataContextList().then((val)=>{
+      console.log("finished loading state: "+JSON.stringify(val));
+      // console.log(this.user_state.selected);
     });
 
     return this;
@@ -90,7 +89,9 @@ ChartController.prototype = {
    * These are the handler functions
    */
   contextCountChanged: function(){
-    this.model.updateDataContextList();
+    this.model.updateDataContextList().then((val)=>{
+      console.log("chart event: context added ");
+    });
   },
   /**
    * @function changeelectedAttribute
@@ -102,3 +103,49 @@ ChartController.prototype = {
     this.model.changeSelectedAttribute(args);
   }
 };
+//****************************
+//
+//    Global CODAP functions
+//
+//****************************
+
+function getData(context, collection, attribute){
+  var src = "";
+  switch (arguments.length){
+    case 1:
+      src = 'dataContext[' + context +']';
+      break;
+    case 2:
+      src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
+      break;
+    case 3:
+      src = 'dataContext[' + context +'].collection['+ collection + '].caseSearch['
+                                                              + attribute +' != \'\']';
+      break;
+    default:
+      src = 'dataContextList';
+  }  return new Promise(function(resolve, reject){
+      codapInterface.sendRequest({
+        action: 'get',
+        resource: src,
+      }, function(result) {
+        if (result && result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+}
+function getNewColors(amount){
+  var colors = [];
+  var backgroundColor = [];
+  for (var i = 0; i < amount; i++) {
+    var r = Math.floor( 200 * Math.random()) + 55;
+    var g = Math.floor( 200 * Math.random()) + 55;
+    var b = Math.floor( 200 * Math.random()) + 55;
+    colors.push('rgba('+r+','+g+ ',' +b+ ',1)');
+    backgroundColor.push('rgba('+(r-40)+ ','+(g-40)+ ',' +(b-40)+ ',.8)')
+  }
+  return {colors: colors, bg_colors: backgroundColor};
+}

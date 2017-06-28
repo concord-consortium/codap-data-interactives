@@ -22,12 +22,13 @@
  * @param  {Object} model - uses the model to communicate with CODAP
  */
 var ChartView = function(model){
-
   this.model = model;
+
   //user events
   this.changeSelectedAttributeEvent = new Event(this);
   //chart events
   this.changeChartDataEvent = new Event(this);
+
 
   this.init();
 };
@@ -42,15 +43,23 @@ ChartView.prototype = {
     return this;
   },
   setupHandlers: function(){
+    //context events
     this.changeContextCountHandler = this.changeContextCount.bind(this);
-    this.deselectContextHandler = this.deselectContext.bind(this);
+    this.toggleContextHandler = this.toggleContext.bind(this);
+    //@TODO disable context if it does not exist
 
+    //chart events
+    this.changeSelectedChartHandler = this.changeSelectedChart.bind(this);
+
+    //attribute events
     this.addAttributeHandler = this.addAttribute.bind(this);
-    this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
-    this.deselectAttributesHandler = this.deselectAttributes.bind(this);
-    this.updateChartHandler = this.updateChart.bind(this);
     this.deleteAttributeHandler = this.deleteAttribute.bind(this);
     this.updateAttributeHandler = this.updateAttribute.bind(this);
+    this.moveAttributeHandler = this.moveAttribute.bind(this);
+
+    //user-triggered-attribute events
+    this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
+    this.deselectAttributesHandler = this.deselectAttributes.bind(this);
 
 
     return this;
@@ -58,17 +67,30 @@ ChartView.prototype = {
   enable: function(){
     this.model.changeContextCountEvent.attach(this.changeContextCountHandler);
     this.model.addAttributeEvent.attach(this.addAttributeHandler);
-    this.model.deselectContextEvent.attach(this.deselectContextHandler);
-    this.model.changeSelectedDataEvent.attach(this.updateChartHandler);
+    this.model.changedSelectedContextEvent.attach(this.toggleContextHandler);
     this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
     this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
+    this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
 
     //Own event listeners
     this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
     return this;
   },
-  /**
+  changeSelectedChart: function(){
+    //@TODO get the new chart and notify listener
+
+  },
+   /**
+   * attributeMove
+   * @param  {sender} sender
+   * @param  {Object} args   {attribute: name of attribute moved,
+   *                         after: name of attribute it is after}
+   */
+   moveAttribute: function(sender, args){
+     $("#"+args.attribute).insertAfter('#'+args.after);
+   },
+   /**
    * @function changeContextCount - adds context to UI
    * @param  {Object} sender
    * @param  {Object} args   information about the new context
@@ -102,32 +124,12 @@ ChartView.prototype = {
     $('#'+args.attribute).toggleClass("selected");
   },
   /**
-   * @function deselectContext - stylize unselected context back to original
+   * @function toggleContext - stylize unselected context back to original
    * @param  {Object} sender
    * @param  {Object} args   {context: string}
    */
-  deselectContext: function(sender, args){
+  toggleContext: function(sender, args){
     $('#'+args.context).find(".selected").toggleClass("selected");
-  },
-  updateChart: function (sender, args){
-    view_chart.destroy();
-    view_chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: args.labels,
-        datasets: [{
-          label: 'Count',
-          data: args.data,
-          backgroundColor: args.colors,
-          borderColor: args.background_colors,
-          borderWidth: 1
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    });
   },
   /**
    * @function deselectAttributes
