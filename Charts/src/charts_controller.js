@@ -28,9 +28,8 @@ var ChartController = function(model, view, user_state){
   this.model = model;
   this.view = view;
 
-    // this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
-    this.init();
-  };
+  this.init();
+};
 
 ChartController.prototype = {
   /**
@@ -64,7 +63,7 @@ ChartController.prototype = {
    * @return {Object} this
    */
   enable: function(){
-    // this.view.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
+    this.view.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
     return this;
   },
   /**
@@ -74,7 +73,7 @@ ChartController.prototype = {
   initializeModelView: function(){
     this.model.updateDataContextList().then((val)=>{
       // console.log("finished loading state: "+JSON.stringify(val));
-      // console.log(this.user_state.selected);
+      this.model.loadUserState(this.user_state);
     });
 
     return this;
@@ -94,12 +93,11 @@ ChartController.prototype = {
     });
   },
   /**
-   * @function changeelectedAttribute
+   * @function changeSelectedAttribute
    * @param  {Object} sender
    * @param  {Object} args   object string of names {name, collection, context{
    */
   changeSelectedAttribute: function(sender, args){
-    this.user_state.selected = args;
     this.model.changeSelectedAttribute(args);
   }
 };

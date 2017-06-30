@@ -35,10 +35,8 @@ codapInterface.init({
     console.log("InteractiveState: user does not have a save state");
     user_state.selected = null;
   } else {
-    console.log('InteractiveState: user has a save state')
-    console.log(user_state.selected);
+    // console.log('InteractiveState: user has a save state')
   }
-
   var my_chart = {};
   my_chart.model = new ChartModel();
   my_chart.view = new ChartView(my_chart.model);

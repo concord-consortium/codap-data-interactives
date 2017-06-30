@@ -28,14 +28,6 @@ body{
   width: 80vw;
   height: 100vh;
 }
-#small-buttons{
-  height: auto;
-  background-color: #26A6C4;
-  margin-bottom: 20px;
-  padding: 5px;
-  font-size: 15pt;
-  text-align: center;
-}
 a{
   font-family: serif;
   margin: none;
@@ -61,18 +53,7 @@ button:active{
   border-width: 3px;
   border-color: rgba(255,255,255, .2)
 }
-#chart{
-  border-top: 5px;
-  margin-top: 5px;
-  display:list-item;
-}
-select{
-  background-color: #7EE6FF;
-  border-color: #3F737F;
-  font-size: 3vh;
-  width: 90%;
 
-}
 .tooltip{
 
   position: relative;
@@ -93,6 +74,13 @@ select{
     font-family: serif;
 }
 ul, li{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   cursor: pointer;
 }
 ul{
@@ -133,7 +121,53 @@ li{
   height: 100%;
   width: 100%;
 }
-
+#small-buttons{
+  height: 50px;
+  background-color: #7EE6FF;
+  margin-bottom: 20px;
+  padding: 5px;
+  font-size: 15pt;
+  text-align: center;
+}
+#refresh {
+  font-size: 28pt;
+  color:#555555;
+  width: 20%;
+  max-width: 35px;
+  float: left;
+  text-indent: -10px;
+  text-align: left;
+  display: inline;
+  margin: none;
+  border: none;
+  padding: none;
+}
+#refresh:hover{
+  color: black;
+}
+#chart{
+  width: 80%;
+  font-size: 12pt;
+  text-indent: 5px;
+  float: right;
+  text-align: left;
+  display:list-item;
+  list-style-type: none;
+}
+select{
+  background-color: #7EE6FF;
+  border-color: #555555;
+  border-style: solid;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom-width: 2px;
+  font-size: 15pt;
+  width: 100%;
+}
+select:hover{
+  border-color: black;
+}
 #info{
   z-index: 1;
   position: fixed;

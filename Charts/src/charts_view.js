@@ -23,6 +23,11 @@
  */
 var ChartView = function(model){
   this.model = model;
+  this.chart = null;
+  this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
+  this.default_chart = 'bar';
+  this.$chart_types = $('#select-chart');
+  this.$chart_container = $("#myChart");
 
   //user events
   this.changeSelectedAttributeEvent = new Event(this);
@@ -40,6 +45,8 @@ ChartView.prototype = {
     .enable();
   },
   createChildren: function(){
+    this.populateChartOptions(this.available_charts);
+    this.initializeChart();
     return this;
   },
   setupHandlers: function(){
@@ -72,14 +79,53 @@ ChartView.prototype = {
     this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
     this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
     this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
-
+    this.model.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
+    this.model.changeSelectedChartEvent.attach(this.changeSelectedChartHandler);
     //Own event listeners
-    this.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
     return this;
   },
-  changeSelectedChart: function(){
+  populateChartOptions: function(available_charts){
+    for(var i = 0; i < available_charts.length; i++){
+      var $chart = $("<option>", {'id': available_charts[i]});
+      $chart.text(available_charts[i]);
+      this.$chart_types.append($chart);
+    }
+  },
+  initializeChart: function(){
+    this.chart = new Chart(this.$chart_container, {
+      type: this.default_chart,
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  },
+  changeSelectedChart: function(sender, args){
     //@TODO get the new chart and notify listener
-
+    console.log(args);
+    this.chart.destroy();
+    this.chart = new Chart(this.$chart_container, {
+      type: this.default_chart,
+      data: {
+        labels: args.labels,
+        datasets: [{
+          data:args.data,
+          backgroundColor: args.background_colors,
+          borderColor: args.colors,
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
   },
    /**
    * attributeMove
@@ -120,18 +166,42 @@ ChartView.prototype = {
    * @function changeSelectedAttribute - stylizes the attribute item after click
    * @param  {Object} sender
    * @param {Object} args  information about the new attribute
-   *                             {attribute, collection, context}
+   *                             {selected: {attribute} or [],
+   *                             deselected: {attribtue} or []}
    */
   changeSelectedAttribute: function(sender, args){
-    $('#'+args.attribute).toggleClass("selected");
+    if(args.deselected){
+      if(Array.isArray(args.selected)){
+        for (var i = 0; i < args.selected.length; i++) {
+          $('#'+args.deselected[i]).removeClass("selected");
+        }
+      } else{
+        $('#'+args.deselected).removeClass("selected");
+      }
+    }
+    if(args.selected){
+      if(Array.isArray(args.selected)){
+        for (var i = 0; i < args.selected.length; i++) {
+          $('#'+args.selected[i]).addClass("selected");
+        }
+      } else{
+        $('#'+args.selected).addClass("selected");
+      }
+    }
   },
   /**
    * @function toggleContext - stylize unselected context back to original
    * @param  {Object} sender
-   * @param  {Object} args   {context: string}
+   * @param  {Object} args   {selected: context(string),
+   *                          deselected: context(string)}
    */
   toggleContext: function(sender, args){
-    $('#'+args.context).find(".selected").toggleClass("selected");
+    if(args.selected){
+      $('#'+args.selected).children().show();
+    }
+    if(args.deselected){
+      $('#'+args.deselected).find(".selected").removeClass("selected");
+    }
   },
   /**
    * @function deselectAttributes

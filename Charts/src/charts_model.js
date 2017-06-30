@@ -31,7 +31,9 @@ var ChartModel = function(){
   this.selected = {
     context: null,
     attributes: [],
-    cases: []
+    cases: [],
+    attribute_limit: null,
+    chart_type: null
   };
   //context events
   //@type {context: string}
@@ -45,13 +47,41 @@ var ChartModel = function(){
   this.deselectAttributesEvent = new Event(this);
   this.deleteAttributeEvent = new Event(this);
   this.updateAttributeEvent = new Event(this);
+  //@type {selected: [{attribute: name, context: name},{}], deselected:  [{attribute: name, context: name},{}]}
   this.changeSelectedAttributeEvent = new Event(this);
 
   //@TODO cases events
-  this.changeSelectedDataEvent = new Event(this);
+  this.changeSelectedChartEvent = new Event(this);
 
 };
 ChartModel.prototype = {
+  /**
+   * @function loadUserState
+   * @param  {Object} state {attributes: name, context: name}
+   */
+  loadUserState: function(state){
+    if(!state.selected){
+      state.selected = this.selected;
+    }else{
+      this.selected = state.selected;
+    }
+    //trigger event when loading attribtues and contexts
+    this.changeSelectedAttributeEvent.notify({
+      selected: state.selected.attributes
+    });
+    this.changedSelectedContextEvent.notify({
+      selected: state.selected.context
+    });
+    //@TODO getData for context
+    //update the cases
+    if(this.selected.attributes.length != 0){
+      var col = this.getAttributeCollection(this.selected.attributes[0], this.selected.context);
+      getData(this.selected.context, 'mammals',
+        this.selected.attributes[0]).then((caseList) => {
+          this.updateCases(caseList, this.selected.attributes[0]);
+        });
+    }
+  },
   /**
    * @function updateDataContexList - requests context list from CODAP
    *           in order to add new ones and notifies its event listener
@@ -129,6 +159,24 @@ ChartModel.prototype = {
       });
       return att_list;
     });
+  },
+  /**
+   * @function getAttributeCollection - searches for an attribute
+   * @param  {string} attribute
+   * @param  {string} context
+   * @return {string} collection
+   */
+  getAttributeCollection: function(attribute, context){
+    var cxt = this.model_context_list.find(function(element){
+      return element.name == context;
+    });
+    var col = cxt.collections.find(function(elem){
+      var att = elem.attrs.find(function(att){
+        return att == attribute;
+      });
+      console.log(att);
+    });
+    console.log(col);
   },
   addAttribute: function(attribute, collection, context){
     var attObject = {
@@ -232,47 +280,59 @@ ChartModel.prototype = {
    * @param  {Object} args {name, collection, context}
    */
   changeSelectedAttribute: function(args){
-    var att = args.name;
+    var att = args.attribute;
+    var col = args.collection;
     var cxt = args.context;
     //if its a different context or there is no selected context,
     //      then start from scratch and this is first selection
-    var attObject = this.getAttributeObject(att);
-    if(this.selected.context == null || this.selected.context != cxt){
-      if(this.selected.context != null){
+    if(!this.selected.context || this.selected.context != cxt){
+      if(!this.selected.context){
         this.changedSelectedContextEvent.notify({
-          context: this.selected.context
+          selected: cxt,
+          deselected: null
+        });
+      } else{
+        this.changedSelectedContextEvent.notify({
+          selected: cxt,
+          deselected: this.selected.context
         });
       }
       this.selected.attributes = [];
-      this.selected.context = attObject.context.name;
-      this.selected.attributes.push(attObject);
-
+      this.selected.context = cxt;
+      this.selected.attributes.push(att);
+      this.changeSelectedAttributeEvent.notify({
+        selected: att,
+      });
     } else{ //if same context, then we are either changing, adding, or removing an attribute
       //@TODO make sure to finish adding this functionality
-      if(true){ //this is the limit, if stacked chart is not selected
+      if(true){ //this is the limit, changes based on chart
         var unselected = [];
-        for (var i = 0; i < this.selected.attributes.length; i++) {
-          unselected.push(this.selected.attributes[i].name);
-        }
-        this.deselectAttributesEvent.notify({
-          attributes: unselected
+        this.changeSelectedAttributeEvent.notify({
+          selected: att,
+          deselected: this.selected.attributes
         });
         this.selected.attributes = [];
-        this.selected.attributes.push(attObject);
+        this.selected.attributes.push(att);
       }else{
-        var index = this.isAttributeSelected(attObject);
+        var index = this.isAttributeSelected(att);
         if(index == -1){
-          this.selected.attributes.push(attObject);
+          this.selected.attributes.push(att);
+          this.changeSelectedAttributeEvent.notify({
+            selected: att,
+          });
         } else{
           this.selected.attributes.splice(index, 1);
+          this.changeSelectedAttributeEvent.notify({
+            deselected: [att],
+          });
         }
       }
     }
     //update the cases
     if(this.selected.attributes.length != 0){
-      getData(this.selected.attributes[0].context.name, this.selected.attributes[0].collection.name,
-        this.selected.attributes[0].name).then((caseList) => {
-          this.updateCases(caseList, this.selected.attributes[0].name);
+      getData(this.selected.context, col,
+        this.selected.attributes[0]).then((caseList) => {
+          this.updateCases(caseList, this.selected.attributes[0]);
         });
     }
   },
@@ -300,7 +360,7 @@ ChartModel.prototype = {
     this.selected.attributeList = attMembers;
     this.selected.data = attCount;
     var clrs = getNewColors(attMembers.length);
-    this.changeSelectedDataEvent.notify({
+    this.changeSelectedChartEvent.notify({
       labels: attMembers,
       data: attCount,
       colors: clrs.colors,
@@ -332,6 +392,8 @@ ChartModel.prototype = {
               if(id_list[x]==att.id){
                 //match was found
                 this.addAttribute(att.name, collection.name, context.name);
+                //move to correct position
+                this.moveAttribute(context);
               }
             }
           });
