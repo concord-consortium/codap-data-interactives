@@ -17,6 +17,31 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //=================================================================
+
+//the view listens to the followings events:
+// a. changes for attributes
+//  1. add att
+//  2. move att
+//  3. delete att
+//  4. select att
+//  5. unselect att
+//
+// b. changes in context
+//  1. select cxt
+//  2. deselect cxt
+//  3. create cxt
+//  4. disabled cxt
+//
+// c. changes in chart
+//  1. data
+//  2. chart type
+//
+//the view triggers the following events
+//  1. select att
+//  2. deselect att
+//  3. refresh
+//  4. change chart type
+
 /**
  * @constructor ChartView - focuses on what is displayed in the UI and listens to user actions
  * @param  {Object} model - uses the model to communicate with CODAP
@@ -29,11 +54,11 @@ var ChartView = function(model){
   this.$chart_types = $('#select-chart');
   this.$chart_container = $("#myChart");
 
-  //user events
-  this.changeSelectedAttributeEvent = new Event(this);
-  //chart events
-  this.changeChartDataEvent = new Event(this);
-
+  //the view triggers the following events
+  this.selectedAttributeEvent = new Event(this);    //  1. select att
+  this.deselectedAttributeEvent = new Event(this);  //  2. deselect att
+  this.refreshUserStateEvent = new Event(this);     //  3. refresh
+  this.changeChartTypeEvent = new Event(this);      //  4. change chart type
 
   this.init();
 };
@@ -51,36 +76,40 @@ ChartView.prototype = {
   },
   setupHandlers: function(){
     //context events
-    this.changeContextCountHandler = this.changeContextCount.bind(this);
-    this.toggleContextHandler = this.toggleContext.bind(this);
-    //@TODO disable context if it does not exist
+    /*  1.select   */
+    /*  2.deselect */ this.toggleContextHandler = this.toggleContext.bind(this);
+    /*  3.create   */ this.addNewContextHandler = this.addNewContext.bind(this);
+    /*  4.disabled */
+
+    //attribute events
+    /*    1.add */ this.addAttributeHandler = this.addAttribute.bind(this);
+    /*   2.move */ this.moveAttributeHandler = this.moveAttribute.bind(this);
+    /* 3.delete */ this.deleteAttributeHandler = this.deleteAttribute.bind(this);
+    /* 4.select */ this.selectedAttributeHandler = this.selectedAttribute.bind(this);
+    /*5.deselect*/ this.deselectAttributeHandler = this.deselectAttribute.bind(this);
 
     //chart events
     this.changeSelectedChartHandler = this.changeSelectedChart.bind(this);
 
-    //attribute events
-    this.addAttributeHandler = this.addAttribute.bind(this);
-    this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    this.updateAttributeHandler = this.updateAttribute.bind(this);
-    this.moveAttributeHandler = this.moveAttribute.bind(this);
-
-    //user-triggered-attribute events
-    this.changeSelectedAttributeHandler = this.changeSelectedAttribute.bind(this);
-    this.deselectAttributesHandler = this.deselectAttributes.bind(this);
-
-
     return this;
   },
   enable: function(){
-    this.model.changeContextCountEvent.attach(this.changeContextCountHandler);
-    this.model.addAttributeEvent.attach(this.addAttributeHandler);
-    this.model.changedSelectedContextEvent.attach(this.toggleContextHandler);
-    this.model.deselectAttributesEvent.attach(this.deselectAttributesHandler);
-    this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
-    this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
-    this.model.updateAttributeEvent.attach(this.updateAttributeHandler);
-    this.model.changeSelectedAttributeEvent.attach(this.changeSelectedAttributeHandler);
-    this.model.changeSelectedChartEvent.attach(this.changeSelectedChartHandler);
+    //context events
+    /*1*/
+    /*2*/ this.model.changedSelectedContextEvent.attach(this.toggleContextHandler);
+    /*3*/ this.model.addNewContextEvent.attach(this.addNewContextHandler);
+    /*4*/
+
+    //attribute events
+    /*1*/ this.model.addAttributeEvent.attach(this.addAttributeHandler);
+    /*2*/ this.model.moveAttributeEvent.attach(this.moveAttributeHandler);
+    /*3*/ this.model.deleteAttributeEvent.attach(this.deleteAttributeHandler);
+    /*4*/ this.model.selectedAttributeEvent.attach(this.selectedAttributeHandler);
+    /*5*/ this.model.deselectedAttributeEvent.attach(this.deselectAttributeHandler);
+
+    //chart events
+    /*1*/ this.model.changeSelectedChartEvent.attach(this.changeSelectedChartHandler);
+
     //Own event listeners
     return this;
   },
@@ -89,6 +118,8 @@ ChartView.prototype = {
       var $chart = $("<option>", {'id': available_charts[i]});
       $chart.text(available_charts[i]);
       this.$chart_types.append($chart);
+      $chart.change((evt)=>{
+      });
     }
   },
   initializeChart: function(){
@@ -108,7 +139,6 @@ ChartView.prototype = {
   },
   changeSelectedChart: function(sender, args){
     //@TODO get the new chart and notify listener
-    console.log(args);
     this.chart.destroy();
     this.chart = new Chart(this.$chart_container, {
       type: this.default_chart,
@@ -130,64 +160,48 @@ ChartView.prototype = {
    /**
    * attributeMove
    * @param  {sender} sender
-   * @param  {Object} args   {attribute: name of attribute moved,
-   *                         after: name of attribute it is after}
+   * @param  {string[]} attributes  [name of attribute moved, name of attribute it is after]
    */
-   moveAttribute: function(sender, args){
-     $("#"+args.attribute).insertAfter('#'+args.after);
+   moveAttribute: function(sender, attributes){
+     $("#"+attributes[0]).insertAfter('#'+attributes[1]);
    },
    /**
-   * @function changeContextCount - adds context to UI
+   * @function addNewContext - adds context to UI
    * @param  {Object} sender
-   * @param  {Object} args   information about the new context
-   *                         {name: string}
+   * @param  {string} context - name
    */
-  changeContextCount: function(sender, args){
-    addContextDOM(args.name);
+  addNewContext: function(sender, context){
+    addContextDOM(context);
   },
   /**
    * @function addAttribute - handles new attribute event
    * @param  {Object} sender
-   * @param  {Object} args   information about the new attribute
-   *                         {attribute, collection, context, after(optional)}
+   * @param  {Object} attribute - the new attribute to be added
+   * @param  {string} attribute.name  - name of attribute
+   * @param  {string} attribute.context - name of context
    */
-  addAttribute: function(sender, args){
-    if(args.after){
-      addAttributeToContextDOM(args.attribute, args.collection, args.context, args.after);
-    } else {
-      addAttributeToContextDOM(args.attribute, args.collection, args.context);
-    }
-    $('#'+args.attribute).on('click', (evt) => {
+  addAttribute: function(sender, attribute){
+    addAttributeToContextDOM(attribute.name, attribute.context);
+    $('#'+attribute.name).on('click', (evt) => {
       evt.stopPropagation();
-      this.changeSelectedAttributeEvent.notify(args);
+      this.selectedAttributeEvent.notify(attribute);
     });
   },
   /**
-   * @function changeSelectedAttribute - stylizes the attribute item after click
+   * @function selectedAttribute - stylizes the attribute item after click
    * @param  {Object} sender
-   * @param {Object} args  information about the new attribute
-   *                             {selected: {attribute} or [],
-   *                             deselected: {attribtue} or []}
+   * @param {string} attribute
    */
-  changeSelectedAttribute: function(sender, args){
-    if(args.deselected){
-      if(Array.isArray(args.selected)){
-        for (var i = 0; i < args.selected.length; i++) {
-          $('#'+args.deselected[i]).removeClass("selected");
-        }
-      } else{
-        $('#'+args.deselected).removeClass("selected");
-      }
-    }
-    if(args.selected){
-      if(Array.isArray(args.selected)){
-        for (var i = 0; i < args.selected.length; i++) {
-          $('#'+args.selected[i]).addClass("selected");
-        }
-      } else{
-        $('#'+args.selected).addClass("selected");
-      }
-    }
+  selectedAttribute: function(sender, attribute){
+    $('#'+attribute).addClass("selected");
+  },
+  /**
+   * @function deselectAttribute
+   * @param  {Object} sender
+   * @param {string} attribute
+   */
+  deselectAttribute: function(sender, attribute){
+    $('#'+attribute).removeClass("selected");
   },
   /**
    * @function toggleContext - stylize unselected context back to original
@@ -204,34 +218,14 @@ ChartView.prototype = {
     }
   },
   /**
-   * @function deselectAttributes
-   * @param  {Object} sender
-   * @param  {Object} args   {attributes: []}
-   */
-  deselectAttributes: function(sender, args){
-    var list = args.attributes;
-    for (var i =0; i < list.length; i++){
-      $('#'+list[i]).toggleClass("selected");
-    }
-  },
-  /**
    * @function deleteAttribute
    * @param  {Object} sender [description]
-   * @param  {Object} args   {attribute: name}
+   * @param  {string} attribute - name of attribute
    */
-  deleteAttribute: function(sender, args){
-    $('#'+args.attribute).slideToggle('normal', function(){
+  deleteAttribute: function(sender, attribute){
+    $('#'+attribute).slideToggle('normal', function(){
       $(this).remove();
     });
-  },
-  /**
-   * @function updateAttribute
-   * @param  {object} sender
-   * @param  {args} args   {previous: string, new: string}
-   */
-  updateAttribute: function(sender, args){
-    console.log(args);
-    $('#'+args.previous).attr('id',args.new);
   }
 }
 
@@ -261,17 +255,14 @@ function addContextDOM(context){
 /**
  * @function addAttributeToContextDOM - adds a single attribute element to context list
  * @param {string} attribute
- * @param {string} collection
  * @param {string} context
  */
-function addAttributeToContextDOM(attribute, collection, context, attribute_after){
-  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list '+collection});
+function addAttributeToContextDOM(attribute, context){
+  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list'});
   var isVisible = $('#'+context).children().is(':visible');
   if(!isVisible){
     $item.css("display", 'none');
   }
   $item.text(attribute);
-  if(arguments.length == 4){ //insert after element
-    $item.insertAfter('#'+attribute_after);
-  }else $('#'+context).append($item);
+  $('#'+context).append($item);
 }
