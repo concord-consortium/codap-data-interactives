@@ -27,29 +27,36 @@
  *
  */
 var ChartModel = function(){
+  this.available_charts =  ['bar', 'doughnut', 'pie', 'radar', 'line'];
   this.model_context_list = [];
   this.selected = {
     context: null,
     attributes: [],
     cases: [],
     attribute_limit: null,
-    chart_type: null
+    chart_type: 'bar'
   };
+
+  /***************
+      Events
+  /***************
   //context events
-  //@type {context: string}
-  this.addNewContextEvent = new Event(this);
-  //@type {selected: context-string, deselected: context-string}
-  this.changedSelectedContextEvent = new Event(this); //to have view selected attributes
+  /*  1.select   */ this.selectedContextEvent = new Event(this);
+  /*  2.deselect */ this.deselectedContextEvent = new Event(this);
+  /*  3.create   */ this.addNewContextEvent = new Event(this);
+  /*  4.disabled */
 
   //attribute events
-  this.addAttributeEvent = new Event(this);
-  this.moveAttributeEvent = new Event(this);
-  this.deleteAttributeEvent = new Event(this);
-  this.selectedAttributeEvent = new Event(this);
-  this.deselectedAttributeEvent = new Event(this);
+  /* 1.add      */ this.addAttributeEvent = new Event(this);
+  /* 2.move     */ this.moveAttributeEvent = new Event(this);
+  /* 3.delete   */ this.deleteAttributeEvent = new Event(this);
+  /* 4.select   */ this.selectedAttributeEvent = new Event(this);
+  /* 5.deselect */ this.deselectedAttributeEvent = new Event(this);
 
-  //@TODO cases events
-  this.changeSelectedChartEvent = new Event(this);
+  //cases events
+  /* 1. data  */ this.changedChartDataEvent = new Event(this);
+  /* 2. types */ this.loadedChartsListEvent = new Event(this);
+
 
 };
 ChartModel.prototype = {
@@ -64,10 +71,7 @@ ChartModel.prototype = {
       this.selected = state.selected;
       //trigger event when loading attribtues and contexts
       this.selectedAttributeEvent.notify(state.selected.attributes);
-
-      this.changedSelectedContextEvent.notify({
-        selected: state.selected.context
-      });
+      this.selectedContextEvent.notify(state.selected.context);
       //@TODO getData for context
       //update the cases
       if(this.selected.attributes.length != 0){
@@ -78,6 +82,13 @@ ChartModel.prototype = {
           });
         }
     }
+  },
+  /**
+   * @return {[type]} [description]
+   * @function loadAvailableCharts - gets chart types information and triggers event
+   */
+  loadAvailableCharts: function(){
+    this.loadedChartsListEvent.notify(this.available_charts);
   },
   /**
    * @function updateDataContexList - requests context list from CODAP
@@ -273,6 +284,11 @@ ChartModel.prototype = {
       if (attribute == this.selected.attributes[i]) return i;
     return (-1);
   },
+  updateChartType: function(type){
+    console.log(type);
+    this.selected.chart_type = type;
+  },
+
   /**
    * changeSelectedAttribute
    * @param  {Object} attribute
@@ -285,17 +301,13 @@ ChartModel.prototype = {
     //if its a different context or there is no selected context,
     //      then start from scratch and this is first selection
     if(!this.selected.context || this.selected.context != cxt){
-      // if(!this.selected.context){
-      //   this.changedSelectedContextEvent.notify({
-      //     selected: cxt,
-      //     deselected: null
-      //   });
-      // } else{
-      //   this.changedSelectedContextEvent.notify({
-      //     selected: cxt,
-      //     deselected: this.selected.context
-      //   });
-      // }
+      if(!this.selected.context){
+        this.selectedContextEvent.notify(cxt);
+      } else{
+        this.selectedContextEvent.notify(cxt);
+        console.log(this.selected.context);
+        this.deselectedContextEvent.notify(this.selected.context);
+      }
       this.selected.attributes = [];
       this.selected.context = cxt;
       this.selected.attributes.push(att);
@@ -333,10 +345,9 @@ ChartModel.prototype = {
   updateCases: function(cases, attribute){
     var attMembers = [];
     var attCount = [];
-
     cases.forEach(function(val){
-      var att = val.values[attribute];
       var contains = false, index = 0;
+      var att = val.values[attribute];
       for(i = 0; i < attMembers.length; i++){
         if (att == attMembers[i]){
           contains = true;
@@ -351,15 +362,41 @@ ChartModel.prototype = {
         attMembers.push(att);
       }
     });
+    var att_max = Math.max(...attCount);
+    att_max += Math.round(att_max/10)+1;
+
     this.selected.attributeList = attMembers;
     this.selected.data = attCount;
     var clrs = getNewColors(attMembers.length);
-    this.changeSelectedChartEvent.notify({
-      labels: attMembers,
-      data: attCount,
-      colors: clrs.colors,
-      background_colors: clrs.bg_colors
-    });
+    this.changedChartDataEvent.notify(
+      {
+        type: this.selected.chart_type,
+        data: {
+          labels: attMembers,
+          datasets: [{
+            data:attCount,
+            backgroundColor: clrs.bg_colors,
+            borderColor: clrs.colors,
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            xAxes: [{
+
+            }],
+            yAxes: [{
+              beginAtZero: true,
+                stacked: true,
+                ticks: {
+                  suggestedMax: att_max,
+                }
+            }]
+          }
+        }
+      });
   },
   /**
    * addContextChangeListeners

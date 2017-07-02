@@ -56,6 +56,8 @@ ChartController.prototype = {
   setupHandlers: function(){
     this.contextHandler = this.contextCountChanged.bind(this);
     this.selectedAttributeHandler = this.selectedAttribute.bind(this);
+    this.changedChartTypeHandler = this.changedChartType.bind(this);
+
     return this;
   },
   /**
@@ -64,6 +66,8 @@ ChartController.prototype = {
    */
   enable: function(){
     this.view.selectedAttributeEvent.attach(this.selectedAttributeHandler);
+    this.view.changedChartTypeEvent.attach(this.changedChartTypeHandler);
+
     return this;
   },
   /**
@@ -75,6 +79,8 @@ ChartController.prototype = {
       // console.log("finished loading state: "+JSON.stringify(val));
       this.model.loadUserState(this.user_state);
     });
+    this.model.loadAvailableCharts();
+    this.view.initializeChart();
 
     return this;
   },
@@ -99,6 +105,14 @@ ChartController.prototype = {
    */
   selectedAttribute: function(sender, args){
     this.model.selectedAttribute(args);
+  },
+  /**
+   * @function changedChartType
+   * @param  {Object} sender
+   * @param  {string} chart
+   */
+  changedChartType: function(sender, chart){
+    this.model.updateChartType(chart);
   }
 };
 //****************************

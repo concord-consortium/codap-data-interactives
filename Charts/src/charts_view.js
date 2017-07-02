@@ -34,7 +34,7 @@
 //
 // c. changes in chart
 //  1. data
-//  2. chart type
+//  2. available list
 //
 //the view triggers the following events
 //  1. select att
@@ -49,8 +49,6 @@
 var ChartView = function(model){
   this.model = model;
   this.chart = null;
-  this.available_charts =  ['bar', 'doughtnut', 'pie', 'radar', 'line'];
-  this.default_chart = 'bar';
   this.$chart_types = $('#select-chart');
   this.$chart_container = $("#myChart");
 
@@ -58,7 +56,7 @@ var ChartView = function(model){
   this.selectedAttributeEvent = new Event(this);    //  1. select att
   this.deselectedAttributeEvent = new Event(this);  //  2. deselect att
   this.refreshUserStateEvent = new Event(this);     //  3. refresh
-  this.changeChartTypeEvent = new Event(this);      //  4. change chart type
+  this.changedChartTypeEvent = new Event(this);     //  4. change chart type
 
   this.init();
 };
@@ -70,33 +68,34 @@ ChartView.prototype = {
     .enable();
   },
   createChildren: function(){
-    this.populateChartOptions(this.available_charts);
-    this.initializeChart();
+    // this.populateChartOptions(this.available_charts);
+    // this.initializeChart();
     return this;
   },
   setupHandlers: function(){
     //context events
-    /*  1.select   */
-    /*  2.deselect */ this.toggleContextHandler = this.toggleContext.bind(this);
+    /*  1.select   */ this.selectedContextHandler = this.selectedContext.bind(this);
+    /*  2.deselect */ this.deselectContextHandler = this.deselectContext.bind(this);
     /*  3.create   */ this.addNewContextHandler = this.addNewContext.bind(this);
     /*  4.disabled */
 
     //attribute events
-    /*    1.add */ this.addAttributeHandler = this.addAttribute.bind(this);
-    /*   2.move */ this.moveAttributeHandler = this.moveAttribute.bind(this);
-    /* 3.delete */ this.deleteAttributeHandler = this.deleteAttribute.bind(this);
-    /* 4.select */ this.selectedAttributeHandler = this.selectedAttribute.bind(this);
-    /*5.deselect*/ this.deselectAttributeHandler = this.deselectAttribute.bind(this);
+    /* 1.add      */ this.addAttributeHandler = this.addAttribute.bind(this);
+    /* 2.move     */ this.moveAttributeHandler = this.moveAttribute.bind(this);
+    /* 3.delete   */ this.deleteAttributeHandler = this.deleteAttribute.bind(this);
+    /* 4.select   */ this.selectedAttributeHandler = this.selectedAttribute.bind(this);
+    /* 5.deselect */ this.deselectAttributeHandler = this.deselectAttribute.bind(this);
 
     //chart events
-    this.changeSelectedChartHandler = this.changeSelectedChart.bind(this);
+    /* 1. data  */ this.changedChartDataHandler = this.changedChartData.bind(this);
+    /* 2. types */ this.loadedChartsListHandler = this.loadedChartsList.bind(this);
 
     return this;
   },
   enable: function(){
     //context events
-    /*1*/
-    /*2*/ this.model.changedSelectedContextEvent.attach(this.toggleContextHandler);
+    /*1*/ this.model.selectedContextEvent.attach(this.selectedContextHandler);
+    /*2*/ this.model.deselectedContextEvent.attach(this.deselectContextHandler);
     /*3*/ this.model.addNewContextEvent.attach(this.addNewContextHandler);
     /*4*/
 
@@ -108,23 +107,32 @@ ChartView.prototype = {
     /*5*/ this.model.deselectedAttributeEvent.attach(this.deselectAttributeHandler);
 
     //chart events
-    /*1*/ this.model.changeSelectedChartEvent.attach(this.changeSelectedChartHandler);
+    /*1*/ this.model.changedChartDataEvent.attach(this.changedChartDataHandler);
+    /*2*/ this.model.loadedChartsListEvent.attach(this.loadedChartsListHandler);
 
-    //Own event listeners
     return this;
   },
-  populateChartOptions: function(available_charts){
+  /**
+   * @function loadedChartsList
+   * @param  {string[]} available_charts
+   */
+  loadedChartsList: function(sender, available_charts){
     for(var i = 0; i < available_charts.length; i++){
       var $chart = $("<option>", {'id': available_charts[i]});
       $chart.text(available_charts[i]);
       this.$chart_types.append($chart);
-      $chart.change((evt)=>{
-      });
     }
+    this.$chart_types.on('change', (evt)=>{
+      this.changedChartTypeEvent.notify(evt.target.value);
+    });
   },
+  /**
+   * @function initializeChart - initializes the chart to blank values
+   * @return {[type]} [description]
+   */
   initializeChart: function(){
     this.chart = new Chart(this.$chart_container, {
-      type: this.default_chart,
+      type: 'bar',
       data: {
         labels: [],
         datasets: [{
@@ -137,25 +145,14 @@ ChartView.prototype = {
       }
     });
   },
-  changeSelectedChart: function(sender, args){
-    //@TODO get the new chart and notify listener
+  /**
+   * @function changedChartData
+   * @param  {Object} sender
+   * @param  {Object} data   data parsed to be passed in to chart
+   */
+  changedChartData: function(sender, data){
     this.chart.destroy();
-    this.chart = new Chart(this.$chart_container, {
-      type: this.default_chart,
-      data: {
-        labels: args.labels,
-        datasets: [{
-          data:args.data,
-          backgroundColor: args.background_colors,
-          borderColor: args.colors,
-          borderWidth: 2,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    });
+    this.chart = new Chart(this.$chart_container, data);
   },
    /**
    * attributeMove
@@ -204,18 +201,20 @@ ChartView.prototype = {
     $('#'+attribute).removeClass("selected");
   },
   /**
-   * @function toggleContext - stylize unselected context back to original
+   * @function deselectContext - stylize unselected context back to original
    * @param  {Object} sender
-   * @param  {Object} args   {selected: context(string),
-   *                          deselected: context(string)}
+   * @param  {string} context
    */
-  toggleContext: function(sender, args){
-    if(args.selected){
-      $('#'+args.selected).children().show();
-    }
-    if(args.deselected){
-      $('#'+args.deselected).find(".selected").removeClass("selected");
-    }
+  deselectContext: function(sender, context){
+    $('#'+context).find(".selected").removeClass("selected");
+  },
+  /**
+   * @function selectContext - stylize context back to original
+   * @param  {Object} sender
+   * @param  {string} context
+   */
+  selectedContext: function(sender, context){
+    $('#'+context).children().show();
   },
   /**
    * @function deleteAttribute
