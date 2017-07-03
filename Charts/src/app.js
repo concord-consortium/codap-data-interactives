@@ -50,6 +50,7 @@ function openAuthorInfo(){
 function refreshPlugin(){
   $('#contextList').empty();
   $('#myChart').remove();
+  $('#select-chart').empty();
   $('#chart-container').append('<canvas id="myChart"><canvas>');
 
   user_state = {};

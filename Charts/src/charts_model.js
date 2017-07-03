@@ -39,9 +39,9 @@ var ChartModel = function(){
   this.chart_metadata = {};
   this.chart_data = {
     type: this.selected.chart_type,
-    data: null,
-    options: null,
-  }
+    data: {},
+    options: {}
+  };
 
   /************************************************************/
   //    Events
@@ -281,7 +281,9 @@ ChartModel.prototype = {
     return this.selected.attributes.indexOf(attribute);
   },
   updateChartType: function(type){
+    console.log(type);
     this.selected.chart_type = type;
+    this.calculateChartData();
   },
 
   /**
@@ -308,10 +310,11 @@ ChartModel.prototype = {
       this.selected.attributes.push(att);
       this.selectedAttributeEvent.notify(att);
     } else{ //if same context, then we are either changing, adding, or removing an attribute
-      if(true){ //this is the limit, changes based on chart
+      // if(this.selected.attributes.length == 2){ //this is the limit, changes based on chart
+      if(false){
         var unselected = [];
         //notify of unselections
-        this.deselectedAttributeEvent.notify(this.selected.attributes);
+        this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
         //add selection
         this.selectedAttributeEvent.notify(att);
         this.selected.attributes = [];
@@ -327,14 +330,102 @@ ChartModel.prototype = {
         }
       }
     }
+   this.calculateChartData();
+  },
+  calculateChartData: function(){
     //update the cases
-    if(this.selected.attributes.length != 0){
-      var col = this.getAttributeCollection(att, this.selected.context);
-      getData(this.selected.context, col,
-        this.selected.attributes[0]).then((caseList) => {
-          this.updateCases(caseList, this.selected.attributes[0]);
-        });
+    if(this.selected.attributes.length == 1){
+      this.getAttributeCountDataset();
+    } else if(this.selected.attributes.length >= 2){
+      this.getAttributeDatasets();
     }
+  },
+  getAttributeDatasets: function(){
+    var att = this.selected.attributes[0];
+    var col = this.getAttributeCollection(att, this.selected.context);
+    var att_values = [];
+    getData(this.selected.context, col,
+      this.selected.attributes[0]).then((caseList) => {
+        console.log(caseList);
+        //this variable holds the item on x-axis with data for each item
+        var items_values = {};
+
+        var items = [];
+        var att_item = this.selected.attributes[0];
+        var value_sets = [];
+        var att_datasets = this.selected.attributes.slice(1);
+
+        // value_sets = 
+        caseList.map((z)=>{
+          var vals = [];
+          var items_list = [];
+          var item = {};
+
+          att_datasets.forEach((a)=>{
+            vals.push(z.values[a]);
+          });
+          item[z.values[att_item]] = vals;
+          value_sets.push(item);
+          return vals;
+          // });
+        });
+        console.log(value_sets);
+
+        // console.log(items_values);
+        //save data to chart_data
+        // var dataset = {
+        //   data: data_count,
+        //   label: att,
+        //   backgroundColor: getMultipleColors(data_count.length).colors,
+        //   borderColor: 'rgba(0,0,0,1)',
+        //   borderWidth: 1,
+        // }
+        // this.resetChartData();
+        // this.chart_data.data.datasets = [dataset];
+        // this.chart_data.data.labels = unique_labels;
+        // console.log(this.chart_data);
+        // this.changedChartDataEvent.notify(this.chart_data);
+      });
+  },
+  getAttributeCountDataset: function(){
+    var att = this.selected.attributes[0];
+    var col = this.getAttributeCollection(att, this.selected.context);
+    var att_values = [];
+    getData(this.selected.context, col,
+      this.selected.attributes[0]).then((caseList) => {
+        var labels_count = this.getAttributeUniqueLabels(caseList, att);
+        var unique_labels = Object.keys(labels_count).sort();
+        var data_count = unique_labels.map((label)=> {return labels_count[label];});
+
+        //save data to chart_data
+        var dataset = {
+          data: data_count,
+          label: att,
+          backgroundColor: getMultipleColors(data_count.length).colors,
+          borderColor: 'rgba(0,0,0,1)',
+          borderWidth: 1,
+        }
+        this.resetChartData();
+        this.chart_data.data.datasets = [dataset];
+        this.chart_data.data.labels = unique_labels;
+        console.log(this.chart_data);
+        this.changedChartDataEvent.notify(this.chart_data);
+      });
+  },
+  getAttributeUniqueLabels: function(cases, att){
+    var att_vals = cases.map(function(x){
+        return x.values[att];
+    });
+    var labels = {};
+    att_vals.forEach((val)=>{
+      if(!labels[val]){
+        labels[val] = 1;
+      }
+      else{
+        labels[val] += 1;
+      }
+    });
+    return labels;
   },
   updateCases: function(cases, attribute){
     var attMembers = [];
@@ -361,36 +452,25 @@ ChartModel.prototype = {
 
     this.selected.attributeList = attMembers;
     this.selected.data = attCount;
-    var clrs = getNewColors(attMembers.length);
-    this.changedChartDataEvent.notify(
-      {
-        type: this.selected.chart_type,
-        data: {
-          labels: attMembers,
-          datasets: [{
-            data:attCount,
-            backgroundColor: clrs.bg_colors,
-            borderColor: clrs.colors,
-            borderWidth: 2,
-          }],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            xAxes: [{
-
-            }],
-            yAxes: [{
-              beginAtZero: true,
-                stacked: true,
-                ticks: {
-                  suggestedMax: att_max,
-                }
-            }]
-          }
-        }
-      });
+    // var clrs = getNewColors(attMembers.length);
+  },
+  //*****************************************************************************
+  //
+  //                    CHART DATA PACKAGING
+  //
+  //*****************************************************************************
+  resetChartData: function(){
+    this.chart_data = {
+      type: this.selected.chart_type,
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    }
   },
   //*****************************************************************************
   //

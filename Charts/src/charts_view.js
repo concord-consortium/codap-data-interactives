@@ -246,7 +246,7 @@ function addContextDOM(context){
   $unList.click(function(event){
     event.stopPropagation();
     $(this).children().slideToggle('fast');
-  })
+  });
   $('#contextList').append($unList);
 }
 /**

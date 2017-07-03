@@ -165,7 +165,7 @@ function getContext(context){
     });
   });
 }
-function getNewColors(amount){
+function getMultipleColors(amount){
   var colors = [];
   var backgroundColor = [];
   for (var i = 0; i < amount; i++) {
@@ -176,4 +176,10 @@ function getNewColors(amount){
     backgroundColor.push('rgba('+(r-40)+ ','+(g-40)+ ',' +(b-40)+ ',.8)')
   }
   return {colors: colors, bg_colors: backgroundColor};
+}
+function getSingleColor(){
+    var r = Math.floor( 200 * Math.random()) + 55;
+    var g = Math.floor( 200 * Math.random()) + 55;
+    var b = Math.floor( 200 * Math.random()) + 55;
+    return 'rgba('+r+','+g+ ',' +b+ ',1)';
 }
