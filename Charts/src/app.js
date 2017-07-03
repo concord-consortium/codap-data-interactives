@@ -20,6 +20,7 @@
 //
 
 var user_state = null;
+var my_chart = {};
 
 // initialize the codapInterface
 codapInterface.init({
@@ -32,13 +33,30 @@ codapInterface.init({
   user_state = codapInterface.getInteractiveState();
 
   if(!user_state.selected){
-    console.log("InteractiveState: user does not have a save state");
     user_state.selected = null;
-  } else {
-    // console.log('InteractiveState: user has a save state')
   }
   var my_chart = {};
   my_chart.model = new ChartModel();
   my_chart.view = new ChartView(my_chart.model);
   my_chart.controller = new ChartController(my_chart.model, my_chart.view, user_state);
 });
+
+function openAuthorInfo(){
+  $('#authorinfo').show();
+  $('#close-author').on('click', function(evt){
+    $('#authorinfo').hide();
+  });
+}
+function refreshPlugin(){
+  $('#contextList').empty();
+  $('#myChart').remove();
+  $('#chart-container').append('<canvas id="myChart"><canvas>');
+
+  user_state = {};
+  user_state.selected = null;
+  my_chart = {};
+
+  my_chart.model = new ChartModel();
+  my_chart.view = new ChartView(my_chart.model);
+  my_chart.controller = new ChartController(my_chart.model, my_chart.view, user_state);
+};

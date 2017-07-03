@@ -15,7 +15,7 @@
     <div class="wrapper">
       <div class="sidebar">
         <div id="small-buttons" >
-          <button id="refresh" onclick='getContextAttributeCount()' class="material-icons">
+          <button id="refresh" class="material-icons" onclick="refreshPlugin()">
             refresh
           </button>
           <div id="chart">
@@ -25,7 +25,7 @@
         </div>
         <div id="contextList"> </div>
       </div>
-      <button id="info" class="material-icons tooltip" >info_outline</button>
+      <button id="info" class="material-icons tooltip" onclick="openAuthorInfo()">info_outline</button>
       <div id="authorinfo">
         <button id="close-author" class="material-icons">close</button>
         <div class='profile-container'>
@@ -42,7 +42,7 @@
           <br> <br>
       </div>
       <div class="main" >
-        <div class="chart-container">
+        <div id="chart-container" class="chart-container">
           <canvas id="myChart" ></canvas>
         </div>
         <script src="src/chart_interface.js" language='javascript'> </script>

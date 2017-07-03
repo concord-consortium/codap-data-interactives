@@ -32,14 +32,21 @@ var ChartModel = function(){
   this.selected = {
     context: null,
     attributes: [],
-    cases: [],
     attribute_limit: null,
-    chart_type: 'bar'
+    chart_type: 'bar' //default chart is bar chart
   };
+  this.cases = null;
+  this.chart_metadata = {};
+  this.chart_data = {
+    type: this.selected.chart_type,
+    data: null,
+    options: null,
+  }
 
-  /***************
-      Events
-  /***************
+  /************************************************************/
+  //    Events
+  /************************************************************/
+
   //context events
   /*  1.select   */ this.selectedContextEvent = new Event(this);
   /*  2.deselect */ this.deselectedContextEvent = new Event(this);
@@ -57,12 +64,17 @@ var ChartModel = function(){
   /* 1. data  */ this.changedChartDataEvent = new Event(this);
   /* 2. types */ this.loadedChartsListEvent = new Event(this);
 
+  /************************************************************/
 
 };
 ChartModel.prototype = {
   /**
    * @function loadUserState
-   * @param  {Object} state {attributes: name, context: name}
+   * @param {Object} state
+   * @param {Object} state.selected
+   * @param {string} state.selected.context
+   * @param {string} state.selected.chart_type
+   * @param {Object[]} state.selected.attributes
    */
   loadUserState: function(state){
     if(!state.selected){
@@ -72,7 +84,7 @@ ChartModel.prototype = {
       //trigger event when loading attribtues and contexts
       this.selectedAttributeEvent.notify(state.selected.attributes);
       this.selectedContextEvent.notify(state.selected.context);
-      //@TODO getData for context
+
       //update the cases
       if(this.selected.attributes.length != 0){
         var col = this.getAttributeCollection(this.selected.attributes[0], this.selected.context);
@@ -84,9 +96,8 @@ ChartModel.prototype = {
     }
   },
   /**
-   * @return {[type]} [description]
-   * @function loadAvailableCharts - gets chart types information and triggers event
-   */
+  * @function loadAvailableCharts - gets chart types information and triggers event
+ */
   loadAvailableCharts: function(){
     this.loadedChartsListEvent.notify(this.available_charts);
   },
@@ -262,30 +273,14 @@ ChartModel.prototype = {
     });
   },
   /**
-   * @function getAttributeObject - return attribute object
-   * @param  {string} name of attribute
-   * @return {Object}      attribute object with context and collection data
-   */
-  getAttributeObject: function(name){
-    for(var i = 0; i < this.model_attribute_list.length; i++){
-      if(name == this.model_attribute_list[i].name){
-        return this.model_attribute_list[i];
-      }
-    }
-    return null;
-  },
-  /**
    * @function isAttributeSelected - checks if given attribute is selected
    * @param  {Object}  attribute {context, collection, name, id, etc,... }
    * @return {number}  -1 if not in selected.atttributes array or index
    */
   isAttributeSelected: function(attribute){
-    for(var i = 0; i < this.selected.attributes.length; i++)
-      if (attribute == this.selected.attributes[i]) return i;
-    return (-1);
+    return this.selected.attributes.indexOf(attribute);
   },
   updateChartType: function(type){
-    console.log(type);
     this.selected.chart_type = type;
   },
 
@@ -294,6 +289,7 @@ ChartModel.prototype = {
    * @param  {Object} attribute
    * @param  {string} attribute.name
    * @param  {string} attribute.context
+   * @param  {string} attribute.data_type
    */
   selectedAttribute : function(attribute){
     var att = attribute.name;
@@ -305,7 +301,6 @@ ChartModel.prototype = {
         this.selectedContextEvent.notify(cxt);
       } else{
         this.selectedContextEvent.notify(cxt);
-        console.log(this.selected.context);
         this.deselectedContextEvent.notify(this.selected.context);
       }
       this.selected.attributes = [];
@@ -313,7 +308,6 @@ ChartModel.prototype = {
       this.selected.attributes.push(att);
       this.selectedAttributeEvent.notify(att);
     } else{ //if same context, then we are either changing, adding, or removing an attribute
-      //@TODO make sure to finish adding this functionality
       if(true){ //this is the limit, changes based on chart
         var unselected = [];
         //notify of unselections
@@ -398,6 +392,11 @@ ChartModel.prototype = {
         }
       });
   },
+  //*****************************************************************************
+  //
+  //                    CONTEXT EVENT LISTENER
+  //
+  //*****************************************************************************
   /**
    * addContextChangeListeners
    * @param  {Object} context

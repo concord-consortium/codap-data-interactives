@@ -76,7 +76,6 @@ ChartController.prototype = {
    */
   initializeModelView: function(){
     this.model.updateDataContextList().then((val)=>{
-      // console.log("finished loading state: "+JSON.stringify(val));
       this.model.loadUserState(this.user_state);
     });
     this.model.loadAvailableCharts();
@@ -101,10 +100,13 @@ ChartController.prototype = {
   /**
    * @function selectedAttribute
    * @param  {Object} sender
-   * @param  {Object} args   object string of names {name, collection, context{
+   * @param  {Object} attribute
+   * @param  {string} attribute.name
+   * @param  {string} attribute.context
+   * @param  {string} attribute.data_type
    */
-  selectedAttribute: function(sender, args){
-    this.model.selectedAttribute(args);
+  selectedAttribute: function(sender, attribute){
+    this.model.selectedAttribute(attribute);
   },
   /**
    * @function changedChartType

@@ -68,8 +68,6 @@ ChartView.prototype = {
     .enable();
   },
   createChildren: function(){
-    // this.populateChartOptions(this.available_charts);
-    // this.initializeChart();
     return this;
   },
   setupHandlers: function(){
