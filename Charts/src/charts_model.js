@@ -346,46 +346,49 @@ ChartModel.prototype = {
     var att_values = [];
     getData(this.selected.context, col,
       this.selected.attributes[0]).then((caseList) => {
-        console.log(caseList);
         //this variable holds the item on x-axis with data for each item
         var items_values = {};
-
-        var items = [];
         var att_item = this.selected.attributes[0];
         var value_sets = [];
         var att_datasets = this.selected.attributes.slice(1);
 
-        // value_sets = 
-        caseList.map((z)=>{
+        value_sets = caseList.map((z)=>{
           var vals = [];
-          var items_list = [];
           var item = {};
-
           att_datasets.forEach((a)=>{
             vals.push(z.values[a]);
           });
           item[z.values[att_item]] = vals;
-          value_sets.push(item);
-          return vals;
-          // });
+          return item;
         });
-        console.log(value_sets);
-
-        // console.log(items_values);
-        //save data to chart_data
-        // var dataset = {
-        //   data: data_count,
-        //   label: att,
-        //   backgroundColor: getMultipleColors(data_count.length).colors,
-        //   borderColor: 'rgba(0,0,0,1)',
-        //   borderWidth: 1,
-        // }
-        // this.resetChartData();
-        // this.chart_data.data.datasets = [dataset];
-        // this.chart_data.data.labels = unique_labels;
-        // console.log(this.chart_data);
-        // this.changedChartDataEvent.notify(this.chart_data);
+        var items = this.getDataSet(value_sets, -1);
+        console.log(items);
+        this.resetChartData();
+        this.chart_data.data.labels = items;
+        for (var i = 0; i < att_datasets.length; i++) {
+          // att_datasets[i]
+          var set = this.getDataSet(value_sets, i);
+          var dataset = {
+            data: set,
+            label: att_datasets[i],
+            backgroundColor: getSingleColor(),
+            borderColor: 'rgba(0,0,0,1)',
+            borderWidth: 1,
+          }
+          this.chart_data.data.datasets.push(dataset);
+        }
+        this.changedChartDataEvent.notify(this.chart_data);
       });
+  },
+  getDataSet: function(cases, index){
+    var data = cases.map((c)=>{
+      var key = Object.keys(c)[0];
+      if(index == -1){
+        return key;
+      } else
+      return c[key][index];
+    });
+    return data;
   },
   getAttributeCountDataset: function(){
     var att = this.selected.attributes[0];
@@ -452,7 +455,6 @@ ChartModel.prototype = {
 
     this.selected.attributeList = attMembers;
     this.selected.data = attCount;
-    // var clrs = getNewColors(attMembers.length);
   },
   //*****************************************************************************
   //
