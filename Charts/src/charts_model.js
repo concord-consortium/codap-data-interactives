@@ -28,6 +28,10 @@
  */
 var ChartModel = function(){
   this.available_charts =  ['bar', 'doughnut', 'pie', 'radar', 'line'];
+  /**
+   * model_context_list - list of context objects as recieved from CODAP
+   * @type {Object}
+   */
   this.model_context_list = [];
   this.selected = {
     context: null,
@@ -35,8 +39,6 @@ var ChartModel = function(){
     attribute_limit: null,
     chart_type: 'bar' //default chart is bar chart
   };
-  this.cases = null;
-  this.chart_metadata = {};
   this.chart_data = {
     type: this.selected.chart_type,
     data: {},
@@ -90,7 +92,7 @@ ChartModel.prototype = {
         var col = this.getAttributeCollection(this.selected.attributes[0], this.selected.context);
         getData(this.selected.context, col,
           this.selected.attributes[0]).then((caseList) => {
-            this.updateCases(caseList, this.selected.attributes[0]);
+           this.calculateChartData();
           });
         }
     }
@@ -280,12 +282,6 @@ ChartModel.prototype = {
   isAttributeSelected: function(attribute){
     return this.selected.attributes.indexOf(attribute);
   },
-  updateChartType: function(type){
-    console.log(type);
-    this.selected.chart_type = type;
-    this.calculateChartData();
-  },
-
   /**
    * changeSelectedAttribute
    * @param  {Object} attribute
@@ -309,69 +305,78 @@ ChartModel.prototype = {
       this.selected.context = cxt;
       this.selected.attributes.push(att);
       this.selectedAttributeEvent.notify(att);
-    } else{ //if same context, then we are either changing, adding, or removing an attribute
-      // if(this.selected.attributes.length == 2){ //this is the limit, changes based on chart
-      if(false){
-        var unselected = [];
-        //notify of unselections
-        this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
-        //add selection
-        this.selectedAttributeEvent.notify(att);
-        this.selected.attributes = [];
+    } else{ //if same context, then we are either adding or removing an attribute
+      var index = this.isAttributeSelected(att);
+      if(index == -1){
         this.selected.attributes.push(att);
-      }else{
-        var index = this.isAttributeSelected(att);
-        if(index == -1){
-          this.selected.attributes.push(att);
-          this.selectedAttributeEvent.notify(att);
-        } else{
-          this.selected.attributes.splice(index, 1);
-          this.deselectedAttributeEvent.notify(att);
-        }
+        this.selectedAttributeEvent.notify(att);
+      } else{
+        this.selected.attributes.splice(index, 1);
+        this.deselectedAttributeEvent.notify(att);
       }
     }
    this.calculateChartData();
   },
+  //*****************************************************************************
+  //
+  //                    CHART DATA PACKAGING
+  //
+  //*****************************************************************************
+  /**
+   * @function calculateChartData - gets user's Chart data based on attributes selected
+   */
   calculateChartData: function(){
-    //update the cases
+    //if only one attribute is chosen, then plot its count
     if(this.selected.attributes.length == 1){
       this.getAttributeCountDataset();
-    } else if(this.selected.attributes.length >= 2){
+    }
+    //if there are more than two atts, then build datasets
+    else if(this.selected.attributes.length >= 2){
       this.getAttributeDatasets();
     }
   },
   getAttributeDatasets: function(){
+    //the first attribute selected will be the categories
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
-    var att_values = [];
-    getData(this.selected.context, col,
-      this.selected.attributes[0]).then((caseList) => {
-        //this variable holds the item on x-axis with data for each item
-        var items_values = {};
-        var att_item = this.selected.attributes[0];
-        var value_sets = [];
-        var att_datasets = this.selected.attributes.slice(1);
 
-        value_sets = caseList.map((z)=>{
-          var vals = [];
+    getData(this.selected.context, col, att).then((caseList) => {
+        /**
+         * datasets - an array of objects containing the item and its plot values
+         * @type {Objects[]} Object - an array of key-value pair objects
+         * @type {Object} key - key is a string representing a value of a categorical attributes
+         * @type {Object} value - the value is a list of values pertaining to label attributes
+         */
+        var datasets = [];
+        /**
+         * labels_list - a list of attributes
+         * @type {string}
+         */
+        var labels_list = this.selected.attributes.slice(1);
+
+        datasets = caseList.map((case_item)=>{
+          var values = [];
           var item = {};
-          att_datasets.forEach((a)=>{
-            vals.push(z.values[a]);
+          //for eaceh attribute label, get its value
+          labels_list.forEach((label)=>{
+            values.push(case_item.values[label]);
           });
-          item[z.values[att_item]] = vals;
+          //each item's key is the value of its categorical attribute,
+          //  and its value is a list containing the values of the label attributes
+          //  (the attribute values that are going to be plotted)
+          item[case_item.values[att]] = values;
           return item;
         });
-        var items = this.getDataSet(value_sets, -1);
-        console.log(items);
+
+        var items = this.getCasesCount(datasets, -1);
         this.resetChartData();
         this.chart_data.data.labels = items;
-        for (var i = 0; i < att_datasets.length; i++) {
-          // att_datasets[i]
-          var set = this.getDataSet(value_sets, i);
+        for (var i = 0; i < labels_list.length; i++) {
+          var set = this.getCasesCount(datasets, i);
           var dataset = {
             data: set,
-            label: att_datasets[i],
-            backgroundColor: getSingleColor(),
+            label: labels_list[i],
+            backgroundColor: getSingleColor(), //@TODO if its pie or doughnut then diff colors
             borderColor: 'rgba(0,0,0,1)',
             borderWidth: 1,
           }
@@ -380,7 +385,15 @@ ChartModel.prototype = {
         this.changedChartDataEvent.notify(this.chart_data);
       });
   },
-  getDataSet: function(cases, index){
+  /**
+   * @function getCasesCount - create a list of values from a list of Objects, where the
+   *                            objects contain a list of values
+   * @param  {Object[]} cases - cases as contructed in getAttributeDatasets
+   * @param  {number} index - number pertaining to which values are retrived, -1 returns a list
+   *                          of keys
+   * @return {[type]}       [description]
+   */
+  getCasesCount: function(cases, index){
     var data = cases.map((c)=>{
       var key = Object.keys(c)[0];
       if(index == -1){
@@ -390,32 +403,57 @@ ChartModel.prototype = {
     });
     return data;
   },
+  /**
+   * @function getAttributeCountDataset - this function gets data for a single attribute
+1   */
   getAttributeCountDataset: function(){
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
-    var att_values = [];
-    getData(this.selected.context, col,
-      this.selected.attributes[0]).then((caseList) => {
-        var labels_count = this.getAttributeUniqueLabels(caseList, att);
-        var unique_labels = Object.keys(labels_count).sort();
-        var data_count = unique_labels.map((label)=> {return labels_count[label];});
 
-        //save data to chart_data
-        var dataset = {
-          data: data_count,
-          label: att,
-          backgroundColor: getMultipleColors(data_count.length).colors,
-          borderColor: 'rgba(0,0,0,1)',
-          borderWidth: 1,
+    getData(this.selected.context, col, att).then((caseList) => {
+      var labels_count = this.getAttributeUniqueLabels(caseList, att);
+      var unique_labels = Object.keys(labels_count).sort();
+      var data_count = unique_labels.map((label)=> {return labels_count[label];});
+
+      //save data to chart_data
+      var dataset = {
+        data: data_count,
+        backgroundColor: getMultipleColors(data_count.length).colors,
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 1,
+      }
+      //update data
+      this.resetChartData();
+      this.chart_data.data.datasets = [dataset];
+      this.chart_data.data.labels = unique_labels;
+
+      //update chart options vary depending on type of chart
+      //if its not a doughtnut or pie chart then the axis need to be calculated
+      if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
+        this.resetChartOptions();
+        this.chart_data.options.scales = {
+          yAxes: [{
+            ticks: { //@TODO make sure the max axis is greater than the max value
+              beginAtZero: true,
+              stacked: true,
+            },
+          }],
         }
-        this.resetChartData();
-        this.chart_data.data.datasets = [dataset];
-        this.chart_data.data.labels = unique_labels;
-        console.log(this.chart_data);
-        this.changedChartDataEvent.notify(this.chart_data);
-      });
+      }
+
+      this.changedChartDataEvent.notify(this.chart_data);
+    });
   },
+  /**
+   * @function getAttributeUniqueLabels - calculates the count of an attribtues
+   * @param  {Object[]} cases  - a list of case objects from CODAP
+   * @param  {Object[]} cases.values - attribute values of the case
+   * @param  {string} att   - attribute name to calculate count
+   * @return {Object} labels - keys are unique attribute and values are the count
+   *                         of how many times it appeared
+   */
   getAttributeUniqueLabels: function(cases, att){
+    console.log(att);
     var att_vals = cases.map(function(x){
         return x.values[att];
     });
@@ -430,49 +468,37 @@ ChartModel.prototype = {
     });
     return labels;
   },
-  updateCases: function(cases, attribute){
-    var attMembers = [];
-    var attCount = [];
-    cases.forEach(function(val){
-      var contains = false, index = 0;
-      var att = val.values[attribute];
-      for(i = 0; i < attMembers.length; i++){
-        if (att == attMembers[i]){
-          contains = true;
-          index = i;
-        }
-      }
-      if (contains){
-        attCount[index] += 1;
-      }
-      else {
-        attCount.push(1);
-        attMembers.push(att);
-      }
-    });
-    var att_max = Math.max(...attCount);
-    att_max += Math.round(att_max/10)+1;
-
-    this.selected.attributeList = attMembers;
-    this.selected.data = attCount;
-  },
   //*****************************************************************************
   //
-  //                    CHART DATA PACKAGING
+  //                    CHART DATA RESET
   //
   //*****************************************************************************
+  /**
+   * @function resetChartData - resets data when it needs to be updated
+   */
   resetChartData: function(){
-    this.chart_data = {
-      type: this.selected.chart_type,
-      data: {
-        labels: [],
-        datasets: []
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-      }
+    this.chart_data.data = {
+      labels: [],
+      datasets: []
     }
+  },
+  /**
+   * @function resetChartOptions - resets the options when a chart type is changed
+   */
+  resetChartOptions: function(){
+    this.chart_data.options = {
+      responsive: true,
+      maintainAspectRatio: false,
+    }
+  },
+  /**
+   * @function resetChartOptions - resets the options when a chart type is changed
+   */
+  updateChartType: function(type){
+    this.selected.chart_type = type;
+    this.chart_data.type = this.selected.chart_type;
+    this.resetChartOptions();
+    this.calculateChartData();
   },
   //*****************************************************************************
   //
