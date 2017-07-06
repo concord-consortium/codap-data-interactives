@@ -64,8 +64,13 @@ var ChartModel = function(){
 
   //cases events
   /* 1. data  */ this.changedChartDataEvent = new Event(this);
-  /* 2. types */ this.loadedChartsListEvent = new Event(this);
 
+  //chart events
+  /* 1. types */ this.loadedChartsListEvent = new Event(this);
+  /* 1. types */ this.changedChartTypeEvent = new Event(this);
+
+  //error events
+  /* 1. invalid data */ this.invalidDataEvent = new Event(this);
   /************************************************************/
 
 };
@@ -83,9 +88,15 @@ ChartModel.prototype = {
       state.selected = this.selected;
     }else{
       this.selected = state.selected;
-      //trigger event when loading attribtues and contexts
-      this.selectedAttributeEvent.notify(state.selected.attributes);
+      //trigger event when loading attributes and contexts
+      this.selected.attributes.forEach((att)=>{
+        this.selectedAttributeEvent.notify(att);
+      });
       this.selectedContextEvent.notify(state.selected.context);
+      //load previous chart type
+      this.updateChartType(this.selected.chart_type);
+
+
 
       //update the cases
       if(this.selected.attributes.length != 0){
@@ -267,12 +278,19 @@ ChartModel.prototype = {
         });
       });
       for(var i = 0; i < newList.length; i++){
-        var msg = [];
-        msg.push(newList[i].attribute.name);
-        if(i==0) msg.push('first_item'); else msg.push(newList[i-1].attribute.name);
+        var msg = {};
+        msg.name = newList[i].attribute.name;
+        if(i==0) msg.after = 'first_item'; else msg.after = newList[i-1].attribute.name;
         this.moveAttributeEvent.notify(msg);
       }
     });
+  },
+  /**
+   * @function selectedAttributeCount - returns number of attribtues are selected
+   * @return {number}
+   */
+  selectedAttributeCount: function(){
+    return this.selected.attributes.length;
   },
   /**
    * @function isAttributeSelected - checks if given attribute is selected
@@ -367,21 +385,53 @@ ChartModel.prototype = {
           item[case_item.values[att]] = values;
           return item;
         });
-
+        //get the datasets
         var items = this.getCasesCount(datasets, -1);
+        var max_y_axis = 0; //this track max for plotting in bar
+
         this.resetChartData();
         this.chart_data.data.labels = items;
+
+
+        var chart_clrs = null; //handle color generator for chart type
         for (var i = 0; i < labels_list.length; i++) {
           var set = this.getCasesCount(datasets, i);
+          if(Math.max(...set) > max_y_axis){
+            max_y_axis = Math.max(...set);
+          }
+          if ((this.chart_data.type == 'pie' || this.chart_data.type == 'doughnut') && i == 0){
+            chart_clrs = getMultipleColors(set.length).colors;
+          }
+          else if (this.chart_data.type != 'pie' && this.chart_data.type != 'doughnut'){
+             chart_clrs = getSingleColor();
+           }
           var dataset = {
             data: set,
             label: labels_list[i],
-            backgroundColor: getSingleColor(), //@TODO if its pie or doughnut then diff colors
+            backgroundColor: chart_clrs,
             borderColor: 'rgba(0,0,0,1)',
             borderWidth: 1,
           }
           this.chart_data.data.datasets.push(dataset);
         }
+        //chart options
+        this.resetChartOptions();
+        max_y_axis += Math.round(max_y_axis/10) + 1;
+        if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
+            this.chart_data.options.scales = {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                suggestedMax: max_y_axis
+              },
+              stacked: true,
+            }], //@TODO make stacked chart optional
+            xAxes: [{
+              stacked: true,
+            }]
+          }
+        }
+
         this.changedChartDataEvent.notify(this.chart_data);
       });
   },
@@ -405,7 +455,7 @@ ChartModel.prototype = {
   },
   /**
    * @function getAttributeCountDataset - this function gets data for a single attribute
-1   */
+   */
   getAttributeCountDataset: function(){
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
@@ -414,6 +464,8 @@ ChartModel.prototype = {
       var labels_count = this.getAttributeUniqueLabels(caseList, att);
       var unique_labels = Object.keys(labels_count).sort();
       var data_count = unique_labels.map((label)=> {return labels_count[label];});
+      var max_y_axis = Math.max(...data_count);
+      max_y_axis += Math.round(max_y_axis/10) + 1;
 
       //save data to chart_data
       var dataset = {
@@ -429,18 +481,17 @@ ChartModel.prototype = {
 
       //update chart options vary depending on type of chart
       //if its not a doughtnut or pie chart then the axis need to be calculated
+      this.resetChartOptions();
       if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
-        this.resetChartOptions();
-        this.chart_data.options.scales = {
+          this.chart_data.options.scales = {
           yAxes: [{
-            ticks: { //@TODO make sure the max axis is greater than the max value
+            ticks: {
               beginAtZero: true,
-              stacked: true,
+              suggestedMax: max_y_axis
             },
           }],
         }
       }
-
       this.changedChartDataEvent.notify(this.chart_data);
     });
   },
@@ -453,9 +504,8 @@ ChartModel.prototype = {
    *                         of how many times it appeared
    */
   getAttributeUniqueLabels: function(cases, att){
-    console.log(att);
     var att_vals = cases.map(function(x){
-        return x.values[att];
+      return x.values[att];
     });
     var labels = {};
     att_vals.forEach((val)=>{
@@ -499,6 +549,7 @@ ChartModel.prototype = {
     this.chart_data.type = this.selected.chart_type;
     this.resetChartOptions();
     this.calculateChartData();
+    this.changedChartTypeEvent.notify(type);
   },
   //*****************************************************************************
   //
@@ -599,3 +650,69 @@ ChartModel.prototype = {
     });
   }
 };
+//******************************************************************************
+//
+//    Global CODAP and helper functions
+//
+//******************************************************************************
+
+function getData(context, collection, attribute){
+  var src = "";
+  switch (arguments.length){
+    case 1:
+      src = 'dataContext[' + context +'].collectionList';
+      break;
+    case 2:
+      src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
+      break;
+    case 3:
+      src = 'dataContext[' + context +'].collection['+ collection + '].caseSearch['
+                                                              + attribute +' != \'\']';
+      break;
+    default:
+      src = 'dataContextList';
+  }  return new Promise(function(resolve, reject){
+      codapInterface.sendRequest({
+        action: 'get',
+        resource: src,
+      }, function(result) {
+        if (result && result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+}
+function getContext(context){
+  return new Promise(function(resolve, reject){
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext['+context+']',
+    }, function(result){
+      if (result && result.success){
+        resolve(result.values);
+      } else {
+        resolve([]);
+      }
+    });
+  });
+}
+function getMultipleColors(amount){
+  var colors = [];
+  var backgroundColor = [];
+  for (var i = 0; i < amount; i++) {
+    var r = Math.floor( 200 * Math.random()) + 55;
+    var g = Math.floor( 200 * Math.random()) + 55;
+    var b = Math.floor( 200 * Math.random()) + 55;
+    colors.push('rgba('+r+','+g+ ',' +b+ ',1)');
+    backgroundColor.push('rgba('+(r-40)+ ','+(g-40)+ ',' +(b-40)+ ',.8)')
+  }
+  return {colors: colors, backgroundColor: backgroundColor};
+}
+function getSingleColor(){
+    var r = Math.floor( 200 * Math.random()) + 55;
+    var g = Math.floor( 200 * Math.random()) + 55;
+    var b = Math.floor( 200 * Math.random()) + 55;
+    return 'rgba('+r+','+g+ ',' +b+ ',1)';
+}

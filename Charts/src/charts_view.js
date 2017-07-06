@@ -51,6 +51,7 @@ var ChartView = function(model){
   this.chart = null;
   this.$chart_types = $('#select-chart');
   this.$chart_container = $("#myChart");
+  this.$message_box = $('#user-messages');
 
   //the view triggers the following events
   this.selectedAttributeEvent = new Event(this);    //  1. select att
@@ -87,6 +88,7 @@ ChartView.prototype = {
     //chart events
     /* 1. data  */ this.changedChartDataHandler = this.changedChartData.bind(this);
     /* 2. types */ this.loadedChartsListHandler = this.loadedChartsList.bind(this);
+    /* 3. select*/ this.changedChartTypeHandler = this.changedChartType.bind(this);
 
     return this;
   },
@@ -107,6 +109,7 @@ ChartView.prototype = {
     //chart events
     /*1*/ this.model.changedChartDataEvent.attach(this.changedChartDataHandler);
     /*2*/ this.model.loadedChartsListEvent.attach(this.loadedChartsListHandler);
+    /*3*/ this.model.changedChartTypeEvent.attach(this.changedChartTypeHandler);
 
     return this;
   },
@@ -155,10 +158,12 @@ ChartView.prototype = {
    /**
    * attributeMove
    * @param  {sender} sender
-   * @param  {string[]} attributes  [name of attribute moved, name of attribute it is after]
+   * @param  {Object} attribute
+   * @param  {string} attribute.name
+   * @param  {string} attribute.after
    */
    moveAttribute: function(sender, attributes){
-     $("#"+attributes[0]).insertAfter('#'+attributes[1]);
+     $("#"+removeSpace(attributes.name)).insertAfter('#'+removeSpace(attributes.after));
    },
    /**
    * @function addNewContext - adds context to UI
@@ -177,7 +182,7 @@ ChartView.prototype = {
    */
   addAttribute: function(sender, attribute){
     addAttributeToContextDOM(attribute.name, attribute.context);
-    $('#'+attribute.name).on('click', (evt) => {
+    $('#'+removeSpace(attribute.name)).on('click', (evt) => {
       evt.stopPropagation();
       this.selectedAttributeEvent.notify(attribute);
     });
@@ -188,7 +193,7 @@ ChartView.prototype = {
    * @param {string} attribute
    */
   selectedAttribute: function(sender, attribute){
-    $('#'+attribute).addClass("selected");
+    $('#'+removeSpace(attribute)).addClass("selected");
   },
   /**
    * @function deselectAttribute
@@ -196,7 +201,7 @@ ChartView.prototype = {
    * @param {string} attribute
    */
   deselectAttribute: function(sender, attribute){
-    $('#'+attribute).removeClass("selected");
+    $('#'+removeSpace(attribute)).removeClass("selected");
   },
   /**
    * @function deselectContext - stylize unselected context back to original
@@ -204,7 +209,7 @@ ChartView.prototype = {
    * @param  {string} context
    */
   deselectContext: function(sender, context){
-    $('#'+context).find(".selected").removeClass("selected");
+    $('#'+removeSpace(context)).find(".selected").removeClass("selected");
   },
   /**
    * @function selectContext - stylize context back to original
@@ -212,7 +217,7 @@ ChartView.prototype = {
    * @param  {string} context
    */
   selectedContext: function(sender, context){
-    $('#'+context).children().show();
+    $('#'+removeSpace(context)).children().show();
   },
   /**
    * @function deleteAttribute
@@ -220,9 +225,20 @@ ChartView.prototype = {
    * @param  {string} attribute - name of attribute
    */
   deleteAttribute: function(sender, attribute){
-    $('#'+attribute).slideToggle('normal', function(){
+    $('#'+removeSpace(attribute)).slideToggle('normal', function(){
       $(this).remove();
     });
+  },
+  /**
+   * @function changedChartType - updates the selected chart type
+   * @param  {Object} sender
+   * @param  {string} type   chart type
+   */
+  changedChartType: function(sender, type){
+    this.$chart_types.val(type);
+  },
+  displayMessage: function(string){
+
   }
 }
 
@@ -236,7 +252,7 @@ ChartView.prototype = {
  * @param {string} context context name
  */
 function addContextDOM(context){
-  var $unList = $("<ul>", {'id': context, 'class':'view-context-list'});
+  var $unList = $("<ul>", {'id': removeSpace(context), 'class':'view-context-list'});
   $unList.css("background-color", 'lightblue');
   $unList.hover(
     function(){ $(this).css("background-color", "white"); },
@@ -255,11 +271,19 @@ function addContextDOM(context){
  * @param {string} context
  */
 function addAttributeToContextDOM(attribute, context){
-  var $item = $("<li>", {'id': attribute, 'class':'view-attribute-list'});
-  var isVisible = $('#'+context).children().is(':visible');
+  var $item = $("<li>", {'id': removeSpace(attribute), 'class':'view-attribute-list'});
+  var isVisible = $('#'+removeSpace(context)).children().is(':visible');
   if(!isVisible){
     $item.css("display", 'none');
   }
   $item.text(attribute);
-  $('#'+context).append($item);
+  $('#'+removeSpace(context)).append($item);
+}
+/**
+ * @function removeSpace  - removes white spaces from a string`
+ * @param  {string} string
+ * @return {string}
+ */
+function removeSpace(str){
+  return str.replace(/\s+/g, '');
 }

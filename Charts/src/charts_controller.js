@@ -27,6 +27,7 @@ var ChartController = function(model, view, user_state){
   this.user_state = user_state;
   this.model = model;
   this.view = view;
+  this.user_messages = null;
 
   this.init();
 };
@@ -77,6 +78,9 @@ ChartController.prototype = {
   initializeModelView: function(){
     this.model.updateDataContextList().then((val)=>{
       this.model.loadUserState(this.user_state);
+      if(this.model.selectedAttributeCount() == 0){
+        $('#user-messages').show();
+      }
     });
     this.model.loadAvailableCharts();
     this.view.initializeChart();
@@ -117,69 +121,3 @@ ChartController.prototype = {
     this.model.updateChartType(chart);
   }
 };
-//****************************
-//
-//    Global CODAP functions
-//
-//****************************
-
-function getData(context, collection, attribute){
-  var src = "";
-  switch (arguments.length){
-    case 1:
-      src = 'dataContext[' + context +'].collectionList';
-      break;
-    case 2:
-      src = 'dataContext[' + context +'].collection[' + collection + '].attributeList';
-      break;
-    case 3:
-      src = 'dataContext[' + context +'].collection['+ collection + '].caseSearch['
-                                                              + attribute +' != \'\']';
-      break;
-    default:
-      src = 'dataContextList';
-  }  return new Promise(function(resolve, reject){
-      codapInterface.sendRequest({
-        action: 'get',
-        resource: src,
-      }, function(result) {
-        if (result && result.success) {
-          resolve(result.values);
-        } else {
-          resolve([]);
-        }
-      });
-    });
-}
-function getContext(context){
-  return new Promise(function(resolve, reject){
-    codapInterface.sendRequest({
-      action: 'get',
-      resource: 'dataContext['+context+']',
-    }, function(result){
-      if (result && result.success){
-        resolve(result.values);
-      } else {
-        resolve([]);
-      }
-    });
-  });
-}
-function getMultipleColors(amount){
-  var colors = [];
-  var backgroundColor = [];
-  for (var i = 0; i < amount; i++) {
-    var r = Math.floor( 200 * Math.random()) + 55;
-    var g = Math.floor( 200 * Math.random()) + 55;
-    var b = Math.floor( 200 * Math.random()) + 55;
-    colors.push('rgba('+r+','+g+ ',' +b+ ',1)');
-    backgroundColor.push('rgba('+(r-40)+ ','+(g-40)+ ',' +(b-40)+ ',.8)')
-  }
-  return {colors: colors, bg_colors: backgroundColor};
-}
-function getSingleColor(){
-    var r = Math.floor( 200 * Math.random()) + 55;
-    var g = Math.floor( 200 * Math.random()) + 55;
-    var b = Math.floor( 200 * Math.random()) + 55;
-    return 'rgba('+r+','+g+ ',' +b+ ',1)';
-}

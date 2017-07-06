@@ -178,15 +178,31 @@ select:hover{
   display: none;
   width: 70vw;
   height: 70vh;
-  position: fixed;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.8);
   margin-top: 15vh;
   margin-bottom: 15vh;
   margin-left: 15vw;
   margin-right: 15vw;
+
+  position: fixed;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
   z-index: 1;
   text-align: center;
+}
+#userstate {
+  width: 30vw;
+  height: 20vh;
+
+  margin-top: 40vh;
+  margin-bottom: 40vh;
+  margin-left: 35vw;
+  margin-right: 35vw;
+  position: absolute;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1;
+  text-align: center;
+
 }
 #close-author{
   position: relative;
@@ -230,6 +246,7 @@ select:hover{
   background-color: black;
   color: white;
 }
+
 #profile-text {
   color: white;
   font-weight: bold;
