@@ -76,6 +76,7 @@ ChartController.prototype = {
    * @return {Object} this
    */
   initializeModelView: function(){
+
     this.model.updateDataContextList().then((val)=>{
       this.model.loadUserState(this.user_state);
       if(this.model.selectedAttributeCount() == 0){
