@@ -27,7 +27,7 @@
  *
  */
 var ChartModel = function(){
-  this.available_charts =  ['bar', 'doughnut', 'pie', 'radar', 'line'];
+  this.available_charts =  ['bar', 'pie',];
   /**
    * model_context_list - list of context objects as recieved from CODAP
    * @type {Object}
@@ -93,10 +93,9 @@ ChartModel.prototype = {
         this.selectedAttributeEvent.notify(att);
       });
       this.selectedContextEvent.notify(state.selected.context);
+
       //load previous chart type
       this.updateChartType(this.selected.chart_type);
-
-
 
       //update the cases
       if(this.selected.attributes.length != 0){
@@ -122,11 +121,11 @@ ChartModel.prototype = {
   updateDataContextList: function(){
     return getData().then((newContextList) => {
       var promises = [];
-      for (var i = 0; i < newContextList.length; i++) {
-        if( !this.hasContext(newContextList[i].id) ) {
-          promises.push(this.addNewContext(newContextList[i]));
+      newContextList.map((context)=>{
+        if( !this.hasContext(context.id) ) {
+          promises.push(this.addNewContext(context));
         }
-      }
+      });
       return Promise.all(promises)
     });
   },
@@ -135,24 +134,25 @@ ChartModel.prototype = {
   *   @return {boolean}
   */
   hasContext: function(context_id){
-    for(i = 0; i < this.model_context_list.length; i++){
-      if(this.model_context_list[i].id == context_id){
-        return true;
-      }
-    }
-    return false;
+    var contains = false;
+    this.model_context_list.map((context)=>{
+      if(context.id == context_id)
+        contains = true;
+    });
+    return contains;
   },
   /**
    * getContextByName
-   * @param  {string} context name
-   * @return {Object} context
+   * @param  {string} context_name
+   * @return {Object} context_object
    */
-  getContextByName: function(context){
-    for(var i = 0; i < this.model_context_list.length; i++){
-      if(this.model_context_list[i].name == context){
-        return this.model_context_list[i];
-      }
-    }
+  getContextByName: function(context_name){
+    var context_object = null;
+    this.model_context_list.map((cxt)=>{
+      if(cxt.name == context_name)
+        context_object = cxt;
+    });
+    return context_object;
   },
   /**
    * @function addNewContext - adds context to the list and notifies event listeners
@@ -301,7 +301,8 @@ ChartModel.prototype = {
     return this.selected.attributes.indexOf(attribute);
   },
   /**
-   * changeSelectedAttribute
+   * selectedAttribute - handles the selection of new attribute in order to execute
+   *                     appropriate behavior
    * @param  {Object} attribute
    * @param  {string} attribute.name
    * @param  {string} attribute.context
@@ -313,9 +314,9 @@ ChartModel.prototype = {
     //if its a different context or there is no selected context,
     //      then start from scratch and this is first selection
     if(!this.selected.context || this.selected.context != cxt){
-      if(!this.selected.context){
+      if(!this.selected.context){ //if no previous context selected
         this.selectedContextEvent.notify(cxt);
-      } else{
+      } else{ //if there was a selected context, deselect and select new one
         this.selectedContextEvent.notify(cxt);
         this.deselectedContextEvent.notify(this.selected.context);
       }
@@ -323,14 +324,23 @@ ChartModel.prototype = {
       this.selected.context = cxt;
       this.selected.attributes.push(att);
       this.selectedAttributeEvent.notify(att);
-    } else{ //if same context, then we are either adding or removing an attribute
+    } else{ //if same context, then we are either adding or removing a selected attribute
       var index = this.isAttributeSelected(att);
-      if(index == -1){
+      if(this.selected.attribute_limit == this.selected.attributes.length && index==-1){
+        //if the selected limit is reached then remove the last selected
+        //attribute and add new one
+        this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
+        this.selected.attributes.splice(this.selected.attributes.length-1, 1);
         this.selected.attributes.push(att);
         this.selectedAttributeEvent.notify(att);
-      } else{
-        this.selected.attributes.splice(index, 1);
-        this.deselectedAttributeEvent.notify(att);
+      }else{ //if limit not reached, then user is either adding or removing attribute
+        if(index == -1){
+          this.selected.attributes.push(att);
+          this.selectedAttributeEvent.notify(att);
+        } else{
+          this.selected.attributes.splice(index, 1);
+          this.deselectedAttributeEvent.notify(att);
+        }
       }
     }
    this.calculateChartData();
@@ -545,6 +555,9 @@ ChartModel.prototype = {
    * @function resetChartOptions - resets the options when a chart type is changed
    */
   updateChartType: function(type){
+    if(type!='bar'){
+      this.selected.attribute_limit = 2;
+    } else { this.selected.attribute_limit = null;}
     this.selected.chart_type = type;
     this.chart_data.type = this.selected.chart_type;
     this.resetChartOptions();
