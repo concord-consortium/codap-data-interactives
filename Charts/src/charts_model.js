@@ -368,9 +368,7 @@ ChartModel.prototype = {
         var type = caseList[0].values[this.selected.attributes[1]];
         if(isNaN(type)){
           this.getSecondaryAttributeCount(caseList);
-          this.selected.attribute_limit = 2;
         } else{
-          this.selected.attribute_limit = null; 
           this.getAttributeDatasets(caseList);
         }
       });
@@ -704,7 +702,7 @@ ChartModel.prototype = {
    */
   updateChartType: function(type){
     if (type == 'pie' || type=='doughnut'){
-      this.selected.attribute_limit = 2;
+      this.selected.attribute_limit = 1;
     } else this.selected.attribute_limit = null;
 
     this.selected.chart_type = type;
