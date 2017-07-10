@@ -37,7 +37,9 @@ var ChartModel = function(){
     context: null,
     attributes: [],
     attribute_limit: null,
-    chart_type: 'bar' //default chart is bar chart
+    chart_type: 'bar', //default chart is bar chart
+    cases: {}, //a dictionary where keys are unique attributes labels,
+                //and values are a list of case objects that belong to that attribute label
   };
   this.chart_data = {
     type: this.selected.chart_type,
@@ -326,9 +328,9 @@ ChartModel.prototype = {
       this.selectedAttributeEvent.notify(att);
     } else{ //if same context, then we are either adding or removing a selected attribute
       var index = this.isAttributeSelected(att);
+      //if the selected limit is reached and the attribute is not already selected
       if(this.selected.attribute_limit == this.selected.attributes.length && index==-1){
-        //if the selected limit is reached then remove the last selected
-        //attribute and add new one
+        //remove the last selected attribute and add new one
         this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
         this.selected.attributes.splice(this.selected.attributes.length-1, 1);
         this.selected.attributes.push(att);
@@ -354,96 +356,107 @@ ChartModel.prototype = {
    * @function calculateChartData - gets user's Chart data based on attributes selected
    */
   calculateChartData: function(){
+    var att = this.selected.attributes[0];
+    var col = this.getAttributeCollection(att, this.selected.context);
     //if only one attribute is chosen, then plot its count
     if(this.selected.attributes.length == 1){
-      this.getAttributeCountDataset();
+      this.getPrimaryAttributeCount();
     }
     //if there are more than two atts, then build datasets
-    else if(this.selected.attributes.length >= 2){
-      this.getAttributeDatasets();
+    else if(this.selected.attributes.length == 2){
+      getData(this.selected.context, col, att).then((caseList) => {
+        var type = caseList[0].values[this.selected.attributes[1]];
+        if(isNaN(type)){
+          this.getSecondaryAttributeCount(caseList);
+          this.selected.attribute_limit = 2;
+        } else{
+          this.selected.attribute_limit = null; 
+          this.getAttributeDatasets(caseList);
+        }
+      });
     }
+    else if(this.selected.attributes.length > 2){
+      getData(this.selected.context, col, att).then((caseList) => {
+        this.getAttributeDatasets(caseList);
+      });
+    }
+
   },
-  getAttributeDatasets: function(){
+  getAttributeDatasets: function(caseList){
     //the first attribute selected will be the categories
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
 
-    getData(this.selected.context, col, att).then((caseList) => {
-        /**
-         * datasets - an array of objects containing the item and its plot values
-         * @type {Objects[]} Object - an array of key-value pair objects
-         * @type {Object} key - key is a string representing a value of a categorical attributes
-         * @type {Object} value - the value is a list of values pertaining to label attributes
-         */
-        var datasets = [];
-        /**
-         * labels_list - a list of attributes
-         * @type {string}
-         */
-        var labels_list = this.selected.attributes.slice(1);
+    /**
+     * datasets - an array of objects containing the item and its plot values
+     * @type {Objects[]} Object - an array of key-value pair objects
+     * @type {Object} key - key is a string representing a value of a categorical attributes
+     * @type {Object} value - the value is a list of values pertaining to label attributes
+     */
+    var datasets = [];
+    /**
+     * labels_list - a list of attributes
+     * @type {string}
+     */
+    var labels_list = this.selected.attributes.slice(1);
 
-        datasets = caseList.map((case_item)=>{
-          var values = [];
-          var item = {};
-          //for eaceh attribute label, get its value
-          labels_list.forEach((label)=>{
-            values.push(case_item.values[label]);
-          });
-          //each item's key is the value of its categorical attribute,
-          //  and its value is a list containing the values of the label attributes
-          //  (the attribute values that are going to be plotted)
-          item[case_item.values[att]] = values;
-          return item;
-        });
-        //get the datasets
-        var items = this.getCasesCount(datasets, -1);
-        var max_y_axis = 0; //this track max for plotting in bar
-
-        this.resetChartData();
-        this.chart_data.data.labels = items;
-
-
-        var chart_clrs = null; //handle color generator for chart type
-        for (var i = 0; i < labels_list.length; i++) {
-          var set = this.getCasesCount(datasets, i);
-          if(Math.max(...set) > max_y_axis){
-            max_y_axis = Math.max(...set);
-          }
-          if ((this.chart_data.type == 'pie' || this.chart_data.type == 'doughnut') && i == 0){
-            chart_clrs = getMultipleColors(set.length).colors;
-          }
-          else if (this.chart_data.type != 'pie' && this.chart_data.type != 'doughnut'){
-             chart_clrs = getSingleColor();
-           }
-          var dataset = {
-            data: set,
-            label: labels_list[i],
-            backgroundColor: chart_clrs,
-            borderColor: 'rgba(0,0,0,1)',
-            borderWidth: 1,
-          }
-          this.chart_data.data.datasets.push(dataset);
-        }
-        //chart options
-        this.resetChartOptions();
-        max_y_axis += Math.round(max_y_axis/10) + 1;
-        if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
-            this.chart_data.options.scales = {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true,
-                suggestedMax: max_y_axis
-              },
-              stacked: true,
-            }], //@TODO make stacked chart optional
-            xAxes: [{
-              stacked: true,
-            }]
-          }
-        }
-
-        this.changedChartDataEvent.notify(this.chart_data);
+    datasets = caseList.map((case_item)=>{
+      var values = [];
+      var item = {};
+      //for eaceh attribute label, get its value
+      labels_list.forEach((label)=>{
+        values.push(case_item.values[label]);
       });
+      //each item's key is the value of its categorical attribute,
+      //  and its value is a list containing the values of the label attributes
+      //  (the attribute values that are going to be plotted)
+      item[case_item.values[att]] = values;
+      return item;
+    });
+    //get the datasets
+    var items = this.getCasesCount(datasets, -1);
+    var max_y_axis = 0; //this track max for plotting in bar
+
+    this.resetChartData();
+    this.chart_data.data.labels = items;
+
+
+    var chart_clrs = null; //handle color generator for chart type
+    for (var i = 0; i < labels_list.length; i++) {
+      var set = this.getCasesCount(datasets, i);
+      if(Math.max(...set) > max_y_axis){
+        max_y_axis = Math.max(...set);
+      }
+      if ((this.chart_data.type == 'pie' || this.chart_data.type == 'doughnut') && i == 0){
+        chart_clrs = getMultipleColors(set.length).colors;
+      }
+      else if (this.chart_data.type != 'pie' && this.chart_data.type != 'doughnut'){
+         chart_clrs = getSingleColor();
+       }
+      var dataset = {
+        data: set,
+        label: labels_list[i],
+        backgroundColor: chart_clrs,
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 1,
+      }
+      this.chart_data.data.datasets.push(dataset);
+    }
+    //chart options
+    this.resetChartOptions();
+    max_y_axis += Math.round(max_y_axis/10) + 1;
+    if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
+        this.chart_data.options.scales = {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            suggestedMax: max_y_axis
+          },
+        }],
+      }
+    }
+
+    this.changedChartDataEvent.notify(this.chart_data);
   },
   /**
    * @function getCasesCount - create a list of values from a list of Objects, where the
@@ -464,46 +477,186 @@ ChartModel.prototype = {
     return data;
   },
   /**
-   * @function getAttributeCountDataset - this function gets data for a single attribute
+   * @function getPrimaryAttributeCount - plot count for a single attributes
    */
-  getAttributeCountDataset: function(){
+  getPrimaryAttributeCount: function(caseList){
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
 
     getData(this.selected.context, col, att).then((caseList) => {
-      var labels_count = this.getAttributeUniqueLabels(caseList, att);
-      var unique_labels = Object.keys(labels_count).sort();
-      var data_count = unique_labels.map((label)=> {return labels_count[label];});
-      var max_y_axis = Math.max(...data_count);
-      max_y_axis += Math.round(max_y_axis/10) + 1;
+      var primary_attributes = this.getAttributeUniqueLabels(caseList, att);
+      this.selected.cases = primary_attributes;
 
-      //save data to chart_data
-      var dataset = {
-        data: data_count,
-        backgroundColor: getMultipleColors(data_count.length).colors,
-        borderColor: 'rgba(0,0,0,1)',
-        borderWidth: 1,
-      }
+      var primary_labels = Object.keys(primary_attributes);
+      //track max value
+      var dataset = primary_labels.map((label)=>{return primary_attributes[label].length;});
+      var max_y_axis = Math.max(...dataset);
+      max_y_axis += Math.round(max_y_axis/10) + 1; //round max_y_axis up
+
+      //sort primary labels
+      if(!isNaN(primary_labels[0])){
+        primary_labels = primary_labels.sort(function(a, b){return a-b});
+      } else primary_labels = primary_labels.sort();
+
       //update data
       this.resetChartData();
-      this.chart_data.data.datasets = [dataset];
-      this.chart_data.data.labels = unique_labels;
+      this.chart_data.data.datasets.push({
+        data: dataset,
+        backgroundColor: getMultipleColors(dataset.length).backgroundColor,
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 1,
+      });
+      this.chart_data.data.labels = primary_labels;
 
       //update chart options vary depending on type of chart
       //if its not a doughtnut or pie chart then the axis need to be calculated
       this.resetChartOptions();
       if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
-          this.chart_data.options.scales = {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-              suggestedMax: max_y_axis
-            },
-          }],
-        }
+        this.setBartChartAxis(max_y_axis);
       }
       this.changedChartDataEvent.notify(this.chart_data);
     });
+  },
+  /**
+   * @function getSecondaryAttributesCount - get datasets for a stacked chart
+   *                                      with categorical secondary attributes
+   */
+  getSecondaryAttributeCount: function(caseList){
+    var att = this.selected.attributes[0];
+    var col = this.getAttributeCollection(att, this.selected.context);
+
+    var primary_attributes = this.getAttributeUniqueLabels(caseList, att);
+    this.selected.cases = primary_attributes;
+
+    var primary_labels = Object.keys(primary_attributes);
+    //track max value
+    var max_y_axis = Math.max(...primary_labels.map((label)=>{return primary_attributes[label].length;}));
+    max_y_axis += Math.round(max_y_axis/10) + 1; //round max_y_axis up
+
+    //sort primary labels
+    if(!isNaN(primary_labels[0])){
+      primary_labels = primary_labels.sort(function(a, b){return a-b});
+    } else primary_labels = primary_labels.sort();
+
+    //these are secondary attributes
+    var secondary_attributes = this.selected.attributes.slice(1);
+    var datasets = this.getDatasets(primary_attributes, primary_labels, secondary_attributes);
+    var secondary_labels = Object.keys(datasets);
+
+    //sort secondary labels
+    if(isNaN(primary_labels[0])){
+      secondary_labels = secondary_labels.sort(function(a, b){return a-b});
+    } else secondary_labels = secondary_labels.sort();
+
+    //package datasets for chart.js
+    var chart_datasets = secondary_labels.map((label)=>{
+      var set = {
+        label: label,
+        data: datasets[label],
+        backgroundColor: getSingleColor(),
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 1,
+      };
+      return set;
+    });
+
+    //update data
+    this.resetChartData();
+    this.chart_data.data.datasets = chart_datasets;
+    this.chart_data.data.labels = primary_labels;
+
+    //update chart options vary depending on type of chart
+    //if its not a doughtnut or pie chart then the axis need to be calculated
+    this.resetChartOptions();
+    if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
+      this.setBartChartAxis(max_y_axis);
+    }
+    this.changedChartDataEvent.notify(this.chart_data);
+  },
+  /**
+   * @function setBartChartAxis - calculates axis for chart
+   * @param {number} max - max number for bar chart's y-axis
+   */
+  setBartChartAxis: function(max){
+    this.chart_data.options.scales = {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          suggestedMax: max
+        },
+        stacked: true,
+      }],
+      xAxes: [{
+        stacked: true,
+      }]
+    }
+  },
+  /**
+   * @function getDatasets
+   * @param  {object} cases  as recieved from CODAP
+   * @param  {string[]} labels primary attribute labels
+   * @param  {values} values secondary attributes
+   * @return {Object[]} datasets - key/value items where key is secondary label and
+   *                               value is its respective dataset
+   */
+  getDatasets: function(cases, labels, values){
+    var secondary_att_objs = {};
+    var secondary_att_keys = [];
+    values.forEach((val)=>{
+      //each secondary attribute gonna have its own data set with length matching labels
+      labels.forEach((label)=>{
+        secondary_att_objs[label] = this.getAttributeUniqueLabels(cases[label], val);
+        var keys = Object.keys(secondary_att_objs[label]).sort();
+        secondary_att_keys = this.appendUniqueKeys(secondary_att_keys,keys);
+      });
+    });
+    var datasets = {}; //key,value object where key is the label(for secondary attribute)
+                       //and value is the data array
+    secondary_att_keys.forEach((key)=>{
+      var data = [];
+      labels.forEach((label)=>{
+        if(secondary_att_objs[label][key]){
+          data.push(secondary_att_objs[label][key].length);
+        } else data.push(0);
+      });
+      datasets[key] = data;
+    });
+    return datasets;
+  },
+  /**
+   * @function appendUniqueKeys - appends two sorted lists without repeated values
+   * @param  {array} first
+   * @param  {array} second
+   * @return {array} merge - combined array containing first and second without repeated values
+   */
+  appendUniqueKeys: function(first, second){
+    //both keys are sorted, adding to array from newkeys
+    var merge = [];
+    var i =0 ,j = 0;
+    while(i < first.length && j < second.length){
+      if(first[i]==second[j]){
+        merge.push(first[i]);
+        i++;
+        j++;
+      }
+      else if(first[i]<second[j]){
+        merge.push(first[i]);
+        i++;
+      }
+      else if(first[i]>second[j]){
+        merge.push(second[j]);
+        j++;
+      }
+    }
+    while(i < first.length){
+      merge.push(first[i]);
+      i++;
+    }
+    while(j < second.length){
+      merge.push(second[j]);
+      j++;
+    }
+    return merge;
   },
   /**
    * @function getAttributeUniqueLabels - calculates the count of an attribtues
@@ -514,19 +667,14 @@ ChartModel.prototype = {
    *                         of how many times it appeared
    */
   getAttributeUniqueLabels: function(cases, att){
-    var att_vals = cases.map(function(x){
-      return x.values[att];
-    });
-    var labels = {};
-    att_vals.forEach((val)=>{
-      if(!labels[val]){
-        labels[val] = 1;
+    var att_vals = {};
+    cases.forEach(function(case_item){
+      if(!att_vals[case_item.values[att]]){
+        att_vals[case_item.values[att]] = [];
       }
-      else{
-        labels[val] += 1;
-      }
+      att_vals[case_item.values[att]].push(case_item);
     });
-    return labels;
+    return att_vals;
   },
   //*****************************************************************************
   //
@@ -555,9 +703,10 @@ ChartModel.prototype = {
    * @function resetChartOptions - resets the options when a chart type is changed
    */
   updateChartType: function(type){
-    if(type!='bar'){
+    if (type == 'pie' || type=='doughnut'){
       this.selected.attribute_limit = 2;
-    } else { this.selected.attribute_limit = null;}
+    } else this.selected.attribute_limit = null;
+
     this.selected.chart_type = type;
     this.chart_data.type = this.selected.chart_type;
     this.resetChartOptions();
@@ -609,27 +758,34 @@ ChartModel.prototype = {
       this.moveAttribute(context);
     });
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'updateAttributes', (evt)=>{
-      var att_list = evt.values.result.attrs;
+      if(evt.values.result.attrs){
       getContext(context.name).then((newContext)=>{
         //iterate through attribute list
-        context.collections.forEach((collection)=>{
-          collection.attrs.forEach((att)=>{
-            for (var i = 0; i < att_list.length; i++) { //iterate through updated list
-              if(att_list[i].id == att.id){
-                //delete old
-                this.deleteAttributeByID(context.name, att_list[i].id);
-                this.deleteAttributeEvent.notify( att.name );
-                //add new
-                this.addAttribute(att_list[i].name, collection.name, context.name);
+          var att_list = [];
+          att_list = evt.values.result.attrs; //if attrs exists then there was a name change
+          context.collections.forEach((collection)=>{
+            collection.attrs.forEach((att)=>{
+              for (var i = 0; i < att_list.length; i++) { //iterate through updated list
+                if(att_list[i].id == att.id){
+                  if(att_list[i].name != att.name){
+                    //delete old
+                    this.deleteAttributeByID(context.name, att_list[i].id);
+                    this.deleteAttributeEvent.notify( att.name );
+                    //add new
+                    this.addAttribute(att_list[i].name, collection.name, context.name);
+                    //update context
+                    context.collections = newContext.collections;
+                    console.log(newContext.collections);
+                    console.log(context.collections);
+                    //move to correct position
+                    this.moveAttribute(context);
+                  }
+                }
               }
-            }
+            });
           });
         });
-        //update context
-        context.collections = newContext.collections;
-        //move to correct position
-        this.moveAttribute(context);
-      });
+      }
     });
     codapInterface.on('dataContextChangeNotice['+context.name+']', 'deleteCollection', (evt)=>{
       getContext(context.name).then((newContext)=>{
@@ -668,7 +824,6 @@ ChartModel.prototype = {
 //    Global CODAP and helper functions
 //
 //******************************************************************************
-
 function getData(context, collection, attribute){
   var src = "";
   switch (arguments.length){

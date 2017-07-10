@@ -242,9 +242,17 @@ select:hover{
 .profile-container:hover #profile-overlay {
   opacity: .5;
 }
+.primary, .primary:hover{
+  background-color: #CC788E;
+  color: black;
+}
+.secondary, .secondary:hover{
+  background-color: #FFFAAF;
+  color: black;
+}
 .selected, .selected:hover{
-  background-color: black;
-  color: white;
+  background-color: #FFFAAF;
+  color: black;
 }
 
 #profile-text {

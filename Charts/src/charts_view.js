@@ -253,10 +253,10 @@ ChartView.prototype = {
  */
 function addContextDOM(context){
   var $unList = $("<ul>", {'id': removeSpace(context), 'class':'view-context-list'});
-  $unList.css("background-color", 'lightblue');
+  $unList.css("background-color", "#7EE6FF");
   $unList.hover(
     function(){ $(this).css("background-color", "white"); },
-    function(){ $(this).css("background-color", "lightblue"); }
+    function(){ $(this).css("background-color", "#7EE6FF"); }
   );
   $unList.text(context);
   $unList.click(function(event){
