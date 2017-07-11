@@ -167,12 +167,43 @@ select{
 select:hover{
   border-color: black;
 }
-#info{
+
+#modal-buttons{
   z-index: 1;
-  position: fixed;
+  position: absolute;
   float: right;
   border: none;
-  margin-left: 95vw;
+  margin-left: 95%;
+}
+#helpinfo{
+  display: none;
+  width: 70vw;
+  height: 70vh;
+  margin-top: 15vh;
+  margin-bottom: 15vh;
+  margin-left: 15vw;
+  margin-right: 15vw;
+
+  position: fixed;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1;
+  text-align: center;
+}
+#close-help{
+  position: relative;
+  float:right;
+  color: white;
+  border: none;
+  font-size: 25pt;
+}
+#close-help:hover{
+  color: lightblue;
+}
+#info, #help{
+  border: none;
+  margin: none;
+  padding: none;
 }
 #authorinfo{
   display: none;
@@ -189,6 +220,16 @@ select:hover{
   z-index: 1;
   text-align: center;
 }
+#close-author{
+  position: relative;
+  float:right;
+  color: white;
+  border: none;
+  font-size: 25pt;
+}
+#close-author:hover{
+  color: lightblue;
+}
 #userstate {
   width: 30vw;
   height: 20vh;
@@ -203,16 +244,6 @@ select:hover{
   z-index: 1;
   text-align: center;
 
-}
-#close-author{
-  position: relative;
-  float:right;
-  color: white;
-  border: none;
-  font-size: 25pt;
-}
-#close-author:hover{
-  color: lightblue;
 }
 .profile-container{
   position: relative;

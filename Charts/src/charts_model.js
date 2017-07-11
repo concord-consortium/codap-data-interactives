@@ -92,7 +92,11 @@ ChartModel.prototype = {
       this.selected = state.selected;
       //trigger event when loading attributes and contexts
       this.selected.attributes.forEach((att)=>{
-        this.selectedAttributeEvent.notify(att);
+        if (att == this.selected.attributes[0]){
+          this.selectedAttributeEvent.notify({name: att, type: 'primary'});
+        } else {
+          this.selectedAttributeEvent.notify({name: att, type: 'secondary'});
+        }
       });
       this.selectedContextEvent.notify(state.selected.context);
 
@@ -325,7 +329,7 @@ ChartModel.prototype = {
       this.selected.attributes = [];
       this.selected.context = cxt;
       this.selected.attributes.push(att);
-      this.selectedAttributeEvent.notify(att);
+      this.selectedAttributeEvent.notify({name: att, type: 'primary'});
     } else{ //if same context, then we are either adding or removing a selected attribute
       var index = this.isAttributeSelected(att);
       //if the selected limit is reached and the attribute is not already selected
@@ -334,18 +338,28 @@ ChartModel.prototype = {
         this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
         this.selected.attributes.splice(this.selected.attributes.length-1, 1);
         this.selected.attributes.push(att);
-        this.selectedAttributeEvent.notify(att);
+        if(this.selected.attributes.length == 1){
+          this.selectedAttributeEvent.notify({name: att, type: 'primary'});
+        } else  this.selectedAttributeEvent.notify({name: att, type: 'secondary'});
       }else{ //if limit not reached, then user is either adding or removing attribute
         if(index == -1){
           this.selected.attributes.push(att);
-          this.selectedAttributeEvent.notify(att);
+          if(this.selected.attributes.length == 1){
+            this.selectedAttributeEvent.notify({name: att, type: 'primary'});
+          } else  this.selectedAttributeEvent.notify({name: att, type: 'secondary'});
         } else{
           this.selected.attributes.splice(index, 1);
           this.deselectedAttributeEvent.notify(att);
+          if(this.selected.attributes.length == 1){
+            var temp = this.selected.attributes[0];
+            this.deselectedAttributeEvent.notify(temp);
+            this.selectedAttributeEvent.notify({name: temp, type: 'primary'});
+          }
         }
       }
     }
-   this.calculateChartData();
+    if(this.selected.attributes.length != 0)
+      this.calculateChartData();
   },
   //*****************************************************************************
   //

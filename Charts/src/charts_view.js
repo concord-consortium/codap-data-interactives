@@ -190,10 +190,12 @@ ChartView.prototype = {
   /**
    * @function selectedAttribute - stylizes the attribute item after click
    * @param  {Object} sender
-   * @param {string} attribute
+   * @param {Object} attribute
+   * @param {string} attribute.name
+   * @param {string} attribute.type
    */
   selectedAttribute: function(sender, attribute){
-    $('#'+removeSpace(attribute)).addClass("selected");
+    $('#'+removeSpace(attribute.name)).addClass(attribute.type);
   },
   /**
    * @function deselectAttribute
@@ -201,7 +203,8 @@ ChartView.prototype = {
    * @param {string} attribute
    */
   deselectAttribute: function(sender, attribute){
-    $('#'+removeSpace(attribute)).removeClass("selected");
+    $('#'+removeSpace(attribute)).removeClass('primary');
+    $('#'+removeSpace(attribute)).removeClass('secondary');
   },
   /**
    * @function deselectContext - stylize unselected context back to original
@@ -209,7 +212,8 @@ ChartView.prototype = {
    * @param  {string} context
    */
   deselectContext: function(sender, context){
-    $('#'+removeSpace(context)).find(".selected").removeClass("selected");
+    $('#'+removeSpace(context)).find(".primary").removeClass('primary');
+    $('#'+removeSpace(context)).find(".secondary").removeClass('secondary');
   },
   /**
    * @function selectContext - stylize context back to original

@@ -47,6 +47,12 @@ function openAuthorInfo(){
     $('#authorinfo').hide();
   });
 }
+function openHelpInfo(){
+  $('#helpinfo').show();
+  $('#close-help').on('click', function(evt){
+    $('#helpinfo').hide();
+  });
+}
 function refreshPlugin(){
   $('#contextList').empty();
   $('#myChart').remove();
