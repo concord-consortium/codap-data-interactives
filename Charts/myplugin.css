@@ -117,6 +117,7 @@ li{
   /*float: right;*/
   position: relative;
   margin: auto;
+  padding-left: 3%;
   height: 100%;
   width: 100%;
 }

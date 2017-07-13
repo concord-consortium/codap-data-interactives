@@ -333,10 +333,13 @@ ChartModel.prototype = {
     } else{ //if same context, then we are either adding or removing a selected attribute
       var index = this.isAttributeSelected(att);
       //if the selected limit is reached and the attribute is not already selected
-      if(this.selected.attribute_limit == this.selected.attributes.length && index==-1){
+      if(this.selected.attribute_limit <= this.selected.attributes.length && index==-1){
         //remove the last selected attribute and add new one
-        this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
-        this.selected.attributes.splice(this.selected.attributes.length-1, 1);
+        while(!this.selected.attributes.length < this.selected.attribute_limit){
+          this.deselectedAttributeEvent.notify(this.selected.attributes[this.selected.attributes.length-1]);
+          this.selected.attributes.splice(this.selected.attributes.length-1, 1);
+        }
+
         this.selected.attributes.push(att);
         if(this.selected.attributes.length == 1){
           this.selectedAttributeEvent.notify({name: att, type: 'primary'});
@@ -383,18 +386,18 @@ ChartModel.prototype = {
         if(isNaN(type)){
           this.getSecondaryAttributeCount(caseList);
         } else{
-          this.getAttributeDatasets(caseList);
+          this.getMultipleAttributeDatasets(caseList);
         }
       });
     }
     else if(this.selected.attributes.length > 2){
       getData(this.selected.context, col, att).then((caseList) => {
-        this.getAttributeDatasets(caseList);
+        this.getMultipleAttributeDatasets(caseList);
       });
     }
 
   },
-  getAttributeDatasets: function(caseList){
+  getMultipleAttributeDatasets: function(caseList){
     //the first attribute selected will be the categories
     var att = this.selected.attributes[0];
     var col = this.getAttributeCollection(att, this.selected.context);
@@ -462,7 +465,11 @@ ChartModel.prototype = {
         yAxes: [{
           ticks: {
             beginAtZero: true,
-            suggestedMax: max_y_axis
+            suggestedMax: max_y_axis,
+          },
+          scaleLabel: {
+            display: true,
+            labelString: labels_list.join(", "),
           },
         }],
       }
@@ -473,7 +480,7 @@ ChartModel.prototype = {
   /**
    * @function getCasesCount - create a list of values from a list of Objects, where the
    *                            objects contain a list of values
-   * @param  {Object[]} cases - cases as contructed in getAttributeDatasets
+   * @param  {Object[]} cases - cases as contructed in getMultipleAttributeDatasets
    * @param  {number} index - number pertaining to which values are retrived, -1 returns a list
    *                          of keys
    * @return {[type]}       [description]
@@ -524,7 +531,7 @@ ChartModel.prototype = {
       //if its not a doughtnut or pie chart then the axis need to be calculated
       this.resetChartOptions();
       if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
-        this.setBartChartAxis(max_y_axis);
+        this.setBartChartAxis(max_y_axis, "Count", att);
       }
       this.changedChartDataEvent.notify(this.chart_data);
     });
@@ -581,15 +588,18 @@ ChartModel.prototype = {
     //if its not a doughtnut or pie chart then the axis need to be calculated
     this.resetChartOptions();
     if (this.selected.chart_type != 'doughnut' && this.selected.chart_type != 'pie'){
-      this.setBartChartAxis(max_y_axis);
+      this.setBartChartAxis(max_y_axis, "Count", att);
     }
     this.changedChartDataEvent.notify(this.chart_data);
   },
   /**
    * @function setBartChartAxis - calculates axis for chart
    * @param {number} max - max number for bar chart's y-axis
+   * @param {string} yLabel
+   * @param {string} xLabel
+   * @param {string} title
    */
-  setBartChartAxis: function(max){
+  setBartChartAxis: function(max, yLabel, xLabel, title){
     this.chart_data.options.scales = {
       yAxes: [{
         ticks: {
@@ -597,9 +607,17 @@ ChartModel.prototype = {
           suggestedMax: max
         },
         stacked: true,
+        scaleLabel: {
+          display: true,
+          labelString: yLabel,
+        },
       }],
       xAxes: [{
         stacked: true,
+        scaleLabel: {
+          display: true,
+          labelString: xLabel,
+        },
       }]
     }
   },
@@ -717,12 +735,16 @@ ChartModel.prototype = {
   updateChartType: function(type){
     if (type == 'pie' || type=='doughnut'){
       this.selected.attribute_limit = 1;
-    } else this.selected.attribute_limit = null;
+    } else{
+      this.selected.attribute_limit = null;
+    }
 
     this.selected.chart_type = type;
     this.chart_data.type = this.selected.chart_type;
     this.resetChartOptions();
-    this.calculateChartData();
+    if(this.selected.attributes.length != 0){
+      this.calculateChartData();
+    }
     this.changedChartTypeEvent.notify(type);
   },
   //*****************************************************************************
