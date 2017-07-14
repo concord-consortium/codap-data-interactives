@@ -25,10 +25,10 @@ var my_chart = {};
 // initialize the codapInterface
 codapInterface.init({
 
-  name: 'Graphs',
+  name: 'Charts',
   dimensions: {width: 700, height: 500},
-  title: 'Graphs',
-  version: '0.1',
+  title: 'Charts',
+  version: '1.0',
 }).then(function(iResult){
   user_state = codapInterface.getInteractiveState();
 
