@@ -128,10 +128,12 @@ $(document).ready(function () {
             category = obj.categories,
             path = '',
             url = $("#codap-url").val(),
+            // query_param = url
             category_bin ='',
             listing = '',
             listing_desc ='',
-            query_param = '?di=',
+            query_param_di = '?di=',
+            query_param_dev = '?dev',
             launchLink = '',
             linkLink = '',
             url_root = window.location.origin+window.location.pathname;
@@ -147,6 +149,8 @@ $(document).ready(function () {
         if (url.match(/^https/i) && !path.match(/^https/i)) {
             path=path.replace(/http/i,'https');
         }
+
+        // if (url.match('?dev=true'))check the query parameter
 
 
             for (var i=0; i<category.length;i++) {
@@ -166,7 +170,7 @@ $(document).ready(function () {
                 category_bin = '#' + category[i] + '_list';
             }
             listing = $('<li>').addClass('listing');
-            launchLink = $('<a class = "listing-title" target = "_blank" href='+url+query_param+path+'> '+title+' </a>'),
+            launchLink = $('<a class = "listing-title" target = "_blank" href='+url+query_param_di+path+'> '+title+' </a>'),
                 listing_desc = $('<p>').addClass('listing-desc').append(description),
                 linkLink = $('<a class = "listing-link" href=' + path + '>Embeddable Link </a>'),
                 launchLink.appendTo(listing);
