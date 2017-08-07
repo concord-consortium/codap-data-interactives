@@ -7,10 +7,8 @@ $(document).ready(function () {
     //Utility function to check if URL has query param and parse the query param. Returns true if it exists
     function checkQueryParam (){
         var query = decodeURIComponent(window.location.search.substring(1));
-        console.log ("query param is " + query);
-        if (query=="") {
-            return false;
-        } else if (query=="dev") {
+
+        if (query=="dev") {
             return true;
         } else {
             return false;
@@ -195,7 +193,6 @@ $(document).ready(function () {
     function buildListing(listing){
 
         $('.listing').remove();
-
         if (checkQueryParam()) {         //check if url param includes query param
             for (var i=0; i<listing.length; i++) {
                 AddListingObj(listing[i]);
