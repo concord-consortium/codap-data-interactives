@@ -4,6 +4,19 @@
 
 $(document).ready(function () {
 
+    //Utility function to check if URL has query param and parse the query param. Returns true if it exists
+    function checkQueryParam (){
+        var query = decodeURIComponent(window.location.search.substring(1));
+        console.log ("query param is " + query);
+        if (query=="") {
+            return false;
+        } else if (query=="dev") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function fetchObjList () {
         console.log ("in fetchObjList");
         var loc = "./data_interactive_map.json";
@@ -128,12 +141,10 @@ $(document).ready(function () {
             category = obj.categories,
             path = '',
             url = $("#codap-url").val(),
-            // query_param = url
             category_bin ='',
             listing = '',
             listing_desc ='',
             query_param_di = '?di=',
-            query_param_dev = '?dev',
             launchLink = '',
             linkLink = '',
             url_root = window.location.origin+window.location.pathname;
@@ -182,11 +193,18 @@ $(document).ready(function () {
 
 
     function buildListing(listing){
-        //check if item is visible
+
         $('.listing').remove();
-        for (var i=0; i<listing.length; i++) {
-            if (listing[i].visible) {
+
+        if (checkQueryParam()) {         //check if url param includes query param
+            for (var i=0; i<listing.length; i++) {
                 AddListingObj(listing[i]);
+            }
+        } else {
+            for (var i = 0; i < listing.length; i++) {
+                if (listing[i].visible) {         //check if item is visible
+                    AddListingObj(listing[i]);
+                }
             }
         }
     }
