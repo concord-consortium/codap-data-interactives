@@ -356,33 +356,11 @@
       ]
     },
     {
-      "title": "Desmos Basic Calculator",
-      "description": "",
-      "width": 600,
-      "height": 400,
-      "path": "/DesmosBasicCalculator/index.html",
-      "visible": false,
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
       "title": "Desmos Geometry",
       "description": "",
       "width": 600,
       "height": 400,
       "path": "/DesmosGeometry/index.html",
-      "visible": false,
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
-      "title": "Desmos Graphing Calculator",
-      "description": "",
-      "width": 600,
-      "height": 400,
-      "path": "/DesmosGraphingCalculator/index.html",
       "visible": false,
       "categories": [
         "Utilities"
