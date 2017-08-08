@@ -209,7 +209,7 @@ $(document).ready(function () {
 
         buildListingDivs(categories_obj);
         buildListing(di_list);
-      
+
       $('#codap_url_form').on('submit', function(event) {
           buildListing(di_list);
           event.preventDefault();
