@@ -159,9 +159,6 @@ $(document).ready(function () {
             path=path.replace(/http/i,'https');
         }
 
-        // if (url.match('?dev=true'))check the query parameter
-
-
             for (var i=0; i<category.length;i++) {
             if (category[i].includes('/')) {
                 console.log("In category split");
@@ -189,8 +186,8 @@ $(document).ready(function () {
         }
     }
 
-
-    function buildListing(listing){
+    function buildListing(listing) {
+        console.log("In buildListing")
 
         $('.listing').remove();
         if (checkQueryParam()) {         //check if url param includes query param
@@ -206,14 +203,17 @@ $(document).ready(function () {
         }
     }
 
-
     function buildPage(response) {
         var categories_obj = getCategories(response);
         var di_list = response.data_interactives;
+
         buildListingDivs(categories_obj);
         buildListing(di_list);
-
-        $('#codap-url').on('input', function(){buildListing(di_list); return false;});
+      
+      $('#codap_url_form').on('submit', function(event) {
+          buildListing(di_list);
+          event.preventDefault();
+          return false;});
     }
 
     fetchObjList();
