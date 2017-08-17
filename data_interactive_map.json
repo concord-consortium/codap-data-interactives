@@ -343,6 +343,94 @@
       "categories": [
         "Utilities"
       ]
+    },
+    {
+      "title": "CaseGenerator",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/CaseGenerator/CaseGenerator.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Data Interactive API Tester",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/DataInteractiveAPITester/index.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Desmos Geometry",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/DesmosGeometry/index.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "GeoJSON Importer",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/GeoJSONImporter/GeoJSONImporter.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "GoogleSheets",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/GoogleSheets/example.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Image Library",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/ImageLibrary/index.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "JSON Rows",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/JsonRows/JsonRows.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Movement",
+      "description": "",
+      "width": 600,
+      "height": 400,
+      "path": "/Movement/Movement.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
     }
   ]
 }

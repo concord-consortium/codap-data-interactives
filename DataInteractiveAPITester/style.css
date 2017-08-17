@@ -204,6 +204,14 @@ button {
   margin: 3px;
   background-color: transparent ;
 }
+#filter-button.filter-active {
+  background-color:darkgray;
+  color: white;
+  border-radius: 5px;
+  border: thin gray solid;
+  outline: none;
+  line-height: 1;
+}
 /*.di-run-field, .di-count-field, .di-open-field{*/
   /*width: 5%;*/
 /*}*/
