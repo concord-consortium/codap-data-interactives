@@ -334,6 +334,17 @@
       ]
     },
     {
+      "title": "Charts",
+      "description": "Allows user to create common charts for attributes on the data contexts",
+      "width": 600,
+      "height": 400,
+      "path": "/Charts/index.html",
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
       "title": "CaseGenerator",
       "description": "",
       "width": 600,
@@ -416,17 +427,6 @@
       "width": 600,
       "height": 400,
       "path": "/Movement/Movement.html",
-      "visible": false,
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
-      "title": "Screen Scraper",
-      "description": "",
-      "width": 600,
-      "height": 400,
-      "path": "/ScreenScraper/index.html",
       "visible": false,
       "categories": [
         "Utilities"
