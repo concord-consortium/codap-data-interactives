@@ -285,7 +285,17 @@
       "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
     }
   },
-
+  {
+    "name": "Update Attribute Location",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Toons].attributeLocation[name]",
+      "values": {
+        "position": 0,
+        "collection": "newCollection"
+      }
+    }
+  },
   {
     "name": "Create Parent Case",
     "message": {

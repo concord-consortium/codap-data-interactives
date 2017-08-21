@@ -27,9 +27,10 @@ $(function () {
       'dataContext',
       'collection',
       'attribute',
+      'attributeLocation',
       'case',
       'item',
-      'selection',
+      'selectionList',
       'undoChangeNotice',
       'logMessage'
     ];
