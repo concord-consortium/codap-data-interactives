@@ -32,7 +32,8 @@ $(function () {
       'item',
       'selectionList',
       'undoChangeNotice',
-      'logMessage'
+      'logMessage',
+      'logMessageMonitor'
     ];
 
   var templates = [];
@@ -562,21 +563,22 @@ $(function () {
   }
 
   function removeNotifyFilter() {
+    $('#filter-button').removeClass('filter-active');
     regenerateLog();
   }
 
   function addNotifyFilter() {
+    $('#filter-button').addClass('filter-active');
     regenerateLog();
   }
 
   function notifyFilterIsActive() {
-    return $('#filter-button').hasClass('filter-active');
+    return interactiveState.config.filterNotifications; // $('#filter-button').hasClass('filter-active');
   }
 
   function toggleNotifyFilter() {
-    var $filterButton = $('#filter-button');
-    var wasActive = $filterButton.hasClass('filter-active');
-    $filterButton.toggleClass('filter-active');
+    var wasActive = interactiveState.config.filterNotifications; //$filterButton.hasClass('filter-active');
+    interactiveState.config.filterNotifications = !interactiveState.config.filterNotifications;
     if (wasActive) {
       removeNotifyFilter();
     } else {
@@ -693,6 +695,15 @@ $(function () {
     interactiveState.recordings.forEach(function (recording, ix) {
       makeRecordingView(recording.name, recording.data.length, ix);
     });
+
+    if (!interactiveState.config) {
+      interactiveState.config = {
+        filterNotifications: false
+      }
+    }
+    if (interactiveState.config.filterNotifications) {
+      addNotifyFilter();
+    }
   });
 
   codapInterface.on('notify', '*', function (notice) {

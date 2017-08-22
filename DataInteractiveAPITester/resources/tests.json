@@ -590,6 +590,52 @@
   },
 
   {
+    "name": "Log a Message with topic",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "topic": "dataflow",
+        "formatStr": "Did this thing"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging: full fire hose",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "message": "*"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging by topic",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "topic": "dataflow",
+        "clientId": "abc123"
+      }
+    }
+  },
+
+  {
+    "name": "Unsubscribe to Message Logging by topic",
+    "message": {
+      "action": "unregister",
+      "resource": "logMessageMonitor",
+      "values": {
+        "clientId": "abc123"
+      }
+    }
+  },
+
+  {
     "name": "Undo Change",
     "message": {
       "action": "notify",
