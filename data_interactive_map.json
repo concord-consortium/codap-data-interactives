@@ -246,6 +246,52 @@
       ]
     },
     {
+      "title": "Sage",
+      "description": "A Building Models systems modeler.",
+      "width": 780,
+      "height": 620,
+      "path": "https://sage.concord.org",
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
+    },
+
+    {
+      "title": "Stella",
+      "description": "A Data Science Game. Stella is a simulation where you are an astronomer studying stars. ",
+      "width": 780,
+      "height": 620,
+      "path": "https://www.eeps.com/dsg/stella/stella.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Stebbins",
+      "description": "A Data Science Game. You are a predator. Stebbers and Crud are colored circles moving around the World.",
+      "width": 780,
+      "height": 620,
+      "path": "https://www.eeps.com/dsg/steb/steb.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Barty",
+      "description": "A Data Science Game. Pulls data from the BART database and allows you to see voyage starts and ends by station by date. ",
+      "width": 780,
+      "height": 620,
+      "path": "https://www.eeps.com/dsg/barty/barty.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+
+    {
       "title": "Data Card",
       "description": "Data Card permits the user to browse and modify a data set one case at a time.",
       "width": 780,
