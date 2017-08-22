@@ -122,6 +122,7 @@
       "resource": "dataContext[DataContext1].collection",
       "values": [
         {
+          "parent": "ROOT",
           "name": "People",
           "title": "Data about People",
           "labels": {
@@ -286,16 +287,30 @@
     }
   },
   {
-    "name": "Update Attribute Location",
-    "message": {
+    "name": "Update Attribute Location to Parent",
+    "message":
+    {
       "action": "update",
-      "resource": "dataContext[DataContext1].collection[Toons].attributeLocation[name]",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
       "values": {
-        "position": 0,
-        "collection": "newCollection"
+        "collection": "parent",
+        "position": 0
       }
     }
   },
+  {
+    "name": "Update Attribute Location",
+    "message":
+    {
+      "action": "update",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
+      "values": {
+        "collection": "collectionName",
+        "position": 2
+      }
+    }
+  },
+
   {
     "name": "Create Parent Case",
     "message": {
