@@ -181,7 +181,7 @@ var topics = [
     checkbox: "Stop recording data",
     popUp: div({},
       p({}, "Data collection is now paused. You can start recording data again at any time."),
-      p({}, "Next: Right click on the sensor block and select \"View recorded data.\"")
+      p({}, "Next: Click on the \"View recorded data.\" button")
     )
   },
   {
