@@ -1,0 +1,11 @@
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+
+.error-msg {
+  color: red;
+}
