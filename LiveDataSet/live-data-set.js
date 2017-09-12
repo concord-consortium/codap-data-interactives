@@ -32,7 +32,7 @@ $(function () {
 
   function handleDataLoad(data) {
     try {
-      var result = Papa.parse(data);
+      var result = Papa.parse(data, {skipEmptyLines:true});
       dataSet = result.data;
       setStats(myState.csvURL, dataSet);
       myState.lastFetch = new Date();
@@ -48,7 +48,9 @@ $(function () {
   }
 
   function getName(url) {
-    return url && url.replace(/[^\/]*\//g, '').replace(/\.[^.]*$/, '');
+    var name = url && url.replace(/[^\/]*\//g, '').replace(/\.[^.]*$/, '');
+    console.log("extracted name: " + name + " from url: " + url);
+    return name;
   }
 
   // function formatRow(a) {
@@ -171,7 +173,6 @@ $(function () {
     $('.csv-url').text(myState.csvURL||'');
     $('.csv-cols').text(myState.stats && myState.stats.cols||'');
     $('.csv-rows').text(myState.stats && myState.stats.rows||'')
-    $('#data-set-name').val(myState.dataSetName);
     $('.data-set-name').text(myState.dataSetName)
     $('.first-line-is-header').text(myState.firstLineIsHeader);
     $('.last-fetch').text(myState.lastFetch?myState.lastFetch.toLocaleString():'');
@@ -238,14 +239,14 @@ $(function () {
   codapInterface.init({
     name: 'live-data-set',
     title: 'Live Data Set',
-    dimensions: {width: 300, height: 400},
+    dimensions: {width: 300, height: 180},
     version: '0.1',
     preventDataContextReorg: false
   }).then(function (/*iResult*/) {
     // get interactive state so we can save the sample set index.
     myState = codapInterface.getInteractiveState();
-    if (myState.step) {
-
+    if (myState.csvURL) {
+      fetchCSVData(myState.csvURL);
     } else {
       myState.step = '#start-step';
     }

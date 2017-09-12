@@ -13,7 +13,6 @@
   <script src="live-data-set.js"></script>
 </head>
 <body>
-<h1>Live Data Set</h1>
 <div id="work-area">
   <div class="step" id="no-step">
     This page is a <a href="https://codap.concord.org">CODAP</a> plugin.
@@ -34,10 +33,10 @@
   </div>
   <div class="step" id="load-step">
     <div><span class="label">URL: </span><span class="csv-url"></span></div>
-    <div><span class="label">Cols: </span><span class="csv-cols"></span></div>
-    <div><span class="label">Rows: </span><span class="csv-rows"></span></div>
+    <div><span class="label">Cols: </span><span class="csv-cols"></span>
+    <span class="label">Rows: </span><span class="csv-rows"></span></div>
     <form id="load-form">
-      <label>Data Set: <input id="data-set-name" type="text" placeholder="data set name"/></label>
+      <label>Data Set: <input id="data-set-name" type="text"/></label>
       <label><input id="csv-first-line-is-header" type="checkbox" checked /> First row is header</label>
       <input type="submit" value="fetch" />
       <button class="restart-button">Restart</button>
@@ -45,8 +44,8 @@
   </div>
   <div class="step" id="run-step">
     <div><span class="label">URL: </span><span class="csv-url"></span></div>
-    <div><span class="label">Cols: </span><span class="csv-cols"></span></div>
-    <div><span class="label">Rows: </span><span class="csv-rows"></span></div>
+    <div><span class="label">Cols: </span><span class="csv-cols"></span>
+    <span class="label">Rows: </span><span class="csv-rows"></span></div>
     <div><span class="label">Data Set: </span><span class="data-set-name"></span></div>
     <div><span class="label">First Line is Header: </span><span class="first-line-is-header"></span></div>
     <div><span class="label">Last fetch: </span><span class="last-fetch"></span></div>
