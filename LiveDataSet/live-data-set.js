@@ -18,6 +18,8 @@
 // ==========================================================================
 /*global $:true, Papa:true, codapInterface:true, Promise:true*/
 $(function () {
+  var kDefaultUpdateInterval=5*60*1000;
+
   var myState = {
     attrs: [],
     csvURL: null,
@@ -25,7 +27,8 @@ $(function () {
     firstLineIsHeader: null,
     lastFetch: null,
     stats: {},
-    step: '#start-step'
+    step: null,
+    updateInterval: null
   }
 
   var dataSet;

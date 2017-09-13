@@ -243,7 +243,8 @@
           title: iConfig.title,
           version: iConfig.version,
           dimensions: iConfig.dimensions,
-          preventBringToFront: iConfig.preventBringToFront
+          preventBringToFront: iConfig.preventBringToFront,
+          preventDataContextReorg: iConfig.preventDataContextReorg
         };
         var updateFrameReq = {
           action: 'update',
