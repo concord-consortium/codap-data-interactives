@@ -18,8 +18,11 @@
 // ==========================================================================
 /*global $:true, Papa:true, codapInterface:true, Promise:true*/
 $(function () {
-  var kDefaultUpdateInterval=5*60*1000;
+  // constants
+  var kDefaultUpdateInterval=5; // minutes
+  var kAttrPrefix = 'attr_';
 
+  // persistent state
   var myState = {
     attrs: [],
     csvURL: null,
@@ -29,9 +32,11 @@ $(function () {
     stats: {},
     step: null,
     updateInterval: null
-  }
+  };
 
+  // transient state
   var dataSet;
+  var updateTimer;
 
   function handleDataLoad(data) {
     try {
@@ -46,39 +51,66 @@ $(function () {
         setStep('#load-step');
       }
     } catch (ex) {
-      printError(ex);
+      displayError(ex);
     }
   }
 
   function getName(url) {
     var name = url && url.replace(/[^\/]*\//g, '').replace(/\.[^.]*$/, '');
-    console.log("extracted name: " + name + " from url: " + url);
+    logMessage("extracted name: " + name + " from url: " + url);
     return name;
   }
 
-  // function formatRow(a) {
-  //   var $row = $('<tr>');
-  //   a.forEach(function (item/*, iname*/) {
-  //     var $cell = $('<td>').text(item.toString());
-  //     $cell.appendTo($row);
-  //   })
-  //   return $row;
-  // }
-
   function setStats(url, data) {
     var cols = data.reduce(
-        function (sum, row) {return Math.max(sum, row.length)}, 0);
+        function (sum, row) {return Math.max(sum, row.length);}, 0);
     var rows = data.length;
     myState.stats = {cols: cols, rows: rows};
     $('#data-set-name').val(getName(url));
   }
 
-  function printError(msg) {
-    printMessage($('<span>').addClass('error-msg').text(msg));
+  function setStep(st) {
+    myState.step = st;
+    render();
   }
 
-  function printMessage(msg) {
-    $('#message-area').html(msg);
+  function fetchDataAndSetUpdateTimer () {
+    var timeout = (myState.updateInterval || kDefaultUpdateInterval) * 60 * 1000;
+    if (myState.step === '#run-step') {
+      fetchCSVData(myState.csvURL);
+    }
+    console.log('timeout: ' + myState.step);
+    updateTimer = window.setTimeout(fetchDataAndSetUpdateTimer, timeout);
+  }
+
+  function fetchCSVData(csvURL) {
+    $.ajax(csvURL, {
+      success: handleDataLoad,
+      error: function(jqXHR) {
+        displayError('Error: ' + jqXHR.statusText);
+      }
+    });
+  }
+
+  function createAndPopulateDataSet(dataSetName, firstLineIsHeader) {
+    myState.dataSetName = dataSetName;
+    myState.firstLineIsHeader = firstLineIsHeader;
+    createDataSet(dataSetName, firstLineIsHeader, dataSet).then(function (rslt) {
+      var dataSetName = rslt && rslt.success && rslt.values.name;
+      if (dataSetName !== null && dataSetName !== undefined) {
+        createCaseTable(dataSetName);
+      } else {
+        return Promise.reject('Error creating case table');
+      }
+    }).then(function () {
+      populateDataSet(dataSet, firstLineIsHeader);
+    }).then(function (){
+      setStep('#run-step');
+    }).then(null,
+        function (err) {
+          displayError(err);
+        }
+    );
   }
 
   function createDataSet(name, firstLineIsHeader, dataSet) {
@@ -89,7 +121,7 @@ $(function () {
         if (firstLine[ix] !== null && firstLine[ix] !== undefined) {
           attrs[ix] = firstLine[ix];
         } else {
-          attrs[ix] = 'attr_' + ix;
+          attrs[ix] = kAttrPrefix + ix;
         }
       }
       myState.attrs = attrs;
@@ -104,7 +136,7 @@ $(function () {
           name: name, attrs: []
         }]
       }
-    }
+    };
     myState.attrs = nameAttrs(myState.stats.cols, firstLineIsHeader && dataSet[0]? dataSet[0]: []);
     req.values.collections[0].attrs = myState.attrs.map(function (attr) { return {name: attr};});
     return codapInterface.sendRequest(req);
@@ -132,6 +164,7 @@ $(function () {
           }
         });
   }
+
   function populateDataSet(dataSet, firstLineIsHeader) {
     var attrs = myState.attrs;
     var req = {
@@ -151,6 +184,8 @@ $(function () {
     });
     return cleanDataSet(myState.dataSetName).then(function () {
       codapInterface.sendRequest(req);
+      displayMessage('Updated data set "' + myState.dataSetName +
+          '" from "' + myState.csvURL + '"');
     });
   }
 
@@ -162,12 +197,19 @@ $(function () {
         type: 'caseTable',
         dataContext: dataSetID
       }
-    })
+    });
   }
 
-  function setStep(st) {
-    myState.step = st;
-    render();
+  function displayError(msg) {
+    displayMessage($('<span>').addClass('error-msg').text(msg));
+  }
+
+  function displayMessage(msg) {
+    $('#message-area').html(msg);
+  }
+
+  function logMessage(msg) {
+    console.log(msg);
   }
 
   function render() {
@@ -175,19 +217,11 @@ $(function () {
     $(myState.step).addClass('active');
     $('.csv-url').text(myState.csvURL||'');
     $('.csv-cols').text(myState.stats && myState.stats.cols||'');
-    $('.csv-rows').text(myState.stats && myState.stats.rows||'')
-    $('.data-set-name').text(myState.dataSetName)
+    $('.csv-rows').text(myState.stats && myState.stats.rows||'');
+    $('.data-set-name').text(myState.dataSetName);
     $('.first-line-is-header').text(myState.firstLineIsHeader);
     $('.last-fetch').text(myState.lastFetch?myState.lastFetch.toLocaleString():'');
-  }
-
-  function fetchCSVData(csvURL) {
-    $.ajax(csvURL, {
-      success: handleDataLoad,
-      error: function(jqXHR) {
-        printError('Error: ' + jqXHR.statusText);
-      }
-    });
+    $('#update-interval').val(myState.updateInterval||kDefaultUpdateInterval);
   }
 
   $('#source-form').on('submit', function (ev) {
@@ -203,27 +237,9 @@ $(function () {
     var dataSetName = $('#data-set-name').val();
     var firstLineIsHeader = $('#csv-first-line-is-header').is(':checked');
     if (dataSetName && dataSetName.length > 0) {
-      myState.dataSetName = dataSetName;
-      myState.firstLineIsHeader = firstLineIsHeader;
-      createDataSet(dataSetName, firstLineIsHeader, dataSet).then(function (rslt) {
-        var dataSetName = rslt && rslt.success && rslt.values.name;
-        if (dataSetName !== null && dataSetName !== undefined) {
-          createCaseTable(dataSetName);
-        } else {
-          return Promise.reject('Error creating case table')
-        }
-      }).then(function () {
-        populateDataSet(dataSet, firstLineIsHeader);
-      }).then(function (){
-        setStep('#run-step');
-      }).then(null,
-          function (err) {
-            printError(err);
-          }
-      );
-
+      createAndPopulateDataSet(dataSetName, firstLineIsHeader);
     } else {
-      printError('Please set data set name');
+      displayError('Please set data set name');
     }
     ev.preventDefault();
     return false;
@@ -237,7 +253,15 @@ $(function () {
 
   $('.restart-button').on('click', function () {
     setStep('#start-step');
-  })
+  });
+
+  $('#update-interval').on('change', function () {
+    myState.updateInterval = $('#update-interval').val();
+    if (updateTimer) {
+      clearTimeout(updateTimer);
+    }
+    fetchDataAndSetUpdateTimer();
+  });
 
   codapInterface.init({
     name: 'live-data-set',
@@ -254,7 +278,6 @@ $(function () {
       myState.step = '#start-step';
     }
     render();
-    // Determine if CODAP already has the Data Context we need.
-  }, function () {setStep('#no-step');})
-  // setStep('#start-step');
+    fetchDataAndSetUpdateTimer();
+  }, function () {setStep('#no-step');});
 });
