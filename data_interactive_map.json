@@ -414,7 +414,7 @@
     },
     {
       "title": "Desmos Geometry",
-      "description": "",
+      "description": "DO NOT MAKE VISIBLE: DESMOS PROTECTIVE OF API",
       "width": 600,
       "height": 400,
       "path": "/DesmosGeometry/index.html",
@@ -473,6 +473,15 @@
       "width": 600,
       "height": 400,
       "path": "/Movement/Movement.html",
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Live Dataset",
+      "description": "Loads a CSV document from the web and periodically updates",
+      "path": "/LiveDataSet/index.html",
       "visible": false,
       "categories": [
         "Utilities"
