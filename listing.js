@@ -4,6 +4,17 @@
 
 $(document).ready(function () {
 
+    //Utility function to check if URL has query param and parse the query param. Returns true if it exists
+    function checkQueryParam (){
+        var query = decodeURIComponent(window.location.search.substring(1));
+
+        if (query=="dev") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function fetchObjList () {
         console.log ("in fetchObjList");
         var loc = "./data_interactive_map.json";
@@ -131,7 +142,7 @@ $(document).ready(function () {
             category_bin ='',
             listing = '',
             listing_desc ='',
-            query_param = '?di=',
+            query_param_di = '?di=',
             launchLink = '',
             linkLink = '',
             url_root = window.location.origin+window.location.pathname;
@@ -147,7 +158,6 @@ $(document).ready(function () {
         if (url.match(/^https/i) && !path.match(/^https/i)) {
             path=path.replace(/http/i,'https');
         }
-
 
             for (var i=0; i<category.length;i++) {
             if (category[i].includes('/')) {
@@ -166,7 +176,7 @@ $(document).ready(function () {
                 category_bin = '#' + category[i] + '_list';
             }
             listing = $('<li>').addClass('listing');
-            launchLink = $('<a class = "listing-title" target = "_blank" href='+url+query_param+path+'> '+title+' </a>'),
+            launchLink = $('<a class = "listing-title" target = "_blank" href='+url+query_param_di+path+'> '+title+' </a>'),
                 listing_desc = $('<p>').addClass('listing-desc').append(description),
                 linkLink = $('<a class = "listing-link" href=' + path + '>Embeddable Link </a>'),
                 launchLink.appendTo(listing);
@@ -176,25 +186,34 @@ $(document).ready(function () {
         }
     }
 
+    function buildListing(listing) {
+        console.log("In buildListing")
 
-    function buildListing(listing){
-        //check if item is visible
         $('.listing').remove();
-        for (var i=0; i<listing.length; i++) {
-            if (listing[i].visible) {
+        if (checkQueryParam()) {         //check if url param includes query param
+            for (var i=0; i<listing.length; i++) {
                 AddListingObj(listing[i]);
+            }
+        } else {
+            for (var i = 0; i < listing.length; i++) {
+                if (listing[i].visible) {         //check if item is visible
+                    AddListingObj(listing[i]);
+                }
             }
         }
     }
 
-
     function buildPage(response) {
         var categories_obj = getCategories(response);
         var di_list = response.data_interactives;
+
         buildListingDivs(categories_obj);
         buildListing(di_list);
 
-        $('#codap-url').on('input', function(){buildListing(di_list); return false;});
+      $('#codap_url_form').on('submit', function(event) {
+          buildListing(di_list);
+          event.preventDefault();
+          return false;});
     }
 
     fetchObjList();

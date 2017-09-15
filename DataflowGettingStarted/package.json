@@ -1,0 +1,8 @@
+{
+  "name": "dataflow-getting-started",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/DataflowGettingStarted.js",
+  "author": "Doug Martin",
+  "license": "MIT"
+}
