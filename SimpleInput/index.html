@@ -1,0 +1,28 @@
+<!--This page allows user to enter numbers into a dataset.
+    It was built for the ESTEEM project to be paired with collaborative services.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+  <style>
+    body {
+      background-color: white;
+    }
+  </style>
+  <title>Number Please</title>
+</head>
+
+<body>
+  <!--<form name="form1" action="">-->
+    <label>Type an integer from 0 to 8:
+      <input type="text" size="1" autofocus required min="0" max="8" pattern="[0-8]{1,1}"
+             id="integerInput" value=""></label><br>
+    <input type="button" id="submitButton" onClick="processInput();" value="Submit">
+  <!--</form>-->
+  <div id="message-area"></div>
+  <script src="simple-input.js"></script>
+</body>
+</html>
