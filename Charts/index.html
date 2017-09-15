@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="../Common/js/CodapInterface.js"></script>
+    <script src="../Common/js/jquery.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="myplugin.css" />
+
+    <script src="src/app.js" language='javascript'></script>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="sidebar">
+        <div id="small-buttons" >
+          <button id="refresh" class="material-icons" onclick="refreshPlugin()">
+            refresh
+          </button>
+          <div id="chart">
+            Chart Type: <br>
+            <select id="select-chart" name="collection"> Select Chart: </select>
+          </div>
+        </div>
+        <div id="contextList"> </div>
+      </div>
+      <div id='modal-buttons'>
+        <button id="info" class="material-icons tooltip" onclick="openAuthorInfo()">info_outline</button>
+        <button id="help" class="material-icons tooltip" onclick="openHelpInfo()">help_outline</button>
+      </div>
+
+      <div id="authorinfo">
+        <button id="close-author" class="material-icons">close</button>
+        <div class='profile-container'>
+          <img id="profile-pic" src= "https://avatars1.githubusercontent.com/u/10087828?v=3&u=dc9d7bef01e86ef52f828672f76d1fd6ebeb0156&s=400" > </img>
+          <a id="profile-overlay" href="https://github.com/Mikelon15" target="_blank">
+            <div id="profile-text" > Click for GitHub Profile </div>
+          </a>
+        </div>
+        <br>
+        Author: <a class='info-links' href='mailto:miguelgutz95@gmail.com' target="_blank" style='color: white'> Miguel Gutierrez </a> <br> <br>
+        I made this <a class='info-links' href='http://concord-consortium.github.io/codap-data-interactives/' target="_blank">Data Interactive</a>
+        plugin during the summer of 2017 in order to allow users to make charts in CODAP.
+        <br> This plugin uses <a class='info-links' href='http://www.chartjs.org/' target="_blank">Chart.JS</a> library to add animations and customization capabilities.
+          <br> <br>
+      </div>
+      <div id="helpinfo">
+        <button id="close-help" class="material-icons">close</button>
+        <br> <br>
+        <br> <br>
+        <b> Click </b> on a context to open the attribute list.
+        <br>
+        <b> Click </b> an attribute to begin plotting on the selected chart.
+        <br> <br>
+        <br> <br>
+        A <b>primary</b> attribute is  <a class='primary'><b> purple </b></a>  and creates categories along the x-axis.
+        <br> <br>
+        A <b>secondary</b> attribute is  <a class='secondary'><b> yellow </b></a>  and plots to the y-axis or stacks attributes.
+
+          <br> <br>
+      </div>
+      <div class="main" >
+        <div id="chart-container" class="chart-container">
+          <canvas id="myChart" ></canvas>
+        </div>
+        <script src="src/charts_model.js" language='javascript'></script>
+        <script src="src/charts_view.js" language='javascript'></script>
+        <script src="src/charts_controller.js" language='javascript'></script>
+        <script src="src/EventDispatcher.js" language='javascript'></script>
+      </div>
+    </div>
+  </body>
+</html>

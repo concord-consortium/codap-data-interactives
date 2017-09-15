@@ -122,6 +122,7 @@
       "resource": "dataContext[DataContext1].collection",
       "values": [
         {
+          "parent": "ROOT",
           "name": "People",
           "title": "Data about People",
           "labels": {
@@ -283,6 +284,30 @@
     "message": {
       "action": "delete",
       "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
+    }
+  },
+  {
+    "name": "Update Attribute Location to Parent",
+    "message":
+    {
+      "action": "update",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
+      "values": {
+        "collection": "parent",
+        "position": 0
+      }
+    }
+  },
+  {
+    "name": "Update Attribute Location",
+    "message":
+    {
+      "action": "update",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
+      "values": {
+        "collection": "collectionName",
+        "position": 2
+      }
     }
   },
 
@@ -575,6 +600,52 @@
       "values": {
         "formatStr": "Launched rocket with %@ engine toward %@",
         "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+
+  {
+    "name": "Log a Message with topic",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "topic": "dataflow",
+        "formatStr": "Did this thing"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging: full fire hose",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "message": "*"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging by topic",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "topic": "dataflow",
+        "clientId": "abc123"
+      }
+    }
+  },
+
+  {
+    "name": "Unsubscribe to Message Logging by topic",
+    "message": {
+      "action": "unregister",
+      "resource": "logMessageMonitor",
+      "values": {
+        "clientId": "abc123"
       }
     }
   },
