@@ -59,6 +59,28 @@
       ]
     },
     {
+      "title": "Elodea Simulator",
+      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inspect\"InSPECT</a> project",
+      "width": 550,
+      "height": 500,
+      "path": "https://concord-consortium.github.io/elodea-sim/",
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Ramp Game (InquirySpace 2 version)",
+      "description": "Win by landing the car on the target. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\"InquirySpace 2</a> project",
+      "width": 550,
+      "height": 500,
+      "path": "https://concord-consortium.github.io/inquiry-space-2/",
+      "visible": true,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
       "title": "Cart Weight",
       "description": "Win by predicting the total weight of a cart stacked with bricks.",
       "width": 290,
@@ -70,7 +92,7 @@
       ]
     },
     {
-      "title": "Ramp Game",
+      "title": "Ramp Game (Netlogo version)",
       "description": "Win by landing on the target.",
       "width": 500,
       "height": 734,
