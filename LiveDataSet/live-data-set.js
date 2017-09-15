@@ -45,7 +45,10 @@ $(function () {
       setStats(myState.csvURL, dataSet);
       myState.lastFetch = new Date();
       if (myState.dataSetName) {
-        populateDataSet(dataSet, myState.firstLineIsHeader);
+        populateDataSet(dataSet, myState.firstLineIsHeader)
+            .then(null, function (msg) {
+              displayError(msg);
+            });
         render();
       } else {
         setStep('#load-step');
@@ -93,9 +96,9 @@ $(function () {
   }
 
   function createAndPopulateDataSet(dataSetName, firstLineIsHeader) {
-    myState.dataSetName = dataSetName;
+    myState.dataSetName = normalize(dataSetName);
     myState.firstLineIsHeader = firstLineIsHeader;
-    createDataSet(dataSetName, firstLineIsHeader, dataSet).then(function (rslt) {
+    createDataSet(myState.dataSetName, firstLineIsHeader, dataSet).then(function (rslt) {
       var dataSetName = rslt && rslt.success && rslt.values.name;
       if (dataSetName !== null && dataSetName !== undefined) {
         createCaseTable(dataSetName);
@@ -103,9 +106,9 @@ $(function () {
         return Promise.reject('Error creating case table');
       }
     }).then(function () {
-      populateDataSet(dataSet, firstLineIsHeader);
+      return populateDataSet(dataSet, firstLineIsHeader);
     }).then(function (){
-      setStep('#run-step');
+      return setStep('#run-step');
     }).then(null,
         function (err) {
           displayError(err);
@@ -113,6 +116,9 @@ $(function () {
     );
   }
 
+  function normalize(name) {
+    return name.replace(/\./g, '_').replace(/ /g, '_');
+  }
   function createDataSet(name, firstLineIsHeader, dataSet) {
     function nameAttrs(cols, firstLine) {
       var attrs = [];
@@ -154,7 +160,7 @@ $(function () {
     return codapInterface.sendRequest(getDataSetReq)
         .then(function (rslt) {
           var context = rslt.values;
-          var collectionID = context && (context.collections[0].id);
+          var collectionID = rslt.success && context && (context.collections[0].id);
           if (collectionID) {
             deleteCasesReq.resource = 'dataContext[' +
                 dataSetName + '].collection[' + collectionID + '].allCases';
