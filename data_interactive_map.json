@@ -506,6 +506,17 @@
       "categories": [
         "Partners"
       ]
+    },
+    {
+      "title": "Sensor Interactive (InquirySpace 2 version)",
+      "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
+      "width": 600,
+      "height": 400,
+      "path": "https://concord-consortium.github.io/sensor-interactive/index.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
     }
   ]
 }
