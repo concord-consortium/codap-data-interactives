@@ -40,7 +40,7 @@ $(function () {
 
   function handleDataLoad(data) {
     try {
-      var result = Papa.parse(data, {skipEmptyLines:true});
+      var result = Papa.parse(data, {skipEmptyLines:true,comment:'#'});
       dataSet = result.data;
       setStats(myState.csvURL, dataSet);
       myState.lastFetch = new Date();
