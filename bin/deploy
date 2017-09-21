@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Script to deploy endorsed CODAP plugins on a server. It is expected that
+# the user running this script has appropriate access the server and directories
+# on the server in question. In the case of the CODAP server, this is root
+# access.
+#
+# It is assumed that the CODAP server supports standard unix utilities, including
+# ssh, scp, rm, unzip, ln.
+PROG=`basename $0`
+DIRNAME=`dirname $0`
+HOMEDIR=$DIRNAME/..
+cd $HOMEDIR
+
+# We source configuration values from .codap-build.rc for information about
+# the server we will be installing on. Values expected from this file:
+#
+# * CODAP_SERVER           DNS name of server to install to
+# * CODAP_SERVER_WWW_BASE  BASE directory on the server
+#
+. ${HOME}/.codap-build.rc
+
+BUILD_NUM=`cat lib/build-num.txt`
+ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
+SOURCE_PATH=target/$ZIP_FILENAME
+INSTALL_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/build_$BUILD_NUM
+
+scp $SOURCE_PATH $CODAP_SERVER:/tmp
+ssh $CODAP_SERVER "sudo mkdir -p $INSTALL_PATH"
+ssh $CODAP_SERVER "sudo unzip /tmp/$ZIP_FILENAME -d $INSTALL_PATH"
+ssh $CODAP_SERVER "rm /tmp/$ZIP_FILENAME"
+

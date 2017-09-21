@@ -1,0 +1,26 @@
+{
+  "name": "codap-data-interactives",
+  "version": "0.0.1",
+  "description": "CODAP Plugins",
+  "main": "index.html",
+  "scripts": {
+    "build": "bin/build",
+    "deploy": "bin/deploy",
+    "increment-build-number": "bin/increment-build-number"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/concord-consortium/codap-data-interactives.git"
+  },
+  "keywords": [
+    "CODAP",
+    "Plugin",
+    "Data Interactive"
+  ],
+  "author": "Jonathan Sandoe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/concord-consortium/codap-data-interactives/issues"
+  },
+  "homepage": "https://github.com/concord-consortium/codap-data-interactives#readme"
+}
