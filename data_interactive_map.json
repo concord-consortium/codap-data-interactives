@@ -70,7 +70,7 @@
       ]
     },
     {
-      "title": "Ramp Game",
+      "title": "Ramp Game (Netlogo version)",
       "description": "Win by landing on the target.",
       "width": 500,
       "height": 734,
@@ -485,6 +485,37 @@
       "visible": false,
       "categories": [
         "Utilities"
+      ]
+    },
+    {
+      "title": "Elodea Simulator",
+      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project",
+      "path": "https://concord-consortium.github.io/elodea-sim/index.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Ramp Simulation (InquirySpace 2 version)",
+      "description": "Win by landing the car on the target. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace 2</a> project",
+      "width": 600,
+      "height": 400,
+      "path": "https://concord-consortium.github.io/inquiry-space-2/index.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Sensor Interactive (InquirySpace 2 version)",
+      "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
+      "width": 600,
+      "height": 400,
+      "path": "https://concord-consortium.github.io/sensor-interactive/index.html",
+      "visible": false,
+      "categories": [
+        "Partners"
       ]
     }
   ]
