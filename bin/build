@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# Creates a zip file, "codap-data-interactives-{build-num}.zip" in target
+# containing self-contained versions of each endorsed plugin.
+#
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+HOMEDIR=$DIRNAME/..
+
+# make sure we are in the root directory of the plugin folder
+cd $HOMEDIR
+
+# Where to put zip.
+TARGET=./target
+WORKING=/tmp/$PROGNAME.$$
+BUILD_NUM=`cat lib/build-num.txt`
+ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
+ENDORSED_PLUGINS="Common TP-Sampler"
+
+echo "Build: $BUILD_NUM"
+
+echo "Plugins:"
+for plugin in $ENDORSED_PLUGINS; do
+  echo "  $plugin";
+done
+
+mkdir -p $TARGET
+zip -r $TARGET/$ZIP_FILENAME $ENDORSED_PLUGINS

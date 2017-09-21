@@ -956,7 +956,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: '0.2',
+    version: 'v0.2(#' + window.codapPluginConfig.buildNumber + ')',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;
