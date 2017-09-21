@@ -11,6 +11,7 @@ PROG=`basename $0`
 DIRNAME=`dirname $0`
 HOMEDIR=$DIRNAME/..
 cd $HOMEDIR
+set -e
 
 # We source configuration values from .codap-build.rc for information about
 # the server we will be installing on. Values expected from this file:
@@ -19,14 +20,18 @@ cd $HOMEDIR
 # * CODAP_SERVER_WWW_BASE  BASE directory on the server
 #
 . ${HOME}/.codap-build.rc
+CODAP_SERVER=${CODAP_SERVER:-"codap-server.concord.org"}
+CODAP_SERVER_WWW_BASE=${CODAP_SERVER_WWW_BASE:="/var/www/html"}
 
 BUILD_NUM=`cat lib/build-num.txt`
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 SOURCE_PATH=target/$ZIP_FILENAME
 INSTALL_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/build_$BUILD_NUM
+LATEST_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/latest
 
 scp $SOURCE_PATH $CODAP_SERVER:/tmp
 ssh $CODAP_SERVER "sudo mkdir -p $INSTALL_PATH"
 ssh $CODAP_SERVER "sudo unzip /tmp/$ZIP_FILENAME -d $INSTALL_PATH"
+ssh $CODAP_SERVER "sudo rm -f $LATEST_PATH && sudo ln -s $INSTALL_PATH $LATEST_PATH"
 ssh $CODAP_SERVER "rm /tmp/$ZIP_FILENAME"
 
