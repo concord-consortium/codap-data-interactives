@@ -1,3 +1,3 @@
 window.codapPluginConfig = {
-  buildNumber: 0002
+  buildNumber: 0003
 }
