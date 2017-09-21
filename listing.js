@@ -159,6 +159,10 @@ $(document).ready(function () {
             path=path.replace(/http/i,'https');
         }
 
+        if (path.match(/^https/i) && !url.match(/^https/i)) {
+            url=url.replace(/http/i,'https');
+        }
+
             for (var i=0; i<category.length;i++) {
             if (category[i].includes('/')) {
                 console.log("In category split");
