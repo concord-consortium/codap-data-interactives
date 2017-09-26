@@ -396,6 +396,9 @@ function resetButtonPressed() {
         });
         if( tMsgList.length > 0)
           codapInterface.sendRequest( tMsgList);
+        if (device === "collector") {
+          getContexts().then(populateContextsList);
+        }
       }
     });
   });
@@ -956,7 +959,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: 'v0.2(#' + window.codapPluginConfig.buildNumber + ')',
+    version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;
