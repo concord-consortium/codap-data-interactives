@@ -395,10 +395,18 @@ function resetButtonPressed() {
           }
         });
         if( tMsgList.length > 0)
-          codapInterface.sendRequest( tMsgList);
-        if (device === "collector") {
-          getContexts().then(populateContextsList);
-        }
+          codapInterface.sendRequest( tMsgList).then( function( iResult) {
+            if( iResult.success) {
+              if (device === "collector") {
+                return getContexts().then(populateContextsList);
+              }
+            }
+            else {
+              return Promise.reject( "Failure to remove attributes");
+            }
+          }).then( null, function( iMsg) {
+            console.log( iMsg);
+          });
       }
     });
   });
