@@ -1,9 +1,9 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="tp-sampler.css" />
-    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
-    <script src="../Common/js/CodapInterface.js"></script>
-    <script src="../Common/js/build-include.js"></script>
+    <script src="src/lib/iframe-phone.js" language="javascript"></script>
+    <script src="src/lib/CodapInterface.js"></script>
+    <script src="src/lib/build-include.js"></script>
     <script src="src/lib/snap.svg-min.js"></script>
   </head>
   <body>
@@ -22,13 +22,13 @@
     <div id="draw-settings">
       <div>
         <span>Select</span>
-        <input id="number_selected" value="2"></input>
+        <input id="sample_size"></input>
         <span>items</span>
       </div>
       <div>
-        <span>Repeat&nbsp;</span>
-        <input id="repeat" value="5"></input>
-        <span>times</span>
+        <span>Collect&nbsp;</span>
+        <input id="repeat"></input>
+        <span>samples</span>
       </div>
     </div>
     <div id="model">

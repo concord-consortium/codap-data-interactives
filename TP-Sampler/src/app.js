@@ -50,8 +50,8 @@ var s = Snap("#model svg"),
     sentRun = 0,
     sequence = [],
 
-    numRuns = 5,
-    sampleSize = 2,
+    numRuns = 3,
+    sampleSize = 5,
 
     experimentCaseID,
     runCaseID,
@@ -79,7 +79,7 @@ var s = Snap("#model svg"),
 
 function render() {
   s.clear();
-  document.getElementById("number_selected").value = sampleSize;
+  document.getElementById("sample_size").value = sampleSize;
   document.getElementById("repeat").value = numRuns;
   var sliderSpeed = speed > 0.5 ? speed : 0;
   document.getElementById("speed").value = sliderSpeed;
@@ -319,7 +319,7 @@ function setVariableName() {
  * of the ball to be selected.
  *
  * @param {int} draw - The number of variables drawn per run
- * @param {int} repeat - The number of repetitions
+ * @param {int} repeat - The number of samples
  */
 function createRandomSequence(draw, repeat) {
   var seq = [],
@@ -395,7 +395,18 @@ function resetButtonPressed() {
           }
         });
         if( tMsgList.length > 0)
-          codapInterface.sendRequest( tMsgList);
+          codapInterface.sendRequest( tMsgList).then( function( iResult) {
+            if( iResult.success) {
+              if (device === "collector") {
+                return getContexts().then(populateContextsList);
+              }
+            }
+            else {
+              return Promise.reject( "Failure to remove attributes");
+            }
+          }).then( null, function( iMsg) {
+            console.log( iMsg);
+          });
       }
     });
   });
@@ -838,7 +849,7 @@ document.getElementById("collector").onclick = switchState;
 document.getElementById("refresh-list").onclick = function() {
   getContexts().then(populateContextsList)
 };
-document.getElementById("number_selected").addEventListener('input', function (evt) {
+document.getElementById("sample_size").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
     render();
 });
@@ -876,7 +887,7 @@ function disableButtons() {
   setRunButton(false);
   addClass(document.getElementById("add-variable"), "disabled");
   addClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("number_selected").setAttribute("disabled", "disabled");
+  document.getElementById("sample_size").setAttribute("disabled", "disabled");
   document.getElementById("repeat").setAttribute("disabled", "disabled");
   removeClass(document.getElementById("stop"), "disabled");
 }
@@ -884,7 +895,7 @@ function enableButtons() {
   setRunButton(true);
   removeClass(document.getElementById("add-variable"), "disabled");
   removeClass(document.getElementById("remove-variable"), "disabled");
-  document.getElementById("number_selected").removeAttribute("disabled");
+  document.getElementById("sample_size").removeAttribute("disabled");
   document.getElementById("repeat").removeAttribute("disabled");
   addClass(document.getElementById("stop"), "disabled");
 }
@@ -956,7 +967,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: 'v0.2(#' + window.codapPluginConfig.buildNumber + ')',
+    version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;
@@ -989,20 +1000,20 @@ codapInterface.init({
                   name: 'experiments',
                   attrs: [
                     {name: "experiment", type: 'categorical'},
-                    {name: "number_selected", type: 'categorical'}
+                    {name: "sample_size", type: 'categorical'}
                   ],
                   childAttrName: "experiment"
                 },
                 {
-                  name: 'repetitions',
+                  name: 'samples',
                   parent: 'experiments',
                   // The parent collection has just one attribute
-                  attrs: [{name: "repetition", type: 'categorical'}],
-                  childAttrName: "repetition"
+                  attrs: [{name: "sample", type: 'categorical'}],
+                  childAttrName: "sample"
                 },
                 {
                   name: 'items',
-                  parent: 'repetitions',
+                  parent: 'samples',
                   labels: {
                     pluralCase: "items",
                     setOfCasesWithArticle: "an item"
@@ -1039,7 +1050,7 @@ function startNewExperimentInCODAP() {
       values: [{
         values: {
           experiment: experimentNumber,
-          number_selected: sampleSize
+          sample_size: sampleSize
         }
       }]
     }, function (result) {
@@ -1071,11 +1082,11 @@ function addValuesToCODAP(run, vals) {
 
   codapInterface.sendRequest({
     action: 'create',
-    resource: 'collection[repetitions].case',
+    resource: 'collection[samples].case',
     values: [
      {
       parent: experimentCaseID,
-      values: { repetition: run }
+      values: { sample: run }
      }
     ]
   }, function (result) {
