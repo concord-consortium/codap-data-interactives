@@ -29,9 +29,14 @@ SOURCE_PATH=target/$ZIP_FILENAME
 INSTALL_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/build_$BUILD_NUM
 LATEST_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/latest
 
+echo "Copy $SOURCE_PATH to $CODAP_SERVER:/tmp ..."
 scp $SOURCE_PATH $CODAP_SERVER:/tmp
+echo "On $CODAP_SERVER, make $INSTALL_PATH"
 ssh $CODAP_SERVER "sudo mkdir -p $INSTALL_PATH"
+echo "On $CODAP_SERVER, unzip $ZIP_FILENAME"
 ssh $CODAP_SERVER "sudo unzip /tmp/$ZIP_FILENAME -d $INSTALL_PATH"
+echo "On $CODAP_SERVER, link $LATEST_PATH"
 ssh $CODAP_SERVER "sudo rm -f $LATEST_PATH && sudo ln -s $INSTALL_PATH $LATEST_PATH"
+echo "On $CODAP_SERVER, clean up"
 ssh $CODAP_SERVER "rm /tmp/$ZIP_FILENAME"
 
