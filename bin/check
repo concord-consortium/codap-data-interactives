@@ -20,4 +20,4 @@ CODAP_BRANCH=`git rev-parse --abbrev-ref HEAD`
 git pull
 
 # verify that we are clean
-[`git status -s | wc -l` != 0 ] && error 'codeline is not clean'
+[`git status -s | wc -l` != "0" ] && error 'codeline is not clean'
