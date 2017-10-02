@@ -498,10 +498,10 @@
     },
     {
       "title": "Ramp Simulation (InquirySpace 2 version)",
-      "description": "Win by landing the car on the target. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace 2</a> project",
+      "description": "Win by landing the car on the target. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace 2</a> project. To run the Game version of this interactive add '?game' to the ramp game url and reload the page.",
       "width": 600,
       "height": 400,
-      "path": "https://concord-consortium.github.io/inquiry-space-2/index.html",
+      "path": "https://ramp-game.concord.org/",
       "visible": false,
       "categories": [
         "Partners"
@@ -512,7 +512,7 @@
       "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
       "width": 600,
       "height": 400,
-      "path": "https://concord-consortium.github.io/sensor-interactive/index.html",
+      "path": "https://sensor-interactive.concord.org",
       "visible": false,
       "categories": [
         "Partners"
