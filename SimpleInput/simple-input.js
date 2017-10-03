@@ -22,7 +22,7 @@
 // It does nothing more than provide an input for the user to type in an integer
 // from 0 to 8. After the user submits a valid integer, the form will not accept more input.
 //
-var kDataSetName = 'Integers',
+var kDataSetName = 'Trials',
     kAppName = "Simple Input";
 // The following is the initial structure of the data set that the plugin will
 // refer to. It will look for it at startup and create it if not found.
@@ -30,9 +30,8 @@ var kDataSetTemplate = {
     name: "{name}",
     collections: [  // There is just one collection
       {
-        name: 'Integers',
-        // The parent collection has just one attribute
-        attrs: [ {name: "integer"}],
+        name: 'Trials',
+        attrs: [ {name: "Number of Successes"}],
       }
     ]
   };
@@ -182,7 +181,7 @@ function processInput () {
 
   myState.didProperlyInput = true;
 
-  var item = { integer: input };
+  var item = { "Number of Successes": input };
 
   // send it
   sendItems(kDataSetName, [item]);
