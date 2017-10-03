@@ -5,8 +5,10 @@
   "main": "index.html",
   "scripts": {
     "build": "bin/build",
+    "check": "bin/check",
     "deploy": "bin/deploy",
-    "increment-build-number": "bin/increment-build-number"
+    "increment-build-number": "bin/increment-build-number",
+    "build-and-deploy":"npm run check && npm run increment-build-number && npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",

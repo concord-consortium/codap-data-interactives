@@ -15,14 +15,31 @@ TARGET=./target
 WORKING=/tmp/$PROGNAME.$$
 BUILD_NUM=`cat lib/build-num.txt`
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
-ENDORSED_PLUGINS="Common TP-Sampler"
+ENDORSED_PLUGIN_FOLDERS="TP-Sampler"
+HIDDEN_FOLDERS="Common"
+ALL_FOLDERS="$ENDORSED_PLUGIN_FOLDERS $HIDDEN_FOLDERS"
+PLUGIN_MAP_FILE=${HOMEDIR}/data_interactive_map.json
+
+function makeIndexJSON() {
+  tmp=
+  for t in $ENDORSED_PLUGIN_FOLDERS; do
+    [ "$tmp" != "" ] && tmp="$tmp,"
+    tmp="$tmp\"/$t\""
+  done
+  echo tmp=$tmp
+  cat $PLUGIN_MAP_FILE | jq --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > $TARGET/plugins.json
+}
+
 
 echo "Build: $BUILD_NUM"
 
 echo "Plugins:"
-for plugin in $ENDORSED_PLUGINS; do
+for plugin in $ENDORSED_PLUGIN_FOLDERS; do
   echo "  $plugin";
 done
 
+makeIndexJSON
+
+rm -rf $TARGET
 mkdir -p $TARGET
-zip -r $TARGET/$ZIP_FILENAME $ENDORSED_PLUGINS
+zip -r $TARGET/$ZIP_FILENAME $ALL_FOLDERS
