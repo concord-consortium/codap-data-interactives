@@ -22,7 +22,7 @@
 var STARTING_CONNECTION_STATE = 'initialized',
     TIMEDOUT_CONNECTION_STATE = 'timed-out',
     ACTIVE_CONNECTION_STATE = 'active',
-    RECORDING_DURATION = 15,
+    RECORDING_DURATION = 60,
     RECORDING_INTERVAL = 1;
 
 // Update constants with optional query param values
@@ -49,7 +49,8 @@ var div = React.DOM.div,
     li = React.DOM.li,
     button = React.DOM.button,
     input = React.DOM.input,
-    strong = React.DOM.strong;
+    strong = React.DOM.strong,
+    em = React.DOM.em;
 
 var RecordingCountdown = React.createFactory(React.createClass({
   getInitialState: function () {
@@ -84,16 +85,20 @@ var pages = [
       h1({}, "Welcome to Dataflow!"),
       p({}, "This activity will teach you:"),
       ol({},
-        li({}, "How to set up a diagram for a new experiment."),
+        li({}, "How to set up a flow diagram for a new experiment."),
         li({}, "How to export your data to CODAP for analysis.")
       ),
       p({}, "You will need:"),
       ol({},
-        li({}, "A Raspberry Pi (RPi) that has been pre-authorized by Concord Consortium."),
-        li({}, "At least one working sensor. Leave it unplugged for now!")
+        li({}, "A Raspberry Pi (RPi) controller that has been pre-authorized by Concord Consortium. ", strong({}, "Plug it in now!")),
+        li({}, "At least one working sensor. (But leave that unplugged for now!)")
       ),
       p({}, "See our documentation for more information."),
       p({}, "First step:")
+    ),
+    postInfo: div({},
+      p({}, "Select your RPi from the list when you are ready to begin."),
+      p({}, em({}, "Note: If this is your first time using Dataflow, you will need to enter the name of your Pi. Ask your teacher for help!"))
     )
   },
   {
@@ -116,7 +121,7 @@ var topics = [
     popUpTitle : "Select your Raspberry Pi",
     popUp: div({},
       p({}, "Great! You have connected to your Raspberry Pi controller. Make sure it is plugged in and turned on any time you want to run an experiment or view the data from a previous experiment."),
-      p({}, "Next: create a new flow diagram.")
+      p({}, strong({}, "Next: Click on 'New Diagram' to create a new flow diagram."))
     )
   },
   {
@@ -125,7 +130,8 @@ var topics = [
     checkbox: "Create a new Diagram",
     popUp: div({},
       p({}, "This is a flow diagram. It uses a visual programming language to allow you to control the sensors and actuators in your experiment."),
-      p({}, "Next: plug in a sensor to your Raspberry Pi controller.")
+      p({}, strong({}, "Click on 'Save' to name your diagram now.")),
+      p({}, strong({}, "Next: Choose a sensor and plug it in to one of the USB ports on your Raspberry Pi controller."))
     )
   },
   {
@@ -135,7 +141,7 @@ var topics = [
     popUp: div({},
       p({}, "You added a sensor to your diagram!"),
       p({}, "Any sensors or actuators plugged in to your Raspberry Pi will be automatically detected and added as a new block to your flow diagram. You can create connections to other blocks to change its behavior."),
-      p({}, "Next: Add a plot.")
+      p({}, strong({}, "Next: Click on 'Add Plot'."))
     )
   },
   {
@@ -144,7 +150,7 @@ var topics = [
     checkbox: "Add a Plot",
     popUp: div({},
       p({}, "Plots let you see live data from sensors. Add more blocks to your diagram by plugging in more sensors. Add a relay block or set up different functions to control your experiment."),
-      p({}, "Next: drag and drop a connector from your sensor block to the plot block to link them.")
+      p({}, strong({}, "Next: drag and drop a connector from your sensor block to the plot block to link them."))
     )
   },
   {
@@ -152,8 +158,8 @@ var topics = [
     page: 1,
     checkbox: "Connect the Plot",
     popUp: div({},
-      p({}, "Now that the two blocks are connected, you can see that this plot is now graphing the data from your sensor. Please note that while you can see this reading, data is NOT being recorded yet. Make sure your experiment is in place, and your diagram is correct set up before you start recording data."),
-      p({}, "Next: Start recording data!")
+      p({}, "Now that the two blocks are connected, you can see that this plot is now graphing the data from your sensor. ", strong({}, "Please note that while you can see this reading, data is NOT being recorded yet."), " Make sure your experiment is in place, and your diagram is correct set up before you start recording data."),
+      p({}, strong({}, "Next: Click on 'Start Recording Data!"))
     )
   },
   {
@@ -171,7 +177,7 @@ var topics = [
     checkbox: "Set up data collection",
     popUp: div({},
       p({}, "Data is now being saved to your Raspberry Pi!"),
-      p({}, span({}, "Next: In ", strong({}, replaceConstants("RECORDING_DURATION seconds")), span({}, " click to \"Stop recording data\" so that we can explore the data."))),
+      p({}, span({}, "Next: In ", strong({}, replaceConstants("RECORDING_DURATION seconds")), span({}, " click 'Stop Recording Data' so that we can explore the data."))),
       RecordingCountdown({})
     )
   },
@@ -181,7 +187,7 @@ var topics = [
     checkbox: "Stop recording data",
     popUp: div({},
       p({}, "Data collection is now paused. You can start recording data again at any time."),
-      p({}, "Next: Click on the \"View recorded data.\" button")
+      p({}, strong({}, "Next: Click on 'View Recorded Data'."))
     )
   },
   {
@@ -190,7 +196,7 @@ var topics = [
     checkbox: "View recorded data",
     popUp: div({},
       p({}, "This is where you can see all of your recorded data and choose what to export to CODAP for analysis."),
-      p({}, "Next: Click on \"Select data to export\" to highlight the data you want.")
+      p({}, strong({}, "Next: Click on 'Select Interval' to highlight the data you want."))
     )
   },
   {
@@ -199,7 +205,7 @@ var topics = [
     checkbox: "Select data to export",
     popUp: div({},
       p({}, "Now you click anywhere on the graph to select the range of data you want to analyze. This might be all of the data you have collected, or it might be a single run of an experiment."),
-      p({}, "Next: Export the data to CODAP!")
+      p({}, strong({}, "Next: Click on 'Explore Data in CODAP!'"))
     )
   },
   {
@@ -208,8 +214,7 @@ var topics = [
     checkbox: "Export to CODAP",
     popUp: div({},
       p({}, "You're done! Now that your data is in CODAP, you can analyze it just like any other dataset. You can save this document for later, or you can choose to export the data again."),
-      p({}, "To learn more about what you can do in CODAP, try our Getting Started with CODAP guide!"),
-      p({}, "Or, move on to \"Getting Started with Dataflow Part 2\" to learn how to use other function blocks!")
+      p({}, "To learn more about what you can do in CODAP, try our Getting Started with CODAP guide!")
     )
   }
 ];
@@ -227,7 +232,7 @@ var dataManager = Object.create({
       version: "0.1",
       dimensions: {
         width: tester? 300 : 550,
-        height: tester ? 450 : 400
+        height: tester ? 500 : 450
       },
       connectionState: STARTING_CONNECTION_STATE,
       tester: tester,
@@ -520,14 +525,16 @@ var DataflowGettingStartedAppView = React.createFactory(React.createClass({
     var pageTopics = topics.filter(function (topic) {
       return topic.page === currentTopic.page;
     });
+    var page = pages[currentTopic.page];
     return div({className: "page"},
-      pages[currentTopic.page] ? pages[currentTopic.page].info : null,
+      page ? page.info : null,
       pageTopics.map(function (pageTopic) {
         return div({},
           input({type: "checkbox", disabled: true, checked: pageTopic.logged}),
           pageTopic.checkbox
         );
       }),
+      page ? page.postInfo : null,
       this.state.showPopup ? this.renderPopup() : null
     );
   },
