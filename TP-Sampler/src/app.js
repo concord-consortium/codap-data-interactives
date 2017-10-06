@@ -1,3 +1,9 @@
+require([
+  'lib/snap.svg-min',
+  'lib/CodapInterface',
+  'lib/codap-plugin-config']
+, function(Snap, codapInterface, codapPluginConfig) {
+
 Snap.plugin(function (Snap, Element) {
 
   Element.prototype.pause = function () {
@@ -967,7 +973,7 @@ codapInterface.init({
     name: 'Sampler',
     title: 'Sampler',
     dimensions: {width: 235, height: 400},
-    version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
+    version: 'v0.3 (#' + codapPluginConfig.buildNumber + ')',
     stateHandler: function (state) {
       if (state) {
         experimentNumber = state.experimentNumber || experimentNumber;
@@ -1228,3 +1234,5 @@ function setCasesFromContext(contextName) {
     }).then(setCollection);
   });
 }
+
+});

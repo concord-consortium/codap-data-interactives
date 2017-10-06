@@ -74,9 +74,7 @@
 
 /*global require, iframePhone, Promise, module */
 
-(function (global) {
-
-  var iframePh = (typeof module !== 'undefined')? require('iframe-phone') : iframePhone;
+define(['./iframe-phone'], function (iframePh) {
 
   var config = null;
 
@@ -426,9 +424,5 @@
     }
   };
 
-  if (typeof module !== 'undefined') {
-    module.exports = codapInterface;
-  } else {
-    global.codapInterface = codapInterface;
-  }
-}(this));
+  return codapInterface;
+});
