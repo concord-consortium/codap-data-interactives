@@ -1,27 +1,4 @@
-require([
-  'lib/snap.svg-min',
-  'lib/CodapInterface',
-  'lib/codap-plugin-config']
-, function(Snap, codapInterface, codapPluginConfig) {
-
-Snap.plugin(function (Snap, Element) {
-
-  Element.prototype.pause = function () {
-    var anims = this.inAnim();
-    for (var i = 0; i < anims.length; i ++) {
-      anims[i].mina.pause();
-    }
-  };
-
-  Element.prototype.resume = function () {
-    var anims = this.inAnim();
-    for (var i = 0; i < anims.length; i ++) {
-      this.animate({ dummy: 0 } ,1);
-      anims[i].mina.resume();
-    }
-  };
-
-});
+require(['lib/snap-plugins', './codap-com'], function(Snap, CodapCom) {
 
 var s = Snap("#model svg"),
 
@@ -41,8 +18,6 @@ var s = Snap("#model svg"),
     spinnerRadius = Math.min(containerWidth, containerHeight)/2,
     spinnerX = containerX + (containerWidth/2),
     spinnerY = containerY + (containerHeight/2),
-
-    codapConnected = true,
 
     running = false,
     paused = false,
@@ -66,7 +41,6 @@ var s = Snap("#model svg"),
     caseVariables = [],
     variables = userVariables,
 
-    collectionResourceName,
     collectionAttributes,
     drawAttributes,
 
@@ -81,7 +55,40 @@ var s = Snap("#model svg"),
     uniqueVariables,
 
     editingVariable = false,    // then the id of the var
-    variableNameInput = document.getElementById("variable-name-change");
+    variableNameInput = document.getElementById("variable-name-change"),
+
+    codapCom;
+
+function getInteractiveState() {
+  return {
+    success: true,
+    values: {
+      experimentNumber: experimentNumber,
+      variables: variables,
+      draw: sampleSize,
+      repeat: numRuns,
+      speed: speed,
+      device: device
+    }
+  };
+}
+
+function loadInteractiveState(state) {
+  if (state) {
+    experimentNumber = state.experimentNumber || experimentNumber;
+    variables = state.variables || variables;
+    sampleSize = state.draw || sampleSize;
+    numRuns = state.repeat || numRuns;
+    speed = state.speed || speed;
+    if (state.device) {
+      switchState(null, state.device)
+    }
+
+    render();
+  }
+}
+
+codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
 
 function render() {
   s.clear();
@@ -378,46 +385,7 @@ function stopButtonPressed() {
 function resetButtonPressed() {
   this.blur();
   experimentNumber = 0;
-  // First delete all the cases
-  codapInterface.sendRequest({
-    action: 'delete',
-    resource: 'dataContext[Sampler].collection[experiments].allCases'
-  });
-  var structure = { items: ['value']};
-  Object.keys( structure).forEach( function( key) {
-    var tValidAttrs = structure[ key];
-    codapInterface.sendRequest( {
-      action: 'get',
-      resource: 'dataContext[Sampler].collection[' + key + '].attributeList'
-    }).then( function( iResult) {
-      var tMsgList = [];
-      if( iResult.success) {
-        iResult.values.forEach( function( iAttribute) {
-          if( tValidAttrs.indexOf( iAttribute.name) < 0) {
-            tMsgList.push( {
-              action: 'delete',
-              resource: 'dataContext[Sampler].collection[' + key + '].attribute[' + iAttribute.name + ']'
-            });
-          }
-        });
-        if( tMsgList.length > 0)
-          codapInterface.sendRequest( tMsgList).then( function( iResult) {
-            if( iResult.success || (iResult.every( function(iItem) {
-                  return iItem.success;
-                }))) {
-              if (device === "collector") {
-                return getContexts().then(populateContextsList);
-              }
-            }
-            else {
-              return Promise.reject( "Failure to remove attributes");
-            }
-          }).then( null, function( iMsg) {
-            console.log( iMsg);
-          });
-      }
-    });
-  });
+  codapCom.deleteAll();
 }
 
 function addNextSequenceRunToCODAP() {
@@ -426,15 +394,23 @@ function addNextSequenceRunToCODAP() {
   var vars = sequence[sentRun].map(function(i) {
     return variables[i];
   });
-  addValuesToCODAP(sentRun+1, vars);
+  codapCom.addValuesToCODAP(sentRun+1, vars, isCollector);
   sentRun++;
 }
 
 function run() {
-  startNewExperimentInCODAP().then(function() {
+  experimentNumber += 1;
+  runNumber = 0;
+  codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize).then(function() {
     sequence = createRandomSequence(sampleSize, numRuns);
     if (speed === 3) {
-      sendSequenceDirectlyToCODAP(sequence);
+      // send sequence directly to codap
+      for (var i = 0, ii = sequence.length; i < ii; i++) {
+        var values = sequence[i].map(function(v) {
+          return variables[v];
+        })
+        codapCom.addValuesToCODAP(i+1, values, isCollector);
+      }
       reset();
       return;
     }
@@ -836,7 +812,7 @@ function switchState(evt, state) {
     variables = isCollector ? caseVariables : userVariables;
     renderVariableControls();
     if (isCollector) {
-      getContexts().then(populateContextsList);
+      codapCom.getContexts().then(populateContextsList);
     }
     reset();
   }
@@ -855,7 +831,7 @@ document.getElementById("mixer").onclick = switchState;
 document.getElementById("spinner").onclick = switchState;
 document.getElementById("collector").onclick = switchState;
 document.getElementById("refresh-list").onclick = function() {
-  getContexts().then(populateContextsList)
+  codapCom.getContexts().then(populateContextsList)
 };
 document.getElementById("sample_size").addEventListener('input', function (evt) {
     sampleSize = this.value * 1;
@@ -943,298 +919,22 @@ function populateContextsList(collections) {
     sel.removeAttribute("disabled")
   }
 
+  function setVariablesAndRender(vars) {
+    // push into existing array, as `variables` is pointing at this
+    caseVariables.push.apply(caseVariables, vars);
+    render();
+  }
+
   if (sel.childNodes.length == 1) {
-    setCasesFromContext(sel.childNodes[0].value).then(render)
+    codapCom.setCasesFromContext(sel.childNodes[0].value).then(setVariablesAndRender);
   } else {
     sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
     sel.onchange = function(evt) {
       if(evt.target.value) {
-        setCasesFromContext(evt.target.value).then(render)
+        codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
       }
     }
   }
-}
-
-
-
-/** ******** CODAP Communication ********** **/
-
-codapInterface.on('get', 'interactiveState', function () {
-  return {success: true, values: {
-    experimentNumber: experimentNumber,
-    variables: variables,
-    draw: sampleSize,
-    repeat: numRuns,
-    speed: speed,
-    device: device
-  }};
-});
-
-// initialize the codapInterface
-codapInterface.init({
-    name: 'Sampler',
-    title: 'Sampler',
-    dimensions: {width: 235, height: 400},
-    version: 'v0.3 (#' + codapPluginConfig.buildNumber + ')',
-    stateHandler: function (state) {
-      if (state) {
-        experimentNumber = state.experimentNumber || experimentNumber;
-        variables = state.variables || variables;
-        sampleSize = state.draw || sampleSize;
-        numRuns = state.repeat || numRuns;
-        speed = state.speed || speed;
-        if (state.device) {
-          switchState(null, state.device)
-        }
-
-        render();
-      }
-    }
-  }).then(function () {
-    // Determine if CODAP already has the Data Context we need.
-    // If not, create it.
-    return codapInterface.sendRequest({
-        action:'get',
-        resource: 'dataContext[Sampler]'
-      }, function (result) {
-        if (result && !result.success) {
-          codapInterface.sendRequest({
-            action: 'create',
-            resource: 'dataContext',
-            values: {
-              name: "Sampler",
-              collections: [
-                {
-                  name: 'experiments',
-                  attrs: [
-                    {name: "experiment", type: 'categorical'},
-                    {name: "sample_size", type: 'categorical'}
-                  ],
-                  childAttrName: "experiment"
-                },
-                {
-                  name: 'samples',
-                  parent: 'experiments',
-                  // The parent collection has just one attribute
-                  attrs: [{name: "sample", type: 'categorical'}],
-                  childAttrName: "sample"
-                },
-                {
-                  name: 'items',
-                  parent: 'samples',
-                  labels: {
-                    pluralCase: "items",
-                    setOfCasesWithArticle: "an item"
-                  },
-                  // The child collection also has just one attribute
-                  attrs: [{name: "value"}]
-                }
-              ]
-            }
-          }, function(result) { console.log(result)});;
-        }
-      }
-    );
-  },
-  function (err) {
-    codapConnected = false;
-  }
-);
-
-function startNewExperimentInCODAP() {
-  openTable();
-  return new Promise(function(resolve, reject) {
-    if (!codapConnected) {
-      console.log('Not in CODAP')
-      resolve();
-      return;
-    }
-
-    experimentNumber++;
-    runNumber = 0; // Each experiment starts the runNumber afresh
-    codapInterface.sendRequest({
-      action: 'create',
-      resource: 'collection[experiments].case',
-      values: [{
-        values: {
-          experiment: experimentNumber,
-          sample_size: sampleSize
-        }
-      }]
-    }, function (result) {
-      if (result && result.success) {
-        experimentCaseID = result.values[0].id;
-        resolve();
-      } else {
-        window.alert('Unable to begin experiment');
-        reject();
-      }
-    });
-  });
-}
-
-function addValuesToCODAP(run, vals) {
-  if (!codapConnected) {
-    return;
-  }
-
-  // process values into map of columns and value
-  var values;
-  values = vals.map(function(v) {
-    if (!isCollector) {
-      return {value : v}
-    } else {
-      return v;    // case is already in `key: value` structure
-    }
-  });
-
-  codapInterface.sendRequest({
-    action: 'create',
-    resource: 'collection[samples].case',
-    values: [
-     {
-      parent: experimentCaseID,
-      values: { sample: run }
-     }
-    ]
-  }, function (result) {
-      if (result.success) {
-        var runCaseID = result.values[0].id,
-            valuesArray = values.map(function(v) {
-              return  {
-                parent: runCaseID,
-                values: v
-               }
-            });
-        codapInterface.sendRequest({
-          action: 'create',
-          resource: 'collection[items].case',
-          values: valuesArray
-        });
-      }
-  });
-}
-
-function sendSequenceDirectlyToCODAP(sequence) {
-  for (var i = 0, ii = sequence.length; i < ii; i++) {
-    var values = sequence[i].map(function(v) {
-      return variables[v];
-    })
-    addValuesToCODAP(i+1, values)
-  }
-}
-
-function openTable() {
-  if (!codapConnected) {
-    return;
-  }
-
-  codapInterface.sendRequest({
-    action: 'create',
-    resource: 'component',
-    values: {
-      type: 'caseTable'
-    }
-  });
-}
-
-function getContexts() {
-  return new Promise(function(resolve, reject) {
-    if (!codapConnected) {
-      console.log('Not in CODAP')
-      resolve([]);
-      return;
-    }
-
-    codapInterface.sendRequest({
-      action: 'get',
-      resource: 'dataContextList'
-    }, function(result) {
-      if (result && result.success) {
-        resolve(result.values);
-      } else {
-        resolve([]);
-      }
-    });
-  });
-}
-
-function setCasesFromContext(contextName) {
-  return new Promise(function(resolve, reject) {
-
-    function setCasesGivenCount (results) {
-      if (results.success) {
-        // clear caseVariables while leaving variables reference intact
-        caseVariables.length = 0;
-
-        var count = Math.min(results.values, 120),
-            reqs = [];
-        for (var i = 0; i < count; i++) {
-          reqs.push({
-            action: 'get',
-            resource: collectionResourceName + '.caseByIndex['+i+']'
-          });
-        }
-        codapInterface.sendRequest(reqs).then(function(results) {
-          results.forEach(function(res) {
-            caseVariables.push(res.values.case.values);
-          });
-          resolve();
-       });
-      }
-    }
-
-    function addAttributes() {
-      collectionAttributes.forEach(function (attr) {
-        if (drawAttributes.indexOf(attr) < 0) {
-          codapInterface.sendRequest({
-            action: 'create',
-            resource: 'collection[items].attribute',
-            values: [
-              {
-                name: attr
-              }
-            ]
-          });
-        }
-      });
-    }
-
-    function setCollection (result) {
-      if (result.success) {
-        collectionResourceName = "dataContext[" + contextName + "].collection[" +
-            result.values[0].name + "]";
-        codapInterface.sendRequest([
-          {     // get the existing columns in the draw table
-            action: 'get',
-            resource: 'collection[items].attributeList'
-          },
-          {     // get the columns we'll be needing
-            action: 'get',
-            resource: collectionResourceName + '.attributeList'
-          },
-          {     // get the number of cases
-            action: 'get',
-            resource: collectionResourceName + '.caseCount'
-          }
-        ]).then(function(results) {
-          drawAttributes = results[0].values.map(function (res) {
-            return res.name;
-          });
-          collectionAttributes = results[1].values.map(function (res) {
-            return res.name;
-          });
-          addAttributes();    // throw this over the wall
-          return results[2];
-        }).then(setCasesGivenCount);
-      }
-    }
-
-    codapInterface.sendRequest({
-      action: 'get',
-      resource: 'dataContext[' + contextName + '].collectionList'
-    }).then(setCollection);
-  });
 }
 
 });
