@@ -1,9 +1,16 @@
+/**
+ * Codap communications module
+ *
+ * Additional layer of abstraction over the codap interface module to allow us
+ * to keep our lengthy communications with codap out of the way.
+ */
+
 define([
     './lib/CodapInterface',
     './lib/codap-plugin-config'],
   function (codapInterface, codapPluginConfig) {
 
-    CodapCom = function(getStateFunc, loadStateFunc) {
+    var CodapCom = function(getStateFunc, loadStateFunc) {
       this.codapConnected = false;
       this.experimentCaseID = null;
       this.loadStateFunc = loadStateFunc;
@@ -14,10 +21,13 @@ define([
       this.addValuesToCODAP = this.addValuesToCODAP.bind(this);
       this.openTable = this.openTable.bind(this);
 
+      this.drawAttributes = null;
+      this.collectionAttributes = null;
+
       codapInterface.on('get', 'interactiveState', getStateFunc);
 
       this.init();
-    }
+    };
 
     CodapCom.prototype = {
 
@@ -74,7 +84,7 @@ define([
                     }
                   ]
                 }
-              }, function(result) { console.log(result)});;
+              }, function(result) { console.log(result); });
             }
           }
         );
@@ -139,7 +149,7 @@ define([
         var values;
         values = vals.map(function(v) {
           if (!isCollector) {
-            return {value : v}
+            return {value : v};
           } else {
             return v;    // case is already in `key: value` structure
           }
@@ -161,7 +171,7 @@ define([
                     return  {
                       parent: runCaseID,
                       values: v
-                     }
+                     };
                   });
               codapInterface.sendRequest({
                 action: 'create',
@@ -172,7 +182,8 @@ define([
         });
       },
 
-      deleteAll: function() {
+      deleteAll: function(device, populateContextsList) {
+        var _this = this;
         codapInterface.sendRequest({
           action: 'delete',
           resource: 'dataContext[Sampler].collection[experiments].allCases'
@@ -198,7 +209,7 @@ define([
                 codapInterface.sendRequest( tMsgList).then( function( iResult) {
                   if( iResult.success) {
                     if (device === "collector") {
-                      return getContexts().then(populateContextsList);
+                      return _this.getContexts().then(populateContextsList);
                     }
                   }
                   else {
@@ -234,7 +245,7 @@ define([
         });
       },
 
-      setCasesFromContext: function(contextName) {
+      setCasesFromContext: function(contextName, caseVariables) {
         var _this = this;
         return new Promise(function(resolve, reject) {
 
@@ -260,8 +271,8 @@ define([
           }
 
           function addAttributes() {
-            collectionAttributes.forEach(function (attr) {
-              if (drawAttributes.indexOf(attr) < 0) {
+            _this.collectionAttributes.forEach(function (attr) {
+              if (_this.drawAttributes.indexOf(attr) < 0) {
                 codapInterface.sendRequest({
                   action: 'create',
                   resource: 'collection[items].attribute',
@@ -293,10 +304,10 @@ define([
                   resource: _this.collectionResourceName + '.caseCount'
                 }
               ]).then(function(results) {
-                drawAttributes = results[0].values.map(function (res) {
+                _this.drawAttributes = results[0].values.map(function (res) {
                   return res.name;
                 });
-                collectionAttributes = results[1].values.map(function (res) {
+                _this.collectionAttributes = results[1].values.map(function (res) {
                   return res.name;
                 });
                 addAttributes();    // throw this over the wall
@@ -311,7 +322,7 @@ define([
           }).then(setCollection);
         });
       }
-    }
+    };
 
     return CodapCom;
 });

@@ -2,7 +2,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
 
   var s = Snap("#model svg"),
 
-      device = "mixer",       // ..."spinner"
+      device = "mixer",       // ..."spinner", "collector"
       isCollector = false,
 
       running = false,
@@ -10,22 +10,15 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       speed = 1,  //  0.5, 1, 2, 3=inf
 
       experimentNumber = 0,
-      runNumber = 0,
       sentRun = 0,
       sequence = [],
 
       numRuns = 3,
       sampleSize = 5,
 
-      experimentCaseID,
-      runCaseID,
-
       userVariables = ["a", "b", "a"],
       caseVariables = [],
       variables = userVariables,
-
-      collectionAttributes,
-      drawAttributes,
 
       samples = [],
 
@@ -56,7 +49,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       numRuns = state.repeat || numRuns;
       speed = state.speed || speed;
       if (state.device) {
-        switchState(null, state.device)
+        switchState(null, state.device);
       }
 
       view.render();
@@ -75,7 +68,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       variables: variables,
       uniqueVariables: uniqueVariables,
       samples: samples
-    }
+    };
   }
 
   function isRunning() {
@@ -90,7 +83,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     return paused;
   }
 
-  view = new View(getProps, isRunning, setRunning, isPaused, reset);
+  view = new View(getProps, isRunning, setRunning, isPaused, setup);
 
   function getNextVariable() {
     // brain-dead version for now
@@ -172,7 +165,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
   function resetButtonPressed() {
     this.blur();
     experimentNumber = 0;
-    codapCom.deleteAll();
+    codapCom.deleteAll(device, ui.populateContextsList(caseVariables, view, codapCom));
   }
 
   function addNextSequenceRunToCODAP() {
@@ -187,7 +180,6 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
 
   function run() {
     experimentNumber += 1;
-    runNumber = 0;
     codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize).then(function() {
       sequence = createRandomSequence(sampleSize, numRuns);
       if (speed === 3) {
@@ -195,10 +187,10 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
         for (var i = 0, ii = sequence.length; i < ii; i++) {
           var values = sequence[i].map(function(v) {
             return variables[v];
-          })
+          });
           codapCom.addValuesToCODAP(i+1, values, isCollector);
         }
-        reset();
+        setup();
         return;
       }
 
@@ -226,7 +218,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
         }
       }
 
-      if (device == "mixer" || device == "collector") {
+      if (device === "mixer" || device === "collector") {
         view.animateMixer();
       }
 
@@ -234,21 +226,11 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     });
   }
 
-
   function fastforwardToEnd() {
     view.endAnimation();
     while (sequence[sentRun]) {
       addNextSequenceRunToCODAP();
     }
-  }
-
-  function reset() {
-    view.reset();
-    ui.enableButtons();
-    samples = [];
-    running = false;
-    paused = false;
-    view.render();
   }
 
   // permanently sorts variables so identical ones are next to each other
@@ -260,7 +242,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
           inserted = false,
           j = -1;
       while (!inserted && ++j < sortedVariables.length) {
-        if (sortedVariables[j] == v) {
+        if (sortedVariables[j] === v) {
           sortedVariables.splice(j, 0, v);
           inserted = true;
           uniqueVariables--;
@@ -289,12 +271,12 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       if (isCollector) {
         codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
       }
-      reset();
+      setup();
     }
   }
 
   function refreshCaseList() {
-    codapCom.getContexts().then(populateContextsList)
+    codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
   }
 
   function setSampleSize(n) {
@@ -309,9 +291,19 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
 
   function setSpeed(n) {
     speed = n;
-    if (running && !paused && speed == 3) {
+    if (running && !paused && speed === 3) {
       fastforwardToEnd();
     }
+  }
+
+  // Set the model up to the initial conditions, reset all buttons and the view
+  function setup() {
+    view.reset();
+    ui.enableButtons();
+    samples = [];
+    running = false;
+    paused = false;
+    view.render();
   }
 
   ui.appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
@@ -319,6 +311,5 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     view.speedText, view.setVariableName);
 
   // initialize and render the model
-  reset();
-
+  setup();
 });
