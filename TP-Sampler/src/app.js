@@ -1,4 +1,4 @@
-require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, View) {
+require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, CodapCom, View, ui) {
 
   var s = Snap("#model svg"),
 
@@ -27,13 +27,9 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
       collectionAttributes,
       drawAttributes,
 
-
       samples = [],
 
-
       uniqueVariables,
-
-      variableNameInput = document.getElementById("variable-name-change"),
 
       codapCom,
       view;
@@ -107,9 +103,9 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
     variables.push(getNextVariable());
     view.render();
 
-    removeClass(document.getElementById("remove-variable"), "disabled");
+    ui.enable("remove-variable");
     if (variables.length > 119) {
-      addClass(document.getElementById("add-variable"), "disabled");
+      ui.disable("add-variable");
     }
   }
 
@@ -120,9 +116,9 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
     variables.pop();
     view.render();
 
-    removeClass(document.getElementById("add-variable"), "disabled");
+    ui.enable("add-variable");
     if (variables.length < 2) {
-      addClass(document.getElementById("remove-variable"), "disabled");
+      ui.disable("remove-variable");
     }
   }
 
@@ -151,12 +147,12 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
     this.blur();
     if (!running) {
       running = true;
-      disableButtons();
+      ui.disableButtons();
       run();
     } else {
       paused = !paused;
       view.pause(paused);
-      setRunButton(paused);
+      ui.setRunButton(paused);
     }
   }
 
@@ -248,7 +244,7 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
 
   function reset() {
     view.reset();
-    enableButtons();
+    ui.enableButtons();
     samples = [];
     running = false;
     paused = false;
@@ -282,141 +278,47 @@ require(['lib/snap-plugins', './codap-com', './view'], function(Snap, CodapCom, 
     if (this.blur) this.blur();
     var selectedDevice = state || this.id;
     if (selectedDevice !== device) {
-      console.log("variables", variables)
-      console.log("userVariables", userVariables)
-      removeClass(document.getElementById(device), "active");
-      addClass(document.getElementById(selectedDevice), "active");
+      ui.toggleDevice(device, selectedDevice);
       device = selectedDevice;
       isCollector = device === "collector";
       variables = isCollector ? caseVariables : userVariables;
       if (device === "spinner") {
         sortVariablesForSpinner();
       }
-      renderVariableControls();
+      ui.renderVariableControls(device);
       if (isCollector) {
-        codapCom.getContexts().then(populateContextsList);
+        codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
       }
       reset();
     }
   }
 
-  reset();
-
-  /** ******** HTML handlers and class modification ******** **/
-
-  document.getElementById("add-variable").onclick = addVariable;
-  document.getElementById("remove-variable").onclick = removeVariable;
-  document.getElementById("run").onclick = runButtonPressed;
-  document.getElementById("stop").onclick = stopButtonPressed;
-  document.getElementById("reset").onclick = resetButtonPressed;
-  document.getElementById("mixer").onclick = switchState;
-  document.getElementById("spinner").onclick = switchState;
-  document.getElementById("collector").onclick = switchState;
-  document.getElementById("refresh-list").onclick = function() {
+  function refreshCaseList() {
     codapCom.getContexts().then(populateContextsList)
-  };
-  document.getElementById("sample_size").addEventListener('input', function (evt) {
-      sampleSize = this.value * 1;
-      view.render();
-  });
-  document.getElementById("repeat").addEventListener('input', function (evt) {
-      numRuns = this.value * 1;
-      view.render();
-  });
-  document.getElementById("speed").addEventListener('input', function (evt) {
-      speed = (this.value * 1) || 0.5;
-      document.getElementById("speed-text").innerHTML = view.speedText[this.value * 1];
-      if (running && !paused && speed == 3) {
-        fastforwardToEnd();
-      }
-  });
-  variableNameInput.onblur = view.setVariableName;
-  variableNameInput.onkeypress = function(e) {
-    if (e.keyCode == 13) {
-      view.setVariableName();
-      return false;
-    }
   }
-  function addClass(el, className) {
-    if (el.classList)
-      el.classList.add(className);
-    else
-      el.className += ' ' + className;
-  }
-  function removeClass(el, className) {
-    if (el.classList)
-      el.classList.remove(className);
-    else
-      el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-  }
-  function disableButtons() {
-    setRunButton(false);
-    addClass(document.getElementById("add-variable"), "disabled");
-    addClass(document.getElementById("remove-variable"), "disabled");
-    document.getElementById("sample_size").setAttribute("disabled", "disabled");
-    document.getElementById("repeat").setAttribute("disabled", "disabled");
-    removeClass(document.getElementById("stop"), "disabled");
-  }
-  function enableButtons() {
-    setRunButton(true);
-    removeClass(document.getElementById("add-variable"), "disabled");
-    removeClass(document.getElementById("remove-variable"), "disabled");
-    document.getElementById("sample_size").removeAttribute("disabled");
-    document.getElementById("repeat").removeAttribute("disabled");
-    addClass(document.getElementById("stop"), "disabled");
-  }
-  function setRunButton(showRun) {
-    if (showRun) {
-      document.getElementById("run").innerHTML = "START";
-    } else {
-      document.getElementById("run").innerHTML = "PAUSE";
-    }
-  }
-  function renderVariableControls() {
-    if (device !== "collector") {
-      removeClass(document.getElementById("add-variable"), "hidden");
-      removeClass(document.getElementById("remove-variable"), "hidden");
-      addClass(document.getElementById("select-collection"), "hidden");
-      addClass(document.getElementById("refresh-list"), "hidden");
-    } else {
-      addClass(document.getElementById("add-variable"), "hidden");
-      addClass(document.getElementById("remove-variable"), "hidden");
-      removeClass(document.getElementById("select-collection"), "hidden");
-      removeClass(document.getElementById("refresh-list"), "hidden");
-    }
-  }
-  function populateContextsList(collections) {
-    var sel = document.getElementById("select-collection");
-    sel.innerHTML = "";
-    collections.forEach(function (col) {
-      if (col.name !== 'Sampler')
-        sel.innerHTML += '<option value="' + col.name + '">' + col.name + "</option>";
-    });
 
-    if (!sel.innerHTML) {
-      sel.innerHTML += "<option>No collections</option>";
-      sel.setAttribute("disabled", "disabled");
-      return;
-    } else {
-      sel.removeAttribute("disabled")
-    }
+  function setSampleSize(n) {
+    sampleSize = n;
+    view.render();
+  }
 
-    function setVariablesAndRender(vars) {
-      // push into existing array, as `variables` is pointing at this
-      caseVariables.push.apply(caseVariables, vars);
-      view.render();
-    }
+  function setNumRuns(n) {
+    numRuns = n;
+    view.render();
+  }
 
-    if (sel.childNodes.length == 1) {
-      codapCom.setCasesFromContext(sel.childNodes[0].value).then(setVariablesAndRender);
-    } else {
-      sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
-      sel.onchange = function(evt) {
-        if(evt.target.value) {
-          codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
-        }
-      }
+  function setSpeed(n) {
+    speed = n;
+    if (running && !paused && speed == 3) {
+      fastforwardToEnd();
     }
   }
+
+  ui.appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
+    resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
+    view.speedText, view.setVariableName);
+
+  // initialize and render the model
+  reset();
 
 });
