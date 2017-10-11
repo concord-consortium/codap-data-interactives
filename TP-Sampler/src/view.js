@@ -1,7 +1,14 @@
+/* globals mina */
+
+/**
+ * Sampler View module
+ *
+ * Draws the SVG state of the mixer and spinner plugins
+ */
+
 define(function() {
 
   var width = 205,            // svg units
-      height = 220,
       containerX = 10,
       containerY = 0,
       containerWidth = 130,
@@ -53,7 +60,7 @@ define(function() {
       },
 
       getLabelForVariable = function(v) {
-        if (typeof v == "object"){
+        if (typeof v === "object"){
           var firstKey = Object.keys(v)[0];
           return v[firstKey];
         } else {
@@ -93,12 +100,12 @@ define(function() {
             hue = (baseColorHue + (hueDiff * i)) % 360,
             huePerc = (hue / 360) * 100,
             lightPerc = 66 + (lighten ? 15 : 0);
-        return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)"
+        return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)";
       };
 
 
 
-  View = function(getProps, isRunning, setRunning, isPaused, modelReset) {
+  var View = function(getProps, isRunning, setRunning, isPaused, modelReset) {
     this.getProps = getProps;
     this.isRunning = isRunning;
     this.setRunning = setRunning;
@@ -110,7 +117,8 @@ define(function() {
     this.animateMixer = this.animateMixer.bind(this);
     this.moveLetterToSlot = this.moveLetterToSlot.bind(this);
     this.endAnimation = this.endAnimation.bind(this);
-  }
+    this.setVariableName = this.setVariableName.bind(this);
+  };
 
   View.prototype = {
     render: function() {
@@ -133,7 +141,7 @@ define(function() {
       document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
 
       this.createSampleSlots();
-      if (device == "mixer" || device == "collector") {
+      if (device === "mixer" || device === "collector") {
         this.createMixer();
       } else {
         this.createSpinner();
@@ -152,10 +160,11 @@ define(function() {
           maxSlotDepth = 4,
           minSlotDepth = slotSize/3,
           slotDepth = Math.min(minSlotDepth, maxSlotDepth),
-          stroke = (slotHeight < maxHeight) ? stroke / 2 : stroke,
           totalHeight = slotHeight * sampleSize,
           mx = x + (maxSlotDepth - slotDepth),
           y = Math.max(containerY, centerY - (totalHeight / 2));
+
+      stroke = (slotHeight < maxHeight) ? stroke / 2 : stroke;
 
       sampleSlotTargets = [];
       sampleSlots = [];
@@ -216,20 +225,23 @@ define(function() {
           radius = 14,
           maxInRow = Math.floor(w / (radius*2)),
           rows = Math.floor(variables.length/maxInRow),
-          radius = rows > 6 ? 9 : 14,      // repeat these to recalculate once
-          maxInRow = Math.floor(w / (radius*2)),
           maxVariableLength = variables.reduce(function(max, v) {
             var length = getLabelForVariable(v).length;
             return Math.max(max, length);
           }, 0),
           fontScaling = 1 - Math.min(Math.max((maxVariableLength - 5) * 0.1, 0), 0.4),
-          fontSize = radius * fontScaling;
+          fontSize,
+          i, ii;
 
-      for (var i = 0, ii=variables.length; i<ii; i++) {
+      radius = rows > 6 ? 9 : 14;      // repeat these to recalculate once
+      maxInRow = Math.floor(w / (radius*2));
+      fontSize = radius * fontScaling;
+
+      for (i = 0, ii=variables.length; i<ii; i++) {
         var rowNumber = Math.floor(i/maxInRow),
             rowIndex = i % maxInRow,
             rowHeight = rows < 3 ? (radius * 2) : rows < 5 ? (radius * 1.5) : radius,
-            x = (rowNumber % 2 == 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
+            x = (rowNumber % 2 === 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
             y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
 
         var labelClipping = s.circle(x, y, radius);
@@ -246,7 +258,7 @@ define(function() {
               dy: ".25em",
               dx: getTextShift(text, (3.8*(radius/fontSize))),
               clipPath: labelClipping
-            })
+            }),
             ball = s.group(
               circle,
               label
@@ -255,20 +267,20 @@ define(function() {
         ball.click(this.showVariableNameInput(i));
         ball.hover((function(circ, lab, size) {
           return function() {
-            if (_this.isRunning() || device == "collector") return;
+            if (_this.isRunning() || device === "collector") return;
             circ.attr({ fill: getVariableColor(0, 0) });
             lab.attr({ fontSize: size + 2, dy: ".26em", });
-          }
+          };
         })(circle, label, fontSize), (function(circ, lab, size) {
           return function() {
             circ.attr({ fill: getVariableColor(0, 0, true) });
             lab.attr({ fontSize: size, dy: ".25em", });
-          }
+          };
         })(circle, label, fontSize));
       }
 
       // setup animation
-      for (var i = 0, ii = balls.length; i < ii; i++) {
+      for (i = 0, ii = balls.length; i < ii; i++) {
         var speed = 5 + (Math.random() * 7),
             direction = Math.PI + (Math.random() * Math.PI);
         balls[i].vx = Math.cos(direction) * speed;
@@ -279,7 +291,7 @@ define(function() {
     animateSelectNextVariable: function (selection, draw, selectionMadeCallback) {
       if (!this.isRunning()) return;
 
-      if (device == "mixer" || device == "collector") {
+      if (device === "mixer" || device === "collector") {
         this.animateMixerSelection(selection, draw, selectionMadeCallback);
       } else {
         this.animateSpinnerSelection(selection, draw, selectionMadeCallback)
@@ -305,7 +317,7 @@ define(function() {
 
       var origin = letter.getBBox();
       var target = sampleSlotTargets[slot].getBBox();
-      matrix = letter.transform().localMatrix;
+      var matrix = letter.transform().localMatrix;
       matrix.translate((target.x-origin.x), (target.cy-origin.cy));
 
       var size = sampleSlotTargets[slot].attr("r")*2;
@@ -314,7 +326,7 @@ define(function() {
 
       letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
-      if (slot == sampleSize-1) {
+      if (slot === sampleSize-1) {
         setTimeout(pushLettersOut, 300/speed);
         setTimeout(returnSlots, 600/speed);
         setTimeout(selectionMade, 600/speed);
@@ -345,7 +357,7 @@ define(function() {
               return function() {
                 lett.remove();
                 samples = [];
-              }
+              };
             })(letter));
           }
         }
@@ -442,7 +454,7 @@ define(function() {
     },
 
     pause: function (doPause) {
-      func = doPause ? "pause" : "resume";
+      var func = doPause ? "pause" : "resume";
       var animatedObjects = balls.concat(sampleSlotTargets).concat(sampleSlots).concat(samples);
       if (needle) {
         animatedObjects.push(needle);
@@ -453,13 +465,16 @@ define(function() {
     },
 
     createSpinner: function () {
+      var labelClipping,
+          label;
+
       wedges = [];
       if (uniqueVariables === 1) {
         var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
               fill: getVariableColor(0, 0)
-            }),
-            labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius),
-            label = this.createSpinnerLabel(0, 0, spinnerX, spinnerY,
+            });
+        labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
+        label = this.createSpinnerLabel(0, 0, spinnerX, spinnerY,
                       spinnerRadius/2, labelClipping, 9, circle);
         wedges.push(label);
       } else {
@@ -469,9 +484,9 @@ define(function() {
             offsetDueToMerge = 0;
 
         for (var i = 0, ii = variables.length; i < ii; i++) {
-          var merge = variables[i] == lastVariable,
-              mergeCount = merge ? mergeCount + 1 : 0,
-              slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount),
+          var merge = variables[i] === lastVariable;
+          mergeCount = merge ? mergeCount + 1 : 0;
+          var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount),
               textSize = spinnerRadius / (3 + (ii * 0.1));
 
           lastVariable = variables[i];
@@ -485,8 +500,8 @@ define(function() {
           });
 
           // label
-          var labelClipping = s.path(slice.path),
-              label = this.createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
+          labelClipping = s.path(slice.path);
+          label = this.createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
                         labelClipping, Math.max(1, 10 - variables.length), wedge);
           wedges.push(label);
 
@@ -494,7 +509,7 @@ define(function() {
           s.path(slice.path).attr({
             fill: "none",
             stroke: "#fff",
-            strokeWidth: i == ii - 1 ? 0.5 : 1
+            strokeWidth: i === ii - 1 ? 0.5 : 1
           });
         }
       }
@@ -562,7 +577,7 @@ define(function() {
     showVariableNameInput: function (i) {
       var _this = this;
       return function() {
-        if (_this.isRunning() || device == "collector") return;
+        if (_this.isRunning() || device === "collector") return;
 
         var loc = this.node.getClientRects()[0],
             text = variables[i],
@@ -581,14 +596,14 @@ define(function() {
           var v = variables[editingVariable];
           editingVariable = [];
           for (var j = 0, jj = variables.length; j < jj; j++) {
-            if (variables[j] == v) {
+            if (variables[j] === v) {
               variables[j] = " ";
               editingVariable.push(j);
             }
           }
         }
         _this.render();
-      }
+      };
     },
 
     setVariableName: function () {
@@ -617,7 +632,7 @@ define(function() {
       sampleSlotTargets = [];
       sampleSlots = [];
     }
-  }
+  };
 
   return View;
 });

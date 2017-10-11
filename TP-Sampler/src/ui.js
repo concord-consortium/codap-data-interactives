@@ -1,3 +1,9 @@
+/**
+ * UI module
+ *
+ * Adds listeners to DOM elements, and helpers for updating their state
+ */
+
 define(function() {
 
   function addClass(el, className) {
@@ -76,7 +82,7 @@ define(function() {
         sel.setAttribute("disabled", "disabled");
         return;
       } else {
-        sel.removeAttribute("disabled")
+        sel.removeAttribute("disabled");
       }
 
       function setVariablesAndRender(vars) {
@@ -85,17 +91,18 @@ define(function() {
         view.render();
       }
 
-      if (sel.childNodes.length == 1) {
-        codapCom.setCasesFromContext(sel.childNodes[0].value).then(setVariablesAndRender);
+      if (sel.childNodes.length === 1) {
+        codapCom.setCasesFromContext(sel.childNodes[0].value, caseVariables)
+          .then(setVariablesAndRender);
       } else {
         sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
         sel.onchange = function(evt) {
           if(evt.target.value) {
             codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
           }
-        }
+        };
       }
-    }
+    };
   }
 
   function toggleDevice(oldDevice, newDevice) {
@@ -125,15 +132,15 @@ define(function() {
       var val = (this.value * 1),
           speed = val || 0.5;
       document.getElementById("speed-text").innerHTML = speedText[val];
-      setSpeed(speed)
+      setSpeed(speed);
     });
     document.getElementById("variable-name-change").onblur = setVariableName;
     document.getElementById("variable-name-change").onkeypress = function(e) {
-      if (e.keyCode == 13) {
+      if (e.keyCode === 13) {
         setVariableName();
         return false;
       }
-    }
+    };
   }
 
   return {
