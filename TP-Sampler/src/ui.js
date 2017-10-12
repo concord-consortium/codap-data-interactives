@@ -180,7 +180,12 @@ define(function() {
       setHidden(hidden);
       show(document.getElementById("model-cover"), hidden);
     };
+  }
 
+  // Sets up the UI elements based on the loaded state of the model
+  function render(hidden) {
+    show(document.getElementById("model-cover"), hidden);
+    document.getElementById("hideModel").checked = hidden;
   }
 
   return {
@@ -192,6 +197,7 @@ define(function() {
     setRunButton: setRunButton,
     toggleDevice: toggleDevice,
     renderVariableControls: renderVariableControls,
-    populateContextsList: populateContextsList
+    populateContextsList: populateContextsList,
+    render: render
   };
 });
