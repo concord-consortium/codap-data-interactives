@@ -240,3 +240,15 @@ text:hover{
   position: absolute;
   top: 8vh;
 }
+
+#options div {
+  padding-bottom: 3vh;
+}
+
+#options.disabled .disablable {
+  color: #888;
+}
+
+#password-failed {
+  color: red;
+}

@@ -8,6 +8,8 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       running = false,
       paused = false,
       speed = 1,  //  0.5, 1, 2, 3=inf
+
+      password = null,      // if we have a password, options are locked
       hidden = false,
 
       experimentNumber = 0,
@@ -38,7 +40,8 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
         repeat: numRuns,
         speed: speed,
         device: device,
-        hidden: hidden
+        hidden: hidden,
+        password: password
       }
     };
   }
@@ -53,8 +56,9 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       if (state.device) {
         switchState(null, state.device);
       }
-      hidden = state.hidden;
-      ui.render(hidden);
+      hidden = state.hidden || false;
+      password = state.password || null;
+      ui.render(hidden, password, false);
 
       view.render();
     }
@@ -305,6 +309,20 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     hidden = b;
   }
 
+  function setOrCheckPassword(pass) {
+    var passwordFailed = false;
+    if (!password) {
+      password = pass;      // lock model
+    } else {
+      if (pass === password) {
+        password = null;      // clear existing password
+      } else {
+        passwordFailed = true;
+      }
+    }
+    ui.render(hidden, password, passwordFailed);
+  }
+
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     view.reset();
@@ -317,7 +335,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
 
   ui.appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
     resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-    view.speedText, view.setVariableName, setHidden);
+    view.speedText, view.setVariableName, setHidden, setOrCheckPassword);
 
   // initialize and render the model
   setup();

@@ -139,11 +139,38 @@ define(function() {
     addClass(document.getElementById("tab-options"), "active");
     hide(document.getElementById("sampler"));
     show(document.getElementById("options"));
+    hide(document.getElementById("password-failed"));
+  }
+
+  function lockOptionsFunc(setOrCheckPassword) {
+    return function() {
+      var password = document.getElementById("password").value;
+      if (password.length > 0) {
+        setOrCheckPassword(password);
+      }
+    };
+  }
+
+  function lockOptions(lock) {
+    var passwordField = document.getElementById("password");
+    if (lock) {
+      passwordField.value = "aaaaaaaaaa"; // always make hidden password 10 chars
+      passwordField.type = "password";
+      addClass(document.getElementById("options"), "disabled");
+      document.getElementById("hideModel").disabled = "disabled";
+      document.getElementById("pass-lock").innerHTML = "Unlock";
+    } else {
+      passwordField.value = "";
+      passwordField.type = "text";
+      removeClass(document.getElementById("options"), "disabled");
+      document.getElementById("hideModel").disabled = false;
+      document.getElementById("pass-lock").innerHTML = "Lock";
+    }
   }
 
   function appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
             resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-            speedText, setVariableName, setHidden) {
+            speedText, setVariableName, setHidden, setOrCheckPassword) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("run").onclick = runButtonPressed;
@@ -180,12 +207,22 @@ define(function() {
       setHidden(hidden);
       show(document.getElementById("model-cover"), hidden);
     };
+
+    var passwordField = document.getElementById("password");
+    passwordField.onclick = function(evt) {
+      passwordField.value = "";
+      passwordField.type = "text";
+    };
+    document.getElementById("pass-lock").onclick = lockOptionsFunc(setOrCheckPassword);
   }
 
   // Sets up the UI elements based on the loaded state of the model
-  function render(hidden) {
+  function render(hidden, password, passwordFailed) {
     show(document.getElementById("model-cover"), hidden);
     document.getElementById("hideModel").checked = hidden;
+    var isLocked = !!password;
+    lockOptions(isLocked);
+    show(document.getElementById("password-failed"), passwordFailed);
   }
 
   return {
