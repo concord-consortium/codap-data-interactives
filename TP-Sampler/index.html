@@ -55,8 +55,18 @@
       <div id="model-cover" class="hidden">?</div>
     </div>
     <div id="options" class="hidden">
-      <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
-      <label for="hideModel">Hide model</label>
+      <div class="disablable">
+        <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
+        <label for="hideModel">Hide model</label>
+      </div>
+      <div>
+        <label for="password">Lock settings with password:</label>
+        <input id="password" type="text"></input>
+        <button id="pass-lock">Lock</button>
+        <span id="password-failed" class="hidden">
+          Password is incorrect.
+        </span>
+      </div>
     </div>
     <script data-main="src/app" src="src/lib/require.js"></script>
   </body>
