@@ -489,7 +489,7 @@
     },
     {
       "title": "Elodea Simulator",
-      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project",
+      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
       "path": "https://concord-consortium.github.io/elodea-sim/index.html",
       "visible": false,
       "categories": [
@@ -513,6 +513,28 @@
       "width": 600,
       "height": 400,
       "path": "https://ramp-game.concord.org",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Dataflow Onboarding",
+      "description": "This is the onboarding plugin for the DataFlow plugin. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. This must be used in conjunction with the Dataflow plugin",
+      "width": 600,
+      "height": 400,
+      "path": "https://concord-consortium.github.io/codap-data-interactives/DataflowGettingStarted/DataflowGettingStarted.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Dataflow",
+      "description": "The DataFlow plugin is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. It collects sensor data collected by the InSPECT Raspbery Pis.",
+      "width": 600,
+      "height": 400,
+      "path": "https://dataflow.manylabs.org/ext/flow?use_codap=1",
       "visible": false,
       "categories": [
         "Partners"
