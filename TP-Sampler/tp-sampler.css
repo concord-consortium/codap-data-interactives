@@ -222,6 +222,20 @@ text:hover{
   cursor: pointer;
 }
 
+#model-cover {
+  position: absolute;
+  left: 1vh;
+  top: 21.2vh;
+  width: 37.5vh;
+  height: 65.5vh;
+  z-index: 2;
+  background-color: #F0F0F0;
+  border: 0.1vh solid #444;
+  color: white;
+  font-size: 49vh;
+  text-align: center;
+}
+
 #options {
   position: absolute;
   top: 8vh;
