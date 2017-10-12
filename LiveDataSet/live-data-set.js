@@ -28,12 +28,33 @@ $(function () {
     csvURL: null,
     dataSetName: null,
     firstLineIsHeader: null,
+    indexAttribute: null,
+    lineCount: 0,
+    rowHashes: null,
     lastFetch: null,
     stats: {},
     step: null,
     updateInterval: null
   };
 
+  /**
+   * From git://github.com/darkskyapp/string-hash.git
+   * @param str
+   * @return {number}
+   */
+  function hash(str) {
+    var hash = 5381,
+        i    = str.length;
+
+    while(i) {
+      hash = (hash * 33) ^ str.charCodeAt(--i);// eslint-disable-line no-bitwise
+    }
+
+    /* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
+     * integers. Since we want the results to be always positive, convert the
+     * signed int to an unsigned by doing an unsigned bitshift. */
+    return hash >>> 0; // eslint-disable-line no-bitwise
+  }
   // transient state
   var dataSet;
   var updateTimer;
@@ -145,54 +166,84 @@ $(function () {
     };
     myState.attrs = nameAttrs(myState.stats.cols, firstLineIsHeader && dataSet[0]? dataSet[0]: []);
     req.values.collections[0].attrs = myState.attrs.map(function (attr) { return {name: attr};});
+    // generate random name for indexAttribute and add it to collection
+    myState.indexAttribute = "index" + Math.round(Math.random() * 99999999);
+    req.values.collections[0].attrs.push({name: myState.indexAttribute, hidden:true});
     return codapInterface.sendRequest(req);
   }
 
-  function cleanDataSet(dataSetName) {
-    var getDataSetReq = {
-      action: 'get',
-      resource: 'dataContext[' + dataSetName + ']'
-    };
-    var deleteCasesReq = {
-      action: 'delete',
-      resource: null
-    };
-    return codapInterface.sendRequest(getDataSetReq)
-        .then(function (rslt) {
-          var context = rslt.values;
-          var collectionID = rslt.success && context && (context.collections[0].id);
-          if (collectionID) {
-            deleteCasesReq.resource = 'dataContext[' +
-                dataSetName + '].collection[' + collectionID + '].allCases';
-            return codapInterface.sendRequest(deleteCasesReq);
-          } else {
-            return Promise.reject('Context error');
-          }
-        });
-  }
-
-  function populateDataSet(dataSet, firstLineIsHeader) {
-    var attrs = myState.attrs;
+  function createItems(items) {
     var req = {
       action: 'create',
       resource: 'dataContext[' + myState.dataSetName + '].item',
-      values: []
+      values: items
     };
+    if (items && (items.length > 0)) {
+      displayMessage('Updated data set "' + myState.dataSetName + '" from "' + myState.csvURL + '"');
+      return codapInterface.sendRequest(req);
+    } else {
+      return Promise.resolve({success:true});
+    }
+  }
+
+  function populateDataSet(dataSet, firstLineIsHeader) {
+
+    function makeItem (row, rowHash) {
+      var item = {};
+      var attrs = myState.attrs;
+      row.forEach(function (cell, ix) {
+        item[attrs[ix]] = cell;
+      });
+      myState.rowHashes[myState.lineCount] = rowHash;
+      item[myState.indexAttribute] = myState.lineCount++;
+      return item;
+    }
+
+    // 1. create map of row hashes to array of row keys;
+    if (!dataSet) { return; }
+    var rowHashMap = {};
+    var deleteRowRequests = [];
+    var itemsToAdd = [];
+    if (!myState.rowHashes) {myState.rowHashes = []; myState.lineCount = 0; }
+    myState.rowHashes.forEach(function(rowHash, ix) {
+      if (!rowHashMap[rowHash]) {
+        rowHashMap[rowHash] = [];
+      }
+      rowHashMap[rowHash].push(ix);
+    });
+    // 2. for each row in dataSet
+    // 2a.  compute hash.
+    // 2b.  if hash exists in map, pop from map and, if map entry is empty, remove it
+    // 2c.  if hash not in map, it is a new row: add to new row array
     dataSet.forEach(function (row, ix) {
-      if ( !(ix === 0 && firstLineIsHeader) && row.length>0) {
-        var item = {};
-        row.forEach(function (v, ix) {
-          var key = attrs[ix];
-          item[key] = v;
-        });
-        req.values.push(item);
+      try {
+        if ( !(ix === 0 && firstLineIsHeader) && row.length>0) {
+          var h = hash(JSON.stringify(row));
+          if (rowHashMap[h]) {
+            rowHashMap[h].pop(h);
+            if (rowHashMap[h].length === 0) {
+              delete rowHashMap[h];
+            }
+          } else {
+            itemsToAdd.push(makeItem(row, h));
+          }
+        }
+      } catch(ex){
+        console.warn(ex);
       }
     });
-    return cleanDataSet(myState.dataSetName).then(function () {
-      codapInterface.sendRequest(req);
-      displayMessage('Updated data set "' + myState.dataSetName +
-          '" from "' + myState.csvURL + '"');
+    // 3. for each map entry, prepare delete/itemBySearch request
+    Object.keys(rowHashMap).forEach(function (key) {
+      rowHashMap[key].forEach(function (rowID) {
+        delete myState.rowHashes[rowID];
+        deleteRowRequests.push({
+          action: 'delete',
+          resource: 'dataContext[' + myState.dataSetName + '].itemSearch[' +
+            myState.indexAttribute + '==' + rowID + ']'
+        });
+      });
     });
+    return codapInterface.sendRequest(deleteRowRequests).then(createItems(itemsToAdd));
   }
 
   function createCaseTable(dataSetID) {
@@ -208,6 +259,7 @@ $(function () {
 
   function displayError(msg) {
     displayMessage($('<span>').addClass('error-msg').text(msg));
+    console.warn(msg);
   }
 
   function displayMessage(msg) {

@@ -247,7 +247,7 @@
     },
     {
       "title": "Sage",
-      "description": "A Building Models systems modeler.",
+      "description": "A <a target=\"blank\" href=\"https://concord.org/our-work/research-projects/building-models/\">Building Models</a> systems modeler.",
       "width": 780,
       "height": 620,
       "path": "https://sage.concord.org",
@@ -489,19 +489,8 @@
     },
     {
       "title": "Elodea Simulator",
-      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project",
+      "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
       "path": "https://concord-consortium.github.io/elodea-sim/index.html",
-      "visible": false,
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
-      "title": "Ramp Simulation (InquirySpace 2 version)",
-      "description": "Win by landing the car on the target. This is part of the <a target=\"_blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace 2</a> project. To run the Game version of this interactive add '?game' to the ramp game url and reload the page.",
-      "width": 600,
-      "height": 400,
-      "path": "https://ramp-game.concord.org/",
       "visible": false,
       "categories": [
         "Partners"
@@ -513,6 +502,39 @@
       "width": 600,
       "height": 400,
       "path": "https://sensor-interactive.concord.org",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Ramp Simulation (InquirySpace 2 version)",
+      "description": "Win by landing the car on the target. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inquiryspace\">InquirySpace 2</a> project. To run the Game version of this interactive add '?game' to the ramp game url and reload the page.",
+      "width": 600,
+      "height": 400,
+      "path": "https://ramp-game.concord.org",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Dataflow Onboarding",
+      "description": "This is the onboarding plugin for the DataFlow plugin. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. This must be used in conjunction with the Dataflow plugin",
+      "width": 600,
+      "height": 400,
+      "path": "https://concord-consortium.github.io/codap-data-interactives/DataflowGettingStarted/DataflowGettingStarted.html",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Dataflow",
+      "description": "The DataFlow plugin is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. It collects sensor data collected by the InSPECT Raspbery Pis.",
+      "width": 600,
+      "height": 400,
+      "path": "https://dataflow.manylabs.org/ext/flow?use_codap=1",
       "visible": false,
       "categories": [
         "Partners"
