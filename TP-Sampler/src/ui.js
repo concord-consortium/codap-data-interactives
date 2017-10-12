@@ -54,17 +54,34 @@ define(function() {
     }
   }
 
+  // Shows the element if no boolean is passed as the second argument.
+  // If a bool is passed, this will either show or hide.
+  function show(el, show) {
+    if (show === undefined) {
+      show = true;
+    }
+    if (show) {
+      removeClass(el, "hidden");
+    } else {
+      addClass(el, "hidden");
+    }
+  }
+
+  function hide(el) {
+    addClass(el, "hidden");
+  }
+
   function renderVariableControls(device) {
     if (device !== "collector") {
-      removeClass(document.getElementById("add-variable"), "hidden");
-      removeClass(document.getElementById("remove-variable"), "hidden");
-      addClass(document.getElementById("select-collection"), "hidden");
-      addClass(document.getElementById("refresh-list"), "hidden");
+      show(document.getElementById("add-variable"));
+      show(document.getElementById("remove-variable"));
+      hide(document.getElementById("select-collection"));
+      hide(document.getElementById("refresh-list"));
     } else {
-      addClass(document.getElementById("add-variable"), "hidden");
-      addClass(document.getElementById("remove-variable"), "hidden");
-      removeClass(document.getElementById("select-collection"), "hidden");
-      removeClass(document.getElementById("refresh-list"), "hidden");
+      hide(document.getElementById("add-variable"));
+      hide(document.getElementById("remove-variable"));
+      show(document.getElementById("select-collection"));
+      show(document.getElementById("refresh-list"));
     }
   }
 
@@ -113,15 +130,15 @@ define(function() {
   function viewSampler() {
     addClass(document.getElementById("tab-sampler"), "active");
     removeClass(document.getElementById("tab-options"), "active");
-    removeClass(document.getElementById("sampler"), "hidden");
-    addClass(document.getElementById("options"), "hidden");
+    show(document.getElementById("sampler"));
+    hide(document.getElementById("options"));
   }
 
   function viewOptions() {
     removeClass(document.getElementById("tab-sampler"), "active");
     addClass(document.getElementById("tab-options"), "active");
-    addClass(document.getElementById("sampler"), "hidden");
-    removeClass(document.getElementById("options"), "hidden");
+    hide(document.getElementById("sampler"));
+    show(document.getElementById("options"));
   }
 
   function appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
@@ -159,7 +176,9 @@ define(function() {
     document.getElementById("tab-options").onclick = viewOptions;
 
     document.getElementById("hideModel").onclick = function(evt) {
-      setHidden(evt.currentTarget.checked);
+      var hidden = evt.currentTarget.checked;
+      setHidden(hidden);
+      show(document.getElementById("model-cover"), hidden);
     };
 
   }
