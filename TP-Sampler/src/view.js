@@ -294,7 +294,7 @@ define(function() {
       if (device === "mixer" || device === "collector") {
         this.animateMixerSelection(selection, draw, selectionMadeCallback);
       } else {
-        this.animateSpinnerSelection(selection, draw, selectionMadeCallback)
+        this.animateSpinnerSelection(selection, draw, selectionMadeCallback);
       }
     },
 
@@ -377,7 +377,9 @@ define(function() {
 
     animateMixerSelection: function (selection, draw, selectionMadeCallback) {
       var _this = this,
-          speed = this.getProps().speed,
+          props = this.getProps(),
+          speed = props.speed,
+          hidden = props.hidden,
           ball = balls[selection],
           circle = ball.select("circle"),
           variable = ball.select("text"),
@@ -393,6 +395,12 @@ define(function() {
       ball.animate({transform: trans}, 300/speed, function() {
         _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
         ball.beingSelected = false;
+        if (hidden) {
+          setTimeout(function() {
+            trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 3, containerY + (containerHeight/2), circle);
+            ball.animate({transform: trans}, 100/speed);
+          }, 100/speed);
+        }
       });
     },
 

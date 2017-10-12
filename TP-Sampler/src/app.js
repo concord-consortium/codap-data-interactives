@@ -68,7 +68,8 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       device: device,
       variables: variables,
       uniqueVariables: uniqueVariables,
-      samples: samples
+      samples: samples,
+      hidden: hidden
     };
   }
 
