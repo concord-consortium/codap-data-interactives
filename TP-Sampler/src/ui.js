@@ -110,6 +110,20 @@ define(function() {
     addClass(document.getElementById(newDevice), "active");
   }
 
+  function viewSampler() {
+    addClass(document.getElementById("tab-sampler"), "active");
+    removeClass(document.getElementById("tab-options"), "active");
+    removeClass(document.getElementById("sampler"), "hidden");
+    addClass(document.getElementById("options"), "hidden");
+  }
+
+  function viewOptions() {
+    removeClass(document.getElementById("tab-sampler"), "active");
+    addClass(document.getElementById("tab-options"), "active");
+    addClass(document.getElementById("sampler"), "hidden");
+    removeClass(document.getElementById("options"), "hidden");
+  }
+
   function appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
             resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
             speedText, setVariableName) {
@@ -141,6 +155,8 @@ define(function() {
         return false;
       }
     };
+    document.getElementById("tab-sampler").onclick = viewSampler;
+    document.getElementById("tab-options").onclick = viewOptions;
   }
 
   return {
