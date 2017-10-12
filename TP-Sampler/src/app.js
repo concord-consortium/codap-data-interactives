@@ -8,6 +8,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       running = false,
       paused = false,
       speed = 1,  //  0.5, 1, 2, 3=inf
+      hidden = false,
 
       experimentNumber = 0,
       sentRun = 0,
@@ -218,7 +219,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
         }
       }
 
-      if (device === "mixer" || device === "collector") {
+      if (!hidden && (device === "mixer" || device === "collector")) {
         view.animateMixer();
       }
 
@@ -296,6 +297,10 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     }
   }
 
+  function setHidden(b) {
+    hidden = b;
+  }
+
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     view.reset();
@@ -308,7 +313,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
 
   ui.appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
     resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-    view.speedText, view.setVariableName);
+    view.speedText, view.setVariableName, setHidden);
 
   // initialize and render the model
   setup();
