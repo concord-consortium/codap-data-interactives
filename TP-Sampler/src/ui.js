@@ -126,7 +126,7 @@ define(function() {
 
   function appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
             resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-            speedText, setVariableName) {
+            speedText, setVariableName, setHidden) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("run").onclick = runButtonPressed;
@@ -157,6 +157,11 @@ define(function() {
     };
     document.getElementById("tab-sampler").onclick = viewSampler;
     document.getElementById("tab-options").onclick = viewOptions;
+
+    document.getElementById("hideModel").onclick = function(evt) {
+      setHidden(evt.currentTarget.checked);
+    };
+
   }
 
   return {
