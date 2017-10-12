@@ -396,7 +396,9 @@ function resetButtonPressed() {
         });
         if( tMsgList.length > 0)
           codapInterface.sendRequest( tMsgList).then( function( iResult) {
-            if( iResult.success) {
+            if( iResult.success || (iResult.every( function(iItem) {
+                  return iItem.success;
+                }))) {
               if (device === "collector") {
                 return getContexts().then(populateContextsList);
               }
