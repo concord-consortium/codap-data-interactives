@@ -3,50 +3,60 @@
     <link rel="stylesheet" type="text/css" href="tp-sampler.css" />
   </head>
   <body>
-    <div id="top-bar">
-      <button id="run">START</button>
-      <button id="stop">STOP</button>
-      <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
-      <datalist id="speedsettings">
-        <option>0</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </datalist>
-      <span id="speed-text">Medium</span>
+    <div id="tabs">
+      <div id="tab-sampler" class="active">Sampler</div>
+      <div id="tab-options">Options</div>
     </div>
-    <div id="draw-settings">
-      <div>
-        <span>Select</span>
-        <input id="sample_size"></input>
-        <span>items</span>
+    <div id="sampler">
+      <div id="top-bar">
+        <button id="run">START</button>
+        <button id="stop">STOP</button>
+        <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
+        <datalist id="speedsettings">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </datalist>
+        <span id="speed-text">Medium</span>
+      </div>
+      <div id="draw-settings">
+        <div>
+          <span>Select</span>
+          <input id="sample_size"></input>
+          <span>items</span>
+        </div>
+        <div>
+          <span>Collect&nbsp;</span>
+          <input id="repeat"></input>
+          <span>samples</span>
+        </div>
+      </div>
+      <div id="model">
+        <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
+      </div>
+      <div id="model-controls">
+        <button id="add-variable">+</button>
+        <button id="remove-variable">-</button>
+        <select id="select-collection" class="hidden" name="select">
+          <option selected>Loading collections...</option>
+        </select>
+        <button id="refresh-list" class="hidden">Refresh list</button>
       </div>
       <div>
-        <span>Collect&nbsp;</span>
-        <input id="repeat"></input>
-        <span>samples</span>
+        <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
       </div>
+      <div id="device-selection">
+        <button id="mixer" class="active">Mixer</button>
+        <button id="spinner">Spinner</button>
+        <button id="collector">Collector</button>
+      </div>
+      <input id="variable-name-change" type="text"></input>
     </div>
-    <div id="model">
-      <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
+    <div id="options" class="hidden">
+      <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
+      <label for="hideModel">Hide model</label>
     </div>
-    <div id="model-controls">
-      <button id="add-variable">+</button>
-      <button id="remove-variable">-</button>
-      <select id="select-collection" class="hidden" name="select">
-        <option selected>Loading collections...</option>
-      </select>
-      <button id="refresh-list" class="hidden">Refresh list</button>
-    </div>
-    <div>
-      <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
-    </div>
-    <div id="device-selection">
-      <button id="mixer" class="active">Mixer</button>
-      <button id="spinner">Spinner</button>
-      <button id="collector">Collector</button>
-    </div>
-    <input id="variable-name-change" type="text"></input>
     <script data-main="src/app" src="src/lib/require.js"></script>
   </body>
 </html>
