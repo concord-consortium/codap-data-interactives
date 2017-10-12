@@ -37,7 +37,8 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
         draw: sampleSize,
         repeat: numRuns,
         speed: speed,
-        device: device
+        device: device,
+        hidden: hidden
       }
     };
   }
@@ -52,6 +53,8 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
       if (state.device) {
         switchState(null, state.device);
       }
+      hidden = state.hidden;
+      ui.render(hidden);
 
       view.render();
     }
