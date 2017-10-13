@@ -15,7 +15,7 @@ echo New Build Number: $BUILD_NUM
 echo $BUILD_NUM > $BUILD_FILE
 cat > $BUILD_INCLUDE << EOF
 window.codapPluginConfig = {
-  buildNumber: $BUILD_NUM
+  buildNumber: "$BUILD_NUM"
 }
 EOF
 
