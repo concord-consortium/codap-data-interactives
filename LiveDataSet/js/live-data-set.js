@@ -22,23 +22,27 @@ $(function () {
   var kDefaultUpdateInterval = 5; // minutes
 
   // persistent state
-  var myState = {
-    attrs: [],
-    csvURL: null,
-    dataSetName: null,
-    firstLineIsHeader: null,
-    indexAttribute: null,
-    lineCount: 0,
-    rowHashes: null,
-    lastFetch: null,
-    stats: {},
-    step: null,
-    updateInterval: null
-  };
+  var myState = null;
 
   var DataSetManager = function () {
     var kAttrPrefix = 'attr_';
 
+    /**
+     * {{
+     *  id: {number}
+     *  attrs: {[{string}]},
+     *  csvURL: {string},
+     *  dataSetName: {string},
+     *  firstLineIsHeader: {boolean},
+     *  indexAttribute: {string},
+     *  lineCount: {number},
+     *  rowHashes: {[{string}]},
+     *  lastFetch: {Date},
+     *  stats: {},
+     *  step: {'#start-step'||'#load-step'||'#run-step'||'#no-step'},
+     *  updateInterval: {number}
+     * }}
+     */
     var pState;
     var dataSet;
     var updateTimer;
@@ -109,19 +113,24 @@ $(function () {
       fetchDataAndSetUpdateTimer: function fetchDataAndSetUpdateTimer() {
         var timeout = (pState.updateInterval || kDefaultUpdateInterval) * 60 * 1000;
         if (pState.step === '#run-step') {
-          this.fetchCSVData(pState.csvURL);
+          getCurrentDataSetManager().fetchCSVData();
         }
         console.log('timeout: ' + pState.step);
-        updateTimer = window.setTimeout(this.fetchDataAndSetUpdateTimer,
+        updateTimer = window.setTimeout(this.fetchDataAndSetUpdateTimer.bind(this),
             timeout);
       },
 
       fetchCSVData: function (csvURL) {
-        $.ajax(csvURL, {
-          success: this.handleDataLoad.bind(this), error: function (jqXHR) {
-            displayError('Error: ' + jqXHR.statusText);
-          }
-        });
+        var url = csvURL || pState.csvURL;
+        if (!url) {
+          pState.step = '#start-step';
+        } else {
+          $.ajax(url, {
+            success: this.handleDataLoad.bind(this), error: function (jqXHR) {
+              displayError('Error: ' + jqXHR.statusText);
+            }
+          });
+        }
       },
 
       createAndPopulateDataSet: function (dataSetName, firstLineIsHeader) {
@@ -144,7 +153,7 @@ $(function () {
         });
       },
 
-      createDataSet: function createDataSet(name, firstLineIsHeader, dataSet) {
+      createDataSet: function (name, firstLineIsHeader, dataSet) {
         function nameAttrs(cols, firstLine) {
           var attrs = [];
           var ix;
@@ -221,6 +230,8 @@ $(function () {
           }
           rowHashMap[rowHash].push(ix);
         });
+        //console.log('rowHashes: ' + JSON.stringify(pState.rowHashes));
+
         // 2. for each row in dataSet
         // 2a.  compute hash.
         // 2b.  if hash exists in map, pop from map and, if map entry is empty, remove it
@@ -245,6 +256,7 @@ $(function () {
         // 3. for each map entry, prepare delete/itemBySearch request
         Object.keys(rowHashMap).forEach(function (key) {
           rowHashMap[key].forEach(function (rowID) {
+            //console.log("deleting row " + rowID + "with hash " + key);
             delete pState.rowHashes[rowID];
             deleteRowRequests.push({
               action: 'delete',
@@ -254,18 +266,21 @@ $(function () {
         });
         return codapInterface.sendRequest(deleteRowRequests).then(
             this.createItems(itemsToAdd));
-      }, createCaseTable: function (dataSetID) {
+      },
+      createCaseTable: function (dataSetID) {
         return codapInterface.sendRequest({
           action: 'create', resource: 'component', values: {
             type: 'caseTable', dataContext: dataSetID
           }
         });
-      }, setCSVURL: function (url) {
+      },
+      setCSVURL: function (url) {
         pState.csvURL = url;
         if (pState.csvURL && pState.csvURL.length > 0) {
-          this.fetchCSVData(pState.csvURL);
+          getCurrentDataSetManager().fetchCSVData(pState.csvURL);
         }
-      }, setUpdateInterval: function (interval) {
+      },
+      setUpdateInterval: function (interval) {
         pState.updateInterval = interval;
         if (updateTimer) {
           clearTimeout(updateTimer);
@@ -275,8 +290,20 @@ $(function () {
     };
   };
 
-  var dataSetManager;
+  var dataSetManagers = [];
 
+  function getCurrentDataSetManager() {
+    var currentIndex = myState.currentIndex || 0;
+    var currentDSM = dataSetManagers[currentIndex];
+    if (!currentDSM) {
+      currentDSM = new DataSetManager();
+      if (!myState.dataSets[currentIndex]) {myState.dataSets[currentIndex] = {id:currentIndex};}
+      currentDSM.init(myState.dataSets[currentIndex]);
+      dataSetManagers.push(currentDSM);
+    }
+    return currentDSM;
+  }
+  
   function displayError(msg) {
     displayMessage($('<span>').addClass('error-msg').text(msg));
     console.warn(msg);
@@ -296,7 +323,7 @@ $(function () {
     $('.csv-url').text(state.csvURL || '');
     $('.csv-cols').text(state.stats && state.stats.cols || '');
     $('.csv-rows').text(state.stats && state.stats.rows || '');
-    $('.data-set-name').text(state.dataSetName);
+    $('.data-set-name.selected').text(state.dataSetName);
     $('#data-set-name').val(state.dataSetName);
     $('.first-line-is-header').text(state.firstLineIsHeader);
     $('.last-fetch').text(
@@ -305,7 +332,7 @@ $(function () {
   }
 
   $('#source-form').on('submit', function (ev) {
-    dataSetManager.setCSVURL($('#csv-url-entry').val());
+    getCurrentDataSetManager().setCSVURL($('#csv-url-entry').val());
     ev.preventDefault();
     return false;
   });
@@ -314,7 +341,7 @@ $(function () {
     var dataSetName = $('#data-set-name').val();
     var firstLineIsHeader = $('#csv-first-line-is-header').is(':checked');
     if (dataSetName && dataSetName.length > 0) {
-      dataSetManager.createAndPopulateDataSet(dataSetName, firstLineIsHeader);
+      getCurrentDataSetManager().createAndPopulateDataSet(dataSetName, firstLineIsHeader);
     } else {
       displayError('Please set data set name');
     }
@@ -323,43 +350,85 @@ $(function () {
   });
 
   $('#run-form').on('submit', function (ev) {
-    dataSetManager.fetchCSVData(myState.csvURL);
+    getCurrentDataSetManager().fetchCSVData();
     ev.preventDefault();
     return false;
   });
 
   $('.restart-button').on('click', function () {
-    dataSetManager.setStep('#start-step');
+    getCurrentDataSetManager().setStep('#start-step');
   });
 
   $('#update-interval').on('change', function () {
     var interval = $('#update-interval').val();
     if (!isNaN(interval)) {
-      dataSetManager.setUpdateInterval(interval);
+      getCurrentDataSetManager().setUpdateInterval(interval);
     } else {
       displayError("Interval must be a number(minutes)");
     }
   });
 
+  $('#new-tab').on('click', function () {
+    var $this = $(this);
+    myState.currentIndex = myState.dataSets.length;
+    getCurrentDataSetManager().setStep('#start-step');
+    $('.tab.selected').removeClass('selected');
+    var $newChild = $('<div>').addClass('tab data-set-name selected').prop('id', 'tab-'+myState.currentIndex);
+    $newChild.insertBefore($this);
+  });
+
+  $('.tab-bar').on('click', '.tab.data-set-name', function (ev) {
+    var $this = $(this);
+    $('.tab.selected').removeClass('selected');
+    $this.addClass('selected');
+    var id = $this[0].id;
+    myState.currentIndex = Number(id.replace(/tab-/, ''));
+    render(myState.dataSets[myState.currentIndex]);
+  });
+
+
+  // converts from initial, one-source version to multisource.
+  function convertState(st) {
+    if (!st) {
+      return {
+        currentIndex: 0,
+        dataSets: [{}],
+        version: 1.0
+      };
+    } else if (!st.dataSets) {
+      return {
+        currentIndex: 0,
+        dataSets: [st],
+        version: 1.0
+      };
+    } else return (st);
+  }
+
+  function initializeApplication(state) {
+    console.log(JSON.stringify(state));
+    dataSetManagers = state.dataSets.map(function (dataSet) {
+      var dsm = new DataSetManager();
+      dsm.init(dataSet);
+      return dsm;
+    });
+    var dataSetManager = getCurrentDataSetManager();
+    dataSetManager.fetchCSVData();
+    render(state.dataSets[state.currentIndex]);
+    dataSetManager.fetchDataAndSetUpdateTimer();
+  }
+
   codapInterface.init({
     name: 'live-data-set',
     title: 'Live Data Set',
-    dimensions: {width: 300, height: 180},
-    version: '0.1',
+    dimensions: {width: 300, height: 240},
+    version: '1.0',
     preventDataContextReorg: false
   }).then(function (/*iResult*/) {
     // get interactive state so we can save the sample set index.
     myState = codapInterface.getInteractiveState();
-    dataSetManager = new DataSetManager();
-    dataSetManager.init(myState);
-    if (myState.csvURL) {
-      dataSetManager.fetchCSVData(myState.csvURL);
-    } else {
-      myState.step = '#start-step';
-    }
-    render(myState);
-    dataSetManager.fetchDataAndSetUpdateTimer();
+    myState = convertState(myState);
+    initializeApplication(myState);
   }, function () {
-    dataSetManager = new DataSetManager({step: '#no-step'});
+    dataSetManagers = [new DataSetManager({step: '#no-step'})];
   });
 });
