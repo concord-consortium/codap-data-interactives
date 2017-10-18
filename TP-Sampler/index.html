@@ -59,13 +59,15 @@
         <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
         <label for="hideModel">Hide model</label>
       </div>
-      <div>
-        <label for="password">Lock settings with password:</label>
-        <input id="password" type="text"></input>
-        <button id="pass-lock">Lock</button>
-        <span id="password-failed" class="hidden">
+      <div id="password-area">
+        <label for="password" id="pass-text">Lock settings with password:</label>
+        <div>
+          <input id="password" type="text"></input>
+          <button id="pass-lock">Lock</button>
+        </div>
+        <div id="password-failed" class="hidden">
           Password is incorrect.
-        </span>
+        </div>
       </div>
     </div>
     <script data-main="src/app" src="src/lib/require.js"></script>
