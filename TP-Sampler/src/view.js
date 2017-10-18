@@ -460,17 +460,30 @@ define(function() {
     },
 
     endAnimation: function () {
-      var _this = this;
+      var _this = this,
+          i, ii;
       if (this.isPaused()) {
         setTimeout(_this.endAnimation, 200);
         return;
       }
       var speed = this.getProps().speed;
       this.setRunning(false);
-      for (var i = 0, ii = balls.length; i < ii; i++) {
-        balls[i].animate({transform: "T0,0"}, (800 + (Math.random() * 300))/speed, mina.bounce);
+      var numBalls = balls.length;
+      // if we have fewer balls, we can afford fancier ending transitions
+      if (numBalls < 101) {
+        for (i = 0, ii = balls.length; i < ii; i++) {
+          balls[i].animate({transform: "T0,0"}, (800 + (Math.random() * 300))/speed, mina.bounce);
+        }
+        setTimeout(_this.modelReset, 800/speed);
+      } else if (numBalls < 500) {
+        for (i = 0, ii = balls.length; i < ii; i++) {
+          balls[i].animate({transform: "T0,0"}, 400/speed);
+        }
+        setTimeout(_this.modelReset, 400/speed);
+      } else {
+        setTimeout(_this.modelReset, 200/speed);
       }
-      setTimeout(_this.modelReset, 800/speed);
+
     },
 
     pause: function (doPause) {
