@@ -46,6 +46,8 @@ define(function() {
 
       editingVariable = false,    // then the id of the var
 
+      skipOffset = 0,
+
       getTextShift = function(text, maxLetters) {
         var lettersOver = Math.max(0, text.length - maxLetters);
         return (0.2 * lettersOver) + "em";
@@ -407,7 +409,7 @@ define(function() {
     animateMixer: function () {
       var _this = this;
       if (this.isRunning()) {
-        var timeout = Math.max(30, variables.length * 1.5);
+        var timeout = Math.min(Math.max(30, variables.length * 1.5), 150);
         animationSpeed = timeout / 30;
         setTimeout(function() {
           animationRequest = requestAnimationFrame(_this.animateMixer);
@@ -417,27 +419,37 @@ define(function() {
     },
 
     mixerAnimationStep: function () {
+      var speed = this.getProps().speed;
+      var animationSpeedBoost = Math.min(speed * animationSpeed, 5);
+      var numBalls = balls.length;
+      // start skipping animation of balls when there are lots of balls in mixer.
+      // At 50 balls, we start to skip one ball per cycle. Linearly increase until we
+      // are skipping every other ball when we are 200+ balls.
+      var skipEveryNthBall = Math.max(75 - Math.floor(numBalls / 2), 2);
+      // offset which ball(s) we skip each time
+      skipOffset = (skipOffset + 1) % numBalls;
+
       if (!this.isPaused()) {
-        var speed = this.getProps().speed;
         for (var i = 0, ii = balls.length; i < ii; i++) {
+          if ((i + skipOffset + 1) % skipEveryNthBall === 0) continue;  // don't animate skips
           if (!balls[i].beingSelected) {
             var ball = balls[i],
                 matrix = ball.transform().localMatrix,
-                dx = ball.vx*speed*animationSpeed,
-                dy = ball.vy*speed*animationSpeed,
+                dx = ball.vx*animationSpeedBoost,
+                dy = ball.vy*animationSpeedBoost,
                 bbox = ball.getBBox();
 
 
             if ((bbox.x + dx) < (containerX + border)) {
               ball.vx = Math.abs(ball.vx);
-              dx = ball.vx*speed*animationSpeed;
+              dx = ball.vx*animationSpeedBoost;
             } else if ((bbox.x + bbox.w + dx) > containerX + (containerWidth - capHeight - border)) {
               ball.vx = -Math.abs(ball.vx);
-              dx = ball.vx*speed*animationSpeed;
+              dx = ball.vx*animationSpeedBoost;
             }
             if (bbox.y + dy < (containerY + border) || (bbox.y + bbox.h + dy) > containerY + containerHeight - border) {
               ball.vy *= -1;
-              dy = ball.vy*speed*animationSpeed;
+              dy = ball.vy*animationSpeedBoost;
             }
 
             matrix.translate(dx, dy);
