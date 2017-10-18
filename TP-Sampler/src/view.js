@@ -412,8 +412,8 @@ define(function() {
         setTimeout(function() {
           animationRequest = requestAnimationFrame(_this.animateMixer);
         }, timeout);
+        this.mixerAnimationStep();
       }
-      this.mixerAnimationStep();
     },
 
     mixerAnimationStep: function () {
