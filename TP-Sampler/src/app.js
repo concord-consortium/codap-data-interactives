@@ -108,9 +108,6 @@ function(Snap, CodapCom, View, ui, utils) {
     view.render();
 
     ui.enable("remove-variable");
-    if (variables.length > 119) {
-      ui.disable("add-variable");
-    }
   }
 
   function removeVariable() {

@@ -253,7 +253,7 @@ define([
             if (results.success) {
               caseVariables = [];
 
-              var count = Math.min(results.values, 120),
+              var count = results.values,
                   reqs = [];
               for (var i = 0; i < count; i++) {
                 reqs.push({

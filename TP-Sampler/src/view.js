@@ -221,10 +221,13 @@ define(function() {
 
       balls = [];
 
-      var w = containerWidth - capHeight - (border * 2),
-          radius = 14,
+      var num = variables.length,
+          w = containerWidth - capHeight - (border * 2),
+          radius = num < 15 ? 14 : Math.max(14 - (10 * (num-15)/200), 4),
           maxInRow = Math.floor(w / (radius*2)),
-          rows = Math.floor(variables.length/maxInRow),
+          rows = Math.ceil(num/maxInRow),
+          maxHeight = containerHeight * 0.75,
+          rowHeight = Math.min(radius * 2, maxHeight/rows),
           maxVariableLength = variables.reduce(function(max, v) {
             var length = getLabelForVariable(v).length;
             return Math.max(max, length);
@@ -233,14 +236,11 @@ define(function() {
           fontSize,
           i, ii;
 
-      radius = rows > 6 ? 9 : 14;      // repeat these to recalculate once
-      maxInRow = Math.floor(w / (radius*2));
       fontSize = radius * fontScaling;
 
-      for (i = 0, ii=variables.length; i<ii; i++) {
+      for (i = 0, ii=num; i<ii; i++) {
         var rowNumber = Math.floor(i/maxInRow),
             rowIndex = i % maxInRow,
-            rowHeight = rows < 3 ? (radius * 2) : rows < 5 ? (radius * 1.5) : radius,
             x = (rowNumber % 2 === 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
             y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
 
