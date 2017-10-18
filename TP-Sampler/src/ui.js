@@ -20,6 +20,13 @@ define(function() {
       el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
   }
 
+  function hasClass(el, className) {
+    if (el.classList)
+      return el.classList.contains(className);
+    else
+      return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+  }
+
   function disableButtons() {
     setRunButton(false);
     addClass(document.getElementById("add-variable"), "disabled");
@@ -38,12 +45,17 @@ define(function() {
     addClass(document.getElementById("stop"), "disabled");
   }
 
-  function disable(className) {
-    addClass(document.getElementById(className), "disabled");
+  function disable(classNameOrEl) {
+    if (typeof classNameOrEl === "string")
+      classNameOrEl = document.getElementById(classNameOrEl);
+    addClass(classNameOrEl, "disabled");
+
   }
 
-  function enable(className) {
-    removeClass(document.getElementById(className), "disabled");
+  function enable(classNameOrEl) {
+    if (typeof classNameOrEl === "string")
+      classNameOrEl = document.getElementById(classNameOrEl);
+    removeClass(classNameOrEl, "disabled");
   }
 
   function setRunButton(showRun) {
@@ -142,6 +154,30 @@ define(function() {
     hide(document.getElementById("password-failed"));
   }
 
+  function hideModel(hidden) {
+    show(document.getElementById("model-cover"), hidden);
+    document.getElementById("hideModel").checked = hidden;
+
+    var mixerButton = document.getElementById("mixer");
+    var spinnerButton = document.getElementById("spinner");
+    var collectorButton = document.getElementById("collector");
+    if (hidden) {
+      if (!hasClass(mixerButton, "active"))
+        disable(mixerButton);
+      if (!hasClass(spinnerButton, "active"))
+        disable(spinnerButton);
+      if (!hasClass(collectorButton, "active"))
+        disable(collectorButton);
+      hide(document.getElementById("refresh-list"));
+    } else {
+      enable(mixerButton);
+      enable(spinnerButton);
+      enable(collectorButton);
+      if (hasClass(collectorButton, "active"))
+        show(document.getElementById("refresh-list"));
+    }
+  }
+
   function lockOptionsFunc(setOrCheckPassword) {
     return function() {
       var password = document.getElementById("password").value;
@@ -154,7 +190,7 @@ define(function() {
   function lockOptions(lock) {
     var passwordField = document.getElementById("password");
     if (lock) {
-      passwordField.value = "aaaaaaaaaa"; // always make hidden password 10 chars
+      passwordField.value = "";
       passwordField.type = "password";
       addClass(document.getElementById("options"), "disabled");
       document.getElementById("hideModel").disabled = "disabled";
@@ -205,7 +241,7 @@ define(function() {
     document.getElementById("hideModel").onclick = function(evt) {
       var hidden = evt.currentTarget.checked;
       setHidden(hidden);
-      show(document.getElementById("model-cover"), hidden);
+      hideModel(hidden);
     };
 
     var passwordField = document.getElementById("password");
@@ -218,8 +254,7 @@ define(function() {
 
   // Sets up the UI elements based on the loaded state of the model
   function render(hidden, password, passwordFailed) {
-    show(document.getElementById("model-cover"), hidden);
-    document.getElementById("hideModel").checked = hidden;
+    hideModel(hidden);
     var isLocked = !!password;
     lockOptions(isLocked);
     show(document.getElementById("password-failed"), passwordFailed);
