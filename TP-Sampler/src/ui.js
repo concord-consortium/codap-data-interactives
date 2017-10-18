@@ -29,20 +29,22 @@ define(function() {
 
   function disableButtons() {
     setRunButton(false);
-    addClass(document.getElementById("add-variable"), "disabled");
-    addClass(document.getElementById("remove-variable"), "disabled");
+    disable(document.getElementById("add-variable"));
+    disable(document.getElementById("remove-variable"));
+    disable(document.getElementById("add-variable-series"));
     document.getElementById("sample_size").setAttribute("disabled", "disabled");
     document.getElementById("repeat").setAttribute("disabled", "disabled");
-    removeClass(document.getElementById("stop"), "disabled");
+    enable(document.getElementById("stop"));
   }
 
   function enableButtons() {
     setRunButton(true);
-    removeClass(document.getElementById("add-variable"), "disabled");
-    removeClass(document.getElementById("remove-variable"), "disabled");
+    enable(document.getElementById("add-variable"));
+    enable(document.getElementById("remove-variable"));
+    enable(document.getElementById("add-variable-series"));
     document.getElementById("sample_size").removeAttribute("disabled");
     document.getElementById("repeat").removeAttribute("disabled");
-    addClass(document.getElementById("stop"), "disabled");
+    disable(document.getElementById("stop"));
   }
 
   function disable(classNameOrEl) {
@@ -199,11 +201,12 @@ define(function() {
     }
   }
 
-  function appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
-            resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-            speedText, setVariableName, setHidden, setOrCheckPassword) {
+  function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
+            stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
+            setNumRuns, setSpeed, speedText, setVariableName, setHidden, setOrCheckPassword) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
+    document.getElementById("add-variable-series").onclick = addVariableSeries;
     document.getElementById("run").onclick = runButtonPressed;
     document.getElementById("stop").onclick = stopButtonPressed;
     document.getElementById("reset").onclick = resetButtonPressed;

@@ -1,4 +1,6 @@
-require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, CodapCom, View, ui) {
+require(
+['lib/snap-plugins', './codap-com', './view', './ui', './utils'],
+function(Snap, CodapCom, View, ui, utils) {
 
   var s = Snap("#model svg"),
 
@@ -122,6 +124,27 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     if (variables.length < 2) {
       ui.disable("remove-variable");
     }
+  }
+
+  function addVariableSeries() {
+    this.blur();
+    if (running) return;
+
+    var sequenceRequest = showSequencePrompt();
+    if (sequenceRequest) {
+      var sequence = utils.parseSequence(sequenceRequest);
+      if (sequence) {
+        // swap contents of sequence into variables without updating variables reference
+        variables.length = 0;
+        Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
+      }
+    }
+
+    view.render();
+  }
+
+  function showSequencePrompt() {
+    return window.prompt("Enter a range (e.g. 1-50, -5 to 5, 1.0 to 5.0, A-Z)", "a to c");
   }
 
   /**
@@ -334,9 +357,9 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     view.render();
   }
 
-  ui.appendUIHandlers(addVariable, removeVariable, runButtonPressed, stopButtonPressed,
-    resetButtonPressed, switchState, refreshCaseList, setSampleSize, setNumRuns, setSpeed,
-    view.speedText, view.setVariableName, setHidden, setOrCheckPassword);
+  ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
+    stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
+    setNumRuns, setSpeed, view.speedText, view.setVariableName, setHidden, setOrCheckPassword);
 
   // initialize and render the model
   setup();
