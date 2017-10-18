@@ -169,22 +169,15 @@ define(function() {
       if (!hasClass(collectorButton, "active"))
         disable(collectorButton);
       hide(document.getElementById("refresh-list"));
+      show(document.getElementById("password-area"));
     } else {
       enable(mixerButton);
       enable(spinnerButton);
       enable(collectorButton);
       if (hasClass(collectorButton, "active"))
         show(document.getElementById("refresh-list"));
+      hide(document.getElementById("password-area"));
     }
-  }
-
-  function lockOptionsFunc(setOrCheckPassword) {
-    return function() {
-      var password = document.getElementById("password").value;
-      if (password.length > 0) {
-        setOrCheckPassword(password);
-      }
-    };
   }
 
   function lockOptions(lock) {
@@ -195,12 +188,14 @@ define(function() {
       addClass(document.getElementById("options"), "disabled");
       document.getElementById("hideModel").disabled = "disabled";
       document.getElementById("pass-lock").innerHTML = "Unlock";
+      document.getElementById("pass-text").innerHTML = "Unlock settings with password:";
     } else {
       passwordField.value = "";
       passwordField.type = "text";
       removeClass(document.getElementById("options"), "disabled");
       document.getElementById("hideModel").disabled = false;
       document.getElementById("pass-lock").innerHTML = "Lock";
+      document.getElementById("pass-text").innerHTML = "Lock settings with password:";
     }
   }
 
@@ -249,7 +244,12 @@ define(function() {
       passwordField.value = "";
       passwordField.type = "text";
     };
-    document.getElementById("pass-lock").onclick = lockOptionsFunc(setOrCheckPassword);
+    document.getElementById("pass-lock").onclick = function() {
+      var password = document.getElementById("password").value;
+      if (password.length > 0) {
+        setOrCheckPassword(password);
+      }
+    };
   }
 
   // Sets up the UI elements based on the loaded state of the model
