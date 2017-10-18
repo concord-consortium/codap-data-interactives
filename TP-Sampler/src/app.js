@@ -316,6 +316,7 @@ require(['lib/snap-plugins', './codap-com', './view', './ui'], function(Snap, Co
     } else {
       if (pass === password) {
         password = null;      // clear existing password
+        hidden = false;       // unhide model automatically
       } else {
         passwordFailed = true;
       }
