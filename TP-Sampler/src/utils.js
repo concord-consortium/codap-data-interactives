@@ -1,5 +1,22 @@
 define(function() {
 
+  // fills an array from 0 to n
+  function fill(n) {
+    var arr = Array.apply(null, {length: n}).map(Function.call, Number);
+    return arr;
+  }
+
+  // shuffles an array in place
+  function shuffle(arr) {
+    var j, x, i;
+    for (i = arr.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1));
+      x = arr[i];
+      arr[i] = arr[j];
+      arr[j] = x;
+    }
+  }
+
   function parseSequence(seq) {
     // strip all spaces
     seq = seq.replace(/ /g, "");
@@ -88,6 +105,8 @@ define(function() {
   testParsing();
 
   return {
+    fill: fill,
+    shuffle: shuffle,
     parseSequence: parseSequence
   };
 });
