@@ -29,35 +29,40 @@ define(function() {
 
   function disableButtons() {
     setRunButton(false);
-    disable(document.getElementById("add-variable"));
-    disable(document.getElementById("remove-variable"));
-    disable(document.getElementById("add-variable-series"));
-    document.getElementById("sample_size").setAttribute("disabled", "disabled");
-    document.getElementById("repeat").setAttribute("disabled", "disabled");
-    enable(document.getElementById("stop"));
+    disable("add-variable");
+    disable("remove-variable");
+    disable("add-variable-series");
+    disable("sample_size");
+    disable("repeat");
+    enable("stop");
   }
 
   function enableButtons() {
     setRunButton(true);
-    enable(document.getElementById("add-variable"));
-    enable(document.getElementById("remove-variable"));
-    enable(document.getElementById("add-variable-series"));
-    document.getElementById("sample_size").removeAttribute("disabled");
-    document.getElementById("repeat").removeAttribute("disabled");
-    disable(document.getElementById("stop"));
+    enable("add-variable");
+    enable("remove-variable");
+    enable("add-variable-series");
+    enable("sample_size");
+    enable("repeat");
+    disable("stop");
   }
 
   function disable(classNameOrEl) {
     if (typeof classNameOrEl === "string")
       classNameOrEl = document.getElementById(classNameOrEl);
     addClass(classNameOrEl, "disabled");
-
+    if (classNameOrEl.tagName === "INPUT" || classNameOrEl.tagName === "BUTTON") {
+      classNameOrEl.setAttribute("disabled", "disabled");
+    }
   }
 
   function enable(classNameOrEl) {
     if (typeof classNameOrEl === "string")
       classNameOrEl = document.getElementById(classNameOrEl);
     removeClass(classNameOrEl, "disabled");
+    if (classNameOrEl.tagName === "INPUT" || classNameOrEl.tagName === "BUTTON") {
+      classNameOrEl.removeAttribute("disabled");
+    }
   }
 
   function setRunButton(showRun) {
@@ -187,25 +192,35 @@ define(function() {
     if (lock) {
       passwordField.value = "";
       passwordField.type = "password";
-      addClass(document.getElementById("options"), "disabled");
+      disable("hide-options");
       document.getElementById("hideModel").disabled = "disabled";
       document.getElementById("pass-lock").innerHTML = "Unlock";
       document.getElementById("pass-text").innerHTML = "Unlock settings with password:";
     } else {
       passwordField.value = "";
       passwordField.type = "text";
-      removeClass(document.getElementById("options"), "disabled");
+      enable("hide-options");
       document.getElementById("hideModel").disabled = false;
       document.getElementById("pass-lock").innerHTML = "Lock";
       document.getElementById("pass-text").innerHTML = "Lock settings with password:";
     }
   }
 
-  function setReplacement(withReplacement) {
-    if (withReplacement) {
-      document.getElementById("with-replacement").checked = true;
+  function setReplacement(withReplacement, device) {
+    if (device !== "spinner") {
+      enable("selection-options");
+      enable("with-replacement");
+      enable("without-replacement");
+      if (withReplacement) {
+        document.getElementById("with-replacement").checked = true;
+      } else {
+        document.getElementById("without-replacement").checked = true;
+      }
     } else {
-      document.getElementById("without-replacement").checked = true;
+      document.getElementById("with-replacement").checked = true;
+      disable("selection-options");
+      disable("with-replacement");
+      disable("without-replacement");
     }
   }
 
@@ -272,12 +287,12 @@ define(function() {
   }
 
   // Sets up the UI elements based on the loaded state of the model
-  function render(hidden, password, passwordFailed, withReplacement) {
+  function render(hidden, password, passwordFailed, withReplacement, device) {
     hideModel(hidden);
     var isLocked = !!password;
     lockOptions(isLocked);
     show(document.getElementById("password-failed"), passwordFailed);
-    setReplacement(withReplacement);
+    setReplacement(withReplacement, device);
   }
 
   return {
