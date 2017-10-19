@@ -29,6 +29,7 @@ define(function() {
       sampleSize,
       numRuns,
       device,
+      withReplacement,
       variables,
       uniqueVariables,
       samples,
@@ -134,6 +135,7 @@ define(function() {
       sampleSize = props.sampleSize;
       numRuns = props.numRuns;
       device = props.device;
+      withReplacement = props.withReplacement;
       variables = props.variables;
       uniqueVariables = props.uniqueVariables;
       samples = props.samples;
@@ -206,13 +208,20 @@ define(function() {
           cap = capHeight - halfb,
           w = containerWidth - capHeight - halfb,
           // pathStr = "m"+mx+","+my+" h "+shoulder+" v -"+cap+" h "+capWidth+" v "+cap+" h "+shoulder+" v "+h+" h -"+w+" z";
-          pathStr = "m"+mx+","+my+" h "+w+" v "+shoulder+" h "+cap+" v "+capWidth+" h -"+cap+" v "+shoulder+" h -"+w+" z";
+          pathStr = "m"+mx+","+my+" h "+w+" v "+shoulder+" h "+cap+" v "+capWidth+" h -"+cap+" v "+shoulder+" h -"+w+" z",
+          clipping = "none";
+
+      if (!withReplacement) {
+        var clipWidth = containerWidth + (border/2) + capHeight;
+        clipping = s.rect({x: 0, y: 0, width: clipWidth, height: containerHeight});
+      }
 
       s.path(pathStr).attr({
-            fill: "none",
-            stroke: "#333",
-            strokeWidth: border
-        });
+        fill: "none",
+        stroke: "#333",
+        strokeWidth: border,
+        clipPath: clipping
+      });
 
       this.addMixerVariables();
     },
@@ -381,10 +390,16 @@ define(function() {
           return;
         }
         samples = [];
-        var speed = _this.getProps().speed;
-        for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+        var speed = _this.getProps().speed,
+            i, ii;
+        for (i = 0, ii = sampleSlots.length; i < ii; i++) {
           var sampleSlot = sampleSlots[i];
           sampleSlot.animate({transform: "T0,0"}, 200/speed);
+        }
+        if (!withReplacement) {
+          for (i = 0, ii = balls.length; i < ii; i++) {
+            balls[i].attr({ visibility: "visible"});
+          }
         }
       }
     },
@@ -412,6 +427,9 @@ define(function() {
         }
 
         ball.animate({transform: trans}, 300/speed, function() {
+          if (!withReplacement) {
+            ball.attr({ visibility: "hidden"});
+          }
           _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
           ball.beingSelected = false;
           if (hidden) {
@@ -422,6 +440,9 @@ define(function() {
           }
         });
       } else {
+        if (!withReplacement) {
+          ball.attr({ visibility: "hidden"});
+        }
         _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
       }
 
