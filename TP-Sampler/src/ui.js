@@ -201,9 +201,18 @@ define(function() {
     }
   }
 
+  function setReplacement(withReplacement) {
+    if (withReplacement) {
+      document.getElementById("with-replacement").checked = true;
+    } else {
+      document.getElementById("without-replacement").checked = true;
+    }
+  }
+
   function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
             stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-            setNumRuns, setSpeed, speedText, setVariableName, setHidden, setOrCheckPassword) {
+            setNumRuns, setSpeed, speedText, setVariableName, setReplacement, setHidden,
+            setOrCheckPassword) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("add-variable-series").onclick = addVariableSeries;
@@ -236,6 +245,13 @@ define(function() {
     document.getElementById("tab-sampler").onclick = viewSampler;
     document.getElementById("tab-options").onclick = viewOptions;
 
+    document.getElementById("with-replacement").onclick = function(evt) {
+      setReplacement(evt.currentTarget.checked);
+    };
+    document.getElementById("without-replacement").onclick = function(evt) {
+      setReplacement(!evt.currentTarget.checked);
+    };
+
     document.getElementById("hideModel").onclick = function(evt) {
       var hidden = evt.currentTarget.checked;
       setHidden(hidden);
@@ -256,11 +272,12 @@ define(function() {
   }
 
   // Sets up the UI elements based on the loaded state of the model
-  function render(hidden, password, passwordFailed) {
+  function render(hidden, password, passwordFailed, withReplacement) {
     hideModel(hidden);
     var isLocked = !!password;
     lockOptions(isLocked);
     show(document.getElementById("password-failed"), passwordFailed);
+    setReplacement(withReplacement);
   }
 
   return {

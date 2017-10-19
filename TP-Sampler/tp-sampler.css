@@ -253,7 +253,11 @@ text:hover{
   color: red;
 }
 
-input[type=checkbox] {
+#options #select-cases {
+  padding-bottom: 1vh;
+}
+
+input[type=checkbox], input[type=radio] {
   display: inline-block;
   width: 3vh;
   height: 3vh;
