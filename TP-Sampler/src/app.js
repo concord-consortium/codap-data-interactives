@@ -63,7 +63,7 @@ function(Snap, CodapCom, View, ui, utils) {
       withReplacement = (state.withReplacement !== undefined) ? state.withReplacement : true;
       hidden = state.hidden || false;
       password = state.password || null;
-      ui.render(hidden, password, false, withReplacement);
+      ui.render(hidden, password, false, withReplacement, device);
 
       view.render();
     }
@@ -371,14 +371,14 @@ function(Snap, CodapCom, View, ui, utils) {
         passwordFailed = true;
       }
     }
-    ui.render(hidden, password, passwordFailed, withReplacement);
+    ui.render(hidden, password, passwordFailed, withReplacement, device);
   }
 
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     view.reset();
     ui.enableButtons();
-    ui.render(hidden, password, false, withReplacement);
+    ui.render(hidden, password, false, withReplacement, device);
     samples = [];
     running = false;
     paused = false;

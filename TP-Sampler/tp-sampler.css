@@ -245,7 +245,7 @@ text:hover{
   padding-bottom: 3vh;
 }
 
-#options.disabled .disablable {
+.disablable.disabled {
   color: #888;
 }
 
