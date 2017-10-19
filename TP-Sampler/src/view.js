@@ -39,6 +39,7 @@ define(function() {
       balls = [],
       sampleSlotTargets = [],
       sampleSlots = [],
+      ballRadius,
 
       needle,
       needleTurns = 0,
@@ -46,7 +47,8 @@ define(function() {
 
       editingVariable = false,    // then the id of the var
 
-      skipOffset = 0,
+      scrambledInitialSetup = false,       // whether all balls have been mixed in mixer
+      stepOffset = 0,
 
       getTextShift = function(text, maxLetters) {
         var lettersOver = Math.max(0, text.length - maxLetters);
@@ -223,13 +225,14 @@ define(function() {
 
       balls = [];
 
-      var num = variables.length,
-          w = containerWidth - capHeight - (border * 2),
-          radius = num < 15 ? 14 : Math.max(14 - (10 * (num-15)/200), 4),
-          maxInRow = Math.floor(w / (radius*2)),
+      var num = variables.length;
+      ballRadius = num < 15 ? 14 : Math.max(14 - (10 * (num-15)/200), 4);
+
+      var w = containerWidth - capHeight - (border * 2),
+          maxInRow = Math.floor(w / (ballRadius*2)),
           rows = Math.ceil(num/maxInRow),
           maxHeight = containerHeight * 0.75,
-          rowHeight = Math.min(radius * 2, maxHeight/rows),
+          rowHeight = Math.min(ballRadius * 2, maxHeight/rows),
           maxVariableLength = variables.reduce(function(max, v) {
             var length = getLabelForVariable(v).length;
             return Math.max(max, length);
@@ -238,18 +241,18 @@ define(function() {
           fontSize,
           i, ii;
 
-      fontSize = radius * fontScaling;
+      fontSize = ballRadius * fontScaling;
 
       for (i = 0, ii=num; i<ii; i++) {
         var rowNumber = Math.floor(i/maxInRow),
             rowIndex = i % maxInRow,
-            x = (rowNumber % 2 === 0) ? containerX + border + radius + (rowIndex * radius * 2) : containerX + containerWidth - border - capHeight - radius - (rowIndex * radius * 2),
-            y = containerY + containerHeight - border - radius - (rowHeight * rowNumber);
+            x = (rowNumber % 2 === 0) ? containerX + border + ballRadius + (rowIndex * ballRadius * 2) : containerX + containerWidth - border - capHeight - ballRadius - (rowIndex * ballRadius * 2),
+            y = containerY + containerHeight - border - ballRadius - (rowHeight * rowNumber);
 
-        var labelClipping = s.circle(x, y, radius);
+        var labelClipping = s.circle(x, y, ballRadius);
         // render ball to the screen
         var text = this.getLabelForIndex(i),
-            circle = s.circle(x, y, radius).attr({
+            circle = s.circle(x, y, ballRadius).attr({
               fill: getVariableColor(0, 0, true),
               stroke: "#000",
               strokeWidth: 1
@@ -258,7 +261,7 @@ define(function() {
               fontSize: fontSize,
               textAnchor: "middle",
               dy: ".25em",
-              dx: getTextShift(text, (3.8*(radius/fontSize))),
+              dx: getTextShift(text, (3.8*(ballRadius/fontSize))),
               clipPath: labelClipping
             }),
             ball = s.group(
@@ -279,6 +282,7 @@ define(function() {
             lab.attr({ fontSize: size, dy: ".25em", });
           };
         })(circle, label, fontSize));
+        ball.orig = {x: x, y: y};
       }
 
       // setup animation
@@ -358,7 +362,6 @@ define(function() {
             letter.animate({transform: letterMatrix}, 200/speed, (function(lett) {
               return function() {
                 lett.remove();
-                samples = [];
               };
             })(letter));
           }
@@ -368,6 +371,7 @@ define(function() {
             setTimeout(returnSlots, 200);
             return;
           }
+          samples = [];
           var speed = _this.getProps().speed;
           for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
             var sampleSlot = sampleSlots[i];
@@ -387,51 +391,68 @@ define(function() {
           variable = ball.select("text"),
           trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 1, containerY + (containerHeight/2), circle);
 
-      ball.beingSelected = true;
-      if (ball.getBBox().y > containerY + (containerHeight/2)) {
-        ball.vy = -Math.abs(ball.vy);
+      if (balls.length < 200) {
+        ball.beingSelected = true;
+        if (ball.getBBox().y > containerY + (containerHeight/2)) {
+          ball.vy = -Math.abs(ball.vy);
+        } else {
+          ball.vy = Math.abs(ball.vy);
+        }
+
+        ball.animate({transform: trans}, 300/speed, function() {
+          _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
+          ball.beingSelected = false;
+          if (hidden) {
+            setTimeout(function() {
+              trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 3, containerY + (containerHeight/2), circle);
+              ball.animate({transform: trans}, 100/speed);
+            }, 100/speed);
+          }
+        });
       } else {
-        ball.vy = Math.abs(ball.vy);
+        _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
       }
 
-      ball.animate({transform: trans}, 300/speed, function() {
-        _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
-        ball.beingSelected = false;
-        if (hidden) {
-          setTimeout(function() {
-            trans = getTransformForMovingTo(containerX + containerWidth - circle.attr("r") * 3, containerY + (containerHeight/2), circle);
-            ball.animate({transform: trans}, 100/speed);
-          }, 100/speed);
-        }
-      });
     },
 
     animateMixer: function () {
       var _this = this;
+      var degradeAnimation = variables.length > 300;
       if (this.isRunning()) {
-        var timeout = Math.min(Math.max(30, variables.length * 1.5), 150);
+        stepOffset += 1;
+        var timeout = Math.min(Math.max(30, variables.length * 1.5), 200);
         animationSpeed = timeout / 30;
         setTimeout(function() {
           animationRequest = requestAnimationFrame(_this.animateMixer);
         }, timeout);
-        this.mixerAnimationStep();
+        if (variables.length < 100) {
+          this.mixerAnimationStep();
+        } else if (variables.length < 400) {
+          this.positionBallsRandomly();
+        } else {
+          if (!scrambledInitialSetup) {
+            this.positionBallsRandomly();
+          } else {
+            this.fakeMixerAnimationStep();
+          }
+        }
       }
     },
 
     mixerAnimationStep: function () {
       var speed = this.getProps().speed;
-      var animationSpeedBoost = Math.min(speed * animationSpeed, 5);
+      var animationSpeedBoost = Math.min(speed * animationSpeed, 4);
       var numBalls = balls.length;
       // start skipping animation of balls when there are lots of balls in mixer.
       // At 50 balls, we start to skip one ball per cycle. Linearly increase until we
       // are skipping every other ball when we are 200+ balls.
       var skipEveryNthBall = Math.max(75 - Math.floor(numBalls / 2), 2);
       // offset which ball(s) we skip each time
-      skipOffset = (skipOffset + 1) % numBalls;
+      var skipOffset = stepOffset % numBalls;
 
       if (!this.isPaused()) {
         for (var i = 0, ii = balls.length; i < ii; i++) {
-          if ((i + skipOffset + 1) % skipEveryNthBall === 0) continue;  // don't animate skips
+          if (scrambledInitialSetup && (i + skipOffset + 1) % skipEveryNthBall === 0) continue;  // don't animate skips
           if (!balls[i].beingSelected) {
             var ball = balls[i],
                 matrix = ball.transform().localMatrix,
@@ -443,17 +464,59 @@ define(function() {
             if ((bbox.x + dx) < (containerX + border)) {
               ball.vx = Math.abs(ball.vx);
               dx = ball.vx*animationSpeedBoost;
-            } else if ((bbox.x + bbox.w + dx) > containerX + (containerWidth - capHeight - border)) {
+            } else if ((bbox.x + bbox.w + dx) > containerX + (containerWidth - capHeight - (border * 2))) {
               ball.vx = -Math.abs(ball.vx);
               dx = ball.vx*animationSpeedBoost;
             }
-            if (bbox.y + dy < (containerY + border) || (bbox.y + bbox.h + dy) > containerY + containerHeight - border) {
+            if (bbox.y + dy < (containerY + (border * 2)) || (bbox.y + bbox.h + dy) > containerY + containerHeight - border) {
               ball.vy *= -1;
               dy = ball.vy*animationSpeedBoost;
             }
 
             matrix.translate(dx, dy);
             ball.attr({transform: matrix});
+          }
+        }
+        scrambledInitialSetup = true;
+      }
+    },
+
+    positionBallsRandomly: function () {
+      if (!this.isPaused()) {
+        var minX = containerX + border + ballRadius,
+            maxY = containerY + containerHeight - border - ballRadius,
+            width = containerWidth - border - capHeight - (ballRadius * 2),
+            height = containerHeight - border - (ballRadius * 2);
+        for (var i = 0, ii = balls.length; i < ii; i++) {
+          var ball = balls[i],
+              x = minX + Math.random() * width,
+              y = maxY - Math.random() * height,
+              dx = x - ball.orig.x,
+              dy = y - ball.orig.y;
+            ball.attr({transform: 't'+dx+','+dy});
+        }
+        scrambledInitialSetup = true;
+      }
+    },
+
+    fakeMixerAnimationStep: function () {
+      var speed = this.getProps().speed;
+      var animationSpeedBoost = Math.min(speed * animationSpeed, 5);
+      var numBalls = balls.length;
+      // start skipping animation of balls when there are lots of balls in mixer.
+      // At 50 balls, we start to skip one ball per cycle. Linearly increase until we
+      // are skipping every other ball when we are 200+ balls.
+      var skipEveryNthBall = Math.max(75 - Math.floor(numBalls / 2), 2);
+      // offset which ball(s) we skip each time
+      var skipOffset = stepOffset % numBalls;
+
+      if (!this.isPaused()) {
+        for (var i = 0, ii = balls.length; i < ii; i++) {
+          var ball = balls[i];
+          if (ball.beingSelected || (i + stepOffset + 1) % skipEveryNthBall === 0) {
+            ball.attr({ visibility: "visible"});
+          } else {
+            ball.attr({ visibility: "hidden"});
           }
         }
       }
@@ -664,6 +727,7 @@ define(function() {
       wedges = [];
       sampleSlotTargets = [];
       sampleSlots = [];
+      scrambledInitialSetup = false;
     }
   };
 
