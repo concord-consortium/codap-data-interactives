@@ -122,6 +122,7 @@ define(function() {
     this.moveLetterToSlot = this.moveLetterToSlot.bind(this);
     this.endAnimation = this.endAnimation.bind(this);
     this.setVariableName = this.setVariableName.bind(this);
+    this.pushAllLettersOut = this.pushAllLettersOut.bind(this);
   };
 
   View.prototype = {
@@ -333,32 +334,39 @@ define(function() {
       letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
       if (slot === sampleSize-1) {
-        setTimeout(pushLettersOut, 300/speed);
-        setTimeout(returnSlots, 600/speed);
-        setTimeout(selectionMade, 600/speed);
-        function selectionMade() {
-          if (_this.isPaused()) {
-            setTimeout(selectionMade, 200);
-          } else {
-            selectionMadeCallback();
-          }
-        }
+        _this.pushAllLettersOut(selectionMadeCallback);
+      }
+    },
 
-        function pushLettersOut() {
-          if (!_this.isRunning()) return;
-          if (_this.isPaused()) {
-            setTimeout(pushLettersOut, 200);
-            return;
-          }
-          var speed = _this.getProps().speed;
-          for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
-            var sampleSlot = sampleSlots[i],
-                letter = samples[i],
-                sampleMatrix = sampleSlot.transform().localMatrix,
-                letterMatrix = letter.transform().localMatrix;
-            sampleMatrix.translate(20, 0);
+    pushAllLettersOut: function(selectionMadeCallback) {
+      var _this = this;
+      setTimeout(pushLettersOut, 300/speed);
+      setTimeout(returnSlots, 600/speed);
+      setTimeout(selectionMade, 600/speed);
+      function selectionMade() {
+        if (_this.isPaused()) {
+          setTimeout(selectionMade, 200);
+        } else {
+          selectionMadeCallback();
+        }
+      }
+
+      function pushLettersOut() {
+        if (!_this.isRunning()) return;
+        if (_this.isPaused()) {
+          setTimeout(pushLettersOut, 200);
+          return;
+        }
+        var speed = _this.getProps().speed;
+        for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+          var sampleSlot = sampleSlots[i],
+              letter = samples[i],
+              sampleMatrix = sampleSlot.transform().localMatrix,
+              letterMatrix = letter ? letter.transform().localMatrix : null;
+          sampleMatrix.translate(20, 0);
+          sampleSlot.animate({transform: sampleMatrix}, 200/speed);
+          if (letter) {
             letterMatrix.translate(40, 0);
-            sampleSlot.animate({transform: sampleMatrix}, 200/speed);
             letter.animate({transform: letterMatrix}, 200/speed, (function(lett) {
               return function() {
                 lett.remove();
@@ -366,22 +374,26 @@ define(function() {
             })(letter));
           }
         }
-        function returnSlots() {
-          if (_this.isPaused()) {
-            setTimeout(returnSlots, 200);
-            return;
-          }
-          samples = [];
-          var speed = _this.getProps().speed;
-          for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
-            var sampleSlot = sampleSlots[i];
-            sampleSlot.animate({transform: "T0,0"}, 200/speed);
-          }
+      }
+      function returnSlots() {
+        if (_this.isPaused()) {
+          setTimeout(returnSlots, 200);
+          return;
+        }
+        samples = [];
+        var speed = _this.getProps().speed;
+        for (var i = 0, ii = sampleSlots.length; i < ii; i++) {
+          var sampleSlot = sampleSlots[i];
+          sampleSlot.animate({transform: "T0,0"}, 200/speed);
         }
       }
     },
 
     animateMixerSelection: function (selection, draw, selectionMadeCallback) {
+      if (isNaN(selection)) {   // EMPTY selection
+        this.pushAllLettersOut(selectionMadeCallback);
+        return;
+      }
       var _this = this,
           props = this.getProps(),
           speed = props.speed,

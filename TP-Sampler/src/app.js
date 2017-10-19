@@ -158,12 +158,26 @@ function(Snap, CodapCom, View, ui, utils) {
     var seq = [],
         len = variables.length;
     while (repeat--) {
-      var run = [],
-          _draw = draw;
-      while (_draw--) {
-        run.push( Math.floor(Math.random()*len) );
+      if (withReplacement || device === "spinner") {
+        // fill run array of length `draw` with random numbers [0-len]
+        var run = [],
+            _draw = draw;
+        while (_draw--) {
+          run.push( Math.floor(Math.random()*len) );
+        }
+        seq.push(run);
+      } else {
+        // shuffle an array of all possible values, select `draw` of them
+        var allCases = utils.fill(len);
+        utils.shuffle(allCases);
+        // set length. This lopps of end if longer, and padds empty values otherwise
+        allCases.length = draw;
+        if (draw > len) {
+          // instead of a number, pad with "EMPTY", which we will use in array lookups
+          allCases.fill("EMPTY", len, draw);
+        }
+        seq.push(allCases);
       }
-      seq.push(run);
     }
     return seq;
   }
@@ -211,6 +225,9 @@ function(Snap, CodapCom, View, ui, utils) {
   }
 
   function run() {
+    // this doesn't get written out in array, or change the length
+    variables.EMPTY = "";
+
     experimentNumber += 1;
     codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize).then(function() {
       sequence = createRandomSequence(sampleSize, numRuns);
@@ -232,6 +249,10 @@ function(Snap, CodapCom, View, ui, utils) {
 
       function selectNext() {
         if (!paused) {
+          if (sequence[run][draw] === "EMPTY") {
+            // jump to the end. Slots will push out automatically.
+            draw = sequence[run].length - 1;
+          }
           view.animateSelectNextVariable(sequence[run][draw], draw, addNextSequenceRunToCODAP);
 
           if (draw < sequence[run].length - 1) {
