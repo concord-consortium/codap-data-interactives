@@ -6,6 +6,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
       device = "mixer",       // ..."spinner", "collector"
       isCollector = false,
+      withReplacement = true,
 
       running = false,
       paused = false,
@@ -42,6 +43,7 @@ function(Snap, CodapCom, View, ui, utils) {
         repeat: numRuns,
         speed: speed,
         device: device,
+        withReplacement: withReplacement,
         hidden: hidden,
         password: password
       }
@@ -58,9 +60,10 @@ function(Snap, CodapCom, View, ui, utils) {
       if (state.device) {
         switchState(null, state.device);
       }
+      withReplacement = (state.withReplacement !== undefined) ? state.withReplacement : true;
       hidden = state.hidden || false;
       password = state.password || null;
-      ui.render(hidden, password, false);
+      ui.render(hidden, password, false, withReplacement);
 
       view.render();
     }
@@ -325,6 +328,10 @@ function(Snap, CodapCom, View, ui, utils) {
     }
   }
 
+  function setReplacement(b) {
+    withReplacement = b;
+  }
+
   function setHidden(b) {
     hidden = b;
   }
@@ -341,13 +348,14 @@ function(Snap, CodapCom, View, ui, utils) {
         passwordFailed = true;
       }
     }
-    ui.render(hidden, password, passwordFailed);
+    ui.render(hidden, password, passwordFailed, withReplacement);
   }
 
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     view.reset();
     ui.enableButtons();
+    ui.render(hidden, password, false, withReplacement);
     samples = [];
     running = false;
     paused = false;
@@ -356,7 +364,8 @@ function(Snap, CodapCom, View, ui, utils) {
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
     stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-    setNumRuns, setSpeed, view.speedText, view.setVariableName, setHidden, setOrCheckPassword);
+    setNumRuns, setSpeed, view.speedText, view.setVariableName, setReplacement, setHidden,
+    setOrCheckPassword);
 
   // initialize and render the model
   setup();
