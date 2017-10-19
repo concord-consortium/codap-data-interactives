@@ -78,6 +78,7 @@ function(Snap, CodapCom, View, ui, utils) {
       sampleSize: sampleSize,
       numRuns: numRuns,
       device: device,
+      withReplacement: withReplacement,
       variables: variables,
       uniqueVariables: uniqueVariables,
       samples: samples,
@@ -351,6 +352,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function setReplacement(b) {
     withReplacement = b;
+    view.render();
   }
 
   function setHidden(b) {
