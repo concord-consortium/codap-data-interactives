@@ -4,13 +4,22 @@ function(Snap, CodapCom, View, ui, utils) {
 
   var s = Snap("#model svg"),
 
-      device = "mixer",       // ..."spinner", "collector"
-      isCollector = false,
+      defaultSettings = {
+        repeat: 3,
+        draw: 5,
+        speed: 1,
+        variables: ["a", "b", "a"],
+        device: "mixer",
+        withReplacement: true
+      },
+
+      device = defaultSettings.device,       // "mixer, "spinner", "collector"
+      isCollector = device === "collector",
       withReplacement = true,
 
       running = false,
       paused = false,
-      speed = 1,  //  0.5, 1, 2, 3=inf
+      speed = defaultSettings.speed,  //  0.5, 1, 2, 3=inf
 
       password = null,      // if we have a password, options are locked
       hidden = false,
@@ -19,10 +28,10 @@ function(Snap, CodapCom, View, ui, utils) {
       sentRun = 0,
       sequence = [],
 
-      numRuns = 3,
-      sampleSize = 5,
+      numRuns = defaultSettings.repeat,
+      sampleSize = defaultSettings.draw,
 
-      userVariables = ["a", "b", "a"],
+      userVariables = defaultSettings.variables.slice(0),   // clone
       caseVariables = [],
       variables = userVariables,
 
@@ -53,7 +62,11 @@ function(Snap, CodapCom, View, ui, utils) {
   function loadInteractiveState(state) {
     if (state) {
       experimentNumber = state.experimentNumber || experimentNumber;
-      variables = state.variables || variables;
+      if (state.variables) {
+        // swap contents of sequence into variables without updating variables reference
+        variables.length = 0;
+        Array.prototype.splice.apply(variables, [0, state.variables].concat(state.variables));
+      }
       sampleSize = state.draw || sampleSize;
       numRuns = state.repeat || numRuns;
       speed = state.speed || speed;
@@ -374,6 +387,10 @@ function(Snap, CodapCom, View, ui, utils) {
     ui.render(hidden, password, passwordFailed, withReplacement, device);
   }
 
+  function reloadDefaultSettings() {
+    loadInteractiveState(defaultSettings);
+  }
+
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     view.reset();
@@ -388,7 +405,7 @@ function(Snap, CodapCom, View, ui, utils) {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
     stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
     setNumRuns, setSpeed, view.speedText, view.setVariableName, setReplacement, setHidden,
-    setOrCheckPassword);
+    setOrCheckPassword, reloadDefaultSettings);
 
   // initialize and render the model
   setup();
