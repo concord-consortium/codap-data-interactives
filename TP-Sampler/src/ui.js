@@ -195,14 +195,16 @@ define(function() {
       passwordField.value = "";
       passwordField.type = "password";
       disable("hide-options");
-      document.getElementById("hideModel").disabled = "disabled";
+      disable("hideModel");
+      disable("reload-settings");
       document.getElementById("pass-lock").innerHTML = "Unlock";
       document.getElementById("pass-text").innerHTML = "Unlock settings with password:";
     } else {
       passwordField.value = "";
       passwordField.type = "text";
       enable("hide-options");
-      document.getElementById("hideModel").disabled = false;
+      enable("hideModel");
+      enable("reload-settings");
       document.getElementById("pass-lock").innerHTML = "Lock";
       document.getElementById("pass-text").innerHTML = "Lock settings with password:";
     }
@@ -229,7 +231,7 @@ define(function() {
   function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
             stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
             setNumRuns, setSpeed, speedText, setVariableName, setReplacement, setHidden,
-            setOrCheckPassword) {
+            setOrCheckPassword, reloadDefaultSettings) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("add-variable-series").onclick = addVariableSeries;
@@ -285,6 +287,10 @@ define(function() {
       if (password.length > 0) {
         setOrCheckPassword(password);
       }
+    };
+    document.getElementById("reload-settings").onclick = function() {
+      reloadDefaultSettings();
+      viewSampler();
     };
   }
 
