@@ -34,6 +34,7 @@ define(function() {
     disable("add-variable-series");
     disable("sample_size");
     disable("repeat");
+    disable("reset");
     enable("stop");
   }
 
@@ -44,6 +45,7 @@ define(function() {
     enable("add-variable-series");
     enable("sample_size");
     enable("repeat");
+    enable("reset");
     disable("stop");
   }
 
