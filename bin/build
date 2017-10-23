@@ -19,6 +19,7 @@ ENDORSED_PLUGIN_FOLDERS="TP-Sampler"
 HIDDEN_FOLDERS="Common"
 ALL_FOLDERS="$ENDORSED_PLUGIN_FOLDERS $HIDDEN_FOLDERS"
 PLUGIN_MAP_FILE=${HOMEDIR}/data_interactive_map.json
+PUBLISHED_PLUGIN_MAP_FILE=published-plugins.json
 
 function makeIndexJSON() {
   tmp=
@@ -27,7 +28,7 @@ function makeIndexJSON() {
     tmp="$tmp\"/$t\""
   done
   echo tmp=$tmp
-  cat $PLUGIN_MAP_FILE | jq --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > $TARGET/plugins.json
+  cat $PLUGIN_MAP_FILE | jq --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
 }
 
 
@@ -42,4 +43,5 @@ makeIndexJSON
 
 rm -rf $TARGET
 mkdir -p $TARGET
-zip -r $TARGET/$ZIP_FILENAME $ALL_FOLDERS
+zip -r $TARGET/$ZIP_FILENAME $ALL_FOLDERS $PUBLISHED_PLUGIN_MAP_FILE
+rm $PUBLISHED_PLUGIN_MAP_FILE
