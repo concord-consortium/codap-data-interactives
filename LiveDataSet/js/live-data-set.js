@@ -331,6 +331,28 @@ $(function () {
     $('#update-interval').val(state.updateInterval || kDefaultUpdateInterval);
   }
 
+  function renderTabs(activeTab, dataSets) {
+    var $lastTab = $('#new-tab', '.tab-bar');
+    $('.tab.data-set-name', '.tab-bar').remove();
+    dataSets.forEach(function (dataSet, ix) {
+      addTab(ix, $lastTab, dataSet.dataSetName, activeTab === ix);
+    });
+  }
+
+  function addTab(index, $lastTab, name, doSelect) {
+    if (doSelect) {
+      $('.tab.selected').removeClass('selected');
+    }
+    var $newChild = $('<div>').addClass('tab data-set-name').prop('id', 'tab-'+index);
+    if (doSelect) {
+      $newChild.addClass('selected');
+    }
+    if (name) {
+      $newChild.text(name);
+    }
+    $newChild.insertBefore($lastTab);
+  }
+
   $('#source-form').on('submit', function (ev) {
     getCurrentDataSetManager().setCSVURL($('#csv-url-entry').val());
     ev.preventDefault();
@@ -372,9 +394,7 @@ $(function () {
     var $this = $(this);
     myState.currentIndex = myState.dataSets.length;
     getCurrentDataSetManager().setStep('#start-step');
-    $('.tab.selected').removeClass('selected');
-    var $newChild = $('<div>').addClass('tab data-set-name selected').prop('id', 'tab-'+myState.currentIndex);
-    $newChild.insertBefore($this);
+    addTab(myState.currentIndex, $this, 'new', true);
   });
 
   $('.tab-bar').on('click', '.tab.data-set-name', function (ev) {
@@ -389,19 +409,21 @@ $(function () {
 
   // converts from initial, one-source version to multisource.
   function convertState(st) {
-    if (!st) {
-      return {
-        currentIndex: 0,
-        dataSets: [{}],
-        version: 1.0
-      };
-    } else if (!st.dataSets) {
-      return {
-        currentIndex: 0,
-        dataSets: [st],
-        version: 1.0
-      };
-    } else return (st);
+    var key;
+    var oldState = {};
+    var dataSets = [oldState];
+    if (!st.dataSets) {
+      for (key in st) {
+        if (st.hasOwnProperty(key)) {
+          oldState[key] = st[key];
+          delete st[key];
+        }
+      }
+      st.currentIndex = 0;
+      st.dataSets = dataSets;
+      st.version = 1.0;
+    }
+    return (st);
   }
 
   function initializeApplication(state) {
@@ -413,6 +435,7 @@ $(function () {
     });
     var dataSetManager = getCurrentDataSetManager();
     dataSetManager.fetchCSVData();
+    renderTabs(myState.currentIndex, myState.dataSets);
     render(state.dataSets[state.currentIndex]);
     dataSetManager.fetchDataAndSetUpdateTimer();
   }
