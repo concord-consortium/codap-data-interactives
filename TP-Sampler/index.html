@@ -1,56 +1,90 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Sampler</title>
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="tp-sampler.css" />
-    <script src="src/lib/iframe-phone.js" language="javascript"></script>
-    <script src="src/lib/CodapInterface.js"></script>
-    <script src="src/lib/build-include.js"></script>
-    <script src="src/lib/snap.svg-min.js"></script>
   </head>
   <body>
-    <div id="top-bar">
-      <button id="run">START</button>
-      <button id="stop">STOP</button>
-      <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
-      <datalist id="speedsettings">
-        <option>0</option>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-      </datalist>
-      <span id="speed-text">Medium</span>
+    <div id="tabs">
+      <div id="tab-sampler" class="active">Sampler</div>
+      <div id="tab-options">Options</div>
     </div>
-    <div id="draw-settings">
-      <div>
-        <span>Select</span>
-        <input id="sample_size"></input>
-        <span>items</span>
+    <div id="sampler">
+      <div id="top-bar">
+        <button id="run">START</button>
+        <button id="stop">STOP</button>
+        <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
+        <datalist id="speedsettings">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </datalist>
+        <span id="speed-text">Medium</span>
+      </div>
+      <div id="draw-settings">
+        <div>
+          <span>Select</span>
+          <input id="sample_size"></input>
+          <span>items</span>
+        </div>
+        <div>
+          <span>Collect&nbsp;</span>
+          <input id="repeat"></input>
+          <span>samples</span>
+        </div>
+      </div>
+      <div id="model">
+        <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
+      </div>
+      <div id="model-controls">
+        <button id="add-variable">+</button>
+        <button id="remove-variable">-</button>
+        <button id="add-variable-series">...</button>
+        <select id="select-collection" class="hidden" name="select">
+          <option selected>Loading collections...</option>
+        </select>
+        <button id="refresh-list" class="hidden">Refresh list</button>
       </div>
       <div>
-        <span>Collect&nbsp;</span>
-        <input id="repeat"></input>
-        <span>samples</span>
+        <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
+      </div>
+      <div id="device-selection">
+        <button id="mixer" class="active">Mixer</button>
+        <button id="spinner">Spinner</button>
+        <button id="collector">Collector</button>
+      </div>
+      <input id="variable-name-change" type="text"></input>
+      <div id="model-cover" class="hidden">?</div>
+    </div>
+    <div id="options" class="hidden">
+      <div id="selection-options" class="disablable">
+        <div id="select-cases">Select cases</div>
+        <input type="radio" id="with-replacement" name="replacement-group" value="with-replacement">
+        <label for="with-replacement">with replacement</label>
+        <br>
+        <input type="radio" id="without-replacement" name="replacement-group" value="without-replacement">
+        <label for="without-replacement">without replacement</label>
+      </div>
+      <div id="hide-options" class="disablable">
+        <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
+        <label for="hideModel">Hide model</label>
+      </div>
+      <div id="password-area">
+        <label for="password" id="pass-text">Lock settings with password:</label>
+        <div>
+          <input id="password" type="text"></input>
+          <button id="pass-lock">Lock</button>
+        </div>
+        <div id="password-failed" class="hidden">
+          Password is incorrect.
+        </div>
+      </div>
+      <div>
+        <button id="reload-settings">Reload default settings</button>
       </div>
     </div>
-    <div id="model">
-      <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
-    </div>
-    <div id="model-controls">
-      <button id="add-variable">+</button>
-      <button id="remove-variable">-</button>
-      <select id="select-collection" class="hidden" name="select">
-        <option selected>Loading collections...</option>
-      </select>
-      <button id="refresh-list" class="hidden">Refresh list</button>
-    </div>
-    <div>
-      <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
-    </div>
-    <div id="device-selection">
-      <button id="mixer" class="active">Mixer</button>
-      <button id="spinner">Spinner</button>
-      <button id="collector">Collector</button>
-    </div>
-    <input id="variable-name-change" type="text"></input>
-    <script src="src/app.js"></script>
+    <script data-main="src/app" src="src/lib/require.js"></script>
   </body>
 </html>
