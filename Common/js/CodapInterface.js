@@ -145,7 +145,7 @@
     var handled = false;
     var success = true;
 
-    if (action === 'get') {
+    if ((action === 'get') || (action === 'update')) {
       // get assumes only one subscriber because it expects only one response.
       notificationSubscribers.some(function (subscription) {
         var result = false;
@@ -259,9 +259,11 @@
         connection = new iframePh.IframePhoneRpcEndpoint(
             notificationHandler, "data-interactive", window.parent);
 
-        this.on('get', 'interactiveState', function () {
-          return ({success: true, values: this.getInteractiveState()});
-        }.bind(this));
+        if (!config.customInteractiveStateHandler) {
+          this.on('get', 'interactiveState', function () {
+            return ({success: true, values: this.getInteractiveState()});
+          }.bind(this));
+        }
 
         console.log('sending interactiveState: ' + JSON.stringify(this.getInteractiveState));
         // update, then get the interactiveFrame.
@@ -379,7 +381,7 @@
           os,
           hn;
       var args = Array.prototype.slice.call(arguments);
-      if (args[0] === 'get' || args[0] === 'notify') {
+      if (['get', 'update', 'notify'].indexOf(args[0]) >= 0) {
         as = args.shift();
       }
       rs = args.shift();
