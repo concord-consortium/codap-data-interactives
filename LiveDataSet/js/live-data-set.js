@@ -75,6 +75,10 @@ $(function () {
         pState = st || {};
       },
 
+      getName: function() {
+        return pState.dataSetName;
+      },
+
       handleDataLoad: function (data) {
         try {
           var result = Papa.parse(data, {skipEmptyLines: true, comment: '#'});
@@ -86,7 +90,9 @@ $(function () {
                 .then(null, function (msg) {
                   displayError(msg);
                 });
-            render(pState);
+            if (this === getCurrentDataSetManager()) {
+              render(pState);
+            }
           } else {
             this.setStep('#load-step');
           }
@@ -102,7 +108,7 @@ $(function () {
         var rows = data.length;
         pState.stats = {cols: cols, rows: rows};
         pState.dataSetName = inferDataSetNameFromURL(url);
-        render(pState);
+        // render(pState);
       },
 
       setStep: function setStep(st) {
@@ -113,9 +119,9 @@ $(function () {
       fetchDataAndSetUpdateTimer: function fetchDataAndSetUpdateTimer() {
         var timeout = (pState.updateInterval || kDefaultUpdateInterval) * 60 * 1000;
         if (pState.step === '#run-step') {
-          getCurrentDataSetManager().fetchCSVData();
+          this.fetchCSVData();
         }
-        console.log('timeout: ' + pState.step);
+        console.log('timeout: ' + pState.step + ', dataSet: ' + pState.dataSetName);
         updateTimer = window.setTimeout(this.fetchDataAndSetUpdateTimer.bind(this),
             timeout);
       },
@@ -372,7 +378,7 @@ $(function () {
   });
 
   $('#run-form').on('submit', function (ev) {
-    getCurrentDataSetManager().fetchCSVData();
+    getCurrentDataSetManager().fetchDataAndSetUpdateTimer();
     ev.preventDefault();
     return false;
   });
@@ -437,7 +443,9 @@ $(function () {
     dataSetManager.fetchCSVData();
     renderTabs(myState.currentIndex, myState.dataSets);
     render(state.dataSets[state.currentIndex]);
-    dataSetManager.fetchDataAndSetUpdateTimer();
+    dataSetManagers.forEach(function (dataSetManager) {
+      dataSetManager.fetchDataAndSetUpdateTimer();
+    });
   }
 
   codapInterface.init({
