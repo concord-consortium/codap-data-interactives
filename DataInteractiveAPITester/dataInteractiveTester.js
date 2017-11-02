@@ -30,6 +30,7 @@ $(function () {
       'attributeLocation',
       'case',
       'item',
+      'global',
       'selectionList',
       'undoChangeNotice',
       'logMessage',
@@ -421,6 +422,7 @@ $(function () {
 
   var resourceMap = {
           attributeList: 'attribute',
+          attributeLocation: 'attribute',
           allCases: 'case',
           caseByIndex: 'case',
           caseByID: 'case',
@@ -430,6 +432,7 @@ $(function () {
           componentList: 'component',
           dataContextFromURL: 'dataContext',
           dataContextList: 'dataContext',
+          globalList: 'global'
         };
 
   function classifyTemplateData(templateData) {

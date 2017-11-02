@@ -398,6 +398,42 @@
       "resource": "dataContext[DataContext1].allCases"
     }
   },
+  {
+    "name": "Create Global Value",
+    "message": {
+      "action": "create",
+      "resource": "global",
+      "values": {
+        "name": "g1",
+        "value": 1
+      }
+    }
+  },
+
+  {
+    "name": "Update Global Value",
+    "message": {
+      "action": "update",
+      "resource": "global[g1]",
+      "values": {
+        "value": 2
+      }
+    }
+  },
+  {
+    "name": "Get Global Value",
+    "message": {
+      "action": "get",
+      "resource": "global[g1]"
+    }
+  },
+  {
+    "name": "Get Global Value List",
+    "message": {
+      "action": "get",
+      "resource": "globalList"
+    }
+  },
 
   {
     "name": "Create Items",
