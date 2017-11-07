@@ -6,8 +6,7 @@
  */
 
 define([
-    './lib/CodapInterface',
-    './lib/codap-plugin-config'],
+    './lib/CodapInterface'],
   function (codapInterface, codapPluginConfig) {
 
     var CodapCom = function(getStateFunc, loadStateFunc) {
@@ -37,7 +36,7 @@ define([
           name: 'Sampler',
           title: 'Sampler',
           dimensions: {width: 235, height: 400},
-          version: 'v0.3 (#' + codapPluginConfig.buildNumber + ')',
+          version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
           stateHandler: this.loadStateFunc
         }).then(this.findOrCreateDataContext, this.error);
       },
