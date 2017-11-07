@@ -228,7 +228,7 @@ class TutorialView extends React.Component {
 
   }
 
-  handleCodapNotification(iRequest) {
+  handleCodapNotification(iNotification) {
 
     let isAccomplished = function (iKey) {
           return this.state.accomplished.some(function (iAccomplishment) {
@@ -261,18 +261,18 @@ class TutorialView extends React.Component {
         }.bind(this);
 
     let tFeedback = '';
-    switch (iRequest.values.operation) {
+    switch (iNotification.values.operation) {
       case 'dataContextCountChanged':
         handleDataContextCountChanged();
         break;
       case 'create':
-        if( iRequest.values.type === 'graph')
+        if( iNotification.values.type === 'graph')
           handleAccomplishment('MakeGraph', !isAccomplished('Drag'));
-        else if(iRequest.values.type === 'table')
+        else if(iNotification.values.type === 'table')
           handleAccomplishment('MakeTable');
         break;
       case 'move':
-        if( iRequest.values.type === 'DG.GraphView' || iRequest.values.type === 'DG.TableView')
+        if( iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView')
           handleAccomplishment('MoveComponent');
         break;
       case 'attributeChange':

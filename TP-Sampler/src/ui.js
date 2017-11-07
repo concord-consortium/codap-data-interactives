@@ -124,7 +124,8 @@ define(function() {
       }
 
       function setVariablesAndRender(vars) {
-        // push into existing array, as `variables` is pointing at this
+        // Never append. Always start from scratch
+        caseVariables.length = 0;
         caseVariables.push.apply(caseVariables, vars);
         view.render();
       }
@@ -134,6 +135,7 @@ define(function() {
           .then(setVariablesAndRender);
       } else {
         sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
+        setVariablesAndRender([]);  // empty out mixer
         sel.onchange = function(evt) {
           if(evt.target.value) {
             codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
