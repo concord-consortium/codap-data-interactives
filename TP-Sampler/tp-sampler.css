@@ -16,18 +16,47 @@ body {
     "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
-#model {
+#tabs {
   position: absolute;
   left: 0;
-  top: 18.6vh;
+  top: 0.5vh;
+  width: 100%;
+  height: 4vh;
+  display: flex;
+  border-bottom: 1px solid #777;
+  z-index: 2;
+}
+
+#tabs div {
+  border: 1px solid #777;
+  margin: 0 0 -1px 0;
+  padding-left: 1vh;
+  padding-right: 2vh;
+  font-size: 3.2vh;
+  color: #666;
+  background-color: #FAFAFA;
+  cursor: pointer;
+}
+
+#tabs div.active {
+  border-bottom: 1px solid white;
+  margin: -1px 0 -1px 0;
+  color: #444;
+  background-color: white;
+}
+
+#model {
+  position: absolute;
+  left: -1vh;
+  top: 21.2vh;
   width: 62vh;
-  height: 61vh;
+  height: 59vh;
 }
 
 #top-bar {
   position: absolute;
   left: 3.2vh;
-  top: -1.5vh;
+  top: 2.5vh;
   display: flex;
   align-items: center;
 }
@@ -56,7 +85,7 @@ span {
 #draw-settings {
   position: absolute;
   left: 3.2vh;
-  top: 8vh;
+  top: 11vh;
 }
 
 #draw-settings input {
@@ -73,7 +102,7 @@ input[disabled="disabled"] {
 #model-controls {
   position: absolute;
   left: 3.2vh;
-  bottom: 14vh;
+  bottom: 13.2vh;
 }
 
 #model-controls button, #device-selection button {
@@ -191,4 +220,45 @@ circle:hover{
 }
 text:hover{
   cursor: pointer;
+}
+
+#model-cover {
+  position: absolute;
+  left: 1vh;
+  top: 21.2vh;
+  width: 37.5vh;
+  height: 65.5vh;
+  z-index: 2;
+  background-color: #F0F0F0;
+  border: 0.1vh solid #444;
+  color: white;
+  font-size: 49vh;
+  text-align: center;
+}
+
+#options {
+  position: absolute;
+  top: 8vh;
+}
+
+#options div {
+  padding-bottom: 3vh;
+}
+
+.disablable.disabled {
+  color: #888;
+}
+
+#password-failed {
+  color: red;
+}
+
+#options #select-cases {
+  padding-bottom: 1vh;
+}
+
+input[type=checkbox], input[type=radio] {
+  display: inline-block;
+  width: 3vh;
+  height: 3vh;
 }

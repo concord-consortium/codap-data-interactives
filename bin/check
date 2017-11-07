@@ -1,8 +1,6 @@
 #!/bin/bash
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
-HOMEDIR=$DIRNAME/..
-cd $HOMEDIR
 
 EXP_CODAP_BRANCH=${EXP_CODAP_BRANCH:-master}
 
@@ -17,7 +15,9 @@ CODAP_BRANCH=`git rev-parse --abbrev-ref HEAD`
 [ "$CODAP_BRANCH" != "$EXP_CODAP_BRANCH" ] && error 'branch is not master'
 
 # pull the latest
-git pull
+git pull 2>&1
 
 # verify that we are clean
-[`git status -s | wc -l` != "0" ] && error 'codeline is not clean'
+[ `git status -s | wc -l` != 0 ] && error 'codeline is not clean'
+
+exit 0

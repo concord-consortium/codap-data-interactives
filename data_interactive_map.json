@@ -539,6 +539,17 @@
       "categories": [
         "Partners"
       ]
+    },
+    {
+      "title": "Draw Tool",
+      "description": "Annotate an image.",
+      "width": 600,
+      "height": 400,
+      "path": "/DrawTool/index.html",
+      "visible": true,
+      "categories": [
+        "Utilities"
+      ]
     }
   ]
 }
