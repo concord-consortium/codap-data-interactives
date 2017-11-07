@@ -272,7 +272,8 @@ class TutorialView extends React.Component {
           handleAccomplishment('MakeTable');
         break;
       case 'move':
-        handleAccomplishment('MoveComponent');
+        if( iRequest.values.type === 'DG.GraphView' || iRequest.values.type === 'DG.TableView')
+          handleAccomplishment('MoveComponent');
         break;
       case 'attributeChange':
         handleAccomplishment('AssignAttribute');
