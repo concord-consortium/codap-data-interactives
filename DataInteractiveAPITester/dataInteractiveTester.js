@@ -432,7 +432,9 @@ $(function () {
           componentList: 'component',
           dataContextFromURL: 'dataContext',
           dataContextList: 'dataContext',
-          globalList: 'global'
+          globalList: 'global',
+          itemByCaseID: 'item',
+          itemSearch: 'item'
         };
 
   function classifyTemplateData(templateData) {
