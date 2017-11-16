@@ -12,11 +12,29 @@
       .dt-container {
         background-color: lightgray;
       }
+      .container {
+        position: relative;
+      }
+      #camera {
+        display: block;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 43px;
+        height: 33px;
+        vertical-align: middle;
+        text-align: center;
+        background-color: white;
+        background-image: url(camera.png);
+        background-size: contain;
+        border-radius:5px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div id="drawing-tool"></div>
+      <div id="camera" title="Take a snapshot">&nbsp;</div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.js"></script>

@@ -69,4 +69,15 @@ $(function () {
         state = jsonState && JSON.parse(jsonState);
     return ({success: true, values: state });
   });
+
+  $('#camera').on('click', function () {
+    var img = drawingTool.canvas.toDataURL();
+    codapInterface.sendRequest({
+      action: 'notify',
+      resource: 'interactiveFrame',
+      values: {
+        image: img
+      }
+    });
+  });
 });
