@@ -41,6 +41,54 @@
       }
     }
   },
+  {
+    "name": "Notify Interactive Frame is dirty",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "dirty": true
+      }
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
+    }
+  },
+  {
+    "name": "Notify Interactive Frame has screenshot",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "image": "data:image/png;base64,sdkfalsdjf=="
+      }
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
+    }
+  },
 
   {
     "name": "Create Data Context",
