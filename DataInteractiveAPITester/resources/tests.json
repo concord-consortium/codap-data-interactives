@@ -41,6 +41,54 @@
       }
     }
   },
+  {
+    "name": "Notify Interactive Frame is dirty",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "dirty": true
+      }
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
+    }
+  },
+  {
+    "name": "Notify Interactive Frame has screenshot",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "image": "data:image/png;base64,sdkfalsdjf=="
+      }
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
+    }
+  },
 
   {
     "name": "Create Data Context",
@@ -460,7 +508,61 @@
       ]
     }
   },
-
+  {
+    "name": "Get Item",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].item[1]"
+    }
+  },
+  {
+    "name": "Update Item",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].item[1]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Get Item by Case ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].itemByCaseID[23]"
+    }
+  },
+  {
+    "name": "Update Item by Case ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].itemByCaseID[23]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Delete Item by Case ID",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].itemByCaseID[23]"
+    }
+  },
+  {
+    "name": "Get Item by Search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].itemSearch[Species==human]"
+    }
+  },
+  {
+    "name": "Delete Item by Search",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[DataContext1].itemSearch[Age>4]"
+    }
+  },
   {
     "name": "Create Selection List",
     "message": {

@@ -69,4 +69,55 @@ $(function () {
         state = jsonState && JSON.parse(jsonState);
     return ({success: true, values: state });
   });
+
+  $('#camera').on('click', function () {
+    var img = drawingTool.canvas.toDataURL();
+    codapInterface.sendRequest({
+      action: 'notify',
+      resource: 'interactiveFrame',
+      values: {
+        image: img
+      }
+    });
+  });
+
+  // Support dropping an image file into the draw tool.
+  $('.container').on('dragover', function (ev) {
+    ev.preventDefault();
+    var oev = ev.originalEvent;
+    oev.dataTransfer.dropEffect = 'all';
+  });
+
+  $('.container').on('drop', function (ev) {
+    function readToDataURI (file, callback) {
+      function handleAbnormalRead() {
+        console.log("Failed to read file: " + file.name);
+      }
+      function handleRead() {
+        callback(reader.result);
+      }
+      var reader = new FileReader();
+      if (file) {
+        reader.onabort = handleAbnormalRead;
+        reader.onerror = handleAbnormalRead;
+        reader.onload = handleRead;
+        reader.readAsDataURL(file);
+      }
+    }
+    function setBackground(dataURI) {
+      drawingTool.setBackgroundImage(dataURI, 'resizeCanvasToBackground',
+          updateInteractiveFrame);
+    }
+    ev.preventDefault();
+    var mimeTypes = ['image/png','image/gif', 'image/jpeg', 'image/svg+xml']
+    var oev = ev.originalEvent;
+    var tDataTransfer = oev.dataTransfer;
+    var tFiles = tDataTransfer && tDataTransfer.files;
+    if( tFiles && (tFiles.length > 0) && mimeTypes.includes(tFiles[0].type)) {
+      console.log('drop: got file -- ' + tFiles[0].name);
+      readToDataURI(tFiles[0], setBackground);
+    } else {
+      console.log('drop of non-file or not file of type: [' + mimeTypes.join() + ']')
+    }
+  });
 });
