@@ -322,6 +322,17 @@ define([
             resource: 'dataContext[' + contextName + '].collectionList'
           }).then(setCollection);
         });
+      },
+
+      logAction: function( iMsg, iReplaceArgs) {
+        codapInterface.sendRequest({
+          action: 'notify',
+          resource: 'logMessage',
+          values: {
+            formatStr: iMsg,
+            replaceArgs: iReplaceArgs
+          }
+        });
       }
     };
 

@@ -111,7 +111,7 @@ function(Snap, CodapCom, View, ui, utils) {
     return paused;
   }
 
-  view = new View(getProps, isRunning, setRunning, isPaused, setup);
+  view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom);
 
   function getNextVariable() {
     // brain-dead version for now
@@ -125,6 +125,7 @@ function(Snap, CodapCom, View, ui, utils) {
     view.render();
 
     ui.enable("remove-variable");
+    codapCom.logAction("addItem");
   }
 
   function removeVariable() {
@@ -138,6 +139,7 @@ function(Snap, CodapCom, View, ui, utils) {
     if (variables.length < 2) {
       ui.disable("remove-variable");
     }
+    codapCom.logAction("removeItem");
   }
 
   function addVariableSeries() {
@@ -151,6 +153,7 @@ function(Snap, CodapCom, View, ui, utils) {
         // swap contents of sequence into variables without updating variables reference
         variables.length = 0;
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
+        codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
     }
 
@@ -202,6 +205,7 @@ function(Snap, CodapCom, View, ui, utils) {
       running = true;
       ui.disableButtons();
       run();
+      codapCom.logAction('start: %@ samples with %@ items', [numRuns, sampleSize]);
     } else {
       paused = !paused;
       view.pause(paused);
@@ -220,12 +224,14 @@ function(Snap, CodapCom, View, ui, utils) {
     }
     samples = [];
     view.endAnimation();
+    codapCom.logAction("stop:");
   }
 
   function resetButtonPressed() {
     this.blur();
     experimentNumber = 0;
     codapCom.deleteAll(device, ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.logAction("clearData:");
   }
 
   function addNextSequenceRunToCODAP() {
@@ -327,6 +333,8 @@ function(Snap, CodapCom, View, ui, utils) {
     if (this.blur) this.blur();
     var selectedDevice = state || this.id;
     if (selectedDevice !== device) {
+      if( device)
+        codapCom.logAction("switchDevice: %@", selectedDevice);
       ui.toggleDevice(device, selectedDevice);
       device = selectedDevice;
       isCollector = device === "collector";
@@ -344,16 +352,19 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function refreshCaseList() {
     codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.logAction('refreshList');
   }
 
   function setSampleSize(n) {
     sampleSize = n;
     view.render();
+    codapCom.logAction("setNumItems: %@", n);
   }
 
   function setNumRuns(n) {
     numRuns = n;
     view.render();
+    codapCom.logAction("setNumSamples: %@", n);
   }
 
   function setSpeed(n) {
@@ -361,25 +372,30 @@ function(Snap, CodapCom, View, ui, utils) {
     if (running && !paused && speed === 3) {
       fastforwardToEnd();
     }
+    codapCom.logAction("setSpeed: %@", n);
   }
 
   function setReplacement(b) {
     withReplacement = b;
     view.render();
+    codapCom.logAction("setWithReplacement: %@", b);
   }
 
   function setHidden(b) {
     hidden = b;
+    codapCom.logAction("%@", b ? 'hideModel' : 'showModel');
   }
 
   function setOrCheckPassword(pass) {
     var passwordFailed = false;
     if (!password) {
       password = pass;      // lock model
+      codapCom.logAction("lockModel");
     } else {
       if (pass === password) {
         password = null;      // clear existing password
         hidden = false;       // unhide model automatically
+        codapCom.logAction("unLockModel");
       } else {
         passwordFailed = true;
       }
@@ -389,6 +405,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function reloadDefaultSettings() {
     loadInteractiveState(defaultSettings);
+    codapCom.logAction("reloadDefaultSettings");
   }
 
   // Set the model up to the initial conditions, reset all buttons and the view

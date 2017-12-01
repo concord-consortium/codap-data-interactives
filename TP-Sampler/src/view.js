@@ -110,12 +110,13 @@ define(function() {
 
 
 
-  var View = function(getProps, isRunning, setRunning, isPaused, modelReset) {
+  var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codapCom) {
     this.getProps = getProps;
     this.isRunning = isRunning;
     this.setRunning = setRunning;
     this.isPaused = isPaused;
     this.modelReset = modelReset;
+    this.codapCom = codapCom;
 
     this.speedText = speedText;
 
@@ -749,6 +750,7 @@ define(function() {
         variableNameInput.style.display = "none";
         this.render();
         editingVariable = false;
+        this.codapCom.logAction("changeItemName: %@", newName);
       }
     },
 
