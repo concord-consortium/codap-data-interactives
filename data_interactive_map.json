@@ -556,10 +556,10 @@
       "description": "This is the onboarding plugin for CODAP.",
       "width": 600,
       "height": 400,
-      "path": "https://codap.concord.org/plugins/onboarding?lang=en",
+      "path": "https://codap.concord.org/plugins/releases/latest/onboarding/",
       "visible": false,
       "categories": [
-        "Partners"
+        "Utilities"
       ]
     }
   ]
