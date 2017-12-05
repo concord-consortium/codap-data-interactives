@@ -4,6 +4,11 @@ body {
     color: rgb(110, 109, 95);
 }
 
+button {
+    position: absolute;
+    bottom: 5px;
+}
+
 .App {
     text-align: center;
 }

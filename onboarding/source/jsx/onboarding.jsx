@@ -17,6 +17,7 @@
 //  limitations under the License.
 // ==========================================================================
 /* jshint strict: false */
+
 /*global console:true,iframePhone:true,React:true, ReactDOM:true */
 
 /**
@@ -51,11 +52,11 @@ class HelpWelcomeArea extends React.Component {
 class Feedback extends React.Component {
 
   render() {
-    if (this.props.feedbackText === '') {
+    if (!this.props.showingInfoText && (this.props.feedbackText === '' || this.props.onboardingComplete)) {
       return null;
     }
     else {
-      let tCheckbox = this.props.allAccomplished ? null :
+      let tCheckbox =
           <img src="./resources/x.png" className="App-feedback-close"
                onMouseDown={this.props.handleFeedbackExit}/>;
       return (
@@ -165,6 +166,15 @@ let taskDescriptions = {
         <p>You can replace this attribute with another one, or drag an attribute to the other graph
           axis to make a scatter plot.</p>
       </div>
+    },
+    {
+      key: 'SecondAttribute', label: 'Drag a 2nd attribute to a graph\'s axis', url: './resources/Drag2ndAttribute.mp4',
+      feedback: <div>
+        <p>Alright! You dragged a second attribute to a graph.</p>
+        <p>You graph is <em>bivariate</em> meaning you have displayed two attributes on a single graph.</p>
+        <p>You can replace either attribute with a different attribute, or drag an attribute to the
+          middle of the graph to create a legend for the points.</p>
+      </div>
     }
   ],
   getFeedbackFor: function (iKey, iUseAltFeedback) {
@@ -230,7 +240,50 @@ class TutorialView extends React.Component {
 
   handleCodapNotification(iNotification) {
 
-    let isAccomplished = function (iKey) {
+    let handleAttributeChange = function () {
+          // If there is a graph with two attributes then 'SecondAttribute' else 'AssignAttribute'
+          codapInterface.sendRequest({
+            action: 'get',
+            resource: 'componentList'
+          }).then( function( iResult) {
+            if( iResult.success && iResult.values.length > 1) {
+              let tGraphRequestList = [];
+              iResult.values.forEach( function( iComponent) {
+                if( iComponent.type === 'graph') {
+                  tGraphRequestList.push( {
+                    action: 'get',
+                    resource: 'component[' + iComponent.id + ']'
+                  })
+                }
+              });
+              if( tGraphRequestList.length > 0) {
+                codapInterface.sendRequest( tGraphRequestList).then( function( iResults) {
+                  let maxAttrsFound = 0;
+                  iResults.forEach( function( iResult) {
+                    let numAttrsFound = 0;
+                    ['xAttributeName', 'yAttributeName', 'y2AttributeName', 'legendAttributeName'].forEach(
+                        function( iKey) {
+                          if( iResult.values[ iKey])
+                            numAttrsFound++;
+                        }
+                    );
+                    maxAttrsFound = Math.max( maxAttrsFound, numAttrsFound);
+                  });
+                  switch( maxAttrsFound) {
+                    case 1:
+                      handleAccomplishment( 'AssignAttribute');
+                      break;
+                    case 2:
+                      handleAccomplishment( 'SecondAttribute');
+                      break;
+                  }
+                })
+              }
+            }
+          })
+        }.bind(this),
+
+        isAccomplished = function (iKey) {
           return this.state.accomplished.some(function (iAccomplishment) {
             return iAccomplishment === iKey;
           });
@@ -248,8 +301,8 @@ class TutorialView extends React.Component {
           codapInterface.sendRequest({
             action: 'get',
             resource: 'dataContextList'
-          }).then( function( iResult) {
-            if(iResult.success && iResult.values.length > 1) {
+          }).then(function (iResult) {
+            if (iResult.success && iResult.values.length > 1) {
               let tName = iResult.values[0].name;
               codapInterface.sendRequest({
                 action: 'delete',
@@ -266,17 +319,17 @@ class TutorialView extends React.Component {
         handleDataContextCountChanged();
         break;
       case 'create':
-        if( iNotification.values.type === 'graph')
+        if (iNotification.values.type === 'graph')
           handleAccomplishment('MakeGraph', !isAccomplished('Drag'));
-        else if(iNotification.values.type === 'table')
+        else if (iNotification.values.type === 'table')
           handleAccomplishment('MakeTable');
         break;
       case 'move':
-        if( iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView')
+        if (iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView')
           handleAccomplishment('MoveComponent');
         break;
       case 'attributeChange':
-        handleAccomplishment('AssignAttribute');
+        handleAttributeChange();
         break;
     }
     return {success: true};
@@ -305,6 +358,7 @@ class TutorialView extends React.Component {
 
     let tText = '',
         tAllAccomplished = false,
+        tOnboardingComplete = this.state.allAccomplished,
         allAccomplished = function () {
           return taskDescriptions.descriptions.every(function (iDesc) {
             return this.state.accomplished.indexOf(iDesc.key) >= 0;
@@ -320,16 +374,18 @@ class TutorialView extends React.Component {
           <li>Made a graph</li>
           <li>Moved a component</li>
           <li>Plotted an attribute on a graph axis</li>
+          <li>Made a graph show values for two attributes</li>
         </ul>
-        <p>You can do a <em>lot</em> with just those four skills!</p>
+        <p>You can do a <em>lot</em> with just those five skills!</p>
         <p>For more information about how to work with CODAP, visit the
-          <a href="https://codap.concord.org/help/" target="_blank"> CODAP Help</a> page. </p>
+          <a href="https://codap.concord.org/help/" target="_blank">CODAP Help</a> page. </p>
         <button onClick={this.startOver}>Start Over</button>
       </div>
     }
     this.setState({
       allAccomplished: tAllAccomplished,
-      feedbackText: tText
+      feedbackText: tText,
+      onboardingComplete: tOnboardingComplete
     });
   }
 
@@ -344,12 +400,18 @@ class TutorialView extends React.Component {
                target="_blank">
               CODAP's data interactive GitHub repository</a>. </p>
           <p>This plugin makes use of the CODAP data interactive plugin API whose documentation is at<br/>
-            <a href="https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API" target="_blank">
+            <a href="https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-Plugin-API" target="_blank">
               CODAP Data Interactive API</a>.</p>
         </div>
     this.setState({
-      feedbackText: tFeedback
-    })
+      feedbackText: tFeedback,
+      showingInfoText: true
+    });
+    // We want the showingInfoText property to become false after the feedback is shown.
+    // Using a timeout to do so seems bizarre and we should try to find a more straightforward way.
+    setTimeout(function() {
+      this.state.showingInfoText = false;
+    }.bind( this), 100);
   }
 
   render() {
@@ -370,6 +432,8 @@ class TutorialView extends React.Component {
               feedbackText={this.state.feedbackText}
               allAccomplished={this.state.allAccomplished}
               handleFeedbackExit={this.handleFeedbackExit}
+              onboardingComplete={this.state.onboardingComplete}
+              showingInfoText={this.state.showingInfoText}
           />
           <img src="./resources/infoIcon.png" className="App-info"
                onClick={this.handleInfoClick}/>
@@ -380,25 +444,25 @@ class TutorialView extends React.Component {
 
 function getStarted() {
 
-/*
-  window.onmousemove = function() {
-    hasMouse = true;
-  }
-*/
+  /*
+    window.onmousemove = function() {
+      hasMouse = true;
+    }
+  */
 
   codapInterface.init({
     title: "Getting started with CODAP",
     version: "1.01",
     dimensions: {
       width: 400,
-      height: 500
+      height: 550
     },
     preventDataContextReorg: false
   }).catch(function (msg) {
     console.log(msg);
   });
 
-  if( !hasMouse) {
+  if (!hasMouse) {
     codapInterface.sendRequest({
       action: 'create',
       resource: 'dataContextFromURL',
@@ -410,7 +474,7 @@ function getStarted() {
     });
   }
 
-  ReactDOM.render(<TutorialView />,
+  ReactDOM.render(<TutorialView/>,
       document.getElementById('container'));
 
 }
