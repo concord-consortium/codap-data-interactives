@@ -24,7 +24,6 @@ $(function () {
 
   var interfaceConfig = {
     name: kPluginName,
-    dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
     version: kFullVersion,
     customInteractiveStateHandler: true
   };
@@ -38,6 +37,14 @@ $(function () {
     .then(function (initialState) {
       if (initialState) {
         drawingTool.load(JSON.stringify(initialState), function() {}, true);
+      } else { // set default dimensions, if no initial state
+        return codapInterface.sendRequest({
+          action: 'update',
+          resource: 'interactiveFrame',
+          values: {
+            dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
+          }
+        })
       }
       // that's all we need, so return a resolved promise.
       return Promise.resolve(initialState);
