@@ -127,4 +127,10 @@ $(function () {
       console.log('drop of non-file or not file of type: [' + mimeTypes.join() + ']')
     }
   });
+
+  // listen for drawing:changed event and notify CODAP to mark the document
+  // dirty when this occurs
+  drawingTool.on('drawing:changed', function () {
+    codapInterface.sendRequest({action:'notify', resource: 'interactiveFrame', values: {"dirty": true}});
+  });
 });
