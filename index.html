@@ -29,15 +29,15 @@
     <div class = "form_container">
         <form action = "#" id="codap_url_form">
             <label>Enter CODAP build to use:</label>
-            <input id="codap-url" size="75" type="text" value="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html" />
-            <!--<script type="text/javascript">-->
-                <!--var pageLoc = location.href;-->
-<!--//                if (pageLoc.indexOf("https") > -1) {-->
-<!--//                    $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");-->
-<!--//                } else {-->
-<!--//                    $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");-->
-<!--//                }-->
-            <!--</script>-->
+            <input id="codap-url" size="75" type="text" value="" />
+            <script type="text/javascript">
+                var pageLoc = location.href;
+                if (pageLoc.indexOf("https") > -1) {
+                    $("#codap-url").val("https://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                } else {
+                    $("#codap-url").val("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html");
+                }
+            </script>
         </form>
     </div>
 </div>
