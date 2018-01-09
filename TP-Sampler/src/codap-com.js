@@ -11,7 +11,7 @@ define([
 
     var CodapCom = function(getStateFunc, loadStateFunc) {
       this.codapConnected = false;
-      this.experimentCaseID = null;
+      this.itemProto = {};
       this.loadStateFunc = loadStateFunc;
 
       this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
@@ -96,33 +96,16 @@ define([
 
       startNewExperimentInCODAP: function(experimentNumber, sampleSize) {
         var _this = this;
-        return new Promise(function(resolve, reject) {
-          if (!_this.codapConnected) {
-            console.log('Not in CODAP');
-            resolve();
-            return;
-          }
-          _this.openTable();
+        if (!_this.codapConnected) {
+          console.log('Not in CODAP');
+          return;
+        }
+        _this.openTable();
 
-          codapInterface.sendRequest({
-            action: 'create',
-            resource: 'collection[experiments].case',
-            values: [{
-              values: {
-                experiment: experimentNumber,
-                sample_size: sampleSize
-              }
-            }]
-          }, function (result) {
-            if (result && result.success) {
-              _this.experimentCaseID = result.values[0].id;
-              resolve();
-            } else {
-              console.log('Unable to begin experiment');
-              reject();
-            }
-          });
-        });
+        this.itemProto = {
+          experiment: experimentNumber,
+          sample_size: sampleSize
+        };
       },
 
       openTable: function() {
@@ -146,38 +129,19 @@ define([
 
         // process values into map of columns and value
         var values;
+        var _this = this;
         values = vals.map(function(v) {
           if (!isCollector) {
-            return {value : v};
+            return Object.assign({sample: run, value: v}, _this.itemProto);
           } else {
-            return v;    // case is already in `key: value` structure
+            return Object.assign(v, {sample: run}, _this.itemProto);
           }
         });
 
         codapInterface.sendRequest({
           action: 'create',
-          resource: 'collection[samples].case',
-          values: [
-           {
-            parent: this.experimentCaseID,
-            values: { sample: run }
-           }
-          ]
-        }, function (result) {
-            if (result.success) {
-              var runCaseID = result.values[0].id,
-                  valuesArray = values.map(function(v) {
-                    return  {
-                      parent: runCaseID,
-                      values: v
-                     };
-                  });
-              codapInterface.sendRequest({
-                action: 'create',
-                resource: 'collection[items].case',
-                values: valuesArray
-              });
-            }
+          resource: 'item',
+          values: values
         });
       },
 
@@ -264,7 +228,7 @@ define([
               }
               codapInterface.sendRequest(reqs).then(function(results) {
                 results.forEach(function(res) {
-                  caseVariables.push(res.values.case.values);
+                  caseVariables.push(res.values['case'].values);
                 });
                 resolve(caseVariables);
              });
