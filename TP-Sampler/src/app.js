@@ -20,6 +20,7 @@ function(Snap, CodapCom, View, ui, utils) {
       running = false,
       paused = false,
       speed = defaultSettings.speed,  //  0.5, 1, 2, 3=inf
+      kFastestSpeed = 3,
 
       password = null,      // if we have a password, options are locked
       hidden = false,
@@ -161,6 +162,7 @@ function(Snap, CodapCom, View, ui, utils) {
   }
 
   function showSequencePrompt() {
+    // eslint-disable-next-line no-alert
     return window.prompt("Enter a range (e.g. 1-50, -5 to 5, 1.0 to 5.0, A-Z)", "a to c");
   }
 
@@ -212,7 +214,14 @@ function(Snap, CodapCom, View, ui, utils) {
       ui.setRunButton(paused);
     }
   }
-
+  function clearSamples() {
+    for (var i = 0, ii = samples.length; i < ii; i++) {
+      if (samples[i].remove) {
+        samples[i].remove();
+      }
+    }
+    samples = [];
+  }
   function stopButtonPressed() {
     this.blur();
     running = false;
@@ -249,61 +258,82 @@ function(Snap, CodapCom, View, ui, utils) {
     variables.EMPTY = "";
 
     experimentNumber += 1;
-    codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize).then(function() {
-      sequence = createRandomSequence(sampleSize, numRuns);
-      if (speed === 3) {
-        // send sequence directly to codap
-        for (var i = 0, ii = sequence.length; i < ii; i++) {
-          var values = sequence[i].map(function(v) {
+    codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize);
+
+    function addValuesToCODAPNoDelay() {
+      if (!paused) {
+        if (speed === kFastestSpeed) {
+          if (runNumber >= sequence.length) {
+            setup();
+            return;
+          }
+          var values = sequence[runNumber].map(function(v) {
             return variables[v];
           });
-          codapCom.addValuesToCODAP(i+1, values, isCollector);
+          codapCom.addValuesToCODAP(runNumber+1, values, isCollector);
+          sentRun++;
+
+          runNumber++;
+          if (running) setTimeout(addValuesToCODAPNoDelay, 0);
+        } else {
+          selectNext();
         }
-        setup();
-        return;
+      } else {
+        if (running) setTimeout(addValuesToCODAPNoDelay, 500);
       }
 
-      var run = 0,
-          draw = 0;
-      sentRun = 0;
+    }
 
-      function selectNext() {
-        if (!paused) {
-          if (sequence[run][draw] === "EMPTY") {
+    function selectNext() {
+      var timeout = (speed !== kFastestSpeed)? 1000/speed: 0;
+      if (!paused) {
+        if (speed !== kFastestSpeed) {
+          if (sequence[runNumber][draw] === "EMPTY") {
             // jump to the end. Slots will push out automatically.
-            draw = sequence[run].length - 1;
+            draw = sequence[runNumber].length - 1;
           }
-          view.animateSelectNextVariable(sequence[run][draw], draw, addNextSequenceRunToCODAP);
+          view.animateSelectNextVariable(sequence[runNumber][draw], draw,
+              addNextSequenceRunToCODAP);
 
-          if (draw < sequence[run].length - 1) {
+          if (draw < sequence[runNumber].length - 1) {
             draw++;
           } else {
-            run++;
+            runNumber++;
             draw = 0;
           }
-        }
-        if (running) {
-          if (sequence[run]) {
-            setTimeout(selectNext, 1000/speed);
-          } else {
-            setTimeout(view.endAnimation, 1000/speed);
-          }
+        } else {
+          addValuesToCODAPNoDelay();
+          return;
         }
       }
-
-      if (!hidden && (device === "mixer" || device === "collector")) {
-        view.animateMixer();
+      if (running) {
+        if (sequence[runNumber]) {
+          setTimeout(selectNext, timeout);
+        } else {
+          setTimeout(view.endAnimation, timeout);
+        }
       }
-
-      selectNext();
-    });
-  }
-
-  function fastforwardToEnd() {
-    view.endAnimation();
-    while (sequence[sentRun]) {
-      addNextSequenceRunToCODAP();
     }
+
+    var runNumber = 0,
+        draw = 0;
+
+    sentRun = 0;
+
+    sequence = createRandomSequence(sampleSize, numRuns);
+
+    if (!hidden && (device === "mixer" || device === "collector")) {
+      view.animateMixer();
+    }
+
+    if (speed === kFastestSpeed) {
+      // send sequence directly to codap
+      addValuesToCODAPNoDelay();
+      return;
+    }
+
+
+    selectNext();
   }
 
   // permanently sorts variables so identical ones are next to each other
@@ -369,8 +399,8 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function setSpeed(n) {
     speed = n;
-    if (running && !paused && speed === 3) {
-      fastforwardToEnd();
+    if (running && !paused && speed === kFastestSpeed) {
+      clearSamples();
     }
     codapCom.logAction("setSpeed: %@", n);
   }

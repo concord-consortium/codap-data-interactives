@@ -36,7 +36,10 @@ $(function () {
     .init(interfaceConfig)
     .then(function (initialState) {
       if (initialState) {
-        drawingTool.load(JSON.stringify(initialState), function() {}, true);
+        drawingTool.load(JSON.stringify(initialState), function() {
+            // resets undo history so the initial state is the state _after_ load.
+            drawingTool.resetHistory();
+          }, true);
       } else { // set default dimensions, if no initial state
         return codapInterface.sendRequest({
           action: 'update',
