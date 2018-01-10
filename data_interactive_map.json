@@ -499,6 +499,15 @@
       ]
     },
     {
+      "title": "Ecochamber Simulator",
+      "description": "Simulates an ecochamber. Plants and animals in a sealed system, and how they affect rates of photosynthesis and respiration. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
+      "path": "https://concord-consortium.github.io/ecochamber/?noise=true",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
       "title": "Elodea Simulator",
       "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
       "path": "https://concord-consortium.github.io/elodea-sim/index.html",
