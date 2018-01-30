@@ -51,18 +51,7 @@
       }
     },
     "expect": {
-      "success": true,
-      "values": {
-        "name": "Tester",
-        "title": "DI-API Test",
-        "version": "0.1",
-        "preventBringToFront": false,
-        "preventDataContextReorg": false,
-        "dimensions": {
-        },
-        "externalUndoAvailable": true,
-        "standaloneUndoModeAvailable": false
-      }
+      "success": true
     }
   },
   {
@@ -75,18 +64,82 @@
       }
     },
     "expect": {
-      "success": true,
+      "success": true
+    }
+  },
+
+  {
+    "name": "Create Data Context",
+    "message": {
+      "action": "create",
+      "resource": "dataContext",
       "values": {
-        "name": "Tester",
-        "title": "DI-API Test",
-        "version": "0.1",
-        "preventBringToFront": false,
-        "preventDataContextReorg": false,
-        "dimensions": {
-        },
-        "externalUndoAvailable": true,
-        "standaloneUndoModeAvailable": false
+        "name": "Mammals",
+        "title": "Mammals",
+        "description": "Information about some mammals",
+        "collections": [
+          {
+            "name": "Mammals",
+            "title": "Mammals",
+            "labels": {
+              "singleCase": "mammal",
+              "pluralCase": "mammals"
+            },
+            "attrs": [
+              {
+                "name": "Mammal",
+                "description": "The species of mammal"
+              },
+              {
+                "name": "Order",
+                "description": "The order of the species",
+                "type": "categorical"
+              },
+              {
+                "name": "Lifespan",
+                "description": "The expected lifespan of the mammal in the wild",
+                "type": "numeric",
+                "unit": "years"
+              },
+              {
+                "name": "Height",
+                "description": "The height of the mammal at maturity",
+                "type": "numeric",
+                "unit": "meters"
+              },
+              {
+                "name": "Mass",
+                "description": "The mass of a full grown adult",
+                "type": "numeric",
+                "unit": "kg"
+              },
+              {
+                "name": "Sleep",
+                "description": "The average sleep time per day of an adult",
+                "type": "numeric",
+                "unit": "hrs"
+              },
+              {
+                "name": "Speed",
+                "type": "numeric",
+                "unit": "km/h"
+              },
+              {
+                "name": "Habitat",
+                "type": "categorical"
+              },
+              {
+                "name": "Diet",
+                "type": "categorical"
+              }
+            ]
+          }
+        ]
       }
+    },
+    "expect": {
+      "id": "%%",
+      "name": "Mammals"
     }
   },
 
@@ -106,6 +159,7 @@
       "name": "DataContext1"
     }
   },
+
   {
     "name": "Create Data Context from URL",
     "message": {
@@ -116,6 +170,7 @@
       }
     }
   },
+
   {
     "name": "Update Data Context",
     "message": {
@@ -126,6 +181,7 @@
       }
     }
   },
+
   {
     "name": "Get Data Context",
     "message": {
@@ -141,6 +197,7 @@
       }
     }
   },
+
   {
     "name": "Get Data Context List",
     "message": {
