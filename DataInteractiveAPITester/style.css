@@ -204,6 +204,12 @@ button {
   margin: 3px;
   background-color: transparent ;
 }
+#message-log .di-toggle-open .di-expand-toggle:before {
+  content: '\25BC';
+}
+#message-log .di-toggle-closed .di-expand-toggle:before {
+  content: '\25B6';
+}
 #filter-button.filter-active {
   background-color:darkgray;
   color: white;

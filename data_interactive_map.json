@@ -488,6 +488,26 @@
       ]
     },
     {
+      "title": "CODAP Onboarding",
+      "description": "This is the onboarding plugin for CODAP",
+      "path": "https://codap.concord.org/plugins/releases/latest/onboarding",
+      "width":600,
+      "height":400,
+      "visible": false,
+      "categories": [
+        "Utilities"
+      ]
+    },
+    {
+      "title": "Ecochamber Simulator",
+      "description": "Simulates an ecochamber. Plants and animals in a sealed system, and how they affect rates of photosynthesis and respiration. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
+      "path": "https://concord-consortium.github.io/ecochamber/?noise=true",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
       "title": "Elodea Simulator",
       "description": "Simulates how many bubbles are produce by elodea plant depending on light color, light level, and CO2 level. This is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project.",
       "path": "https://concord-consortium.github.io/elodea-sim/index.html",
@@ -500,7 +520,7 @@
       "title": "Sensor Interactive (InquirySpace 2 version)",
       "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
       "width": 600,
-      "height": 400,
+      "height": 420,
       "path": "https://sensor-interactive.concord.org",
       "visible": false,
       "categories": [

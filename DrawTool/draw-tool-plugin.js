@@ -24,7 +24,6 @@ $(function () {
 
   var interfaceConfig = {
     name: kPluginName,
-    dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
     version: kFullVersion,
     customInteractiveStateHandler: true
   };
@@ -37,7 +36,18 @@ $(function () {
     .init(interfaceConfig)
     .then(function (initialState) {
       if (initialState) {
-        drawingTool.load(JSON.stringify(initialState), function() {}, true);
+        drawingTool.load(JSON.stringify(initialState), function() {
+            // resets undo history so the initial state is the state _after_ load.
+            drawingTool.resetHistory();
+          }, true);
+      } else { // set default dimensions, if no initial state
+        return codapInterface.sendRequest({
+          action: 'update',
+          resource: 'interactiveFrame',
+          values: {
+            dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
+          }
+        })
       }
       // that's all we need, so return a resolved promise.
       return Promise.resolve(initialState);
@@ -119,5 +129,11 @@ $(function () {
     } else {
       console.log('drop of non-file or not file of type: [' + mimeTypes.join() + ']')
     }
+  });
+
+  // listen for drawing:changed event and notify CODAP to mark the document
+  // dirty when this occurs
+  drawingTool.on('drawing:changed', function () {
+    codapInterface.sendRequest({action:'notify', resource: 'interactiveFrame', values: {"dirty": true}});
   });
 });

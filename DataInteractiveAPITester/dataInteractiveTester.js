@@ -1,17 +1,17 @@
 /*global $:true, codapInterface:true, Promise:true */
 $(function () {
-  var kTrianglePointsRight = '\u25B6';
-  var kTrianglePointsDown = '\u25BC';
+  // var kTrianglePointsRight = '\u25B6';
+  // var kTrianglePointsDown = '\u25BC';
   var kResourceTypeSelector = '.di-resource-type-list .di-item';
   var kActionSelector = '.di-action-list .di-item';
   var kTemplateSelector = '.di-template-list .di-item';
 
   var interactiveState = null;
 
-  var stats = {
-    seq: 0,
-    successes: 0
-  }
+  // var stats = {
+  //   seq: 0,
+  //   successes: 0
+  // }
 
   var actions = [
       'get',
@@ -89,7 +89,7 @@ $(function () {
     var myClass = 'di-' + type;
     var $expandEl = $('<span>')
         .addClass('di-expand-toggle')
-        .text(kTrianglePointsRight);
+        .text(' ');
     var $idEl = $('<span>')
         .text(( id || '' ) + ' ');
     var $typeEl = $('<span>')
@@ -179,7 +179,7 @@ $(function () {
 
   function sendNextTest(parsedMessages, msgNum) {
     if (msgNum >= parsedMessages.length) { return; }
-    var id = ++stats.seq;
+    var id = ++interactiveState.stats.seq;
 
     var parsedMessage = parsedMessages[msgNum];
     var message = parsedMessage.message || parsedMessage;
@@ -197,21 +197,21 @@ $(function () {
       if (result && expected) {
         diff = compareObj(expected, result);
         if ($.isEmptyObject(diff)) {
-          stats.successes++;
+          interactiveState.stats.successes++;
         } else {
           isError = true;
         }
       } else if (isSuccess(result)) {
-        stats.successes++;
+        interactiveState.stats.successes++;
       } else {
         isError = true;
       }
       logMessage('resp', id, result, isError);
-      $('#success').text('' + stats.successes);
+      $('#success').text('' + interactiveState.stats.successes);
 //              console.log('Reply: ' + JSON.stringify(result));
       sendNextTest(parsedMessages, msgNum+1);
     });
-    $('#sentMessages').text('' + stats.seq);
+    $('#sentMessages').text('' + interactiveState.stats.seq);
   }
 
   /**
@@ -228,7 +228,7 @@ $(function () {
 
       sendNextTest(parsedMessages, 0);
     } catch (e) {
-      logMessage('err', null, '' + (stats.seq) + ': ' + e);
+      logMessage('err', null, '' + (interactiveState.stats.seq) + ': ' + e);
       throw e;
     }
   }
@@ -410,10 +410,10 @@ $(function () {
         } catch (ex) {
           var match = ex.message.match(/^.*in JSON at position ([0-9]+)/)
           if (match) {
-            logMessage('error', stats.seq, 'JSON Parse error at or before ' +
+            logMessage('error', interactiveState.stats.seq, 'JSON Parse error at or before ' +
                 characterPositionToLineAndCol(message, match[1]))
           } else {
-            logMessage('error', stats.seq, ex.toString());
+            logMessage('error', interactiveState.stats.seq, ex.toString());
           }
         }
       }
@@ -486,9 +486,11 @@ $(function () {
 
   function clearMessageLog() {
     codapInterface.getInteractiveState().history = [];
-    stats.seq = 0;
-    stats.successes = 0;
+    interactiveState.stats.seq = 0;
+    interactiveState.stats.successes = 0;
     $('#message-log').empty();
+    $('#success').text('' + interactiveState.stats.successes);
+    $('#sentMessages').text('' + interactiveState.stats.seq);
   }
 
   function extractNames(values) {
@@ -599,7 +601,8 @@ $(function () {
 
   function regenerateLog () {
     var priorHistory = interactiveState.history;
-    clearMessageLog();
+    // clearMessageLog();
+    $('#message-log').empty();
     priorHistory.forEach(function (item) {
       logMessage(item.type, item.id, item.message,
           item.type === 'resp' && !item.message.success);
@@ -625,13 +628,12 @@ $(function () {
     var $this = $(this);
     var $div = $this.parent('div');
     var $messageLog = $('#message-log');
+    var divIsClosed = $div.hasClass('di-toggle-closed');
 
-    if ($div.hasClass('di-toggle-closed')) {
-      $this.text(kTrianglePointsDown);
+    $('.di-toggle-open').removeClass('di-toggle-open').addClass('di-toggle-closed')
+    if (divIsClosed) {
+      // $this.text(kTrianglePointsDown);
       $div.removeClass('di-toggle-closed').addClass('di-toggle-open');
-    } else {
-      $this.text(kTrianglePointsRight);
-      $div.removeClass('di-toggle-open').addClass('di-toggle-closed');
     }
     if ($div.is(':last-of-type')) {
       $messageLog[0].scrollTop = $div[0].offsetTop;
@@ -676,15 +678,17 @@ $(function () {
 
   codapInterface.init({
     name: 'CODAP API Tester',
-    version: 0.2,
-    dimensions: { height: 640, width: 430}
+    title: 'CODAP API Tester',
+    version: 'v0.3(#' + window.codapPluginConfig.buildNumber + ')',
+    dimensions: { height: 640, width: 430},
+    preventBringToFront: false
   }).then(function () {
     var priorHistory = [];
     interactiveState = codapInterface.getInteractiveState();
     if (!interactiveState.stats) {
       interactiveState.stats = { seq: 0, successes: 0};
     }
-    stats = interactiveState.stats;
+    // stats = interactiveState.stats;
     if (interactiveState.history) {
       priorHistory = interactiveState.history;
     }
@@ -703,7 +707,7 @@ $(function () {
 
     if (!interactiveState.config) {
       interactiveState.config = {
-        filterNotifications: false
+        filterNotifications: true
       }
     }
     if (interactiveState.config.filterNotifications) {
