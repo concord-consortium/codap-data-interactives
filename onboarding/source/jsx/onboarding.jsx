@@ -241,7 +241,8 @@ class TutorialView extends React.Component {
   handleCodapNotification(iNotification) {
 
     let handleAttributeChange = function () {
-          // If there is a graph with two attributes then 'SecondAttribute' else 'AssignAttribute'
+          // If there is a graph with two or more attributes then 'SecondAttribute' else 'AssignAttribute'
+          // Note that dropping a legend attribute doesn't trigger this notification!
           codapInterface.sendRequest({
             action: 'get',
             resource: 'componentList'
@@ -274,6 +275,7 @@ class TutorialView extends React.Component {
                       handleAccomplishment( 'AssignAttribute');
                       break;
                     case 2:
+                    case 3:
                       handleAccomplishment( 'SecondAttribute');
                       break;
                   }

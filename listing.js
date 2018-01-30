@@ -195,6 +195,7 @@ $(document).ready(function () {
 
         $('.listing').remove();
         if (checkQueryParam()) {         //check if url param includes query param
+            $("#codap-url").val("https://codap.concord.org/releases/staging/static/dg/en/cert/index.html");
             for (var i=0; i<listing.length; i++) {
                 AddListingObj(listing[i]);
             }
