@@ -132,7 +132,8 @@ $(function () {
         var itemID = 'item' + itemCtr++;
         $('<div>')
             .addClass('item')
-            .prop('id', itemID)
+            .prop('id', attr.id)
+            .attr('draggable', 'true')
             .text(attr.name)
             .appendTo($srcStack);
       });
@@ -206,10 +207,13 @@ $(function () {
 
   function handleDragStart(ev) {
 //        console.log('start: ' + this.id);
+//        
+    var $this = $(this);
     var oev = ev.originalEvent;
-    oev.dataTransfer.effectAllowed = 'move';
+    oev.dataTransfer.effectAllowed = 'moveCopy';
     oev.dataTransfer.setData('text/html', this.outerHTML);
     oev.dataTransfer.setData('text', this.id);
+    oev.dataTransfer.setData('application/x-codap-attr-' + $this.attr('id'), $this.text())
     $(this).addClass('drag-active');
     $(kTargetTableSelector + ',' + kSrcStackSelector).addClass('drag-in-progress');
   }
@@ -579,8 +583,9 @@ $(function () {
 
     makeDataSetSelector();
 
+    $(kTargetTableSelector + ' .item').attr('draggable', true);
+    $(kSrcStackItemsSelector + ' .item').attr('draggable', true);
     $(kTargetTableSelector+','+kSrcStackSelector)
-        .attr('draggable', '.item', true)
         .on('dragstart', '.item', handleDragStart)
         .on('dragend', '.item', handleDragEnd);
 
