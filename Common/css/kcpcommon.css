@@ -170,7 +170,7 @@ html {
 	background: -webkit-gradient(linear, left top, left bottom, from(#bf404f), to(#f16c7c));
 	background: -moz-linear-gradient(top,  #bf404f,  #f16c7c);
 	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#bf404f', endColorstr='#f16c7c');
-    background-image: -ms-linear-gradient(top, #bf404f, #f16c7c)); /* IE10+ */
+    background-image: -ms-linear-gradient(top, #bf404f, #f16c7c); /* IE10+ */
     background: linear-gradient(to bottom, #bf404f 0%,#f16c7c 100%); /* W3C */
 }
 .button, .button:hover, .button:active, .button:disabled, .bigrounded, .bigrounded:hover, .bigrounded:active {
