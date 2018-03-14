@@ -132,7 +132,11 @@ $(function () {
           pState.step = '#start-step';
         } else {
           $.ajax(url, {
-            success: this.handleDataLoad.bind(this), error: function (jqXHR) {
+            header: {
+              Accept:'text/csv'
+            },
+            success: this.handleDataLoad.bind(this),
+            error: function (jqXHR) {
               displayError('Error: ' + jqXHR.statusText);
             }
           });
