@@ -73,7 +73,7 @@ ShuffleModel.prototype.initialize = function()
         args: {
             name: "Shuffleboard",
             version: "2.0",
-            dimensions: { width: 520, height: 348 },
+            dimensions: { width: 504, height: 338 },
             collections: [
                 {
                     name: "Games",

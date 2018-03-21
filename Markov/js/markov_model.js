@@ -72,7 +72,7 @@ MarkovModel.prototype.initialize = function()
         args: {
             name: "Markov",
             version: "2.0",
-            dimensions: { width: 534, height: 302 },
+            dimensions: { width: 534, height: 303 },
             collections: [
                 {
                     name: "Games",
