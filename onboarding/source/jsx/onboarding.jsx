@@ -100,13 +100,15 @@ class DraggableLink extends React.Component {
     let dt = event.dataTransfer,
         tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/mammals.csv";
     dt.setData("text/uri-list", tUrl);
+    dt.setData('text', tUrl);
+    dt.effectAllowed = 'all';
   }
 
   render() {
     return (
         <span className="App-link">
           <img src={'./resources/text-icon.png'} alt="link" width={50}
-               onDragStart={this.handleDragStart}
+               onDragStart={this.handleDragStart} draggable={true}
           />
         </span>
     )
