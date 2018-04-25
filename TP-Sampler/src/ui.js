@@ -133,14 +133,14 @@ define(function() {
       if (sel.childNodes.length === 1) {
         codapCom.setCasesFromContext(sel.childNodes[0].value, caseVariables)
           .then(setVariablesAndRender);
-        codapCom.logAction('chooseCollection: %@ (auto)', sel.childNodes[0].value)
+        codapCom.logAction('chooseCollection: %@ (auto)', sel.childNodes[0].value);
       } else {
         sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
         setVariablesAndRender([]);  // empty out mixer
         sel.onchange = function(evt) {
           if(evt.target.value) {
             codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
-            codapCom.logAction('chooseCollection: %@', evt.target.value)
+            codapCom.logAction('chooseCollection: %@', evt.target.value);
           }
         };
       }
