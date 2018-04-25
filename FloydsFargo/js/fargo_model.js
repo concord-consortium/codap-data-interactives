@@ -39,7 +39,7 @@ FargoModel.prototype.initialize = function()
       args:  {
         name: "Floyd's of Fargo",
         version: "2.0",
-        dimensions: { width: 570, height: 408 },
+        dimensions: { width: 554, height: 396 },
         collections: [
             {
                 name: "Games",

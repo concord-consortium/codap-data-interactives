@@ -56,7 +56,7 @@ CartModel.prototype.initialize = function()
       args: {
             name: "Cart Weight",
             version:"2.0",
-            dimensions:{width: 290, height:350},
+            dimensions:{width: 274, height:338},
             collections: [
             {
               name: "Games",

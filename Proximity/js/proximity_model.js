@@ -54,7 +54,7 @@ ProximityModel.prototype.initialize = function()
       args:{
           name: "Proximity",
           version: "2.0",
-          dimensions: { width: 463, height: 344 },
+          dimensions: { width: 447, height: 330 },
           collections: [
               {
                   name: "Games",

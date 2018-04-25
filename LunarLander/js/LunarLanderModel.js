@@ -73,7 +73,7 @@ LunarLanderModel.prototype.initGame = function() {
     args:{
         name: "Lunar Lander",
         version:"3.0",
-        dimensions:{width: 357, height:533},
+        dimensions:{width: 341, height:529},
         collections: [
             {
                 name: "Landing Attempts",
