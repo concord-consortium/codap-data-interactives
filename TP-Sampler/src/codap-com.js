@@ -18,6 +18,7 @@ define([
       this.error = this.error.bind(this);
       this.startNewExperimentInCODAP = this.startNewExperimentInCODAP.bind(this);
       this.addValuesToCODAP = this.addValuesToCODAP.bind(this);
+      this.addMultipleSamplesToCODAP = this.addMultipleSamplesToCODAP.bind(this);
       this.openTable = this.openTable.bind(this);
 
       this.drawAttributes = null;
@@ -122,27 +123,29 @@ define([
         });
       },
 
-      addValuesToCODAP: function(run, vals, isCollector) {
-        if (!this.codapConnected) {
-          return;
-        }
-
-        // process values into map of columns and value
-        var values;
+      addMultipleSamplesToCODAP: function (samples, isCollector) {
         var _this = this;
-        values = vals.map(function(v) {
-          if (!isCollector) {
-            return Object.assign({sample: run, value: v}, _this.itemProto);
-          } else {
-            return Object.assign(v, {sample: run}, _this.itemProto);
-          }
+        var items = [];
+        samples.forEach(function (sample) {
+          var run = sample.run;
+          var item;
+          sample.values.forEach(function(v) {
+            if (!isCollector) {
+              item = Object.assign({}, {sample: run, value: v}, _this.itemProto);
+            } else {
+              item = Object.assign({}, v, {sample: run}, _this.itemProto);
+            }
+            items.push(item);
+          });
         });
-
         codapInterface.sendRequest({
           action: 'create',
           resource: 'item',
-          values: values
+          values: items
         });
+      },
+      addValuesToCODAP: function(run, vals, isCollector) {
+        this.addMultipleSamplesToCODAP([{run: run, values: vals}], isCollector);
       },
 
       deleteAll: function(device, populateContextsList) {
@@ -192,9 +195,9 @@ define([
         var _this = this;
         return new Promise(function(resolve, reject) {
           if (!_this.codapConnected) {
+            // we log that CODAP is not initiated. If we are in CODAP, it will
+            // respond eventually.
             console.log('Not in CODAP');
-            resolve([]);
-            return;
           }
 
           codapInterface.sendRequest({

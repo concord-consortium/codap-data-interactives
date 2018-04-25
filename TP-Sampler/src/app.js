@@ -21,6 +21,7 @@ function(Snap, CodapCom, View, ui, utils) {
       paused = false,
       speed = defaultSettings.speed,  //  0.5, 1, 2, 3=inf
       kFastestSpeed = 3,
+      kFastestItemGroupSize = 50, // number of items to send at a time at fastest speed
 
       password = null,      // if we have a password, options are locked
       hidden = false,
@@ -78,7 +79,9 @@ function(Snap, CodapCom, View, ui, utils) {
       hidden = state.hidden || false;
       password = state.password || null;
       ui.render(hidden, password, false, withReplacement, device);
-
+      if (isCollector) {
+        refreshCaseList();
+      }
       view.render();
     }
   }
@@ -261,19 +264,29 @@ function(Snap, CodapCom, View, ui, utils) {
     codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize);
 
     function addValuesToCODAPNoDelay() {
+      var ix = 0;
+      var samples = [];
       if (!paused) {
         if (speed === kFastestSpeed) {
+          while (ix < sampleGroupSize && runNumber < sequence.length) {
+            var values = sequence[runNumber].map(
+              function (v) {
+                return variables[v];
+              });
+            var run = runNumber ++;
+            sentRun++;
+            samples.push({
+              run: run+1,
+              values: values
+            });
+            ix ++;
+          }
+          codapCom.addMultipleSamplesToCODAP(samples, isCollector);
+
           if (runNumber >= sequence.length) {
             setup();
             return;
           }
-          var values = sequence[runNumber].map(function(v) {
-            return variables[v];
-          });
-          codapCom.addValuesToCODAP(runNumber+1, values, isCollector);
-          sentRun++;
-
-          runNumber++;
           if (running) setTimeout(addValuesToCODAPNoDelay, 0);
         } else {
           selectNext();
@@ -316,8 +329,11 @@ function(Snap, CodapCom, View, ui, utils) {
     }
 
     var runNumber = 0,
-        draw = 0;
+        draw = 0,
+        // sample group size is the number of samples we will send in one message
+        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(sampleSize||1));
 
+    console.log('sample group size: ' + sampleGroupSize);
     sentRun = 0;
 
     sequence = createRandomSequence(sampleSize, numRuns);
