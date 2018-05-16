@@ -157,18 +157,19 @@ define(function() {
     },
 
     createSampleSlots: function() {
-      var x = containerWidth + ((width - containerWidth)  / 3),
+      var sSampleSize = sampleSize>=1? Math.floor(sampleSize): 0,
+          x = containerWidth + ((width - containerWidth)  / 3),
           centerY = containerY + (containerHeight/2),
           stroke = border / 2,
           padding = 2,
           maxHeight = 20,
-          minHeight = Math.max(10, (containerHeight/sampleSize)),
+          minHeight = Math.max(10, (containerHeight/sSampleSize)),
           slotHeight = Math.min(minHeight, maxHeight),
           slotSize = slotHeight - padding - (stroke*2),
           maxSlotDepth = 4,
           minSlotDepth = slotSize/3,
           slotDepth = Math.min(minSlotDepth, maxSlotDepth),
-          totalHeight = slotHeight * sampleSize,
+          totalHeight = slotHeight * sSampleSize,
           mx = x + (maxSlotDepth - slotDepth),
           y = Math.max(containerY, centerY - (totalHeight / 2));
 
@@ -177,7 +178,7 @@ define(function() {
       sampleSlotTargets = [];
       sampleSlots = [];
 
-      for (var i = 0; i < sampleSize; i++) {
+      for (var i = 0; i < sSampleSize; i++) {
         var my = y + padding + (slotHeight * i),
             pathStr = "m"+mx+","+my+" h -"+slotDepth+" v "+slotSize+" h "+slotDepth,
             r = slotSize/2,
@@ -343,7 +344,7 @@ define(function() {
 
       letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
 
-      if (slot === sampleSize-1) {
+      if (slot === Math.floor(sampleSize)-1) {
         _this.pushAllLettersOut(selectionMadeCallback);
       }
     },

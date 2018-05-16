@@ -75,6 +75,14 @@ define(function() {
     }
   }
 
+  function setRunButtonMode(enabled) {
+    if (enabled) {
+      enable("run");
+    } else {
+      disable("run");
+    }
+  }
+
   // Shows the element if no boolean is passed as the second argument.
   // If a bool is passed, this will either show or hide.
   function show(el, show) {
@@ -247,10 +255,10 @@ define(function() {
     document.getElementById("collector").onclick = switchState;
     document.getElementById("refresh-list").onclick = refreshCaseList;
     document.getElementById("sample_size").addEventListener('input', function (evt) {
-      setSampleSize(this.value * 1);
+      setSampleSize(this.value);
     });
     document.getElementById("repeat").addEventListener('input', function (evt) {
-      setNumRuns(this.value * 1);
+      setNumRuns(this.value);
     });
     document.getElementById("speed").addEventListener('input', function (evt) {
       var val = (this.value * 1),
@@ -317,6 +325,7 @@ define(function() {
     toggleDevice: toggleDevice,
     renderVariableControls: renderVariableControls,
     populateContextsList: populateContextsList,
+    setRunButtonMode: setRunButtonMode,
     render: render
   };
 });

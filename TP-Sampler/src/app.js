@@ -257,11 +257,6 @@ function(Snap, CodapCom, View, ui, utils) {
   }
 
   function run() {
-    // this doesn't get written out in array, or change the length
-    variables.EMPTY = "";
-
-    experimentNumber += 1;
-    codapCom.startNewExperimentInCODAP(experimentNumber, sampleSize);
 
     function addValuesToCODAPNoDelay() {
       var ix = 0;
@@ -328,15 +323,23 @@ function(Snap, CodapCom, View, ui, utils) {
       }
     }
 
+
     var runNumber = 0,
         draw = 0,
+        tSampleSize = Math.floor(sampleSize),
+        tNumRuns = Math.floor(numRuns),
         // sample group size is the number of samples we will send in one message
-        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(sampleSize||1));
+        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1));
+
+    // this doesn't get written out in array, or change the length
+    variables.EMPTY = "";
+    experimentNumber += 1;
+    codapCom.startNewExperimentInCODAP(experimentNumber, tSampleSize);
 
     console.log('sample group size: ' + sampleGroupSize);
     sentRun = 0;
 
-    sequence = createRandomSequence(sampleSize, numRuns);
+    sequence = createRandomSequence(tSampleSize, tNumRuns);
 
     if (!hidden && (device === "mixer" || device === "collector")) {
       view.animateMixer();
@@ -404,13 +407,19 @@ function(Snap, CodapCom, View, ui, utils) {
   function setSampleSize(n) {
     sampleSize = n;
     view.render();
+    updateRunButtonMode();
     codapCom.logAction("setNumItems: %@", n);
   }
 
   function setNumRuns(n) {
     numRuns = n;
     view.render();
+    updateRunButtonMode();
     codapCom.logAction("setNumSamples: %@", n);
+  }
+
+  function updateRunButtonMode() {
+    ui.setRunButtonMode((Math.floor(sampleSize) > 0) && (Math.floor(numRuns) > 0));
   }
 
   function setSpeed(n) {
