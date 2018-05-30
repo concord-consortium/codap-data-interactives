@@ -29,13 +29,17 @@ define([
       this.init();
     };
 
+    var appName = 'Sampler';
+    var targetDataSetName = 'Sampler';
+    var targetDataSetPhrase = 'dataContext[' + targetDataSetName + ']';
+
     CodapCom.prototype = {
 
       init: function() {
         // initialize the codapInterface
         codapInterface.init({
-          name: 'Sampler',
-          title: 'Sampler',
+          name: appName,
+          title: appName,
           dimensions: {width: 235, height: 400},
           version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
           stateHandler: this.loadStateFunc
@@ -48,14 +52,14 @@ define([
         // If not, create it.
         return codapInterface.sendRequest({
             action:'get',
-            resource: 'dataContext[Sampler]'
-          }, function (result) {
+            resource: targetDataSetPhrase
+            }, function (result) {
             if (result && !result.success) {
               codapInterface.sendRequest({
                 action: 'create',
                 resource: 'dataContext',
                 values: {
-                  name: "Sampler",
+                  name: targetDataSetName,
                   collections: [
                     {
                       name: 'experiments',
@@ -140,7 +144,7 @@ define([
         });
         codapInterface.sendRequest({
           action: 'create',
-          resource: 'item',
+          resource: targetDataSetPhrase + '.item',
           values: items
         });
       },
@@ -152,14 +156,14 @@ define([
         var _this = this;
         codapInterface.sendRequest({
           action: 'delete',
-          resource: 'dataContext[Sampler].collection[experiments].allCases'
+          resource: targetDataSetPhrase + '.collection[experiments].allCases'
         });
         var structure = { items: ['value']};
         Object.keys( structure).forEach( function( key) {
           var tValidAttrs = structure[ key];
           codapInterface.sendRequest( {
             action: 'get',
-            resource: 'dataContext[Sampler].collection[' + key + '].attributeList'
+            resource: targetDataSetPhrase + '.collection[' + key + '].attributeList'
           }).then( function( iResult) {
             var tMsgList = [];
             if( iResult.success) {
@@ -167,7 +171,7 @@ define([
                 if( tValidAttrs.indexOf( iAttribute.name) < 0) {
                   tMsgList.push( {
                     action: 'delete',
-                    resource: 'dataContext[Sampler].collection[' + key + '].attribute[' + iAttribute.name + ']'
+                    resource: targetDataSetPhrase + '.collection[' + key + '].attribute[' + iAttribute.name + ']'
                   });
                 }
               });
@@ -243,7 +247,7 @@ define([
               if (_this.drawAttributes.indexOf(attr) < 0) {
                 codapInterface.sendRequest({
                   action: 'create',
-                  resource: 'collection[items].attribute',
+                  resource: targetDataSetPhrase + '.collection[items].attribute',
                   values: [
                     {
                       name: attr
@@ -261,7 +265,7 @@ define([
               codapInterface.sendRequest([
                 {     // get the existing columns in the draw table
                   action: 'get',
-                  resource: 'collection[items].attributeList'
+                  resource: targetDataSetPhrase + '.collection[items].attributeList'
                 },
                 {     // get the columns we'll be needing
                   action: 'get',
