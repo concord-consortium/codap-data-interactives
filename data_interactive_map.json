@@ -62,7 +62,7 @@
       "title": "Cart Weight",
       "description": "Win by predicting the total weight of a cart stacked with bricks.",
       "width": 290,
-      "height": 304,
+      "height": 305,
       "path": "/CartWeight/index.html",
       "visible": true,
       "categories": [
@@ -250,7 +250,7 @@
       "description": "A <a target=\"blank\" href=\"https://concord.org/our-work/research-projects/building-models/\">Building Models</a> systems modeler.",
       "width": 780,
       "height": 620,
-      "path": "https://sage.concord.org",
+      "path": "https://codap.concord.org/sage/branch/master/index.html&app=is",
       "visible": true,
       "categories": [
         "Partners"
