@@ -13,6 +13,7 @@ function(Snap, CodapCom, View, ui, utils) {
         withReplacement: true
       },
 
+      dataSetName,
       device = defaultSettings.device,       // "mixer, "spinner", "collector"
       isCollector = device === "collector",
       withReplacement = true,
@@ -56,13 +57,15 @@ function(Snap, CodapCom, View, ui, utils) {
         device: device,
         withReplacement: withReplacement,
         hidden: hidden,
-        password: password
+        password: password,
+        dataSetName: dataSetName
       }
     };
   }
 
   function loadInteractiveState(state) {
     if (state) {
+      dataSetName = state.dataSetName;
       experimentNumber = state.experimentNumber || experimentNumber;
       if (state.variables) {
         // swap contents of sequence into variables without updating variables reference
@@ -87,7 +90,34 @@ function(Snap, CodapCom, View, ui, utils) {
   }
 
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
+  codapCom.init()
+      .then(setCodapDataSetName)
+      .then(codapCom.findOrCreateDataContext)
+// eslint-disable-next-line dot-notation
+      .catch(codapCom.error);
 
+  function setCodapDataSetName() {
+    return new Promise(function (resolve, reject) {
+      if (dataSetName) {
+        codapCom.setDataSetName(dataSetName);
+        resolve(dataSetName);
+      } else {
+        codapCom.getContexts().then(function (contexts) {
+          var names = contexts.map(function (context) {return context.name; });
+          var baseName = 'Sampler';
+          var ix = 0;
+          var name = baseName;
+          while (names.indexOf(name) >= 0) {
+            ix++;
+            name = baseName + (ix);
+          }
+          dataSetName = name;
+          codapCom.setDataSetName(name);
+          resolve(name);
+        });
+      }
+    });
+  }
   function getProps() {
     return {
       s: s,
