@@ -565,7 +565,7 @@
       "description": "The Data Sonofication plugin was created by Takahiko Tsuchiya",
       "width": 600,
       "height": 400,
-      "path": "https://ttsuchiya.github.io/codap/plugins/Sonification/SimpleSpectrum/",
+      "path": "https://ttsuchiya.github.io/codap/plugins/Sonification/SimpleSpectrum/index.html",
       "visible": false,
       "categories": [
         "Partners"
