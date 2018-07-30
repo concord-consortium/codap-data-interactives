@@ -20,30 +20,39 @@ define([
       this.addValuesToCODAP = this.addValuesToCODAP.bind(this);
       this.addMultipleSamplesToCODAP = this.addMultipleSamplesToCODAP.bind(this);
       this.openTable = this.openTable.bind(this);
+      this.setDataSetName = this.setDataSetName.bind(this);
+      this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
 
       this.drawAttributes = null;
       this.collectionAttributes = null;
 
       codapInterface.on('get', 'interactiveState', getStateFunc);
 
-      this.init();
+      // this.init();
     };
 
     var appName = 'Sampler';
     var targetDataSetName = 'Sampler';
-    var targetDataSetPhrase = 'dataContext[' + targetDataSetName + ']';
+    function getTargetDataSetPhrase() { return  'dataContext[' + targetDataSetName + ']'; }
 
     CodapCom.prototype = {
 
+      /*
+       * Returns a Promise.
+       */
       init: function() {
         // initialize the codapInterface
-        codapInterface.init({
+        return codapInterface.init({
           name: appName,
           title: appName,
           dimensions: {width: 235, height: 400},
           version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
           stateHandler: this.loadStateFunc
-        }).then(this.findOrCreateDataContext, this.error);
+        });
+      },
+
+      setDataSetName: function (name) {
+        targetDataSetName = name;
       },
 
       findOrCreateDataContext: function () {
@@ -52,7 +61,7 @@ define([
         // If not, create it.
         return codapInterface.sendRequest({
             action:'get',
-            resource: targetDataSetPhrase
+            resource: getTargetDataSetPhrase()
             }, function (result) {
             if (result && !result.success) {
               codapInterface.sendRequest({
@@ -94,8 +103,8 @@ define([
         );
       },
 
-      error: function() {
-        console.log("Failed to connect to CODAP");
+      error: function(msg) {
+        console.log(msg || "Failed to connect to CODAP");
         this.codapConnected = false;
       },
 
@@ -144,7 +153,7 @@ define([
         });
         codapInterface.sendRequest({
           action: 'create',
-          resource: targetDataSetPhrase + '.item',
+          resource: getTargetDataSetPhrase() + '.item',
           values: items
         });
       },
@@ -156,14 +165,14 @@ define([
         var _this = this;
         codapInterface.sendRequest({
           action: 'delete',
-          resource: targetDataSetPhrase + '.collection[experiments].allCases'
+          resource: getTargetDataSetPhrase() + '.collection[experiments].allCases'
         });
         var structure = { items: ['value']};
         Object.keys( structure).forEach( function( key) {
           var tValidAttrs = structure[ key];
           codapInterface.sendRequest( {
             action: 'get',
-            resource: targetDataSetPhrase + '.collection[' + key + '].attributeList'
+            resource: getTargetDataSetPhrase() + '.collection[' + key + '].attributeList'
           }).then( function( iResult) {
             var tMsgList = [];
             if( iResult.success) {
@@ -171,7 +180,7 @@ define([
                 if( tValidAttrs.indexOf( iAttribute.name) < 0) {
                   tMsgList.push( {
                     action: 'delete',
-                    resource: targetDataSetPhrase + '.collection[' + key + '].attribute[' + iAttribute.name + ']'
+                    resource: getTargetDataSetPhrase() + '.collection[' + key + '].attribute[' + iAttribute.name + ']'
                   });
                 }
               });
@@ -247,7 +256,7 @@ define([
               if (_this.drawAttributes.indexOf(attr) < 0) {
                 codapInterface.sendRequest({
                   action: 'create',
-                  resource: targetDataSetPhrase + '.collection[items].attribute',
+                  resource: getTargetDataSetPhrase() + '.collection[items].attribute',
                   values: [
                     {
                       name: attr
@@ -265,7 +274,7 @@ define([
               codapInterface.sendRequest([
                 {     // get the existing columns in the draw table
                   action: 'get',
-                  resource: targetDataSetPhrase + '.collection[items].attributeList'
+                  resource: getTargetDataSetPhrase() + '.collection[items].attributeList'
                 },
                 {     // get the columns we'll be needing
                   action: 'get',
