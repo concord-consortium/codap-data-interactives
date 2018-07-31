@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Spectrum AD</title>
+
+    <script type="text/javascript" src="../../Common/js/iframe-phone.js"></script>
+    <script type="text/javascript" src="../../Common/js/CodapInterface.js"></script>
+
+    <script type="text/javascript" src="../lib/vue.min.js"></script>
+    <script type="text/javascript" src="../lib/dtm.js"></script>
+    <script type="text/javascript" src="../lib/NexusUI.js"></script>
+
+    <style type="text/css">
+        body {
+            font-family: sans-serif;
+        }
+
+        .property-row, .playback-control {
+            height: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .property-row > span, .playback-control > span {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="property-row">
+        <span>Data Set</span>
+        <span>
+            <select v-model="dataCtx" @change="onDataCtxSelection">
+                <option disabled value="">Select context (file)</option>
+                <option v-for="dataCtx in dataCtxList">{{dataCtx}}</option>
+            </select>
+        </span>
+    </div>
+    <div class="property-row">
+        <span>Table</span>
+        <span>
+            <select v-model="collection" @change="onCollectionSelection">
+                <option disabled value="">Select collection (table)</option>
+                <option v-for="collection in collectionList">{{collection}}</option>
+            </select>
+        </span>
+    </div>
+    <div class="property-row">
+        <span>Link to Graph Attributes</span>
+        <span>
+            <input type="checkbox" id="follow-graph-toggle" v-model="followGraph" @change="onFollowGraphToggle"/>
+        </span>
+    </div>
+    <div class="property-row">
+        <span>Node Loudness (Y-axis)</span>
+        <span>
+            <select v-model="magAttr" @change="onMagAttrSelection">
+                <option disabled value="">Select attribute</option>
+                <option v-for="attr in attrList">{{attr}}</option>
+            </select>
+        </span>
+    </div>
+    <div class="property-row">
+        <span>Node Pitch (X-axis)</span>
+        <span>
+            <select v-model="orderAttr" @change="onOrderAttrSelection">
+                <option disabled value="">Select attribute</option>
+                <option>Default</option>
+                <option v-for="attr in attrList">{{attr}}</option>
+            </select>
+        </span>
+    </div>
+    <div class="property-row">
+        <span class="playback-control">
+            <span>Play</span>
+            <span id="play-toggle"></span>
+        </span>
+        <span class="playback-control">
+            <span>Base Pitch</span>
+            <span id="pitch-slider"></span>
+        </span>
+    </div>
+</div>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>
