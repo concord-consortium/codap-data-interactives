@@ -8,7 +8,7 @@
     "check": "bin/check",
     "deploy": "bin/deploy",
     "increment-build-number": "bin/increment-build-number",
-    "build-and-deploy":"npm run check && npm run increment-build-number && npm run build && npm run deploy"
+    "build-and-deploy": "npm run check && npm run increment-build-number && npm run build && npm run deploy"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/concord-consortium/codap-data-interactives/issues"
   },
-  "homepage": "https://github.com/concord-consortium/codap-data-interactives#readme"
+  "homepage": "https://github.com/concord-consortium/codap-data-interactives#readme",
+  "dependencies": {
+    "simplify-geojson": "^1.0.3"
+  }
 }
