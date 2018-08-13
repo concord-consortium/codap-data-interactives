@@ -1,0 +1,14 @@
+{
+  "name": "ipums_usa_importer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ipums_usa_importer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wfinzer@concord.org",
+  "license": "MIT",
+  "dependencies": {
+    "xml-js": "^1.6.7"
+  }
+}
