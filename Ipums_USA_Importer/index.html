@@ -1,0 +1,65 @@
+<!--This page provides the UI for the IPUMS USA extract importer.-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../Common/js/jquery.js" language="javascript"></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="../Common/js/CodapInterface.js"></script>
+    <style>
+        body {
+            background-color: #fffdf5;
+        }
+    </style>
+    <title>IPUMS USA Extract Importer</title>
+</head>
+
+<body>
+<article>
+    <h1>IPUMS USA Extract Importer</h1>
+
+    <p>Specify the xml and dat files for your IPUMS USA microdata</p>
+
+    <section id="getDATStep">
+        <label>
+            DAT File
+            <input id="datFile" type="file"/>
+        </label>
+    </section>
+    <p id="numPersons"></p>
+
+    <section id="getCBKStep">
+        <label>
+            XML Codebook File
+            <input id="cbkFile" type="file"/>
+        </label>
+    </section>
+    <p id="cbkDisplay"></p>
+
+    <p>
+        <label>
+            Number of people to extract:
+            <input type="text" id="numToChoose" value="1000" size="6"/>
+        </label>
+
+    <p></p>
+
+    <label>
+        Dataset name:
+        <input type="text" id="datasetName" value="IPUMS Import" size="20"/>
+    </label>
+
+    <p></p>
+
+    <button id="import" type="button" onclick="Ipums_Importer.doImport()"><span id="btnText">Create Dataset</span>
+    </button>
+    <p></p>
+
+    <p id="results"></p>
+
+    <p></p>
+</article>
+<script src="xml-js.js"></script>
+<script src="ipums_usa_importer.js"></script>
+</body>
+</html>
