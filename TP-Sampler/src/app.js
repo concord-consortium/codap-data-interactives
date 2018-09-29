@@ -85,8 +85,8 @@ function(Snap, CodapCom, View, ui, utils) {
       if (isCollector) {
         refreshCaseList();
       }
-      view.render();
     }
+    view.render();
   }
 
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
@@ -493,14 +493,18 @@ function(Snap, CodapCom, View, ui, utils) {
     codapCom.logAction("reloadDefaultSettings");
   }
 
-  // Set the model up to the initial conditions, reset all buttons and the view
-  function setup() {
+  function getStarted() {
     view.reset();
     ui.enableButtons();
     ui.render(hidden, password, false, withReplacement, device);
     samples = [];
     running = false;
     paused = false;
+  }
+
+  // Set the model up to the initial conditions, reset all buttons and the view
+  function setup() {
+    getStarted();
     view.render();
   }
 
@@ -510,5 +514,5 @@ function(Snap, CodapCom, View, ui, utils) {
     setOrCheckPassword, reloadDefaultSettings);
 
   // initialize and render the model
-  setup();
+  getStarted();
 });
