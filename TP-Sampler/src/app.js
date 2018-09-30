@@ -426,6 +426,7 @@ function(Snap, CodapCom, View, ui, utils) {
         codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
       }
       setup();
+      view.render();
     }
   }
 

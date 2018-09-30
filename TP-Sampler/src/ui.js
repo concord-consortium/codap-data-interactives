@@ -176,13 +176,24 @@ define(function() {
   }
 
   function hideModel(hidden) {
-    show(document.getElementById("model-cover"), hidden);
     document.getElementById("hideModel").checked = hidden;
 
+    var mixerCover = document.getElementById("model-cover");
+    var spinnerCover = document.getElementById("spinner-cover");
     var mixerButton = document.getElementById("mixer");
     var spinnerButton = document.getElementById("spinner");
     var collectorButton = document.getElementById("collector");
+    var device = hasClass(mixerButton, "active") ? "mixer" :
+        (hasClass(spinnerButton, "active") ? "spinner" : "collector");
     if (hidden) {
+      if(device === "mixer") {
+        show(mixerCover);
+        hide(spinnerCover);
+      }
+      else {
+        show(spinnerCover);
+        hide(mixerCover);
+      }
       if (!hasClass(mixerButton, "active"))
         disable(mixerButton);
       if (!hasClass(spinnerButton, "active"))
@@ -192,6 +203,8 @@ define(function() {
       hide(document.getElementById("refresh-list"));
       show(document.getElementById("password-area"));
     } else {
+      hide(mixerCover);
+      hide(spinnerCover);
       enable(mixerButton);
       enable(spinnerButton);
       enable(collectorButton);
@@ -222,11 +235,23 @@ define(function() {
     }
   }
 
-  function setReplacement(withReplacement, device) {
+  function setReplacement(withReplacement, device, hidden) {
+
+    function setReplacementUI( enabled) {
+      if( enabled) {
+        enable("selection-options");
+        enable("with-replacement");
+        enable("without-replacement");
+      }
+      else {
+        disable("selection-options");
+        disable("with-replacement");
+        disable("without-replacement");
+      }
+    }
+
     if (device !== "spinner") {
-      enable("selection-options");
-      enable("with-replacement");
-      enable("without-replacement");
+      setReplacementUI( !hidden);
       if (withReplacement) {
         document.getElementById("with-replacement").checked = true;
       } else {
@@ -234,9 +259,7 @@ define(function() {
       }
     } else {
       document.getElementById("with-replacement").checked = true;
-      disable("selection-options");
-      disable("with-replacement");
-      disable("without-replacement");
+      setReplacementUI( false);
     }
   }
 
@@ -312,7 +335,7 @@ define(function() {
     var isLocked = !!password;
     lockOptions(isLocked);
     show(document.getElementById("password-failed"), passwordFailed);
-    setReplacement(withReplacement, device);
+    setReplacement(withReplacement, device, hidden);
   }
 
   return {

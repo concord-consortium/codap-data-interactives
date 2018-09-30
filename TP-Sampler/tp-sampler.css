@@ -236,6 +236,20 @@ text:hover{
   text-align: center;
 }
 
+#spinner-cover {
+  position: absolute;
+  left: 3vh;
+  top: 32.2vh;
+  width: 37.5vh;
+  height: 54.6vh;
+  z-index: 2;
+  background-color: white;
+}
+
+#spinner-cover img {
+  width: 100%;
+}
+
 #options {
   position: absolute;
   top: 8vh;
