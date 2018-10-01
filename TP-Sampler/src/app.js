@@ -148,8 +148,15 @@ function(Snap, CodapCom, View, ui, utils) {
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom);
 
   function getNextVariable() {
-    // brain-dead version for now
-    return "" + (variables.length + 1);
+    var max = variables.reduce( function( currMax, currValue) {
+      var isNumeric = !isNaN(Number(currMax)) && !isNaN(Number(currValue));
+      if( isNumeric)
+        return Number(currMax) < Number(currValue) ? currValue : currMax;
+      else {
+        return (currMax < currValue && String(currValue) < 'z') ? currValue : currMax;
+      }
+    }, '0');
+    return !isNaN(Number(max)) ? String(Number(max) + 1) : String.fromCharCode( max.codePointAt(0) + 1);
   }
 
   function addVariable() {
@@ -323,7 +330,10 @@ function(Snap, CodapCom, View, ui, utils) {
     }
 
     function selectNext() {
-      var timeout = (speed !== kFastestSpeed)? 1000/speed: 0;
+      var timeout = (speed === kFastestSpeed) ? 0 :
+          // Give "Fast" a little extra
+          (speed === kFastestSpeed - 1 ? 1000 / kFastestSpeed :
+              speed);
       if (!paused) {
         if (speed !== kFastestSpeed) {
           if (sequence[runNumber][draw] === "EMPTY") {
