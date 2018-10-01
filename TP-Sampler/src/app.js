@@ -196,6 +196,7 @@ function(Snap, CodapCom, View, ui, utils) {
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
         codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
+      else alert('Sorry. Unable to parse that. Here are some valid range expressions: 1-50, -5 to 5, 1.0 to 5.0, or A-Z');
     }
 
     view.render();
