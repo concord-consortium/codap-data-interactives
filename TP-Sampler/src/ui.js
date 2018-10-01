@@ -104,11 +104,13 @@ define(function() {
     if (device !== "collector") {
       show(document.getElementById("add-variable"));
       show(document.getElementById("remove-variable"));
+      show(document.getElementById("add-variable-series"));
       hide(document.getElementById("select-collection"));
       hide(document.getElementById("refresh-list"));
     } else {
       hide(document.getElementById("add-variable"));
       hide(document.getElementById("remove-variable"));
+      hide(document.getElementById("add-variable-series"));
       show(document.getElementById("select-collection"));
       show(document.getElementById("refresh-list"));
     }
