@@ -185,6 +185,7 @@ define(function() {
     var mixerButton = document.getElementById("mixer");
     var spinnerButton = document.getElementById("spinner");
     var collectorButton = document.getElementById("collector");
+    var withReplacement = document.getElementById("with-replacement").checked;
     var device = hasClass(mixerButton, "active") ? "mixer" :
         (hasClass(spinnerButton, "active") ? "spinner" : "collector");
     if (hidden) {
@@ -214,6 +215,7 @@ define(function() {
         show(document.getElementById("refresh-list"));
       hide(document.getElementById("password-area"));
     }
+    setReplacement( withReplacement, device, hidden);
   }
 
   function lockOptions(lock) {
