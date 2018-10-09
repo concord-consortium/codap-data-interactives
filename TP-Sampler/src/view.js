@@ -630,7 +630,7 @@ define(function() {
             stroke: "none"
           });
           var percentString = (100*(mergeCount+1)*slicePercent).toPrecision(2);
-          var hint = Snap.parse('<title>('+ percentString + '%)</title>');
+          var hint = Snap.parse('<title>'+ percentString + '%</title>');
           wedge.append(hint);
 
           // label
