@@ -148,15 +148,28 @@ function(Snap, CodapCom, View, ui, utils) {
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom);
 
   function getNextVariable() {
-    var max = variables.reduce( function( currMax, currValue) {
-      var isNumeric = !isNaN(Number(currMax)) && !isNaN(Number(currValue));
-      if( isNumeric)
-        return Number(currMax) < Number(currValue) ? currValue : currMax;
-      else {
-        return (currMax < currValue && String(currValue) < 'z') ? currValue : currMax;
-      }
-    }, '0');
-    return !isNaN(Number(max)) ? String(Number(max) + 1) : String.fromCharCode( max.codePointAt(0) + 1);
+    var tResult = 'a',
+        tMax,
+        tIsNumeric = variables.every(function (iValue) {
+          return !isNaN(Number(iValue));
+        });
+    if (tIsNumeric) {
+      tMax = variables.reduce(function (iCurrMax, iValue) {
+        return (iCurrMax === '' || Number(iCurrMax) < Number(iValue)) ? iValue : iCurrMax;
+      }, '');
+      tResult = String(Number(tMax) + 1)
+    }
+    else {
+      tMax = variables.reduce(function (iCurrMax, iValue) {
+        if( iValue >= 'a' && iValue < String.fromCharCode('z'.codePointAt(0) + 1)) {
+          return (iCurrMax < iValue && String(iValue) < 'z') ? iValue : iCurrMax;
+        } else if (iValue >= 'A' && iValue < String.fromCharCode('Z'.codePointAt(0) + 1)) {
+          return (iCurrMax < iValue && String(iValue) < 'Z') ? iValue : iCurrMax;
+        } else return iCurrMax;
+      }, '0');
+      tResult = String.fromCharCode(tMax.codePointAt(0) + 1);
+    }
+    return tResult;
   }
 
   function addVariable() {
