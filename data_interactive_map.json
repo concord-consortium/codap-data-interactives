@@ -549,12 +549,24 @@
         "Partners"
       ]
     },
+
     {
       "title": "Dataflow",
       "description": "The DataFlow plugin is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. It collects sensor data collected by the InSPECT Raspbery Pis.",
       "width": 600,
       "height": 400,
-      "path": "https://dataflow.manylabs.org/ext/flow?use_codap=1",
+      "path": "https://dataflow.staging.concord.org/ext/flow?features=1?use_codap=1",
+      "visible": false,
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "2013 CA ACS Data Portal",
+      "description": "A Data Science Games plugin. It will get a random sample of Californians from the 2013 <a target=\"blank\" href=\"https://www.census.gov/programs-surveys/acs/\">American Community Survey</a>",
+      "width": 600,
+      "height": 400,
+      "path": "https://www.eeps.com/codap/acs/acs.html?lang=en",
       "visible": false,
       "categories": [
         "Partners"
