@@ -1,0 +1,6662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ipums-ddi-xslt.xsl"?>
+<codeBook xmlns="ddi:codebook:2_5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="ddi:codebook:2_5 http://www.ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd" version="2.5" ID="ddi2-127688_usa_00010.dat-usa.ipums.org">
+  <docDscr>
+    <citation>
+      <titlStmt>
+        <titl>Codebook for an IPUMS-USA Data Extract</titl>
+        <subTitl>DDI 2.5 metadata describing the extract file  'usa_00010.dat'</subTitl>
+        <IDNo>ddi2-127688_usa_00010.dat-usa.ipums.org</IDNo>
+      </titlStmt>
+      <rspStmt>
+        <AuthEnty affiliation="University of Minnesota">Minnesota Population Center</AuthEnty>
+      </rspStmt>
+      <prodStmt>
+        <producer abbr="MPC" affiliation="University of Minnesota" role="Documentation">Minnesota Population Center</producer>
+        <prodDate date="2018-10-15">October 15, 2018</prodDate>
+        <prodPlac>Minnesota Population Center, 50 Willey Hall, 225 - 19th Avenue South, Minneapolis, MN 55455</prodPlac>
+      </prodStmt>
+      <distStmt>
+        <contact affiliation="University of Minnesota" URI="http://pop.umn.edu">Minnesota Population Center</contact>
+      </distStmt>
+    </citation>
+  </docDscr>
+  <stdyDscr>
+    <citation>
+      <titlStmt>
+        <titl>User Extract usa_00010.dat</titl>
+      </titlStmt>
+      <rspStmt>
+        <AuthEnty affiliation="University of Minnesota">Minnesota Population Center</AuthEnty>
+      </rspStmt>
+      <prodStmt>
+        <producer abbr="MPC" affiliation="University of Minnesota" role="Documentation">Minnesota Population Center</producer>
+        <prodDate date="2018-10-15">October 15, 2018</prodDate>
+        <prodPlac>Minnesota Population Center, 50 Willey Hall, 225 - 19th Avenue South, Minneapolis, MN 55455</prodPlac>
+      </prodStmt>
+      <distStmt>
+        <contact affiliation="University of Minnesota" URI="http://pop.umn.edu">Minnesota Population Center</contact>
+      </distStmt>
+      <serStmt>
+        <serName abbr="usa">IPUMS-USA</serName>
+        <serInfo>DOI:10.18128/D010.V8.0</serInfo>
+      </serStmt>
+      <verStmt>
+        <version date="2018-10-15"/>
+      </verStmt>
+    </citation>
+    <stdyInfo>
+      <subject>
+        <topcClas vocab="IPUMS">Technical Variables -- HOUSEHOLD</topcClas>
+        <topcClas vocab="IPUMS">Geographic Variables -- HOUSEHOLD</topcClas>
+        <topcClas vocab="IPUMS">Group Quarters Variables -- HOUSEHOLD</topcClas>
+        <topcClas vocab="IPUMS">Technical Variables -- PERSON</topcClas>
+        <topcClas vocab="IPUMS">Family Interrelationship Variables -- PERSON</topcClas>
+        <topcClas vocab="IPUMS">Demographic Variables -- PERSON</topcClas>
+        <topcClas vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</topcClas>
+      </subject>
+      <sumDscr ID="sdatref-2614">
+        <timePrd event="single" date="2000">2000</timePrd>
+        <nation abbr="us">United States</nation>
+      </sumDscr>
+      <sumDscr ID="sdatref-2650">
+        <timePrd event="single" date="2010">2010</timePrd>
+        <nation abbr="us">United States</nation>
+      </sumDscr>
+      <sumDscr ID="sdatref-2680">
+        <timePrd event="single" date="2014">2014</timePrd>
+        <nation abbr="us">United States</nation>
+      </sumDscr>
+      <sumDscr ID="sdatref-2690">
+        <timePrd event="single" date="2015">2015</timePrd>
+        <nation abbr="us">United States</nation>
+      </sumDscr>
+      <sumDscr ID="sdatref-2695">
+        <timePrd event="single" date="2016">2016</timePrd>
+        <nation abbr="us">United States</nation>
+      </sumDscr>
+      <notes><![CDATA[Additional notes on a sample that is part of this study:  2000 Unweighted 1%\n            Density of the full data file:  1.0%
+            Density of this extract: 0.0%
+]]></notes>
+      <notes><![CDATA[Additional notes on a sample that is part of this study:  2010 ACS\n            Density of the full data file:  1.0%
+            Density of this extract: 0.0%
+]]></notes>
+      <notes><![CDATA[Additional notes on a sample that is part of this study:  2014 ACS\n            Density of the full data file:  1.0%
+            Density of this extract: 0.0%
+]]></notes>
+      <notes><![CDATA[Additional notes on a sample that is part of this study:  2015 ACS\n            Density of the full data file:  1.0%
+            Density of this extract: 0.0%
+]]></notes>
+      <notes><![CDATA[Additional notes on a sample that is part of this study:  2016 ACS\n            Density of the full data file:  1.0%
+            Density of this extract: 0.0%
+]]></notes>
+    </stdyInfo>
+    <dataAccs>
+      <useStmt>
+        <confDec required="no"><![CDATA[None]]></confDec>
+        <contact affiliation="Minnesota Population Center" URI="http://usa.ipums.org">IPUMS-USA</contact>
+        <citReq><![CDATA[Publications and research reports based on the IPUMS-USA database must cite it appropriately. The citation should include the following:
+
+Steven Ruggles, Sarah Flood, Ronald Goeken, Josiah Grover, Erin Meyer, Jose Pacas, and Matthew Sobek. IPUMS USA: Version 8.0 [dataset]. Minneapolis, MN: IPUMS, 2018. https://doi.org/10.18128/D010.V8.0
+
+The licensing agreement for use of IPUMS-USA data requires that users supply us with the title and full citation for any publications, research reports, or educational materials making use of the data or documentation. Please add your citation to the IPUMS bibliography at http://bibliography.ipums.org/.]]></citReq>
+        <conditions><![CDATA[Users of IPUMS-USA data must agree to abide by the conditions of use. A user's license is valid for one year and may be renewed.  Users must agree to the following conditions:
+
+(1) No fees may be charged for use or distribution of the data.
+
+(2) Cite IPUMS appropriately.  For information on proper citation,  refer to the citation requirement section of this DDI document.
+
+(3) Tell us about any work you do using the IPUMS.  Publications, research  reports, or presentations making use of IPUMS-USA should be added to our  Bibliography. Continued funding for the IPUMS depends on our ability to  show our sponsor agencies that researchers are using the data for productive  purposes.
+
+(4) The IPUMS cannot be used for genealogical research
+
+(5) It is difficult to use the IPUMS to study small geographic areas.  In the  IPUMS census samples for years 1940-present, no places having a population  of fewer than 100,000 persons can be identified.
+
+(6) Use it for GOOD -- never for EVIL.
+
+(7) Please notify ipums@umn.edu regarding errors in the data or documentation.]]></conditions>
+        <disclaimer>The user of the data acknowledges that the original collector of the data, the authorized distributor of the data, and the relevant funding agency bear no responsibility for use of the data or for interpretations or inferences based upon such uses.</disclaimer>
+      </useStmt>
+    </dataAccs>
+    <notes><![CDATA[User-provided description:  A smallish ACS+2000 extract]]></notes>
+  </stdyDscr>
+  <fileDscr ID="ExtractData">
+    <fileTxt>
+      <fileName>usa_00010.dat</fileName>
+      <fileCont>Microdata records</fileCont>
+      <fileStrc type="rectangular">
+      </fileStrc>
+      <fileType charset="ISO-8859-1">ISO-8859-1 data file</fileType>
+      <format>fixed length fields</format>
+      <filePlac>Minnesota Population Center, 50 Willey Hall, 225 - 19th Avenue South, Minneapolis, MN 55455</filePlac>
+    </fileTxt>
+  </fileDscr>
+  <dataDscr>
+    <var ID="YEAR" files="ExtractData" name="YEAR" intrvl="discrete" dcml="0">
+      <location StartPos="1" width="4" EndPos="4"/>
+      <labl>Census year</labl>
+      <txt><![CDATA[YEAR reports the four-digit year when the household was enumerated or included in the census, the ACS, and the PRCS.
+
+For the multi-year ACS/PRCS samples, YEAR indicates the last year of data included (e.g., 2007 for the 2005-2007 3-year ACS/PRCS; 2008 for the 2006-2008 3-year ACS/PRCS; and so on).  For the actual year of survey in these multi-year data, see MULTYEAR.]]></txt>
+      <catgry>
+        <catValu>1850</catValu>
+        <labl>1850</labl>
+      </catgry>
+      <catgry>
+        <catValu>1860</catValu>
+        <labl>1860</labl>
+      </catgry>
+      <catgry>
+        <catValu>1870</catValu>
+        <labl>1870</labl>
+      </catgry>
+      <catgry>
+        <catValu>1880</catValu>
+        <labl>1880</labl>
+      </catgry>
+      <catgry>
+        <catValu>1900</catValu>
+        <labl>1900</labl>
+      </catgry>
+      <catgry>
+        <catValu>1910</catValu>
+        <labl>1910</labl>
+      </catgry>
+      <catgry>
+        <catValu>1920</catValu>
+        <labl>1920</labl>
+      </catgry>
+      <catgry>
+        <catValu>1930</catValu>
+        <labl>1930</labl>
+      </catgry>
+      <catgry>
+        <catValu>1940</catValu>
+        <labl>1940</labl>
+      </catgry>
+      <catgry>
+        <catValu>1950</catValu>
+        <labl>1950</labl>
+      </catgry>
+      <catgry>
+        <catValu>1960</catValu>
+        <labl>1960</labl>
+      </catgry>
+      <catgry>
+        <catValu>1970</catValu>
+        <labl>1970</labl>
+      </catgry>
+      <catgry>
+        <catValu>1980</catValu>
+        <labl>1980</labl>
+      </catgry>
+      <catgry>
+        <catValu>1990</catValu>
+        <labl>1990</labl>
+      </catgry>
+      <catgry>
+        <catValu>2000</catValu>
+        <labl>2000</labl>
+      </catgry>
+      <catgry>
+        <catValu>2001</catValu>
+        <labl>2001</labl>
+      </catgry>
+      <catgry>
+        <catValu>2002</catValu>
+        <labl>2002</labl>
+      </catgry>
+      <catgry>
+        <catValu>2003</catValu>
+        <labl>2003</labl>
+      </catgry>
+      <catgry>
+        <catValu>2004</catValu>
+        <labl>2004</labl>
+      </catgry>
+      <catgry>
+        <catValu>2005</catValu>
+        <labl>2005</labl>
+      </catgry>
+      <catgry>
+        <catValu>2006</catValu>
+        <labl>2006</labl>
+      </catgry>
+      <catgry>
+        <catValu>2007</catValu>
+        <labl>2007</labl>
+      </catgry>
+      <catgry>
+        <catValu>2008</catValu>
+        <labl>2008</labl>
+      </catgry>
+      <catgry>
+        <catValu>2009</catValu>
+        <labl>2009</labl>
+      </catgry>
+      <catgry>
+        <catValu>2010</catValu>
+        <labl>2010</labl>
+      </catgry>
+      <catgry>
+        <catValu>2011</catValu>
+        <labl>2011</labl>
+      </catgry>
+      <catgry>
+        <catValu>2012</catValu>
+        <labl>2012</labl>
+      </catgry>
+      <catgry>
+        <catValu>2013</catValu>
+        <labl>2013</labl>
+      </catgry>
+      <catgry>
+        <catValu>2014</catValu>
+        <labl>2014</labl>
+      </catgry>
+      <catgry>
+        <catValu>2015</catValu>
+        <labl>2015</labl>
+      </catgry>
+      <catgry>
+        <catValu>2016</catValu>
+        <labl>2016</labl>
+      </catgry>
+      <concept vocab="IPUMS">Technical Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="DATANUM" files="ExtractData" name="DATANUM" intrvl="contin" dcml="0">
+      <location StartPos="5" width="2" EndPos="6"/>
+      <labl>Data set number</labl>
+      <txt><![CDATA[DATANUM identifies the particular sample from which the case is drawn in a given year. For most censuses, the IPUMS has multiple datasets available which were constructed using different sampling techniques (i.e. size/demographic of the sample population, geographic coverage level or location, or duration of the sampling period for the ACS/PRCS samples).
+
+The 1970 samples present a special case; in addition to geographic coding differences, the samples were drawn from two distinct questionnaires ("long forms"), referred to in the IPUMS as Form 1 and Form 2. Different questions were asked of the persons in the Form 1 and Form 2 samples, necessitating separate treatment in the record layout. For other census years, DATANUM has a value of 1 because only one sample is available for that year.
+
+The availability table for each variable indicates whether that variable is available in only certain samples for a given year. For further discussion of sample differences, see "Sample Designs." [URL omitted from DDI.]]]></txt>
+      <codInstr><![CDATA[
+
+The following years have multiple samples in the IPUMS. Some samples from recent years have been renamed in the IPUMS. The original sample names appear in parentheses.
+
+* .indent {
+  text-indent: 10px;
+}
+
+* .lrgindent {
+  text-indent: 90px;
+}
+
+	
+	
+	
+		DATANUM
+	
+		Census Year
+	
+		1850:
+	
+		1 = 1850 1% unweighted sample
+	
+		2 = 1850 100% dataset
+	
+		
+	
+
+		1860 and 1870:
+	
+		1 = 1860 and 1870 1% samples
+	
+		2 = 1860 and 1870 1% samples combined with Black oversamples
+	
+		
+	
+
+		1880:
+	
+		1 = 1880 1% sample
+	
+		2 = 1880 10% sample with oversample
+	
+		3 = 1880 100% dataset
+	
+		
+	
+
+		1900:
+	
+		1 = 1900 1% sample with oversample (2%)
+	
+		2 = 1900 1% unweighted sample
+	
+		3 = 1900 5% sample
+	
+		
+	
+
+		1910:
+	
+		1 = 1910 1.4% sample with oversample
+	
+		2 = 1910 1% unweighted sample
+	
+		3 = 1910 1% Puerto Rico sample with oversample
+	
+		4 = 1910 100% dataset
+	
+		
+	
+
+		1920:
+	
+		1 = 1920 1% sample
+	
+		2 = 1920 Puerto Rico sample with oversample
+	
+		3 = 1920 100% dataset
+	
+		
+	
+
+		1930:
+	
+		1 = 1930 1% sample
+	
+		2 = 1930 5% sample
+	
+		3 = 1930 5% Puerto Rico sample
+	
+		4 = 1930 100% dataset
+	
+		
+	
+
+		1940:
+	
+		1 = 1940 1% sample
+	
+		2 = 1940 100% sample
+	
+		
+	
+
+		1950:
+	
+		1 = 1950 1% sample
+	
+		
+	
+
+		1960:
+	
+		1 = 1960 1% sample
+	
+		2 = 1960 5% sample (Internal Census)
+	
+		
+	
+
+		1970:
+	
+		1 = 1970 1% Form 1 State sample (5% State)
+	
+		2 = 1970 1% Form 2 State sample (15% State)
+	
+		3 = 1970 1% Form 1 Metro sample (5% County group)
+	
+		4 = 1970 1% Form 2 Metro sample (15% County group)
+	
+		5 = 1970 1% Form 1 Neighborhood sample (5% Neighborhood characteristics)
+	
+		6 = 1970 1% Form 2 Neighborhood sample (15% Neighborhood characteristics)
+	
+		8 = 1970 1% Puerto Rico State sample
+	
+		9 = 1970 1% Puerto Rico Municipio sample
+	
+		0 = 1970 1% Puerto Rico Neighborhood sample
+	
+		
+	
+
+		1980:
+	
+		1 = 1980 5% State sample ("A," 5% State)
+	
+		2 = 1980 1% Metro sample ("B," 1% County group)
+	
+		3 = 1980 1% Urban/Rural sample ("C," 1% Urban/rural)
+	
+		4 = 1980 1% Labor Market Areas sample ("D," 1% State)
+	
+		5 = 1980 1% Detailed Metro/Nonmetro sample ("E," 1% Urban/rural)
+	
+		6 = 1980 5% Puerto Rico sample
+	
+		7 = 1980 1% Puerto Rico sample
+	
+		8 = 1980 Puerto Rico Urban/Rural sample
+	
+		9 = 1980 Internal Census sample
+	
+		
+	
+
+		1990:
+	
+		1 = 1990 5% State (5% State)
+	
+		2 = 1990 1% Metro (1% Metropolitan)
+	
+		3 = 1990 3%Elderly (3% Elderly)
+	
+		4 = 1990 1% Flat (1%, derived from State sample)
+	
+		5 = 1990 1% Labor Market Areas ("L," 1% State)
+	
+		8 = 1990 Internal Census sample
+	
+		
+	
+
+		2000:
+	
+		1 = 2000 5% Census sample
+	
+		2 = 2000 1% Census sample (old)
+	
+		3 = 2000 ACS
+	
+		4 = 2000 1% Flat (1%, derived from 5% Census sample)
+	
+		5 = 2000 5% Puerto Rico sample
+	
+		6 = 2000 1% Puerto Rico sample (old)
+	
+		7 = 2000 1% Census sample
+	
+		8 = 2000 1% Puerto Rico sample
+	
+		
+	
+
+		2010:
+	
+		1 = 2010 10% Census sample
+	
+		2 = 2010 Puerto Rico 10% sample
+	
+		
+	
+		
+	
+		
+	
+
+		ACS/PRCS 2001-Present
+	
+		1 = ACS sample (except 2000 - see above)
+	
+		2 = PRCS sample (available starting in 2005)
+	
+		3 = ACS 3-Year sample (available starting with the 2005-2007 period)
+	
+		4 = PRCS 3-Year sample (available starting with the 2005-2007 period)
+	
+		5 = ACS 5-Year sample (available starting with the 2005-2009 period)
+	
+		6 = PRCS 5-Year sample (available starting with the 2005-2009 period)
+	
+	
+	
+	]]></codInstr>
+      <concept vocab="IPUMS">Technical Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="SERIAL" files="ExtractData" name="SERIAL" intrvl="contin" dcml="0">
+      <location StartPos="7" width="8" EndPos="14"/>
+      <labl>Household serial number</labl>
+      <txt><![CDATA[SERIAL is an identifying number unique to each household record in a given sample. All person records are assigned the same serial number as the household record that they follow. (Person records also have their own unique identifiers - see PERNUM.) A combination of YEAR, DATANUM, and SERIAL provides a unique identifier for every household in the IPUMS; the combination of YEAR, DATANUM, SERIAL, and PERNUM uniquely identifies every person in the database.
+
+For 1850-1930, households that are part of a multi-household dwelling can be identified by using the DWELLING and DWSEQ variables. See "Sample Designs" [URL omitted from DDI.] for further discussion of sampling from within multi-household dwellings.]]></txt>
+      <codInstr><![CDATA[
+SERIAL is an 8-digit numeric variable which assigns a unique identification number to each household record in a given sample (See PERNUM for the analogous person record identifier). A combination of YEAR, DATANUM, and SERIAL provides a unique identifier for every household in the IPUMS; the combination of YEAR, DATANUM, SERIAL, and PERNUM uniquely identifies every person in the database. SERIAL specific variable codes for missing, edited, or unidentified observations, observations not applicable (N/A), observations not in universe (NIU), top and bottom value coding, etc. are provided below if applicable by Census year (and data sample if specified).
+
+SERIAL Specific Variable Codes]]></codInstr>
+      <concept vocab="IPUMS">Technical Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="HHWT" files="ExtractData" name="HHWT" intrvl="contin" dcml="2">
+      <location StartPos="15" width="10" EndPos="24"/>
+      <labl>Household weight</labl>
+      <txt><![CDATA[HHWT indicates how many households in the U.S. population are represented by a given household in an IPUMS sample. 
+
+It is generally a good idea to use HHWT when conducting a household-level analysis of any IPUMS sample. The use of HHWT is optional when analyzing one of the "flat" or unweighted IPUMS samples. Flat IPUMS samples include the 1% samples from 1850-1930, all samples from 1960, 1970, and 1980, the 1% unweighted samples from 1990 and 2000, the 10% 2010 sample, and any of the full count 100% census datasets. HHWT must be used to obtain nationally representative statistics for household-level analyses of any sample other than those.
+
+Users should also be sure to select one person (e.g., PERNUM = 1) to represent the entire household.
+
+For further explanation of the sample weights, see "Sample Designs" [URL omitted from DDI.] and "Sample Weights" [URL omitted from DDI.]. See also PERWT for a corresponding variable at the person level, and SLWT for a weight variable used with sample-line records in 1940 1% and 1950.]]></txt>
+      <codInstr><![CDATA[
+HHWT is a 6-digit numeric variable which indicates how many households in the U.S. population are represented by a given household in an IPUMS sample and has two implied decimals. For example, a HHWT value of 010461 should be interpreted as 104.61. HHWT specific variable codes for missing, edited, or unidentified observations, observations not applicable (N/A), observations not in universe (NIU), top and bottom value coding, etc. are provided below if applicable by Census year (and data sample if specified).
+
+User Note: Users should also be sure to select one person (e.g., PERNUM = 1) to represent the entire household when using HHWT.
+
+HHWT Specific Variable Codes]]></codInstr>
+      <concept vocab="IPUMS">Technical Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="STATEFIP" files="ExtractData" name="STATEFIP" intrvl="discrete" dcml="0">
+      <location StartPos="25" width="2" EndPos="26"/>
+      <labl>State (FIPS code)</labl>
+      <txt><![CDATA[STATEFIP reports the state in which the household was located, using the Federal Information Processing Standards (FIPS) coding scheme, which orders the states alphabetically. STATEFIP identifies state groups in the 1980 Urban/Rural sample that are not available in STATEICP; these state groups (codes 61-68) are only available for that particular sample. See "Geographic Coding and Comparability" [URL omitted from DDI.] for more information on the geographic detail available in particular samples. 
+
+See STATEICP for further variable description details.]]></txt>
+      <catgry>
+        <catValu>01</catValu>
+        <labl>Alabama</labl>
+      </catgry>
+      <catgry>
+        <catValu>02</catValu>
+        <labl>Alaska</labl>
+      </catgry>
+      <catgry>
+        <catValu>04</catValu>
+        <labl>Arizona</labl>
+      </catgry>
+      <catgry>
+        <catValu>05</catValu>
+        <labl>Arkansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>06</catValu>
+        <labl>California</labl>
+      </catgry>
+      <catgry>
+        <catValu>08</catValu>
+        <labl>Colorado</labl>
+      </catgry>
+      <catgry>
+        <catValu>09</catValu>
+        <labl>Connecticut</labl>
+      </catgry>
+      <catgry>
+        <catValu>10</catValu>
+        <labl>Delaware</labl>
+      </catgry>
+      <catgry>
+        <catValu>11</catValu>
+        <labl>District of Columbia</labl>
+      </catgry>
+      <catgry>
+        <catValu>12</catValu>
+        <labl>Florida</labl>
+      </catgry>
+      <catgry>
+        <catValu>13</catValu>
+        <labl>Georgia</labl>
+      </catgry>
+      <catgry>
+        <catValu>15</catValu>
+        <labl>Hawaii</labl>
+      </catgry>
+      <catgry>
+        <catValu>16</catValu>
+        <labl>Idaho</labl>
+      </catgry>
+      <catgry>
+        <catValu>17</catValu>
+        <labl>Illinois</labl>
+      </catgry>
+      <catgry>
+        <catValu>18</catValu>
+        <labl>Indiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>19</catValu>
+        <labl>Iowa</labl>
+      </catgry>
+      <catgry>
+        <catValu>20</catValu>
+        <labl>Kansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>21</catValu>
+        <labl>Kentucky</labl>
+      </catgry>
+      <catgry>
+        <catValu>22</catValu>
+        <labl>Louisiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>23</catValu>
+        <labl>Maine</labl>
+      </catgry>
+      <catgry>
+        <catValu>24</catValu>
+        <labl>Maryland</labl>
+      </catgry>
+      <catgry>
+        <catValu>25</catValu>
+        <labl>Massachusetts</labl>
+      </catgry>
+      <catgry>
+        <catValu>26</catValu>
+        <labl>Michigan</labl>
+      </catgry>
+      <catgry>
+        <catValu>27</catValu>
+        <labl>Minnesota</labl>
+      </catgry>
+      <catgry>
+        <catValu>28</catValu>
+        <labl>Mississippi</labl>
+      </catgry>
+      <catgry>
+        <catValu>29</catValu>
+        <labl>Missouri</labl>
+      </catgry>
+      <catgry>
+        <catValu>30</catValu>
+        <labl>Montana</labl>
+      </catgry>
+      <catgry>
+        <catValu>31</catValu>
+        <labl>Nebraska</labl>
+      </catgry>
+      <catgry>
+        <catValu>32</catValu>
+        <labl>Nevada</labl>
+      </catgry>
+      <catgry>
+        <catValu>33</catValu>
+        <labl>New Hampshire</labl>
+      </catgry>
+      <catgry>
+        <catValu>34</catValu>
+        <labl>New Jersey</labl>
+      </catgry>
+      <catgry>
+        <catValu>35</catValu>
+        <labl>New Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>36</catValu>
+        <labl>New York</labl>
+      </catgry>
+      <catgry>
+        <catValu>37</catValu>
+        <labl>North Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>38</catValu>
+        <labl>North Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>39</catValu>
+        <labl>Ohio</labl>
+      </catgry>
+      <catgry>
+        <catValu>40</catValu>
+        <labl>Oklahoma</labl>
+      </catgry>
+      <catgry>
+        <catValu>41</catValu>
+        <labl>Oregon</labl>
+      </catgry>
+      <catgry>
+        <catValu>42</catValu>
+        <labl>Pennsylvania</labl>
+      </catgry>
+      <catgry>
+        <catValu>44</catValu>
+        <labl>Rhode Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>45</catValu>
+        <labl>South Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>46</catValu>
+        <labl>South Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>47</catValu>
+        <labl>Tennessee</labl>
+      </catgry>
+      <catgry>
+        <catValu>48</catValu>
+        <labl>Texas</labl>
+      </catgry>
+      <catgry>
+        <catValu>49</catValu>
+        <labl>Utah</labl>
+      </catgry>
+      <catgry>
+        <catValu>50</catValu>
+        <labl>Vermont</labl>
+      </catgry>
+      <catgry>
+        <catValu>51</catValu>
+        <labl>Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>53</catValu>
+        <labl>Washington</labl>
+      </catgry>
+      <catgry>
+        <catValu>54</catValu>
+        <labl>West Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>55</catValu>
+        <labl>Wisconsin</labl>
+      </catgry>
+      <catgry>
+        <catValu>56</catValu>
+        <labl>Wyoming</labl>
+      </catgry>
+      <catgry>
+        <catValu>61</catValu>
+        <labl>Maine-New Hampshire-Vermont</labl>
+      </catgry>
+      <catgry>
+        <catValu>62</catValu>
+        <labl>Massachusetts-Rhode Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>63</catValu>
+        <labl>Minnesota-Iowa-Missouri-Kansas-Nebraska-S.Dakota-N.Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>64</catValu>
+        <labl>Maryland-Delaware</labl>
+      </catgry>
+      <catgry>
+        <catValu>65</catValu>
+        <labl>Montana-Idaho-Wyoming</labl>
+      </catgry>
+      <catgry>
+        <catValu>66</catValu>
+        <labl>Utah-Nevada</labl>
+      </catgry>
+      <catgry>
+        <catValu>67</catValu>
+        <labl>Arizona-New Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>68</catValu>
+        <labl>Alaska-Hawaii</labl>
+      </catgry>
+      <catgry>
+        <catValu>72</catValu>
+        <labl>Puerto Rico</labl>
+      </catgry>
+      <catgry>
+        <catValu>97</catValu>
+        <labl>Military/Mil. Reservation</labl>
+      </catgry>
+      <catgry>
+        <catValu>99</catValu>
+        <labl>State not identified</labl>
+      </catgry>
+      <concept vocab="IPUMS">Geographic Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="PUMA" files="ExtractData" name="PUMA" intrvl="contin" dcml="0">
+      <location StartPos="27" width="5" EndPos="31"/>
+      <labl>Public Use Microdata Area</labl>
+      <txt><![CDATA[PUMA identifies the Public Use Microdata Area (PUMA) where the housing unit was located. In the 1990 State sample, PUMAs generally follow the boundaries of county groups, single counties, or census-defined "places". If these areas exceed 200,000 residents, they are divided into as many PUMAs of 100,000+ residents as possible. None of the 1990 State sample PUMAs cross state lines. For the 1990 Metro sample, PUMAs generally follow the boundaries of whole central cities, Metropolitan Statistical Areas, Primary Metropolitan Statistical Areas, or non-metropolitan places (See METAREA for definitions of these terms). If these areas exceed 200,000 residents, they are divided into as many PUMAs of 100,000+ residents as possible. 1990 Metro sample PUMAs sometimes cross state lines; when they do, STATEFIP and STATEICP codes are not available for households in those PUMAs. PUMAs in the 2000 census, 2010 census, and the 2005-onward ACS/PRCS also consist of 100,000+ residents, and they do not cross state lines.
+
+Note that PUMA is state-dependent. The codes must be read in combination with one of the STATE variables (STATEFIP or STATEICP). PUMAs are categorized by type (e.g., metropolitan, mixed metro/nonmetro, non-metropolitan) in the variable PUMATYPE. PUMA is similar to the county group variables, CNTYGP97 (1970) and CNTYGP98 (1980), and the State Economic Area variable (SEA) for 1940 and 1950.
+
+Note Regarding Multi-Year Samples: The Census Bureau redraws PUMA boundaries every 10 years based on population information gathered from the most recent decennial census. ACS samples incorporate the new PUMAs within a few years of the Decennial Census. See the comparability statement to see which PUMAs are used in each sample. In Multi-Year ACS files, PUMA boundaries depend on the original year the respondent was interviewed (see MULTYEAR). For example in the 2010-2012 3-year ACS sample, respondents from 2010 and 2011 correspond to the Census 2000 based PUMAs, while respondents from 2012 correspond to the Census 2010 based PUMAs.]]></txt>
+      <codInstr><![CDATA[
+PUMA is a 5-digit numeric variable identifying the Public Use Microdata Area (PUMA) where the housing unit was located. PUMAs are categorized by type (e.g., metropolitan, mixed metro/nonmetro, non-metropolitan) in the variable PUMATYPE. PUMA is similar to the county group variables, CNTYGP97 (1970) and CNTYGP98 (1980), and the State Economic Area variable (SEA) for 1940 and 1950. PUMA specific variable codes for missing, edited, or unidentified observations, observations not applicable (N/A), observations not in universe (NIU), top and bottom value coding, etc. are provided below by Census year (and data sample if specified).
+
+User Note: PUMAs are drawn and coded differently for the 1990 State and Metro samples. In the 1990 State sample, PUMAs generally follow the boundaries of groups of counties, single counties, or census-defined "places". If such areas exceed 200,000 residents, they are divided into as many PUMAs of 100,000+ residents as possible. None of the 1990 State sample PUMAs cross state lines. In the 1990 Metro sample, PUMAs generally follow the boundaries of whole central cities, Metropolitan Statistical Areas, Primary Metropolitan Statistical Areas, or non-metropolitan places (See METAREA for definitions of these terms). If these areas exceed 200,000 residents, they are divided into as many PUMAs of 100,000+ residents as possible. 1990 Metro sample PUMAs sometimes cross state lines; when they do, STATEFIP and STATEICP codes are not available for households in those PUMAs. PUMAs in the 2000 census, 2010 census, and the 2005-onward ACS/PRCS also consist of 100,000+ residents, and they do not cross state lines.
+
+User Note: PUMA is state-dependent, therefore the codes must be read in combination with one of the STATE variables: STATEFIP or STATEICP.
+
+PUMA Specific Variable Codes
+See links for details regarding PUMA codes:
+Census 2010 based PUMA map and Boundary files [URL omitted from DDI.]
+Census 2000 based PUMA and Super-PUMA Maps, Boundary files and Detailed Composition [URL omitted from DDI.]
+1990 PUMA Maps, Boundary files and Detailed Composition [URL omitted from DDI.]
+1990 PUMAs crossing state lines, 1 percent Metro sample [URL omitted from DDI.]
+
+User Note: In the 2006-2011 ACS, persons living in Louisiana PUMAs 01801, 01802, and 01905 were all coded as living in Louisiana PUMA 77777. This is because these three PUMAs no longer had sufficient population to be included as separate entities due the effects of hurricane Katrina.]]></codInstr>
+      <concept vocab="IPUMS">Geographic Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="GQ" files="ExtractData" name="GQ" intrvl="discrete" dcml="0">
+      <location StartPos="32" width="1" EndPos="32"/>
+      <labl>Group quarters status</labl>
+      <txt><![CDATA[GQ classifies all housing units as falling into one of three main categories: households, group quarters, or vacant units. It also identifies fragmentary sample units for 1850-1930 (see below). In all years, the data available about a person and their co-residents depend on whether the person lives in a household or in group quarters. Households are sampled as units, meaning that everyone in the household is included in the sample, and most household-level variables are available. People living in group quarters are generally sampled as individuals; other people in their unit may or may not be included in the sample, and there is no way of linking co-residents' records to one another. If, however, a sampled person in group quarters was living with relatives, the related group was sampled for 1850-1930. Most household-level variables are not available for group quarters or for vacant units.
+
+Group quarters are largely institutions and other group living arrangements, such as rooming houses and military barracks. The definitions vary from year to year, but the pre-1940 samples have generally used a definition of group quarters that includes units with 10 or more individuals unrelated to the householder. See the comparability discussion below and "Sample Designs" [URL omitted from DDI.] for more details about changing definitions of group quarters.  Group-quarters types are identified in further detail by GQTYPE and GQFUNDS.]]></txt>
+      <catgry>
+        <catValu>0</catValu>
+        <labl>Vacant unit</labl>
+      </catgry>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Households under 1970 definition</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Additional households under 1990 definition</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>Group quarters--Institutions</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>Other group quarters</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>Additional households under 2000 definition</labl>
+      </catgry>
+      <catgry>
+        <catValu>6</catValu>
+        <labl>Fragment</labl>
+      </catgry>
+      <concept vocab="IPUMS">Group Quarters Variables -- HOUSEHOLD</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="PERNUM" files="ExtractData" name="PERNUM" intrvl="contin" dcml="0">
+      <location StartPos="33" width="4" EndPos="36"/>
+      <labl>Person number in sample unit</labl>
+      <txt><![CDATA[PERNUM numbers all persons within each household consecutively in the order in which they appear on the original census or survey form. When combined with YEAR, DATANUM, and SERIAL, PERNUM uniquely identifies each person within the IPUMS.]]></txt>
+      <codInstr><![CDATA[
+
+PERNUM is a 4-digit numeric variable which numbers all persons within each household consecutively in the order in which they appear on the original census or survey form. PERNUM specific variable codes for missing, edited, or unidentified observations, observations not applicable (N/A), observations not in universe (NIU), top and bottom value coding, etc. are provided below if applicable by Census year (and data sample if specified).]]></codInstr>
+      <concept vocab="IPUMS">Technical Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="PERWT" files="ExtractData" name="PERWT" intrvl="contin" dcml="2">
+      <location StartPos="37" width="10" EndPos="46"/>
+      <labl>Person weight</labl>
+      <txt><![CDATA[PERWT indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample. 
+
+It is generally a good idea to use PERWT when conducting a person-level analysis of any IPUMS sample. The use of PERWT is optional when analyzing one of the "flat" or unweighted IPUMS samples. Flat IPUMS samples include the 1% samples from 1850-1930, all samples from 1960, 1970, and 1980, the 1% unweighted samples from 1990 and 2000, the 10% 2010 sample, and any of the full count 100% census datasets. PERWT must be used to obtain nationally representative statistics for person-level analyses of any sample other than those.
+
+For further explanation of the sample weights, see "Sample Designs" [URL omitted from DDI.] and "Sample Weights" [URL omitted from DDI.]. See also HHWT for a corresponding variable at the household level, and SLWT for a weight variable used with sample-line records in 1940 and 1950.]]></txt>
+      <codInstr><![CDATA[
+PERWT is a 6-digit numeric variable which indicates how many persons in the U.S. population are represented by a given person in an IPUMS sample and has two implied decimals. For example, a PERWT value of 010461 should be interpreted as 104.61. PERWT specific variable codes for missing, edited, or unidentified observations, observations not applicable (N/A), observations not in universe (NIU), top and bottom value coding, etc. are provided below if applicable by Census year (and data sample if specified).
+
+PERWT Specific Variable Codes]]></codInstr>
+      <concept vocab="IPUMS">Technical Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="FAMSIZE" files="ExtractData" name="FAMSIZE" intrvl="discrete" dcml="0">
+      <location StartPos="47" width="2" EndPos="48"/>
+      <labl>Number of own family members in household</labl>
+      <txt><![CDATA[FAMSIZE counts the number of own family members residing with each individual, including the person her/himself. Persons not living with others related to them by blood, marriage, or adoption are coded 1.]]></txt>
+      <catgry>
+        <catValu>01</catValu>
+        <labl>1 family member present</labl>
+      </catgry>
+      <catgry>
+        <catValu>02</catValu>
+        <labl>2 family members present</labl>
+      </catgry>
+      <catgry>
+        <catValu>03</catValu>
+        <labl>3</labl>
+      </catgry>
+      <catgry>
+        <catValu>04</catValu>
+        <labl>4</labl>
+      </catgry>
+      <catgry>
+        <catValu>05</catValu>
+        <labl>5</labl>
+      </catgry>
+      <catgry>
+        <catValu>06</catValu>
+        <labl>6</labl>
+      </catgry>
+      <catgry>
+        <catValu>07</catValu>
+        <labl>7</labl>
+      </catgry>
+      <catgry>
+        <catValu>08</catValu>
+        <labl>8</labl>
+      </catgry>
+      <catgry>
+        <catValu>09</catValu>
+        <labl>9</labl>
+      </catgry>
+      <catgry>
+        <catValu>10</catValu>
+        <labl>10</labl>
+      </catgry>
+      <catgry>
+        <catValu>11</catValu>
+        <labl>11</labl>
+      </catgry>
+      <catgry>
+        <catValu>12</catValu>
+        <labl>12</labl>
+      </catgry>
+      <catgry>
+        <catValu>13</catValu>
+        <labl>13</labl>
+      </catgry>
+      <catgry>
+        <catValu>14</catValu>
+        <labl>14</labl>
+      </catgry>
+      <catgry>
+        <catValu>15</catValu>
+        <labl>15</labl>
+      </catgry>
+      <catgry>
+        <catValu>16</catValu>
+        <labl>16</labl>
+      </catgry>
+      <catgry>
+        <catValu>17</catValu>
+        <labl>17</labl>
+      </catgry>
+      <catgry>
+        <catValu>18</catValu>
+        <labl>18</labl>
+      </catgry>
+      <catgry>
+        <catValu>19</catValu>
+        <labl>19</labl>
+      </catgry>
+      <catgry>
+        <catValu>20</catValu>
+        <labl>20</labl>
+      </catgry>
+      <catgry>
+        <catValu>21</catValu>
+        <labl>21</labl>
+      </catgry>
+      <catgry>
+        <catValu>22</catValu>
+        <labl>22</labl>
+      </catgry>
+      <catgry>
+        <catValu>23</catValu>
+        <labl>23</labl>
+      </catgry>
+      <catgry>
+        <catValu>24</catValu>
+        <labl>24</labl>
+      </catgry>
+      <catgry>
+        <catValu>25</catValu>
+        <labl>25</labl>
+      </catgry>
+      <catgry>
+        <catValu>26</catValu>
+        <labl>26</labl>
+      </catgry>
+      <catgry>
+        <catValu>27</catValu>
+        <labl>27</labl>
+      </catgry>
+      <catgry>
+        <catValu>28</catValu>
+        <labl>28</labl>
+      </catgry>
+      <catgry>
+        <catValu>29</catValu>
+        <labl>29</labl>
+      </catgry>
+      <concept vocab="IPUMS">Family Interrelationship Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="NCHILD" files="ExtractData" name="NCHILD" intrvl="discrete" dcml="0">
+      <location StartPos="49" width="1" EndPos="49"/>
+      <labl>Number of own children in the household</labl>
+      <txt><![CDATA[NCHILD counts the number of own children (of any age or marital status) residing with each individual. NCHILD includes step-children and adopted children as well as biological children. Persons with no children present are coded "0."]]></txt>
+      <catgry>
+        <catValu>0</catValu>
+        <labl>0 children present</labl>
+      </catgry>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>1 child present</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>2</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>3</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>4</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>5</labl>
+      </catgry>
+      <catgry>
+        <catValu>6</catValu>
+        <labl>6</labl>
+      </catgry>
+      <catgry>
+        <catValu>7</catValu>
+        <labl>7</labl>
+      </catgry>
+      <catgry>
+        <catValu>8</catValu>
+        <labl>8</labl>
+      </catgry>
+      <catgry>
+        <catValu>9</catValu>
+        <labl>9+</labl>
+      </catgry>
+      <concept vocab="IPUMS">Family Interrelationship Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="NCHLT5" files="ExtractData" name="NCHLT5" intrvl="discrete" dcml="0">
+      <location StartPos="50" width="1" EndPos="50"/>
+      <labl>Number of own children under age 5 in household</labl>
+      <txt><![CDATA[NCHLT5 counts the number of own children age 4 and under residing with each individual. NCHLT5 includes step-children and adopted children as well as biological children. Persons with no children under 5 present are coded "0."]]></txt>
+      <catgry>
+        <catValu>0</catValu>
+        <labl>No children under age 5</labl>
+      </catgry>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>1 child under age 5</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>2</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>3</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>4</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>5</labl>
+      </catgry>
+      <catgry>
+        <catValu>6</catValu>
+        <labl>6</labl>
+      </catgry>
+      <catgry>
+        <catValu>7</catValu>
+        <labl>7</labl>
+      </catgry>
+      <catgry>
+        <catValu>8</catValu>
+        <labl>8</labl>
+      </catgry>
+      <catgry>
+        <catValu>9</catValu>
+        <labl>9+</labl>
+      </catgry>
+      <concept vocab="IPUMS">Family Interrelationship Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="RELATE" files="ExtractData" name="RELATE" intrvl="discrete" dcml="0">
+      <location StartPos="51" width="2" EndPos="52"/>
+      <labl>Relationship to household head [general version]</labl>
+      <txt><![CDATA[RELATE describes an individual's relationship to the head of household or householder. Beginning in 1880, data on household relationship was asked of every person. The general relationship code is reasonably comparable across years. The detailed code makes distinctions that cannot be made in all years.
+
+The relationship codes are divided into two categories: relatives (codes 1-10) and non-relatives (codes 11-13). In general, the codes for relatives are self-explanatory. The non-relative codes are divided into three groups: "Partner, Friend, Visitor," roughly described as persons who do not pay or work for their accommodations (unless they share ownership); "Other Non-Relatives," including those persons paying or working for accommodations; and "Institutional Inmates." See the comparability discussion for further information about the coding scheme.
+
+RELATE is not available for 1850-1870, but the IPUMS variable IMPREL produces similar results.  As a convenience, the extract system is set up so that users may include RELATE in extracts of the 1850-1870 samples.  In those years, RELATE contains the information that is documented in the IMPREL variable description.]]></txt>
+      <catgry>
+        <catValu>01</catValu>
+        <labl>Head/Householder</labl>
+      </catgry>
+      <catgry>
+        <catValu>02</catValu>
+        <labl>Spouse</labl>
+      </catgry>
+      <catgry>
+        <catValu>03</catValu>
+        <labl>Child</labl>
+      </catgry>
+      <catgry>
+        <catValu>04</catValu>
+        <labl>Child-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>05</catValu>
+        <labl>Parent</labl>
+      </catgry>
+      <catgry>
+        <catValu>06</catValu>
+        <labl>Parent-in-Law</labl>
+      </catgry>
+      <catgry>
+        <catValu>07</catValu>
+        <labl>Sibling</labl>
+      </catgry>
+      <catgry>
+        <catValu>08</catValu>
+        <labl>Sibling-in-Law</labl>
+      </catgry>
+      <catgry>
+        <catValu>09</catValu>
+        <labl>Grandchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>10</catValu>
+        <labl>Other relatives</labl>
+      </catgry>
+      <catgry>
+        <catValu>11</catValu>
+        <labl>Partner, friend, visitor</labl>
+      </catgry>
+      <catgry>
+        <catValu>12</catValu>
+        <labl>Other non-relatives</labl>
+      </catgry>
+      <catgry>
+        <catValu>13</catValu>
+        <labl>Institutional inmates</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="RELATED" files="ExtractData" name="RELATED" intrvl="discrete" dcml="0">
+      <location StartPos="53" width="4" EndPos="56"/>
+      <labl>Relationship to household head [detailed version]</labl>
+      <txt><![CDATA[RELATE describes an individual's relationship to the head of household or householder. Beginning in 1880, data on household relationship was asked of every person. The general relationship code is reasonably comparable across years. The detailed code makes distinctions that cannot be made in all years.
+
+The relationship codes are divided into two categories: relatives (codes 1-10) and non-relatives (codes 11-13). In general, the codes for relatives are self-explanatory. The non-relative codes are divided into three groups: "Partner, Friend, Visitor," roughly described as persons who do not pay or work for their accommodations (unless they share ownership); "Other Non-Relatives," including those persons paying or working for accommodations; and "Institutional Inmates." See the comparability discussion for further information about the coding scheme.
+
+RELATE is not available for 1850-1870, but the IPUMS variable IMPREL produces similar results.  As a convenience, the extract system is set up so that users may include RELATE in extracts of the 1850-1870 samples.  In those years, RELATE contains the information that is documented in the IMPREL variable description.]]></txt>
+      <catgry>
+        <catValu>0101</catValu>
+        <labl>Head/Householder</labl>
+      </catgry>
+      <catgry>
+        <catValu>0201</catValu>
+        <labl>Spouse</labl>
+      </catgry>
+      <catgry>
+        <catValu>0202</catValu>
+        <labl>2nd/3rd Wife (Polygamous)</labl>
+      </catgry>
+      <catgry>
+        <catValu>0301</catValu>
+        <labl>Child</labl>
+      </catgry>
+      <catgry>
+        <catValu>0302</catValu>
+        <labl>Adopted Child</labl>
+      </catgry>
+      <catgry>
+        <catValu>0303</catValu>
+        <labl>Stepchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>0304</catValu>
+        <labl>Adopted, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>0401</catValu>
+        <labl>Child-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0402</catValu>
+        <labl>Step Child-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0501</catValu>
+        <labl>Parent</labl>
+      </catgry>
+      <catgry>
+        <catValu>0502</catValu>
+        <labl>Stepparent</labl>
+      </catgry>
+      <catgry>
+        <catValu>0601</catValu>
+        <labl>Parent-in-Law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0602</catValu>
+        <labl>Stepparent-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0701</catValu>
+        <labl>Sibling</labl>
+      </catgry>
+      <catgry>
+        <catValu>0702</catValu>
+        <labl>Step/Half/Adopted Sibling</labl>
+      </catgry>
+      <catgry>
+        <catValu>0801</catValu>
+        <labl>Sibling-in-Law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0802</catValu>
+        <labl>Step/Half Sibling-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>0901</catValu>
+        <labl>Grandchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>0902</catValu>
+        <labl>Adopted Grandchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>0903</catValu>
+        <labl>Step Grandchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>0904</catValu>
+        <labl>Grandchild-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>1000</catValu>
+        <labl>Other Relatives:</labl>
+      </catgry>
+      <catgry>
+        <catValu>1001</catValu>
+        <labl>Other Relatives</labl>
+      </catgry>
+      <catgry>
+        <catValu>1011</catValu>
+        <labl>Grandparent</labl>
+      </catgry>
+      <catgry>
+        <catValu>1012</catValu>
+        <labl>Step Grandparent</labl>
+      </catgry>
+      <catgry>
+        <catValu>1013</catValu>
+        <labl>Grandparent-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>1021</catValu>
+        <labl>Aunt or Uncle</labl>
+      </catgry>
+      <catgry>
+        <catValu>1022</catValu>
+        <labl>Aunt,Uncle-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>1031</catValu>
+        <labl>Nephew, Niece</labl>
+      </catgry>
+      <catgry>
+        <catValu>1032</catValu>
+        <labl>Neph/Niece-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>1033</catValu>
+        <labl>Step/Adopted Nephew/Niece</labl>
+      </catgry>
+      <catgry>
+        <catValu>1034</catValu>
+        <labl>Grand Niece/Nephew</labl>
+      </catgry>
+      <catgry>
+        <catValu>1041</catValu>
+        <labl>Cousin</labl>
+      </catgry>
+      <catgry>
+        <catValu>1042</catValu>
+        <labl>Cousin-in-law</labl>
+      </catgry>
+      <catgry>
+        <catValu>1051</catValu>
+        <labl>Great Grandchild</labl>
+      </catgry>
+      <catgry>
+        <catValu>1061</catValu>
+        <labl>Other relatives, nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>1100</catValu>
+        <labl>Partner, Friend, Visitor</labl>
+      </catgry>
+      <catgry>
+        <catValu>1110</catValu>
+        <labl>Partner/friend</labl>
+      </catgry>
+      <catgry>
+        <catValu>1111</catValu>
+        <labl>Friend</labl>
+      </catgry>
+      <catgry>
+        <catValu>1112</catValu>
+        <labl>Partner</labl>
+      </catgry>
+      <catgry>
+        <catValu>1113</catValu>
+        <labl>Partner/roommate</labl>
+      </catgry>
+      <catgry>
+        <catValu>1114</catValu>
+        <labl>Unmarried Partner</labl>
+      </catgry>
+      <catgry>
+        <catValu>1115</catValu>
+        <labl>Housemate/Roomate</labl>
+      </catgry>
+      <catgry>
+        <catValu>1120</catValu>
+        <labl>Relative of partner</labl>
+      </catgry>
+      <catgry>
+        <catValu>1130</catValu>
+        <labl>Concubine/Mistress</labl>
+      </catgry>
+      <catgry>
+        <catValu>1131</catValu>
+        <labl>Visitor</labl>
+      </catgry>
+      <catgry>
+        <catValu>1132</catValu>
+        <labl>Companion and family of companion</labl>
+      </catgry>
+      <catgry>
+        <catValu>1139</catValu>
+        <labl>Allocated partner/friend/visitor</labl>
+      </catgry>
+      <catgry>
+        <catValu>1200</catValu>
+        <labl>Other non-relatives</labl>
+      </catgry>
+      <catgry>
+        <catValu>1201</catValu>
+        <labl>Roomers/boarders/lodgers</labl>
+      </catgry>
+      <catgry>
+        <catValu>1202</catValu>
+        <labl>Boarders</labl>
+      </catgry>
+      <catgry>
+        <catValu>1203</catValu>
+        <labl>Lodgers</labl>
+      </catgry>
+      <catgry>
+        <catValu>1204</catValu>
+        <labl>Roomer</labl>
+      </catgry>
+      <catgry>
+        <catValu>1205</catValu>
+        <labl>Tenant</labl>
+      </catgry>
+      <catgry>
+        <catValu>1206</catValu>
+        <labl>Foster child</labl>
+      </catgry>
+      <catgry>
+        <catValu>1210</catValu>
+        <labl>Employees:</labl>
+      </catgry>
+      <catgry>
+        <catValu>1211</catValu>
+        <labl>Servant</labl>
+      </catgry>
+      <catgry>
+        <catValu>1212</catValu>
+        <labl>Housekeeper</labl>
+      </catgry>
+      <catgry>
+        <catValu>1213</catValu>
+        <labl>Maid</labl>
+      </catgry>
+      <catgry>
+        <catValu>1214</catValu>
+        <labl>Cook</labl>
+      </catgry>
+      <catgry>
+        <catValu>1215</catValu>
+        <labl>Nurse</labl>
+      </catgry>
+      <catgry>
+        <catValu>1216</catValu>
+        <labl>Other probable domestic employee</labl>
+      </catgry>
+      <catgry>
+        <catValu>1217</catValu>
+        <labl>Other employee</labl>
+      </catgry>
+      <catgry>
+        <catValu>1219</catValu>
+        <labl>Relative of employee</labl>
+      </catgry>
+      <catgry>
+        <catValu>1221</catValu>
+        <labl>Military</labl>
+      </catgry>
+      <catgry>
+        <catValu>1222</catValu>
+        <labl>Students</labl>
+      </catgry>
+      <catgry>
+        <catValu>1223</catValu>
+        <labl>Members of religious orders</labl>
+      </catgry>
+      <catgry>
+        <catValu>1230</catValu>
+        <labl>Other non-relatives</labl>
+      </catgry>
+      <catgry>
+        <catValu>1239</catValu>
+        <labl>Allocated other non-relative</labl>
+      </catgry>
+      <catgry>
+        <catValu>1240</catValu>
+        <labl>Roomers/boarders/lodgers and foster children</labl>
+      </catgry>
+      <catgry>
+        <catValu>1241</catValu>
+        <labl>Roomers/boarders/lodgers</labl>
+      </catgry>
+      <catgry>
+        <catValu>1242</catValu>
+        <labl>Foster children</labl>
+      </catgry>
+      <catgry>
+        <catValu>1250</catValu>
+        <labl>Employees</labl>
+      </catgry>
+      <catgry>
+        <catValu>1251</catValu>
+        <labl>Domestic employees</labl>
+      </catgry>
+      <catgry>
+        <catValu>1252</catValu>
+        <labl>Non-domestic employees</labl>
+      </catgry>
+      <catgry>
+        <catValu>1253</catValu>
+        <labl>Relative of employee</labl>
+      </catgry>
+      <catgry>
+        <catValu>1260</catValu>
+        <labl>Other non-relatives (1990 includes employees)</labl>
+      </catgry>
+      <catgry>
+        <catValu>1270</catValu>
+        <labl>Non-inmate 1990</labl>
+      </catgry>
+      <catgry>
+        <catValu>1281</catValu>
+        <labl>Head of group quarters</labl>
+      </catgry>
+      <catgry>
+        <catValu>1282</catValu>
+        <labl>Employees of group quarters</labl>
+      </catgry>
+      <catgry>
+        <catValu>1283</catValu>
+        <labl>Relative of head, staff, or employee group quarters</labl>
+      </catgry>
+      <catgry>
+        <catValu>1284</catValu>
+        <labl>Other non-inmate 1940-1959</labl>
+      </catgry>
+      <catgry>
+        <catValu>1291</catValu>
+        <labl>Military</labl>
+      </catgry>
+      <catgry>
+        <catValu>1292</catValu>
+        <labl>College dormitories</labl>
+      </catgry>
+      <catgry>
+        <catValu>1293</catValu>
+        <labl>Residents of rooming houses</labl>
+      </catgry>
+      <catgry>
+        <catValu>1294</catValu>
+        <labl>Other non-inmate 1980 (includes employees and non-inmates in</labl>
+      </catgry>
+      <catgry>
+        <catValu>1295</catValu>
+        <labl>Other non-inmates 1960-1970 (includes employees)</labl>
+      </catgry>
+      <catgry>
+        <catValu>1296</catValu>
+        <labl>Non-inmates in institutions</labl>
+      </catgry>
+      <catgry>
+        <catValu>1301</catValu>
+        <labl>Institutional inmates</labl>
+      </catgry>
+      <catgry>
+        <catValu>9996</catValu>
+        <labl>Unclassifiable</labl>
+      </catgry>
+      <catgry>
+        <catValu>9997</catValu>
+        <labl>Unknown</labl>
+      </catgry>
+      <catgry>
+        <catValu>9998</catValu>
+        <labl>Illegible</labl>
+      </catgry>
+      <catgry>
+        <catValu>9999</catValu>
+        <labl>Missing</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="SEX" files="ExtractData" name="SEX" intrvl="discrete" dcml="0">
+      <location StartPos="57" width="1" EndPos="57"/>
+      <labl>Sex</labl>
+      <txt><![CDATA[SEX reports whether the person was male or female.]]></txt>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Male</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Female</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="AGE" files="ExtractData" name="AGE" intrvl="discrete" dcml="0">
+      <location StartPos="58" width="3" EndPos="60"/>
+      <labl>Age</labl>
+      <txt><![CDATA[AGE reports the person's age in years as of the last birthday.]]></txt>
+      <catgry>
+        <catValu>000</catValu>
+        <labl>Less than 1 year old</labl>
+      </catgry>
+      <catgry>
+        <catValu>001</catValu>
+        <labl>1</labl>
+      </catgry>
+      <catgry>
+        <catValu>002</catValu>
+        <labl>2</labl>
+      </catgry>
+      <catgry>
+        <catValu>003</catValu>
+        <labl>3</labl>
+      </catgry>
+      <catgry>
+        <catValu>004</catValu>
+        <labl>4</labl>
+      </catgry>
+      <catgry>
+        <catValu>005</catValu>
+        <labl>5</labl>
+      </catgry>
+      <catgry>
+        <catValu>006</catValu>
+        <labl>6</labl>
+      </catgry>
+      <catgry>
+        <catValu>007</catValu>
+        <labl>7</labl>
+      </catgry>
+      <catgry>
+        <catValu>008</catValu>
+        <labl>8</labl>
+      </catgry>
+      <catgry>
+        <catValu>009</catValu>
+        <labl>9</labl>
+      </catgry>
+      <catgry>
+        <catValu>010</catValu>
+        <labl>10</labl>
+      </catgry>
+      <catgry>
+        <catValu>011</catValu>
+        <labl>11</labl>
+      </catgry>
+      <catgry>
+        <catValu>012</catValu>
+        <labl>12</labl>
+      </catgry>
+      <catgry>
+        <catValu>013</catValu>
+        <labl>13</labl>
+      </catgry>
+      <catgry>
+        <catValu>014</catValu>
+        <labl>14</labl>
+      </catgry>
+      <catgry>
+        <catValu>015</catValu>
+        <labl>15</labl>
+      </catgry>
+      <catgry>
+        <catValu>016</catValu>
+        <labl>16</labl>
+      </catgry>
+      <catgry>
+        <catValu>017</catValu>
+        <labl>17</labl>
+      </catgry>
+      <catgry>
+        <catValu>018</catValu>
+        <labl>18</labl>
+      </catgry>
+      <catgry>
+        <catValu>019</catValu>
+        <labl>19</labl>
+      </catgry>
+      <catgry>
+        <catValu>020</catValu>
+        <labl>20</labl>
+      </catgry>
+      <catgry>
+        <catValu>021</catValu>
+        <labl>21</labl>
+      </catgry>
+      <catgry>
+        <catValu>022</catValu>
+        <labl>22</labl>
+      </catgry>
+      <catgry>
+        <catValu>023</catValu>
+        <labl>23</labl>
+      </catgry>
+      <catgry>
+        <catValu>024</catValu>
+        <labl>24</labl>
+      </catgry>
+      <catgry>
+        <catValu>025</catValu>
+        <labl>25</labl>
+      </catgry>
+      <catgry>
+        <catValu>026</catValu>
+        <labl>26</labl>
+      </catgry>
+      <catgry>
+        <catValu>027</catValu>
+        <labl>27</labl>
+      </catgry>
+      <catgry>
+        <catValu>028</catValu>
+        <labl>28</labl>
+      </catgry>
+      <catgry>
+        <catValu>029</catValu>
+        <labl>29</labl>
+      </catgry>
+      <catgry>
+        <catValu>030</catValu>
+        <labl>30</labl>
+      </catgry>
+      <catgry>
+        <catValu>031</catValu>
+        <labl>31</labl>
+      </catgry>
+      <catgry>
+        <catValu>032</catValu>
+        <labl>32</labl>
+      </catgry>
+      <catgry>
+        <catValu>033</catValu>
+        <labl>33</labl>
+      </catgry>
+      <catgry>
+        <catValu>034</catValu>
+        <labl>34</labl>
+      </catgry>
+      <catgry>
+        <catValu>035</catValu>
+        <labl>35</labl>
+      </catgry>
+      <catgry>
+        <catValu>036</catValu>
+        <labl>36</labl>
+      </catgry>
+      <catgry>
+        <catValu>037</catValu>
+        <labl>37</labl>
+      </catgry>
+      <catgry>
+        <catValu>038</catValu>
+        <labl>38</labl>
+      </catgry>
+      <catgry>
+        <catValu>039</catValu>
+        <labl>39</labl>
+      </catgry>
+      <catgry>
+        <catValu>040</catValu>
+        <labl>40</labl>
+      </catgry>
+      <catgry>
+        <catValu>041</catValu>
+        <labl>41</labl>
+      </catgry>
+      <catgry>
+        <catValu>042</catValu>
+        <labl>42</labl>
+      </catgry>
+      <catgry>
+        <catValu>043</catValu>
+        <labl>43</labl>
+      </catgry>
+      <catgry>
+        <catValu>044</catValu>
+        <labl>44</labl>
+      </catgry>
+      <catgry>
+        <catValu>045</catValu>
+        <labl>45</labl>
+      </catgry>
+      <catgry>
+        <catValu>046</catValu>
+        <labl>46</labl>
+      </catgry>
+      <catgry>
+        <catValu>047</catValu>
+        <labl>47</labl>
+      </catgry>
+      <catgry>
+        <catValu>048</catValu>
+        <labl>48</labl>
+      </catgry>
+      <catgry>
+        <catValu>049</catValu>
+        <labl>49</labl>
+      </catgry>
+      <catgry>
+        <catValu>050</catValu>
+        <labl>50</labl>
+      </catgry>
+      <catgry>
+        <catValu>051</catValu>
+        <labl>51</labl>
+      </catgry>
+      <catgry>
+        <catValu>052</catValu>
+        <labl>52</labl>
+      </catgry>
+      <catgry>
+        <catValu>053</catValu>
+        <labl>53</labl>
+      </catgry>
+      <catgry>
+        <catValu>054</catValu>
+        <labl>54</labl>
+      </catgry>
+      <catgry>
+        <catValu>055</catValu>
+        <labl>55</labl>
+      </catgry>
+      <catgry>
+        <catValu>056</catValu>
+        <labl>56</labl>
+      </catgry>
+      <catgry>
+        <catValu>057</catValu>
+        <labl>57</labl>
+      </catgry>
+      <catgry>
+        <catValu>058</catValu>
+        <labl>58</labl>
+      </catgry>
+      <catgry>
+        <catValu>059</catValu>
+        <labl>59</labl>
+      </catgry>
+      <catgry>
+        <catValu>060</catValu>
+        <labl>60</labl>
+      </catgry>
+      <catgry>
+        <catValu>061</catValu>
+        <labl>61</labl>
+      </catgry>
+      <catgry>
+        <catValu>062</catValu>
+        <labl>62</labl>
+      </catgry>
+      <catgry>
+        <catValu>063</catValu>
+        <labl>63</labl>
+      </catgry>
+      <catgry>
+        <catValu>064</catValu>
+        <labl>64</labl>
+      </catgry>
+      <catgry>
+        <catValu>065</catValu>
+        <labl>65</labl>
+      </catgry>
+      <catgry>
+        <catValu>066</catValu>
+        <labl>66</labl>
+      </catgry>
+      <catgry>
+        <catValu>067</catValu>
+        <labl>67</labl>
+      </catgry>
+      <catgry>
+        <catValu>068</catValu>
+        <labl>68</labl>
+      </catgry>
+      <catgry>
+        <catValu>069</catValu>
+        <labl>69</labl>
+      </catgry>
+      <catgry>
+        <catValu>070</catValu>
+        <labl>70</labl>
+      </catgry>
+      <catgry>
+        <catValu>071</catValu>
+        <labl>71</labl>
+      </catgry>
+      <catgry>
+        <catValu>072</catValu>
+        <labl>72</labl>
+      </catgry>
+      <catgry>
+        <catValu>073</catValu>
+        <labl>73</labl>
+      </catgry>
+      <catgry>
+        <catValu>074</catValu>
+        <labl>74</labl>
+      </catgry>
+      <catgry>
+        <catValu>075</catValu>
+        <labl>75</labl>
+      </catgry>
+      <catgry>
+        <catValu>076</catValu>
+        <labl>76</labl>
+      </catgry>
+      <catgry>
+        <catValu>077</catValu>
+        <labl>77</labl>
+      </catgry>
+      <catgry>
+        <catValu>078</catValu>
+        <labl>78</labl>
+      </catgry>
+      <catgry>
+        <catValu>079</catValu>
+        <labl>79</labl>
+      </catgry>
+      <catgry>
+        <catValu>080</catValu>
+        <labl>80</labl>
+      </catgry>
+      <catgry>
+        <catValu>081</catValu>
+        <labl>81</labl>
+      </catgry>
+      <catgry>
+        <catValu>082</catValu>
+        <labl>82</labl>
+      </catgry>
+      <catgry>
+        <catValu>083</catValu>
+        <labl>83</labl>
+      </catgry>
+      <catgry>
+        <catValu>084</catValu>
+        <labl>84</labl>
+      </catgry>
+      <catgry>
+        <catValu>085</catValu>
+        <labl>85</labl>
+      </catgry>
+      <catgry>
+        <catValu>086</catValu>
+        <labl>86</labl>
+      </catgry>
+      <catgry>
+        <catValu>087</catValu>
+        <labl>87</labl>
+      </catgry>
+      <catgry>
+        <catValu>088</catValu>
+        <labl>88</labl>
+      </catgry>
+      <catgry>
+        <catValu>089</catValu>
+        <labl>89</labl>
+      </catgry>
+      <catgry>
+        <catValu>090</catValu>
+        <labl>90 (90+ in 1980 and 1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>091</catValu>
+        <labl>91</labl>
+      </catgry>
+      <catgry>
+        <catValu>092</catValu>
+        <labl>92</labl>
+      </catgry>
+      <catgry>
+        <catValu>093</catValu>
+        <labl>93</labl>
+      </catgry>
+      <catgry>
+        <catValu>094</catValu>
+        <labl>94</labl>
+      </catgry>
+      <catgry>
+        <catValu>095</catValu>
+        <labl>95</labl>
+      </catgry>
+      <catgry>
+        <catValu>096</catValu>
+        <labl>96</labl>
+      </catgry>
+      <catgry>
+        <catValu>097</catValu>
+        <labl>97</labl>
+      </catgry>
+      <catgry>
+        <catValu>098</catValu>
+        <labl>98</labl>
+      </catgry>
+      <catgry>
+        <catValu>099</catValu>
+        <labl>99</labl>
+      </catgry>
+      <catgry>
+        <catValu>100</catValu>
+        <labl>100 (100+ in 1960-1970)</labl>
+      </catgry>
+      <catgry>
+        <catValu>101</catValu>
+        <labl>101</labl>
+      </catgry>
+      <catgry>
+        <catValu>102</catValu>
+        <labl>102</labl>
+      </catgry>
+      <catgry>
+        <catValu>103</catValu>
+        <labl>103</labl>
+      </catgry>
+      <catgry>
+        <catValu>104</catValu>
+        <labl>104</labl>
+      </catgry>
+      <catgry>
+        <catValu>105</catValu>
+        <labl>105</labl>
+      </catgry>
+      <catgry>
+        <catValu>106</catValu>
+        <labl>106</labl>
+      </catgry>
+      <catgry>
+        <catValu>107</catValu>
+        <labl>107</labl>
+      </catgry>
+      <catgry>
+        <catValu>108</catValu>
+        <labl>108</labl>
+      </catgry>
+      <catgry>
+        <catValu>109</catValu>
+        <labl>109</labl>
+      </catgry>
+      <catgry>
+        <catValu>110</catValu>
+        <labl>110</labl>
+      </catgry>
+      <catgry>
+        <catValu>111</catValu>
+        <labl>111</labl>
+      </catgry>
+      <catgry>
+        <catValu>112</catValu>
+        <labl>112 (112+ in the 1980 internal data)</labl>
+      </catgry>
+      <catgry>
+        <catValu>113</catValu>
+        <labl>113</labl>
+      </catgry>
+      <catgry>
+        <catValu>114</catValu>
+        <labl>114</labl>
+      </catgry>
+      <catgry>
+        <catValu>115</catValu>
+        <labl>115 (115+ in the 1990 internal data)</labl>
+      </catgry>
+      <catgry>
+        <catValu>116</catValu>
+        <labl>116</labl>
+      </catgry>
+      <catgry>
+        <catValu>117</catValu>
+        <labl>117</labl>
+      </catgry>
+      <catgry>
+        <catValu>118</catValu>
+        <labl>118</labl>
+      </catgry>
+      <catgry>
+        <catValu>119</catValu>
+        <labl>119</labl>
+      </catgry>
+      <catgry>
+        <catValu>120</catValu>
+        <labl>120</labl>
+      </catgry>
+      <catgry>
+        <catValu>121</catValu>
+        <labl>121</labl>
+      </catgry>
+      <catgry>
+        <catValu>122</catValu>
+        <labl>122</labl>
+      </catgry>
+      <catgry>
+        <catValu>123</catValu>
+        <labl>123</labl>
+      </catgry>
+      <catgry>
+        <catValu>124</catValu>
+        <labl>124</labl>
+      </catgry>
+      <catgry>
+        <catValu>125</catValu>
+        <labl>125</labl>
+      </catgry>
+      <catgry>
+        <catValu>126</catValu>
+        <labl>126</labl>
+      </catgry>
+      <catgry>
+        <catValu>129</catValu>
+        <labl>129</labl>
+      </catgry>
+      <catgry>
+        <catValu>130</catValu>
+        <labl>130</labl>
+      </catgry>
+      <catgry>
+        <catValu>135</catValu>
+        <labl>135</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="AGEORIG" files="ExtractData" name="AGEORIG" intrvl="discrete" dcml="0">
+      <location StartPos="61" width="2" EndPos="62"/>
+      <labl>Age (original version)</labl>
+      <txt><![CDATA[AGEORIG reports the person's age in years as of the last birthday, as originally released in the ACS/PRCS PUMS by the Census Bureau.  To reduce the risk that any individual in the PUMS will be identifiable, the Census Bureau randomly adjusts the ages of some individuals. In the 2000 census and in the 2003-2006 ACS/PRCS data, the implementation of this technique resulted in implausible sex ratios for persons aged 65 and up. These errors carried through to the 2005 and 2006 cases in the 2005-2007 3-year ACS/PRCS. 
+
+As a result, PUMS files for these years may not be representative of the 65+ population at individual ages, and analyses of variables that are expected to change by age stand to be particularly affected. For a full discussion of the problem and its implications for researchers, see NBER Working Paper No. 15703 [URL omitted from DDI.]. 
+
+The Census Bureau re-released this variable for the affected samples. Only those needing to use the original, incorrectly edited version for a special purpose should use AGEORIG. All others should use AGE, which contains the revised and corrected variable. 
+
+Ages have changed only for the 10 percent of individuals who are at least 65 years old. AGE and AGEORIG do not differ for about 20 percent of these cases; differ by 1 to 3 years for about 70 percent of them; and differ by 4 to 9 years for about 10 percent of them. While the new values produce more accurate estimates than did the old values (contained in AGEORIG), the extraordinary number of changes suggests that the new version of the data was created via imputation or synthetic processes. IPUMS assigns a QAGE value of 4 to all age values for the 65+ population in the revised ACS.  Users who study the older population or who need the most accurate AGE data should take note.]]></txt>
+      <catgry>
+        <catValu>00</catValu>
+        <labl>Less than 1 year old</labl>
+      </catgry>
+      <catgry>
+        <catValu>01</catValu>
+        <labl>1</labl>
+      </catgry>
+      <catgry>
+        <catValu>02</catValu>
+        <labl>2</labl>
+      </catgry>
+      <catgry>
+        <catValu>03</catValu>
+        <labl>3</labl>
+      </catgry>
+      <catgry>
+        <catValu>04</catValu>
+        <labl>4</labl>
+      </catgry>
+      <catgry>
+        <catValu>05</catValu>
+        <labl>5</labl>
+      </catgry>
+      <catgry>
+        <catValu>06</catValu>
+        <labl>6</labl>
+      </catgry>
+      <catgry>
+        <catValu>07</catValu>
+        <labl>7</labl>
+      </catgry>
+      <catgry>
+        <catValu>08</catValu>
+        <labl>8</labl>
+      </catgry>
+      <catgry>
+        <catValu>09</catValu>
+        <labl>9</labl>
+      </catgry>
+      <catgry>
+        <catValu>10</catValu>
+        <labl>10</labl>
+      </catgry>
+      <catgry>
+        <catValu>11</catValu>
+        <labl>11</labl>
+      </catgry>
+      <catgry>
+        <catValu>12</catValu>
+        <labl>12</labl>
+      </catgry>
+      <catgry>
+        <catValu>13</catValu>
+        <labl>13</labl>
+      </catgry>
+      <catgry>
+        <catValu>14</catValu>
+        <labl>14</labl>
+      </catgry>
+      <catgry>
+        <catValu>15</catValu>
+        <labl>15</labl>
+      </catgry>
+      <catgry>
+        <catValu>16</catValu>
+        <labl>16</labl>
+      </catgry>
+      <catgry>
+        <catValu>17</catValu>
+        <labl>17</labl>
+      </catgry>
+      <catgry>
+        <catValu>18</catValu>
+        <labl>18</labl>
+      </catgry>
+      <catgry>
+        <catValu>19</catValu>
+        <labl>19</labl>
+      </catgry>
+      <catgry>
+        <catValu>20</catValu>
+        <labl>20</labl>
+      </catgry>
+      <catgry>
+        <catValu>21</catValu>
+        <labl>21</labl>
+      </catgry>
+      <catgry>
+        <catValu>22</catValu>
+        <labl>22</labl>
+      </catgry>
+      <catgry>
+        <catValu>23</catValu>
+        <labl>23</labl>
+      </catgry>
+      <catgry>
+        <catValu>24</catValu>
+        <labl>24</labl>
+      </catgry>
+      <catgry>
+        <catValu>25</catValu>
+        <labl>25</labl>
+      </catgry>
+      <catgry>
+        <catValu>26</catValu>
+        <labl>26</labl>
+      </catgry>
+      <catgry>
+        <catValu>27</catValu>
+        <labl>27</labl>
+      </catgry>
+      <catgry>
+        <catValu>28</catValu>
+        <labl>28</labl>
+      </catgry>
+      <catgry>
+        <catValu>29</catValu>
+        <labl>29</labl>
+      </catgry>
+      <catgry>
+        <catValu>30</catValu>
+        <labl>30</labl>
+      </catgry>
+      <catgry>
+        <catValu>31</catValu>
+        <labl>31</labl>
+      </catgry>
+      <catgry>
+        <catValu>32</catValu>
+        <labl>32</labl>
+      </catgry>
+      <catgry>
+        <catValu>33</catValu>
+        <labl>33</labl>
+      </catgry>
+      <catgry>
+        <catValu>34</catValu>
+        <labl>34</labl>
+      </catgry>
+      <catgry>
+        <catValu>35</catValu>
+        <labl>35</labl>
+      </catgry>
+      <catgry>
+        <catValu>36</catValu>
+        <labl>36</labl>
+      </catgry>
+      <catgry>
+        <catValu>37</catValu>
+        <labl>37</labl>
+      </catgry>
+      <catgry>
+        <catValu>38</catValu>
+        <labl>38</labl>
+      </catgry>
+      <catgry>
+        <catValu>39</catValu>
+        <labl>39</labl>
+      </catgry>
+      <catgry>
+        <catValu>40</catValu>
+        <labl>40</labl>
+      </catgry>
+      <catgry>
+        <catValu>41</catValu>
+        <labl>41</labl>
+      </catgry>
+      <catgry>
+        <catValu>42</catValu>
+        <labl>42</labl>
+      </catgry>
+      <catgry>
+        <catValu>43</catValu>
+        <labl>43</labl>
+      </catgry>
+      <catgry>
+        <catValu>44</catValu>
+        <labl>44</labl>
+      </catgry>
+      <catgry>
+        <catValu>45</catValu>
+        <labl>45</labl>
+      </catgry>
+      <catgry>
+        <catValu>46</catValu>
+        <labl>46</labl>
+      </catgry>
+      <catgry>
+        <catValu>47</catValu>
+        <labl>47</labl>
+      </catgry>
+      <catgry>
+        <catValu>48</catValu>
+        <labl>48</labl>
+      </catgry>
+      <catgry>
+        <catValu>49</catValu>
+        <labl>49</labl>
+      </catgry>
+      <catgry>
+        <catValu>50</catValu>
+        <labl>50</labl>
+      </catgry>
+      <catgry>
+        <catValu>51</catValu>
+        <labl>51</labl>
+      </catgry>
+      <catgry>
+        <catValu>52</catValu>
+        <labl>52</labl>
+      </catgry>
+      <catgry>
+        <catValu>53</catValu>
+        <labl>53</labl>
+      </catgry>
+      <catgry>
+        <catValu>54</catValu>
+        <labl>54</labl>
+      </catgry>
+      <catgry>
+        <catValu>55</catValu>
+        <labl>55</labl>
+      </catgry>
+      <catgry>
+        <catValu>56</catValu>
+        <labl>56</labl>
+      </catgry>
+      <catgry>
+        <catValu>57</catValu>
+        <labl>57</labl>
+      </catgry>
+      <catgry>
+        <catValu>58</catValu>
+        <labl>58</labl>
+      </catgry>
+      <catgry>
+        <catValu>59</catValu>
+        <labl>59</labl>
+      </catgry>
+      <catgry>
+        <catValu>60</catValu>
+        <labl>60</labl>
+      </catgry>
+      <catgry>
+        <catValu>61</catValu>
+        <labl>61</labl>
+      </catgry>
+      <catgry>
+        <catValu>62</catValu>
+        <labl>62</labl>
+      </catgry>
+      <catgry>
+        <catValu>63</catValu>
+        <labl>63</labl>
+      </catgry>
+      <catgry>
+        <catValu>64</catValu>
+        <labl>64</labl>
+      </catgry>
+      <catgry>
+        <catValu>65</catValu>
+        <labl>65</labl>
+      </catgry>
+      <catgry>
+        <catValu>66</catValu>
+        <labl>66</labl>
+      </catgry>
+      <catgry>
+        <catValu>67</catValu>
+        <labl>67</labl>
+      </catgry>
+      <catgry>
+        <catValu>68</catValu>
+        <labl>68</labl>
+      </catgry>
+      <catgry>
+        <catValu>69</catValu>
+        <labl>69</labl>
+      </catgry>
+      <catgry>
+        <catValu>70</catValu>
+        <labl>70</labl>
+      </catgry>
+      <catgry>
+        <catValu>71</catValu>
+        <labl>71</labl>
+      </catgry>
+      <catgry>
+        <catValu>72</catValu>
+        <labl>72</labl>
+      </catgry>
+      <catgry>
+        <catValu>73</catValu>
+        <labl>73</labl>
+      </catgry>
+      <catgry>
+        <catValu>74</catValu>
+        <labl>74</labl>
+      </catgry>
+      <catgry>
+        <catValu>75</catValu>
+        <labl>75</labl>
+      </catgry>
+      <catgry>
+        <catValu>76</catValu>
+        <labl>76</labl>
+      </catgry>
+      <catgry>
+        <catValu>77</catValu>
+        <labl>77</labl>
+      </catgry>
+      <catgry>
+        <catValu>78</catValu>
+        <labl>78</labl>
+      </catgry>
+      <catgry>
+        <catValu>79</catValu>
+        <labl>79</labl>
+      </catgry>
+      <catgry>
+        <catValu>80</catValu>
+        <labl>80</labl>
+      </catgry>
+      <catgry>
+        <catValu>81</catValu>
+        <labl>81</labl>
+      </catgry>
+      <catgry>
+        <catValu>82</catValu>
+        <labl>82</labl>
+      </catgry>
+      <catgry>
+        <catValu>83</catValu>
+        <labl>83</labl>
+      </catgry>
+      <catgry>
+        <catValu>84</catValu>
+        <labl>84</labl>
+      </catgry>
+      <catgry>
+        <catValu>85</catValu>
+        <labl>85</labl>
+      </catgry>
+      <catgry>
+        <catValu>86</catValu>
+        <labl>86</labl>
+      </catgry>
+      <catgry>
+        <catValu>87</catValu>
+        <labl>87</labl>
+      </catgry>
+      <catgry>
+        <catValu>88</catValu>
+        <labl>88</labl>
+      </catgry>
+      <catgry>
+        <catValu>89</catValu>
+        <labl>89</labl>
+      </catgry>
+      <catgry>
+        <catValu>90</catValu>
+        <labl>90 (90+ in 1980 and 1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>91</catValu>
+        <labl>91</labl>
+      </catgry>
+      <catgry>
+        <catValu>92</catValu>
+        <labl>92</labl>
+      </catgry>
+      <catgry>
+        <catValu>93</catValu>
+        <labl>93</labl>
+      </catgry>
+      <catgry>
+        <catValu>94</catValu>
+        <labl>94</labl>
+      </catgry>
+      <catgry>
+        <catValu>95</catValu>
+        <labl>95</labl>
+      </catgry>
+      <catgry>
+        <catValu>96</catValu>
+        <labl>96</labl>
+      </catgry>
+      <catgry>
+        <catValu>97</catValu>
+        <labl>97</labl>
+      </catgry>
+      <catgry>
+        <catValu>98</catValu>
+        <labl>98</labl>
+      </catgry>
+      <catgry>
+        <catValu>99</catValu>
+        <labl>99</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="MARST" files="ExtractData" name="MARST" intrvl="discrete" dcml="0">
+      <location StartPos="63" width="1" EndPos="63"/>
+      <labl>Marital status</labl>
+      <txt><![CDATA[MARST gives each person's current marital status.]]></txt>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Married, spouse present</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Married, spouse absent</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>Separated</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>Divorced</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>Widowed</labl>
+      </catgry>
+      <catgry>
+        <catValu>6</catValu>
+        <labl>Never married/single</labl>
+      </catgry>
+      <concept vocab="IPUMS">Demographic Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="RACE" files="ExtractData" name="RACE" intrvl="discrete" dcml="0">
+      <location StartPos="64" width="1" EndPos="64"/>
+      <labl>Race [general version]</labl>
+      <txt><![CDATA[With the exception of the 1970-1990 Puerto Rican censuses, RACE was asked of every person in all years. The concept of race has changed over the more than 150 years represented in the IPUMS. Currently, the Census Bureau and others consider race to be a sociopolitical construct, not a scientific or anthropological one. Many detailed RACE categories consist of national origin groups. Beginning in 2000, the race question changed substantially to allow respondents to report as many races as they felt necessary to describe themselves. In earlier years, only one race response was coded.
+
+IPUMS offers several variables describing the answer(s) to the race question. RACE provides the full detail given by the respondent and/or released by the Census Bureau; it is not always historically compatible (see comparability discussion below). Users primarily interested in historical compatibility should consider using RACESING, and should consult the race code relationship page, Relationship between RACE and RACESING codes [URL omitted from DDI.], for detail about how the RACE and RACESING codes are related.
+
+In addition, specific combinations of major races can be discerned using the following bivariate indicators of whether a particular race group was reported: RACAMIND, RACASIAN, RACBLK, RACOTHER, RACPACIS, and RACWHT. RACNUM indicates the total number of major race groups reported for an individual. The information contained in the bivariate indicators and in RACNUM is integrated into the detailed version of RACE. Users primarily interested in historical comparability should consider using RACESING and/or the accompanying variables PROBAI, PROBAPI, PROBBLK, PROBOTH, and PROBWHT.  Note that Hispanic origin is assessed through separate questioning (see HISPAN).
+
+Prior to 1960, the census enumerator was responsible for categorizing persons and was not specifically instructed to ask the individual his or her race. In 1970 and later years, an individual's race was reported by someone in the household or group quarters. In the 1990 U.S. census, the 2000 U.S. and Puerto Rican censuses, the ACS, and the PRCS respondents were specifically asked what race the person "considers himself/herself" to be, although such self-description was more or less operative since 1960.
+
+User Note: Race questions were not asked in the Puerto Rican censuses of 1970, 1980, and 1990.  They were asked in the 1910 and 1920 Puerto Rican censuses, the 2000-2010 Puerto Rican censuses, and the PRCS.]]></txt>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>White</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Black/African American/Negro</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>American Indian or Alaska Native</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>Chinese</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>Japanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>6</catValu>
+        <labl>Other Asian or Pacific Islander</labl>
+      </catgry>
+      <catgry>
+        <catValu>7</catValu>
+        <labl>Other race, nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>8</catValu>
+        <labl>Two major races</labl>
+      </catgry>
+      <catgry>
+        <catValu>9</catValu>
+        <labl>Three or more major races</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="RACED" files="ExtractData" name="RACED" intrvl="discrete" dcml="0">
+      <location StartPos="65" width="3" EndPos="67"/>
+      <labl>Race [detailed version]</labl>
+      <txt><![CDATA[With the exception of the 1970-1990 Puerto Rican censuses, RACE was asked of every person in all years. The concept of race has changed over the more than 150 years represented in the IPUMS. Currently, the Census Bureau and others consider race to be a sociopolitical construct, not a scientific or anthropological one. Many detailed RACE categories consist of national origin groups. Beginning in 2000, the race question changed substantially to allow respondents to report as many races as they felt necessary to describe themselves. In earlier years, only one race response was coded.
+
+IPUMS offers several variables describing the answer(s) to the race question. RACE provides the full detail given by the respondent and/or released by the Census Bureau; it is not always historically compatible (see comparability discussion below). Users primarily interested in historical compatibility should consider using RACESING, and should consult the race code relationship page, Relationship between RACE and RACESING codes [URL omitted from DDI.], for detail about how the RACE and RACESING codes are related.
+
+In addition, specific combinations of major races can be discerned using the following bivariate indicators of whether a particular race group was reported: RACAMIND, RACASIAN, RACBLK, RACOTHER, RACPACIS, and RACWHT. RACNUM indicates the total number of major race groups reported for an individual. The information contained in the bivariate indicators and in RACNUM is integrated into the detailed version of RACE. Users primarily interested in historical comparability should consider using RACESING and/or the accompanying variables PROBAI, PROBAPI, PROBBLK, PROBOTH, and PROBWHT.  Note that Hispanic origin is assessed through separate questioning (see HISPAN).
+
+Prior to 1960, the census enumerator was responsible for categorizing persons and was not specifically instructed to ask the individual his or her race. In 1970 and later years, an individual's race was reported by someone in the household or group quarters. In the 1990 U.S. census, the 2000 U.S. and Puerto Rican censuses, the ACS, and the PRCS respondents were specifically asked what race the person "considers himself/herself" to be, although such self-description was more or less operative since 1960.
+
+User Note: Race questions were not asked in the Puerto Rican censuses of 1970, 1980, and 1990.  They were asked in the 1910 and 1920 Puerto Rican censuses, the 2000-2010 Puerto Rican censuses, and the PRCS.]]></txt>
+      <catgry>
+        <catValu>100</catValu>
+        <labl>White</labl>
+      </catgry>
+      <catgry>
+        <catValu>110</catValu>
+        <labl>Spanish write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>120</catValu>
+        <labl>Blank (white) (1850)</labl>
+      </catgry>
+      <catgry>
+        <catValu>130</catValu>
+        <labl>Portuguese</labl>
+      </catgry>
+      <catgry>
+        <catValu>140</catValu>
+        <labl>Mexican (1930)</labl>
+      </catgry>
+      <catgry>
+        <catValu>150</catValu>
+        <labl>Puerto Rican (1910 Hawaii)</labl>
+      </catgry>
+      <catgry>
+        <catValu>200</catValu>
+        <labl>Black/African American/Negro</labl>
+      </catgry>
+      <catgry>
+        <catValu>210</catValu>
+        <labl>Mulatto</labl>
+      </catgry>
+      <catgry>
+        <catValu>300</catValu>
+        <labl>American Indian/Alaska Native</labl>
+      </catgry>
+      <catgry>
+        <catValu>302</catValu>
+        <labl>Apache</labl>
+      </catgry>
+      <catgry>
+        <catValu>303</catValu>
+        <labl>Blackfoot</labl>
+      </catgry>
+      <catgry>
+        <catValu>304</catValu>
+        <labl>Cherokee</labl>
+      </catgry>
+      <catgry>
+        <catValu>305</catValu>
+        <labl>Cheyenne</labl>
+      </catgry>
+      <catgry>
+        <catValu>306</catValu>
+        <labl>Chickasaw</labl>
+      </catgry>
+      <catgry>
+        <catValu>307</catValu>
+        <labl>Chippewa</labl>
+      </catgry>
+      <catgry>
+        <catValu>308</catValu>
+        <labl>Choctaw</labl>
+      </catgry>
+      <catgry>
+        <catValu>309</catValu>
+        <labl>Comanche</labl>
+      </catgry>
+      <catgry>
+        <catValu>310</catValu>
+        <labl>Creek</labl>
+      </catgry>
+      <catgry>
+        <catValu>311</catValu>
+        <labl>Crow</labl>
+      </catgry>
+      <catgry>
+        <catValu>312</catValu>
+        <labl>Iroquois</labl>
+      </catgry>
+      <catgry>
+        <catValu>313</catValu>
+        <labl>Kiowa</labl>
+      </catgry>
+      <catgry>
+        <catValu>314</catValu>
+        <labl>Lumbee</labl>
+      </catgry>
+      <catgry>
+        <catValu>315</catValu>
+        <labl>Navajo</labl>
+      </catgry>
+      <catgry>
+        <catValu>316</catValu>
+        <labl>Osage</labl>
+      </catgry>
+      <catgry>
+        <catValu>317</catValu>
+        <labl>Paiute</labl>
+      </catgry>
+      <catgry>
+        <catValu>318</catValu>
+        <labl>Pima</labl>
+      </catgry>
+      <catgry>
+        <catValu>319</catValu>
+        <labl>Potawatomi</labl>
+      </catgry>
+      <catgry>
+        <catValu>320</catValu>
+        <labl>Pueblo</labl>
+      </catgry>
+      <catgry>
+        <catValu>321</catValu>
+        <labl>Seminole</labl>
+      </catgry>
+      <catgry>
+        <catValu>322</catValu>
+        <labl>Shoshone</labl>
+      </catgry>
+      <catgry>
+        <catValu>323</catValu>
+        <labl>Sioux</labl>
+      </catgry>
+      <catgry>
+        <catValu>324</catValu>
+        <labl>Tlingit (Tlingit_Haida, 2000/ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>325</catValu>
+        <labl>Tohono O Odham</labl>
+      </catgry>
+      <catgry>
+        <catValu>326</catValu>
+        <labl>All other tribes (1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>328</catValu>
+        <labl>Hopi</labl>
+      </catgry>
+      <catgry>
+        <catValu>329</catValu>
+        <labl>Central American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>330</catValu>
+        <labl>Spanish American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>350</catValu>
+        <labl>Delaware</labl>
+      </catgry>
+      <catgry>
+        <catValu>351</catValu>
+        <labl>Latin American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>352</catValu>
+        <labl>Puget Sound Salish</labl>
+      </catgry>
+      <catgry>
+        <catValu>353</catValu>
+        <labl>Yakama</labl>
+      </catgry>
+      <catgry>
+        <catValu>354</catValu>
+        <labl>Yaqui</labl>
+      </catgry>
+      <catgry>
+        <catValu>355</catValu>
+        <labl>Colville</labl>
+      </catgry>
+      <catgry>
+        <catValu>356</catValu>
+        <labl>Houma</labl>
+      </catgry>
+      <catgry>
+        <catValu>357</catValu>
+        <labl>Menominee</labl>
+      </catgry>
+      <catgry>
+        <catValu>358</catValu>
+        <labl>Yuman</labl>
+      </catgry>
+      <catgry>
+        <catValu>359</catValu>
+        <labl>South American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>360</catValu>
+        <labl>Mexican American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>361</catValu>
+        <labl>Other Amer. Indian tribe (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>362</catValu>
+        <labl>2+ Amer. Indian tribes (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>370</catValu>
+        <labl>Alaskan Athabaskan</labl>
+      </catgry>
+      <catgry>
+        <catValu>371</catValu>
+        <labl>Aleut</labl>
+      </catgry>
+      <catgry>
+        <catValu>372</catValu>
+        <labl>Eskimo</labl>
+      </catgry>
+      <catgry>
+        <catValu>373</catValu>
+        <labl>Alaskan mixed</labl>
+      </catgry>
+      <catgry>
+        <catValu>374</catValu>
+        <labl>Inupiat</labl>
+      </catgry>
+      <catgry>
+        <catValu>375</catValu>
+        <labl>Yup'ik</labl>
+      </catgry>
+      <catgry>
+        <catValu>379</catValu>
+        <labl>Other Alaska Native tribe(s) (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>398</catValu>
+        <labl>Both Am. Ind. and Alaska Native (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>399</catValu>
+        <labl>Tribe not specified</labl>
+      </catgry>
+      <catgry>
+        <catValu>400</catValu>
+        <labl>Chinese</labl>
+      </catgry>
+      <catgry>
+        <catValu>410</catValu>
+        <labl>Taiwanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>420</catValu>
+        <labl>Chinese and Taiwanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>500</catValu>
+        <labl>Japanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>600</catValu>
+        <labl>Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>610</catValu>
+        <labl>Asian Indian (Hindu 1920_1940)</labl>
+      </catgry>
+      <catgry>
+        <catValu>620</catValu>
+        <labl>Korean</labl>
+      </catgry>
+      <catgry>
+        <catValu>630</catValu>
+        <labl>Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>631</catValu>
+        <labl>Hawaiian and Asian (1900,1920)</labl>
+      </catgry>
+      <catgry>
+        <catValu>632</catValu>
+        <labl>Hawaiian and European (1900,1920)</labl>
+      </catgry>
+      <catgry>
+        <catValu>634</catValu>
+        <labl>Hawaiian mixed</labl>
+      </catgry>
+      <catgry>
+        <catValu>640</catValu>
+        <labl>Vietnamese</labl>
+      </catgry>
+      <catgry>
+        <catValu>641</catValu>
+        <labl>   Bhutanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>642</catValu>
+        <labl>   Mongolian </labl>
+      </catgry>
+      <catgry>
+        <catValu>643</catValu>
+        <labl>   Nepalese</labl>
+      </catgry>
+      <catgry>
+        <catValu>650</catValu>
+        <labl>Other Asian or Pacific Islander (1920,1980)</labl>
+      </catgry>
+      <catgry>
+        <catValu>651</catValu>
+        <labl>Asian only (CPS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>652</catValu>
+        <labl>Pacific Islander only (CPS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>653</catValu>
+        <labl>Asian or Pacific Islander, n.s. (1990 Internal Census files)</labl>
+      </catgry>
+      <catgry>
+        <catValu>660</catValu>
+        <labl>Cambodian</labl>
+      </catgry>
+      <catgry>
+        <catValu>661</catValu>
+        <labl>Hmong</labl>
+      </catgry>
+      <catgry>
+        <catValu>662</catValu>
+        <labl>Laotian</labl>
+      </catgry>
+      <catgry>
+        <catValu>663</catValu>
+        <labl>Thai</labl>
+      </catgry>
+      <catgry>
+        <catValu>664</catValu>
+        <labl>Bangladeshi</labl>
+      </catgry>
+      <catgry>
+        <catValu>665</catValu>
+        <labl>Burmese</labl>
+      </catgry>
+      <catgry>
+        <catValu>666</catValu>
+        <labl>Indonesian</labl>
+      </catgry>
+      <catgry>
+        <catValu>667</catValu>
+        <labl>Malaysian</labl>
+      </catgry>
+      <catgry>
+        <catValu>668</catValu>
+        <labl>Okinawan</labl>
+      </catgry>
+      <catgry>
+        <catValu>669</catValu>
+        <labl>Pakistani</labl>
+      </catgry>
+      <catgry>
+        <catValu>670</catValu>
+        <labl>Sri Lankan</labl>
+      </catgry>
+      <catgry>
+        <catValu>671</catValu>
+        <labl>Other Asian, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>672</catValu>
+        <labl>Asian, not specified</labl>
+      </catgry>
+      <catgry>
+        <catValu>673</catValu>
+        <labl>Chinese and Japanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>674</catValu>
+        <labl>Chinese and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>675</catValu>
+        <labl>Chinese and Vietnamese</labl>
+      </catgry>
+      <catgry>
+        <catValu>676</catValu>
+        <labl>Chinese and Asian write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>677</catValu>
+        <labl>Japanese and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>678</catValu>
+        <labl>Asian Indian and Asian write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>679</catValu>
+        <labl>Other Asian race combinations</labl>
+      </catgry>
+      <catgry>
+        <catValu>680</catValu>
+        <labl>Samoan</labl>
+      </catgry>
+      <catgry>
+        <catValu>681</catValu>
+        <labl>Tahitian</labl>
+      </catgry>
+      <catgry>
+        <catValu>682</catValu>
+        <labl>Tongan</labl>
+      </catgry>
+      <catgry>
+        <catValu>683</catValu>
+        <labl>Other Polynesian (1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>684</catValu>
+        <labl>1+ other Polynesian races (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>685</catValu>
+        <labl>Guamanian/Chamorro</labl>
+      </catgry>
+      <catgry>
+        <catValu>686</catValu>
+        <labl>Northern Mariana Islander</labl>
+      </catgry>
+      <catgry>
+        <catValu>687</catValu>
+        <labl>Palauan</labl>
+      </catgry>
+      <catgry>
+        <catValu>688</catValu>
+        <labl>Other Micronesian (1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>689</catValu>
+        <labl>1+ other Micronesian races (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>690</catValu>
+        <labl>Fijian</labl>
+      </catgry>
+      <catgry>
+        <catValu>691</catValu>
+        <labl>Other Melanesian (1990)</labl>
+      </catgry>
+      <catgry>
+        <catValu>692</catValu>
+        <labl>1+ other Melanesian races (2000,ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>698</catValu>
+        <labl>2+ PI races from 2+ PI regions</labl>
+      </catgry>
+      <catgry>
+        <catValu>699</catValu>
+        <labl>Pacific Islander, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>700</catValu>
+        <labl>Other race, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>801</catValu>
+        <labl>White and Black</labl>
+      </catgry>
+      <catgry>
+        <catValu>802</catValu>
+        <labl>White and AIAN</labl>
+      </catgry>
+      <catgry>
+        <catValu>810</catValu>
+        <labl>White and Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>811</catValu>
+        <labl>White and Chinese</labl>
+      </catgry>
+      <catgry>
+        <catValu>812</catValu>
+        <labl>White and Japanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>813</catValu>
+        <labl>White and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>814</catValu>
+        <labl>White and Asian Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>815</catValu>
+        <labl>White and Korean</labl>
+      </catgry>
+      <catgry>
+        <catValu>816</catValu>
+        <labl>White and Vietnamese</labl>
+      </catgry>
+      <catgry>
+        <catValu>817</catValu>
+        <labl>White and Asian write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>818</catValu>
+        <labl>White and other Asian race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>819</catValu>
+        <labl>White and two or more Asian groups</labl>
+      </catgry>
+      <catgry>
+        <catValu>820</catValu>
+        <labl>White and PI  </labl>
+      </catgry>
+      <catgry>
+        <catValu>821</catValu>
+        <labl>White and Native Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>822</catValu>
+        <labl>White and Samoan</labl>
+      </catgry>
+      <catgry>
+        <catValu>823</catValu>
+        <labl>White and Guamanian</labl>
+      </catgry>
+      <catgry>
+        <catValu>824</catValu>
+        <labl>White and PI write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>825</catValu>
+        <labl>White and other PI race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>826</catValu>
+        <labl>White and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>827</catValu>
+        <labl>White and other race, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>830</catValu>
+        <labl>Black and AIAN</labl>
+      </catgry>
+      <catgry>
+        <catValu>831</catValu>
+        <labl>Black and Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>832</catValu>
+        <labl>Black and Chinese</labl>
+      </catgry>
+      <catgry>
+        <catValu>833</catValu>
+        <labl>Black and Japanese</labl>
+      </catgry>
+      <catgry>
+        <catValu>834</catValu>
+        <labl>Black and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>835</catValu>
+        <labl>Black and Asian Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>836</catValu>
+        <labl>Black and Korean</labl>
+      </catgry>
+      <catgry>
+        <catValu>837</catValu>
+        <labl>Black and Asian write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>838</catValu>
+        <labl>Black and other Asian race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>840</catValu>
+        <labl>Black and PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>841</catValu>
+        <labl>Black and PI write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>842</catValu>
+        <labl>Black and other PI race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>845</catValu>
+        <labl>Black and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>850</catValu>
+        <labl>AIAN and Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>851</catValu>
+        <labl>AIAN and Filipino (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>852</catValu>
+        <labl>AIAN and Asian Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>853</catValu>
+        <labl>AIAN and Asian write_in (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>854</catValu>
+        <labl>AIAN and other Asian race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>855</catValu>
+        <labl>AIAN and PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>856</catValu>
+        <labl>AIAN and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>860</catValu>
+        <labl>Asian and PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>861</catValu>
+        <labl>Chinese and Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>862</catValu>
+        <labl>Chinese, Filipino, Hawaiian (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>863</catValu>
+        <labl>Japanese and Hawaiian (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>864</catValu>
+        <labl>Filipino and Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>865</catValu>
+        <labl>Filipino and PI write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>866</catValu>
+        <labl>Asian Indian and PI write_in (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>867</catValu>
+        <labl>Asian write_in and PI write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>868</catValu>
+        <labl>Other Asian race(s) and PI race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>869</catValu>
+        <labl>Japanese and Korean (ACS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>880</catValu>
+        <labl>Asian and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>881</catValu>
+        <labl>Chinese and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>882</catValu>
+        <labl>Japanese and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>883</catValu>
+        <labl>Filipino and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>884</catValu>
+        <labl>Asian Indian and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>885</catValu>
+        <labl>Asian write_in and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>886</catValu>
+        <labl>Other Asian race(s) and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>887</catValu>
+        <labl>      Chinese and Korean</labl>
+      </catgry>
+      <catgry>
+        <catValu>890</catValu>
+        <labl>PI and other race write_in: </labl>
+      </catgry>
+      <catgry>
+        <catValu>891</catValu>
+        <labl>PI write_in and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>892</catValu>
+        <labl>Other PI race(s) and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>893</catValu>
+        <labl>         Native Hawaiian or PI other race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>899</catValu>
+        <labl>API and other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>901</catValu>
+        <labl>White, Black, AIAN</labl>
+      </catgry>
+      <catgry>
+        <catValu>902</catValu>
+        <labl>White, Black, Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>903</catValu>
+        <labl>White, Black, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>904</catValu>
+        <labl>White, Black, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>905</catValu>
+        <labl>White, AIAN, Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>906</catValu>
+        <labl>White, AIAN, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>907</catValu>
+        <labl>White, AIAN, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>910</catValu>
+        <labl>White, Asian, PI </labl>
+      </catgry>
+      <catgry>
+        <catValu>911</catValu>
+        <labl>White, Chinese, Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>912</catValu>
+        <labl>White, Chinese, Filipino, Hawaiian (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>913</catValu>
+        <labl>White, Japanese, Hawaiian (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>914</catValu>
+        <labl>White, Filipino, Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>915</catValu>
+        <labl>Other White, Asian race(s), PI race(s)</labl>
+      </catgry>
+      <catgry>
+        <catValu>916</catValu>
+        <labl>      White, AIAN and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>917</catValu>
+        <labl>      White, Black, and Filipino</labl>
+      </catgry>
+      <catgry>
+        <catValu>920</catValu>
+        <labl>White, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>921</catValu>
+        <labl>White, Filipino, other race write_in (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>922</catValu>
+        <labl>White, Asian write_in, other race write_in (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>923</catValu>
+        <labl>Other White, Asian race(s), other race write_in (2000 1%)</labl>
+      </catgry>
+      <catgry>
+        <catValu>925</catValu>
+        <labl>White, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>930</catValu>
+        <labl>Black, AIAN, Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>931</catValu>
+        <labl>Black, AIAN, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>932</catValu>
+        <labl>Black, AIAN, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>933</catValu>
+        <labl>Black, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>934</catValu>
+        <labl>Black, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>935</catValu>
+        <labl>Black, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>940</catValu>
+        <labl>AIAN, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>941</catValu>
+        <labl>AIAN, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>942</catValu>
+        <labl>AIAN, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>943</catValu>
+        <labl>Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>944</catValu>
+        <labl>Asian (Chinese, Japanese, Korean, Vietnamese); and Native Hawaiian or PI; and Other</labl>
+      </catgry>
+      <catgry>
+        <catValu>949</catValu>
+        <labl>2 or 3 races (CPS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>950</catValu>
+        <labl>White, Black, AIAN, Asian</labl>
+      </catgry>
+      <catgry>
+        <catValu>951</catValu>
+        <labl>White, Black, AIAN, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>952</catValu>
+        <labl>White, Black, AIAN, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>953</catValu>
+        <labl>White, Black, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>954</catValu>
+        <labl>White, Black, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>955</catValu>
+        <labl>White, Black, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>960</catValu>
+        <labl>White, AIAN, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>961</catValu>
+        <labl>White, AIAN, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>962</catValu>
+        <labl>White, AIAN, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>963</catValu>
+        <labl>White, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>964</catValu>
+        <labl>White, Chinese, Japanese, Native Hawaiian</labl>
+      </catgry>
+      <catgry>
+        <catValu>970</catValu>
+        <labl>Black, AIAN, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>971</catValu>
+        <labl>Black, AIAN, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>972</catValu>
+        <labl>Black, AIAN, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>973</catValu>
+        <labl>Black, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>974</catValu>
+        <labl>AIAN, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>975</catValu>
+        <labl>AIAN, Asian, PI, Hawaiian other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>976</catValu>
+        <labl>Two specified Asian  (Chinese and other Asian, Chinese and Japanese, Japanese and other Asian, Korean and other Asian); Native Hawaiian/PI; and Other Race</labl>
+      </catgry>
+      <catgry>
+        <catValu>980</catValu>
+        <labl>White, Black, AIAN, Asian, PI</labl>
+      </catgry>
+      <catgry>
+        <catValu>981</catValu>
+        <labl>White, Black, AIAN, Asian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>982</catValu>
+        <labl>White, Black, AIAN, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>983</catValu>
+        <labl>White, Black, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>984</catValu>
+        <labl>White, AIAN, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>985</catValu>
+        <labl>Black, AIAN, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>986</catValu>
+        <labl>Black, AIAN, Asian, PI, Hawaiian, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>989</catValu>
+        <labl>4 or 5 races (CPS)</labl>
+      </catgry>
+      <catgry>
+        <catValu>990</catValu>
+        <labl>White, Black, AIAN, Asian, PI, other race write_in</labl>
+      </catgry>
+      <catgry>
+        <catValu>991</catValu>
+        <labl>White race; Some other race; Black or African American race and/or American Indian and Alaska Native race and/or Asian groups and/or Native Hawaiian and Other Pacific Islander groups</labl>
+      </catgry>
+      <catgry>
+        <catValu>996</catValu>
+        <labl>2+ races, n.e.c. (CPS)</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="HISPAN" files="ExtractData" name="HISPAN" intrvl="discrete" dcml="0">
+      <location StartPos="68" width="1" EndPos="68"/>
+      <labl>Hispanic origin [general version]</labl>
+      <txt><![CDATA[HISPAN identifies persons of Hispanic/Spanish/Latino origin and classifies them according to their country of origin when possible. Origin is defined by the Census Bureau as ancestry, lineage, heritage, nationality group, or country of birth. People of Hispanic origin may be of any race; see RACE for a discussion of coding issues involved.  Users should note that race questions were not asked in the Puerto Rican censuses of 1970, 1980 and 1990.  They were asked in the 1910 and 1920 Puerto Rican censuses, and in the 2000 and 2010 Puerto Rican census and the PRCS.  However, questions assessing Spanish/Hispanic origin were not asked in the Puerto Rican censuses prior to 2000. 
+
+The HISPAN general code covers country-of-origin classifications common to all years; the detailed code distinguishes additional groups and subgroups. See HISPRULE for details on how country of origin information was assigned prior to 1980.]]></txt>
+      <catgry>
+        <catValu>0</catValu>
+        <labl>Not Hispanic</labl>
+      </catgry>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Mexican</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Puerto Rican</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>Cuban</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>Other</labl>
+      </catgry>
+      <catgry>
+        <catValu>9</catValu>
+        <labl>Not Reported</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="HISPAND" files="ExtractData" name="HISPAND" intrvl="discrete" dcml="0">
+      <location StartPos="69" width="3" EndPos="71"/>
+      <labl>Hispanic origin [detailed version]</labl>
+      <txt><![CDATA[HISPAN identifies persons of Hispanic/Spanish/Latino origin and classifies them according to their country of origin when possible. Origin is defined by the Census Bureau as ancestry, lineage, heritage, nationality group, or country of birth. People of Hispanic origin may be of any race; see RACE for a discussion of coding issues involved.  Users should note that race questions were not asked in the Puerto Rican censuses of 1970, 1980 and 1990.  They were asked in the 1910 and 1920 Puerto Rican censuses, and in the 2000 and 2010 Puerto Rican census and the PRCS.  However, questions assessing Spanish/Hispanic origin were not asked in the Puerto Rican censuses prior to 2000. 
+
+The HISPAN general code covers country-of-origin classifications common to all years; the detailed code distinguishes additional groups and subgroups. See HISPRULE for details on how country of origin information was assigned prior to 1980.]]></txt>
+      <catgry>
+        <catValu>000</catValu>
+        <labl>Not Hispanic</labl>
+      </catgry>
+      <catgry>
+        <catValu>100</catValu>
+        <labl>Mexican</labl>
+      </catgry>
+      <catgry>
+        <catValu>102</catValu>
+        <labl>Mexican American</labl>
+      </catgry>
+      <catgry>
+        <catValu>103</catValu>
+        <labl>Mexicano/Mexicana</labl>
+      </catgry>
+      <catgry>
+        <catValu>104</catValu>
+        <labl>Chicano/Chicana</labl>
+      </catgry>
+      <catgry>
+        <catValu>105</catValu>
+        <labl>La Raza</labl>
+      </catgry>
+      <catgry>
+        <catValu>106</catValu>
+        <labl>Mexican American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>107</catValu>
+        <labl>Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>200</catValu>
+        <labl>Puerto Rican</labl>
+      </catgry>
+      <catgry>
+        <catValu>300</catValu>
+        <labl>Cuban</labl>
+      </catgry>
+      <catgry>
+        <catValu>401</catValu>
+        <labl>Central American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>402</catValu>
+        <labl>Canal Zone</labl>
+      </catgry>
+      <catgry>
+        <catValu>411</catValu>
+        <labl>Costa Rican</labl>
+      </catgry>
+      <catgry>
+        <catValu>412</catValu>
+        <labl>Guatemalan</labl>
+      </catgry>
+      <catgry>
+        <catValu>413</catValu>
+        <labl>Honduran</labl>
+      </catgry>
+      <catgry>
+        <catValu>414</catValu>
+        <labl>Nicaraguan</labl>
+      </catgry>
+      <catgry>
+        <catValu>415</catValu>
+        <labl>Panamanian</labl>
+      </catgry>
+      <catgry>
+        <catValu>416</catValu>
+        <labl>Salvadoran</labl>
+      </catgry>
+      <catgry>
+        <catValu>417</catValu>
+        <labl>Central American, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>420</catValu>
+        <labl>Argentinean</labl>
+      </catgry>
+      <catgry>
+        <catValu>421</catValu>
+        <labl>Bolivian</labl>
+      </catgry>
+      <catgry>
+        <catValu>422</catValu>
+        <labl>Chilean</labl>
+      </catgry>
+      <catgry>
+        <catValu>423</catValu>
+        <labl>Colombian</labl>
+      </catgry>
+      <catgry>
+        <catValu>424</catValu>
+        <labl>Ecuadorian</labl>
+      </catgry>
+      <catgry>
+        <catValu>425</catValu>
+        <labl>Paraguayan</labl>
+      </catgry>
+      <catgry>
+        <catValu>426</catValu>
+        <labl>Peruvian</labl>
+      </catgry>
+      <catgry>
+        <catValu>427</catValu>
+        <labl>Uruguayan</labl>
+      </catgry>
+      <catgry>
+        <catValu>428</catValu>
+        <labl>Venezuelan</labl>
+      </catgry>
+      <catgry>
+        <catValu>429</catValu>
+        <labl>South American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>430</catValu>
+        <labl>Criollo</labl>
+      </catgry>
+      <catgry>
+        <catValu>431</catValu>
+        <labl>South American, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>450</catValu>
+        <labl>Spaniard</labl>
+      </catgry>
+      <catgry>
+        <catValu>451</catValu>
+        <labl>Andalusian</labl>
+      </catgry>
+      <catgry>
+        <catValu>452</catValu>
+        <labl>Asturian</labl>
+      </catgry>
+      <catgry>
+        <catValu>453</catValu>
+        <labl>Castillian</labl>
+      </catgry>
+      <catgry>
+        <catValu>454</catValu>
+        <labl>Catalonian</labl>
+      </catgry>
+      <catgry>
+        <catValu>455</catValu>
+        <labl>Balearic Islander</labl>
+      </catgry>
+      <catgry>
+        <catValu>456</catValu>
+        <labl>Gallego</labl>
+      </catgry>
+      <catgry>
+        <catValu>457</catValu>
+        <labl>Valencian</labl>
+      </catgry>
+      <catgry>
+        <catValu>458</catValu>
+        <labl>Canarian</labl>
+      </catgry>
+      <catgry>
+        <catValu>459</catValu>
+        <labl>Spanish Basque</labl>
+      </catgry>
+      <catgry>
+        <catValu>460</catValu>
+        <labl>Dominican</labl>
+      </catgry>
+      <catgry>
+        <catValu>465</catValu>
+        <labl>Latin American</labl>
+      </catgry>
+      <catgry>
+        <catValu>470</catValu>
+        <labl>Hispanic</labl>
+      </catgry>
+      <catgry>
+        <catValu>480</catValu>
+        <labl>Spanish</labl>
+      </catgry>
+      <catgry>
+        <catValu>490</catValu>
+        <labl>Californio</labl>
+      </catgry>
+      <catgry>
+        <catValu>491</catValu>
+        <labl>Tejano</labl>
+      </catgry>
+      <catgry>
+        <catValu>492</catValu>
+        <labl>Nuevo Mexicano</labl>
+      </catgry>
+      <catgry>
+        <catValu>493</catValu>
+        <labl>Spanish American</labl>
+      </catgry>
+      <catgry>
+        <catValu>494</catValu>
+        <labl>Spanish American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>495</catValu>
+        <labl>Meso American Indian</labl>
+      </catgry>
+      <catgry>
+        <catValu>496</catValu>
+        <labl>Mestizo</labl>
+      </catgry>
+      <catgry>
+        <catValu>498</catValu>
+        <labl>Other, n.s. </labl>
+      </catgry>
+      <catgry>
+        <catValu>499</catValu>
+        <labl>Other, n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>900</catValu>
+        <labl>Not Reported</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="BPL" files="ExtractData" name="BPL" intrvl="discrete" dcml="0">
+      <location StartPos="72" width="3" EndPos="74"/>
+      <labl>Birthplace [general version]</labl>
+      <txt><![CDATA[BPL indicates the U.S. state, the outlying U.S. area or territory, or the foreign country where the person was born.]]></txt>
+      <catgry>
+        <catValu>465</catValu>
+        <labl>Other USSR/Russia</labl>
+      </catgry>
+      <catgry>
+        <catValu>463</catValu>
+        <labl>Baltic States, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>462</catValu>
+        <labl>Lithuania</labl>
+      </catgry>
+      <catgry>
+        <catValu>461</catValu>
+        <labl>Latvia</labl>
+      </catgry>
+      <catgry>
+        <catValu>460</catValu>
+        <labl>Estonia</labl>
+      </catgry>
+      <catgry>
+        <catValu>459</catValu>
+        <labl>Eastern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>458</catValu>
+        <labl>Central Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>457</catValu>
+        <labl>Yugoslavia</labl>
+      </catgry>
+      <catgry>
+        <catValu>456</catValu>
+        <labl>Romania</labl>
+      </catgry>
+      <catgry>
+        <catValu>455</catValu>
+        <labl>Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>454</catValu>
+        <labl>Hungary</labl>
+      </catgry>
+      <catgry>
+        <catValu>120</catValu>
+        <labl>Other US Possessions</labl>
+      </catgry>
+      <catgry>
+        <catValu>150</catValu>
+        <labl>Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>155</catValu>
+        <labl>St. Pierre and Miquelon</labl>
+      </catgry>
+      <catgry>
+        <catValu>160</catValu>
+        <labl>Atlantic Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>199</catValu>
+        <labl>North America, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>200</catValu>
+        <labl>Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>210</catValu>
+        <labl>Central America</labl>
+      </catgry>
+      <catgry>
+        <catValu>250</catValu>
+        <labl>Cuba</labl>
+      </catgry>
+      <catgry>
+        <catValu>260</catValu>
+        <labl>West Indies</labl>
+      </catgry>
+      <catgry>
+        <catValu>299</catValu>
+        <labl>Americas, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>300</catValu>
+        <labl>SOUTH AMERICA</labl>
+      </catgry>
+      <catgry>
+        <catValu>400</catValu>
+        <labl>Denmark</labl>
+      </catgry>
+      <catgry>
+        <catValu>401</catValu>
+        <labl>Finland</labl>
+      </catgry>
+      <catgry>
+        <catValu>402</catValu>
+        <labl>Iceland</labl>
+      </catgry>
+      <catgry>
+        <catValu>403</catValu>
+        <labl>Lapland, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>404</catValu>
+        <labl>Norway</labl>
+      </catgry>
+      <catgry>
+        <catValu>405</catValu>
+        <labl>Sweden</labl>
+      </catgry>
+      <catgry>
+        <catValu>410</catValu>
+        <labl>England</labl>
+      </catgry>
+      <catgry>
+        <catValu>411</catValu>
+        <labl>Scotland</labl>
+      </catgry>
+      <catgry>
+        <catValu>412</catValu>
+        <labl>Wales</labl>
+      </catgry>
+      <catgry>
+        <catValu>413</catValu>
+        <labl>United Kingdom, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>414</catValu>
+        <labl>Ireland</labl>
+      </catgry>
+      <catgry>
+        <catValu>419</catValu>
+        <labl>Northern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>420</catValu>
+        <labl>Belgium</labl>
+      </catgry>
+      <catgry>
+        <catValu>421</catValu>
+        <labl>France</labl>
+      </catgry>
+      <catgry>
+        <catValu>422</catValu>
+        <labl>Liechtenstein</labl>
+      </catgry>
+      <catgry>
+        <catValu>423</catValu>
+        <labl>Luxembourg</labl>
+      </catgry>
+      <catgry>
+        <catValu>424</catValu>
+        <labl>Monaco</labl>
+      </catgry>
+      <catgry>
+        <catValu>425</catValu>
+        <labl>Netherlands</labl>
+      </catgry>
+      <catgry>
+        <catValu>426</catValu>
+        <labl>Switzerland</labl>
+      </catgry>
+      <catgry>
+        <catValu>429</catValu>
+        <labl>Western Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>430</catValu>
+        <labl>Albania</labl>
+      </catgry>
+      <catgry>
+        <catValu>431</catValu>
+        <labl>Andorra</labl>
+      </catgry>
+      <catgry>
+        <catValu>432</catValu>
+        <labl>Gibraltar</labl>
+      </catgry>
+      <catgry>
+        <catValu>433</catValu>
+        <labl>Greece</labl>
+      </catgry>
+      <catgry>
+        <catValu>434</catValu>
+        <labl>Italy</labl>
+      </catgry>
+      <catgry>
+        <catValu>435</catValu>
+        <labl>Malta</labl>
+      </catgry>
+      <catgry>
+        <catValu>436</catValu>
+        <labl>Portugal</labl>
+      </catgry>
+      <catgry>
+        <catValu>437</catValu>
+        <labl>San Marino</labl>
+      </catgry>
+      <catgry>
+        <catValu>438</catValu>
+        <labl>Spain</labl>
+      </catgry>
+      <catgry>
+        <catValu>439</catValu>
+        <labl>Vatican City</labl>
+      </catgry>
+      <catgry>
+        <catValu>440</catValu>
+        <labl>Southern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>450</catValu>
+        <labl>Austria</labl>
+      </catgry>
+      <catgry>
+        <catValu>451</catValu>
+        <labl>Bulgaria</labl>
+      </catgry>
+      <catgry>
+        <catValu>452</catValu>
+        <labl>Czechoslovakia</labl>
+      </catgry>
+      <catgry>
+        <catValu>453</catValu>
+        <labl>Germany</labl>
+      </catgry>
+      <catgry>
+        <catValu>115</catValu>
+        <labl>U.S. Virgin Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>110</catValu>
+        <labl>Puerto Rico</labl>
+      </catgry>
+      <catgry>
+        <catValu>105</catValu>
+        <labl>Guam</labl>
+      </catgry>
+      <catgry>
+        <catValu>100</catValu>
+        <labl>American Samoa</labl>
+      </catgry>
+      <catgry>
+        <catValu>099</catValu>
+        <labl>United States, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>090</catValu>
+        <labl>Native American</labl>
+      </catgry>
+      <catgry>
+        <catValu>056</catValu>
+        <labl>Wyoming</labl>
+      </catgry>
+      <catgry>
+        <catValu>055</catValu>
+        <labl>Wisconsin</labl>
+      </catgry>
+      <catgry>
+        <catValu>054</catValu>
+        <labl>West Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>053</catValu>
+        <labl>Washington</labl>
+      </catgry>
+      <catgry>
+        <catValu>051</catValu>
+        <labl>Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>050</catValu>
+        <labl>Vermont</labl>
+      </catgry>
+      <catgry>
+        <catValu>049</catValu>
+        <labl>Utah</labl>
+      </catgry>
+      <catgry>
+        <catValu>048</catValu>
+        <labl>Texas</labl>
+      </catgry>
+      <catgry>
+        <catValu>047</catValu>
+        <labl>Tennessee</labl>
+      </catgry>
+      <catgry>
+        <catValu>046</catValu>
+        <labl>South Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>045</catValu>
+        <labl>South Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>044</catValu>
+        <labl>Rhode Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>042</catValu>
+        <labl>Pennsylvania</labl>
+      </catgry>
+      <catgry>
+        <catValu>041</catValu>
+        <labl>Oregon</labl>
+      </catgry>
+      <catgry>
+        <catValu>040</catValu>
+        <labl>Oklahoma</labl>
+      </catgry>
+      <catgry>
+        <catValu>039</catValu>
+        <labl>Ohio</labl>
+      </catgry>
+      <catgry>
+        <catValu>038</catValu>
+        <labl>North Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>037</catValu>
+        <labl>North Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>036</catValu>
+        <labl>New York</labl>
+      </catgry>
+      <catgry>
+        <catValu>035</catValu>
+        <labl>New Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>034</catValu>
+        <labl>New Jersey</labl>
+      </catgry>
+      <catgry>
+        <catValu>033</catValu>
+        <labl>New Hampshire</labl>
+      </catgry>
+      <catgry>
+        <catValu>032</catValu>
+        <labl>Nevada</labl>
+      </catgry>
+      <catgry>
+        <catValu>031</catValu>
+        <labl>Nebraska</labl>
+      </catgry>
+      <catgry>
+        <catValu>030</catValu>
+        <labl>Montana</labl>
+      </catgry>
+      <catgry>
+        <catValu>029</catValu>
+        <labl>Missouri</labl>
+      </catgry>
+      <catgry>
+        <catValu>028</catValu>
+        <labl>Mississippi</labl>
+      </catgry>
+      <catgry>
+        <catValu>027</catValu>
+        <labl>Minnesota</labl>
+      </catgry>
+      <catgry>
+        <catValu>026</catValu>
+        <labl>Michigan</labl>
+      </catgry>
+      <catgry>
+        <catValu>025</catValu>
+        <labl>Massachusetts</labl>
+      </catgry>
+      <catgry>
+        <catValu>024</catValu>
+        <labl>Maryland</labl>
+      </catgry>
+      <catgry>
+        <catValu>023</catValu>
+        <labl>Maine</labl>
+      </catgry>
+      <catgry>
+        <catValu>022</catValu>
+        <labl>Louisiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>021</catValu>
+        <labl>Kentucky</labl>
+      </catgry>
+      <catgry>
+        <catValu>020</catValu>
+        <labl>Kansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>019</catValu>
+        <labl>Iowa</labl>
+      </catgry>
+      <catgry>
+        <catValu>018</catValu>
+        <labl>Indiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>017</catValu>
+        <labl>Illinois</labl>
+      </catgry>
+      <catgry>
+        <catValu>016</catValu>
+        <labl>Idaho</labl>
+      </catgry>
+      <catgry>
+        <catValu>015</catValu>
+        <labl>Hawaii</labl>
+      </catgry>
+      <catgry>
+        <catValu>013</catValu>
+        <labl>Georgia</labl>
+      </catgry>
+      <catgry>
+        <catValu>012</catValu>
+        <labl>Florida</labl>
+      </catgry>
+      <catgry>
+        <catValu>011</catValu>
+        <labl>District of Columbia</labl>
+      </catgry>
+      <catgry>
+        <catValu>010</catValu>
+        <labl>Delaware</labl>
+      </catgry>
+      <catgry>
+        <catValu>009</catValu>
+        <labl>Connecticut</labl>
+      </catgry>
+      <catgry>
+        <catValu>008</catValu>
+        <labl>Colorado</labl>
+      </catgry>
+      <catgry>
+        <catValu>006</catValu>
+        <labl>California</labl>
+      </catgry>
+      <catgry>
+        <catValu>005</catValu>
+        <labl>Arkansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>004</catValu>
+        <labl>Arizona</labl>
+      </catgry>
+      <catgry>
+        <catValu>002</catValu>
+        <labl>Alaska</labl>
+      </catgry>
+      <catgry>
+        <catValu>001</catValu>
+        <labl>Alabama</labl>
+      </catgry>
+      <catgry>
+        <catValu>999</catValu>
+        <labl>Missing/blank</labl>
+      </catgry>
+      <catgry>
+        <catValu>950</catValu>
+        <labl>Other n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>900</catValu>
+        <labl>Abroad (unknown) or at sea</labl>
+      </catgry>
+      <catgry>
+        <catValu>800</catValu>
+        <labl>Antarctica, ns/nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>710</catValu>
+        <labl>Pacific Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>700</catValu>
+        <labl>Australia and New Zealand</labl>
+      </catgry>
+      <catgry>
+        <catValu>600</catValu>
+        <labl>AFRICA</labl>
+      </catgry>
+      <catgry>
+        <catValu>599</catValu>
+        <labl>Asia, nec/ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>550</catValu>
+        <labl>South Asia, nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>549</catValu>
+        <labl>Asia Minor, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>548</catValu>
+        <labl>Southwest Asia, nec/ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>547</catValu>
+        <labl>Middle East, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>546</catValu>
+        <labl>Persian Gulf States, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>545</catValu>
+        <labl>Yemen, PDR (South)</labl>
+      </catgry>
+      <catgry>
+        <catValu>544</catValu>
+        <labl>Yemen Arab Republic (North)</labl>
+      </catgry>
+      <catgry>
+        <catValu>543</catValu>
+        <labl>United Arab Emirates</labl>
+      </catgry>
+      <catgry>
+        <catValu>542</catValu>
+        <labl>Turkey</labl>
+      </catgry>
+      <catgry>
+        <catValu>541</catValu>
+        <labl>Syria</labl>
+      </catgry>
+      <catgry>
+        <catValu>540</catValu>
+        <labl>Saudi Arabia</labl>
+      </catgry>
+      <catgry>
+        <catValu>539</catValu>
+        <labl>Qatar</labl>
+      </catgry>
+      <catgry>
+        <catValu>538</catValu>
+        <labl>Oman</labl>
+      </catgry>
+      <catgry>
+        <catValu>537</catValu>
+        <labl>Lebanon</labl>
+      </catgry>
+      <catgry>
+        <catValu>536</catValu>
+        <labl>Kuwait</labl>
+      </catgry>
+      <catgry>
+        <catValu>535</catValu>
+        <labl>Jordan</labl>
+      </catgry>
+      <catgry>
+        <catValu>534</catValu>
+        <labl>Israel/Palestine</labl>
+      </catgry>
+      <catgry>
+        <catValu>533</catValu>
+        <labl>Iraq/Saudi Arabia</labl>
+      </catgry>
+      <catgry>
+        <catValu>532</catValu>
+        <labl>Iraq</labl>
+      </catgry>
+      <catgry>
+        <catValu>531</catValu>
+        <labl>Cyprus</labl>
+      </catgry>
+      <catgry>
+        <catValu>530</catValu>
+        <labl>Bahrain</labl>
+      </catgry>
+      <catgry>
+        <catValu>524</catValu>
+        <labl>Nepal</labl>
+      </catgry>
+      <catgry>
+        <catValu>523</catValu>
+        <labl>Maldives</labl>
+      </catgry>
+      <catgry>
+        <catValu>522</catValu>
+        <labl>Iran</labl>
+      </catgry>
+      <catgry>
+        <catValu>521</catValu>
+        <labl>India</labl>
+      </catgry>
+      <catgry>
+        <catValu>520</catValu>
+        <labl>Afghanistan</labl>
+      </catgry>
+      <catgry>
+        <catValu>519</catValu>
+        <labl>Southeast Asia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>518</catValu>
+        <labl>Vietnam</labl>
+      </catgry>
+      <catgry>
+        <catValu>517</catValu>
+        <labl>Thailand</labl>
+      </catgry>
+      <catgry>
+        <catValu>516</catValu>
+        <labl>Singapore</labl>
+      </catgry>
+      <catgry>
+        <catValu>515</catValu>
+        <labl>Philippines</labl>
+      </catgry>
+      <catgry>
+        <catValu>514</catValu>
+        <labl>Malaysia</labl>
+      </catgry>
+      <catgry>
+        <catValu>513</catValu>
+        <labl>Laos</labl>
+      </catgry>
+      <catgry>
+        <catValu>512</catValu>
+        <labl>Indonesia</labl>
+      </catgry>
+      <catgry>
+        <catValu>511</catValu>
+        <labl>Cambodia (Kampuchea)</labl>
+      </catgry>
+      <catgry>
+        <catValu>510</catValu>
+        <labl>Brunei</labl>
+      </catgry>
+      <catgry>
+        <catValu>509</catValu>
+        <labl>East Asia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>502</catValu>
+        <labl>Korea</labl>
+      </catgry>
+      <catgry>
+        <catValu>501</catValu>
+        <labl>Japan</labl>
+      </catgry>
+      <catgry>
+        <catValu>500</catValu>
+        <labl>China</labl>
+      </catgry>
+      <catgry>
+        <catValu>499</catValu>
+        <labl>Europe, ns</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="BPLD" files="ExtractData" name="BPLD" intrvl="discrete" dcml="0">
+      <location StartPos="75" width="5" EndPos="79"/>
+      <labl>Birthplace [detailed version]</labl>
+      <txt><![CDATA[BPL indicates the U.S. state, the outlying U.S. area or territory, or the foreign country where the person was born.]]></txt>
+      <catgry>
+        <catValu>46546</catValu>
+        <labl>Turkmenistan</labl>
+      </catgry>
+      <catgry>
+        <catValu>46545</catValu>
+        <labl>Tadzhik</labl>
+      </catgry>
+      <catgry>
+        <catValu>46544</catValu>
+        <labl>Kirghizia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46543</catValu>
+        <labl>Kazakhstan</labl>
+      </catgry>
+      <catgry>
+        <catValu>46542</catValu>
+        <labl>Republic of Georgia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46541</catValu>
+        <labl>Azerbaijan</labl>
+      </catgry>
+      <catgry>
+        <catValu>46540</catValu>
+        <labl>Armenia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46530</catValu>
+        <labl>Ukraine</labl>
+      </catgry>
+      <catgry>
+        <catValu>46521</catValu>
+        <labl>Bessarabia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46520</catValu>
+        <labl>Moldavia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46510</catValu>
+        <labl>Byelorussia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46500</catValu>
+        <labl>Other USSR/Russia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46300</catValu>
+        <labl>Baltic States, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>46200</catValu>
+        <labl>Lithuania</labl>
+      </catgry>
+      <catgry>
+        <catValu>46100</catValu>
+        <labl>Latvia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46000</catValu>
+        <labl>Estonia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45900</catValu>
+        <labl>Eastern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>45800</catValu>
+        <labl>Central Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>45790</catValu>
+        <labl>Kosovo</labl>
+      </catgry>
+      <catgry>
+        <catValu>45780</catValu>
+        <labl>Slovenia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45770</catValu>
+        <labl>Carniola</labl>
+      </catgry>
+      <catgry>
+        <catValu>45760</catValu>
+        <labl>Slovonia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45750</catValu>
+        <labl>Dalmatia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45740</catValu>
+        <labl>Bosnia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45730</catValu>
+        <labl>Serbia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45720</catValu>
+        <labl>Montenegro</labl>
+      </catgry>
+      <catgry>
+        <catValu>45710</catValu>
+        <labl>Croatia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45700</catValu>
+        <labl>Yugoslavia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45610</catValu>
+        <labl>Transylvania</labl>
+      </catgry>
+      <catgry>
+        <catValu>45600</catValu>
+        <labl>Romania</labl>
+      </catgry>
+      <catgry>
+        <catValu>45530</catValu>
+        <labl>Russian Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45526</catValu>
+        <labl>West Prussia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45525</catValu>
+        <labl>Silesia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45524</catValu>
+        <labl>Prussian Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45523</catValu>
+        <labl>Posen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45522</catValu>
+        <labl>Pomerania</labl>
+      </catgry>
+      <catgry>
+        <catValu>45521</catValu>
+        <labl>East Prussia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45520</catValu>
+        <labl>German Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45511</catValu>
+        <labl>Galicia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45510</catValu>
+        <labl>Austrian Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45500</catValu>
+        <labl>Poland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45400</catValu>
+        <labl>Hungary</labl>
+      </catgry>
+      <catgry>
+        <catValu>45362</catValu>
+        <labl>Niedersachsen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45361</catValu>
+        <labl>Hohenzollern</labl>
+      </catgry>
+      <catgry>
+        <catValu>45360</catValu>
+        <labl>Prussia, nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>45353</catValu>
+        <labl>Probably Thuringian States</labl>
+      </catgry>
+      <catgry>
+        <catValu>45351</catValu>
+        <labl>Schwerin</labl>
+      </catgry>
+      <catgry>
+        <catValu>45350</catValu>
+        <labl>Probable Saxony</labl>
+      </catgry>
+      <catgry>
+        <catValu>45347</catValu>
+        <labl>Thuringian States</labl>
+      </catgry>
+      <catgry>
+        <catValu>45346</catValu>
+        <labl>Saxony</labl>
+      </catgry>
+      <catgry>
+        <catValu>45345</catValu>
+        <labl>Mecklenburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>11520</catValu>
+        <labl>St. John</labl>
+      </catgry>
+      <catgry>
+        <catValu>11530</catValu>
+        <labl>St. Thomas</labl>
+      </catgry>
+      <catgry>
+        <catValu>12000</catValu>
+        <labl>Other US Possessions:</labl>
+      </catgry>
+      <catgry>
+        <catValu>12010</catValu>
+        <labl>Johnston Atoll</labl>
+      </catgry>
+      <catgry>
+        <catValu>12020</catValu>
+        <labl>Midway Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>12030</catValu>
+        <labl>Wake Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>12040</catValu>
+        <labl>Other US Caribbean Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>12041</catValu>
+        <labl>Navassa Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>12050</catValu>
+        <labl>Other US Pacific Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>12051</catValu>
+        <labl>Baker Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>12052</catValu>
+        <labl>Howland Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>12053</catValu>
+        <labl>Jarvis Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>12054</catValu>
+        <labl>Kingman Reef</labl>
+      </catgry>
+      <catgry>
+        <catValu>12055</catValu>
+        <labl>Palmyra Atoll</labl>
+      </catgry>
+      <catgry>
+        <catValu>12090</catValu>
+        <labl>US outlying areas, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>12091</catValu>
+        <labl>US possessions, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>12092</catValu>
+        <labl>US territory, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>15000</catValu>
+        <labl>Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15010</catValu>
+        <labl>English Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15011</catValu>
+        <labl>British Columbia</labl>
+      </catgry>
+      <catgry>
+        <catValu>15013</catValu>
+        <labl>Alberta</labl>
+      </catgry>
+      <catgry>
+        <catValu>15015</catValu>
+        <labl>Saskatchewan</labl>
+      </catgry>
+      <catgry>
+        <catValu>15017</catValu>
+        <labl>Northwest</labl>
+      </catgry>
+      <catgry>
+        <catValu>15019</catValu>
+        <labl>Ruperts Land</labl>
+      </catgry>
+      <catgry>
+        <catValu>15020</catValu>
+        <labl>Manitoba</labl>
+      </catgry>
+      <catgry>
+        <catValu>15021</catValu>
+        <labl>Red River</labl>
+      </catgry>
+      <catgry>
+        <catValu>15030</catValu>
+        <labl>Ontario/Upper Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15031</catValu>
+        <labl>Upper Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15032</catValu>
+        <labl>Canada West</labl>
+      </catgry>
+      <catgry>
+        <catValu>15040</catValu>
+        <labl>New Brunswick</labl>
+      </catgry>
+      <catgry>
+        <catValu>15050</catValu>
+        <labl>Nova Scotia</labl>
+      </catgry>
+      <catgry>
+        <catValu>15051</catValu>
+        <labl>Cape Breton</labl>
+      </catgry>
+      <catgry>
+        <catValu>15052</catValu>
+        <labl>Halifax</labl>
+      </catgry>
+      <catgry>
+        <catValu>15060</catValu>
+        <labl>Prince Edward Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>15070</catValu>
+        <labl>Newfoundland</labl>
+      </catgry>
+      <catgry>
+        <catValu>15080</catValu>
+        <labl>French Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15081</catValu>
+        <labl>Quebec</labl>
+      </catgry>
+      <catgry>
+        <catValu>15082</catValu>
+        <labl>Lower Canada</labl>
+      </catgry>
+      <catgry>
+        <catValu>15083</catValu>
+        <labl>Canada East</labl>
+      </catgry>
+      <catgry>
+        <catValu>15500</catValu>
+        <labl>St. Pierre and Miquelon</labl>
+      </catgry>
+      <catgry>
+        <catValu>16000</catValu>
+        <labl>Atlantic Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>16010</catValu>
+        <labl>Bermuda</labl>
+      </catgry>
+      <catgry>
+        <catValu>16020</catValu>
+        <labl>Cape Verde</labl>
+      </catgry>
+      <catgry>
+        <catValu>16030</catValu>
+        <labl>Falkland Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>16040</catValu>
+        <labl>Greenland</labl>
+      </catgry>
+      <catgry>
+        <catValu>16050</catValu>
+        <labl>St. Helena and Ascension</labl>
+      </catgry>
+      <catgry>
+        <catValu>16060</catValu>
+        <labl>Canary Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>19900</catValu>
+        <labl>North America, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>20000</catValu>
+        <labl>Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>21000</catValu>
+        <labl>Central America</labl>
+      </catgry>
+      <catgry>
+        <catValu>21010</catValu>
+        <labl>Belize/British Honduras</labl>
+      </catgry>
+      <catgry>
+        <catValu>21020</catValu>
+        <labl>Costa Rica</labl>
+      </catgry>
+      <catgry>
+        <catValu>21030</catValu>
+        <labl>El Salvador</labl>
+      </catgry>
+      <catgry>
+        <catValu>21040</catValu>
+        <labl>Guatemala</labl>
+      </catgry>
+      <catgry>
+        <catValu>21050</catValu>
+        <labl>Honduras</labl>
+      </catgry>
+      <catgry>
+        <catValu>21060</catValu>
+        <labl>Nicaragua</labl>
+      </catgry>
+      <catgry>
+        <catValu>21070</catValu>
+        <labl>Panama</labl>
+      </catgry>
+      <catgry>
+        <catValu>21071</catValu>
+        <labl>Canal Zone</labl>
+      </catgry>
+      <catgry>
+        <catValu>21090</catValu>
+        <labl>Central America, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>25000</catValu>
+        <labl>Cuba</labl>
+      </catgry>
+      <catgry>
+        <catValu>26000</catValu>
+        <labl>West Indies</labl>
+      </catgry>
+      <catgry>
+        <catValu>26010</catValu>
+        <labl>Dominican Republic</labl>
+      </catgry>
+      <catgry>
+        <catValu>26020</catValu>
+        <labl>Haiti</labl>
+      </catgry>
+      <catgry>
+        <catValu>26030</catValu>
+        <labl>Jamaica</labl>
+      </catgry>
+      <catgry>
+        <catValu>26040</catValu>
+        <labl>British West Indies</labl>
+      </catgry>
+      <catgry>
+        <catValu>26041</catValu>
+        <labl>Anguilla</labl>
+      </catgry>
+      <catgry>
+        <catValu>26042</catValu>
+        <labl>Antigua-Barbuda</labl>
+      </catgry>
+      <catgry>
+        <catValu>26043</catValu>
+        <labl>Bahamas</labl>
+      </catgry>
+      <catgry>
+        <catValu>26044</catValu>
+        <labl>Barbados</labl>
+      </catgry>
+      <catgry>
+        <catValu>26045</catValu>
+        <labl>British Virgin Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>26046</catValu>
+        <labl>Anegada</labl>
+      </catgry>
+      <catgry>
+        <catValu>26047</catValu>
+        <labl>Cooper</labl>
+      </catgry>
+      <catgry>
+        <catValu>26048</catValu>
+        <labl>Jost Van Dyke</labl>
+      </catgry>
+      <catgry>
+        <catValu>26049</catValu>
+        <labl>Peter</labl>
+      </catgry>
+      <catgry>
+        <catValu>26050</catValu>
+        <labl>Tortola</labl>
+      </catgry>
+      <catgry>
+        <catValu>26051</catValu>
+        <labl>Virgin Gorda</labl>
+      </catgry>
+      <catgry>
+        <catValu>26052</catValu>
+        <labl>Br. Virgin Islands, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26053</catValu>
+        <labl>Cayman Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>26054</catValu>
+        <labl>Dominica</labl>
+      </catgry>
+      <catgry>
+        <catValu>26055</catValu>
+        <labl>Grenada</labl>
+      </catgry>
+      <catgry>
+        <catValu>26056</catValu>
+        <labl>Montserrat</labl>
+      </catgry>
+      <catgry>
+        <catValu>26057</catValu>
+        <labl>St. Kitts-Nevis</labl>
+      </catgry>
+      <catgry>
+        <catValu>26058</catValu>
+        <labl>St. Lucia</labl>
+      </catgry>
+      <catgry>
+        <catValu>26059</catValu>
+        <labl>St. Vincent</labl>
+      </catgry>
+      <catgry>
+        <catValu>26060</catValu>
+        <labl>Trinidad and Tobago</labl>
+      </catgry>
+      <catgry>
+        <catValu>26061</catValu>
+        <labl>Turks and Caicos</labl>
+      </catgry>
+      <catgry>
+        <catValu>26069</catValu>
+        <labl>Br. Virgin Islands, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26070</catValu>
+        <labl>Other West Indies</labl>
+      </catgry>
+      <catgry>
+        <catValu>26071</catValu>
+        <labl>Aruba</labl>
+      </catgry>
+      <catgry>
+        <catValu>26072</catValu>
+        <labl>Netherlands Antilles</labl>
+      </catgry>
+      <catgry>
+        <catValu>26073</catValu>
+        <labl>Bonaire</labl>
+      </catgry>
+      <catgry>
+        <catValu>26074</catValu>
+        <labl>Curacao</labl>
+      </catgry>
+      <catgry>
+        <catValu>26075</catValu>
+        <labl>Dutch St. Maarten</labl>
+      </catgry>
+      <catgry>
+        <catValu>26076</catValu>
+        <labl>Saba</labl>
+      </catgry>
+      <catgry>
+        <catValu>26077</catValu>
+        <labl>St. Eustatius</labl>
+      </catgry>
+      <catgry>
+        <catValu>26079</catValu>
+        <labl>Dutch Caribbean, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26080</catValu>
+        <labl>French St. Maarten</labl>
+      </catgry>
+      <catgry>
+        <catValu>26081</catValu>
+        <labl>Guadeloupe</labl>
+      </catgry>
+      <catgry>
+        <catValu>26082</catValu>
+        <labl>Martinique</labl>
+      </catgry>
+      <catgry>
+        <catValu>26083</catValu>
+        <labl>St. Barthelemy</labl>
+      </catgry>
+      <catgry>
+        <catValu>26089</catValu>
+        <labl>French Caribbean, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26090</catValu>
+        <labl>Antilles, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26091</catValu>
+        <labl>Caribbean, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26092</catValu>
+        <labl>Latin America, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26093</catValu>
+        <labl>Leeward Islands, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26094</catValu>
+        <labl>West Indies, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>26095</catValu>
+        <labl>Windward Islands, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>29900</catValu>
+        <labl>Americas, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>30000</catValu>
+        <labl>South America</labl>
+      </catgry>
+      <catgry>
+        <catValu>30005</catValu>
+        <labl>Argentina</labl>
+      </catgry>
+      <catgry>
+        <catValu>30010</catValu>
+        <labl>Bolivia</labl>
+      </catgry>
+      <catgry>
+        <catValu>30015</catValu>
+        <labl>Brazil</labl>
+      </catgry>
+      <catgry>
+        <catValu>30020</catValu>
+        <labl>Chile</labl>
+      </catgry>
+      <catgry>
+        <catValu>30025</catValu>
+        <labl>Colombia</labl>
+      </catgry>
+      <catgry>
+        <catValu>30030</catValu>
+        <labl>Ecuador</labl>
+      </catgry>
+      <catgry>
+        <catValu>30035</catValu>
+        <labl>French Guiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>30040</catValu>
+        <labl>Guyana/British Guiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>30045</catValu>
+        <labl>Paraguay</labl>
+      </catgry>
+      <catgry>
+        <catValu>30050</catValu>
+        <labl>Peru</labl>
+      </catgry>
+      <catgry>
+        <catValu>30055</catValu>
+        <labl>Suriname</labl>
+      </catgry>
+      <catgry>
+        <catValu>30060</catValu>
+        <labl>Uruguay</labl>
+      </catgry>
+      <catgry>
+        <catValu>30065</catValu>
+        <labl>Venezuela</labl>
+      </catgry>
+      <catgry>
+        <catValu>30090</catValu>
+        <labl>South America, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>30091</catValu>
+        <labl>South and Central America, n.s.</labl>
+      </catgry>
+      <catgry>
+        <catValu>40000</catValu>
+        <labl>Denmark</labl>
+      </catgry>
+      <catgry>
+        <catValu>40010</catValu>
+        <labl>Faeroe Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>40100</catValu>
+        <labl>Finland</labl>
+      </catgry>
+      <catgry>
+        <catValu>40200</catValu>
+        <labl>Iceland</labl>
+      </catgry>
+      <catgry>
+        <catValu>40300</catValu>
+        <labl>Lapland, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>40400</catValu>
+        <labl>Norway</labl>
+      </catgry>
+      <catgry>
+        <catValu>40410</catValu>
+        <labl>Svalbard and Jan Meyen</labl>
+      </catgry>
+      <catgry>
+        <catValu>40411</catValu>
+        <labl>Svalbard</labl>
+      </catgry>
+      <catgry>
+        <catValu>40412</catValu>
+        <labl>Jan Meyen</labl>
+      </catgry>
+      <catgry>
+        <catValu>40500</catValu>
+        <labl>Sweden</labl>
+      </catgry>
+      <catgry>
+        <catValu>41000</catValu>
+        <labl>England</labl>
+      </catgry>
+      <catgry>
+        <catValu>41010</catValu>
+        <labl>Channel Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>41011</catValu>
+        <labl>Guernsey</labl>
+      </catgry>
+      <catgry>
+        <catValu>41012</catValu>
+        <labl>Jersey</labl>
+      </catgry>
+      <catgry>
+        <catValu>41020</catValu>
+        <labl>Isle of Man</labl>
+      </catgry>
+      <catgry>
+        <catValu>41100</catValu>
+        <labl>Scotland</labl>
+      </catgry>
+      <catgry>
+        <catValu>41200</catValu>
+        <labl>Wales</labl>
+      </catgry>
+      <catgry>
+        <catValu>41300</catValu>
+        <labl>United Kingdom, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>41400</catValu>
+        <labl>Ireland</labl>
+      </catgry>
+      <catgry>
+        <catValu>41410</catValu>
+        <labl>Northern Ireland</labl>
+      </catgry>
+      <catgry>
+        <catValu>41900</catValu>
+        <labl>Northern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>42000</catValu>
+        <labl>Belgium</labl>
+      </catgry>
+      <catgry>
+        <catValu>42100</catValu>
+        <labl>France</labl>
+      </catgry>
+      <catgry>
+        <catValu>42110</catValu>
+        <labl>Alsace-Lorraine</labl>
+      </catgry>
+      <catgry>
+        <catValu>42111</catValu>
+        <labl>Alsace</labl>
+      </catgry>
+      <catgry>
+        <catValu>42112</catValu>
+        <labl>Lorraine</labl>
+      </catgry>
+      <catgry>
+        <catValu>42200</catValu>
+        <labl>Liechtenstein</labl>
+      </catgry>
+      <catgry>
+        <catValu>42300</catValu>
+        <labl>Luxembourg</labl>
+      </catgry>
+      <catgry>
+        <catValu>42400</catValu>
+        <labl>Monaco</labl>
+      </catgry>
+      <catgry>
+        <catValu>42500</catValu>
+        <labl>Netherlands</labl>
+      </catgry>
+      <catgry>
+        <catValu>42600</catValu>
+        <labl>Switzerland</labl>
+      </catgry>
+      <catgry>
+        <catValu>42900</catValu>
+        <labl>Western Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>43000</catValu>
+        <labl>Albania</labl>
+      </catgry>
+      <catgry>
+        <catValu>43100</catValu>
+        <labl>Andorra</labl>
+      </catgry>
+      <catgry>
+        <catValu>43200</catValu>
+        <labl>Gibraltar</labl>
+      </catgry>
+      <catgry>
+        <catValu>43300</catValu>
+        <labl>Greece</labl>
+      </catgry>
+      <catgry>
+        <catValu>43310</catValu>
+        <labl>Dodecanese Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>43320</catValu>
+        <labl>Turkey Greece</labl>
+      </catgry>
+      <catgry>
+        <catValu>43330</catValu>
+        <labl>Macedonia</labl>
+      </catgry>
+      <catgry>
+        <catValu>43400</catValu>
+        <labl>Italy</labl>
+      </catgry>
+      <catgry>
+        <catValu>43500</catValu>
+        <labl>Malta</labl>
+      </catgry>
+      <catgry>
+        <catValu>43600</catValu>
+        <labl>Portugal</labl>
+      </catgry>
+      <catgry>
+        <catValu>43610</catValu>
+        <labl>Azores</labl>
+      </catgry>
+      <catgry>
+        <catValu>43620</catValu>
+        <labl>Madeira Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>43630</catValu>
+        <labl>Cape Verde Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>43640</catValu>
+        <labl>St. Miguel</labl>
+      </catgry>
+      <catgry>
+        <catValu>43700</catValu>
+        <labl>San Marino</labl>
+      </catgry>
+      <catgry>
+        <catValu>43800</catValu>
+        <labl>Spain</labl>
+      </catgry>
+      <catgry>
+        <catValu>43900</catValu>
+        <labl>Vatican City</labl>
+      </catgry>
+      <catgry>
+        <catValu>44000</catValu>
+        <labl>Southern Europe, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>45000</catValu>
+        <labl>Austria</labl>
+      </catgry>
+      <catgry>
+        <catValu>45010</catValu>
+        <labl>Austria-Hungary</labl>
+      </catgry>
+      <catgry>
+        <catValu>45020</catValu>
+        <labl>Austria-Graz</labl>
+      </catgry>
+      <catgry>
+        <catValu>45030</catValu>
+        <labl>Austria-Linz</labl>
+      </catgry>
+      <catgry>
+        <catValu>45040</catValu>
+        <labl>Austria-Salzburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45050</catValu>
+        <labl>Austria-Tyrol</labl>
+      </catgry>
+      <catgry>
+        <catValu>45060</catValu>
+        <labl>Austria-Vienna</labl>
+      </catgry>
+      <catgry>
+        <catValu>45070</catValu>
+        <labl>Austria-Kaernsten</labl>
+      </catgry>
+      <catgry>
+        <catValu>45080</catValu>
+        <labl>Austria-Neustadt</labl>
+      </catgry>
+      <catgry>
+        <catValu>45100</catValu>
+        <labl>Bulgaria</labl>
+      </catgry>
+      <catgry>
+        <catValu>45200</catValu>
+        <labl>Czechoslovakia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45210</catValu>
+        <labl>Bohemia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45211</catValu>
+        <labl>Bohemia-Moravia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45212</catValu>
+        <labl>Slovakia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45213</catValu>
+        <labl>Czech Republic</labl>
+      </catgry>
+      <catgry>
+        <catValu>45300</catValu>
+        <labl>Germany</labl>
+      </catgry>
+      <catgry>
+        <catValu>45301</catValu>
+        <labl>Berlin</labl>
+      </catgry>
+      <catgry>
+        <catValu>45302</catValu>
+        <labl>West Berlin</labl>
+      </catgry>
+      <catgry>
+        <catValu>45303</catValu>
+        <labl>East Berlin</labl>
+      </catgry>
+      <catgry>
+        <catValu>45310</catValu>
+        <labl>West Germany</labl>
+      </catgry>
+      <catgry>
+        <catValu>45311</catValu>
+        <labl>Baden</labl>
+      </catgry>
+      <catgry>
+        <catValu>45312</catValu>
+        <labl>Bavaria</labl>
+      </catgry>
+      <catgry>
+        <catValu>45313</catValu>
+        <labl>Braunschweig</labl>
+      </catgry>
+      <catgry>
+        <catValu>45314</catValu>
+        <labl>Bremen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45315</catValu>
+        <labl>Hamburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45316</catValu>
+        <labl>Hanover</labl>
+      </catgry>
+      <catgry>
+        <catValu>45317</catValu>
+        <labl>Hessen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45318</catValu>
+        <labl>Hesse-Nassau</labl>
+      </catgry>
+      <catgry>
+        <catValu>45319</catValu>
+        <labl>Lippe</labl>
+      </catgry>
+      <catgry>
+        <catValu>45320</catValu>
+        <labl>Lubeck</labl>
+      </catgry>
+      <catgry>
+        <catValu>45321</catValu>
+        <labl>Oldenburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45322</catValu>
+        <labl>Rheinland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45323</catValu>
+        <labl>Schaumburg-Lippe</labl>
+      </catgry>
+      <catgry>
+        <catValu>45324</catValu>
+        <labl>Schleswig</labl>
+      </catgry>
+      <catgry>
+        <catValu>45325</catValu>
+        <labl>Sigmaringen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45327</catValu>
+        <labl>Westphalia</labl>
+      </catgry>
+      <catgry>
+        <catValu>45328</catValu>
+        <labl>Wurttemberg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45329</catValu>
+        <labl>Waldeck</labl>
+      </catgry>
+      <catgry>
+        <catValu>45330</catValu>
+        <labl>Wittenberg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45331</catValu>
+        <labl>Frankfurt</labl>
+      </catgry>
+      <catgry>
+        <catValu>45332</catValu>
+        <labl>Saarland</labl>
+      </catgry>
+      <catgry>
+        <catValu>45333</catValu>
+        <labl>Nordrhein-Westfalen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45340</catValu>
+        <labl>East Germany</labl>
+      </catgry>
+      <catgry>
+        <catValu>45341</catValu>
+        <labl>Anhalt</labl>
+      </catgry>
+      <catgry>
+        <catValu>45342</catValu>
+        <labl>Brandenburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>45344</catValu>
+        <labl>Kingdom of Saxony</labl>
+      </catgry>
+      <catgry>
+        <catValu>11510</catValu>
+        <labl>St. Croix</labl>
+      </catgry>
+      <catgry>
+        <catValu>11500</catValu>
+        <labl>U.S. Virgin Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>11000</catValu>
+        <labl>Puerto Rico</labl>
+      </catgry>
+      <catgry>
+        <catValu>10500</catValu>
+        <labl>Guam</labl>
+      </catgry>
+      <catgry>
+        <catValu>10010</catValu>
+        <labl>Samoa, 1940-1950</labl>
+      </catgry>
+      <catgry>
+        <catValu>10000</catValu>
+        <labl>American Samoa</labl>
+      </catgry>
+      <catgry>
+        <catValu>09900</catValu>
+        <labl>United States, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>09000</catValu>
+        <labl>Native American</labl>
+      </catgry>
+      <catgry>
+        <catValu>05610</catValu>
+        <labl>Wyoming Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>05600</catValu>
+        <labl>Wyoming</labl>
+      </catgry>
+      <catgry>
+        <catValu>05500</catValu>
+        <labl>Wisconsin</labl>
+      </catgry>
+      <catgry>
+        <catValu>05400</catValu>
+        <labl>West Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>05300</catValu>
+        <labl>Washington</labl>
+      </catgry>
+      <catgry>
+        <catValu>05100</catValu>
+        <labl>Virginia</labl>
+      </catgry>
+      <catgry>
+        <catValu>05000</catValu>
+        <labl>Vermont</labl>
+      </catgry>
+      <catgry>
+        <catValu>04910</catValu>
+        <labl>Utah Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>04900</catValu>
+        <labl>Utah</labl>
+      </catgry>
+      <catgry>
+        <catValu>04800</catValu>
+        <labl>Texas</labl>
+      </catgry>
+      <catgry>
+        <catValu>04700</catValu>
+        <labl>Tennessee</labl>
+      </catgry>
+      <catgry>
+        <catValu>04610</catValu>
+        <labl>Dakota Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>04600</catValu>
+        <labl>South Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>04500</catValu>
+        <labl>South Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>04400</catValu>
+        <labl>Rhode Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>04200</catValu>
+        <labl>Pennsylvania</labl>
+      </catgry>
+      <catgry>
+        <catValu>04100</catValu>
+        <labl>Oregon</labl>
+      </catgry>
+      <catgry>
+        <catValu>04010</catValu>
+        <labl>Indian Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>04000</catValu>
+        <labl>Oklahoma</labl>
+      </catgry>
+      <catgry>
+        <catValu>03900</catValu>
+        <labl>Ohio</labl>
+      </catgry>
+      <catgry>
+        <catValu>03800</catValu>
+        <labl>North Dakota</labl>
+      </catgry>
+      <catgry>
+        <catValu>03700</catValu>
+        <labl>North Carolina</labl>
+      </catgry>
+      <catgry>
+        <catValu>03600</catValu>
+        <labl>New York</labl>
+      </catgry>
+      <catgry>
+        <catValu>03510</catValu>
+        <labl>New Mexico Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>03500</catValu>
+        <labl>New Mexico</labl>
+      </catgry>
+      <catgry>
+        <catValu>03400</catValu>
+        <labl>New Jersey</labl>
+      </catgry>
+      <catgry>
+        <catValu>03300</catValu>
+        <labl>New Hampshire</labl>
+      </catgry>
+      <catgry>
+        <catValu>03200</catValu>
+        <labl>Nevada</labl>
+      </catgry>
+      <catgry>
+        <catValu>03100</catValu>
+        <labl>Nebraska</labl>
+      </catgry>
+      <catgry>
+        <catValu>03000</catValu>
+        <labl>Montana</labl>
+      </catgry>
+      <catgry>
+        <catValu>02900</catValu>
+        <labl>Missouri</labl>
+      </catgry>
+      <catgry>
+        <catValu>02800</catValu>
+        <labl>Mississippi</labl>
+      </catgry>
+      <catgry>
+        <catValu>02700</catValu>
+        <labl>Minnesota</labl>
+      </catgry>
+      <catgry>
+        <catValu>02600</catValu>
+        <labl>Michigan</labl>
+      </catgry>
+      <catgry>
+        <catValu>02500</catValu>
+        <labl>Massachusetts</labl>
+      </catgry>
+      <catgry>
+        <catValu>02400</catValu>
+        <labl>Maryland</labl>
+      </catgry>
+      <catgry>
+        <catValu>02300</catValu>
+        <labl>Maine</labl>
+      </catgry>
+      <catgry>
+        <catValu>02200</catValu>
+        <labl>Louisiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>02100</catValu>
+        <labl>Kentucky</labl>
+      </catgry>
+      <catgry>
+        <catValu>02000</catValu>
+        <labl>Kansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>01900</catValu>
+        <labl>Iowa</labl>
+      </catgry>
+      <catgry>
+        <catValu>01800</catValu>
+        <labl>Indiana</labl>
+      </catgry>
+      <catgry>
+        <catValu>01700</catValu>
+        <labl>Illinois</labl>
+      </catgry>
+      <catgry>
+        <catValu>01610</catValu>
+        <labl>Idaho Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>01600</catValu>
+        <labl>Idaho</labl>
+      </catgry>
+      <catgry>
+        <catValu>01500</catValu>
+        <labl>Hawaii</labl>
+      </catgry>
+      <catgry>
+        <catValu>01300</catValu>
+        <labl>Georgia</labl>
+      </catgry>
+      <catgry>
+        <catValu>01200</catValu>
+        <labl>Florida</labl>
+      </catgry>
+      <catgry>
+        <catValu>01100</catValu>
+        <labl>District of Columbia</labl>
+      </catgry>
+      <catgry>
+        <catValu>01000</catValu>
+        <labl>Delaware</labl>
+      </catgry>
+      <catgry>
+        <catValu>00900</catValu>
+        <labl>Connecticut</labl>
+      </catgry>
+      <catgry>
+        <catValu>00800</catValu>
+        <labl>Colorado</labl>
+      </catgry>
+      <catgry>
+        <catValu>00600</catValu>
+        <labl>California</labl>
+      </catgry>
+      <catgry>
+        <catValu>00500</catValu>
+        <labl>Arkansas</labl>
+      </catgry>
+      <catgry>
+        <catValu>00400</catValu>
+        <labl>Arizona</labl>
+      </catgry>
+      <catgry>
+        <catValu>00200</catValu>
+        <labl>Alaska</labl>
+      </catgry>
+      <catgry>
+        <catValu>00100</catValu>
+        <labl>Alabama</labl>
+      </catgry>
+      <catgry>
+        <catValu>99900</catValu>
+        <labl>Missing/blank</labl>
+      </catgry>
+      <catgry>
+        <catValu>95000</catValu>
+        <labl>Other n.e.c.</labl>
+      </catgry>
+      <catgry>
+        <catValu>90022</catValu>
+        <labl>At sea or abroad (U.S. citizen)</labl>
+      </catgry>
+      <catgry>
+        <catValu>90021</catValu>
+        <labl>At sea (US citizen)</labl>
+      </catgry>
+      <catgry>
+        <catValu>90020</catValu>
+        <labl>At sea</labl>
+      </catgry>
+      <catgry>
+        <catValu>90011</catValu>
+        <labl>Abroad (US citizen)</labl>
+      </catgry>
+      <catgry>
+        <catValu>90010</catValu>
+        <labl>Abroad, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>90000</catValu>
+        <labl>Abroad (unknown) or at sea</labl>
+      </catgry>
+      <catgry>
+        <catValu>80050</catValu>
+        <labl>Heard and McDonald Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>80040</catValu>
+        <labl>French Southern and Antarctic Lands</labl>
+      </catgry>
+      <catgry>
+        <catValu>80030</catValu>
+        <labl>Dronning Maud Land</labl>
+      </catgry>
+      <catgry>
+        <catValu>80020</catValu>
+        <labl>British Antarctic Terr.</labl>
+      </catgry>
+      <catgry>
+        <catValu>80010</catValu>
+        <labl>Bouvet Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>80000</catValu>
+        <labl>Antarctica, ns/nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>71090</catValu>
+        <labl>Oceania, ns/nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>71050</catValu>
+        <labl>Clipperton Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>71049</catValu>
+        <labl>Pacific Trust Terr, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>71048</catValu>
+        <labl>Palau</labl>
+      </catgry>
+      <catgry>
+        <catValu>71047</catValu>
+        <labl>Northern Mariana Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71046</catValu>
+        <labl>Yap</labl>
+      </catgry>
+      <catgry>
+        <catValu>71045</catValu>
+        <labl>Truk</labl>
+      </catgry>
+      <catgry>
+        <catValu>71044</catValu>
+        <labl>Pohnpei</labl>
+      </catgry>
+      <catgry>
+        <catValu>71043</catValu>
+        <labl>Kosrae</labl>
+      </catgry>
+      <catgry>
+        <catValu>71042</catValu>
+        <labl>Micronesia</labl>
+      </catgry>
+      <catgry>
+        <catValu>71041</catValu>
+        <labl>Marshall Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71040</catValu>
+        <labl>US Pacific Trust Territories</labl>
+      </catgry>
+      <catgry>
+        <catValu>71039</catValu>
+        <labl>Micronesia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>71034</catValu>
+        <labl>Nauru</labl>
+      </catgry>
+      <catgry>
+        <catValu>71033</catValu>
+        <labl>Canton and Enderbury</labl>
+      </catgry>
+      <catgry>
+        <catValu>71032</catValu>
+        <labl>Kiribati</labl>
+      </catgry>
+      <catgry>
+        <catValu>71029</catValu>
+        <labl>Polynesia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>71028</catValu>
+        <labl>Tuvalu</labl>
+      </catgry>
+      <catgry>
+        <catValu>71027</catValu>
+        <labl>Tokelau</labl>
+      </catgry>
+      <catgry>
+        <catValu>71026</catValu>
+        <labl>Pitcairn Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>71025</catValu>
+        <labl>Western Samoa</labl>
+      </catgry>
+      <catgry>
+        <catValu>71024</catValu>
+        <labl>Wallis and Futuna Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71023</catValu>
+        <labl>Tonga</labl>
+      </catgry>
+      <catgry>
+        <catValu>71022</catValu>
+        <labl>French Polynesia</labl>
+      </catgry>
+      <catgry>
+        <catValu>71020</catValu>
+        <labl>Cook Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71018</catValu>
+        <labl>Niue</labl>
+      </catgry>
+      <catgry>
+        <catValu>71017</catValu>
+        <labl>Norfolk Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71016</catValu>
+        <labl>Melanesia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>71015</catValu>
+        <labl>Fiji</labl>
+      </catgry>
+      <catgry>
+        <catValu>71014</catValu>
+        <labl>Vanuatu (New Hebrides)</labl>
+      </catgry>
+      <catgry>
+        <catValu>71013</catValu>
+        <labl>Solomon Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>71012</catValu>
+        <labl>Papua New Guinea</labl>
+      </catgry>
+      <catgry>
+        <catValu>71010</catValu>
+        <labl>New Caledonia</labl>
+      </catgry>
+      <catgry>
+        <catValu>71000</catValu>
+        <labl>Pacific Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>70020</catValu>
+        <labl>New Zealand</labl>
+      </catgry>
+      <catgry>
+        <catValu>70014</catValu>
+        <labl>Cocos Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>70013</catValu>
+        <labl>Christmas Island</labl>
+      </catgry>
+      <catgry>
+        <catValu>70012</catValu>
+        <labl>Coral Sea Islands Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>70011</catValu>
+        <labl>Ashmore and Cartier Islands</labl>
+      </catgry>
+      <catgry>
+        <catValu>70010</catValu>
+        <labl>Australia</labl>
+      </catgry>
+      <catgry>
+        <catValu>70000</catValu>
+        <labl>Australia and New Zealand</labl>
+      </catgry>
+      <catgry>
+        <catValu>60099</catValu>
+        <labl>Africa, ns/nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>60096</catValu>
+        <labl>Southern Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60095</catValu>
+        <labl>Swaziland</labl>
+      </catgry>
+      <catgry>
+        <catValu>60094</catValu>
+        <labl>South Africa (Union of)</labl>
+      </catgry>
+      <catgry>
+        <catValu>60093</catValu>
+        <labl>Namibia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60092</catValu>
+        <labl>Lesotho</labl>
+      </catgry>
+      <catgry>
+        <catValu>60091</catValu>
+        <labl>Botswana</labl>
+      </catgry>
+      <catgry>
+        <catValu>60090</catValu>
+        <labl>Southern Africa</labl>
+      </catgry>
+      <catgry>
+        <catValu>60082</catValu>
+        <labl>French Equatorial Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60081</catValu>
+        <labl>Equatorial Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60080</catValu>
+        <labl>Central Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60079</catValu>
+        <labl>Zaire</labl>
+      </catgry>
+      <catgry>
+        <catValu>60078</catValu>
+        <labl>Sao Tome and Principe</labl>
+      </catgry>
+      <catgry>
+        <catValu>60077</catValu>
+        <labl>Gabon</labl>
+      </catgry>
+      <catgry>
+        <catValu>60076</catValu>
+        <labl>Equatorial Guinea</labl>
+      </catgry>
+      <catgry>
+        <catValu>60075</catValu>
+        <labl>Congo</labl>
+      </catgry>
+      <catgry>
+        <catValu>60074</catValu>
+        <labl>Chad</labl>
+      </catgry>
+      <catgry>
+        <catValu>60073</catValu>
+        <labl>Central African Republic</labl>
+      </catgry>
+      <catgry>
+        <catValu>60072</catValu>
+        <labl>Cameroon</labl>
+      </catgry>
+      <catgry>
+        <catValu>60071</catValu>
+        <labl>Angola</labl>
+      </catgry>
+      <catgry>
+        <catValu>60070</catValu>
+        <labl>Central Africa</labl>
+      </catgry>
+      <catgry>
+        <catValu>60065</catValu>
+        <labl>Eritrea</labl>
+      </catgry>
+      <catgry>
+        <catValu>60064</catValu>
+        <labl>Eastern Africa, nec/ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60063</catValu>
+        <labl>Tromelin</labl>
+      </catgry>
+      <catgry>
+        <catValu>60062</catValu>
+        <labl>Mayotte</labl>
+      </catgry>
+      <catgry>
+        <catValu>60061</catValu>
+        <labl>Juan de Nova</labl>
+      </catgry>
+      <catgry>
+        <catValu>60060</catValu>
+        <labl>Gloriosos</labl>
+      </catgry>
+      <catgry>
+        <catValu>60059</catValu>
+        <labl>Europa</labl>
+      </catgry>
+      <catgry>
+        <catValu>60058</catValu>
+        <labl>Bassas de India</labl>
+      </catgry>
+      <catgry>
+        <catValu>60057</catValu>
+        <labl>Zimbabwe</labl>
+      </catgry>
+      <catgry>
+        <catValu>60056</catValu>
+        <labl>Zambia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60055</catValu>
+        <labl>Uganda</labl>
+      </catgry>
+      <catgry>
+        <catValu>60054</catValu>
+        <labl>Tanzania</labl>
+      </catgry>
+      <catgry>
+        <catValu>60053</catValu>
+        <labl>Somalia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60052</catValu>
+        <labl>Seychelles</labl>
+      </catgry>
+      <catgry>
+        <catValu>60051</catValu>
+        <labl>Rwanda</labl>
+      </catgry>
+      <catgry>
+        <catValu>60050</catValu>
+        <labl>Reunion</labl>
+      </catgry>
+      <catgry>
+        <catValu>60049</catValu>
+        <labl>Mozambique</labl>
+      </catgry>
+      <catgry>
+        <catValu>60048</catValu>
+        <labl>Mauritius</labl>
+      </catgry>
+      <catgry>
+        <catValu>60047</catValu>
+        <labl>Malawi</labl>
+      </catgry>
+      <catgry>
+        <catValu>60046</catValu>
+        <labl>Madagascar</labl>
+      </catgry>
+      <catgry>
+        <catValu>60045</catValu>
+        <labl>Kenya</labl>
+      </catgry>
+      <catgry>
+        <catValu>60044</catValu>
+        <labl>Ethiopia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60043</catValu>
+        <labl>Djibouti</labl>
+      </catgry>
+      <catgry>
+        <catValu>60042</catValu>
+        <labl>Comoros</labl>
+      </catgry>
+      <catgry>
+        <catValu>60041</catValu>
+        <labl>Burundi</labl>
+      </catgry>
+      <catgry>
+        <catValu>60040</catValu>
+        <labl>British Indian Ocean Territory</labl>
+      </catgry>
+      <catgry>
+        <catValu>60039</catValu>
+        <labl>French West Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60038</catValu>
+        <labl>Western Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60034</catValu>
+        <labl>Togo</labl>
+      </catgry>
+      <catgry>
+        <catValu>60033</catValu>
+        <labl>Sierra Leone</labl>
+      </catgry>
+      <catgry>
+        <catValu>60032</catValu>
+        <labl>Senegal</labl>
+      </catgry>
+      <catgry>
+        <catValu>60031</catValu>
+        <labl>Nigeria</labl>
+      </catgry>
+      <catgry>
+        <catValu>60030</catValu>
+        <labl>Niger</labl>
+      </catgry>
+      <catgry>
+        <catValu>60029</catValu>
+        <labl>Mauritania</labl>
+      </catgry>
+      <catgry>
+        <catValu>60028</catValu>
+        <labl>Mali</labl>
+      </catgry>
+      <catgry>
+        <catValu>60027</catValu>
+        <labl>Liberia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60026</catValu>
+        <labl>Ivory Coast</labl>
+      </catgry>
+      <catgry>
+        <catValu>60025</catValu>
+        <labl>Guinea-Bissau</labl>
+      </catgry>
+      <catgry>
+        <catValu>60024</catValu>
+        <labl>Guinea</labl>
+      </catgry>
+      <catgry>
+        <catValu>60023</catValu>
+        <labl>Ghana</labl>
+      </catgry>
+      <catgry>
+        <catValu>60022</catValu>
+        <labl>Gambia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60021</catValu>
+        <labl>Burkina Faso</labl>
+      </catgry>
+      <catgry>
+        <catValu>60020</catValu>
+        <labl>Benin</labl>
+      </catgry>
+      <catgry>
+        <catValu>60019</catValu>
+        <labl>North Africa, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>60017</catValu>
+        <labl>Western Sahara</labl>
+      </catgry>
+      <catgry>
+        <catValu>60016</catValu>
+        <labl>Tunisia</labl>
+      </catgry>
+      <catgry>
+        <catValu>60015</catValu>
+        <labl>Sudan</labl>
+      </catgry>
+      <catgry>
+        <catValu>60014</catValu>
+        <labl>Morocco</labl>
+      </catgry>
+      <catgry>
+        <catValu>60013</catValu>
+        <labl>Libya</labl>
+      </catgry>
+      <catgry>
+        <catValu>60012</catValu>
+        <labl>Egypt/United Arab Rep.</labl>
+      </catgry>
+      <catgry>
+        <catValu>60011</catValu>
+        <labl>Algeria</labl>
+      </catgry>
+      <catgry>
+        <catValu>60010</catValu>
+        <labl>Northern Africa</labl>
+      </catgry>
+      <catgry>
+        <catValu>60000</catValu>
+        <labl>Africa</labl>
+      </catgry>
+      <catgry>
+        <catValu>59900</catValu>
+        <labl>Asia, nec/ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>55000</catValu>
+        <labl>South Asia, nec</labl>
+      </catgry>
+      <catgry>
+        <catValu>54900</catValu>
+        <labl>Asia Minor, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>54800</catValu>
+        <labl>Southwest Asia, nec/ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>54700</catValu>
+        <labl>Middle East, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>54600</catValu>
+        <labl>Persian Gulf States, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>54500</catValu>
+        <labl>Yemen, PDR (South)</labl>
+      </catgry>
+      <catgry>
+        <catValu>54400</catValu>
+        <labl>Yemen Arab Republic (North)</labl>
+      </catgry>
+      <catgry>
+        <catValu>54300</catValu>
+        <labl>United Arab Emirates</labl>
+      </catgry>
+      <catgry>
+        <catValu>54220</catValu>
+        <labl>Asian Turkey</labl>
+      </catgry>
+      <catgry>
+        <catValu>54210</catValu>
+        <labl>European Turkey</labl>
+      </catgry>
+      <catgry>
+        <catValu>54200</catValu>
+        <labl>Turkey</labl>
+      </catgry>
+      <catgry>
+        <catValu>54100</catValu>
+        <labl>Syria</labl>
+      </catgry>
+      <catgry>
+        <catValu>54000</catValu>
+        <labl>Saudi Arabia</labl>
+      </catgry>
+      <catgry>
+        <catValu>53900</catValu>
+        <labl>Qatar</labl>
+      </catgry>
+      <catgry>
+        <catValu>53800</catValu>
+        <labl>Oman</labl>
+      </catgry>
+      <catgry>
+        <catValu>53700</catValu>
+        <labl>Lebanon</labl>
+      </catgry>
+      <catgry>
+        <catValu>53600</catValu>
+        <labl>Kuwait</labl>
+      </catgry>
+      <catgry>
+        <catValu>53500</catValu>
+        <labl>Jordan</labl>
+      </catgry>
+      <catgry>
+        <catValu>53440</catValu>
+        <labl>Israel</labl>
+      </catgry>
+      <catgry>
+        <catValu>53430</catValu>
+        <labl>West Bank</labl>
+      </catgry>
+      <catgry>
+        <catValu>53420</catValu>
+        <labl>Palestine</labl>
+      </catgry>
+      <catgry>
+        <catValu>53410</catValu>
+        <labl>Gaza Strip</labl>
+      </catgry>
+      <catgry>
+        <catValu>53400</catValu>
+        <labl>Israel/Palestine</labl>
+      </catgry>
+      <catgry>
+        <catValu>53300</catValu>
+        <labl>Iraq/Saudi Arabia</labl>
+      </catgry>
+      <catgry>
+        <catValu>53210</catValu>
+        <labl>Mesopotamia</labl>
+      </catgry>
+      <catgry>
+        <catValu>53200</catValu>
+        <labl>Iraq</labl>
+      </catgry>
+      <catgry>
+        <catValu>53100</catValu>
+        <labl>Cyprus</labl>
+      </catgry>
+      <catgry>
+        <catValu>53000</catValu>
+        <labl>Bahrain</labl>
+      </catgry>
+      <catgry>
+        <catValu>52400</catValu>
+        <labl>Nepal</labl>
+      </catgry>
+      <catgry>
+        <catValu>52300</catValu>
+        <labl>Maldives</labl>
+      </catgry>
+      <catgry>
+        <catValu>52200</catValu>
+        <labl>Iran</labl>
+      </catgry>
+      <catgry>
+        <catValu>52150</catValu>
+        <labl>Sri Lanka (Ceylon)</labl>
+      </catgry>
+      <catgry>
+        <catValu>52140</catValu>
+        <labl>Pakistan</labl>
+      </catgry>
+      <catgry>
+        <catValu>52130</catValu>
+        <labl>Burma (Myanmar)</labl>
+      </catgry>
+      <catgry>
+        <catValu>52120</catValu>
+        <labl>Bhutan</labl>
+      </catgry>
+      <catgry>
+        <catValu>52110</catValu>
+        <labl>Bangladesh</labl>
+      </catgry>
+      <catgry>
+        <catValu>52100</catValu>
+        <labl>India</labl>
+      </catgry>
+      <catgry>
+        <catValu>52000</catValu>
+        <labl>Afghanistan</labl>
+      </catgry>
+      <catgry>
+        <catValu>51910</catValu>
+        <labl>Indochina, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>51900</catValu>
+        <labl>Southeast Asia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>51800</catValu>
+        <labl>Vietnam</labl>
+      </catgry>
+      <catgry>
+        <catValu>51700</catValu>
+        <labl>Thailand</labl>
+      </catgry>
+      <catgry>
+        <catValu>51600</catValu>
+        <labl>Singapore</labl>
+      </catgry>
+      <catgry>
+        <catValu>51500</catValu>
+        <labl>Philippines</labl>
+      </catgry>
+      <catgry>
+        <catValu>51400</catValu>
+        <labl>Malaysia</labl>
+      </catgry>
+      <catgry>
+        <catValu>51300</catValu>
+        <labl>Laos</labl>
+      </catgry>
+      <catgry>
+        <catValu>51220</catValu>
+        <labl>East Timor</labl>
+      </catgry>
+      <catgry>
+        <catValu>51210</catValu>
+        <labl>East Indies</labl>
+      </catgry>
+      <catgry>
+        <catValu>51200</catValu>
+        <labl>Indonesia</labl>
+      </catgry>
+      <catgry>
+        <catValu>51100</catValu>
+        <labl>Cambodia (Kampuchea)</labl>
+      </catgry>
+      <catgry>
+        <catValu>51000</catValu>
+        <labl>Brunei</labl>
+      </catgry>
+      <catgry>
+        <catValu>50900</catValu>
+        <labl>East Asia, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>50220</catValu>
+        <labl>South Korea</labl>
+      </catgry>
+      <catgry>
+        <catValu>50210</catValu>
+        <labl>North Korea</labl>
+      </catgry>
+      <catgry>
+        <catValu>50200</catValu>
+        <labl>Korea</labl>
+      </catgry>
+      <catgry>
+        <catValu>50100</catValu>
+        <labl>Japan</labl>
+      </catgry>
+      <catgry>
+        <catValu>50040</catValu>
+        <labl>Taiwan</labl>
+      </catgry>
+      <catgry>
+        <catValu>50030</catValu>
+        <labl>Mongolia</labl>
+      </catgry>
+      <catgry>
+        <catValu>50020</catValu>
+        <labl>Macau</labl>
+      </catgry>
+      <catgry>
+        <catValu>50010</catValu>
+        <labl>Hong Kong</labl>
+      </catgry>
+      <catgry>
+        <catValu>50000</catValu>
+        <labl>China</labl>
+      </catgry>
+      <catgry>
+        <catValu>49900</catValu>
+        <labl>Europe, ns.</labl>
+      </catgry>
+      <catgry>
+        <catValu>46590</catValu>
+        <labl>USSR, ns</labl>
+      </catgry>
+      <catgry>
+        <catValu>46548</catValu>
+        <labl>Siberia</labl>
+      </catgry>
+      <catgry>
+        <catValu>46547</catValu>
+        <labl>Uzbekistan</labl>
+      </catgry>
+      <catgry>
+        <catValu>45352</catValu>
+        <labl>Strelitz</labl>
+      </catgry>
+      <catgry>
+        <catValu>45348</catValu>
+        <labl>Sachsen-Meiningen</labl>
+      </catgry>
+      <catgry>
+        <catValu>45349</catValu>
+        <labl>Sachsen-Weimar-Eisenach</labl>
+      </catgry>
+      <catgry>
+        <catValu>45326</catValu>
+        <labl>Schwarzburg</labl>
+      </catgry>
+      <catgry>
+        <catValu>12056</catValu>
+        <labl>Canton and Enderbury Island</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+    <var ID="CITIZEN" files="ExtractData" name="CITIZEN" intrvl="discrete" dcml="0">
+      <location StartPos="80" width="1" EndPos="80"/>
+      <labl>Citizenship status</labl>
+      <txt><![CDATA[CITIZEN reports the citizenship status of respondents, distinguishing between naturalized citizens and non-citizens. For 1900-1940, respondents who were not yet citizens but who had begun the naturalization process ("received first papers") are identified.]]></txt>
+      <catgry>
+        <catValu>0</catValu>
+        <labl>N/A</labl>
+      </catgry>
+      <catgry>
+        <catValu>1</catValu>
+        <labl>Born abroad of American parents</labl>
+      </catgry>
+      <catgry>
+        <catValu>2</catValu>
+        <labl>Naturalized citizen</labl>
+      </catgry>
+      <catgry>
+        <catValu>3</catValu>
+        <labl>Not a citizen</labl>
+      </catgry>
+      <catgry>
+        <catValu>4</catValu>
+        <labl>Not a citizen, but has received first papers</labl>
+      </catgry>
+      <catgry>
+        <catValu>5</catValu>
+        <labl>Foreign born, citizenship status not reported</labl>
+      </catgry>
+      <concept vocab="IPUMS">Race, Ethnicity, and Nativity Variables -- PERSON</concept>
+      <varFormat schema="other" type="numeric"/>
+    </var>
+  </dataDscr>
+</codeBook>
