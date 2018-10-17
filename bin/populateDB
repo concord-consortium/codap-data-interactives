@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+// ==========================================================================
+//  
+//  Author:   jsandoe
+//
+//  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ==========================================================================
+/**
+ * Node program to populate the SDLC database with data
+ */
+const fs = require('fs');
+const console = require('console');
+const readline = require('readline');
+
+let filename = process.argv[2] || 'data/usa_00001.dat';
+let writeStream = fs.createWriteStream('out.sql');
+let insertPrefix = "insert into peeps (year, state_code, weight, sample_data) values ";
+
+writeStream.write('delete from peeps;\n');
+let lineReader = readline.createInterface({
+  input: fs.createReadStream(filename)
+});
+
+lineReader.on('line', function (line){
+  if (line.length > 0) {
+    // let sep = isFirst? '': ',\n';
+    // isFirst = false;
+    let year = Number(line.slice(0,4));
+    let state = Number(line.slice(31,33));
+    let weight = Number(line.slice(40, 50))/100;
+    writeStream.write(insertPrefix + '(' + [year, state, weight, "'" + line + "'"].join() + ');\n');
+  }
+});
