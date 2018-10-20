@@ -55,7 +55,7 @@ acs.DBconnect = {
         iAtts.forEach( a => tAttNames.push("`" + a.name + "`" ));   //  iAtts is an array, we need a comma-separated string
 
         try {
-            const theCommands = {"c": "getCases", "atts": "," + tAttNames.join(','), "n" : tSampleSize};
+            const theCommands = {"c": "getCases", "atts": 'sample_data', "n" : tSampleSize};
             const iData = await acs.DBconnect.sendCommand(theCommands);
             return iData;
         }

@@ -6,5 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jonathan Sandoe",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "xml-js": "^1.6.8"
+  }
 }

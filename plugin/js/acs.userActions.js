@@ -28,15 +28,21 @@ acs.userActions = {
 
         tData.forEach( c => {
             //  c is a case object
-            let o = { sample : acs.state.sampleNumber };
-            for (let key in c) {
-                if (c.hasOwnProperty(key)) {
-                    const tAtt = acs.allAttributes[key];    //  the Attribute
-                    const tValue = tAtt.decodeValue( c[key]);
-                    o[tAtt.title] = tValue;
-                }
+          let sampleData = c.sample_data;
+          let o = { sample : acs.state.sampleNumber };
+          Object.values(acs.allAttributes).forEach(function (attr) {
+            if (attr.chosen) {
+              o[attr.title] = attr.decodeValue(sampleData);
             }
-            oData.push(o);
+          });
+          // for (let key in c) {
+          //     if (c.hasOwnProperty(key)) {
+          //         const tAtt = acs.allAttributes[key];    //  the Attribute
+          //         const tValue = tAtt.decodeValue( c[key]);
+          //         o[tAtt.title] = tValue;
+          //     }
+          // }
+          oData.push(o);
         });
 
         //     make sure the case table is showing

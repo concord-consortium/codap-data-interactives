@@ -27,9 +27,7 @@ acs.constants = {
     kACSCaseTableName: "People from ACS",
 
     kBasePhpURL: {
-        local: "http://localhost/~jsandoe/eepsmedia-plugins/acs/acs.php",
-        xyz: "https://codap.xyz/plugins/acs/acs.php",
-        eeps: "https://www.eeps.com/codap/acs/acs.php",
-        concord: "https://codap.concord.org/data-science-games/php/acs.php"
+        local: "http://localhost/~jsandoe/sdlc/service/acs.php",
+        concord: "https://codap.concord.org/sdlc/service/acs.php"
     }
 };
