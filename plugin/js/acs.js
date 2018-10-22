@@ -79,7 +79,7 @@ let acs = {
         // const tAtts = await acs.DBconnect.getDBInfo("getAllAttributeInfo");
         //  console.log("the variables: " + JSON.stringify(tAtts));
 
-        let codeBook = await $.ajax('http://localhost/~jsandoe/sdlc/plugin/usa_00001.xml', {dataType: 'text'})
+        let codeBook = await $.ajax('../data/usa_00001.xml', {dataType: 'text'});
         console.dir(codeBook);
         let dataDictionary = this.getDataDictionary(codeBook);
         console.dir(dataDictionary);
