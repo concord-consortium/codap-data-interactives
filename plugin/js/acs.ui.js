@@ -20,7 +20,7 @@
 acs.ui = {
 
     updateWholeUI: function () {
-        acs.ui.refreshCheckboxes();
+        acs.ui.refreshAttributeCheckboxes();
         acs.ui.refreshSampleSummary();
         acs.ui.refreshText();
     },
@@ -40,11 +40,11 @@ acs.ui = {
 
     refreshText: function () {
         const tSampleSize = document.getElementById("sampleSizeInput").value;
-        let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people")
+        let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people");
         $("#getCasesButton").text(theGetCasesButtonText);
     },
 
-    refreshCheckboxes: function () {
+    refreshAttributeCheckboxes: function () {
         for (let attName in acs.allAttributes) {
             if (acs.allAttributes.hasOwnProperty(attName)) {
                 const tAtt = acs.allAttributes[attName];    //  the attribute
@@ -58,6 +58,26 @@ acs.ui = {
     toggleAttributeGroupOpen : function(iGroupIndex) {
         acs.attributeGroups[iGroupIndex].open = !acs.attributeGroups[iGroupIndex].open;
         acs.ui.updateWholeUI();
+    },
+
+    makeStateListHTML: function () {
+      let out = '<div><input type="checkbox" id="state-all"  checked="checked" />all states</div>';
+      let stateAttribute = acs.allAttributes['STATEFIP'];
+      acs.states.forEach(function (state) {
+        let id = 'state-' + state.state_code;
+        let name = stateAttribute.categories[state.state_code];
+        if (!name) { debugger; }
+        out += '<div><input type="checkbox" id="' + id + '"/>' + name + '</div>'
+      });
+      return out;
+    },
+    makeYearListHTML: function () {
+      let out = '<div><input type="checkbox" id="year-all" checked="checked"/>all years</div>';
+      acs.years.forEach(function (year) {
+        let id = 'year-' + year.year;
+        out += '<div><input type="checkbox" id="' + id + '"/>' + year.year + '</div>'
+      });
+      return out;
     },
 
     makeBasicCheckboxesHTML: function () {
@@ -91,7 +111,7 @@ acs.ui = {
                         tAtt.hasCheckbox = true;        //  redundant
                         out += "<div class='oneAttCheckboxPlusLabel'>";
                         out += "<input type = 'checkbox' onchange='acs.userActions.changeAttributeCheckbox(\"" +
-                            attName + "\")' id = '" + tAtt.checkboxID + "' >\n"
+                            attName + "\")' id = '" + tAtt.checkboxID + "' >\n";
                         out += "<label for='" + tAtt.checkboxID + "'><span class='attNameBold'>"
                             + tAtt.title + "</span> (" + tAtt.description + ")</label>";
                         out += "</div>\n";

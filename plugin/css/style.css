@@ -16,8 +16,8 @@
  *
  */
 
-body, #summary, #atts  {
-    margin : 0px;
+body, #summary, #atts, #states, #sampleYears  {
+    margin : 0;
     /*height : 320px;*/
     font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
     font-weight: 300;
@@ -76,4 +76,14 @@ h1 {
     display: block;
     padding-left: 1.0em;
     text-indent: -1.6em;
+}
+
+#chooseStatesDiv, #chooseSampleYearsDiv {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#chooseStatesDiv div, #chooseSampleYearsDiv div {
+  flex-basis: 120px;
+  flex-grow: 3;
 }
