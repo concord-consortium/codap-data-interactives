@@ -61,9 +61,12 @@ include './TE_DBCommon.php';
 
 $whence  = $_REQUEST['whence'];
 
-$user = "root";//$credentials[$whence]["user"];
-$pass = "FsysHs,rd";//$credentials[$whence]["pass"];
-$dbname = "sdlc";//$credentials[$whence]["dbname"];
+$user = "root";
+$pass = "FsysHs,rd";
+$dbname = "sdlc";
+//$user = $credentials[$whence]["user"];
+//$pass = $credentials[$whence]["pass"];
+//$dbname = $credentials[$whence]["dbname"];
 
   reportToFile('Creds : ' . print_r($credentials, true) . " REQ: " . print_r($_REQUEST, true));
   reportToFile("CRED TEST: whence \"$whence\" user \"$user\" pass \"$pass\" dbname \"$dbname\"");
@@ -83,9 +86,12 @@ switch ($command) {
         reportToFile("[$command]............" . date("Y-m-d H:i:s (T)") . " cases: ".$_REQUEST['n']);
         $params = array();
         $params["n"] = $_REQUEST["n"];
-        $theVariables = $_REQUEST['atts'];  //  includes opening comma
+        $state_codes = $_REQUEST["state_codes"];
+        $years = $_REQUEST["years"];
 
-        $query = "SELECT " . $theVariables . " FROM peeps ORDER BY RAND( ) LIMIT :n";
+//        $theVariables = $_REQUEST['atts'];  //  includes opening comma
+
+        $query = "SELECT * FROM peeps ORDER BY RAND( ) LIMIT :n";
 
         $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
         //  reportToFile(".....[$command].(end)." . date("Y-m-d H:i:s (T)") . print_r($out, true));
@@ -99,21 +105,20 @@ switch ($command) {
         $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
         break;
 
-    case 'getAncestries':
+    case 'getYears':
         reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
         $params = array();
-        $query = "SELECT * FROM ancestries";
-        $theAncestries = CODAP_MySQL_getQueryResult($DBH, $query, $params);
+        $query = "SELECT distinct(year) FROM peeps order by year";
+        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
 
-        $out = array();
+        break;
 
-        foreach ($theAncestries as $a) {
-            $theCode = $a["code"];
-            $theText = $a["text"];
-            //  reportToFile("    Ancestry code $theCode is $theText");
-            $out[$theCode] = $theText;
-            reportToFile("    Ancestry Array: ".print_r($out, true));
-        }
+    case 'getStates':
+        reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
+        $params = array();
+        $query = "SELECT distinct(state_code) FROM peeps order by state_code";
+        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
+
         break;
 
     case 'getDecoderInfo':
