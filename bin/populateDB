@@ -26,7 +26,10 @@ const readline = require('readline');
 
 let filename = process.argv[2] || 'data/usa_00001.dat';
 let writeStream = fs.createWriteStream('out.sql');
-let insertPrefix = "insert into peeps (year, state_code, weight, sample_data) values ";
+let insertPrefix = 'insert into peeps (year, state_code, perwt, accum_yr, ' +
+      'accum_yr_st, sample_data) values ';
+let accum_yr = {};
+let accum_yr_st = {};
 
 writeStream.write('delete from peeps;\n');
 let lineReader = readline.createInterface({
@@ -40,6 +43,32 @@ lineReader.on('line', function (line){
     let year = Number(line.slice(0,4));
     let state = Number(line.slice(31,33));
     let weight = Number(line.slice(40, 50))/100;
-    writeStream.write(insertPrefix + '(' + [year, state, weight, "'" + line + "'"].join() + ');\n');
+    if (accum_yr[year] === undefined) {
+      accum_yr[year] = 0;
+      accum_yr_st[year] = {};
+    }
+    if (accum_yr_st[year][state] === undefined) {
+      accum_yr_st[year][state] = 0;
+    }
+    
+    writeStream.write(insertPrefix + '(' + [year, state, weight.toFixed(), 
+      accum_yr[year].toFixed(), accum_yr_st[year][state].toFixed(), '\'' + line + '\''].join() +
+       ');\n');
+
+    accum_yr[year] += weight;
+    accum_yr_st[year][state] += weight;
   }
+});
+lineReader.on('close', function () {
+  Object.keys(accum_yr).forEach(function (yr) {
+    let sum = accum_yr[yr];
+    writeStream.write('insert into stats (year, state_code, sum_weights) values (' +
+        yr + ', null, ' + sum + ');\n');
+    let stateSums = accum_yr_st[yr];
+    Object.keys(stateSums).forEach(function (st) {
+      sum = stateSums[st];
+      writeStream.write('insert into stats (year, state_code, sum_weights) values (' +
+          yr + ',' + st + ',' + sum + ');\n');
+    });
+  });
 });
