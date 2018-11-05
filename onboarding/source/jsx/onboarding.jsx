@@ -344,6 +344,14 @@ class TutorialView extends React.Component {
     setTimeout(function () {
       this.setState({movieURL: movieURL});
     }.bind(this), 10);
+    codapInterface.sendRequest({
+      action: 'notify',
+      resource: 'logMessage',
+      values: {
+        formatStr: "User clicked ShowMe for %@",
+        replaceArgs: [movieURL]
+      }
+    });
   }
 
   addAccomplishment(iKey) {
