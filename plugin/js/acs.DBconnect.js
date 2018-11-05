@@ -19,63 +19,60 @@
 
 acs.DBconnect = {
 
-    sendCommand: async function (iCommands) {
-        let theBody = new FormData();
-        for (let key in iCommands) {
-            if (iCommands.hasOwnProperty(key)) {
-                theBody.append(key, iCommands[key])
-            }
-        }
-        theBody.append("whence", acs.whence);
-
-        let theRequest = new Request(
-            acs.constants.kBasePhpURL[acs.whence],
-            {method: 'POST', body: theBody, headers: new Headers()}
-        );
-
-        try {
-            const theResult = await fetch(theRequest);
-            if (theResult.ok) {
-
-                const theJSON = theResult.json();
-                return theJSON;
-            } else {
-                console.error("sendCommand bad result error: " + theResult.statusText);
-            }
-        }
-        catch (msg) {
-            console.log('fetch error in DBconnect.sendCommand(): ' + msg);
-        }
-    },
-
-    getCasesFromDB : async function(iAtts) {
-        const tSampleSize = document.getElementById("sampleSizeInput").value;
-
-        let tAttNames = [];
-        iAtts.forEach( a => tAttNames.push("`" + a.name + "`" ));   //  iAtts is an array, we need a comma-separated string
-
-        try {
-            const theCommands = {"c": "getCases", "atts": 'sample_data', "n" : tSampleSize};
-            const iData = await acs.DBconnect.sendCommand(theCommands);
-            return iData;
-        }
-
-        catch (msg) {
-            console.log('getCasesFromDB() error: ' + msg);
-        }
-
-    },
-
-    getDBInfo : async function( iType ) {
-        try {
-            const theCommands = {"c": iType };
-            const iData = await acs.DBconnect.sendCommand(theCommands);
-            return iData;
-        }
-
-        catch (msg) {
-            console.log( iType + ' getDBInfo() error: ' + msg);
-        }
+  sendCommand: async function (iCommands) {
+    let theBody = new FormData();
+    for (let key in iCommands) {
+      if (iCommands.hasOwnProperty(key)) {
+        theBody.append(key, iCommands[key])
+      }
     }
+    theBody.append("whence", acs.whence);
+
+    let theRequest = new Request(acs.constants.kBasePhpURL[acs.whence],
+        {method: 'POST', body: theBody, headers: new Headers()});
+
+    try {
+      const theResult = await fetch(theRequest);
+      if (theResult.ok) {
+        return theResult.json();
+      } else {
+        console.error("sendCommand bad result error: " + theResult.statusText);
+      }
+    } catch (msg) {
+      console.log('fetch error in DBconnect.sendCommand(): ' + msg);
+    }
+  },
+
+  getCasesFromDB: async function (iAtts) {
+    const tSampleSize = document.getElementById("sampleSizeInput").value;
+
+    let tAttNames = [];
+    iAtts.forEach(a => tAttNames.push("`" + a.name + "`"));   //  iAtts is an array, we need a comma-separated string
+
+    try {
+      const theCommands = {
+        "c": "getCases",
+        "atts": 'sample_data',
+        "n": tSampleSize
+      };
+      return await acs.DBconnect.sendCommand(theCommands);
+    }
+
+    catch (msg) {
+      console.log('getCasesFromDB() error: ' + msg);
+    }
+
+  },
+
+  getDBInfo: async function (iType) {
+    try {
+      const theCommands = {"c": iType};
+      return await acs.DBconnect.sendCommand(theCommands);
+    }
+
+    catch (msg) {
+      console.log(iType + ' getDBInfo() error: ' + msg);
+    }
+  }
 
 };

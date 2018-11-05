@@ -21,12 +21,18 @@
 acs.CODAPconnect = {
 
     initialize: async function (iCallback) {
+      try {
         await codapInterface.init(this.iFrameDescriptor, null);
+      } catch (e) {
+        console.log('Error connecting to CODAP: ' + e);
+        acs.state = Object.assign({}, acs.freshState);
+        return;
+      }
         await pluginHelper.initDataSet(this.ACSDataContextSetupObject);
 
         //  restore the state if possible
 
-        acs.state = await codapInterface.getInteractiveState();
+          acs.state = await codapInterface.getInteractiveState();
 
         if (jQuery.isEmptyObject(acs.state)) {
             await codapInterface.updateInteractiveState(acs.freshState);
