@@ -57,8 +57,6 @@ function prefetch($DBH) {
 
 function fetchSamples($DBH, $num, $yr, $st) {
     $populateTempQ = "CALL InsertRandom(?, 0, 1)";
-    $populateTempParams = [$num];
-
     $sumWeightsQ = "SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?";
     $selectSamplesYrStQ = "SELECT peeps.id,peeps.sample_data " .
         "FROM peeps, rand_numbers WHERE peeps.year=? AND peeps.state_code=? AND " .
@@ -68,9 +66,9 @@ function fetchSamples($DBH, $num, $yr, $st) {
         "FROM peeps, rand_numbers WHERE peeps.year=? AND " .
         "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr AND " .
         "peeps.accum_yr + peeps.perwt";
-    $params = [$yr, $st];
-
     $depopulateTempQ = "DELETE FROM rand_numbers";
+    $populateTempParams = [$num];
+    $params = [$yr, $st];
 
     CODAP_MySQL_doQueryWithoutResult($DBH, $populateTempQ, $populateTempParams);
     CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsQ, $params);
@@ -79,16 +77,37 @@ function fetchSamples($DBH, $num, $yr, $st) {
     } else {
         $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrQ, $params);
     }
-    CODAP_MySQL_doQueryWithoutResult($DBH, $depopulateTempQ, $populateTempParams);
-
+    CODAP_MySQL_doQueryWithoutResult($DBH, $depopulateTempQ, array ());
     return $rslt;
 }
 
 function postFetch ($DBH) {
-    $emptyTempQ = "DROP TABLE rand_numbers";
+    $emptyTempQ = "DROP TEMPORARY TABLE rand_numbers";
     CODAP_MySQL_doQueryWithoutResult($DBH, $emptyTempQ, array());
 }
 
+function assembleSamples($DBH, $num, $yrArray, $stArray) {
+    assert(is_array($stArray), 'state codes invalid');
+    assert(is_array($yrArray), 'sample years invalid');
+
+    $numCombs = count($yrArray) * count($stArray);
+    assert($numCombs > 0, 'expect number of combs > 0');
+    $segmentSize = ceil($num/$numCombs);
+
+    $samples = array();
+
+    preFetch($DBH);
+    foreach ($yrArray as $yr ) {
+        foreach ($stArray as $st) {
+            reportToFile("Getting $segmentSize segment samples for year: " . $yr .
+                " and state: " . $st . ".");
+            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, $st);
+            $samples = array_merge($samples, $segSamples);
+        }
+    }
+    postFetch($DBH);
+    return $samples;
+}
 
 //  -----------)-    Connect to database ------------
 
@@ -132,26 +151,21 @@ switch ($command) {
 
         $state_codes_raw = (isset($_REQUEST["state_codes"]))? $_REQUEST["state_codes"]: "" ;
         $state_codes=explode(",", $state_codes_raw);
-        $state_codes=[30];
-        assert(is_array($state_codes), 'state codes invalid');
+        $state_codes=[30,31,32];
 
         $years_raw = (isset($_REQUEST["years"]))?$_REQUEST["years"]: "";
         $years = explode(",", $years_raw);
-        $years = [2000];
-        assert(is_array($years), 'sample years invalid');
+        $years = [2000,2010];
 
 //        $theVariables = $_REQUEST['atts'];  //  includes opening comma
 
         // determine per state/year request size
         // determine if national or per state query
 
-//        $query = "SELECT * FROM peeps ORDER BY RAND( ) LIMIT :n";
-        preFetch($DBH);
-        $out = fetchSamples($DBH, $total_requested, 2000, 30);
-        postFetch($DBH);
+        reportToFile("Getting $total_requested samples for " . count($years) .
+            " years and " . count($state_codes) . " states");
+        $out = assembleSamples($DBH, $total_requested, $years, $state_codes);
 
-//        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
-        //  reportToFile(".....[$command].(end)." . date("Y-m-d H:i:s (T)") . print_r($out, true));
         break;
 
 //    case 'getAllAttributeInfo':
@@ -205,8 +219,7 @@ switch ($command) {
 
 $jout = json_encode($out);
 
- reportToFile('end of php: the json is '. print_r($jout, true));
+ //reportToFile('end of php: the json is '. print_r($jout, true));
 
-//  echo $out;
 echo $jout;
 
