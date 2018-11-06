@@ -347,7 +347,7 @@ function(Snap, CodapCom, View, ui, utils) {
       var timeout = (speed === kFastestSpeed) ? 0 :
           // Give "Fast" a little extra
           (speed === kFastestSpeed - 1 ? 1000 / kFastestSpeed :
-              speed);
+              1000 / speed);
       if (!paused) {
         if (speed !== kFastestSpeed) {
           if (sequence[runNumber][draw] === "EMPTY") {
@@ -375,6 +375,7 @@ function(Snap, CodapCom, View, ui, utils) {
           setTimeout(view.endAnimation, timeout);
         }
       }
+      // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
     }
 
 
