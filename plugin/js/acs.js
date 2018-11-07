@@ -18,7 +18,7 @@
  * ==========================================================================
  *
  */
-
+/* global: xml2js */
 
 let acs = {
   state: null,
@@ -29,7 +29,11 @@ let acs = {
   map: null,
 
   freshState: {
-      sampleNumber: 1
+    sampleNumber: 1,
+    sampleSize: 16,
+    selectedYears: [2016],
+    selectedStates: [],
+    selectedAttributes: ['SEX', 'AGE', 'YEAR', 'STATEFIP']
   },
 
   initialize: async function () {
@@ -37,7 +41,6 @@ let acs = {
     acs.states = await acs.DBconnect.getDBInfo('getStates');
     await acs.getAllAttributes();
     await acs.CODAPconnect.initialize(null);
-    acs.ui.updateWholeUI();
 
     //      Make sure the correct tab panel comes to the front when the text link is clicked
 
@@ -46,43 +49,54 @@ let acs = {
           $('#tabs').tabs("option", "active", 1);     //  1 is the index of the attribute panel
       });
     $('#chooseStatesDiv').html(acs.ui.makeStateListHTML());
-    $('#chooseSampleYearsDiv').html(acs.ui.makeYearListHTML())
+    $('#chooseSampleYearsDiv').html(acs.ui.makeYearListHTML());
+
+    $('#chooseStatesDiv input').on('change', acs.userActions.changeSampleStateCheckbox);
+    $('#chooseSampleYearsDiv input').on('change', acs.userActions.changeSampleYearsCheckbox);
+    acs.ui.updateWholeUI();
   },
 
 
+  updateStateFromDOM: function (logMessage) {
+    if (!this.state) {
+      // initialize state from CODAP, then update state
+    }
+    else {
+      this.state.selectedYears = acs.userActions.getSelectedYears();
+      this.state.selectedStates = acs.userActions.getSelectedStates();
+      this.state.selectedAttributes = acs.ui.getArrayOfChosenAttributes()
+          .map(function (attr) { return attr.name;});
+      //this.CODAPconnect.logAction(logMessage);
+    }
+  },
   getDataDictionary: function (codebook) {
     const kSpecialNumeric = ['FAMSIZE', 'AGE'];
     let tCbkObject = xml2js(codebook, {}),
-        tDescriptions = tCbkObject.elements[1].elements[3],
-        tAttrs = tDescriptions.elements.map(function (iDesc) {
-          let tCats = {};
-          iDesc.elements.forEach(function (iElement) {
-            if (iElement.name === 'catgry') {
-              let key = Number(iElement.elements[0].elements[0].text);
-              let value = iElement.elements[1].elements[0].text;
-              tCats[key] = value;
-            }
-          });
-          return {
-            name: iDesc.attributes.name,
-            startPos: iDesc.elements[0].attributes.StartPos,
-            width: Number(iDesc.elements[0].attributes.width),
-            labl: iDesc.elements[1].elements[0].text,
-            description: iDesc.elements[2].elements[0].cdata,
-            format: (Object.keys(tCats).length === 0 || kSpecialNumeric.indexOf(
-                iDesc.attributes.name) >= 0) ? 'numeric' : 'categorical',
-            categories: tCats
-          }
-        });
-
-    return tAttrs;
+        tDescriptions = tCbkObject.elements[1].elements[3];
+    return tDescriptions.elements.map(function (iDesc) {
+      let tCats = {};
+      iDesc.elements.forEach(function (iElement) {
+        if (iElement.name === 'catgry') {
+          let key = Number(iElement.elements[0].elements[0].text);
+          tCats[key] = iElement.elements[1].elements[0].text;
+        }
+      });
+      return {
+        name: iDesc.attributes.name,
+        startPos: iDesc.elements[0].attributes.StartPos,
+        width: Number(iDesc.elements[0].attributes.width),
+        labl: iDesc.elements[1].elements[0].text,
+        description: iDesc.elements[2].elements[0].cdata,
+        format: (Object.keys(tCats).length === 0 || kSpecialNumeric.indexOf(
+            iDesc.attributes.name) >= 0) ? 'numeric' : 'categorical',
+        categories: tCats
+      }
+    });
   },
 
   getAllAttributes: async function () {
     let codeBook = await $.ajax('../data/usa_00001.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
-    // acs.allAttributes['lat'] = new Attribute({ name : 'lat', description : 'PUMA latitude', defcheck : true, defshow : true});
-    // acs.allAttributes['long'] = new Attribute({ name : 'long', description : 'PUMA longitude', defcheck : true, defshow : true});
     dataDictionary.forEach(a => {
       let tA = new Attribute(a, acs.attributeAssignment.find(function (aa) {
         return (a.name === aa.ipumsName);
@@ -93,6 +107,10 @@ let acs = {
     $("#chooseAttributeDiv").html(acs.ui.makeBasicCheckboxesHTML());
   },
 
+  /*
+   * The following declarations har specific to the data set.
+   * Should consider moving to separate json.
+   */
   attributeGroups : [
     {number : 1, open : false, title : "Basic demographics"},
     {number : 2, open : false, title : "Race, ancestry, origin"},
@@ -101,6 +119,7 @@ let acs = {
     {number : 5, open : false, title : "Geography"},
     {number : 6, open : false, title : "Technical"}
   ],
+
   attributeAssignment: [
     {ipumsName: 'AGE', title: 'age', group: 1, defCheck: true},
     {ipumsName: 'SEX', title: 'sex', group: 1, defCheck: true},

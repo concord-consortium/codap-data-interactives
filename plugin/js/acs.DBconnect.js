@@ -43,17 +43,21 @@ acs.DBconnect = {
     }
   },
 
-  getCasesFromDB: async function (iAtts) {
-    const tSampleSize = document.getElementById("sampleSizeInput").value;
+  getCasesFromDB: async function (iAtts, iStateCodes, iYears) {
+    const tSampleSize = acs.userActions.getSelectedSampleSize();
 
+    iStateCodes = iStateCodes || [];
+    iYears = iYears || [];
     let tAttNames = [];
     iAtts.forEach(a => tAttNames.push("`" + a.name + "`"));   //  iAtts is an array, we need a comma-separated string
 
     try {
       const theCommands = {
-        "c": "getCases",
-        "atts": 'sample_data',
-        "n": tSampleSize
+        c: "getCases",
+        atts: 'sample_data',
+        state_codes: iStateCodes.join(),
+        years: iYears.join(),
+        n: tSampleSize
       };
       return await acs.DBconnect.sendCommand(theCommands);
     }

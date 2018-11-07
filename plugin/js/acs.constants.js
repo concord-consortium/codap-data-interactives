@@ -18,16 +18,15 @@
 /* global acs */
 
 acs.constants = {
+  version: "001d",
 
-    version: "001d",
+  kACSDataSetName: "SDLCdata",
+  kACSDataSetTitle: "SDLCdata",
+  kACSCollectionName: "people",
+  kACSCaseTableName: "People from ACS",
 
-    kACSDataSetName: "ACSdata",
-    kACSDataSetTitle: "ACSdata",
-    kACSCollectionName: "people",
-    kACSCaseTableName: "People from ACS",
-
-    kBasePhpURL: {
-        local: "http://localhost/~jsandoe/sdlc/service/acs.php",
-        concord: "https://codap.concord.org/sdlc/service/acs.php"
-    }
+  kBasePhpURL: {
+    local: "http://localhost/~jsandoe/sdlc/service/acs.php",
+    concord: "https://codap.concord.org/sdlc/service/acs.php"
+  }
 };
