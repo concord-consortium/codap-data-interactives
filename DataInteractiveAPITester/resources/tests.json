@@ -750,7 +750,7 @@
         "type": "webView",
         "name": "name-webview",
         "title": "Concord",
-        "URL": "http://www.concord.org",
+        "URL": "http://concord.org",
         "dimensions": {"width": 400, "height": 300}
       }
     }
