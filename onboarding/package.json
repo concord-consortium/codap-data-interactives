@@ -7,6 +7,7 @@
   "dependencies": {},
   "scripts": {
     "build-onboarding": "browserify -t [ babelify --presets [ react ] ] source/jsx/onboarding.jsx -o target/onboarding.js",
+    "build-task_descriptions": "browserify -t [ babelify --presets [ react ] ] source/jsx/task_descriptions.jsx -o target/task_descriptions.js",
     "build-onboarding-pre": "mkdir target",
     "build": "bin/build",
     "clean": "rm -rf target",

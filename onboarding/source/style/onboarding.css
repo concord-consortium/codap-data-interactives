@@ -5,7 +5,7 @@ body {
 }
 
 button {
-    position: absolute;
+    /*position: absolute;*/
     bottom: 5px;
 }
 
@@ -29,7 +29,41 @@ button {
     background-color: #222;
     height: 150px;
     padding: 20px;
-    color: white;
+    color: #F7F7F7;
+}
+
+.App-header-feedback {
+    background-color: #222;
+    height: 180px;
+    padding: 5px 15px 5px 15px;
+    color: #F7F7F7;
+    overflow: auto;
+    text-align: left;
+    -webkit-animation-name: animation;
+    -moz-animation-name: animation;
+    -o-animation-name: animation;
+    animation-name: animation;
+    animation-duration: 5000ms;
+}
+
+.App-header-empty {
+    background-color: #222;
+    height: 180px;
+    padding: 5px 15px 5px 15px;
+    color: #F7F7F7;
+}
+
+@keyframes animation {
+    from { color: #222;}
+    to { color: #F7F7F7;}
+}
+
+.App-header-feedback a {
+    color: yellow;
+}
+
+.App-header-feedback p {
+    margin-block-start: 6px;
 }
 
 .App-movie {
@@ -40,10 +74,17 @@ button {
     font-size: large;
 }
 
+.App-taskarea {
+    overflow: auto;
+}
+
 .App-list {
     text-align: left;
-    line-height: 200%;
     margin-left: 5%;
+}
+
+.App-checkbox {
+    margin-bottom: 12px;
 }
 
 .App-link {
@@ -57,6 +98,7 @@ button {
 }
 
 .App-feedback {
+    /*
     position: fixed;
     top: 150px;
     margin: 0 auto;
@@ -68,6 +110,7 @@ button {
     border-style: solid;
     border-radius: 5px;
     border-color: gray;
+    */
     text-align: left;
     padding: 5px;
 }
