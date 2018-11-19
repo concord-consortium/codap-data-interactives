@@ -68,8 +68,9 @@ acs.userActions = {
   changeSampleStateCheckbox : function (event) {
     // record change of status for selected states and potentially toggle 'all' option
     if ($(this).hasClass('select-all')) {
-      let $itemBoxes = $('#chooseStatesDiv .select-item').prop('checked', false);
+      $('#chooseStatesDiv .select-item').prop('checked', false);
     }
+    // noinspection JSJQueryEfficiency
     let $itemBoxes = $('#chooseStatesDiv .select-item');
     let $allBox = $('#chooseStatesDiv .select-all');
     if ($itemBoxes.filter(':checked').length > 0) {
@@ -80,23 +81,23 @@ acs.userActions = {
     acs.updateStateFromDOM('sample state changed');
   },
 
-  clickMakeMapButton : async function() {
-      const thePUMA = Number(document.getElementById("pumaNumberBox").value);
-      const latlong = await acs.DBconnect.getLatLon( thePUMA );
-
-      if (latlong) {
-        console.log("latlon received: " + JSON.stringify(latlong));
-        const googleLatLong = new google.maps.LatLng(latlong.lat, latlong.long);
-        acs.map.setCenter(googleLatLong);
-        const marker = new google.maps.Marker({
-          position: googleLatLong,
-          map: acs.map
-        });
-      } else {
-        console.log('Perhaps ' + thePUMA + ' is not a real PUMA?');
-      }
-
-  },
+  // clickMakeMapButton : async function() {
+  //     const thePUMA = Number(document.getElementById("pumaNumberBox").value);
+  //     const latlong = await acs.DBconnect.getLatLon( thePUMA );
+  //
+  //     if (latlong) {
+  //       console.log("latlon received: " + JSON.stringify(latlong));
+  //       const googleLatLong = new google.maps.LatLng(latlong.lat, latlong.long);
+  //       acs.map.setCenter(googleLatLong);
+  //       const marker = new google.maps.Marker({
+  //         position: googleLatLong,
+  //         map: acs.map
+  //       });
+  //     } else {
+  //       console.log('Perhaps ' + thePUMA + ' is not a real PUMA?');
+  //     }
+  //
+  // },
   getSelectedYears: function () {
     let rslt = [];
     $('#chooseSampleYearsDiv .select-item:checked').each(function (ix, el) {
@@ -111,10 +112,10 @@ acs.userActions = {
     });
     return rslt;
   },
-  getSelectedAttributes: function () {
-    let rslt = [];
-    return rslt;
-  },
+  // getSelectedAttributes: function () {
+  //   let rslt = [];
+  //   return rslt;
+  // },
   getSelectedSampleSize: function () {
     return $("#sampleSizeInput")[0].value;
   }

@@ -39,7 +39,7 @@ var pluginHelper = {
       var tMessage = { action: 'get', resource: tDataContextResourceString };
 
       //  if the data set already exists, we will not ask CODAP to create one. So we check...
-      var tAlreadyExistsPromise = codapInterface.sendRequest( tMessage );
+      var tAlreadyExistsPromise = codapInterface.sendRequest(tMessage);
 
       tAlreadyExistsPromise.then(
         //  iValue is the result of the resolved "get dataContext" call
@@ -55,7 +55,7 @@ var pluginHelper = {
               resource: 'dataContext',
               values: iDataSetDescription
             };
-            codapInterface.sendRequest( tMessage ).then(
+            codapInterface.sendRequest(tMessage).then(
               //  iValue is the result of the resolved "create dataContext" call.
               function( iValue ) {
                 resolve( iValue );
@@ -90,7 +90,7 @@ var pluginHelper = {
               values : iValuesArray
           };
 
-          var tCreateItemsPromise = codapInterface.sendRequest( tMessage, iCallback );
+          var tCreateItemsPromise = codapInterface.sendRequest(tMessage);
           resolve( tCreateItemsPromise );
       })
   },

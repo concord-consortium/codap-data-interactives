@@ -44,11 +44,11 @@ h1 {
     padding-left: 1.4em;
 }
 
-#acsMap {
-    padding-top: 1em;
-    height : 300px;
-    width : 100%;
-}
+/*#acsMap {*/
+    /*padding-top: 1em;*/
+    /*height : 300px;*/
+    /*width : 100%;*/
+/*}*/
 
 #sampleSizeInput {
     font-family: 'Rokkitt',sans-serif;font-size: 16px;

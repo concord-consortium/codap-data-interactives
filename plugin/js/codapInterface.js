@@ -314,7 +314,6 @@ var codapInterface = {
      * {@link https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API}.
      *
      * @param message {String}
-     * @param callback {function(response, request)} Optional callback to handle
      *    the CODAP response. Note both the response and the initial request will
      *    sent.
      *

@@ -66,7 +66,9 @@ let acs = {
       this.state.selectedStates = acs.userActions.getSelectedStates();
       this.state.selectedAttributes = acs.ui.getArrayOfChosenAttributes()
           .map(function (attr) { return attr.name;});
-      //this.CODAPconnect.logAction(logMessage);
+      if (logMessage) {
+        this.CODAPconnect.logAction(logMessage);
+      }
     }
   },
   getDataDictionary: function (codebook) {

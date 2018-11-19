@@ -121,6 +121,7 @@ $whence  = $_REQUEST['whence'];
 
 // todo: derive from file
 $user = "root";
+/** @noinspection SpellCheckingInspection */
 $pass = "FsysHs,rd";
 $dbname = "sdlc";
 //$user = $credentials[$whence]["user"];
@@ -151,11 +152,11 @@ switch ($command) {
 
         $state_codes_raw = (isset($_REQUEST["state_codes"]))? $_REQUEST["state_codes"]: "" ;
         $state_codes=explode(",", $state_codes_raw);
-        $state_codes=[30,31,32];
+//        $state_codes=[30,31,32];
 
         $years_raw = (isset($_REQUEST["years"]))?$_REQUEST["years"]: "";
         $years = explode(",", $years_raw);
-        $years = [2000,2010];
+//        $years = [2000,2010];
 
 //        $theVariables = $_REQUEST['atts'];  //  includes opening comma
 

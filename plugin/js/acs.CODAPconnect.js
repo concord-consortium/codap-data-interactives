@@ -124,7 +124,7 @@ acs.CODAPconnect = {
       }
     };
 
-    const makeCaseTableResult = await codapInterface.sendRequest( theMessage );
+    const makeCaseTableResult = await codapInterface.sendRequest(theMessage);
     if (makeCaseTableResult.success) {
       console.log("Success creating case table: " + theMessage.title);
     } else {
