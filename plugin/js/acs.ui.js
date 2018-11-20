@@ -158,6 +158,7 @@ acs.ui = {
     let aList = [];
     let stateAttr = acs.allAttributes["STATEFIP"];
     let states = acs.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]});
+    if (states.length === 0) {states = ['all'];}
 
 
     for (let attName in acs.allAttributes) {
@@ -174,7 +175,7 @@ acs.ui = {
         + " from the <a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
         + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
         "</b>, and the following years: <b>" + acs.state.selectedYears.join('</b>, <b>')
-        + "</b>.</p>" +
+        + "</b>.</p>"
         + "<p>The variables you will get are: "
         + "<b>" + aList.join("</b>, <b>") + "</b>.</p>";
 

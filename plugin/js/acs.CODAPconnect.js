@@ -56,6 +56,15 @@ acs.CODAPconnect = {
     acs.ui.updateWholeUI();
   },
 
+  logAction: function (iMessage) {
+    codapInterface.sendRequest({
+      action: 'notify',
+      resource: 'logMessage',
+      values: {
+        formatStr: iMessage
+      }
+    });
+  },
   saveCasesToCODAP: async function (iValues) {
     await this.makeNewAttributesIfNecessary();
 

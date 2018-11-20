@@ -58,6 +58,7 @@ function prefetch($DBH) {
 function fetchSamples($DBH, $num, $yr, $st) {
     $populateTempQ = "CALL InsertRandom(?, 0, 1)";
     $sumWeightsQ = "SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?";
+    $sumWeightsNoStateQ = "SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL";
     $selectSamplesYrStQ = "SELECT peeps.id,peeps.sample_data " .
         "FROM peeps, rand_numbers WHERE peeps.year=? AND peeps.state_code=? AND " .
         "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr_st AND " .
@@ -71,11 +72,12 @@ function fetchSamples($DBH, $num, $yr, $st) {
     $params = [$yr, $st];
 
     CODAP_MySQL_doQueryWithoutResult($DBH, $populateTempQ, $populateTempParams);
-    CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsQ, $params);
     if ($st) {
+        CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsQ, $params);
         $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrStQ, $params);
     } else {
-        $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrQ, $params);
+        CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsNoStateQ, [$yr]);
+        $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrQ, [$yr]);
     }
     CODAP_MySQL_doQueryWithoutResult($DBH, $depopulateTempQ, array ());
     return $rslt;
@@ -90,7 +92,7 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
     assert(is_array($stArray), 'state codes invalid');
     assert(is_array($yrArray), 'sample years invalid');
 
-    $numCombs = count($yrArray) * count($stArray);
+    $numCombs = count($yrArray) * (count($stArray) || 1);
     assert($numCombs > 0, 'expect number of combs > 0');
     $segmentSize = ceil($num/$numCombs);
 
@@ -98,10 +100,17 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
 
     preFetch($DBH);
     foreach ($yrArray as $yr ) {
-        foreach ($stArray as $st) {
+        if (count($stArray) > 0) {
+            foreach ($stArray as $st) {
+                reportToFile("Getting $segmentSize segment samples for year: " . $yr .
+                    " and state: " . $st . ".");
+                $segSamples =  fetchSamples($DBH, $segmentSize, $yr, $st);
+                $samples = array_merge($samples, $segSamples);
+            }
+        } else {
             reportToFile("Getting $segmentSize segment samples for year: " . $yr .
-                " and state: " . $st . ".");
-            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, $st);
+                " for all states.");
+            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, null);
             $samples = array_merge($samples, $segSamples);
         }
     }
@@ -151,12 +160,14 @@ switch ($command) {
         $params["n"] = $total_requested;
 
         $state_codes_raw = (isset($_REQUEST["state_codes"]))? $_REQUEST["state_codes"]: "" ;
-        $state_codes=explode(",", $state_codes_raw);
-//        $state_codes=[30,31,32];
+        if (strlen($state_codes_raw) == 0) {
+            $state_codes = [];
+        } else {
+            $state_codes=explode(",", $state_codes_raw);
+        }
 
         $years_raw = (isset($_REQUEST["years"]))?$_REQUEST["years"]: "";
         $years = explode(",", $years_raw);
-//        $years = [2000,2010];
 
 //        $theVariables = $_REQUEST['atts'];  //  includes opening comma
 

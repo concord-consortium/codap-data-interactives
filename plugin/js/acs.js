@@ -70,6 +70,7 @@ let acs = {
         this.CODAPconnect.logAction(logMessage);
       }
     }
+    this.ui.updateWholeUI();
   },
   getDataDictionary: function (codebook) {
     const kSpecialNumeric = ['FAMSIZE', 'AGE'];

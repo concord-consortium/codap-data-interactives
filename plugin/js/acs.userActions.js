@@ -60,7 +60,7 @@ acs.userActions = {
     const tAtt = acs.allAttributes[iAttName];
 
     tAtt.chosen = !tAtt.chosen;
-    acs.ui.updateWholeUI();
+    acs.updateStateFromDOM('Attribute selection changed.');
   },
   changeSampleYearsCheckbox : function (event) {
     acs.updateStateFromDOM('Sample years changed.');
@@ -107,7 +107,7 @@ acs.userActions = {
   },
   getSelectedStates: function () {
     let rslt = [];
-    $('#chooseStatesDiv input:checked').each(function (ix, el) {
+    $('#chooseStatesDiv .select-item:checked').each(function (ix, el) {
       rslt.push(el.id.replace('state-', ''));
     });
     return rslt;
