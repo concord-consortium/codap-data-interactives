@@ -92,7 +92,11 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
     assert(is_array($stArray), 'state codes invalid');
     assert(is_array($yrArray), 'sample years invalid');
 
-    $numCombs = count($yrArray) * (count($stArray) || 1);
+    if (count($stArray) > 0) {
+        $numCombs = count($yrArray) * count($stArray);
+    } else {
+        $numCombs = count($yrArray);
+    }
     assert($numCombs > 0, 'expect number of combs > 0');
     $segmentSize = ceil($num/$numCombs);
 
@@ -169,8 +173,6 @@ switch ($command) {
         $years_raw = (isset($_REQUEST["years"]))?$_REQUEST["years"]: "";
         $years = explode(",", $years_raw);
 
-//        $theVariables = $_REQUEST['atts'];  //  includes opening comma
-
         // determine per state/year request size
         // determine if national or per state query
 
@@ -179,14 +181,6 @@ switch ($command) {
         $out = assembleSamples($DBH, $total_requested, $years, $state_codes);
 
         break;
-
-//    case 'getAllAttributeInfo':
-//        reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
-//        $params = array();
-//
-//        $query = "SELECT * FROM variables WHERE groupNumber < 50 ORDER By groupNumber";
-//        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
-//        break;
 
     case 'getYears':
         reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
@@ -204,34 +198,9 @@ switch ($command) {
 
         break;
 
-//    case 'getDecoderInfo':
-//        reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
-//        $params = array();
-//
-//        $query = "SELECT DISTINCT varname FROM decoder";
-//        $theVars = CODAP_MySQL_getQueryResult($DBH, $query, $params);
-//        $out = array();
-//
-//        foreach ($theVars as $arrayOfValues) {
-//            //  reportToFile('get Decoder -- looking at array: ' . print_r($arrayOfValues, true));
-//            $var = $arrayOfValues[varname];
-//            //  reportToFile('get Decoder -- looking at var: ' . print_r($var, true));
-//            $query = "SELECT * FROM decoder WHERE varname = '".$var . "'";
-//            $theCodes = CODAP_MySQL_getQueryResult($DBH, $query, $params);
-//            $oCodes = array();
-//            foreach ($theCodes as $aCode) {
-//                $oCodes[$aCode[code]] = $aCode[result];
-//            }
-//            $out[$var] = $oCodes;
-//        }
-//
-//        //  reportToFile("Codes! " . print_r($out, true));
-//        break;
 }
 
 $jout = json_encode($out);
-
- //reportToFile('end of php: the json is '. print_r($jout, true));
 
 echo $jout;
 
