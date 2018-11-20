@@ -85,6 +85,10 @@ acs.ui = {
       acs.ui.updateWholeUI();
   },
 
+  displayStatus: function (message) {
+    $('#status').text(message);
+  },
+
   makeStateListHTML: function () {
     let out = '<div><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</div>';
     let stateAttribute = acs.allAttributes.STATEFIP;

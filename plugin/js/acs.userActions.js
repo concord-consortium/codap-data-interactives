@@ -21,12 +21,13 @@ acs.userActions = {
   pressGetCasesButton : async function() {
     console.log("get cases!");
     let oData = [];
+    acs.ui.displayStatus('Fetching data...');
     let tData = await acs.DBconnect.getCasesFromDB(acs.state.selectedAttributes,
       acs.state.selectedStates, acs.state.selectedYears);
 
     //  okay, tData is an Array of objects whose keys are the variable names.
     //  now we have to translate names and values...
-
+    acs.ui.displayStatus('Formatting data...');
     tData.forEach( c => {
         //  c is a case object
       let sampleData = c.sample_data;
@@ -36,23 +37,19 @@ acs.userActions = {
           o[attr.title] = attr.decodeValue(sampleData);
         }
       });
-      // for (let key in c) {
-      //     if (c.hasOwnProperty(key)) {
-      //         const tAtt = acs.allAttributes[key];    //  the Attribute
-      //         const tValue = tAtt.decodeValue( c[key]);
-      //         o[tAtt.title] = tValue;
-      //     }
-      // }
       oData.push(o);
     });
 
     //     make sure the case table is showing
 
+    acs.ui.displayStatus('Opening case table...');
     await acs.CODAPconnect.makeCaseTableAppear();
 
-      console.log("the cases: " + JSON.stringify(oData));
+    // console.log("the cases: " + JSON.stringify(oData));
 
+    acs.ui.displayStatus('Sending data to codap...');
     acs.CODAPconnect.saveCasesToCODAP( oData );
+    acs.ui.displayStatus('');
     acs.state.sampleNumber++;
   },
 
@@ -62,10 +59,10 @@ acs.userActions = {
     tAtt.chosen = !tAtt.chosen;
     acs.updateStateFromDOM('Attribute selection changed.');
   },
-  changeSampleYearsCheckbox : function (event) {
+  changeSampleYearsCheckbox : function (/*event*/) {
     acs.updateStateFromDOM('Sample years changed.');
   },
-  changeSampleStateCheckbox : function (event) {
+  changeSampleStateCheckbox : function (/*event*/) {
     // record change of status for selected states and potentially toggle 'all' option
     if ($(this).hasClass('select-all')) {
       $('#chooseStatesDiv .select-item').prop('checked', false);
