@@ -25,7 +25,7 @@
  */
 
 
-$theCredentialsFilename = dirname( __FILE__, 4 ) . '/cred/acsCred.php';
+$theCredentialsFilename = dirname( __FILE__, 4 ) . '/cred/sdlcCred.php';
 
 
 ?>

@@ -26,19 +26,11 @@
 
 include 'acs.phpFileLocations.php';     //  tells us where the credentials are
 
-//try {
-//    include $theCredentialsFilename;
-//} catch (Exception $e) {
-//    reportToFile('Problem getting the credentials: '. $e->getMessage());
-//}
-//
-//if (file_exists($theCredentialsFilename)) {
-//    //  reportToFile("the file " . $theCredentialsFilename . " exists!");
-//} else {
-//    reportToFile("the credentials file, " . $theCredentialsFilename . ", does not exist!");
-//
-//}
-
+try {
+    include $theCredentialsFilename;
+} catch (Exception $e) {
+    reportToFile('Problem getting the credentials: '. $e->getMessage());
+}
 
 //  reportToFile(print_r("CRED LOCAL = " . $credentials['local'], true));
 
@@ -128,21 +120,23 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
 include './TE_DBCommon.php';
 
 
+if (file_exists($theCredentialsFilename)) {
+    reportToFile("the file " . $theCredentialsFilename . " exists!");
+} else {
+    reportToFile("the credentials file, " . $theCredentialsFilename . ", does not exist!");
+}
+
 //  ------------    Connected ------------
 
 $whence  = $_REQUEST['whence'];
 
 // todo: derive from file
-$user = "root";
-/** @noinspection SpellCheckingInspection */
-$pass = "FsysHs,rd";
-$dbname = "sdlc";
-//$user = $credentials[$whence]["user"];
-//$pass = $credentials[$whence]["pass"];
-//$dbname = $credentials[$whence]["dbname"];
+$user = $credentials[$whence]["user"];
+$pass = $credentials[$whence]["pass"];
+$dbname = $credentials[$whence]["dbname"];
 
 //  reportToFile('Creds : ' . print_r($credentials, true) . " REQ: " . print_r($_REQUEST, true));
-//  reportToFile("CRED TEST: whence \"$whence\" user \"$user\" pass \"$pass\" dbname \"$dbname\"");
+  reportToFile("CRED TEST: whence \"$whence\" user \"$user\" pass \"$pass\" dbname \"$dbname\"");
 
 $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);     //  works under MAMP....
 
