@@ -18,27 +18,27 @@
 
 //  import codapInterface from "../common/codapInterface";
 
-acs.CODAPconnect = {
+app.CODAPconnect = {
 
   initialize: async function (iCallback) {
     try {
       await codapInterface.init(this.iFrameDescriptor, null);
     } catch (e) {
       console.log('Error connecting to CODAP: ' + e);
-      acs.state = Object.assign({}, acs.freshState);
+      app.state = Object.assign({}, app.freshState);
       return;
     }
     await pluginHelper.initDataSet(this.ACSDataContextSetupObject);
 
     //  restore the state if possible
 
-    acs.state = await codapInterface.getInteractiveState();
+    app.state = await codapInterface.getInteractiveState();
 
-    if (jQuery.isEmptyObject(acs.state)) {
-      await codapInterface.updateInteractiveState(acs.freshState);
-      console.log("acs: getting a fresh state");
+    if (jQuery.isEmptyObject(app.state)) {
+      await codapInterface.updateInteractiveState(app.freshState);
+      console.log("app: getting a fresh state");
     }
-    console.log("acs.state is " + JSON.stringify(acs.state));   //  .length + " chars");
+    console.log("app.state is " + JSON.stringify(app.state));   //  .length + " chars");
 
     //  now update the iframe to be mutable...
 
@@ -53,7 +53,7 @@ acs.CODAPconnect = {
 
     const updateResult = await codapInterface.sendRequest(tMessage);
 
-    acs.ui.updateWholeUI();
+    app.ui.updateWholeUI();
   },
 
   logAction: function (iMessage) {
@@ -70,7 +70,7 @@ acs.CODAPconnect = {
 
     const makeItemsMessage = {
       action : "create",
-      resource : "dataContext[" + acs.constants.kACSDataSetName + "].item",
+      resource : "dataContext[" + app.constants.kACSDataSetName + "].item",
       values : iValues
     };
 
@@ -79,16 +79,16 @@ acs.CODAPconnect = {
   },
 
   makeNewAttributesIfNecessary : async function() {
-    const theAttributes = acs.state.selectedAttributes;//acs.ui.getArrayOfChosenAttributes();
+    const theAttributes = app.state.selectedAttributes;//app.ui.getArrayOfChosenAttributes();
     await Promise.all(theAttributes.map(this.checkOneAttributeAndCreateIfNonexistent));
   },
 
   checkOneAttributeAndCreateIfNonexistent : async function(name) {
-    let a = acs.allAttributes[name];
+    let a = app.allAttributes[name];
     const tMessage = {
       action: "get",
-      resource: "dataContext[" + acs.constants.kACSDataSetName + "].collection["
-      + acs.constants.kACSCollectionName + "].attribute[" + a.title + "]"
+      resource: "dataContext[" + app.constants.kACSDataSetName + "].collection["
+      + app.constants.kACSCollectionName + "].attribute[" + a.title + "]"
     };
 
     const attributeExistenceResult = await codapInterface.sendRequest(tMessage);
@@ -100,8 +100,8 @@ acs.CODAPconnect = {
 
       const naMessage = {
         action: "create",
-        resource: "dataContext[" + acs.constants.kACSDataSetName + "].collection["
-        + acs.constants.kACSCollectionName + "].attribute",
+        resource: "dataContext[" + app.constants.kACSDataSetName + "].collection["
+        + app.constants.kACSCollectionName + "].attribute",
         values : [
           {
             "name": a.title,
@@ -127,8 +127,8 @@ acs.CODAPconnect = {
       resource : "component",
       values : {
         type : 'caseTable',
-        dataContext : acs.constants.kACSDataSetName,
-        name : acs.constants.kACSCaseTableName,
+        dataContext : app.constants.kACSDataSetName,
+        name : app.constants.kACSCaseTableName,
         cannotClose : true
       }
     };
@@ -143,12 +143,12 @@ acs.CODAPconnect = {
   },
 
   ACSDataContextSetupObject: {
-    name: acs.constants.kACSDataSetName,
-    title: acs.constants.kACSDataSetTitle,
+    name: app.constants.kACSDataSetName,
+    title: app.constants.kACSDataSetTitle,
     description: 'ACS portal',
     collections: [
       {
-        name: acs.constants.kACSCollectionName,
+        name: app.constants.kACSCollectionName,
         labels: {
           singleCase: "person",
           pluralCase: "people",
@@ -164,7 +164,7 @@ acs.CODAPconnect = {
 
 
   iFrameDescriptor: {
-    version: acs.constants.version,
+    version: app.constants.version,
     name: 'sdlc',
     title: 'SDLC Data Portal',
     dimensions: {width: 444, height: 555},

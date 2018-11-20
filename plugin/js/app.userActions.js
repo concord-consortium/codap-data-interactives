@@ -16,23 +16,23 @@
  *
  */
 
-acs.userActions = {
+app.userActions = {
 
   pressGetCasesButton : async function() {
     console.log("get cases!");
     let oData = [];
-    acs.ui.displayStatus('Fetching data...');
-    let tData = await acs.DBconnect.getCasesFromDB(acs.state.selectedAttributes,
-      acs.state.selectedStates, acs.state.selectedYears);
+    app.ui.displayStatus('Fetching data...');
+    let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
+      app.state.selectedStates, app.state.selectedYears);
 
     //  okay, tData is an Array of objects whose keys are the variable names.
     //  now we have to translate names and values...
-    acs.ui.displayStatus('Formatting data...');
+    app.ui.displayStatus('Formatting data...');
     tData.forEach( c => {
         //  c is a case object
       let sampleData = c.sample_data;
-      let o = { sample : acs.state.sampleNumber };
-      Object.values(acs.allAttributes).forEach(function (attr) {
+      let o = { sample : app.state.sampleNumber };
+      Object.values(app.allAttributes).forEach(function (attr) {
         if (attr.chosen) {
           o[attr.title] = attr.decodeValue(sampleData);
         }
@@ -42,25 +42,25 @@ acs.userActions = {
 
     //     make sure the case table is showing
 
-    acs.ui.displayStatus('Opening case table...');
-    await acs.CODAPconnect.makeCaseTableAppear();
+    app.ui.displayStatus('Opening case table...');
+    await app.CODAPconnect.makeCaseTableAppear();
 
     // console.log("the cases: " + JSON.stringify(oData));
 
-    acs.ui.displayStatus('Sending data to codap...');
-    acs.CODAPconnect.saveCasesToCODAP( oData );
-    acs.ui.displayStatus('');
-    acs.state.sampleNumber++;
+    app.ui.displayStatus('Sending data to codap...');
+    app.CODAPconnect.saveCasesToCODAP( oData );
+    app.ui.displayStatus('');
+    app.state.sampleNumber++;
   },
 
   changeAttributeCheckbox : function(iAttName) {
-    const tAtt = acs.allAttributes[iAttName];
+    const tAtt = app.allAttributes[iAttName];
 
     tAtt.chosen = !tAtt.chosen;
-    acs.updateStateFromDOM('Attribute selection changed.');
+    app.updateStateFromDOM('Attribute selection changed.');
   },
   changeSampleYearsCheckbox : function (/*event*/) {
-    acs.updateStateFromDOM('Sample years changed.');
+    app.updateStateFromDOM('Sample years changed.');
   },
   changeSampleStateCheckbox : function (/*event*/) {
     // record change of status for selected states and potentially toggle 'all' option
@@ -75,20 +75,20 @@ acs.userActions = {
     } else {
       $allBox.prop('checked', true);
     }
-    acs.updateStateFromDOM('sample state changed');
+    app.updateStateFromDOM('sample state changed');
   },
 
   // clickMakeMapButton : async function() {
   //     const thePUMA = Number(document.getElementById("pumaNumberBox").value);
-  //     const latlong = await acs.DBconnect.getLatLon( thePUMA );
+  //     const latlong = await app.DBconnect.getLatLon( thePUMA );
   //
   //     if (latlong) {
   //       console.log("latlon received: " + JSON.stringify(latlong));
   //       const googleLatLong = new google.maps.LatLng(latlong.lat, latlong.long);
-  //       acs.map.setCenter(googleLatLong);
+  //       app.map.setCenter(googleLatLong);
   //       const marker = new google.maps.Marker({
   //         position: googleLatLong,
-  //         map: acs.map
+  //         map: app.map
   //       });
   //     } else {
   //       console.log('Perhaps ' + thePUMA + ' is not a real PUMA?');

@@ -15,24 +15,24 @@
  * ==========================================================================
  *
  */
-/* global acs */
+/* global app */
 
-acs.ui = {
+app.ui = {
 
   updateWholeUI: function () {
     console.log('updating ui');
-    acs.ui.refreshAttributeCheckboxes();
-    acs.ui.refreshStateCheckboxes();
-    acs.ui.refreshYearCheckboxes();
-    acs.ui.refreshSampleSummary();
-    acs.ui.refreshText();
+    app.ui.refreshAttributeCheckboxes();
+    app.ui.refreshStateCheckboxes();
+    app.ui.refreshYearCheckboxes();
+    app.ui.refreshSampleSummary();
+    app.ui.refreshText();
   },
 
   getArrayOfChosenAttributes: function () {
     let out = [];
-    for (let attName in acs.allAttributes) {
-      if (acs.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = acs.allAttributes[attName];    //  the attribute
+    for (let attName in app.allAttributes) {
+      if (app.allAttributes.hasOwnProperty(attName)) {
+        const tAtt = app.allAttributes[attName];    //  the attribute
         if (tAtt.chosen) {
           out.push(tAtt);
         }
@@ -42,15 +42,15 @@ acs.ui = {
   },
 
   refreshText: function () {
-    const tSampleSize = acs.userActions.getSelectedSampleSize();
+    const tSampleSize = app.userActions.getSelectedSampleSize();
     let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people");
     $("#getCasesButton").text(theGetCasesButtonText);
   },
 
   refreshAttributeCheckboxes: function () {
-    for (let attName in acs.allAttributes) {
-      if (acs.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = acs.allAttributes[attName];    //  the attribute
+    for (let attName in app.allAttributes) {
+      if (app.allAttributes.hasOwnProperty(attName)) {
+        const tAtt = app.allAttributes[attName];    //  the attribute
         if (tAtt.hasCheckbox) {
           document.getElementById(tAtt.checkboxID).checked = tAtt.chosen;
         }
@@ -59,7 +59,7 @@ acs.ui = {
   },
 
   refreshStateCheckboxes: function () {
-    let activeStateCodes = acs.state.selectedStates;
+    let activeStateCodes = app.state.selectedStates;
     $('#states .select-item, #states .select-all').prop('checked', false);
     if (!activeStateCodes || (activeStateCodes.length === 0)) {
       $('#state-all').prop('checked', true);
@@ -71,7 +71,7 @@ acs.ui = {
   },
 
   refreshYearCheckboxes: function () {
-    let activeYears = acs.state.selectedYears;
+    let activeYears = app.state.selectedYears;
     $('#sampleYears .select-item').prop('checked', false);
     if (activeYears) {
       activeYears.forEach(function (year) {
@@ -81,8 +81,8 @@ acs.ui = {
   },
 
   toggleAttributeGroupOpen : function(iGroupIndex) {
-      acs.attributeGroups[iGroupIndex].open = !acs.attributeGroups[iGroupIndex].open;
-      acs.ui.updateWholeUI();
+      app.attributeGroups[iGroupIndex].open = !app.attributeGroups[iGroupIndex].open;
+      app.ui.updateWholeUI();
   },
 
   displayStatus: function (message) {
@@ -91,8 +91,8 @@ acs.ui = {
 
   makeStateListHTML: function () {
     let out = '<div><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</div>';
-    let stateAttribute = acs.allAttributes.STATEFIP;
-    acs.states.forEach(function (state) {
+    let stateAttribute = app.allAttributes.STATEFIP;
+    app.states.forEach(function (state) {
       let id = 'state-' + state.state_code;
       let name = stateAttribute.categories[state.state_code];
       out += '<div><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</div>';
@@ -103,7 +103,7 @@ acs.ui = {
   makeYearListHTML: function () {
     let out = '';
     let checked = ' checked="checked"';
-    acs.years.forEach(function (year) {
+    app.years.forEach(function (year) {
       let id = 'year-' + year.year;
       out += '<div><input type="checkbox" id="' + id + '" class="select-item"' + checked + '/>' + year.year + '</div>';
       checked = '';
@@ -114,7 +114,7 @@ acs.ui = {
   makeBasicCheckboxesHTML: function () {
     let out = "";
 
-    acs.attributeGroups.forEach( (g)=>{
+    app.attributeGroups.forEach( (g)=>{
       out += "<details>";
       //if (g.open) {
           //  out += "<div>";
@@ -133,15 +133,15 @@ acs.ui = {
     out += "<summary>" + iGroupObject.title + "</summary>";
 
     out += "<div class='attributeCheckboxes'>";
-    for (let attName in acs.allAttributes) {
+    for (let attName in app.allAttributes) {
 
-      if (acs.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = acs.allAttributes[attName];    //  the attribute
+      if (app.allAttributes.hasOwnProperty(attName)) {
+        const tAtt = app.allAttributes[attName];    //  the attribute
         if (tAtt.groupNumber == iGroupObject.number) {     //  not === because one may be a string
           if (tAtt.displayMe) {
             tAtt.hasCheckbox = true;        //  redundant
             out += "<div class='oneAttCheckboxPlusLabel'>";
-            out += "<input type = 'checkbox' onchange='acs.userActions.changeAttributeCheckbox(\"" +
+            out += "<input type = 'checkbox' onchange='app.userActions.changeAttributeCheckbox(\"" +
                 attName + "\")' id = '" + tAtt.checkboxID + "' >\n";
             out += "<label for='" + tAtt.checkboxID + "'><span class='attNameBold'>"
                 + tAtt.title + "</span> (" + tAtt.description + ")</label>";
@@ -156,18 +156,18 @@ acs.ui = {
 
 
   refreshSampleSummary: function () {
-    const tSampleSize = acs.userActions.getSelectedSampleSize();
+    const tSampleSize = app.userActions.getSelectedSampleSize();
 
     let out = "";
     let aList = [];
-    let stateAttr = acs.allAttributes["STATEFIP"];
-    let states = acs.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]});
+    let stateAttr = app.allAttributes["STATEFIP"];
+    let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]});
     if (states.length === 0) {states = ['all'];}
 
 
-    for (let attName in acs.allAttributes) {
-      if (acs.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = acs.allAttributes[attName];    //  the attribute
+    for (let attName in app.allAttributes) {
+      if (app.allAttributes.hasOwnProperty(attName)) {
+        const tAtt = app.allAttributes[attName];    //  the attribute
         if (tAtt.chosen) {
           aList.push(tAtt.title);
         }
@@ -176,9 +176,9 @@ acs.ui = {
 
     out = "<p>When you press the button, you will get "
         + (tSampleSize == 1 ? "one random person" : "a random sample of " + tSampleSize + " people")
-        + " from the <a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
+        + " from the <a href='https://www.census.gov/programs-surveys/app' target='_blank'>American Community Survey</a>.</p> "
         + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
-        "</b>, and the following years: <b>" + acs.state.selectedYears.join('</b>, <b>')
+        "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
         + "</b>.</p>"
         + "<p>The variables you will get are: "
         + "<b>" + aList.join("</b>, <b>") + "</b>.</p>";

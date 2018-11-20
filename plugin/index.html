@@ -21,7 +21,7 @@
 
   WHEN UPLOADING TO EEPS
   * Make sure the mysql database is latest, in case of tweaks... (Export form MySQL Pro, then Import)
-  * acs.js, change <whence> to "eeps."
+  * app.js, change <whence> to "eeps."
 
   -->
 
@@ -49,18 +49,18 @@
     <script src="./js/jquery-ui.js" language="javascript"></script>
 
     <script src="js/Attribute.js" language="javascript"></script>
-    <script src="js/acs.js" language="javascript"></script>
-    <script src="js/acs.constants.js" language="javascript"></script>
-    <script src="js/acs.ui.js" language="javascript"></script>
-    <script src="js/acs.userActions.js" language="javascript"></script>
-    <script src="js/acs.CODAPconnect.js" language="javascript"></script>
-    <script src="js/acs.DBconnect.js" language="javascript"></script>
+    <script src="js/app.js" language="javascript"></script>
+    <script src="js/app.constants.js" language="javascript"></script>
+    <script src="js/app.ui.js" language="javascript"></script>
+    <script src="js/app.userActions.js" language="javascript"></script>
+    <script src="js/app.CODAPconnect.js" language="javascript"></script>
+    <script src="js/app.DBconnect.js" language="javascript"></script>
     <script src="js/xml-js.js" language="javascript"></script>
 
     <script>
         $(function () {
             $("#tabs").tabs();
-            acs.initialize();
+            app.initialize();
         });
 
     </script>
@@ -72,8 +72,8 @@
   <h1>SDLC Data Portal</h1>
   <div>
     <label for="sampleSizeInput">How many people? </label>
-    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" onchange="acs.ui.updateWholeUI()">
-    <button id="getCasesButton" onclick="acs.userActions.pressGetCasesButton()">get people</button>
+    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" onchange="app.ui.updateWholeUI()">
+    <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
   </div>
   <div><span id="status"></span>&nbsp;</div>
 </div>
@@ -98,12 +98,12 @@
   <div id="atts">
     <p>Choose attributes from the lists below</p>
     <div id="chooseAttributeDiv">
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(0)"></div>
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(1)"></div>
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(2)"></div>
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(3)"></div>
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(4)"></div>
-      <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(5)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(2)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(3)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(4)"></div>
+      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(5)"></div>
     </div>
   </div>
 
@@ -119,17 +119,6 @@
 
     </div>
   </div>
-
-  <!--
-      <div id="map">
-          <H1>Where?</H1>
-          <label for="pumaNumberBox">PUMA: </label>
-          <input id="pumaNumberBox" type="number">
-          <button id="makeMapButton" onclick="acs.userActions.clickMakeMapButton()">make map</button>
-          <div id="acsMap"></div>
-      </div>
-  -->
-
 
 </div>
 

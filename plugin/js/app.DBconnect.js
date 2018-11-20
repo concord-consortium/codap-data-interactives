@@ -17,7 +17,7 @@
  */
 
 
-acs.DBconnect = {
+app.DBconnect = {
 
   sendCommand: async function (iCommands) {
     let theBody = new FormData();
@@ -26,9 +26,9 @@ acs.DBconnect = {
         theBody.append(key, iCommands[key])
       }
     }
-    theBody.append("whence", acs.whence);
+    theBody.append("whence", app.whence);
 
-    let theRequest = new Request(acs.constants.kBasePhpURL[acs.whence],
+    let theRequest = new Request(app.constants.kBasePhpURL[app.whence],
         {method: 'POST', body: theBody, headers: new Headers()});
 
     try {
@@ -44,7 +44,7 @@ acs.DBconnect = {
   },
 
   getCasesFromDB: async function (iAtts, iStateCodes, iYears) {
-    const tSampleSize = acs.userActions.getSelectedSampleSize();
+    const tSampleSize = app.userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
     iYears = iYears || [];
@@ -59,11 +59,11 @@ acs.DBconnect = {
         years: iYears.join(),
         n: tSampleSize
       };
-      return await acs.DBconnect.sendCommand(theCommands);
+      return await app.DBconnect.sendCommand(theCommands);
     }
 
     catch (msg) {
-      console.log('getCasesFromDB() error: ' + msg);
+      console.warn('getCasesFromDB() error: ' + msg);
     }
 
   },
@@ -71,7 +71,7 @@ acs.DBconnect = {
   getDBInfo: async function (iType) {
     try {
       const theCommands = {"c": iType};
-      return await acs.DBconnect.sendCommand(theCommands);
+      return await app.DBconnect.sendCommand(theCommands);
     }
 
     catch (msg) {

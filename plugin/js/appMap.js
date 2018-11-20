@@ -17,7 +17,7 @@
  */
 
 
-acs.acsMap = {
+app.acsMap = {
 
 
 };

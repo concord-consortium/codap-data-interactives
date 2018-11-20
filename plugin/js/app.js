@@ -20,7 +20,7 @@
  */
 /* global: xml2js */
 
-let acs = {
+let app = {
   state: null,
   whence: "local",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
@@ -37,10 +37,10 @@ let acs = {
   },
 
   initialize: async function () {
-    acs.years = await acs.DBconnect.getDBInfo("getYears");
-    acs.states = await acs.DBconnect.getDBInfo('getStates');
-    await acs.getAllAttributes();
-    await acs.CODAPconnect.initialize(null);
+    app.years = await app.DBconnect.getDBInfo("getYears");
+    app.states = await app.DBconnect.getDBInfo('getStates');
+    await app.getAllAttributes();
+    await app.CODAPconnect.initialize(null);
 
     //      Make sure the correct tab panel comes to the front when the text link is clicked
 
@@ -48,12 +48,12 @@ let acs = {
       () => {
           $('#tabs').tabs("option", "active", 1);     //  1 is the index of the attribute panel
       });
-    $('#chooseStatesDiv').html(acs.ui.makeStateListHTML());
-    $('#chooseSampleYearsDiv').html(acs.ui.makeYearListHTML());
+    $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
+    $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
 
-    $('#chooseStatesDiv input').on('change', acs.userActions.changeSampleStateCheckbox);
-    $('#chooseSampleYearsDiv input').on('change', acs.userActions.changeSampleYearsCheckbox);
-    acs.ui.updateWholeUI();
+    $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
+    $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
+    app.ui.updateWholeUI();
   },
 
 
@@ -62,9 +62,9 @@ let acs = {
       // initialize state from CODAP, then update state
     }
     else {
-      this.state.selectedYears = acs.userActions.getSelectedYears();
-      this.state.selectedStates = acs.userActions.getSelectedStates();
-      this.state.selectedAttributes = acs.ui.getArrayOfChosenAttributes()
+      this.state.selectedYears = app.userActions.getSelectedYears();
+      this.state.selectedStates = app.userActions.getSelectedStates();
+      this.state.selectedAttributes = app.ui.getArrayOfChosenAttributes()
           .map(function (attr) { return attr.name;});
       if (logMessage) {
         this.CODAPconnect.logAction(logMessage);
@@ -101,13 +101,13 @@ let acs = {
     let codeBook = await $.ajax('../data/usa_00001.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
     dataDictionary.forEach(a => {
-      let tA = new Attribute(a, acs.attributeAssignment.find(function (aa) {
+      let tA = new Attribute(a, app.attributeAssignment.find(function (aa) {
         return (a.name === aa.ipumsName);
       }));
-      acs.allAttributes[tA.name] = tA;
+      app.allAttributes[tA.name] = tA;
     });
 
-    $("#chooseAttributeDiv").html(acs.ui.makeBasicCheckboxesHTML());
+    $("#chooseAttributeDiv").html(app.ui.makeBasicCheckboxesHTML());
   },
 
   /*

@@ -15,9 +15,9 @@
  * ==========================================================================
  *
  */
-/* global acs */
+/* global app */
 
-acs.constants = {
+app.constants = {
   version: "001d",
 
   kACSDataSetName: "SDLCdata",
