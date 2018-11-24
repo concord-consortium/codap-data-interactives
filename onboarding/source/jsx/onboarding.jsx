@@ -117,7 +117,7 @@ class TaskList extends React.Component {
 
   render() {
     let checkBoxes = taskDescriptions.descriptions.map(function (iAction, iIndex) {
-      let tIcon = (iIndex === 0 && hasMouse) ? <DraggableLink/> : '', // Special case the data file checkbox
+      let tIcon = (iAction.key === 'Drag') ? <DraggableLink/> : '', // Special case the data file checkbox
           tChecked = this.props.accomplished.indexOf(iAction.key) >= 0;
       return (
           <div key={iAction.key}>
@@ -175,7 +175,7 @@ class TutorialView extends React.Component {
   }
 
   handleAccomplishment(iAccomplishment, iQualifier) {
-    if (!this.isAccomplished(iAccomplishment)) {
+    if (taskDescriptions.taskExists(iAccomplishment) && !this.isAccomplished(iAccomplishment)) {
       this.addAccomplishment(iAccomplishment);
       let tFeedback = taskDescriptions.getFeedbackFor(iAccomplishment, iQualifier, this.allAccomplished());
       if (this.state.whichFeedback === 'feedback') {
@@ -203,8 +203,12 @@ class TutorialView extends React.Component {
   handleOtherNotification(iNotification) {
     // Is the operation and type in the task descriptions. If so, we can treat it generically
     let tTask = taskDescriptions.descriptions.find(function (iDescription) {
-      return iDescription.operation === iNotification.values.operation;
-    });
+      return iDescription.operation === iNotification.values.operation && !iDescription.requiresSpecialHandling &&
+          (!iDescription.prereq || this.isAccomplished( iDescription.prereq) &&
+              (!iDescription.constraints || iDescription.constraints.some( function( iConstraint) {
+                return iNotification.values[iConstraint.property] && iNotification.values[iConstraint.property] === iConstraint.value;
+              })));
+    }.bind( this));
     if (tTask) {
       this.handleAccomplishment(tTask.key);
     }
@@ -247,9 +251,13 @@ class TutorialView extends React.Component {
                   });
                   switch (maxAttrsFound) {
                     case 1:
-                      this.handleAccomplishment('AssignAttribute');
+                      if (taskDescriptions.taskExists('AssignAttribute'))
+                        this.handleAccomplishment('AssignAttribute');
                       break;
                     case 2:
+                      if (taskDescriptions.taskExists('MakeScatterplot'))
+                        this.handleAccomplishment('MakeScatterplot');
+                      // fallthrough deliberate
                     case 3:
                       this.handleAccomplishment('SecondAttribute');
                       break;
@@ -259,6 +267,11 @@ class TutorialView extends React.Component {
             }
           }.bind(this))
         }.bind(this),
+
+        handleLegendAttributeChange = function() {
+          if( iNotification.values.type === 'DG.GraphModel' && (iNotification.values.attributeName === 'Sex'))
+            this.handleAccomplishment('MakeLegend');
+        }.bind( this),
 
         handleDataContextCountChanged = function () {
           codapInterface.sendRequest({
@@ -279,24 +292,24 @@ class TutorialView extends React.Component {
     switch (iNotification.values.operation) {
       case 'dataContextCountChanged':
         handleDataContextCountChanged();
-        tHandled = true;
         break;
       case 'create':
         if (iNotification.values.type === 'graph')
           this.handleAccomplishment('MakeGraph', !this.isAccomplished('Drag'));
         else if (iNotification.values.type === 'table')
           this.handleAccomplishment('MakeTable');
-        tHandled = true;
         break;
       case 'move':
         if (iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView')
           this.handleAccomplishment('MoveComponent');
-        tHandled = true;
         break;
       case 'attributeChange':
         handleAttributeChange();
-        tHandled = true;
         break;
+/*
+      case 'legendAttributeChange':
+        handleLegendAttributeChange();
+*/
     }
     return {success: true};
   }
@@ -366,15 +379,9 @@ class TutorialView extends React.Component {
 
 function getStarted() {
 
-  /*
-    window.onmousemove = function() {
-      hasMouse = true;
-    }
-  */
-
   codapInterface.init({
     title: "Getting started with CODAP",
-    version: "1.01",
+    version: "1.02",
     dimensions: {
       width: 400,
       height: 550
