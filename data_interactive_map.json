@@ -596,7 +596,7 @@
     },
     {
       "title": "acs",
-      "description": "Tim TBD",
+      "description": "ACS data portal: 20000 Californans in 2013",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/acs/acs.html",
@@ -607,7 +607,7 @@
     },
     {
       "title": "arbor",
-      "description": "Tim TBD",
+      "description": "Make decision trees by hand!",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/arbor/arbor.html",
@@ -618,7 +618,7 @@
     },
     {
       "title": "barty",
-      "description": "Tim TBD",
+      "description": "BART data for 2015. Over 10 million data points.",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/barty/barty.html",
@@ -629,7 +629,7 @@
     },
     {
       "title": "fish",
-      "description": "Tim TBD",
+      "description": "A Commons game where you have to fish for a living",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/fish/fish.html",
@@ -640,7 +640,7 @@
     },
     {
       "title": "journal",
-      "description": "Tim TBD",
+      "description": "Nature-of-science helper: write tiny papers to share your data with others.",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/journal/journal.html",
@@ -651,7 +651,7 @@
     },
     {
       "title": "nhanes",
-      "description": "Tim TBD",
+      "description": "Data portal for 11,000-ish cases of 2003 data from NHANES",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/nhanes/nhanes.html",
@@ -662,7 +662,7 @@
     },
     {
       "title": "stebbins",
-      "description": "Tim TBD",
+      "description": "Simulation of natural selection",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/stebbins/stebbins.html",
@@ -673,7 +673,7 @@
     },
     {
       "title": "stella",
-      "description": "Tim TBD",
+      "description": "Simulation for stellar astronomy",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/stella/stella.html",
@@ -684,7 +684,7 @@
     },
     {
       "title": "xeno",
-      "description": "Tim TBD",
+      "description": "Diagnose sick alien creatures. Works with arbor.",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/xeno/xeno.html",
@@ -695,7 +695,7 @@
     },
     {
       "title": "geiger",
-      "description": "Tim TBD",
+      "description": "Find the radioactive speck without taking a lethal dose",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/geiger/geiger.html",
