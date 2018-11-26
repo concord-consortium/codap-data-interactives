@@ -593,6 +593,116 @@
       "categories": [
         "Utilities"
       ]
+    },
+    {
+      "title": "acs",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/acs/acs.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "arbor",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/arbor/arbor.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "barty",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/barty/barty.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "fish",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/fish/fish.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "journal",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/journal/journal.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "nhanes",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/nhanes/nhanes.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "stebbins",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/stebbins/stebbins.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "stella",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/stella/stella.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "xeno",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/xeno/xeno.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "geiger",
+      "description": "Tim TBD",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/geiger/geiger.html",
+      "visible": false,
+      "categories": [
+        "Data Worlds"
+      ]
     }
   ]
 }

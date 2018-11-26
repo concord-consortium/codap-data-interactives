@@ -1,0 +1,111 @@
+/* class options */
+
+body {
+    font-size : 70%
+}
+
+.ui-slider { display : inline-block; width : 15em; }
+.sliderLabel { display : inline-block; }
+
+.options   {
+    background-color: #edd;
+    padding: 4px;
+}
+
+.advancedVisionOptions   {
+    background-color: #eef;
+    padding: 4px;
+}
+
+.visionOptions   {
+    background-color: #dde;
+    padding: 4px;
+}
+
+.preGameOptions   {
+    background-color: #fee;
+    padding: 4px;
+}
+
+.imageButton    {
+    background-image: url('../art/pause.png');
+    background-size: 100% 100%;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+/*  score text  */
+
+#scoreDiv {
+    font-size : 1.2em;
+    vertical-align: middle;
+}
+#evolutionPoints    {
+    color : #0a9a87;
+    font-size : 1.8em;
+    font-weight: 900;
+    vertical-align: middle;
+}
+#predatorPoints    {
+    color : tomato;
+    font-weight: 900;
+    font-size : 1.8em;
+    vertical-align: middle;
+}
+/* option IDs */
+
+/*  button etc stuff */
+
+#allDataButton {
+    background-color: #0a9a87;
+    color: white;
+}
+
+#keepPlayingButton {
+    background-color: #0a9a87;
+    color: white;
+}
+
+#newGameButton {
+    background-color: darkgray;
+    color: white;
+    /* position: absolute;
+    right:  12px;*/
+}
+
+/*		BOX CLASSES		*/
+
+.hBox	{
+    display: flex;
+    flex-direction: row;
+    /*display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	horizontal;
+    -moz-box-orient:	horizontal;
+    box-orient:	horizontal;*/
+}
+
+.vBox	{
+    display: flex;
+    flex-direction: column;
+    /*
+    display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	vertical;
+    -moz-box-orient:	vertical;
+    box-orient:	vertical;
+    */
+}
+
+.textIO {
+    background-color: yellowgreen;
+    margin: 2px;
+    padding: 2px;
+    font-family: sans-serif;
+    font-size: 7pt;
+    color: white;
+}

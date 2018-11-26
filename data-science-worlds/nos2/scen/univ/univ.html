@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 9/22/18.
+ 
+ 
+ ==========================================================================
+fourCU.html in 4color
+
+    Author:   Tim Erickson
+
+Copyright (c) 2018 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+LOCAL:      http://localhost:8888/plugins/nos2/scen/univ/univ.html
+
+
+-->
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Four-Color Universe</title>
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel='stylesheet' type='text/css' href='univ.css'/>
+    <link rel="stylesheet" href="../../../common/jqueryFolder/jquery-ui.css">
+
+    <script src="../../../common/jqueryFolder/jquery.js"></script>
+    <script src="../../../common/jqueryFolder/jquery-ui.js"></script>
+
+    <!-- Snap -->
+    <script src="../../../common/snap.svg-min.js"></script>
+
+    <script src="../../../common/iframe-phone.js" language="javascript"></script>
+    <script src="../../../common/codapInterface.js" language="javascript"></script>
+    <script src="../../../common/pluginHelper.js" language="javascript"></script>
+
+    <script src="../../../common/TEEUtils.js"></script>
+
+    <script src="../../nos2.js"></script>
+    <script src="../../nos2.DBconnect.js"></script>
+    <script src="univ.js"></script>
+    <script src="univ.model.js"></script>
+    <script src="univ.ui.js"></script>
+    <script src="univ.DBconnect.js"></script>
+    <script src="univ.userAction.js"></script>
+    <script src="univ.CODAPconnect.js"></script>
+    <script src="univ.selectionManager.js"></script>
+    <script src="telescopeView.js"></script>
+    <script src="universeView.js"></script>
+    <script src="dataView.js"></script>
+
+    <script src="Result.js"></script>
+    <script src="../../DataPack.js"></script>
+
+
+    <script>
+        $(function () {
+            univ.initialize();
+            $("#tabs").tabs();
+        });
+    </script>
+
+</head>
+<body>
+
+<div id="univStatusBarDiv"></div>
+
+<div id="joinWorldDiv" class="startup">
+    <h1>Join a World</h1>
+
+    <p>You need to get a world code from someone who has created a world.
+        If that person is you, create a world
+        <a href = "../../nosAdmin.html" target="_blank">by following this link</a>.</p>
+    <label for="worldCodeBox">World code: </label>
+    <input type="text" id="worldCodeBox">
+    <button id="joinButton" onclick="univ.userAction.joinWorld()">join</button>
+    <br>
+</div>
+
+<div id="joinTeamDiv" class="startup">
+    <h1>Join a Team</h1>
+    <div id="chooseTeamFromListDiv"></div>
+
+</div>
+
+<div id="tabs">
+    <!--    list the tabs for this jquery_ui widget -->
+    <ul>
+        <li><a href="#observationsTab">Observations</a></li>
+        <li><a href="#dataTab">Data</a></li>
+        <li><a href="#snapshotTab">Data snapshot</a></li>
+        <li><a href="#truthTab">Truth</a></li>
+        <li><a href="#optionsTab">Options</a></li>
+    </ul>
+
+    <div id="observationsTab">
+        <svg id="telescope" width="300" height="300"></svg>
+        <div>
+            <span id="latestResultText"></span><br>
+            <span id="telescopeLocationText"></span>
+            <button id="observeButton" onclick="univ.userAction.observe()">collect data</button>
+        </div>
+    </div>
+
+    <div id="dataTab">
+        <svg id="dataView" width="500" height="300"></svg>
+        <br>
+        <input type="radio" name="dataDisplayChoice" value="selection" onclick="univ.ui.update()"> selection
+        <input type="radio" name="dataDisplayChoice" value="all"  onclick="univ.ui.update()" checked> all
+        <button onclick="univ.userAction.snap()">snap</button>
+    </div>
+
+    <div id="snapshotTab">
+        <label for="snapshotTitle">Title: </label>
+        <input type="text" size="30"  id="snapshotTitle" onblur="univ.currentSnapshot.setText()">
+        <button onclick="univ.userAction.saveSnapshot()">Save this snapshot</button>
+        <br>
+        <svg id="thumbnail" width="250" height="150"></svg>
+        <br>
+        <label for="snapshotCaption">caption</label><br>
+        <textarea id="snapshotCaption" rows="4" cols="40" onblur="univ.currentSnapshot.setText()"></textarea>
+        <br>
+        <label for="snapshotNotes">notes</label><br>
+        <textarea id="snapshotNotes" rows="2" cols="40" onblur="univ.currentSnapshot.setText()"></textarea>
+    </div>
+
+    <div id="truthTab">
+        <svg id="universe" width="300" height="300"></svg>
+    </div>
+
+    <div id="optionsTab">
+    </div>
+</div>
+
+</body>
+</html>

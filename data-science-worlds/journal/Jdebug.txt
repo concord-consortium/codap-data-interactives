@@ -1,0 +1,978 @@
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: null
+how many papers? : 0
+[getJournal]...... worldID: null
+how many papers? : 0
+[getWorldData]......2018-08-28 15:15:41 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: null
+[getMyTeams]......  
+how many papers? : 0
+[getJournal]...... worldID: null
+how many papers? : 0
+[getWorldData]......2018-08-28 15:17:53 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[judgePaper]......2018-08-28 15:17:57 (PDT) paperID: 32
+[getPapers]...... w = 15, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[updatePaper]...... title: A terrific paper
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[submitPaper].......2018-08-28 15:18:18 (PDT) id: 32
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = 15, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: 15
+how many papers? : 3
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[judgePaper]......2018-08-28 15:18:25 (PDT) paperID: 32
+[getPapers]...... w = 15, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: 15
+how many papers? : 4
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Do integration first. 
+Now we will submit?
+   MARKUP: in: Do integration first. 
+Now we will submit?
+   MARKUP: out: <p> pass1: Do integration first. 
+Now we will submit?
+       MARKUP (loc 23): out: <p>Do integration first. </p> pass1: Now we will submit?
+   MARKUP: out: <p>Do integration first. </p><p> pass1: Now we will submit?
+       MARKUP (loc false): out: <p>Do integration first. </p><p>Now we will submit?</p> pass1:  count = 1
+HTML : <p>Do integration first. </p><p>Now we will submit?</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: null
+[getJournal]...... worldID: null
+how many papers? : 0
+how many papers? : 0
+[getWorldData]......2018-08-28 15:20:50 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p> pass1: A revolutionary effort
+       MARKUP (loc false): out: <p>A revolutionary effort</p> pass1:  count = 1
+HTML : <p>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p> pass1: Do integration first, then differentiation
+       MARKUP (loc false): out: <p>Do integration first, then differentiation</p> pass1:  count = 1
+HTML : <p>Do integration first, then differentiation</p>
+text : Do integration first. 
+Now we will submit?
+   MARKUP: in: Do integration first. 
+Now we will submit?
+   MARKUP: out: <p> pass1: Do integration first. 
+Now we will submit?
+       MARKUP (loc 23): out: <p>Do integration first. </p> pass1: Now we will submit?
+   MARKUP: out: <p>Do integration first. </p><p> pass1: Now we will submit?
+       MARKUP (loc false): out: <p>Do integration first. </p><p>Now we will submit?</p> pass1:  count = 1
+HTML : <p>Do integration first. </p><p>Now we will submit?</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p> pass1: Really load them up in Calc 2. 
+       MARKUP (loc false): out: <p>Really load them up in Calc 2. </p> pass1:  count = 1
+HTML : <p>Really load them up in Calc 2. </p>
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: null
+how many papers? : 0
+[getJournal]...... worldID: null
+how many papers? : 0
+[getWorldData]......2018-08-28 15:22:00 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+text : A revolutionary effort
+   MARKUP: in: A revolutionary effort
+   MARKUP: out: <p class='paperText'> pass1: A revolutionary effort
+HTML : <p class='paperText'>A revolutionary effort</p>
+text : Do integration first, then differentiation
+   MARKUP: in: Do integration first, then differentiation
+   MARKUP: out: <p class='paperText'> pass1: Do integration first, then differentiation
+HTML : <p class='paperText'>Do integration first, then differentiation</p>
+text : Do integration first. 
+Now we will submit?
+   MARKUP: in: Do integration first. 
+Now we will submit?
+   MARKUP: out: <p class='paperText'> pass1: Do integration first. 
+Now we will submit?
+   MARKUP: out: <p class='paperText'>Do integration first. </p><p class='paperText'> pass1: Now we will submit?
+HTML : <p class='paperText'>Do integration first. </p><p class='paperText'>Now we will submit?</p>
+text : Really load them up in Calc 2. 
+   MARKUP: in: Really load them up in Calc 2. 
+   MARKUP: out: <p class='paperText'> pass1: Really load them up in Calc 2. 
+HTML : <p class='paperText'>Really load them up in Calc 2. </p>
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = 15, t = 1 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: null
+[getJournal]...... worldID: null
+how many papers? : 0
+how many papers? : 0
+[getWorldData]......2018-08-28 16:23:35 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getMyTeams]......  
+[getMyWorlds]......  
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: null
+how many papers? : 0
+[newPaper]......2018-08-31 15:26:15 (PDT) title: Our discovery
+[newPaper]...... new paper number: 34
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[updatePaper]...... title: Our discovery
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[submitPaper].......2018-08-31 15:26:29 (PDT) id: 34
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getWorldData]......2018-08-31 15:26:45 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+[judgePaper]......2018-08-31 15:27:15 (PDT) paperID: 34
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[updatePaper]...... title: Our discovery
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[submitPaper].......2018-08-31 15:27:52 (PDT) id: 34
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 4
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 4
+[judgePaper]......2018-08-31 15:28:01 (PDT) paperID: 34
+[getPapers]...... w = 15, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: 15
+how many papers? : 5
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-08-31 15:28:48 (PDT) code: tb1
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 18
+            [godID] => 1
+            [code] => tb1
+            [modified] => 
+            [epoch] => 2000
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-08-31 15:28:59 (PDT) code: jpl
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-08-31 15:29:06 (PDT) code: rpi
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getMyWorlds]......  
+[getPapers]...... w = [object Object], t = null 
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[addTeam]......2018-08-31 15:29:08 (PDT) code: unam
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+---  MYSQL connection error SQLSTATE[HY000] [2002] No such file or directory
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 09:51:46 (PDT) code: taka
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 19
+            [godID] => 1
+            [code] => taka
+            [modified] => 
+            [epoch] => 2018
+            [journalTitle] => Journal of Lake Tahoe
+            [editorPassword] => editor
+        )
+
+)
+
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 09:52:11 (PDT) code: a
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: null
+how many papers? : 0
+[getJournal]...... worldID: null
+how many papers? : 0
+[getWorldData]......2018-09-10 09:53:17 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 5
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 5
+[newPaper]......2018-09-10 09:54:21 (PDT) title: Water Quality
+[newPaper]...... new paper number: 35
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 5
+[updatePaper]...... title: Water Quality
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 5
+[submitPaper].......2018-09-10 09:54:24 (PDT) id: 35
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 5
+[getMyTeams]......  
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: null
+how many papers? : 0
+[getJournal]...... worldID: null
+how many papers? : 0
+[getWorldData]......2018-09-10 09:54:53 (PDT) code: baz2
+[getPapers]...... w = 15, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getJournal]...... worldID: 15
+how many papers? : 5
+[judgePaper]......2018-09-10 09:55:13 (PDT) paperID: 35
+[getPapers]...... w = 15, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getJournal]...... worldID: 15
+how many papers? : 5
+[getPapers]...... w = 15, t = 14 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w AND teamID = :t
+[getJournal]...... worldID: 15
+how many papers? : 5
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[addTeam]......2018-09-10 13:22:43 (PDT) code: rice
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:23:39 (PDT) code: ucla
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:23:44 (PDT) code: prin
+[getPapers]...... w = 19, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:23:46 (PDT) code: nany
+[getPapers]...... w = 19, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:23:59 (PDT) code: amoe
+[getPapers]...... w = 19, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getGodData]...... username: george
+[newGod]......2018-09-10 13:25:12 (PDT) name: 
+[newGod]...... new god number: 4
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:25:23 (PDT) code: mars
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '' for column 'epoch' at row 1
+[getPapers]...... w = undefined, t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[addTeam]......2018-09-10 13:25:28 (PDT) code: ucla
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'undefined' for column 'worldID' at row 1
+[getPapers]...... w = undefined, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:26:02 (PDT) code: prin
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'undefined' for column 'worldID' at row 1
+[getPapers]...... w = undefined, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: george
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:27:43 (PDT) code: mars
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '' for column 'epoch' at row 1
+[getMyTeams]......  
+[getMyWorlds]......  
+[getPapers]...... w = undefined, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: george
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:33:41 (PDT) code: mars
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 20
+            [godID] => 4
+            [code] => mars
+            [modified] => 
+            [epoch] => 0
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:33:50 (PDT) code: byu
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[addTeam]......2018-09-10 13:37:27 (PDT) code: cern
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getGodData]...... username: george
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = 20, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:38:12 (PDT) code: emry
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'undefined' for column 'worldID' at row 1
+[getPapers]...... w = 20, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getGodData]...... username: george
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = 20, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:38:46 (PDT) code: unam
+[getPapers]...... w = 20, t = null 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:39:01 (PDT) code: venus
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 21
+            [godID] => 1
+            [code] => venus
+            [modified] => 
+            [epoch] => 0
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:39:10 (PDT) code: cant
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:41:41 (PDT) code: prin
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '[object Object]' for column 'worldID' at row 1
+[getPapers]...... w = [object Object], t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getGodData]...... username: tim
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:41:58 (PDT) code: jupiter
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 22
+            [godID] => 1
+            [code] => jupiter
+            [modified] => 
+            [epoch] => 1999
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getPapers]...... w = undefined, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[addTeam]......2018-09-10 13:42:30 (PDT) code: cit
+---  MySQL preparation or execution error SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'undefined' for column 'worldID' at row 1
+[getPapers]...... w = undefined, t = null 
+[getMyWorlds]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... w = null, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyTeams]......  
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+/n[newWorld]......2018-09-10 13:43:22 (PDT) code: saturn
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 23
+            [godID] => 1
+            [code] => saturn
+            [modified] => 
+            [epoch] => 0
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getMyTeams]......  
+[getMyWorlds]......  
+[getPapers]...... w = undefined, t = null 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getPapers]...... w = null, t = null 
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getGodData]...... username: tim
+[getPapers]...... w = null, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]......  
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+/n[newWorld]......2018-09-10 13:44:28 (PDT) code: venus
+[newWorld]...... out: Array
+(
+    [0] => Array
+        (
+            [id] => 24
+            [godID] => 1
+            [code] => venus
+            [modified] => 
+            [epoch] => 0
+            [journalTitle] => Journal of Scientific Stuff
+            [editorPassword] => editor
+        )
+
+)
+
+[getMyWorlds]......  
+[getPapers]...... w = 24, t = null 
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g
+[getMyTeams]......  
+[addTeam]......2018-09-10 13:44:45 (PDT) code: mich
+[getPapers]...... w = 24, t = null 
+[getMyWorlds]......  
+[getMyTeams]......  
+[getPapers]...... query: SELECT * FROM papers WHERE worldID = :w 
+[getMyWorlds]...... query: SELECT * FROM worlds WHERE godID = :g

@@ -1,0 +1,76 @@
+
+
+ in PHP Mon, 10 Apr 2017 17:53:42 -0700 post is: byRoute | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  Mon, 10 Apr 2017 17:53:42 -0700 submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN '2015-04-15' AND '2015-04-15' )  AND origin = 'EM' AND destination = 'OR' 
+    Mon, 10 Apr 2017 17:53:42 -0700 byRoute  got 19 row(s)
+
+ in PHP Mon, 10 Apr 2017 17:56:47 -0700 post is: byDeparture | 2015-04-15 | 2015-04-15 | EM
+
+----  Mon, 10 Apr 2017 17:56:47 -0700 submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN '2015-04-15' AND '2015-04-15' )  AND origin = 'EM' 
+    Mon, 10 Apr 2017 17:56:47 -0700 byDeparture  got 893 row(s)
+
+ in PHP Wed, 26 Sep 2018 08:51:44 -0700 post is: byRoute | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 08:51:44 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+
+ in PHP Wed, 26 Sep 2018 09:10:11 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:10:11 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+
+ in PHP Wed, 26 Sep 2018 09:13:48 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:13:48 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:13:48 (PDT) byRoute  got 19 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:14:43 -0700 post is: byRoute | local | 2015-04-16 | 2015-04-16 | OR | EM
+
+----  2018-09-26 09:14:43 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:14:43 (PDT) byRoute  got 19 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:21:51 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:21:51 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:21:51 (PDT) byRoute  got 19 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:23:19 -0700 post is: byRoute | local | 2015-04-16 | 2015-04-22 | OR | EM
+
+----  2018-09-26 09:23:19 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:23:21 (PDT) byRoute  got 130 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:27:02 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:27:02 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:27:02 (PDT) byRoute  got 19 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:38:12 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:38:12 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:38:12 (PDT) byRoute  got 19 row(s)
+
+ in PHP Wed, 26 Sep 2018 09:48:04 -0700 post is: byRoute | local | 2015-04-15 | 2015-04-15 | OR | EM
+
+----  2018-09-26 09:48:04 (PDT) submitting query: 
+SELECT id, Bdate, DAYOFWEEK(Bdate) as dow, hour, passengers, origin, destination  FROM hours  
+WHERE  ( Bdate BETWEEN :d0 AND :d1 )  AND origin = :stn0 AND destination = :stn1 
+    2018-09-26 09:48:04 (PDT) byRoute  got 19 row(s)
