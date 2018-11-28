@@ -136,7 +136,7 @@ $pass = $credentials[$whence]["pass"];
 $dbname = $credentials[$whence]["dbname"];
 
 //  reportToFile('Creds : ' . print_r($credentials, true) . " REQ: " . print_r($_REQUEST, true));
-  reportToFile("CRED TEST: whence \"$whence\" user \"$user\" pass \"$pass\" dbname \"$dbname\"");
+  reportToFile("CRED TEST: whence \"$whence\" user \"$user\" dbname \"$dbname\"");
 
 $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);     //  works under MAMP....
 
