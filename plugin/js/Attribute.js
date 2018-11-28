@@ -26,16 +26,16 @@ class Attribute {
     this.name = iRecord.name;
     this.startPos = Number(iRecord.startPos);
     this.width = iRecord.width;
-    this.format = iRecord.format;
+    this.format = (iAttributeAssignment && iAttributeAssignment.format) || iRecord.format;
     this.categories = iRecord.categories;
     this.groupNumber = iAttributeAssignment && iAttributeAssignment.group;
-    this.description = iRecord.description;
+    this.description = (iAttributeAssignment && iAttributeAssignment.description) || iRecord.description;
     this.chosen = iAttributeAssignment && iAttributeAssignment.defCheck;
     this.displayMe = iAttributeAssignment; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;
     this.checkboxID = this.name + "Checkbox";
 
-    this.title = iRecord.labl;
+    this.title = (iAttributeAssignment && iAttributeAssignment.title) || iRecord.labl;
     if (!this.title) {
       this.title = this.name;
     }

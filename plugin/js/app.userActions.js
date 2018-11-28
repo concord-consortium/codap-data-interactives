@@ -48,7 +48,7 @@ app.userActions = {
     // console.log("the cases: " + JSON.stringify(oData));
 
     app.ui.displayStatus('Sending data to codap...');
-    app.CODAPconnect.saveCasesToCODAP( oData );
+    await app.CODAPconnect.saveCasesToCODAP( oData );
     app.ui.displayStatus('');
     app.state.sampleNumber++;
   },

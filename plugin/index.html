@@ -30,40 +30,41 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>SDLC Tool</title>
+  <meta charset="UTF-8">
+  <title>SDLC Tool</title>
 
 
-    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
 
-    <link rel="stylesheet" href="./css/jquery-ui.css" language="javascript">
+  <link rel="stylesheet" href="./css/jquery-ui.css" language="javascript">
 
-    <link rel='stylesheet' type='text/css' href='./css/style.css'/>
+  <link rel='stylesheet' type='text/css' href='./css/style.css'/>
 
-    <script src="./js/iframe-phone.js" language="javascript"></script>
-    <script src="./js/codapInterface.js" language="javascript"></script>
-    <script src="./js/pluginHelper.js" language="javascript"></script>
-    <script src="./js/TEEUtils.js" language="javascript"></script>
-    <script src="./js/jquery.js" language="javascript"></script>
-    <script src="./js/jquery-ui.js" language="javascript"></script>
+  <script src="./js/iframe-phone.js" language="javascript"></script>
+  <script src="./js/codapInterface.js" language="javascript"></script>
+  <script src="./js/pluginHelper.js" language="javascript"></script>
+  <script src="./js/TEEUtils.js" language="javascript"></script>
+  <script src="./js/jquery.js" language="javascript"></script>
+  <script src="./js/jquery-ui.js" language="javascript"></script>
 
-    <script src="js/Attribute.js" language="javascript"></script>
-    <script src="js/app.js" language="javascript"></script>
-    <script src="js/app.constants.js" language="javascript"></script>
-    <script src="js/app.ui.js" language="javascript"></script>
-    <script src="js/app.userActions.js" language="javascript"></script>
-    <script src="js/app.CODAPconnect.js" language="javascript"></script>
-    <script src="js/app.DBconnect.js" language="javascript"></script>
-    <script src="js/xml-js.js" language="javascript"></script>
+  <script src="js/Attribute.js" language="javascript"></script>
+  <script src="js/app.js" language="javascript"></script>
+  <script src="js/app.constants.js" language="javascript"></script>
+  <script src="js/app.ui.js" language="javascript"></script>
+  <script src="js/app.userActions.js" language="javascript"></script>
+  <script src="js/app.CODAPconnect.js" language="javascript"></script>
+  <script src="js/app.DBconnect.js" language="javascript"></script>
+  <script src="js/xml-js.js" language="javascript"></script>
+  <script src="js/config.js" language="javascript"></script>
 
-    <script>
-        $(function () {
-            $("#tabs").tabs();
-            app.initialize();
-        });
+  <script>
+    $(function () {
+        $("#tabs").tabs();
+        app.initialize();
+    });
 
-    </script>
+  </script>
 
 </head>
 <body>
@@ -72,7 +73,7 @@
   <h1>SDLC Data Portal</h1>
   <div>
     <label for="sampleSizeInput">How many people? </label>
-    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" onchange="app.ui.updateWholeUI()">
+    <input id="sampleSizeInput" type="number" value="1000" min="1" max="1000" onchange="app.ui.updateWholeUI()">
     <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
   </div>
   <div><span id="status"></span>&nbsp;</div>
@@ -110,13 +111,11 @@
   <div id="states">
     <p>Choose States from the list below</p>
     <div id="chooseStatesDiv">
-
     </div>
   </div>
   <div id="sampleYears">
     <p>Choose sample years from the list below</p>
     <div id="chooseSampleYearsDiv">
-
     </div>
   </div>
 

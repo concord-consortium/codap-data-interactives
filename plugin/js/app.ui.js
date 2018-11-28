@@ -81,7 +81,7 @@ app.ui = {
   },
 
   toggleAttributeGroupOpen : function(iGroupIndex) {
-      app.attributeGroups[iGroupIndex].open = !app.attributeGroups[iGroupIndex].open;
+      app.config.attributeGroups[iGroupIndex].open = !app.attributeGroups[iGroupIndex].open;
       app.ui.updateWholeUI();
   },
 
@@ -114,7 +114,7 @@ app.ui = {
   makeBasicCheckboxesHTML: function () {
     let out = "";
 
-    app.attributeGroups.forEach( (g)=>{
+    app.config.attributeGroups.forEach( (g)=>{
       out += "<details>";
       //if (g.open) {
           //  out += "<div>";

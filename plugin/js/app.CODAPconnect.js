@@ -75,50 +75,51 @@ app.CODAPconnect = {
     };
 
     const createItemsResult = await codapInterface.sendRequest(makeItemsMessage);
-
+    return createItemsResult;
   },
 
   makeNewAttributesIfNecessary : async function() {
-    const theAttributes = app.state.selectedAttributes;//app.ui.getArrayOfChosenAttributes();
-    await Promise.all(theAttributes.map(this.checkOneAttributeAndCreateIfNonexistent));
-  },
-
-  checkOneAttributeAndCreateIfNonexistent : async function(name) {
-    let a = app.allAttributes[name];
-    const tMessage = {
-      action: "get",
-      resource: "dataContext[" + app.constants.kACSDataSetName + "].collection["
-      + app.constants.kACSCollectionName + "].attribute[" + a.title + "]"
-    };
-
-    const attributeExistenceResult = await codapInterface.sendRequest(tMessage);
-
-    if (attributeExistenceResult.success) {
-      console.log("Attribute " + a.name + " exists as " + a.title);
-    } else {
-      console.log("Need to create attribute " + a.name + " as " + a.title);
-
-      const naMessage = {
-        action: "create",
-        resource: "dataContext[" + app.constants.kACSDataSetName + "].collection["
-        + app.constants.kACSCollectionName + "].attribute",
-        values : [
-          {
-            "name": a.title,
-            "title": a.title,
-            "description": a.description
-          }
-        ]
-      };
-      const makeNewAttributeResult = await codapInterface.sendRequest(naMessage);
-
-      if (makeNewAttributeResult.success) {
-        console.log("Success creating " + a.title);
-      } else {
-        console.log("FAILED to create " + a.title);
+    async function getCODAPAttrList() {
+      let attrListResource = 'dataContext[' + app.constants.kACSDataSetName +
+          '].collection[' + app.constants.kACSCollectionName + '].attributeList';
+      let response =
+          await codapInterface.sendRequest({
+        action: 'get',
+        resource: attrListResource});
+      if (response.success) {
+        return response.values;
       }
     }
-
+    let theAttributes = app.state.selectedAttributes.map(function (attrName) {
+      return app.allAttributes[attrName];
+    });
+    let existingAttributeList = await getCODAPAttrList();
+    let existingAttributeNames = existingAttributeList.map(function (attr) {
+      return attr.name;
+    });
+    let createRequests = [];
+    theAttributes.forEach(function (attr) {
+      if (!existingAttributeNames.includes(attr.name)) {
+        let attrResource = 'dataContext[' + app.constants.kACSDataSetName + '].collection['
+            + app.constants.kACSCollectionName + '].attribute';
+        let req = {
+          action: 'create',
+          resource: attrResource,
+          values: {
+            name: attr.title,
+            title: attr.title,
+            description: attr.description,
+            type: attr.format
+          }
+        };
+        createRequests.push(req);
+      }
+    });
+    if (createRequests.length > 0) {
+      return await codapInterface.sendRequest(createRequests);
+    } else {
+      return {success: true};
+    }
   },
 
   makeCaseTableAppear : async function() {
