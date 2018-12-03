@@ -176,7 +176,7 @@ app.ui = {
 
     out = "<p>When you press the button, you will get "
         + (tSampleSize == 1 ? "one random person" : "a random sample of " + tSampleSize + " people")
-        + " from the <a href='https://www.census.gov/programs-surveys/app' target='_blank'>American Community Survey</a>.</p> "
+        + " from the <a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
         + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
         "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
         + "</b>.</p>"
