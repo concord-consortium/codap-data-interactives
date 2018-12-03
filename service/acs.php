@@ -47,31 +47,33 @@ function prefetch($DBH) {
     CODAP_MySQL_doQueryWithoutResult($DBH, $createTempQ, array());
 }
 
-function fetchSamples($DBH, $num, $yr, $st) {
-    $populateTempQ = "CALL InsertRandom(?, 0, 1)";
-    $sumWeightsQ = "SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?";
-    $sumWeightsNoStateQ = "SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL";
-    $selectSamplesYrStQ = "SELECT peeps.id,peeps.sample_data " .
-        "FROM peeps, rand_numbers WHERE peeps.year=? AND peeps.state_code=? AND " .
-        "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr_st AND " .
-        "peeps.accum_yr_st + peeps.perwt";
-    $selectSamplesYrQ = "SELECT peeps.id,peeps.sample_data " .
-        "FROM peeps, rand_numbers WHERE peeps.year=? AND " .
-        "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr AND " .
-        "peeps.accum_yr + peeps.perwt";
-    $depopulateTempQ = "DELETE FROM rand_numbers";
-    $populateTempParams = [$num];
-    $params = [$yr, $st];
-
-    CODAP_MySQL_doQueryWithoutResult($DBH, $populateTempQ, $populateTempParams);
-    if ($st) {
-        CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsQ, $params);
-        $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrStQ, $params);
+function prepareQueries($DBH, $hasStateSelection) {
+    $queries = array();
+    $queries["populateTemp"] = $DBH->prepare("CALL InsertRandom(?, 0, 1)");
+//    $queries["depopulateTemp"] = $DBH->prepare("DELETE FROM rand_numbers");
+    if ($hasStateSelection) {
+        $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?");
+        $queries["selectSamples"] = $DBH->prepare("SELECT peeps.id,peeps.sample_data FROM peeps, rand_numbers WHERE peeps.year=? AND peeps.state_code=? AND (rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr_st AND peeps.accum_yr_st + peeps.perwt");
     } else {
-        CODAP_MySQL_doQueryWithoutResult($DBH, $sumWeightsNoStateQ, [$yr]);
-        $rslt = CODAP_MySQL_getQueryResult($DBH, $selectSamplesYrQ, [$yr]);
+        $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL");
+        $queries["selectSamples"] = $DBH->prepare("SELECT peeps.id,peeps.sample_data FROM peeps, rand_numbers WHERE peeps.year=? AND " .
+                "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr AND " .
+                "peeps.accum_yr + peeps.perwt");
     }
-    CODAP_MySQL_doQueryWithoutResult($DBH, $depopulateTempQ, array ());
+    return $queries;
+}
+function fetchSamples($DBH, $num, $yr, $st, $queries) {
+    $populateTempParams = [$num];
+    if ($st) {
+        $params = [$yr, $st];
+    } else {
+        $params = [$yr];
+    }
+
+    CODAP_MySQL_doPreparedQueryWithoutResult($queries["populateTemp"], $populateTempParams);
+    CODAP_MySQL_doPreparedQueryWithoutResult($queries["sumWeights"], $params);
+    $rslt = CODAP_MySQL_getPreparedQueryResult($queries["selectSamples"], $params);
+    CODAP_MySQL_doQueryWithoutResult($DBH, "DELETE FROM rand_numbers", array ());
     return $rslt;
 }
 
@@ -95,18 +97,19 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
     $samples = array();
 
     preFetch($DBH);
+    $queries = prepareQueries($DBH, (count($stArray) > 0));
     foreach ($yrArray as $yr ) {
         if (count($stArray) > 0) {
             foreach ($stArray as $st) {
                 reportToFile("Getting $segmentSize segment samples for year: " . $yr .
                     " and state: " . $st . ".");
-                $segSamples =  fetchSamples($DBH, $segmentSize, $yr, $st);
+                $segSamples =  fetchSamples($DBH, $segmentSize, $yr, $st, $queries);
                 $samples = array_merge($samples, $segSamples);
             }
         } else {
             reportToFile("Getting $segmentSize segment samples for year: " . $yr .
                 " for all states.");
-            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, null);
+            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, null, $queries);
             $samples = array_merge($samples, $segSamples);
         }
     }

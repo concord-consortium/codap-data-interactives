@@ -77,6 +77,23 @@ function CODAP_MySQL_doQueryWithoutResult($db, $query, $params)
     }
 }
 
+/**
+ * actually execute a MySQL query
+ * Parameters:
+ * query   prepared query
+ * params  parameters for the query
+ * returns an array of <associated array>s, each of which is one row.
+ */
+
+function CODAP_MySQL_doPreparedQueryWithoutResult($query, $params)
+{
+    try {
+        $query->execute($params);
+    } catch (PDOException $e) {
+        error_log("---  MySQL preparation or execution error " . $e->getMessage());
+        die();
+    }
+}
 
 function CODAP_MySQL_getQueryResult($db, $query, $params)
 {
@@ -92,6 +109,18 @@ function CODAP_MySQL_getQueryResult($db, $query, $params)
     return $result;
 }
 
+function CODAP_MySQL_getPreparedQueryResult($query, $params)
+{
+    try {
+        $query->execute($params);
+    } catch (PDOException $e) {
+        error_log("---  MySQL preparation or execution error " . $e->getMessage());
+        die();
+    }
+
+    $result = $query->fetchAll(PDO::FETCH_ASSOC);
+    return $result;
+}
 /**
  * Gets one row of data.
  */
