@@ -23,14 +23,51 @@
 const fs = require('fs');
 const console = require('console');
 const readline = require('readline');
+const xml2js = require('xml-js');
 
-let filename = process.argv[2] || 'data/usa_00001.dat';
+function getDataDictionary (codebook) {
+  const kSpecialNumeric = ['FAMSIZE', 'AGE'];
+  let tCbkObject = xml2js.xml2js(codebook, {}),
+      tDescriptions = tCbkObject.elements[1].elements[3];
+  return tDescriptions.elements.map(function (iDesc) {
+    let tCats = {};
+    iDesc.elements.forEach(function (iElement) {
+      if (iElement.name === 'catgry') {
+        let key = Number(iElement.elements[0].elements[0].text);
+        tCats[key] = iElement.elements[1].elements[0].text;
+      }
+    });
+    return {
+      name: iDesc.attributes.name,
+      startPos: iDesc.elements[0].attributes.StartPos,
+      width: Number(iDesc.elements[0].attributes.width),
+      labl: iDesc.elements[1].elements[0].text,
+      description: iDesc.elements[2].elements[0].cdata,
+      format: (Object.keys(tCats).length === 0 || kSpecialNumeric.indexOf(
+          iDesc.attributes.name) >= 0) ? 'numeric' : 'categorical',
+      categories: tCats
+    }
+  });
+}
+
+function readAttribute(line, name) {
+  let def = dataDictionary.find(function (entr) {return entr.name === name;});
+  if (def) {
+    let start = def.startPos - 1;
+    return line.slice(start, start + def.width);
+  }
+}
+
+
+let filename = process.argv[2] || 'data/usa.dat';
+let codebookName = process.argv[3] || 'data/codebook.xml';
+let codebook = fs.readFileSync(codebookName, {encoding: 'utf8'});
+let dataDictionary = getDataDictionary(codebook);
 let writeStream = fs.createWriteStream('out.sql');
 let insertPrefix = 'insert into peeps (year, state_code, perwt, accum_yr, ' +
       'accum_yr_st, sample_data) values ';
 let accum_yr = {};
 let accum_yr_st = {};
-
 writeStream.write('delete from peeps;\n');
 let lineReader = readline.createInterface({
   input: fs.createReadStream(filename)
@@ -40,9 +77,9 @@ lineReader.on('line', function (line){
   if (line.length > 0) {
     // let sep = isFirst? '': ',\n';
     // isFirst = false;
-    let year = Number(line.slice(0,4));
-    let state = Number(line.slice(31,33));
-    let weight = Number(line.slice(40, 50))/100;
+    let year = Number(readAttribute(line,'YEAR'));
+    let state = Number(readAttribute(line, 'STATEFIP'));
+    let weight = Number(readAttribute(line, 'PERWT'))/100;
     if (accum_yr[year] === undefined) {
       accum_yr[year] = 0;
       accum_yr_st[year] = {};

@@ -98,7 +98,7 @@ let app = {
   },
 
   getAllAttributes: async function () {
-    let codeBook = await $.ajax('../data/usa_00001.xml', {dataType: 'text'});
+    let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
     dataDictionary.forEach(a => {
       let attributeAssignment = app.config.attributeAssignment.find(function (aa) {
