@@ -31,9 +31,9 @@ let app = {
   freshState: {
     sampleNumber: 1,
     sampleSize: 16,
-    selectedYears: [2016],
+    selectedYears: [2017],
     selectedStates: [],
-    selectedAttributes: ['SEX', 'AGE', 'YEAR', 'STATEFIP']
+    selectedAttributes: ['Sex', 'Age', 'Year', 'State']
   },
 
   initialize: async function () {
@@ -53,9 +53,9 @@ let app = {
 
     $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
     $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
+    $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
     app.ui.updateWholeUI();
   },
-
 
   updateStateFromDOM: function (logMessage) {
     if (!this.state) {
@@ -64,14 +64,14 @@ let app = {
     else {
       this.state.selectedYears = app.userActions.getSelectedYears();
       this.state.selectedStates = app.userActions.getSelectedStates();
-      this.state.selectedAttributes = app.ui.getArrayOfChosenAttributes()
-          .map(function (attr) { return attr.name;});
+      this.state.selectedAttributes = app.userActions.getSelectedAttrs();
       if (logMessage) {
         this.CODAPconnect.logAction(logMessage);
       }
     }
     this.ui.updateWholeUI();
   },
+
   getDataDictionary: function (codebook) {
     const kSpecialNumeric = ['FAMSIZE', 'AGE'];
     let tCbkObject = xml2js(codebook, {}),
@@ -100,12 +100,14 @@ let app = {
   getAllAttributes: async function () {
     let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
-    dataDictionary.forEach(a => {
-      let attributeAssignment = app.config.attributeAssignment.find(function (aa) {
-        return (a.name === aa.ipumsName);
+    app.config.attributeAssignment.forEach(function (configAttr) {
+      let codebookDef = dataDictionary.find(function (def) {
+        return def.name === configAttr.ipumsName;
       });
-      let tA = new Attribute(a, attributeAssignment);
-      app.allAttributes[tA.name] = tA;
+      if (codebookDef) {
+        let tA = new Attribute(codebookDef, configAttr);
+        app.allAttributes[tA.title] = tA;
+      }
     });
 
     $("#chooseAttributeDiv").html(app.ui.makeBasicCheckboxesHTML());

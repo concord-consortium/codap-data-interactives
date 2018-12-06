@@ -28,19 +28,6 @@ app.ui = {
     app.ui.refreshText();
   },
 
-  getArrayOfChosenAttributes: function () {
-    let out = [];
-    for (let attName in app.allAttributes) {
-      if (app.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = app.allAttributes[attName];    //  the attribute
-        if (tAtt.chosen) {
-          out.push(tAtt);
-        }
-      }
-    }
-    return out;
-  },
-
   refreshText: function () {
     const tSampleSize = app.userActions.getSelectedSampleSize();
     let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people");
@@ -48,13 +35,12 @@ app.ui = {
   },
 
   refreshAttributeCheckboxes: function () {
-    for (let attName in app.allAttributes) {
-      if (app.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = app.allAttributes[attName];    //  the attribute
-        if (tAtt.hasCheckbox) {
-          document.getElementById(tAtt.checkboxID).checked = tAtt.chosen;
-        }
-      }
+    let activeAttributes = app.state.selectedAttributes;
+    $('#chooseAttributeDiv .select-item').prop('checked', false);
+    if (activeAttributes) {
+      activeAttributes.forEach(function (attr) {
+        $('#attr-' + attr).prop('checked', true);
+      });
     }
   },
 
@@ -91,7 +77,7 @@ app.ui = {
 
   makeStateListHTML: function () {
     let out = '<div><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</div>';
-    let stateAttribute = app.allAttributes.STATEFIP;
+    let stateAttribute = app.allAttributes.State;
     app.states.forEach(function (state) {
       let id = 'state-' + state.state_code;
       let name = stateAttribute.categories[state.state_code];
@@ -141,10 +127,9 @@ app.ui = {
           if (tAtt.displayMe) {
             tAtt.hasCheckbox = true;        //  redundant
             out += "<div class='oneAttCheckboxPlusLabel'>";
-            out += "<input type = 'checkbox' onchange='app.userActions.changeAttributeCheckbox(\"" +
-                attName + "\")' id = '" + tAtt.checkboxID + "' >\n";
+            out += "<input class='select-item' type ='checkbox' id = '" + tAtt.checkboxID + "' >\n";
             out += "<label for='" + tAtt.checkboxID + "'><span class='attNameBold'>"
-                + tAtt.title + "</span> (" + tAtt.description + ")</label>";
+                + tAtt.title + "</span> " + tAtt.description + "</label>";
             out += "</div>\n";
           }
         }
@@ -159,20 +144,10 @@ app.ui = {
     const tSampleSize = app.userActions.getSelectedSampleSize();
 
     let out = "";
-    let aList = [];
-    let stateAttr = app.allAttributes["STATEFIP"];
+    let stateAttr = app.allAttributes["State"];
     let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]});
     if (states.length === 0) {states = ['all'];}
 
-
-    for (let attName in app.allAttributes) {
-      if (app.allAttributes.hasOwnProperty(attName)) {
-        const tAtt = app.allAttributes[attName];    //  the attribute
-        if (tAtt.chosen) {
-          aList.push(tAtt.title);
-        }
-      }
-    }
 
     out = "<p>When you press the button, you will get "
         + (tSampleSize == 1 ? "one random person" : "a random sample of " + tSampleSize + " people")
@@ -181,7 +156,7 @@ app.ui = {
         "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
         + "</b>.</p>"
         + "<p>The variables you will get are: "
-        + "<b>" + aList.join("</b>, <b>") + "</b>.</p>";
+        + "<b>" + app.state.selectedAttributes.join("</b>, <b>") + "</b>.</p>";
 
     document.getElementById("sampleSummaryDiv").innerHTML = out;
   }

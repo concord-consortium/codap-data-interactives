@@ -95,11 +95,11 @@ app.CODAPconnect = {
     });
     let existingAttributeList = await getCODAPAttrList();
     let existingAttributeNames = existingAttributeList.map(function (attr) {
-      return attr.name;
+      return attr.title;
     });
     let createRequests = [];
     theAttributes.forEach(function (attr) {
-      if (!existingAttributeNames.includes(attr.name)) {
+      if (!existingAttributeNames.includes(attr.title)) {
         let attrResource = 'dataContext[' + app.constants.kACSDataSetName + '].collection['
             + app.constants.kACSCollectionName + '].attribute';
         let req = {

@@ -27,18 +27,19 @@ class Attribute {
     this.startPos = Number(iRecord.startPos);
     this.width = iRecord.width;
     this.format = (iAttributeAssignment && iAttributeAssignment.format) || iRecord.format;
-    this.categories = iRecord.categories;
+    this.categories = (iAttributeAssignment && iAttributeAssignment.categories) || iRecord.categories;
     this.groupNumber = iAttributeAssignment && iAttributeAssignment.group;
     this.description = (iAttributeAssignment && iAttributeAssignment.description) || iRecord.description;
     this.chosen = iAttributeAssignment && iAttributeAssignment.defCheck;
     this.displayMe = iAttributeAssignment; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;
-    this.checkboxID = this.name + "Checkbox";
+    this.rangeMap = (iAttributeAssignment && iAttributeAssignment.rangeMap);
 
     this.title = (iAttributeAssignment && iAttributeAssignment.title) || iRecord.labl;
     if (!this.title) {
       this.title = this.name;
     }
+    this.checkboxID = 'attr-' + this.title;
   }
 
   decodeValue(iValue) {
@@ -47,6 +48,15 @@ class Attribute {
 
     if (this.format === 'categorical') {
       let nOut = Number(out);
+      if (this.rangeMap) {
+        let x = nOut;
+        let foundRange = this.rangeMap.find(function (range) {
+          return (x >= range.from && x <= range.to);
+        });
+        if (foundRange !== null && foundRange !== undefined) {
+          nOut = foundRange.recodeTo;
+        }
+      }
       if (this.categories[nOut]) {
         out = this.categories[Number(nOut)];
       }

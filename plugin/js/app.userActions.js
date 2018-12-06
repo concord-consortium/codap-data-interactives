@@ -32,10 +32,9 @@ app.userActions = {
         //  c is a case object
       let sampleData = c.sample_data;
       let o = { sample : app.state.sampleNumber };
-      Object.values(app.allAttributes).forEach(function (attr) {
-        if (attr.chosen) {
-          o[attr.title] = attr.decodeValue(sampleData);
-        }
+      app.state.selectedAttributes.forEach(function (attrTitle) {
+        let attr = app.allAttributes[attrTitle];
+        o[attr.title] = attr.decodeValue(sampleData);
       });
       oData.push(o);
     });
@@ -54,14 +53,16 @@ app.userActions = {
   },
 
   changeAttributeCheckbox : function(iAttName) {
-    const tAtt = app.allAttributes[iAttName];
-
-    tAtt.chosen = !tAtt.chosen;
+    // const tAtt = app.allAttributes[iAttName];
+    //
+    // tAtt.chosen = !tAtt.chosen;
     app.updateStateFromDOM('Attribute selection changed.');
   },
+
   changeSampleYearsCheckbox : function (/*event*/) {
     app.updateStateFromDOM('Sample years changed.');
   },
+
   changeSampleStateCheckbox : function (/*event*/) {
     // record change of status for selected states and potentially toggle 'all' option
     if ($(this).hasClass('select-all')) {
@@ -78,23 +79,14 @@ app.userActions = {
     app.updateStateFromDOM('sample state changed');
   },
 
-  // clickMakeMapButton : async function() {
-  //     const thePUMA = Number(document.getElementById("pumaNumberBox").value);
-  //     const latlong = await app.DBconnect.getLatLon( thePUMA );
-  //
-  //     if (latlong) {
-  //       console.log("latlon received: " + JSON.stringify(latlong));
-  //       const googleLatLong = new google.maps.LatLng(latlong.lat, latlong.long);
-  //       app.map.setCenter(googleLatLong);
-  //       const marker = new google.maps.Marker({
-  //         position: googleLatLong,
-  //         map: app.map
-  //       });
-  //     } else {
-  //       console.log('Perhaps ' + thePUMA + ' is not a real PUMA?');
-  //     }
-  //
-  // },
+  getSelectedAttrs: function () {
+    let rslt = [];
+    $('#chooseAttributeDiv .select-item:checked').each(function (ix, el) {
+      rslt.push(el.id.replace('attr-', ''));
+    });
+    return rslt;
+  },
+
   getSelectedYears: function () {
     let rslt = [];
     $('#chooseSampleYearsDiv .select-item:checked').each(function (ix, el) {
@@ -102,6 +94,7 @@ app.userActions = {
     });
     return rslt;
   },
+
   getSelectedStates: function () {
     let rslt = [];
     $('#chooseStatesDiv .select-item:checked').each(function (ix, el) {
@@ -109,10 +102,7 @@ app.userActions = {
     });
     return rslt;
   },
-  // getSelectedAttributes: function () {
-  //   let rslt = [];
-  //   return rslt;
-  // },
+
   getSelectedSampleSize: function () {
     return $("#sampleSizeInput")[0].value;
   }
