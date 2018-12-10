@@ -28,32 +28,32 @@ app.config = {
   attributeGroups: [{
       number: 1,
       open: false,
-      title: "Basic demographics"
+      title: 'Basic demographics'
     },
     {
       number: 2,
       open: false,
-      title: "Race, ancestry, origins"
+      title: 'Race, ancestry, origins'
     },
     {
       number: 3,
       open: false,
-      title: "Work & employment"
+      title: 'Work & employment'
     },
     {
       number: 4,
       open: false,
-      title: "Income"
+      title: 'Income'
     },
     {
       number: 5,
       open: false,
-      title: "Geography"
+      title: 'Geography'
     },
     {
       number: 6,
       open: false,
-      title: "Technical"
+      title: 'Technical'
     }],
 
   attributeAssignment: [{
@@ -64,7 +64,7 @@ app.config = {
       description: 'reports the Individual\'s age in years as of the last birthday. Values range from 0 (less than 1 year old) to 90 and above.  See codebook for special codes.'
     },
     {
-      title: 'Age-group',
+      title: 'Age_recode',
       group: 1,
       ipumsName: 'AGE',
       format: 'categorical',
@@ -134,14 +134,14 @@ app.config = {
       defCheck: false,
       description: 'reports on the individual’s level of educational attainment based on the highest degree completed, in years for which this information is available.',
       rangeMap: [
-        {from: 0, to: 1, recodeTo: 0},
-        {from: 2, to: 50, recodeTo: 1},
+        {from: 0, to: 2, recodeTo: 0},
+        {from: 3, to: 50, recodeTo: 1},
         {from: 51, to: 59, recodeTo: 11},
         {from: 60, to: 60, recodeTo: 2},
         {from: 61, to: 61, recodeTo: 1},
         {from: 62, to: 64, recodeTo: 3},
-        {from: 65, to: 70, recodeTo: 4},
-        {from: 71, to: 79, recodeTo: 11},
+        {from: 65, to: 71, recodeTo: 4},
+        {from: 72, to: 79, recodeTo: 11},
         {from: 80, to: 80, recodeTo: 5},
         {from: 81, to: 83, recodeTo: 7},
         {from: 84, to: 89, recodeTo: 11},
@@ -156,17 +156,17 @@ app.config = {
       ],
       categories: [
         'N/A or no schooling completed',
-         'Some schooling, no high school diploma',
-         'Completed Grade 12, diploma not identified',
-         'High school diploma or GED',
-         '1 or more years of college, no degree',
-         '2-4 years of college, degree not identified',
-         '5+ years of college, degree not identified',
-         'Associate’s degree',
-         'Bachelor’s degree',
-         'Master’s or professional degree',
-         'Doctoral degree',
-          'unknown'
+        'Some schooling, no high school diploma',
+        'Completed Grade 12, diploma not identified',
+        'High school diploma or GED',
+        '1 or more years of college, no degree',
+        '2-4 years of college, degree not identified',
+        '5+ years of college, degree not identified',
+        'Associate’s degree',
+        'Bachelor’s degree',
+        'Master’s or professional degree',
+        'Doctoral degree',
+        'unknown'
       ]
     },
     {
@@ -401,11 +401,76 @@ app.config = {
       description: 'reports the person’s primary occupation, using the Census Bureau’s 1950 occupational classification system. There are several hundred occupation categories.'
     },
     {
+      ipumsName: 'OCC1950',
+      title: 'Occupation_1950_basis_recode',
+      group: 3,
+      defCheck: false,
+      description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1950 occupational classification system. There are 8 primary categories.',
+      rangeMap: [
+        {from: 0, to: 99, recodeTo: 1},
+        {from: 100, to: 100, recodeTo: 6},
+        {from: 123, to: 123, recodeTo: 6},
+        {from: 200, to: 290, recodeTo: 2},
+        {from: 300, to: 490, recodeTo: 3},
+        {from: 500, to: 594, recodeTo: 4},
+        {from: 595, to: 595, recodeTo: 7},
+        {from: 600, to: 690, recodeTo: 4},
+        {from: 700, to: 790, recodeTo: 5},
+        {from: 810, to: 970, recodeTo: 6},
+        {from: 980, to: 995, recodeTo: 8},
+        {from: 997, to: 997, recodeTo: 9},
+        {from: 999, to: 999, recodeTo: 10}
+      ],
+      categories: [
+        '',
+        'Professional, technical',
+        'Managers, officials, and proprietors',
+        'Sales and clerical',
+        'Craftsmen and operatives',
+        'Service workers',
+        'Farmers and laborers',
+        'Members of the armed services',
+        'Non-occupational response',
+        'Occupation missing/unknown',
+        'N/A (blank)'
+      ]
+    },
+    {
       ipumsName: 'OCC1990',
       title: 'Occupation_1990_basis',
       group: 3,
       defCheck: false,
       description: 'reports the person’s primary occupation, using a modified version of the 1990 Census Bureau occupational classification scheme, from 1950 forward. There are several hundred occupation categories.'
+    },
+    {
+      ipumsName: 'OCC1990',
+      title: 'Occupation_1990_basis_recode',
+      group: 3,
+      defCheck: false,
+      description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1990 occupational classification system, spanning from 1950 forward. There are 7 primary categories.',
+      rangeMap: [
+        {from: 3, to: 200, recodeTo: 1},
+        {from: 203, to: 389, recodeTo: 2},
+        {from: 405, to: 469, recodeTo: 3},
+        {from: 473, to: 498, recodeTo: 4},
+        {from: 503, to: 699, recodeTo: 5},
+        {from: 703, to: 889, recodeTo: 6},
+        {from: 905, to: 905, recodeTo: 7},
+        {from: 991, to: 991, recodeTo: 8},
+        {from: 999, to: 999, recodeTo: 9}
+      ],
+      categories: [
+        '',
+        'Managerial and professional   ',
+        'Technical, sales, and administrative  ',
+        'Service  ',
+        'Farming, forestry, and fishing  ',
+        'Precision production, craft, and repairers  ',
+        'Operators and laborers  ',
+        'Military occupations  ',
+        'Unemployed',
+        'N/A and unknown'
+      ]
     },
     {
       ipumsName: 'IND1950',
@@ -415,11 +480,79 @@ app.config = {
       description: 'reports the industry of the individual, using the 1950 Census Bureau industrial classification system.'
     },
     {
+      ipumsName: 'IND1950',
+      title: 'Industry_1950_recode',
+      group: 3,
+      defCheck: false,
+      description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1950 industry classification system. There are 9 primary categories.',
+      rangeMap: [
+        {from: 100, to: 126, recodeTo: 1},
+        {from: 206, to: 499, recodeTo: 2},
+        {from: 506, to: 598, recodeTo: 3},
+        {from: 606, to: 699, recodeTo: 4},
+        {from: 716, to: 817, recodeTo: 5},
+        {from: 826, to: 859, recodeTo: 6},
+        {from: 868, to: 899, recodeTo: 7},
+        {from: 906, to: 946, recodeTo: 8},
+        {from: 976, to: 995, recodeTo: 9},
+        {from: 0, to: 0, recodeTo: 10},
+        {from: 997, to: 999, recodeTo: 10}
+      ],
+      categories: [
+        '',
+        'Agriculture, forestry, and fishing',
+        'Construction, Mining, and Manufacturing',
+          'Transportation, Communication, and Other Utilities',
+          'Wholesale and Retail Trade',
+          'Finance, Business, and Repair Services',
+          'Entertainment, Recreation, and Personal Services',
+          'Professional and Related Services',
+          'Public Administration',
+          'Other',
+          'Non-classifiable, not reported, or blank, N/A, etc.'
+      ]
+    },
+    {
       ipumsName: 'IND1990',
       title: 'Industry_1990',
       group: 3,
       defCheck: false,
       description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system, from 1950 forward. There are several hundred industry categories.'
+    },
+    {
+      ipumsName: 'IND1990',
+      title: 'Industry_1990_recode',
+      group: 3,
+      defCheck: false,
+      description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system, from 1950 forward. There are several hundred industry categories. Consider working with a recoded and simplified version of this variable, called Industry-1990 (recode).',
+      rangeMap: [
+        {from: 10, to: 32, recodeTo: 1},
+        {from: 40, to: 392, recodeTo: 2},
+        {from: 400, to: 472, recodeTo: 3},
+        {from: 500, to: 691, recodeTo: 4},
+        {from: 700, to: 760, recodeTo: 5},
+        {from: 761, to: 810, recodeTo: 6},
+        {from: 812, to: 893, recodeTo: 7},
+        {from: 900, to: 932, recodeTo: 8},
+        {from: 940, to: 960, recodeTo: 9},
+        {from: 992, to: 992, recodeTo: 10},
+        {from: 999, to: 999, recodeTo: 10},
+        {from: 0, to: 0, recodeTo: 11},
+      ],
+      categories: [
+          '',
+        'Agriculture, forestry, and fishing',
+        'Construction, Mining, and Manufacturing',
+        'Transportation, Communications, and Other Utilities',
+        'Wholesale and Retail Trade',
+        'Finance, Business, and Repair Services',
+        'Entertainment, Recreation, and Personal Services',
+        'Professional and Related Services',
+        'Public Administration',
+        'Military',
+        'Unemployed not classified by industry, or did not respond',
+        'Not applicable'
+      ]
     },
     {
       ipumsName: 'VETSTAT',
@@ -444,7 +577,7 @@ app.config = {
     },
     {
       ipumsName: 'FTOTINC',
-      title: 'Income_family',
+      title: 'Income-family_total',
       group: 4,
       defCheck: false,
       description: 'total reports the sum of the pre-tax incomes of all respondents 15 years old and over related to Person 1 in the questionnaire. Amounts are expressed in contemporary dollars.  '
@@ -483,6 +616,65 @@ app.config = {
       group: 5,
       defCheck: false,
       description: 'identifies the U.S. Census region and division where the individual lives. There are four primary regions and nine primary divisions of the U.S., with additional categories for mixed divisions. Consider using Region: recode or Region-division: recode for less detailed versions of this variable. '
+    },
+    {
+      ipumsName: 'REGION',
+      title: 'Region_recode',
+      group: 5,
+      defCheck: false,
+      description: 'reports the U.S. Census region where the person lives, with 4 region categories.',
+      rangeMap: [
+        {from: 11, to: 13, recodeTo: 1},
+        {from: 21, to: 23, recodeTo: 2},
+        {from: 31, to: 34, recodeTo: 3},
+        {from: 41, to: 43, recodeTo: 4},
+        {from: 91, to: 99, recodeTo: 5}
+      ],
+      categories: [
+        '',
+        'Northeast',
+        'Midwest',
+        'South',
+        'West',
+        'Other/not identified',
+      ]
+    },
+    {
+      ipumsName: 'REGION',
+      title: 'Region-division_recode',
+      group: 5,
+      defCheck: false,
+      description: 'reports the U.S. Census division where the person lives, with 9 division categories.',
+      rangeMap: [
+        {from: 11, to: 11, recodeTo: 1},
+        {from: 12, to: 12, recodeTo: 2},
+        {from: 13, to: 13, recodeTo: 10},
+        {from: 21, to: 21, recodeTo: 3},
+        {from: 22, to: 22, recodeTo: 4},
+        {from: 23, to: 23, recodeTo: 10},
+        {from: 31, to: 31, recodeTo: 5},
+        {from: 32, to: 32, recodeTo: 6},
+        {from: 33, to: 33, recodeTo: 7},
+        {from: 34, to: 34, recodeTo: 10},
+        {from: 41, to: 41, recodeTo: 8},
+        {from: 42, to: 42, recodeTo: 9},
+        {from: 43, to: 43, recodeTo: 10},
+        {from: 91, to: 99, recodeTo: 11}
+      ],
+      categories: [
+        '',
+        'New England',
+        'Middle Atlantic',
+        'East North Central',
+        'West North Central',
+        'South Atlantic',
+        'East South Central',
+        'West South Central',
+        'Mountain',
+        'Pacific',
+        'Mixed divisions ',
+        'Other/not identified',
+      ]
     },
     {
       ipumsName: 'STATEFIP',
