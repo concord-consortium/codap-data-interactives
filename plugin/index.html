@@ -68,6 +68,7 @@
 
 </head>
 <body>
+<div class="plugin-content">
 
 <div id="pluginHeader">
   <h1>SDLC Data Portal</h1>
@@ -90,37 +91,49 @@
 
 
   <div id="summary">
-    <div id="sampleSummaryDiv"></div>
-    <p>To change which attributes you are collecting, click the <b>attributes</b> tab above
-        or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.</p>
+    <div class="tab-content">
+      <div id="sampleSummaryDiv"></div>
+      <p>
+        To change which attributes you are collecting,
+        click the <b>attributes</b> tab above
+        or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.
+      </p>
+    </div>
   </div>
 
 
   <div id="atts">
-    <p>Choose attributes from the lists below</p>
-    <div id="chooseAttributeDiv">
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(2)"></div>
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(3)"></div>
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(4)"></div>
-      <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(5)"></div>
+    <div class="tab-content">
+      <p>Choose attributes from the lists below</p>
+      <div id="chooseAttributeDiv">
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(2)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(3)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(4)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(5)"></div>
+      </div>
     </div>
   </div>
 
   <div id="states">
-    <p>Choose States from the list below</p>
-    <div id="chooseStatesDiv">
+    <div class="tab-content">
+      <p>Choose States from the list below</p>
+      <div id="chooseStatesDiv">
+      </div>
     </div>
   </div>
   <div id="sampleYears">
-    <p>Choose sample years from the list below</p>
-    <div id="chooseSampleYearsDiv">
+    <div class="tab-content">
+      <p>Choose sample years from the list below</p>
+      <div id="chooseSampleYearsDiv">
+      </div>
     </div>
   </div>
 
 </div>
 
 
+</div>
 </body>
 </html>
