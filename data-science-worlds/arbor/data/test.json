@@ -1,0 +1,43 @@
+{
+  "foo": 42,
+  "latestNodeID": 43,
+  "dependentVariableName": "Sex",
+  "dependentVariableSplit": {
+    "attName": "Sex",
+    "categories": [
+      "Female",
+      "Male"
+    ],
+    "oneBoolean": "(c.Sex === \"Female\")",
+    "cutpoint": null,
+    "operator": "<",
+    "leftCategories": [
+      "Female"
+    ],
+    "leftLabel": "Female",
+    "rightLabel": "Male",
+    "isCategorical": true,
+    "ppv": 1,
+    "npv": 0,
+    "attColor": "#55f"
+  },
+  "tree": {
+    "filterArray": [],
+    "rootNode": {
+      "baumNodeID": 42,
+      "parentID": null,
+      "LoR": "root",
+      "attributeSplit": null,
+      "stopSign": "+",
+      "numerator": 521,
+      "denominator": 1000,
+      "mean": 0.521,
+      "ssdev": 0.24955900000000347,
+      "valueInLabel": "predicting Sex = Female",
+      "filterArray": [
+        "true"
+      ],
+      "branches": []
+    }
+  }
+}

@@ -46,7 +46,7 @@ define([
           name: appName,
           title: appName,
           dimensions: {width: 235, height: 400},
-          version: 'v0.3 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.4 (#' + window.codapPluginConfig.buildNumber + ')',
           stateHandler: this.loadStateFunc
         });
       },

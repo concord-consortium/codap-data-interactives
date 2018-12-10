@@ -85,8 +85,8 @@ function(Snap, CodapCom, View, ui, utils) {
       if (isCollector) {
         refreshCaseList();
       }
-      view.render();
     }
+    view.render();
   }
 
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
@@ -148,8 +148,28 @@ function(Snap, CodapCom, View, ui, utils) {
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom);
 
   function getNextVariable() {
-    // brain-dead version for now
-    return "" + (variables.length + 1);
+    var tResult = 'a',
+        tMax,
+        tIsNumeric = variables.every(function (iValue) {
+          return !isNaN(Number(iValue));
+        });
+    if (tIsNumeric) {
+      tMax = variables.reduce(function (iCurrMax, iValue) {
+        return (iCurrMax === '' || Number(iCurrMax) < Number(iValue)) ? iValue : iCurrMax;
+      }, '');
+      tResult = String(Number(tMax) + 1)
+    }
+    else {
+      tMax = variables.reduce(function (iCurrMax, iValue) {
+        if( iValue >= 'a' && iValue < String.fromCharCode('z'.codePointAt(0) + 1)) {
+          return (iCurrMax < iValue && String(iValue) < 'z') ? iValue : iCurrMax;
+        } else if (iValue >= 'A' && iValue < String.fromCharCode('Z'.codePointAt(0) + 1)) {
+          return (iCurrMax < iValue && String(iValue) < 'Z') ? iValue : iCurrMax;
+        } else return iCurrMax;
+      }, '0');
+      tResult = String.fromCharCode(tMax.codePointAt(0) + 1);
+    }
+    return tResult;
   }
 
   function addVariable() {
@@ -189,6 +209,7 @@ function(Snap, CodapCom, View, ui, utils) {
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
         codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
+      else alert('Sorry. Unable to parse that. Here are some valid range expressions: 1-50, -5 to 5, 1.0 to 5.0, or A-Z');
     }
 
     view.render();
@@ -323,7 +344,10 @@ function(Snap, CodapCom, View, ui, utils) {
     }
 
     function selectNext() {
-      var timeout = (speed !== kFastestSpeed)? 1000/speed: 0;
+      var timeout = (speed === kFastestSpeed) ? 0 :
+          // Give "Fast" a little extra
+          (speed === kFastestSpeed - 1 ? 1000 / kFastestSpeed :
+              1000 / speed);
       if (!paused) {
         if (speed !== kFastestSpeed) {
           if (sequence[runNumber][draw] === "EMPTY") {
@@ -351,6 +375,7 @@ function(Snap, CodapCom, View, ui, utils) {
           setTimeout(view.endAnimation, timeout);
         }
       }
+      // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
     }
 
 
@@ -426,6 +451,7 @@ function(Snap, CodapCom, View, ui, utils) {
         codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
       }
       setup();
+      view.render();
     }
   }
 
@@ -493,14 +519,18 @@ function(Snap, CodapCom, View, ui, utils) {
     codapCom.logAction("reloadDefaultSettings");
   }
 
-  // Set the model up to the initial conditions, reset all buttons and the view
-  function setup() {
+  function getStarted() {
     view.reset();
     ui.enableButtons();
     ui.render(hidden, password, false, withReplacement, device);
     samples = [];
     running = false;
     paused = false;
+  }
+
+  // Set the model up to the initial conditions, reset all buttons and the view
+  function setup() {
+    getStarted();
     view.render();
   }
 
@@ -510,5 +540,5 @@ function(Snap, CodapCom, View, ui, utils) {
     setOrCheckPassword, reloadDefaultSettings);
 
   // initialize and render the model
-  setup();
+  getStarted();
 });

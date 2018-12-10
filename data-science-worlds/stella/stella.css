@@ -1,0 +1,107 @@
+/* class options */
+
+body {
+    font-size : 70%;
+}
+
+fieldset {
+    background-color : #ccccee;
+}
+
+.noPointer {
+    pointer-events: none;
+}
+
+.headsUp {
+    font-size : 12px
+}
+
+.options   {
+    background-color: #eca;
+    padding: 4px;
+}
+.gameOptions   {
+    background-color: #fed;
+    padding: 4px;
+}
+
+.imageButton    {
+    background-image: url('../art/pause.png');
+    background-size: 100% 100%;
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+/* option IDs */
+
+/*  button etc stuff */
+
+#allDataButton {
+    background-color: #0a9a87;
+    color: white;
+}
+
+#newGameButton {
+    background-color: darkgray;
+    color: white;
+    position: absolute;
+    right:  12px;
+}
+
+
+#photometryResultsText {
+    margin: 12px;
+    font-family: "Andale Mono";
+}
+
+#debugText {
+    white-space: pre-line;
+}
+
+#starInfo {
+    margin : 4px;
+    padding : 4px;
+    background-color : #2f9cf3;
+    color : white;
+    font-size : 11pt;
+    font-family: "Helvetica Neue", Verdana,sans-serif;
+}
+
+#timeAndPointingControlBanner {
+    height: 22px;
+    line-height: 22px;
+    vertical-align: middle;
+    font-size : 7pt;
+    font-family: "Helvetica Neue", Verdana, sans-serif;
+}
+
+/*		BOX CLASSES		*/
+
+.hBox	{
+    display: flex;
+    flex-direction: row;
+}
+
+.vBox	{
+    display: flex;
+    flex-direction: column;
+}
+
+.textIO {
+    background-color: yellowgreen;
+    margin: 2px;
+    padding: 2px;
+    font-family: sans-serif;
+    font-size: 7pt;
+    color: white;
+}
+.buttonText {
+    background-color: tomato;
+    margin: 2px;
+    padding: 2px;
+    font-family: sans-serif;
+    font-size: 7pt;
+    color: white;
+}
+

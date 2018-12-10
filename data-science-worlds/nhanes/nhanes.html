@@ -1,0 +1,121 @@
+<!--
+  ~ ==========================================================================
+  ~ Copyright (c) 2018 by eeps media.
+  ~ Last modified 8/18/18 9:03 PM
+  ~
+  ~ Created by Tim Erickson on 8/18/18 9:03 PM
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  ~ ==========================================================================
+  ~
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/nhanes/nhanes.html
+  EEPS:         https://www.eeps.com/codap/nhanes/nhanes.html
+
+  WHEN UPLOADING TO EEPS
+  * Make sure the mysql database is latest, in case of tweaks... (Export from MySQL Pro, then Import)
+  * in nhanes.js, change <whence> to "eeps."
+
+  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NHANES Tool</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css" language="javascript">
+
+    <link rel='stylesheet' type='text/css' href='nhanes.css'/>
+
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js" language="javascript"></script>
+
+    <script src="Attribute.js" language="javascript"></script>
+    <script src="nhanes.js" language="javascript"></script>
+    <script src="nhanes.constants.js" language="javascript"></script>
+    <script src="nhanes.ui.js" language="javascript"></script>
+    <script src="nhanes.userActions.js" language="javascript"></script>
+    <script src="nhanes.CODAPconnect.js" language="javascript"></script>
+    <script src="nhanes.DBconnect.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            nhanes.initialize();
+        });
+
+    </script>
+
+</head>
+<body>
+
+<div id="pluginHeader">
+    <h1>2003 NHANES Data Portal</h1>
+    <label for="sampleSizeInput">How many people? </label>
+    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" onchange="nhanes.ui.updateWholeUI()">
+    <button id="getCasesButton" onclick="nhanes.userActions.pressGetCasesButton()">get people</button>
+</div>
+<br>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#summary">summary</a></li>
+        <li><a href="#atts">attributes</a></li>
+        <li><a href="#cases">cases</a></li>
+    </ul>
+
+
+    <div id="summary">
+        <div id="sampleSummaryDiv"></div>
+        <p>To change which attributes you are collecting, click the <b>attributes</b> tab above
+            or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.</p>
+        <p>To restrict which cases you are collecting, click the <b>cases</b> tab above
+            or <a id="linkToCasesPanel" href="#atts;return false;">click this link</a>.</p>
+    </div>
+
+
+    <div id="atts">
+        <p>Choose attributes from the lists below</p>
+        <div id="chooseAttributeDiv">
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(0)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(1)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(2)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(3)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(4)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(5)"></div>
+        </div>
+    </div>
+
+
+    <div id="cases">
+        <p>You can restrict which cases you get:</p>
+        <div id="chooseCasesDiv">
+            <input type="number" min="0" id="minAgeBox" onchange="nhanes.ui.updateWholeUI()">
+            ≤ AGE ≤ <input type="number" min="0" id="maxAgeBox" onchange="nhanes.ui.updateWholeUI()">
+        </div>
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

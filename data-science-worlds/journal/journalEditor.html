@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 8/24/18.
+ 
+ 
+ ==========================================================================
+journalAdmin in journal
+
+    Author:   Tim Erickson
+
+Copyright (c) 2018 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/journal/journalEditor.html
+  EEPS:         https://www.eeps.com/codap/journal/journalEditor.html
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Journal Editor</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css" language="javascript">
+
+    <link rel='stylesheet' type='text/css' href='journal.css'/>
+
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/external/jquery/jquery.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js" language="javascript"></script>
+
+    <script src="journal.js" language="javascript"></script>
+    <script src="DB_Connect.js" language="javascript"></script>
+    <script src="userAction.js" language="javascript"></script>
+    <script src="editorUI.js" language="javascript"></script>
+    <script src="strings.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            journal.initialize();
+        });
+    </script>
+
+</head>
+<body>
+
+<div id="editorStatusBarDiv">
+
+</div>
+
+<div id="editorJoinWorldDiv" class="startup">
+    <h1>Join a World</h1>
+
+    <p>You need to get a world code from someone who has created a world.
+        If that person is you, create a world
+        <a href="journalAdmin.html" target="_blank">by following this link</a>.</p>
+    <label for="worldCodeBox">World code: </label>
+    <input type="text" id="worldCodeBox">
+    <button id="joinButton" onclick="journal.userAction.joinWorld()">join</button>
+    <br>
+</div>
+
+
+<div id="tabs">
+    <ul>
+        <li><a href="#list">list</a></li>
+        <li><a href="#editing">editing</a></li>
+        <li><a href="#teams">team info</a></li>
+        <li><a href="#journal">journal</a></li>
+    </ul>
+
+
+    <div id="list">
+        <h1>Editor Task List</h1>
+        <button id="paperListRefreshButton" onclick="journal.ui.update()">refresh list</button>
+        <div id="paperTaskTable"></div>
+    </div>
+
+    <div id="editing">
+        <h1>Editing</h1>
+        <table>
+            <tr>
+                <td><label for="paperStatusBox" >status:</label></td>
+                <td id="paperStatusBox"></td>
+            </tr>
+            <tr>
+                <td><label for="paperTitleBox" size="50">title:</label></td>
+                <td id="paperTitleBox">title</td>
+            </tr>
+            <tr>
+                <td><label for="paperAuthorsBox" size="50">authors:</label></td>
+                <td id="paperAuthorsBox">authors</td>
+            </tr>
+            <tr>
+                <td><label for="paperTeamBox" size="50">team:</label></td>
+                <td id="paperTeamBox">team</td>
+            </tr>
+            <tr>
+                <td><label for="paperTextBox">text:</label></td>
+                <td id="paperTextBox">text</td>
+            </tr>
+            <tr>
+                <td><label for="paperEditorCommentsBox">editor:</label></td>
+                <td><textarea id="paperEditorCommentsBox" placeholder="Editor comments" rows="1" , cols="44"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="paperAuthorCommentsBox">author:</label></td>
+                <td id="paperAuthorCommentsBox" placeholder="Author comments" rows="1" , cols="44"></td>
+            </tr>
+        </table>
+        <button id="acceptPaperButton" onclick="journal.userAction.judgePaper('accept')">accept</button>
+        <button id="rejectPaperButton" onclick="journal.userAction.judgePaper('reject')">reject</button>
+        <button id="revisePaperButton" onclick="journal.userAction.judgePaper('revise')">revise</button>
+    </div>
+
+    <div id="teams">
+        <h1>Team Info</h1>
+        <button id="editorTeamInfoRefreshButton" onclick="journal.ui.update()">refresh teams</button>
+        <div id="editorTeamInfoDiv"></div>
+    </div>
+
+
+    <div id="journal">
+        <button id="refreshJournalButton" onclick="journal.ui.update()">refresh journal</button>
+        <div id="journalDiv"></div>
+
+    </div>
+</div>
+
+</body>
+</html>

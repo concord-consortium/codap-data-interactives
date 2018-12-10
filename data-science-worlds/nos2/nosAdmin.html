@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 8/24/18.
+ 
+ 
+ ==========================================================================
+journalAdmin in journal
+
+    Author:   Tim Erickson
+
+Copyright (c) 2018 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/nos2/nosAdmin.html
+  EEPS:         https://www.eeps.com/codap/nos2/nosAdmin.html
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>NoS Administration</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css" language="javascript">
+
+    <link rel='stylesheet' type='text/css' href='journal.css'/>
+
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js" language="javascript"></script>
+
+    <script src="nos2.js" language="javascript"></script>
+    <script src="journal.js" language="javascript"></script>
+    <script src="nos2.DBconnect.js" language="javascript"></script>
+    <script src="userAction.js" language="javascript"></script>
+    <script src="adminUI.js" language="javascript"></script>
+    <script src="strings.js" language="javascript"></script>
+    <script src="teamNameSuggestionList.js" language="javascript"></script>
+
+    <!--    relevant scenario files -->
+
+    <script src="scen/univ/univ.js" language="javascript"></script>
+    <script src="scen/univ/univ.model.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            journal.initialize();
+        });
+    </script>
+
+</head>
+<body>
+
+<div id="adminStatusBarDiv">
+
+</div>
+
+<div id="godLoginDiv" class="startup">
+    <h1>Login </h1>
+    <p>For now, we have very, very low security.
+        By typing in a username, you create an "account."
+        No password.</p>
+
+    <label for="godUsernameBox">Username: </label>
+    <input type="text" id="godUsernameBox">
+    <button id="signInButton" onclick="journal.userAction.godSignIn()">sign in</button>
+</div>
+
+<div id="godChooseWorldDiv" class="startup">
+    <h1>Specify World</h1>
+    <h2>Choose Existing World</h2>
+
+    <div id="godChooseWorldTable"></div>
+
+    <div id="godSetUpWorldDiv">
+        <h2>Set Up New World</h2>
+
+        <label for="worldCodeBox">World code: </label>
+        <input type="text" id="worldCodeBox">
+        <select id="worldScenarioMenu">
+            <option value="univ" selected>4-color universe</option>
+        </select>
+        <button id="newWorld" onclick="journal.userAction.newWorld()">new world</button>
+        <br>
+        <label for = "epochBox">starting year</label>
+        <input id="epochBox" type="number" min="1" max="9999" value="2222" size="5" placeholder="year">
+        <div id="journalNameDiv">
+            <label for="journalNameBox">Journal name: </label>
+            <input type="text" id="journalNameBox">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="tabs">
+    <ul>
+        <li><a href="#teams">teams</a></li>
+        <li><a href="#papers">papers</a></li>
+        <li><a href="#journal">journal</a></li>
+    </ul>
+
+    <div id="teams">
+        <h1>Teams</h1>
+        <fieldset>
+            <legend>Choosing new team names and codes</legend>
+
+        <input type="radio" name="teamNameType"
+               value="researchCenters" onclick="journal.userAction.suggestTeam()" checked> research center
+        <input type="radio" name="teamNameType"
+               value="animals" onclick="journal.userAction.suggestTeam()"	> animal
+        <button id="suggestTeamButton" onclick="journal.userAction.suggestTeam()">suggest team</button>
+        <br>
+
+        <label for = "newTeamCodeBox">code:</label>
+        <input id="newTeamCodeBox" size="5" maxlength="4" type="text">
+        <label for = "newTeamNameBox">full name:</label>
+        <input id="newTeamNameBox" type="text" size="50">
+
+        <button id="newTeamButton" onclick="journal.userAction.newTeam()">make new team</button>
+        </fieldset>
+        <br>
+        <button id="refreshTeamsButton" onclick="journal.ui.update()">refresh team list</button>
+        <br>
+        <div id="teamsListDiv"></div>
+    </div>
+
+    <div id="papers">
+        <h1>Papers</h1>
+        <div id="papersListDiv"></div>
+    </div>
+
+    <div id="journal">
+        <button id="refreshJournalButton" onclick="journal.ui.update()">refresh journal</button>
+        <div id="journalDiv"></div>
+    </div>
+</div>
+
+</body>
+</html>

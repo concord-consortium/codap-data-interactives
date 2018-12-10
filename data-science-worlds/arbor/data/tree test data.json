@@ -1,0 +1,4624 @@
+{
+  "name": "Untitled Document",
+  "guid": 1,
+  "components": [
+    {
+      "type": "DG.TableView",
+      "guid": 508,
+      "componentStorage": {
+        "_links_": {
+          "context": {
+            "type": "DG.DataContextRecord",
+            "id": 2
+          }
+        },
+        "attributeWidths": [],
+        "title": "testData001"
+      },
+      "layout": {
+        "width": 286,
+        "height": 290,
+        "left": 5,
+        "top": 5,
+        "zIndex": 3,
+        "isVisible": true
+      },
+      "savedHeight": null
+    }
+  ],
+  "contexts": [
+    {
+      "type": "DG.DataContext",
+      "document": 1,
+      "guid": 2,
+      "flexibleGroupingChangeFlag": false,
+      "name": "testData001",
+      "title": "testData001",
+      "collections": [
+        {
+          "areParentChildLinksConfigured": false,
+          "attrs": [
+            {
+              "name": "sex",
+              "type": null,
+              "title": "sex",
+              "description": "",
+              "colormap": {},
+              "blockDisplayOfEmptyCategories": true,
+              "editable": true,
+              "guid": 4,
+              "precision": 2,
+              "unit": null
+            },
+            {
+              "name": "height",
+              "type": null,
+              "title": "height",
+              "description": "",
+              "colormap": {},
+              "blockDisplayOfEmptyCategories": true,
+              "editable": true,
+              "guid": 5,
+              "precision": 2,
+              "unit": null
+            },
+            {
+              "name": "income",
+              "type": null,
+              "title": "income",
+              "description": "",
+              "colormap": {
+                "high": {
+                  "h": 0.16666666666666652,
+                  "s": 0.6666666666666666,
+                  "b": 1,
+                  "colorString": "#ffff55"
+                },
+                "low": {
+                  "h": 0.5666666666666665,
+                  "s": 0.6666666666666666,
+                  "b": 1,
+                  "colorString": "#55bbff"
+                }
+              },
+              "blockDisplayOfEmptyCategories": true,
+              "editable": true,
+              "guid": 6,
+              "precision": 2,
+              "unit": null
+            },
+            {
+              "name": "Phlox",
+              "type": null,
+              "title": "Phlox",
+              "description": "",
+              "colormap": {},
+              "blockDisplayOfEmptyCategories": true,
+              "editable": true,
+              "guid": 7,
+              "precision": 2,
+              "unit": null
+            }
+          ],
+          "cases": [
+            {
+              "guid": 8,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 9,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 10,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 11,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 12,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 13,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 14,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 15,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 16,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 17,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 18,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 19,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 20,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 21,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 22,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 23,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 24,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 25,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 26,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 27,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 28,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 29,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 30,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 31,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 32,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 33,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 34,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 35,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 36,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 37,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 38,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 39,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 40,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 41,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 42,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 43,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 44,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 45,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 46,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 47,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 48,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 49,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 50,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 51,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 52,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 53,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 54,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 55,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 56,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 57,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 58,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 59,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 60,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 61,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 62,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 63,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 64,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 65,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 66,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 67,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 68,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 69,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 70,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 71,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 72,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 73,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 74,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 75,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 76,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 77,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 78,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 79,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 80,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 81,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 82,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 83,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 84,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 85,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 86,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 87,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 88,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 89,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 90,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 91,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 92,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 93,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 94,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 95,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 96,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 97,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 98,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 99,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 100,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 101,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 102,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 103,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 104,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 105,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 106,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 107,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 108,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 109,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 110,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 111,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 112,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 113,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 114,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 115,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 116,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 117,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 118,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 119,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 120,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 121,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 122,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 123,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 124,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 125,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 126,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 127,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 128,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 129,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 130,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 131,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 132,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 133,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 134,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 135,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 136,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 137,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 138,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 139,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 140,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 141,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 142,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 143,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 144,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 145,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 146,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 147,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 148,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 149,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 150,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 151,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 152,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 153,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 154,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 155,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 156,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 157,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 158,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 159,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 160,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 161,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 162,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 163,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 164,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 165,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 166,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 167,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 168,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 169,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 170,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 171,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 172,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 173,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 174,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 175,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 176,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 177,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 178,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 179,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 180,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 181,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 182,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 183,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 184,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 185,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 186,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 187,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 188,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 189,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 190,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 191,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 192,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 193,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 194,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 195,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 196,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 197,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 198,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 199,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 200,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 201,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 202,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 203,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 204,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 205,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 206,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 207,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 208,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 209,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 210,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 211,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 212,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 213,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 214,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 215,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 216,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 217,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 218,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 219,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 220,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 221,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 222,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 223,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 224,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 225,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 226,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 227,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 228,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 229,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 230,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 231,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 232,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 233,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 234,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 235,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 236,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 237,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 238,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 239,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 240,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 241,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 242,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 243,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 244,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 245,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 246,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 247,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 248,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 249,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 250,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 251,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 252,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 253,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 254,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 255,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 256,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 257,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 258,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 259,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 260,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 261,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 262,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 263,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 264,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 265,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 266,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 267,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 268,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 269,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 270,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 271,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 272,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 273,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 274,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 275,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 276,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 277,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 278,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 279,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 280,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 281,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 282,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 283,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 284,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 285,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 286,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 287,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 288,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 289,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 290,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 291,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 292,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 293,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 294,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 295,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 296,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 297,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 298,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 299,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 300,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 301,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 302,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 303,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 304,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 305,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 306,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 307,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 308,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 309,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 310,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 311,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 312,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 313,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 314,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 315,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 316,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 317,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 318,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 319,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 320,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 321,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 322,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 323,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 324,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 325,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 326,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 327,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 328,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 329,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 330,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 331,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 332,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 333,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 334,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 335,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 336,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 337,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 338,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 339,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 340,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 341,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 342,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 343,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 344,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 345,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 346,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 347,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 348,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 349,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 350,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 351,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 352,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 353,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 354,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 355,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 356,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 357,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 358,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 359,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 360,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 361,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 362,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 363,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 364,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 365,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 366,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 367,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 368,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 369,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 370,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 371,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 372,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 373,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 374,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 375,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 376,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 377,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 378,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 379,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 380,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 381,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 382,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 383,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 384,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 385,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 386,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 387,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 388,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 389,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 390,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 391,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 392,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 393,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 394,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 395,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 396,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 397,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 398,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 399,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 400,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 401,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 402,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 403,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 404,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 405,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 406,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 407,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 408,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 409,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 410,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 411,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 412,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 413,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 414,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 415,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 416,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 417,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 418,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 419,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 420,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 421,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 422,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 423,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 424,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 425,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 426,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 427,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 428,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 429,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 430,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 431,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 432,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 433,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 434,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 435,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 436,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 437,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 438,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 439,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 440,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 441,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 442,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 443,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 444,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 445,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 446,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 447,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 448,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 449,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 450,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 451,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 452,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 453,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 454,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 455,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 456,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 457,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 458,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 459,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 460,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 461,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 462,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 463,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 464,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 465,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 466,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 467,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 468,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 469,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 470,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 471,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 472,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 473,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 474,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 475,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 476,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 477,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 478,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 479,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 480,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 481,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 482,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 483,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 484,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 485,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 486,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 487,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 488,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 489,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 490,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 491,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 492,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 493,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 494,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 495,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 496,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 497,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 498,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 499,
+              "values": {
+                "sex": "F",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 500,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": true
+              }
+            },
+            {
+              "guid": 501,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 502,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "low",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 503,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 504,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 505,
+              "values": {
+                "sex": "F",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 506,
+              "values": {
+                "sex": "M",
+                "height": "tall",
+                "income": "high",
+                "Phlox": false
+              }
+            },
+            {
+              "guid": 507,
+              "values": {
+                "sex": "M",
+                "height": "short",
+                "income": "high",
+                "Phlox": false
+              }
+            }
+          ],
+          "caseName": null,
+          "childAttrName": null,
+          "collapseChildren": null,
+          "guid": 3,
+          "name": "testData001",
+          "title": "testData001",
+          "type": "DG.Collection"
+        }
+      ],
+      "contextStorage": {}
+    }
+  ],
+  "globalValues": [],
+  "appName": "DG",
+  "appVersion": "2.0",
+  "appBuildNum": "0354",
+  "metadata": {
+    "changeCount": 62
+  }
+}

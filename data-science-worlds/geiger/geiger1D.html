@@ -1,0 +1,121 @@
+<!--
+
+ ==========================================================================
+ geiger1D.html
+
+ Main page for the Geiger DSG. One-D version
+
+ Author:   Tim Erickson
+
+ Copyright (c) 2015 by The Concord Consortium, Inc. All rights reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ ==========================================================================
+
+    Here is the URL...
+
+    http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?di=http://www.eeps.com/dsg/geiger/geiger1D.html
+
+    or locally,
+    http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?di=http://localhost/~tim/gamePrototypes/geiger/geiger1D.html
+
+might need: &documentServer=http://document-store.concord.org
+    -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel='stylesheet' type='text/css' href='geiger.css'/>
+
+
+    <!--These two scripts take care of the communication with CODAP-->
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codap_helper.js" language="javascript"></script>
+
+    <!-- These scripts are our game source -->
+    <script src="geigerManager.js" language="JavaScript"></script>
+    <script>
+        geigerManager.twoDimensional = false;
+        geigerManager.version = "vPre-003";
+    </script>
+
+
+    <script src="geigerModel.js" language="JavaScript"></script>
+    <script src="geigerLabView.js" language="JavaScript"></script>
+    <script src="TEEGauge.js" language="JavaScript"></script>
+    <script src="geigerCODAPConnector.js" language="JavaScript"></script>
+    <script src="geigerControlPanel.js" language="JavaScript"></script>
+    <script src="geigerOptions.js" language="JavaScript"></script>
+    <script src="../common/TEEUtils.js" language="JavaScript"></script>
+</head>
+
+<body>
+<p>Click to place your detector. Press <strong>measure</strong> to get a reading. Try to find the source!</p>
+<svg id = "lab" width="400" height="80" onclick="geigerManager.clickInLab()">
+    <rect width="100%" height="100%" fill="slategray"></rect>
+    <rect id = "dangerZone" width="200" height="200" x="100" y="100" fill="darkslategray"></rect>
+    <circle r="20" cx="5" cy="5" fill="lightgray" stroke="none" id="rangeCircle"></circle>
+    <text x="100" y="40" id="startText" style="fill : white">Press New Game to begin</text>
+
+    <g id="crosshairs" stroke="red">
+        <line x1="5" y1="0" x2="5" y2="100" id="vLine"></line>
+    </g>
+
+    <image id="winImage" xlink:href="art/GeigerWin.png" x="0" y="0" height="80" width = "186"></image>
+    <image id="lossImage" xlink:href="art/GeigerLoss.png" x="0" y="0"  height="80" width="186"></image>
+
+</svg>
+
+<svg id = "doseGauge" width="400" height="24"></svg>
+
+<hr/>
+
+<div class="hBox">
+    <div class="vBox" id = "playingControls" style="width: 180px">
+        <button value="measure" id="takeMeasurement"
+                onclick="geigerManager.doMeasurement();">measure/collect
+        </button>
+        <br> Detector/collector coordinates: <br>
+        (&nbsp;<input type="text" id="detectorX" value="1" size="6"
+                      onblur="geigerManager.moveDetectorByTyping();"> &nbsp;)
+    </div>
+    <div class="vBox">
+
+        <span id="geigerInfo">original info</span></br>
+        <span id="geigerCount">count: 0</span>
+        </br></br>
+        <button value="new game" id="newGame" onclick="geigerManager.newGame();">new game</button>
+    </div>
+</div>
+
+<hr/>
+
+<div class = "vBox" id = "options" onchange="geigerManager.clickOption()">
+    <div class = "hBox"><input type="checkbox" id="showDistance" > show distance as well as count (easier)</div>
+    <div class = "hBox">Scooper radius: <select id="radius">
+        <option value = "0.05">tiny</option>
+        <option value = "0.2">small</option>
+        <option value = "0.5" selected>normal</option>
+        <option value = "1.5">huge</option>
+    </select></div>
+    <div class = "hBox"><input type="checkbox" id="deathPossible" checked> end game on high dose</div>
+    <div class = "hBox"><input type="checkbox" id="useRandom"> use randomness (harder)</div>
+</div>
+
+<script>
+    geigerManager.initializeComponent();
+</script>
+
+</body>
+</html>
