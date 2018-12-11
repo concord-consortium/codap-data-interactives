@@ -78,22 +78,27 @@
 <div id="tabs">
     <ul>
         <li><a href="#summary">summary</a></li>
-        <li><a href="#atts">attributes</a></li>
-        <li><a href="#cases">cases</a></li>
+        <li><a href="#atts">options</a></li>
+        <li><a href="#cases">about</a></li>
     </ul>
 
 
     <div id="summary">
         <div id="sampleSummaryDiv"></div>
-        <p>To change which attributes you are collecting, click the <b>attributes</b> tab above
-            or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.</p>
-        <p>To restrict which cases you are collecting, click the <b>cases</b> tab above
-            or <a id="linkToCasesPanel" href="#atts;return false;">click this link</a>.</p>
+        <p>Click the get people button to obtain a table with data from a random sample of Americans of all ages from
+            the 2003 National Health and Nutrition Examination Survey
+            (<a href="https://www.cdc.gov/nchs/nhanes/index.htm" target="_blank">NHANES</a>).</a></p>
     </div>
 
 
     <div id="atts">
-        <p>Choose attributes from the lists below</p>
+        <p>Options for modifying the random sample:</p>
+        <p>Choose an age range:</p>
+        <div id="chooseCasesDiv">
+            <input type="number" min="0" id="minAgeBox" onchange="nhanes.ui.updateWholeUI()">
+            to <input type="number" min="0" id="maxAgeBox" onchange="nhanes.ui.updateWholeUI()">
+        </div>
+        <p>Choose the attributes you would like to sample from the lists below:</p>
         <div id="chooseAttributeDiv">
             <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(0)"></div>
             <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(1)"></div>
@@ -102,16 +107,34 @@
             <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(4)"></div>
             <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(5)"></div>
         </div>
-    </div>
 
+    </div>
 
     <div id="cases">
-        <p>You can restrict which cases you get:</p>
-        <div id="chooseCasesDiv">
-            <input type="number" min="0" id="minAgeBox" onchange="nhanes.ui.updateWholeUI()">
-            ≤ AGE ≤ <input type="number" min="0" id="maxAgeBox" onchange="nhanes.ui.updateWholeUI()">
-        </div>
+        <p>The National Health and Nutrition Examination Survey (NHANES) is a population survey designed to collect information
+            on the health and nutrition of the U.S. population. If you have ever wondered about the average height of, say, a
+            32-year-old male in the U.S., this dataset will provide that kind of information. Many health professionals have come
+            across this data as part of their medical training. NHANES data has been used to improve the health of the U.S. population
+            in several ways, including informing policies leading to the removal of lead from U.S. gasoline, creating pediatric growth
+            charts, and estimating baseline standards for cholesterol, blood pressure, and Hepatitis C.
+        </p>
+        <h1>Challenges</h1>
+        <p>Try the following data challenges:
+        <ol>
+            <li>Do an online search for what is considered a  healthy weight for an 18-year-old.
+                How does this compare to the average weight of youth in this dataset?</li>
+            <li>Examine the relationships between women who are pregnant and their age, marital status, education status, and
+                household income. What trends do you notice?</li>
+            <li>Are certain groups more likely to be anemic than other groups? Can you predict how much iron a person has in his
+                or her blood based on the individual’s age, race, or other factors?</li>
+            <li>Take a look at the cholesterol level of U.S. citizens. What percent of adults aged 20 and over have high serum total
+                cholesterol measurements (greater than or equal to 240 mg/dL)? What percent of youth and adolescents have high
+                cholesterol?</li>
+        </ol>
+
+        </p>
     </div>
+
 
 
 </div>
