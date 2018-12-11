@@ -24,21 +24,34 @@ class Attribute {
 
   constructor(iRecord, iAttributeAssignment) {
     this.name = iRecord.name;
+    // Starting position in the data string. Value comes from codebook.
     this.startPos = Number(iRecord.startPos);
+    // Width in characters in the data string. Value comes from codebook
     this.width = iRecord.width;
+    // Whether categorical or numeric. Codebook value can be overridden
     this.format = (iAttributeAssignment && iAttributeAssignment.format) || iRecord.format;
+    // If categorical, mapping of numeric codes to string values.
     this.categories = (iAttributeAssignment && iAttributeAssignment.categories) || iRecord.categories;
+    // Attributes are grouped
     this.groupNumber = iAttributeAssignment && iAttributeAssignment.group;
+    // Description of attribute
     this.description = (iAttributeAssignment && iAttributeAssignment.description) || iRecord.description;
+    // no longer used
     this.chosen = iAttributeAssignment && iAttributeAssignment.defCheck;
+
     this.displayMe = iAttributeAssignment; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;
+    // if the order of attribute is important we can convey the order of categories to CODAP
+    this.hasCategoryMap = iAttributeAssignment.hasCategoryMap;
+    // remapping of numeric codes to be applied before mapping to a category string
     this.rangeMap = (iAttributeAssignment && iAttributeAssignment.rangeMap);
 
+    // title is the CODAP attribute string
     this.title = (iAttributeAssignment && iAttributeAssignment.title) || iRecord.labl;
     if (!this.title) {
       this.title = this.name;
     }
+    // the DOM element ID
     this.checkboxID = 'attr-' + this.title;
   }
 
@@ -62,6 +75,28 @@ class Attribute {
       }
     }
     return out;
+  }
+
+  /**
+   * Creates a category map based on the categories listed and assigning colors
+   * in order.
+   */
+  getCategoryMap () {
+    const kKellyColors = [
+      '#FFB300', '#803E75', '#FF6800', '#A6BDD7', '#C10020', '#CEA262',
+      '#817066', '#007D34', '#00538A', '#F13A13', '#53377A', '#FF8E00',
+      '#B32851', '#F4C800', '#7F180D', '#93AA00', '#593315', '#232C16',
+      '#FF7A5C', '#F6768E'];
+    let order = this.categories;
+    let categoryMap = {};
+    let index = 0;
+    if (order) {
+      order.forEach(function (categoryName) {
+        categoryMap[categoryName] = kKellyColors[index++ % kKellyColors.length];
+      });
+    }
+    categoryMap.__order = order;
+    return categoryMap;
   }
 }
 

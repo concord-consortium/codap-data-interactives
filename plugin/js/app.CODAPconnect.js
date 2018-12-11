@@ -112,6 +112,9 @@ app.CODAPconnect = {
             type: attr.format
           }
         };
+        if (attr.hasCategoryMap) {
+          req.values._categoryMap = attr.getCategoryMap();
+        }
         createRequests.push(req);
       }
     });

@@ -122,6 +122,7 @@ app.config = {
     {
       ipumsName: 'EDUC',
       title: 'Education-years',
+      hasCategoryMap: true,
       group: 1,
       defCheck: false,
       description: 'reports the individual’s level of educational attainment based on the highest level or year of school completed.'
@@ -131,6 +132,7 @@ app.config = {
       title: 'Education-degree_recode',
       group: 1,
       format: 'categorical',
+      hasCategoryMap: true,
       defCheck: false,
       description: 'reports on the individual’s level of educational attainment based on the highest degree completed, in years for which this information is available.',
       rangeMap: [
