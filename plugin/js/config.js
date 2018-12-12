@@ -686,6 +686,15 @@ app.config = {
       description: 'reports the state in which the individual lives, using a federal coding scheme that lists states alphabetically.  '
     },
     {
+      ipumsName: 'STATEFIP',
+      title: 'Boundaries',
+      group: 5,
+      defCheck: false,
+      description: 'State boundaries. Requires that the State attribute also be selected.',
+      formula: 'lookupBoundary(US_state_boundaries, State)',
+      formulaDependents: 'State'
+    },
+    {
       ipumsName: 'MIGRATE1',
       title: 'Moved',
       group: 5,

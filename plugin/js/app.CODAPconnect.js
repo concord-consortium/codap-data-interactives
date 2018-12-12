@@ -109,7 +109,8 @@ app.CODAPconnect = {
             name: attr.title,
             title: attr.title,
             description: attr.description,
-            type: attr.format
+            type: attr.format,
+            formula: attr.formula
           }
         };
         if (attr.hasCategoryMap) {

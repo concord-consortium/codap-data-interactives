@@ -34,14 +34,36 @@ app.ui = {
     $("#getCasesButton").text(theGetCasesButtonText);
   },
 
+  /**
+   * Expects an array of attr names. Returns true if they are all selected.
+   * @param dependents
+   */
+  checkDependentSelected: function (dependents) {
+    return dependents.every(function (dep) {
+      return (app.state.selectedAttributes.includes(dep));
+    })
+  },
+
   refreshAttributeCheckboxes: function () {
     let activeAttributes = app.state.selectedAttributes;
     $('#chooseAttributeDiv .select-item').prop('checked', false);
     if (activeAttributes) {
-      activeAttributes.forEach(function (attr) {
-        $('#attr-' + attr).prop('checked', true);
+      activeAttributes.forEach(function (attrName) {
+        $('#attr-' + attrName).prop('checked', true);
       });
     }
+
+    Object.values(app.allAttributes).forEach(function (attr) {
+      if (attr.formulaDependents) {
+        let $el = $('#' + attr.checkboxID);
+        if (!this.checkDependentSelected(attr.formulaDependents.split(','))) {
+          $el.prop('checked', false);
+          $el.prop('disabled', true);
+        } else {
+          $el.prop('disabled', false);
+        }
+      }
+    }.bind(this));
   },
 
   refreshStateCheckboxes: function () {

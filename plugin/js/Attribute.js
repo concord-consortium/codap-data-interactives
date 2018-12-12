@@ -53,6 +53,12 @@ class Attribute {
     }
     // the DOM element ID
     this.checkboxID = 'attr-' + this.title;
+    // we can create formula based attributes. A formula attribute is derived from
+    // values of other attributes as known to CODAP, and not directly from the source data.
+    this.formula = iAttributeAssignment.formula;
+    // a comma delimited list of attributes that must be present in the document
+    // along with this attribute
+    this.formulaDependents = iAttributeAssignment.formulaDependents;
   }
 
   decodeValue(iValue) {
