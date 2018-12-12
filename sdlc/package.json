@@ -1,0 +1,13 @@
+{
+  "name": "sdlc",
+  "version": "1.0.0",
+  "description": "Database and plugin for the SDLC project.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Sandoe",
+  "license": "MIT",
+  "dependencies": {
+    "xml-js": "^1.6.8"
+  }
+}

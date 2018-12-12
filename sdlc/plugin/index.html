@@ -1,0 +1,139 @@
+<!--
+  ~ ==========================================================================
+  ~ Copyright (c) 2018 by eeps media.
+  ~ Last modified 8/18/18 9:03 PM
+  ~
+  ~ Created by Tim Erickson on 8/18/18 9:03 PM
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  ~ ==========================================================================
+  ~
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/acs/acs.html
+  EEPS:         https://www.eeps.com/codap/acs/acs.html
+
+  WHEN UPLOADING TO EEPS
+  * Make sure the mysql database is latest, in case of tweaks... (Export form MySQL Pro, then Import)
+  * app.js, change <whence> to "eeps."
+
+  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SDLC Tool</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+  <link rel="stylesheet" href="./css/jquery-ui.css" language="javascript">
+
+  <link rel='stylesheet' type='text/css' href='./css/style.css'/>
+
+  <script src="./js/iframe-phone.js" language="javascript"></script>
+  <script src="./js/codapInterface.js" language="javascript"></script>
+  <script src="./js/pluginHelper.js" language="javascript"></script>
+  <script src="./js/TEEUtils.js" language="javascript"></script>
+  <script src="./js/jquery.js" language="javascript"></script>
+  <script src="./js/jquery-ui.js" language="javascript"></script>
+
+  <script src="js/Attribute.js" language="javascript"></script>
+  <script src="js/app.js" language="javascript"></script>
+  <script src="js/app.constants.js" language="javascript"></script>
+  <script src="js/app.ui.js" language="javascript"></script>
+  <script src="js/app.userActions.js" language="javascript"></script>
+  <script src="js/app.CODAPconnect.js" language="javascript"></script>
+  <script src="js/app.DBconnect.js" language="javascript"></script>
+  <script src="js/xml-js.js" language="javascript"></script>
+  <script src="js/config.js" language="javascript"></script>
+
+  <script>
+    $(function () {
+        $("#tabs").tabs();
+        app.initialize();
+    });
+
+  </script>
+
+</head>
+<body>
+<div class="plugin-content">
+
+<div id="pluginHeader">
+  <h1>SDLC Data Portal</h1>
+  <div>
+    <label for="sampleSizeInput">How many people? </label>
+    <input id="sampleSizeInput" type="number" value="1000" min="1" max="1000" onchange="app.ui.updateWholeUI()">
+    <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
+  </div>
+  <div><span id="status"></span>&nbsp;</div>
+</div>
+<br>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#summary">summary</a></li>
+    <li><a href="#atts">attributes</a></li>
+    <li><a href="#states">states</a></li>
+    <li><a href="#sampleYears">years</a></li>
+  </ul>
+
+
+  <div id="summary">
+    <div class="tab-content">
+      <div id="sampleSummaryDiv"></div>
+      <p>
+        To change which attributes you are collecting,
+        click the <b>attributes</b> tab above
+        or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.
+      </p>
+    </div>
+  </div>
+
+
+  <div id="atts">
+    <div class="tab-content">
+      <p>Choose attributes from the lists below</p>
+      <div id="chooseAttributeDiv">
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(2)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(3)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(4)"></div>
+        <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(5)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="states">
+    <div class="tab-content">
+      <p>Choose States from the list below</p>
+      <div id="chooseStatesDiv">
+      </div>
+    </div>
+  </div>
+  <div id="sampleYears">
+    <div class="tab-content">
+      <p>Choose sample years from the list below</p>
+      <div id="chooseSampleYearsDiv">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+</div>
+</body>
+</html>
