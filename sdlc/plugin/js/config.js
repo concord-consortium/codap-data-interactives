@@ -185,21 +185,26 @@ app.config = {
       defCheck: false,
       description: 'assigns individuals to one of 5 race categories and assigns a single race to multiple-race people. Comparable over time, but not available after 2014.'
     },
-    // {
-    //   ipumsName: tbd,
-    //   title: 'Race/ethnicity-multi: recode',
-    //   group: 2,
-    //   format: 'categorical',
-    //   defCheck: false,
-    //   description: 'reports each respondent’s combined race and Hispanic ethnicity status, grouped into 7 primary categories. Caution needed when making comparisons over time.',
-    //   rangeMap: [
-    //     {tbd}
-    //   ]
-    // },
-    // {
-    //   title: 'Race/ethnicity-single: recode',
-    //   ipumsName: tbd
-    // },
+    {
+      ipumsName: 'RACE',
+      title: 'Race_ethnicity-multi_recode',
+      group: 2,
+      format: 'categorical',
+      defCheck: false,
+      description: 'reports each respondent’s combined race and Hispanic ethnicity status, grouped into 7 primary categories. Caution needed when making comparisons over time.',
+      formula: "(Hispanic!='Not Hispanic')?'Hispanic':(`Race-multi`='White')?'Non-Hispanic White':(`Race-multi`='Black/African American/Negro')?'Non-Hispanic Black':(`Race-multi`='Other Asian or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='Chinese')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='Japanese')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='American Indian or Alaska Native')?'Non-Hispanic American Indian/Alaska Native':(`Race-multi`='Three or more major races')?'Non-Hispanic two or more major races':(`Race-multi`='Two major races')?'Non-Hispanic two or more major races':'Non-Hispanic Other race'",
+      formulaDependents: 'Hispanic,Race-multi'
+    },
+    {
+      ipumsName: 'RACESING',
+      title: 'Race_ethnicity-single_recode',
+      group: 2,
+      format: 'categorical',
+      defCheck: false,
+      description: 'reports each respondent’s combined race and Hispanic ethnicity status, grouped into 6 primary categories. Comparable over time, but not available after 2014',
+      formula: "(Hispanic!='Not Hispanic')?'Hispanic':(`Race-single`='')?'Non-Hispanic':(`Race-single`='White')?'Non-Hispanic White':(`Race-single`='Black')?'Non-Hispanic Black':(`Race-single`='American Indian/Alaska Native')?'Non-Hispanic American Indian/Alaska Native':(`Race-single`='Asian and/or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':(`Race-single`='Other race, non-Hispanic')?'Non-Hispanic Other race':'Non-Hispanic Other'",
+      formulaDependents: 'Hispanic,Race-single'
+    },
 
     {
       ipumsName: 'HISPAN',
