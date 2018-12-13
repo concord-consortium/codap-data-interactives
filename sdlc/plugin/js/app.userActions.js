@@ -104,7 +104,13 @@ app.userActions = {
   },
 
   getSelectedSampleSize: function () {
-    return $("#sampleSizeInput")[0].value;
+    let requestedSize = $("#sampleSizeInput")[0].value;
+    let numStates = this.getSelectedStates().length || 1;
+    let numYears = this.getSelectedYears().length || 1;
+    let numPartitions = numStates * numYears;
+    let constrainedSize = Math.max(app.constants.kMinCases, Math.min(app.constants.kMaxCases, requestedSize));
+    let partitionSize = Math.floor(constrainedSize/numPartitions);
+    return partitionSize * numPartitions;
   }
 
 };

@@ -55,7 +55,9 @@ h1 {
   width: 3.5em;
   align-content: right;
 }
-
+#sampleSizeInput:invalid {
+  color: red;
+}
 #getCasesButton {
   font-family: 'Rokkitt',sans-serif;font-size: 16px;
   font-weight: 300;
