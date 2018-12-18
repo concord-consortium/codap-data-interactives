@@ -20,6 +20,7 @@
  *
  * Configuration properties.
  */
+/*global app */
 app.config = {
   /*
    * The following declarations are specific to the data set.
@@ -125,7 +126,21 @@ app.config = {
       hasCategoryMap: true,
       group: 1,
       defCheck: false,
-      description: 'reports the individual’s level of educational attainment based on the highest level or year of school completed.'
+      description: 'reports the individual’s level of educational attainment based on the highest level or year of school completed.',
+      categories: [
+          "N/A or no schooling",
+          "Nursery school to grade 4",
+          "Grade 5, 6, 7, or 8",
+          "Grade 9",
+          "Grade 10",
+          "Grade 11",
+          "Grade 12",
+          "1 year of college",
+          "2 years of college",
+          "3 years of college",
+          "4 years of college",
+          "5+ years of college",
+      ]
     },
     {
       ipumsName: 'EDUCD',

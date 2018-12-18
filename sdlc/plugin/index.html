@@ -75,6 +75,10 @@
   <div>
     <label for="sampleSizeInput">How many people? </label>
     <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000" onchange="app.ui.updateWholeUI()">
+    <input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
+    <label for="keepExistingDataCheckbox">Keep Existing Data</label>
+  </div>
+  <div>
     <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
   </div>
   <div><span id="status"></span>&nbsp;</div>
@@ -93,11 +97,6 @@
   <div id="summary">
     <div class="tab-content">
       <div id="sampleSummaryDiv"></div>
-      <p>
-        To change which attributes you are collecting,
-        click the <b>attributes</b> tab above
-        or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.
-      </p>
     </div>
   </div>
 

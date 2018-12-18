@@ -47,6 +47,9 @@ app.userActions = {
     // console.log("the cases: " + JSON.stringify(oData));
 
     app.ui.displayStatus('Sending data to codap...');
+    if (!app.state.keepExistingData) {
+      await app.CODAPconnect.deleteAllCases();
+    }
     await app.CODAPconnect.saveCasesToCODAP( oData );
     app.ui.displayStatus('');
     app.state.sampleNumber++;
@@ -105,12 +108,13 @@ app.userActions = {
 
   getSelectedSampleSize: function () {
     let requestedSize = $("#sampleSizeInput")[0].value;
-    let numStates = this.getSelectedStates().length || 1;
-    let numYears = this.getSelectedYears().length || 1;
-    let numPartitions = numStates * numYears;
+    let numPartitions = app.getPartitionCount();
     let constrainedSize = Math.max(app.constants.kMinCases, Math.min(app.constants.kMaxCases, requestedSize));
-    let partitionSize = Math.floor(constrainedSize/numPartitions);
+    let partitionSize = Math.round(constrainedSize/numPartitions) || 1;
     return partitionSize * numPartitions;
-  }
+  },
 
+  getKeepExistingDataOption: function () {
+    app.state.keepExistingData = $('#keepExistingDataCheckbox').is(':checked');
+  }
 };

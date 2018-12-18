@@ -78,6 +78,14 @@ app.CODAPconnect = {
     return createItemsResult;
   },
 
+  deleteAllCases: async function () {
+    let theMessage = {
+      action: 'delete',
+      resource : "dataContext[" + app.constants.kACSDataSetName + "].allCases"
+    };
+    let result = await codapInterface.sendRequest(theMessage);
+    return result;
+  },
   makeNewAttributesIfNecessary : async function() {
     async function getCODAPAttrList() {
       let attrListResource = 'dataContext[' + app.constants.kACSDataSetName +

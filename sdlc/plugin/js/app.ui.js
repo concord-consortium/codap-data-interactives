@@ -29,9 +29,15 @@ app.ui = {
   },
 
   refreshText: function () {
-    const tSampleSize = app.userActions.getSelectedSampleSize();
-    let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people");
-    $("#getCasesButton").text(theGetCasesButtonText);
+    $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;
+    // let tPartitionCount = app.getPartitionCount();
+    // let tSampleSize = app.userActions.getSelectedSampleSize();
+    // // let tPartitionSize = tSampleSize / tPartitionCount;
+    // let theGetCasesButtonText = (tPartitionCount <= 1) ?
+    //     "Get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people.") :
+    //     'Get ' + tSampleSize + ' people in ' + tPartitionCount + ' equally sized state/sample year combinations.';
+    // app.ui.displayStatus(theGetCasesButtonText);
+    // $("#getCasesButton").text(theGetCasesButtonText);
   },
 
   /**
@@ -41,7 +47,7 @@ app.ui = {
   checkDependentSelected: function (dependents) {
     return dependents.every(function (dep) {
       return (app.state.selectedAttributes.includes(dep));
-    })
+    });
   },
 
   refreshAttributeCheckboxes: function () {
@@ -83,7 +89,7 @@ app.ui = {
     $('#sampleYears .select-item').prop('checked', false);
     if (activeYears) {
       activeYears.forEach(function (year) {
-        $('#year-' + year).prop('checked', true)
+        $('#year-' + year).prop('checked', true);
       });
     }
   },
@@ -164,6 +170,7 @@ app.ui = {
 
   refreshSampleSummary: function () {
     const tSampleSize = app.userActions.getSelectedSampleSize();
+    const tNumPartitions = app.getPartitionCount();
 
     let out = "";
     let stateAttr = app.allAttributes["State"];
@@ -172,7 +179,8 @@ app.ui = {
 
 
     out = "<p>When you press the button, you will get "
-        + (tSampleSize == 1 ? "one random person" : "a random sample of " + tSampleSize + " people")
+        + (tSampleSize == 1 ? "<b>one</b> random person" : ("a random sample of <b>" + tSampleSize + "</b> people" +
+            ((tNumPartitions != 1) ? ' in <b>' + tNumPartitions + '</b> partions': '')))
         + " from the <a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
         + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
         "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
