@@ -76,7 +76,7 @@
     <label for="sampleSizeInput">How many people? </label>
     <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000" onchange="app.ui.updateWholeUI()">
     <input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
-    <label for="keepExistingDataCheckbox">Keep Existing Data</label>
+    <label for="keepExistingDataCheckbox">Keep existing data</label>
   </div>
   <div>
     <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
@@ -91,6 +91,7 @@
     <li><a href="#atts">attributes</a></li>
     <li><a href="#states">states</a></li>
     <li><a href="#sampleYears">years</a></li>
+    <li><a href="#about">about</a></li>
   </ul>
 
 
@@ -122,6 +123,7 @@
       </div>
     </div>
   </div>
+
   <div id="sampleYears">
     <div class="tab-content">
       <p>Choose sample years from the list below</p>
@@ -130,6 +132,26 @@
     </div>
   </div>
 
+  <div id="about">
+    <div class="tab-content">
+      <p>
+        Brought to you by a collaboration between the Strengthening Data Literacy
+        Across the Curriculum Project at EDC and the CODAP project at The
+        Concord Consortium.
+      </p>
+
+      <p>
+        Data are provided by IPUMS-USA, University of Minnesota, www.ipums.org.
+      </p>
+
+      <p>
+        This material is based on work supported by the National Science
+        Foundation under Grant No. DRL-1813956. Any opinions, findings, and
+        conclusions or recommendations expressed in this material are those of
+        the authors and do not necessarily reflect the views of the NSF.
+      </p>
+    </div>
+  </div>
 </div>
 
 
