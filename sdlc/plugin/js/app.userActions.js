@@ -19,40 +19,46 @@
 app.userActions = {
 
   pressGetCasesButton : async function() {
-    console.log("get cases!");
-    let oData = [];
-    app.ui.displayStatus('Fetching data...');
-    let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
-      app.state.selectedStates, app.state.selectedYears);
+    try {
+      console.log("get cases!");
+      let oData = [];
+      app.ui.displayStatus('Fetching data...');
+      let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
+        app.state.selectedStates, app.state.selectedYears);
 
-    //  okay, tData is an Array of objects whose keys are the variable names.
-    //  now we have to translate names and values...
-    app.ui.displayStatus('Formatting data...');
-    tData.forEach( c => {
-        //  c is a case object
-      let sampleData = c.sample_data;
-      let o = { sample : app.state.sampleNumber };
-      app.state.selectedAttributes.forEach(function (attrTitle) {
-        let attr = app.allAttributes[attrTitle];
-        o[attr.title] = attr.decodeValue(sampleData);
+      //  okay, tData is an Array of objects whose keys are the variable names.
+      //  now we have to translate names and values...
+      app.ui.displayStatus('Formatting data...');
+
+      tData.forEach( c => {
+          //  c is a case object
+        let sampleData = c.sample_data;
+        let o = { sample : app.state.sampleNumber };
+        app.state.selectedAttributes.forEach(function (attrTitle) {
+          let attr = app.allAttributes[attrTitle];
+          o[attr.title] = attr.decodeValue(sampleData);
+        });
+        oData.push(o);
       });
-      oData.push(o);
-    });
 
-    //     make sure the case table is showing
+      //     make sure the case table is showing
 
-    app.ui.displayStatus('Opening case table...');
-    await app.CODAPconnect.makeCaseTableAppear();
+      app.ui.displayStatus('Opening case table...');
+      await app.CODAPconnect.makeCaseTableAppear();
 
-    // console.log("the cases: " + JSON.stringify(oData));
+      // console.log("the cases: " + JSON.stringify(oData));
 
-    app.ui.displayStatus('Sending data to codap...');
-    if (!app.state.keepExistingData) {
-      await app.CODAPconnect.deleteAllCases();
+      app.ui.displayStatus('Sending data to codap...');
+      if (!app.state.keepExistingData) {
+        await app.CODAPconnect.deleteAllCases();
+      }
+      await app.CODAPconnect.saveCasesToCODAP( oData );
+      app.ui.displayStatus('');
+      app.state.sampleNumber++;
+    } catch (ex) {
+      console.log(ex);
+      app.ui.displayStatus('Error...');
     }
-    await app.CODAPconnect.saveCasesToCODAP( oData );
-    app.ui.displayStatus('');
-    app.state.sampleNumber++;
   },
 
   changeAttributeCheckbox : function(iAttName) {

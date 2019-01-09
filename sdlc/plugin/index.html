@@ -71,7 +71,7 @@
 <div class="plugin-content">
 
 <div id="pluginHeader">
-  <h1>SDLC Data Portal</h1>
+  <h1>USS Data Portal</h1>
   <div>
     <label for="sampleSizeInput">How many people? </label>
     <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000" onchange="app.ui.updateWholeUI()">
@@ -104,7 +104,9 @@
 
   <div id="atts">
     <div class="tab-content">
-      <p>Choose attributes from the lists below</p>
+      <p>Choose attributes to include in your sample data set from the lists below.</p>
+      <p>For more details about each attribute, and specific cautions about
+        analyzing attributes over time, see the Social Statistics Portal Data Codebook.</p>
       <div id="chooseAttributeDiv">
         <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
         <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
@@ -118,7 +120,10 @@
 
   <div id="states">
     <div class="tab-content">
-      <p>Choose States from the list below</p>
+      <p>Choose States to include in your sample data set from the list below.</p>
+      <p>Note: If you wish to display state names in your case table or graphs,
+        you must also go to the attributes tab, look under the Geography list,
+        and select the State attribute.</p>
       <div id="chooseStatesDiv">
       </div>
     </div>
@@ -126,7 +131,11 @@
 
   <div id="sampleYears">
     <div class="tab-content">
-      <p>Choose sample years from the list below</p>
+      <p>Choose which year(s) to include in your sample data set from the list
+        below.</p>
+      <p>Note: If you wish to display year indicators in your case table or
+        graphs, you must also go to the attributes tab, look under the Other
+        list, and select the Year attribute.</p>
       <div id="chooseSampleYearsDiv">
       </div>
     </div>
@@ -135,8 +144,9 @@
   <div id="about">
     <div class="tab-content">
       <p>
-        Brought to you by a collaboration between the Strengthening Data Literacy
-        Across the Curriculum Project at EDC and the CODAP project at The
+        Brought to you by the Strengthening Data Literacy
+        Across the Curriculum (SDLC) Project, a collaboration between EDC,
+        the California Polytechnic State University, and the CODAP project at the
         Concord Consortium.
       </p>
 

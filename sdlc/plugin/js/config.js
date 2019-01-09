@@ -54,7 +54,7 @@ app.config = {
     {
       number: 6,
       open: false,
-      title: 'Technical'
+      title: 'Other'
     }],
 
   attributeAssignment: [{
@@ -62,7 +62,9 @@ app.config = {
       title: 'Age',
       group: 1,
       defCheck: true,
-      description: 'reports the Individual\'s age in years as of the last birthday. Values range from 0 (less than 1 year old) to 90 and above.  See codebook for special codes.'
+      description: 'reports the individual\'s age in years as of the ' +
+      'last birthday. Values range from 0 (less than 1 year old) to 90 ' +
+      'and above.  See codebook for special codes.'
     },
     {
       title: 'Age_recode',
@@ -70,7 +72,8 @@ app.config = {
       ipumsName: 'AGE',
       format: 'categorical',
       defCheck: false,
-      description: 'reports the individual’s age in years as of the last birthday. Recodes the AGE variable into 8 age categories.',
+      description: 'reports the individual’s age in years as of the ' +
+      'last birthday. Recodes the Age variable into 8 age categories.',
       rangeMap: [
         {from: 0, to: 17, recodeTo: 0},
         {from: 18, to: 24, recodeTo: 1},
@@ -104,21 +107,26 @@ app.config = {
       title: 'Marital_status',
       group: 1,
       defCheck: false,
-      description: 'reports each individual’s current marital status, with 6 possible categories.'
+      description: 'reports each individual’s current marital status, with ' +
+      '6 possible categories.'
     },
     {
       ipumsName: 'NCHILD',
       title: 'Number_of_children',
       group: 1,
       defCheck: false,
-      description: 'counts the number of own children (of any age or marital status) residing with each individual. Values range from 0 to a top code of 9+.'
+      description: 'counts the number of own children (of any age or ' +
+      'marital status) residing with each individual. Values range from ' +
+      '0 to a top code of 9+.'
     },
     {
       ipumsName: 'FAMSIZE',
       title: 'Family_size',
       group: 1,
       defCheck: false,
-      description: 'reports the number of own family members residing with each individual, including the person her/himself.  Values range from 1 to as high as 26 or higher in some years.'
+      description: 'reports the number of own family members residing ' +
+      'with each individual, including the person her/himself.  Values ' +
+      'range from 1 to as high as 26 or higher in some years.'
     },
     {
       ipumsName: 'EDUC',
@@ -126,7 +134,8 @@ app.config = {
       hasCategoryMap: true,
       group: 1,
       defCheck: false,
-      description: 'reports the individual’s level of educational attainment based on the highest level or year of school completed.',
+      description: 'reports the individual’s level of educational ' +
+      'attainment based on the highest level or year of school completed.',
       categories: [
           "N/A or no schooling",
           "Nursery school to grade 4",
@@ -149,7 +158,9 @@ app.config = {
       format: 'categorical',
       hasCategoryMap: true,
       defCheck: false,
-      description: 'reports on the individual’s level of educational attainment based on the highest degree completed, in years for which this information is available.',
+      description: 'reports on the individual’s level of educational ' +
+      'attainment based on the highest degree completed, in years for which ' +
+      'this information is available.',
       rangeMap: [
         {from: 0, to: 2, recodeTo: 0},
         {from: 3, to: 50, recodeTo: 1},
@@ -191,14 +202,18 @@ app.config = {
       title: 'Race-multi',
       group: 2,
       defCheck: false,
-      description: 'reports each individual’s race according to 9 categories, including categories for mixed-race individuals. Caution needed when making comparisons over time.'
+      description: 'reports each individual’s race according to 9 categories, ' +
+      'including categories for mixed-race individuals. Caution needed when ' +
+      'making comparisons over time.'
     },
     {
       ipumsName: 'RACESING',
       title: 'Race-single',
       group: 2,
       defCheck: false,
-      description: 'assigns individuals to one of 5 race categories and assigns a single race to multiple-race people. Comparable over time, but not available after 2014.'
+      description: 'assigns individuals to one of 5 race categories and ' +
+      'assigns a single race to multiple-race people. Comparable over time, ' +
+      'but not available after 2014.'
     },
     {
       ipumsName: 'RACE',
@@ -206,8 +221,19 @@ app.config = {
       group: 2,
       format: 'categorical',
       defCheck: false,
-      description: 'reports each respondent’s combined race and Hispanic ethnicity status, grouped into 7 primary categories. Caution needed when making comparisons over time.',
-      formula: "(Hispanic!='Not Hispanic')?'Hispanic':(`Race-multi`='White')?'Non-Hispanic White':(`Race-multi`='Black/African American/Negro')?'Non-Hispanic Black':(`Race-multi`='Other Asian or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='Chinese')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='Japanese')?'Non-Hispanic Asian or Pacific Islander':(`Race-multi`='American Indian or Alaska Native')?'Non-Hispanic American Indian/Alaska Native':(`Race-multi`='Three or more major races')?'Non-Hispanic two or more major races':(`Race-multi`='Two major races')?'Non-Hispanic two or more major races':'Non-Hispanic Other race'",
+      description: 'reports each respondent’s combined race and Hispanic ' +
+      'ethnicity status, grouped into 7 primary categories. Caution needed ' +
+      'when making comparisons over time.',
+      formula: "(Hispanic!='Not Hispanic')?" +
+          "'Hispanic':(`Race-multi`='White')?'Non-Hispanic White':" +
+          "(`Race-multi`='Black/African American/Negro')?'Non-Hispanic Black':" +
+          "(`Race-multi`='Other Asian or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
+          "(`Race-multi`='Chinese')?'Non-Hispanic Asian or Pacific Islander':" +
+          "(`Race-multi`='Japanese')?'Non-Hispanic Asian or Pacific Islander':" +
+          "(`Race-multi`='American Indian or Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
+          "(`Race-multi`='Three or more major races')?'Non-Hispanic two or more major races':" +
+          "(`Race-multi`='Two major races')?'Non-Hispanic two or more major races':" +
+          "'Non-Hispanic Other race'",
       formulaDependents: 'Hispanic,Race-multi'
     },
     {
@@ -216,8 +242,17 @@ app.config = {
       group: 2,
       format: 'categorical',
       defCheck: false,
-      description: 'reports each respondent’s combined race and Hispanic ethnicity status, grouped into 6 primary categories. Comparable over time, but not available after 2014',
-      formula: "(Hispanic!='Not Hispanic')?'Hispanic':(`Race-single`='')?'Non-Hispanic':(`Race-single`='White')?'Non-Hispanic White':(`Race-single`='Black')?'Non-Hispanic Black':(`Race-single`='American Indian/Alaska Native')?'Non-Hispanic American Indian/Alaska Native':(`Race-single`='Asian and/or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':(`Race-single`='Other race, non-Hispanic')?'Non-Hispanic Other race':'Non-Hispanic Other'",
+      description: 'reports each respondent’s combined race and Hispanic ' +
+      'ethnicity status, grouped into 6 primary categories. Comparable over ' +
+      'time, but not available after 2014.',
+      formula: "(Hispanic!='Not Hispanic')?'Hispanic':" +
+          "(`Race-single`='')?'Non-Hispanic':" +
+          "(`Race-single`='White')?'Non-Hispanic White':" +
+          "(`Race-single`='Black')?'Non-Hispanic Black':" +
+          "(`Race-single`='American Indian/Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
+          "(`Race-single`='Asian and/or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
+          "(`Race-single`='Other race, non-Hispanic')?'Non-Hispanic Other race':" +
+          "'Non-Hispanic Other'",
       formulaDependents: 'Hispanic,Race-single'
     },
 
@@ -226,14 +261,20 @@ app.config = {
       title: 'Hispanic',
       group: 2,
       defCheck: false,
-      description: 'identifies individuals of Hispanic, Spanish, or Latino origin and classifies them according to their country of origin. The U.S. Census considers Hispanic origin to be an ethnic rather than a racial classification; individuals of Hispanic origin can therefore be of any race'
+      description: 'identifies individuals of Hispanic, Spanish, or Latino ' +
+      'origin and classifies them according to their country of origin. ' +
+      'The U.S. Census considers Hispanic origin to be an ethnic rather than a ' +
+      'racial classification; individuals of Hispanic origin can therefore ' +
+      'be of any race.'
     },
     {
       title: 'Hispanic-dummy_recode',
       ipumsName: 'HISPAN',
       group: 2,
       defCheck: false,
-      description: 'Hispanic-dummy: recode identifies whether individuals are of Hispanic, Spanish, or Latino origin. Recodes the Hispanic variable into two codes.',
+      description: 'Hispanic-dummy: recode identifies whether individuals are ' +
+      'of Hispanic, Spanish, or Latino origin. Recodes the Hispanic variable ' +
+      'into two codes.',
       format: 'categorical',
       rangeMap: [
         {from: 0, to: 0, recodeTo: 0},
@@ -250,6 +291,9 @@ app.config = {
       group: 2,
       defCheck: false,
       format: 'categorical',
+      description: 'identifies individuals of Hispanic, Spanish, or Latino ' +
+      'origin and classifies them according to their country of origin. ' +
+      'Recodes a detailed version of Hispanic into 15 categories.',
       rangeMap: [
         {from: 0, to: 99, recodeTo: 0},
         {from: 100, to: 107, recodeTo: 1},
@@ -291,7 +335,8 @@ app.config = {
         'Columbian',
         'Equadoran',
         'Peruvian',
-        'Other South American (Argentinean, Bolivian, Chilean, Paraguayan, Uruguayan, Venezuelan, and others)',
+        'Other South American (Argentinean, Bolivian, Chilean, Paraguayan, ' +
+            'Uruguayan, Venezuelan, and others)',
         'Spaniard',
         'Other Hispanic'
       ]
@@ -301,7 +346,8 @@ app.config = {
       title: 'Citizen',
       group: 2,
       defCheck: false,
-      description: 'identifies the citizenship status of individuals, with 6 categories.'
+      description: 'identifies the citizenship status of individuals, with ' +
+      '6 categories.'
     },
     {
       ipumsName: 'CITIZEN',
@@ -309,7 +355,8 @@ app.config = {
       group: 2,
       defCheck: false,
       format: 'categorical',
-      description: 'individual is a U.S. citizen. Recodes the Citizen variable into two primary codes for almost all years available.',
+      description: 'individual is a U.S. citizen. Recodes the Citizen ' +
+      'variable into two primary codes for almost all years available.',
       rangeMap: [
         {from: 0, to: 2, recodeTo: 1},
         {from: 3, to: 4, recodeTo: 0},
@@ -326,14 +373,17 @@ app.config = {
       title: 'Immigrate-year',
       group: 2,
       defCheck: false,
-      description: 'reports the year in which a foreign-born person entered the U.S'
+      description: 'reports the year in which a foreign-born person entered the U.S.'
     },
     {
       ipumsName: 'BPL',
       title: 'Birthplace',
       group: 2,
       defCheck: false,
-      description: 'reports where in the world the respondent was born. Includes up to 188 location categories. Consider working instead with a recoded and simplified version of this variable, called Birth region'
+      description: 'reports where in the world the respondent was born. ' +
+      'Includes up to 188 location categories. Consider working instead ' +
+      'with a recoded and simplified version of this variable, called ' +
+      'Birth region.'
     },
     {
       ipumsName: 'BPL',
@@ -341,7 +391,8 @@ app.config = {
       group: 2,
       format: 'categorical',
       defCheck: false,
-      description: 'reports where in the world the person was born. Recodes the Birthplace variable into 9 categories',
+      description: 'reports where in the world the person was born. Recodes ' +
+      'the Birthplace variable into 9 categories.',
       rangeMap: [
         {from: 1,   to: 120, recodeTo: 0},
         {from: 150, to: 199, recodeTo: 1},
@@ -373,14 +424,18 @@ app.config = {
       title: 'Speaks_English',
       group: 2,
       defCheck: false,
-      description: 'indicates whether the individual speaks English, speaks only English at home, or how well the individual speaks English. There have been up to 8 codes over time.'
+      description: 'indicates whether the individual speaks English, ' +
+      'speaks only English at home, or how well the individual speaks ' +
+      'English. There have been up to 8 codes over time.'
     },
     {
       ipumsName: 'EMPSTAT',
       title: 'Employment_status',
       group: 3,
       defCheck: false,
-      description: 'reports whether the individual was a part of the labor force, i.e., working or seeking work, and if yes, whether the person was currently unemployed.'
+      description: 'reports whether the individual was a part of the ' +
+      'labor force, i.e., working or seeking work, and if yes, whether ' +
+      'the person was currently unemployed.'
     },
     {
       ipumsName: 'LABFORCE',
@@ -394,20 +449,24 @@ app.config = {
       title: 'Class_of_worker',
       group: 3,
       defCheck: false,
-      description: 'Class of worker indicates whether individuals were self-employed or worked for wages as an employee'
+      description: 'Class of worker indicates whether individuals were ' +
+      'self-employed or worked for wages as an employee.'
     }, {
       ipumsName: 'UHRSWORK',
       title: 'Usual_hours_worked',
       group: 3,
       defCheck: false,
-      description: 'reports the number of hours per week that the individual usually worked, if the person worked during the previous year. Values range from 0 (or N/A) to 99 (the top code).'
+      description: 'reports the number of hours per week that the ' +
+      'individual usually worked, if the person worked during the ' +
+      'previous year. Values range from 0 (or N/A) to 99 (the top code).'
     },
     {
       ipumsName: 'WKSWORK2',
       title: 'Weeks_worked',
       group: 3,
       defCheck: false,
-      description: 'reports the number of weeks that the individual worked the previous year, with six primary categories.'
+      description: 'reports the number of weeks that the individual ' +
+      'worked the previous year, with six primary categories.'
     }, {
       ipumsName: 'WORKEDYR',
       title: 'Worked_last_year',
@@ -420,14 +479,18 @@ app.config = {
       title: 'Occupation_1950_basis',
       group: 3,
       defCheck: false,
-      description: 'reports the person’s primary occupation, using the Census Bureau’s 1950 occupational classification system. There are several hundred occupation categories.'
+      description: 'reports the person’s primary occupation, using ' +
+      'the Census Bureau’s 1950 occupational classification system. ' +
+      'There are several hundred occupation categories.'
     },
     {
       ipumsName: 'OCC1950',
       title: 'Occupation_1950_basis_recode',
       group: 3,
       defCheck: false,
-      description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1950 occupational classification system. There are 8 primary categories.',
+      description: 'reports the person’s primary occupation, using a ' +
+      'simplified version of the Census Bureau’s 1950 occupational ' +
+      'classification system. There are 8 primary categories.',
       rangeMap: [
         {from: 0, to: 99, recodeTo: 1},
         {from: 100, to: 100, recodeTo: 6},
@@ -462,14 +525,21 @@ app.config = {
       title: 'Occupation_1990_basis',
       group: 3,
       defCheck: false,
-      description: 'reports the person’s primary occupation, using a modified version of the 1990 Census Bureau occupational classification scheme, from 1950 forward. There are several hundred occupation categories.'
+      description: 'reports the person’s primary occupation, using a ' +
+      'modified version of the 1990 Census Bureau occupational ' +
+      'classification scheme, from 1950 forward. There are several hundred ' +
+      'occupation categories. This attribute is not available for data ' +
+      'collected prior to 1950.'
     },
     {
       ipumsName: 'OCC1990',
       title: 'Occupation_1990_basis_recode',
       group: 3,
       defCheck: false,
-      description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1990 occupational classification system, spanning from 1950 forward. There are 7 primary categories.',
+      description: 'reports the person’s primary occupation, using a ' +
+      'simplified version of the Census Bureau’s 1990 occupational ' +
+      'classification system. There are 7 primary categories. This ' +
+      'attribute is not available for data collected prior to 1950.',
       rangeMap: [
         {from: 3, to: 200, recodeTo: 1},
         {from: 203, to: 389, recodeTo: 2},
@@ -539,14 +609,14 @@ app.config = {
       title: 'Industry_1990',
       group: 3,
       defCheck: false,
-      description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system, from 1950 forward. There are several hundred industry categories.'
+      description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system. There are several hundred industry categories. This attribute is not available for data collected prior to 1950.'
     },
     {
       ipumsName: 'IND1990',
       title: 'Industry_1990_recode',
       group: 3,
       defCheck: false,
-      description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system, from 1950 forward. There are several hundred industry categories. Consider working with a recoded and simplified version of this variable, called Industry-1990 (recode).',
+      description: 'reports the industry of the individual, using a simplified version of the 1990 Census Bureau industrial classification system, from 1950 forward. There are 9 primary categories.  This attribute is not available for data collected prior to 1950.',
       rangeMap: [
         {from: 10, to: 32, recodeTo: 1},
         {from: 40, to: 392, recodeTo: 2},
@@ -588,56 +658,56 @@ app.config = {
       title: 'Income-total',
       group: 4,
       defCheck: false,
-      description: 'reports each respondent’s total pre-tax income. Total income is the sum of the amounts reported for multiple types of income.  '
+      description: 'reports each respondent’s total pre-tax income. Total income is the sum of the amounts reported for multiple types of income.'
     },
     {
       ipumsName: 'INCWAGE',
       title: 'Income-wages',
       group: 4,
       defCheck: false,
-      description: 'reports each respondent’s pre-tax wage or salary income received for work performed as an employee. Amounts are expressed in contemporary dollars.  '
+      description: 'reports each respondent’s pre-tax wage or salary income received for work performed as an employee. Amounts are expressed in contemporary dollars.'
     },
     {
       ipumsName: 'FTOTINC',
       title: 'Income-family_total',
       group: 4,
       defCheck: false,
-      description: 'total reports the sum of the pre-tax incomes of all respondents 15 years old and over related to Person 1 in the questionnaire. Amounts are expressed in contemporary dollars.  '
+      description: 'total reports the sum of the pre-tax incomes of all respondents 15 years old and over related to Person 1 in the questionnaire. Amounts are expressed in contemporary dollars.'
     },
-    {
-      ipumsName: 'INCEARN',
-      title: 'Income-earnings',
-      group: 4,
-      defCheck: false,
-      description: 'reports income earned from wages or a person\'s own business or farm for the previous year. Amounts are expressed in contemporary dollars. '
-    },
+    // {
+    //   ipumsName: 'INCEARN',
+    //   title: 'Income-earnings',
+    //   group: 4,
+    //   defCheck: false,
+    //   description: 'reports income earned from wages or a person\'s own business or farm for the previous year. Amounts are expressed in contemporary dollars.'
+    // },
     {
       ipumsName: 'CPI99',
       title: 'CPI99',
       group: 4,
       defCheck: false,
-      description: 'provides the adjustment factor that converts contemporary dollars to constant 1999 dollars. It is a 5-digit numeric variable that has three implied decimals. For example, a CPI99 value of 15423 should be interpreted as 15.423. '
+      description: 'provides the adjustment factor that converts contemporary dollars to constant 1999 dollars. It is a 5-digit numeric variable that has three implied decimals. For example, a CPI99 value of 15423 should be interpreted as 15.423.'
     },
     {
       ipumsName: 'INCWELFR',
       title: 'Income-welfare',
       group: 4,
       defCheck: false,
-      description: 'reports how much pre-tax income (if any) the respondent received during the previous year from various public assistance programs commonly referred to as "welfare." Assistance from private charities is not included. Amounts are expressed in contemporary dollars. '
+      description: 'reports how much pre-tax income (if any) the respondent received during the previous year from various public assistance programs commonly referred to as "welfare." Assistance from private charities is not included. Amounts are expressed in contemporary dollars.'
     },
     {
       ipumsName: 'POVERTY',
       title: 'Poverty',
       group: 4,
       defCheck: false,
-      description: 'reports each family\'s total income for the previous year as a percentage of the official U.S. poverty threshold, adjusted for inflation. '
+      description: 'reports each family\'s total income for the previous year as a percentage of the official U.S. poverty threshold, adjusted for inflation.'
     },
     {
       ipumsName: 'REGION',
       title: 'Region',
       group: 5,
       defCheck: false,
-      description: 'identifies the U.S. Census region and division where the individual lives. There are four primary regions and nine primary divisions of the U.S., with additional categories for mixed divisions. Consider using Region: recode or Region-division: recode for less detailed versions of this variable. '
+      description: 'identifies the U.S. Census region and division where the individual lives. There are four primary regions and nine primary divisions of the U.S., with additional categories for mixed divisions. Consider using Region_recode or Region-division_recode for less detailed versions of this variable.'
     },
     {
       ipumsName: 'REGION',
@@ -703,7 +773,7 @@ app.config = {
       title: 'State',
       group: 5,
       defCheck: true,
-      description: 'reports the state in which the individual lives, using a federal coding scheme that lists states alphabetically.  '
+      description: 'reports the state in which the individual lives, using a federal coding scheme that lists states alphabetically. Note that you must select this attribute if you want to display state names in your case table or graphs.'
     },
     {
       ipumsName: 'STATEFIP',
@@ -719,13 +789,14 @@ app.config = {
       title: 'Moved',
       group: 5,
       defCheck: false,
-      description: 'reports whether the person had moved to a different house within the past year, with several categories. '
+      description: 'reports whether the person had moved to a different house within the past year, with several categories.'
     },
     {
       ipumsName: 'YEAR',
       title: 'Year',
       group: 6,
       format: 'categorical',
-      defCheck: true
+      defCheck: true,
+      description: 'reports the four-digit year of the decennial census or ACS for each person\'s questionnaire responses. Note that you must select this attribute if you want to display year indicators in your case table or graphs.'
   }]
 };

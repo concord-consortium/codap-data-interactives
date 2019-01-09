@@ -18,7 +18,7 @@
 /* global app */
 
 app.constants = {
-  version: "001d",
+  version: "v0002",
 
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
@@ -31,5 +31,5 @@ app.constants = {
   },
 
   kMinCases: 1,
-  kMaxCases: 3000
+  kMaxCases: 1000
 };
