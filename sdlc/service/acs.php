@@ -53,12 +53,10 @@ function prepareQueries($DBH, $hasStateSelection) {
 //    $queries["depopulateTemp"] = $DBH->prepare("DELETE FROM rand_numbers");
     if ($hasStateSelection) {
         $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?");
-        $queries["selectSamples"] = $DBH->prepare("SELECT peeps.id,peeps.sample_data FROM peeps, rand_numbers WHERE peeps.year=? AND peeps.state_code=? AND (rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr_st AND peeps.accum_yr_st + peeps.perwt");
+        $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND state_code=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr_st) order by peeps.accum_yr_st desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     } else {
         $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL");
-        $queries["selectSamples"] = $DBH->prepare("SELECT peeps.id,peeps.sample_data FROM peeps, rand_numbers WHERE peeps.year=? AND " .
-                "(rand_numbers.number * @sum_weights) BETWEEN peeps.accum_yr AND " .
-                "peeps.accum_yr + peeps.perwt");
+        $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr) order by peeps.accum_yr desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     }
     return $queries;
 }
