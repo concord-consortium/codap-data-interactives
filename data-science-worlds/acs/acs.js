@@ -22,7 +22,7 @@
 
 let acs = {
     state: null,
-    whence: "local",
+    whence: "concord",
     allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
     decoder: {},
     ancestries: {},
