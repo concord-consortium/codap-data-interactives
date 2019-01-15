@@ -1,0 +1,111 @@
+/*
+ * ==========================================================================
+ * Copyright (c) 2018 by eeps media.
+ * Last modified 8/18/18 9:03 PM
+ *
+ * Created by Tim Erickson on 8/18/18 9:03 PM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * ==========================================================================
+ *
+ */
+
+body, #summary, #atts, #states, #sampleYears, #about {
+  margin : 0;
+  /*height : 320px;*/
+  font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
+  font-weight: 300;
+  color : #555;
+  background: linear-gradient(#eef, #cce );
+  position: relative;
+  /* max-width: 400px; */
+  overflow-y: hidden;
+}
+
+.ui-tabs-anchor {
+  font-family: 'Rokkitt',sans-serif;font-size: 18px;
+  font-weight: 300;
+}
+
+h1 {
+  font-family: 'Rokkitt',sans-serif;font-size: 22px;
+  font-weight: 700;
+  color : #44a;
+}
+
+#pluginHeader {
+    padding-left: 1.4em;
+}
+
+/*#acsMap {*/
+    /*padding-top: 1em;*/
+    /*height : 300px;*/
+    /*width : 100%;*/
+/*}*/
+
+#sampleSizeInput {
+  font-family: 'Rokkitt',sans-serif;font-size: 16px;
+  font-weight: 700;
+  width: 3.5em;
+  align-content: right;
+}
+#sampleSizeInput:invalid {
+  color: red;
+}
+#getCasesButton {
+  font-family: 'Rokkitt',sans-serif;font-size: 16px;
+  font-weight: 300;
+}
+
+.attributeCheckboxes {
+  padding-left: 1.5em;
+  padding-bottom: 0.5em;
+}
+
+.attNameBold {
+  font-weight: 700;
+  color : #004;
+}
+
+.oneAttCheckboxPlusLabel {
+  display: block;
+  padding-left: 1.0em;
+  text-indent: -1.6em;
+}
+
+#chooseStatesDiv, #chooseSampleYearsDiv {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#chooseStatesDiv div, #chooseSampleYearsDiv div {
+  flex-basis: 120px;
+  flex-grow: 3;
+}
+
+.plugin-content {
+  min-width: 400px;
+}
+
+body .ui-tabs .ui-tabs-panel {
+  padding: 0;
+}
+
+.tab-content {
+  height: 300px;
+  overflow-y: auto;
+  padding: 1em 1.4em;
+}
+
+.plugin-content .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: .25em .5em;
+}
+.plugin-content .ui-tabs {
+  overflow-x: hidden; /* otherwise tabs create a new row */
+}
