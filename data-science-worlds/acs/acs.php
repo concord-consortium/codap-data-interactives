@@ -30,7 +30,8 @@ header('Access-Control-Allow-Origin: *');
 
 function reportToFile($message)
 {
-    file_put_contents("acsdebug.txt", $message . "\n", FILE_APPEND);
+    // Uncomment below to reenable debug
+    //file_put_contents("/tmp/acsdebug.txt", $message . "\n", FILE_APPEND);
 }
 
 
@@ -108,7 +109,7 @@ switch ($command) {
             $theCodes = CODAP_MySQL_getQueryResult($DBH, $query, $params);
             $oCodes = array();
             foreach ($theCodes as $aCode) {
-                $oCodes[$aCode[code]] = $aCode['result'];
+                $oCodes[$aCode["code"]] = $aCode['result'];
             }
             $out[$var] = $oCodes;
         }
