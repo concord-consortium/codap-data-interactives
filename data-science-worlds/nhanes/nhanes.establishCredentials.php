@@ -22,6 +22,7 @@
 $whence  = $_REQUEST['whence'];
 
 $credentialFileNames = [
+    "concord" => "/var/www/cred/nhanesCred.php",
     "local" => "/Applications/MAMP/cred/nhanesCred.php",
     "eeps" => "/home1/denofinq/cred/nhanesCred.php"
 ];

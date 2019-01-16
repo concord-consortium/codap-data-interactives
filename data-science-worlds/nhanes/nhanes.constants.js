@@ -27,6 +27,7 @@ nhanes.constants = {
     kNHANESCaseTableName: "People from NHANES",
 
     kBasePhpURL: {
+        concord: 'https://codap.concord.org/data-science-worlds/nhanes/nhanes.php',
         local: "http://localhost:8888/plugins/nhanes/nhanes.php",
         xyz: "https://codap.xyz/plugins/nhanes/nhanes.php",
         eeps: "https://www.eeps.com/codap/nhanes/nhanes.php"
