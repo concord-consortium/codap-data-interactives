@@ -28,7 +28,7 @@ limitations under the License.
 
 barty.constants = {
     version: "002j",
-    whence : "local",
+    whence : "concord",
 
     kBARTYDataSetName : "barty",
     kBARTYDataSetTitle : "BART data",
@@ -38,7 +38,7 @@ barty.constants = {
         local: "http://localhost:8888/plugins/barty/php/getBARTYdata.php",
         xyz: "https://codap.xyz/plugins/barty/php/getBARTYdata.php",
         eeps: "https://www.eeps.com/codap/barty/php/getBARTYdata.php",
-        concord : "https://codap.concord.org/data-science-games/php/getBARTYdata.php",
+        concord : "https://codap.concord.org/data-science-worlds/barty/php/getBARTYdata.php",
     },
 
     dimensions: {height: 700, width: 360},
