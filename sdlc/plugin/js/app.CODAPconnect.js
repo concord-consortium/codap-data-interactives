@@ -86,18 +86,26 @@ app.CODAPconnect = {
     let result = await codapInterface.sendRequest(theMessage);
     return result;
   },
+
   makeNewAttributesIfNecessary : async function() {
     async function getCODAPAttrList() {
       let attrListResource = 'dataContext[' + app.constants.kACSDataSetName +
-          '].collection[' + app.constants.kACSCollectionName + '].attributeList';
+          ']';
       let response =
           await codapInterface.sendRequest({
         action: 'get',
         resource: attrListResource});
       if (response.success) {
-        return response.values;
+        let attrArrays = response.values.collections.map(function (collection) {
+          collection.attrs.forEach(function (attr) {
+            attr.collectionID = collection.guid;
+          });
+          return collection.attrs;
+        });
+        return attrArrays.flat();
       }
     }
+
     let theAttributes = app.state.selectedAttributes.map(function (attrName) {
       return app.allAttributes[attrName];
     });
@@ -105,7 +113,8 @@ app.CODAPconnect = {
     let existingAttributeNames = existingAttributeList.map(function (attr) {
       return attr.title;
     });
-    let createRequests = [];
+    let codapRequests = [];
+
     theAttributes.forEach(function (attr) {
       if (!existingAttributeNames.includes(attr.title)) {
         let attrResource = 'dataContext[' + app.constants.kACSDataSetName + '].collection['
@@ -124,11 +133,27 @@ app.CODAPconnect = {
         if (attr.hasCategoryMap) {
           req.values._categoryMap = attr.getCategoryMap();
         }
-        createRequests.push(req);
+        codapRequests.push(req);
       }
     });
-    if (createRequests.length > 0) {
-      return await codapInterface.sendRequest(createRequests);
+    if (app.state.priorAttributes) {
+      app.state.priorAttributes.forEach(function (attrName) {
+        if (!app.state.selectedAttributes.includes(attrName)) {
+          let codapAttr = existingAttributeList.find(function (cAttr) {return attrName === cAttr.name;});
+          if (codapAttr) {
+            let attrResource = 'dataContext[' + app.constants.kACSDataSetName +
+                '].collection[' + codapAttr.collectionID + '].attribute[' + codapAttr.name + ']';
+            let req = {
+              action: 'delete', resource: attrResource
+            };
+            codapRequests.push(req);
+          }
+        }
+      });
+    }
+    app.state.priorAttributes = app.state.selectedAttributes.slice();
+    if (codapRequests.length > 0) {
+      return await codapInterface.sendRequest(codapRequests);
     } else {
       return {success: true};
     }
