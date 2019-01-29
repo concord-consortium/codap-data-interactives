@@ -703,6 +703,18 @@
       "categories": [
         "Data Worlds"
       ]
+    },
+    {
+      "title": "USS Data Portal",
+      "description": "Portal to US census and American Community Survey Data",
+      "width": 400,
+      "height": 600,
+      "path": "/sdlc/plugin",
+      "aegis": "sdlc",
+      "visible": "false",
+      "categories": [
+        "Partners"
+      ]
     }
   ]
 }
