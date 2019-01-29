@@ -18,7 +18,7 @@
 /* global app */
 
 app.constants = {
-  version: "001d",
+  version: "v0002",
 
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
@@ -26,7 +26,10 @@ app.constants = {
   kACSCaseTableName: "People from ACS",
 
   kBasePhpURL: {
-    local: "http://localhost/~jsandoe/sdlc/service/acs.php",
+    local: "http://localhost/~jsandoe/codap-data-interactives/sdlc/service/acs.php",
     concord: "https://codap.concord.org/sdlc/service/acs.php"
-  }
+  },
+
+  kMinCases: 1,
+  kMaxCases: 1000
 };

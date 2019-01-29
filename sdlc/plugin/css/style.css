@@ -16,7 +16,7 @@
  *
  */
 
-body, #summary, #atts, #states, #sampleYears  {
+body, #summary, #atts, #states, #sampleYears, #about {
   margin : 0;
   /*height : 320px;*/
   font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
@@ -55,7 +55,9 @@ h1 {
   width: 3.5em;
   align-content: right;
 }
-
+#sampleSizeInput:invalid {
+  color: red;
+}
 #getCasesButton {
   font-family: 'Rokkitt',sans-serif;font-size: 16px;
   font-weight: 300;
@@ -99,4 +101,11 @@ body .ui-tabs .ui-tabs-panel {
   height: 300px;
   overflow-y: auto;
   padding: 1em 1.4em;
+}
+
+.plugin-content .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: .25em .5em;
+}
+.plugin-content .ui-tabs {
+  overflow-x: hidden; /* otherwise tabs create a new row */
 }

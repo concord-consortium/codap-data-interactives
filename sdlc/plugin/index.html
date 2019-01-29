@@ -71,10 +71,14 @@
 <div class="plugin-content">
 
 <div id="pluginHeader">
-  <h1>SDLC Data Portal</h1>
+  <h1>USS Data Portal</h1>
   <div>
     <label for="sampleSizeInput">How many people? </label>
-    <input id="sampleSizeInput" type="number" value="1000" min="1" max="1000" onchange="app.ui.updateWholeUI()">
+    <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000" onchange="app.ui.updateWholeUI()">
+    <input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
+    <label for="keepExistingDataCheckbox">Keep existing data</label>
+  </div>
+  <div>
     <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
   </div>
   <div><span id="status"></span>&nbsp;</div>
@@ -87,24 +91,22 @@
     <li><a href="#atts">attributes</a></li>
     <li><a href="#states">states</a></li>
     <li><a href="#sampleYears">years</a></li>
+    <li><a href="#about">about</a></li>
   </ul>
 
 
   <div id="summary">
     <div class="tab-content">
       <div id="sampleSummaryDiv"></div>
-      <p>
-        To change which attributes you are collecting,
-        click the <b>attributes</b> tab above
-        or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.
-      </p>
     </div>
   </div>
 
 
   <div id="atts">
     <div class="tab-content">
-      <p>Choose attributes from the lists below</p>
+      <p>Choose attributes to include in your sample data set from the lists below.</p>
+      <p>For more details about each attribute, and specific cautions about
+        analyzing attributes over time, see the Social Statistics Portal Data Codebook.</p>
       <div id="chooseAttributeDiv">
         <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(0)"></div>
         <div class="attributeGroupDiv" onclick="app.ui.toggleAttributeGroupOpen(1)"></div>
@@ -118,19 +120,48 @@
 
   <div id="states">
     <div class="tab-content">
-      <p>Choose States from the list below</p>
+      <p>Choose States to include in your sample data set from the list below.</p>
+      <p>Note: If you wish to display state names in your case table or graphs,
+        you must also go to the attributes tab, look under the Geography list,
+        and select the State attribute.</p>
       <div id="chooseStatesDiv">
       </div>
     </div>
   </div>
+
   <div id="sampleYears">
     <div class="tab-content">
-      <p>Choose sample years from the list below</p>
+      <p>Choose which year(s) to include in your sample data set from the list
+        below.</p>
+      <p>Note: If you wish to display year indicators in your case table or
+        graphs, you must also go to the attributes tab, look under the Other
+        list, and select the Year attribute.</p>
       <div id="chooseSampleYearsDiv">
       </div>
     </div>
   </div>
 
+  <div id="about">
+    <div class="tab-content">
+      <p>
+        Brought to you by the Strengthening Data Literacy
+        Across the Curriculum (SDLC) Project, a collaboration between EDC,
+        the California Polytechnic State University, and the CODAP project at the
+        Concord Consortium.
+      </p>
+
+      <p>
+        Data are provided by IPUMS-USA, University of Minnesota, www.ipums.org.
+      </p>
+
+      <p>
+        This material is based on work supported by the National Science
+        Foundation under Grant No. DRL-1813956. Any opinions, findings, and
+        conclusions or recommendations expressed in this material are those of
+        the authors and do not necessarily reflect the views of the NSF.
+      </p>
+    </div>
+  </div>
 </div>
 
 

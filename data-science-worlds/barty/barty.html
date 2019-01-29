@@ -109,26 +109,18 @@ HOW TO DEPLOY THIS THING
                 <button id="newGameButton" onclick="barty.ui.newGameButtonPressed()">new game</button>
                 <br><br>
         -->
-
         <table width="100%" style="padding: 6px; margin-bottom:6px; background-color:#ddf;">
             <tr>
                 <td style="padding: 12px">
-                    <button id="getDataButton" onclick="barty.ui.getDataButtonPressed()">get data</button>
-
-                </td>
-                <td valign="middle" align="right" style="padding-right: 12px">
-                    Click<br><strong>get data</strong><br> to get:
-                </td>
-                <td valign="middle">
-                    <span id="downloadOptionTimeAndStationsText"></span>
+                    Click the <b>get data</b> button to obtain a table with data from a sample of BART riders
+                    from the 2015 Bay Area Rapid Transit (BART) ridership reports.
 
                 </td>
             </tr>
         </table>
 
-
         <fieldset id="getDataBlock" onchange="barty.ui.dataSelectionChanged()" width="100%">
-            <legend>Specify time period (don't use IE)</legend>
+            <legend>Specify time period (don't use Internet Explorer)</legend>
             <!--
                         <span>
                             ... current setting:<br>
@@ -160,11 +152,29 @@ HOW TO DEPLOY THIS THING
                 <span id="useHoursItemText">use hour:</span>
                 <input type="checkbox" id="useHour">
             </label>
+
             <div id="hourControl"></div>    <!--    the hour range slider -->
 
             <br>
 
         </fieldset>
+        <br>
+
+        <table width="100%" style="padding: 6px; margin-bottom:6px; background-color:#ddf;">
+            <tr>
+                <td style="padding: 12px">
+                    <button id="getDataButton" onclick="barty.ui.getDataButtonPressed()">get data</button>
+
+                </td>
+                <td valign="middle" align="right" style="padding-right: 12px">
+                    Click<br><strong>get data</strong><br> to get:
+                </td>
+                <td valign="middle">
+                    <span id="downloadOptionTimeAndStationsText"></span>
+
+                </td>
+            </tr>
+        </table>
 
         <br>
 
@@ -257,7 +267,7 @@ HOW TO DEPLOY THIS THING
                 These might make some graphs simpler. "City" is SF but not downtown.
             </li>
         </ul>
-        <p>Thanks to Pam Herhold, BART, for access!</p>
+        <p>Thanks to Pam Herhold of BART, for access!</p>
 
     </div>
 

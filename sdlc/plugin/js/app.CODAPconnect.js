@@ -78,6 +78,14 @@ app.CODAPconnect = {
     return createItemsResult;
   },
 
+  deleteAllCases: async function () {
+    let theMessage = {
+      action: 'delete',
+      resource : "dataContext[" + app.constants.kACSDataSetName + "].allCases"
+    };
+    let result = await codapInterface.sendRequest(theMessage);
+    return result;
+  },
   makeNewAttributesIfNecessary : async function() {
     async function getCODAPAttrList() {
       let attrListResource = 'dataContext[' + app.constants.kACSDataSetName +
@@ -171,7 +179,7 @@ app.CODAPconnect = {
   iFrameDescriptor: {
     version: app.constants.version,
     name: 'sdlc',
-    title: 'SDLC Data Portal',
+    title: 'USS Data Portal',
     dimensions: {width: 444, height: 555},
     preventDataContextReorg: false              //  todo: figure out why this seems not to work!
   }

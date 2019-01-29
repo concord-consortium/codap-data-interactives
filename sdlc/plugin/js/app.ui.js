@@ -29,9 +29,7 @@ app.ui = {
   },
 
   refreshText: function () {
-    const tSampleSize = app.userActions.getSelectedSampleSize();
-    let theGetCasesButtonText = "get " + tSampleSize + ((tSampleSize == 1) ? " person" : " people");
-    $("#getCasesButton").text(theGetCasesButtonText);
+    $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;
   },
 
   /**
@@ -41,7 +39,7 @@ app.ui = {
   checkDependentSelected: function (dependents) {
     return dependents.every(function (dep) {
       return (app.state.selectedAttributes.includes(dep));
-    })
+    });
   },
 
   refreshAttributeCheckboxes: function () {
@@ -83,7 +81,7 @@ app.ui = {
     $('#sampleYears .select-item').prop('checked', false);
     if (activeYears) {
       activeYears.forEach(function (year) {
-        $('#year-' + year).prop('checked', true)
+        $('#year-' + year).prop('checked', true);
       });
     }
   },
@@ -164,16 +162,30 @@ app.ui = {
 
   refreshSampleSummary: function () {
     const tSampleSize = app.userActions.getSelectedSampleSize();
+    const tNumPartitions = app.getPartitionCount();
+    const tSurveys = app.state.selectedYears
+        .map(function (year) {return (year % 10)?'acs':'census';})
+        .reduce(function (acc, survey) { acc[survey] = true; return acc; }, {});
+    const surveyMap = {
+      acs: ' from the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
+      census: ' from decennial census data.',
+      'acs,census': ' from decennial census data and the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
+      'none': '.'
+    }
+
 
     let out = "";
-    let stateAttr = app.allAttributes["State"];
-    let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]});
+    const stateAttr = app.allAttributes["State"];
+    let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]; });
+    const peepsPhrase = tSampleSize == 1 ? "<b>one</b> random person" : "a random sample of <b>" + tSampleSize + "</b> people";
+    const partitionPhrase = (tNumPartitions != 1) ? ' in <b>' + tNumPartitions + '</b> partitions': '';
+    const surveyPhrase = surveyMap[Object.keys(tSurveys).sort().join()||'none'];
+
     if (states.length === 0) {states = ['all'];}
 
 
     out = "<p>When you press the button, you will get "
-        + (tSampleSize == 1 ? "one random person" : "a random sample of " + tSampleSize + " people")
-        + " from the <a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
+        + peepsPhrase + partitionPhrase + surveyPhrase
         + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
         "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
         + "</b>.</p>"

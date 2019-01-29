@@ -40,7 +40,7 @@ limitations under the License.
 
 <h1>Trees in a Diagnosis Game</h1>
 
-<p>To begin, simplify the screen: minimize the <b>diagnostic tree</b>
+<p>To begin, simplify the screen: minimize the <b>diagnostic tree</b> window
     by pressing the minus sign in its title bar.
     Move it away so you're not distracted by it; we'll get to it later.</p>
 <img src="art/minimizer.png" width="333">
@@ -52,15 +52,12 @@ limitations under the License.
     What is it about the creatures that makes them susceptible to ague?
 </p>
 
-<p>The overall approach:</p>
 <ul>
-    <li>At first, leave the left-hand choice at <b>training</b>.
-    <li>Explore the data you already have&mdash;10 cases&mdash;to see if you can figure out what "predicts" the disease
-        (in
-        this case, ague).
+    <li>Starting with the Arbor Xenobiological Services panel in Training mode, explore the data you already have&mdash;10 cases&mdash;to
+        see if you can figure out what "predicts" the disease (in this case, ague).
         <ul>
             <li>
-                In the data table, the <b>health</b> column tells you if they are sick or well.
+                In the "creatures" data table, the <b>health</b> column tells you if they are sick or well.
             </li>
             <li>
                 Figure out what <i>other</i> data you can use to predict <b>health</b>.
@@ -75,27 +72,26 @@ limitations under the License.
     <li>Get additional cases to confirm your ideas.
         Do this by pressing <b>make new cases</b>
         in the little panel
-        on the right side of <b>Arbor Xenobiological Services</b>
-        (there's an arrow in the picture).
+        on the right side of <b>Arbor Xenobiological Services</b>.
     </li>
     <li>When you're confident, change the left-hand choice to <b>one by one</b>.
     <li>Now you will diagnose individual cases. See if you're right.
         If you're not consistently right, review your data
         and see what you might have missed.
         (Notice that you're gaining points!)
-    <li>When you think you have this well figured out, we will automate the process of diagnosing these creatures.
+    <li>When you think you have this figured out, we will automate the process of diagnosing these creatures.
         See the next section on using trees for diagnosis.
 </ul>
 
 <h1>Trees for Diagnosis</h1>
 <p>
     To diagnose a patient, we ask a sequence of questions.
-    The answers will help us predict whether they have this sickness.
+    The answers will help us predict whether creatures have this sickness.
     The answer to a question leads either to a diagnosis (sick or well) or to a further question.
     We will represent&mdash;and automate&mdash;this process using the diagnostic tree.
 </p>
 <ul>
-    <li>Re-open the diagnostic tree by pressing that minus sign again.
+    <li>Expand the diagnostic tree by pressing that minus sign again.
     <li>Arrange your screen so you can see it. (You might want to make your data table smaller.)</li>
 </ul>
 <p>The diagnostic tree should look like the next picture, except that your numbers will be different.</p>
@@ -103,17 +99,10 @@ limitations under the License.
 <img src="art/treeRootOnlyBeginnning.png" width="333">
 
 <p>Grow your tree by dragging attribute names from the palette of names (at the bottom of the window) to the box.
-    You probably already figured out that hair color is important.</p>
+    You probably already figured out which attribute is important.</p>
 <ul>
     <li>
-        Drag <b>hair</b> from the palette to the box. (If it doesn't work the first time, keep trying.)
-
-    </li>
-    <li>
-        The attribute palette for the tree is not the same as the column headings
-        you use to make graphs.
-        You have to use the ones in the tree "tile."
-        Sorry about that.
+        Drag <b>hair</b> from the palette to the box.
     </li>
 </ul>
 
@@ -128,14 +117,14 @@ limitations under the License.
         stripe).
     <li>There are two possible answers, <b>blue</b> and <b>pink</b>. Each one leads to a different box.
     <li>The left-hand box tells us that there are 5 creatures with blue hair, and none of them (0%) are sick.
-    <li>The right-hand box tells us that there are 5 with pink hair, and all 5 of them (100%) are sick.
+    <li>The right-hand box tells us that there are 5 creatures with pink hair, and all 5 of them (100%) are sick.
 </ul>
 
-<p>Note: You can also "hover" over any box or link to get more information.</p>
+<p>Note: You can also "hover" over any box or link in the diagnostic tree to get more information.</p>
 
 <h2>Positive and Negative</h2>
 
-<p>Often, medical people talk about "positive" and "negative" diagnoses and results.
+<p>Often, medical specialists talk about "positive" and "negative" diagnoses and results.
     With our tree tool, we will think of "sick" as <i>positive</i>, like a positive test for ague.
     To predict which creatures have ague, we will label them as positive.</p>
 
@@ -161,7 +150,7 @@ limitations under the License.
     When you have your tree set the way you want it, go back to <b>Arbor Xenobiological Services</b> and choose
     <b>auto</b> on the left.
     Then click the <b>run tree</b> button to create 10 cases.</p>
-
+<img src="art/automate.png" width="333">
 <p>Your diagnostic tree will automatically diagnose 10 new patients. How did your tree do?</p>
 
 <h2>Explore</h2>
@@ -172,7 +161,7 @@ limitations under the License.
     <li>Try making some bad trees, or make bigger trees, and see how they work.
     <li>Figure out what affects your score.
     <li>Try other scenarios. They're harder.
-        (When you choose one, your old data will disappear. And you'll have to configure variables, see below.)
+        (When you choose one, your old data will disappear. And you'll have to configure variables. See below.)
     </li>
 </ul>
 
@@ -187,14 +176,16 @@ limitations under the License.
 <img src="art/showGearButton.png" width="144">
 <p>
     You need to <em>configure</em> the attribute. When you hover over its name in the tree,
-    you will see a gear button appear to the left.
-    Click it to get the configuration dialog.
+    you will see a gear button appear to the left.</p>
+<img src="art/gear.png" width="333">
+
+ <p>   Click it to get the configuration dialog.
 
 </p>
 <img src="art/configurationWeight.png" width="333">
 
 <ul>
-    <li> For a numeric attribute, you can set the "cut point."</li>
+    <li> For a numeric attribute, you can set the "cutoff point."</li>
     <li> For a numeric attribute, you can set the operator, that is, greater than or less than.</li>
     <li> For a categorical attribute, click the possible values to move them left and right.</li>
     <li> For any attribute, click the left-right button to swap the left and right values.</li>

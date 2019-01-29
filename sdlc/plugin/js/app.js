@@ -33,7 +33,8 @@ let app = {
     sampleSize: 16,
     selectedYears: [2017],
     selectedStates: [],
-    selectedAttributes: ['Sex', 'Age', 'Year', 'State']
+    selectedAttributes: ['Sex', 'Age', 'Year', 'State'],
+    keepExistingData: false
   },
 
   initialize: async function () {
@@ -95,6 +96,12 @@ let app = {
         categories: tCats
       }
     });
+  },
+
+  getPartitionCount: function () {
+    let numStates = app.state.selectedStates.length || 1;
+    let numYears = app.state.selectedYears.length || 1;
+    return numStates * numYears;
   },
 
   getAllAttributes: async function () {
