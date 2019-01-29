@@ -55,11 +55,31 @@ function prepareQueries($DBH, $hasStateSelection) {
         $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code=?");
         $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND state_code=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr_st) order by peeps.accum_yr_st desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     } else {
+        $queries["preset0"] = $DBH->prepare("DROP TABLE IF EXISTS xtab");
+        $queries["preset1"] = $DBH->prepare("CREATE TEMPORARY TABLE  xtab AS ( SELECT peeps.id, peeps.sample_data FROM peeps,presets WHERE presets.usage_ct = 0 AND presets.yr = ? AND peeps.id=presets.ref_key LIMIT ?)");
+        $queries["preset2"] = $DBH->prepare("UPDATE presets SET usage_ct = 1 WHERE usage_ct = 0 AND yr=? LIMIT ?");
         $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL");
         $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr) order by peeps.accum_yr desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     }
     return $queries;
 }
+
+function fetchSamplesFromPresetPool($DBH, $num, $yr, $queries) {
+    $params = [$yr, $num];
+
+    try {
+        $DBH->beginTransaction();
+        CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset0"], array());
+        CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset1"], $params);
+        CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset2"], $params);
+        $rslt = CODAP_MySQL_getQueryResult($DBH, "select * from xtab", array());
+        $DBH->commit();
+        return $rslt;
+    } catch (Exception $e) {
+        reportToFile($e);
+    }
+}
+
 function fetchSamples($DBH, $num, $yr, $st, $queries) {
     $populateTempParams = [$num];
     if ($st) {
@@ -107,7 +127,10 @@ function assembleSamples($DBH, $num, $yrArray, $stArray) {
         } else {
             reportToFile("Getting $segmentSize segment samples for year: " . $yr .
                 " for all states.");
-            $segSamples =  fetchSamples($DBH, $segmentSize, $yr, null, $queries);
+            $segSamples = fetchSamplesFromPresetPool($DBH, $segmentSize, $yr, $queries);
+            if (count($segSamples) < $segmentSize) {
+                $segSamples =  fetchSamples($DBH, $segmentSize, $yr, null, $queries);
+            }
             $samples = array_merge($samples, $segSamples);
         }
     }
