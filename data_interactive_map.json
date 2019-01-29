@@ -7,6 +7,7 @@
       "height": 500,
       "path": "https://oceantracks.org/map/trackmenu_1.html",
       "visible": true,
+      "aegis": "Ocean Tracks",
       "categories": [
         "Partners"
       ]
@@ -18,6 +19,7 @@
       "height": 200,
       "path": "/TP-Sampler/index.html",
       "visible": true,
+      "aegis": "ESTEEM",
       "categories": [
         "Partners", "Utilities"
       ]
@@ -29,6 +31,7 @@
       "height": 304,
       "path": "/ShipOdyssey/index.html",
       "visible": true,
+      "aegis": "SRRI",
       "categories": [
         "Partners",
         "Data Games"
@@ -41,6 +44,7 @@
       "height": 304,
       "path": "/Chainsaw/index.html",
       "visible": true,
+      "aegis": "SRRI",
       "categories": [
         "Partners",
         "Data Games"
@@ -53,6 +57,7 @@
       "height": 304,
       "path": "/Inference/index.html",
       "visible": true,
+      "aegis": "SRRI",
       "categories": [
         "Partners",
         "Data Games"
@@ -65,6 +70,7 @@
       "height": 305,
       "path": "/CartWeight/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -76,6 +82,7 @@
       "height": 734,
       "path": "/RampGame/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -87,6 +94,7 @@
       "height": 480,
       "path": "/FloydsFargo/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -98,6 +106,7 @@
       "height": 541,
       "path": "/LunarLander/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -109,6 +118,7 @@
       "height": 315,
       "path": "/Markov/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -120,6 +130,7 @@
       "height": 344,
       "path": "/Proximity/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -131,6 +142,7 @@
       "height": 350,
       "path": "/Shuffleboard/index.html",
       "visible": true,
+      "aegis": "Data Games",
       "categories": [
         "Data Games"
       ]
@@ -142,6 +154,7 @@
       "height": 250,
       "path": "/GuessMyNumber/GuessMyNumber.html",
       "visible": false,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -153,6 +166,7 @@
       "height": 150,
       "path": "/NewRandomNumbers/index.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -164,6 +178,7 @@
       "height": 250,
       "path": "/FastPlants/FastPlants.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -175,6 +190,7 @@
       "height": 250,
       "path": "/PerformanceHarness/PerformanceHarness.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -186,6 +202,7 @@
       "height": 300,
       "path": "/Sampler/Sampler.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -197,6 +214,7 @@
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
       "visible": false,
+      "aegis": "Terra-Pop",
       "categories": [
         "Utilities"
       ]
@@ -208,6 +226,7 @@
       "height": 200,
       "path": "/GeoJSONImporter/GeoJSONImporter.html",
       "visible": false,
+      "aegis": "CODAP",
       "categories": [
         "Utilities"
       ]
@@ -219,6 +238,7 @@
       "height": 500,
       "path": "/WolfSheep/index.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Partners"
       ]
@@ -230,6 +250,7 @@
       "height": 500,
       "path": "/Ants/ants.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Partners"
       ]
@@ -241,6 +262,7 @@
       "height": 620,
       "path": "/Virus/Virus.html",
       "visible": true,
+      "aegis": "CODAP",
       "categories": [
         "Partners"
       ]
@@ -252,40 +274,7 @@
       "height": 620,
       "path": "https://codap.concord.org/sage/sage.html",
       "visible": true,
-      "categories": [
-        "Partners"
-      ]
-    },
-
-    {
-      "title": "Stella",
-      "description": "A Data Science Game. Stella is a simulation where you are an astronomer studying stars. ",
-      "width": 780,
-      "height": 620,
-      "path": "https://www.eeps.com/dsg/stella/stella.html",
-      "visible": false,
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
-      "title": "Stebbins",
-      "description": "A Data Science Game. You are a predator. Stebbers and Crud are colored circles moving around the World.",
-      "width": 780,
-      "height": 620,
-      "path": "https://www.eeps.com/dsg/steb/steb.html",
-      "visible": false,
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
-      "title": "Barty",
-      "description": "A Data Science Game. Pulls data from the BART database and allows you to see voyage starts and ends by station by date. ",
-      "width": 780,
-      "height": 620,
-      "path": "https://www.eeps.com/dsg/barty/barty.html",
-      "visible": false,
+      "aegis": "Building Models",
       "categories": [
         "Partners"
       ]
@@ -297,7 +286,7 @@
       "width": 780,
       "height": 620,
       "path": "/DataCard/DataCard.html",
-      "visible": true,
+      "visible": false,
       "categories": [
         "Utilities"
       ]
@@ -566,7 +555,7 @@
       "description": "A Data Science Games plugin. It will get a random sample of Californians from the 2013 <a target=\"blank\" href=\"https://www.census.gov/programs-surveys/acs/\">American Community Survey</a>",
       "width": 600,
       "height": 400,
-      "path": "https://www.eeps.com/codap/acs/acs.html?lang=en",
+      "path": "https://codap.concord.org/data-science-worlds/acs/acs.html?lang=en",
       "visible": false,
       "categories": [
         "Partners"
@@ -594,6 +583,7 @@
         "Utilities"
       ]
     },
+
     {
       "title": "acs",
       "description": "ACS data portal: 20000 Californans in 2013",
@@ -601,6 +591,7 @@
       "height": 400,
       "path": "/data-science-worlds/acs/acs.html",
       "visible": false,
+      "aegis": "DSG",
       "categories": [
         "Data Worlds"
       ]
@@ -612,6 +603,7 @@
       "height": 400,
       "path": "/data-science-worlds/arbor/arbor.html",
       "visible": false,
+      "aegis": "DSG",
       "categories": [
         "Data Worlds"
       ]
@@ -623,6 +615,7 @@
       "height": 400,
       "path": "/data-science-worlds/barty/barty.html",
       "visible": false,
+      "aegis": "DSG",
       "categories": [
         "Data Worlds"
       ]
@@ -634,61 +627,7 @@
       "height": 400,
       "path": "/data-science-worlds/fish/fish.html",
       "visible": false,
-      "categories": [
-        "Data Worlds"
-      ]
-    },
-    {
-      "title": "journal",
-      "description": "Nature-of-science helper: write tiny papers to share your data with others.",
-      "width": 600,
-      "height": 400,
-      "path": "/data-science-worlds/journal/journal.html",
-      "visible": false,
-      "categories": [
-        "Data Worlds"
-      ]
-    },
-    {
-      "title": "nhanes",
-      "description": "Data portal for 11,000-ish cases of 2003 data from NHANES",
-      "width": 600,
-      "height": 400,
-      "path": "/data-science-worlds/nhanes/nhanes.html",
-      "visible": false,
-      "categories": [
-        "Data Worlds"
-      ]
-    },
-    {
-      "title": "stebbins",
-      "description": "Simulation of natural selection",
-      "width": 600,
-      "height": 400,
-      "path": "/data-science-worlds/stebbins/stebbins.html",
-      "visible": false,
-      "categories": [
-        "Data Worlds"
-      ]
-    },
-    {
-      "title": "stella",
-      "description": "Simulation for stellar astronomy",
-      "width": 600,
-      "height": 400,
-      "path": "/data-science-worlds/stella/stella.html",
-      "visible": false,
-      "categories": [
-        "Data Worlds"
-      ]
-    },
-    {
-      "title": "xeno",
-      "description": "Diagnose sick alien creatures. Works with arbor.",
-      "width": 600,
-      "height": 400,
-      "path": "/data-science-worlds/xeno/xeno.html",
-      "visible": false,
+      "aegis": "DSG",
       "categories": [
         "Data Worlds"
       ]
@@ -700,6 +639,67 @@
       "height": 400,
       "path": "/data-science-worlds/geiger/geiger.html",
       "visible": false,
+      "aegis": "DSG",
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "journal",
+      "description": "Nature-of-science helper: write tiny papers to share your data with others.",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/journal/journal.html",
+      "visible": false,
+      "aegis": "DSG",
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "nhanes",
+      "description": "Data portal for 11,000-ish cases of 2003 data from NHANES",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/nhanes/nhanes.html",
+      "visible": false,
+      "aegis": "DSG",
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "stebbins",
+      "description": "Simulation of natural selection",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/steb/steb.html",
+      "visible": false,
+      "aegis": "DSG",
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "stella",
+      "description": "Simulation for stellar astronomy",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/stella/stella.html",
+      "visible": false,
+      "aegis": "DSG",
+      "categories": [
+        "Data Worlds"
+      ]
+    },
+    {
+      "title": "xeno",
+      "description": "Diagnose sick alien creatures. Works with arbor.",
+      "width": 600,
+      "height": 400,
+      "path": "/data-science-worlds/xeno/xeno.html",
+      "visible": false,
+      "aegis": "DSG",
       "categories": [
         "Data Worlds"
       ]
