@@ -79,26 +79,36 @@ CREATE PROCEDURE log_preset (eventType VARCHAR(10))
   END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS populate_preset_year;
+DELIMITER $$
+CREATE PROCEDURE populate_preset_year (num_per_year INT, year INT)
+  BEGIN
+    DECLARE i INT;
+    SET i = 1;
+    WHILE i <= num_per_year DO
+      INSERT INTO presets (yr) VALUES (year);
+      SET i = i+1;
+    END WHILE;
+  END $$
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS populate_presets;
 DELIMITER $$
 CREATE PROCEDURE populate_presets (num_per_year INT)
   BEGIN
-    DECLARE i INT;
     DECLARE j SMALLINT;
     DROP TABLE IF EXISTS years;
     CREATE TEMPORARY TABLE years AS (SELECT DISTINCT(year) FROM peeps);
     SELECT @yr_count:=count(*) FROM years;
     SET j = 0;
-    WHILE j <= @yr_count DO
+    WHILE j < @yr_count DO
       SELECT @yr:=year FROM years limit j, 1;
-      SET i = 1;
-      WHILE i <= num_per_year DO
-        INSERT INTO presets (yr) VALUES (@yr);
-        SET i = i+1;
-      END WHILE;
+      CALL populate_preset_year(num_per_year, @yr);
       SET j = j + 1;
     END WHILE;
     DROP TABLE years;
+    CALL populate_preset_year(num_per_year, 2017);
+    CALL populate_preset_year(num_per_year, 2017);
   END $$
 DELIMITER ;
 
@@ -108,17 +118,19 @@ CREATE PROCEDURE update_presets ()
   BEGIN
     CALL log_preset('begin');
     UPDATE presets, stats
-      SET presets.randnum=rand()*stats.sum_weights,
-        presets.ref_key=(SELECT peeps.id
+      SET presets.randnum=rand()*stats.sum_weights
+      WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
+            AND stats.year = presets.yr
+            AND stats.state_code IS NULL;
+    UPDATE presets
+      SET presets.ref_key=(SELECT peeps.id
             FROM peeps
             WHERE peeps.year=presets.yr
                   AND presets.randnum > peeps.accum_yr
             ORDER BY peeps.accum_yr DESC
             LIMIT 1),
         presets.usage_ct = 0
-      WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
-            AND stats.year = presets.yr
-            AND stats.state_code IS NULL;
+      WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL));
     CALL log_preset('end');
   END $$
 DELIMITER ;
