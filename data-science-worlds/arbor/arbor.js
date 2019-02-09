@@ -372,10 +372,9 @@ var arbor = {
      * @param iEvent
      */
     resizeWindow: function (iEvent) {
-        console.log("WINDOW resize to width: " + arbor.displayWidth());
-
-        arbor.treePanelView.redrawEntirePanel();
-        arbor.corralView.refreshCorral();
+        this.windowWidth = window.innerWidth;
+        arbor.treePanelView.setUpToDrawTreePanelView();
+        arbor.treePanelView.redrawEntireZone();
     },
 
 
