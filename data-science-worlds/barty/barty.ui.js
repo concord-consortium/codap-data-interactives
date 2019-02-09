@@ -37,12 +37,6 @@ barty.ui = {
      */
     initialize: function () {
         $("#dateControl").val(barty.constants.kBaseDateString);
-        /*
-         $("#dateControl").datepicker({
-         minDate : "2015-04-01",             //  todo: pass in a date, when we figure out how to cope with the time zone!
-         maxDate : "2015-09-30"
-         });
-         */
 
         //  set up hours control
 
@@ -335,8 +329,8 @@ barty.ui = {
 
         var result = "";
         Object.keys(meeting.possibleStations).forEach(
-            function (iAbbr2) {
-                result += "<option value='" + iAbbr2 + "'>" + meeting.possibleStations[iAbbr2] + "</option>";
+            function (iAbbr4) {
+                result += "<option value='" + iAbbr4 + "'>" + meeting.possibleStations[iAbbr4] + "</option>";
             }
         );
         iSelector.empty().append(result);
@@ -380,13 +374,13 @@ barty.ui = {
         stationArray.sort(compareStations);
 
         stationArray.forEach( function (sta) {
-            theOptionText += "<option value='" + sta.abbr2 + "'>" + sta.name + "</option>";
+            theOptionText += "<option value='" + sta.abbr4 + "'>" + sta.name + "</option>";
         });
 
         $("#arrivalSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#arrivalSelector").val("OR");   // choose default value
+        $("#arrivalSelector").val("ORIN");   // choose default value
         $("#departureSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#departureSelector").val("EM");   // choose default value
+        $("#departureSelector").val("EMBR");   // choose default value
 
 
         function compareStations(a, b) {

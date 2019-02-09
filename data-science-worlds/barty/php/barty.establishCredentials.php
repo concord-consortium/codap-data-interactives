@@ -30,10 +30,13 @@ $whence  = $_REQUEST['whence'];
 $credentialFileNames = [
     "concord"=>"/var/www/cred/bartyCred.php",
     "local" => "/Applications/MAMP/cred/bartyCred.php",
+    "local_concord" => "/Applications/MAMP/cred/bartyCred.php",     //  that is, on Tim's machine but attached to the concord github repos
     "eeps" => "/home1/denofinq/cred/bartyCred.php"
 ];
 
 $thisFileName = $credentialFileNames[$whence];
+
+file_put_contents("bartdebug.txt", "\n\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credential filename: $thisFileName", FILE_APPEND);
 
 
 try {
@@ -45,6 +48,8 @@ try {
 $user = $credentials[$whence]["user"];
 $pass = $credentials[$whence]["pass"];
 $dbname = $credentials[$whence]["dbname"];
+
+file_put_contents("bartdebug.txt", "\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credentials: $whence | $user | $dbname", FILE_APPEND);
 
 
 ?>

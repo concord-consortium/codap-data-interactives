@@ -27,27 +27,33 @@ limitations under the License.
 */
 
 barty.constants = {
-    version: "002j",
-    whence : "concord",
+    version: "002k",
+    whence : "local_concord",
 
-    kBARTYDataSetName : "barty",
+    kRecordsPerRequestLimit : 1700,
+
+    kBARTYDataSetName : "bart",
     kBARTYDataSetTitle : "BART data",
     kBARTYCollectionName : "BART data",
 
+    kBaseDateString: "2018-04-18",     //  default search date
+    kMinDateString : "2015-01-01",
+    kMaxDateString : "2018-12-31",
+
     kBasePhpURL: {
         local: "http://localhost:8888/plugins/barty/php/getBARTYdata.php",
+        local_concord: "http://localhost:8888/concord-plugins/data-science-worlds/barty/php/getBARTYdata.php",
         xyz: "https://codap.xyz/plugins/barty/php/getBARTYdata.php",
         eeps: "https://www.eeps.com/codap/barty/php/getBARTYdata.php",
         concord : "https://codap.concord.org/data-science-worlds/barty/php/getBARTYdata.php",
     },
 
-    dimensions: {height: 700, width: 360},
-    name: "barty",
+    dimensions: {height: 710, width: 366},
+    name: "bart",
 
     daysOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     daysOfWeekLong: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     queryTypes: ["byArrival", "byDeparture", "byRoute", "betweenAny"],
-    kBaseDateString: "2015-04-15",     //  default search date
     kBaseH0: 8,        //      default starting hour
     kBaseH1: 14,       //      default ending hour for search
 

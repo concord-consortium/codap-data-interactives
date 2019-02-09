@@ -28,7 +28,8 @@
 /*
     "hub" file for bartY, now called barty.
 
-    DEPLOYMENT NOTE: fix URL at about line 70.
+    DEPLOYMENT NOTE: fix URL in barty.constants.js about line 40.
+    Also fix the value of "whence" earlier in that file.
 
 
     About making "games" work

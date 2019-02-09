@@ -1,5 +1,5 @@
 barty.stations = {
-    BE: {
+    BERY: {
         "StationID": "S50",
         "abbr2": "BE",
         "abbr4": "BERY",
@@ -8,7 +8,7 @@ barty.stations = {
         "name": "Berryessa",
         "region": ""
     },
-    BF: {
+    BAYF: {
         "StationID": "A50",
         "abbr2": "BF",
         "abbr4": "BAYF",
@@ -17,7 +17,7 @@ barty.stations = {
         "name": "Bay Fair",
         "region": "East Bay"
     },
-    WD: {
+    WDUB: {
         "StationID": "L20",
         "abbr2": "WD",
         "abbr4": "WDUB",
@@ -26,7 +26,7 @@ barty.stations = {
         "name": "West Dublin/Pleasanton",
         "region": "East Bay"
     },
-    WC: {
+    WCRK: {
         "StationID": "C40",
         "abbr2": "WC",
         "abbr4": "WCRK",
@@ -35,7 +35,7 @@ barty.stations = {
         "name": "Walnut Creek",
         "region": "East Bay"
     },
-    FV: {
+    FTVL: {
         "StationID": "A20",
         "abbr2": "FV",
         "abbr4": "FTVL",
@@ -44,7 +44,7 @@ barty.stations = {
         "name": "Fruitvale",
         "region": "Oakland"
     },
-    NC: {
+    NCON: {
         "StationID": "C70",
         "abbr2": "NC",
         "abbr4": "NCON",
@@ -53,7 +53,7 @@ barty.stations = {
         "name": "North Concord/Martinez",
         "region": "East Bay"
     },
-    DC: {
+    DALY: {
         "StationID": "M90",
         "abbr2": "DC",
         "abbr4": "DALY",
@@ -62,7 +62,7 @@ barty.stations = {
         "name": "Daly City",
         "region": "Peninsula"
     },
-    BK: {
+    DBRK: {
         "StationID": "R20",
         "abbr2": "BK",
         "abbr4": "DBRK",
@@ -71,7 +71,7 @@ barty.stations = {
         "name": "Downtown Berkeley",
         "region": "East Bay"
     },
-    HY: {
+    HAYW: {
         "StationID": "A60",
         "abbr2": "HY",
         "abbr4": "HAYW",
@@ -80,7 +80,7 @@ barty.stations = {
         "name": "Hayward",
         "region": "East Bay"
     },
-    BP: {
+    BALB: {
         "StationID": "M80",
         "abbr2": "BP",
         "abbr4": "BALB",
@@ -89,7 +89,7 @@ barty.stations = {
         "name": "Balboa Park",
         "region": "City"
     },
-    WP: {
+    PITT: {
         "StationID": "C80",
         "abbr2": "WP",
         "abbr4": "PITT",
@@ -98,16 +98,16 @@ barty.stations = {
         "name": "Pittsburg/Baypoint",
         "region": "East Bay"
     },
-    HC: {
+    ANTI: {
         "StationID": "E30",
         "abbr2": "HC",
-        "abbr4": "HILL",
+        "abbr4": "ANTI",
         "abbr6": "Antoch",
         "code": "58",
-        "name": "Hillcrest Antioch",
+        "name": "Antioch",
         "region": ""
     },
-    FM: {
+    FRMT: {
         "StationID": "A90",
         "abbr2": "FM",
         "abbr4": "FRMT",
@@ -116,7 +116,7 @@ barty.stations = {
         "name": "Fremont",
         "region": "East Bay"
     },
-    LF: {
+    LAFY: {
         "StationID": "C30",
         "abbr2": "LF",
         "abbr4": "LAFY",
@@ -125,7 +125,7 @@ barty.stations = {
         "name": "Lafayette",
         "region": "East Bay"
     },
-    RR: {
+    ROCK: {
         "StationID": "C10",
         "abbr2": "RR",
         "abbr4": "ROCK",
@@ -134,7 +134,7 @@ barty.stations = {
         "name": "Rockridge",
         "region": "Oakland"
     },
-    MT: {
+    MONT: {
         "StationID": "M20",
         "abbr2": "MT",
         "abbr4": "MONT",
@@ -143,7 +143,7 @@ barty.stations = {
         "name": "Montgomery Street",
         "region": "Downtown"
     },
-    NB: {
+    NBRK: {
         "StationID": "R30",
         "abbr2": "NB",
         "abbr4": "NBRK",
@@ -152,7 +152,7 @@ barty.stations = {
         "name": "North Berkeley",
         "region": "East Bay"
     },
-    LM: {
+    LAKE: {
         "StationID": "A10",
         "abbr2": "LM",
         "abbr4": "LAKE",
@@ -161,7 +161,7 @@ barty.stations = {
         "name": "Lake Merritt",
         "region": "Oakland"
     },
-    CV: {
+    CAST: {
         "StationID": "L10",
         "abbr2": "CV",
         "abbr4": "CAST",
@@ -170,7 +170,7 @@ barty.stations = {
         "name": "Castro Valley",
         "region": "East Bay"
     },
-    RM: {
+    RICH: {
         "StationID": "R60",
         "abbr2": "RM",
         "abbr4": "RICH",
@@ -179,7 +179,7 @@ barty.stations = {
         "name": "Richmond",
         "region": "East Bay"
     },
-    PH: {
+    PHIL: {
         "StationID": "C50",
         "abbr2": "PH",
         "abbr4": "PHIL",
@@ -188,7 +188,7 @@ barty.stations = {
         "name": "Pleasant Hill",
         "region": "East Bay"
     },
-    PL: {
+    POWL: {
         "StationID": "M30",
         "abbr2": "PL",
         "abbr4": "POWL",
@@ -197,7 +197,7 @@ barty.stations = {
         "name": "Powell Street",
         "region": "Downtown"
     },
-    EM: {
+    EMBR: {
         "StationID": "M16",
         "abbr2": "EM",
         "abbr4": "EMBR",
@@ -206,7 +206,7 @@ barty.stations = {
         "name": "Embarcadero",
         "region": "Downtown"
     },
-    24: {
+    "24TH" : {
         "StationID": "M60",
         "abbr2": "24",
         "abbr4": "24th",
@@ -215,7 +215,7 @@ barty.stations = {
         "name": "24th Street Mission",
         "region": "City"
     },
-    EN: {
+    DELN: {
         "StationID": "R50",
         "abbr2": "EN",
         "abbr4": "DELN",
@@ -224,7 +224,7 @@ barty.stations = {
         "name": "El Cerrito Del Norte",
         "region": "East Bay"
     },
-    CN: {
+    CONC: {
         "StationID": "C60",
         "abbr2": "CN",
         "abbr4": "CONC",
@@ -233,7 +233,7 @@ barty.stations = {
         "name": "Concord",
         "region": "East Bay"
     },
-    CM: {
+    COLM: {
         "StationID": "W10",
         "abbr2": "CM",
         "abbr4": "COLM",
@@ -242,7 +242,7 @@ barty.stations = {
         "name": "Colma",
         "region": "Peninsula"
     },
-    CL: {
+    COLS: {
         "StationID": "A30",
         "abbr2": "CL",
         "abbr4": "COLS",
@@ -251,7 +251,7 @@ barty.stations = {
         "name": "Coliseum",
         "region": "Oakland"
     },
-    CC: {
+    CIVC: {
         "StationID": "M40",
         "abbr2": "CC",
         "abbr4": "CIVC",
@@ -260,7 +260,7 @@ barty.stations = {
         "name": "Civic Center/UN Plaza",
         "region": "Downtown"
     },
-    ED: {
+    DUBL: {
         "StationID": "L30",
         "abbr2": "ED",
         "abbr4": "DUBL",
@@ -269,16 +269,16 @@ barty.stations = {
         "name": "Dublin/Pleasanton",
         "region": "East Bay"
     },
-    WS: {
+    WSPR: {
         "StationID": "S20",
         "abbr2": "WS",
-        "abbr4": "WARM",
+        "abbr4": "WSPR",
         "abbr6": "WarmSp",
         "code": "50",
         "name": "Warm Springs",
         "region": ""
     },
-    AS: {
+    ASHB: {
         "StationID": "R10",
         "abbr2": "AS",
         "abbr4": "ASHB",
@@ -287,7 +287,7 @@ barty.stations = {
         "name": "Ashby",
         "region": "East Bay"
     },
-    GP: {
+    GLEN: {
         "StationID": "M70",
         "abbr2": "GP",
         "abbr4": "GLEN",
@@ -296,7 +296,7 @@ barty.stations = {
         "name": "Glen Park",
         "region": "City"
     },
-    EP: {
+    PLZA: {
         "StationID": "R40",
         "abbr2": "EP",
         "abbr4": "PLZA",
@@ -305,7 +305,7 @@ barty.stations = {
         "name": "El Cerrito Plaza",
         "region": "East Bay"
     },
-    PR: {
+    PTCC: {
         "StationID": "E20",
         "abbr2": "PR",
         "abbr4": "PTCC",
@@ -314,7 +314,7 @@ barty.stations = {
         "name": "Pittsburg Civic Center",
         "region": ""
     },
-    12: {
+    "12TH": {
         "StationID": "K10",
         "abbr2": "12",
         "abbr4": "12th",
@@ -323,7 +323,7 @@ barty.stations = {
         "name": "12th Street Oakland",
         "region": "Oakland"
     },
-    MA: {
+    MCAR: {
         "StationID": "K30",
         "abbr2": "MA",
         "abbr4": "MCAR",
@@ -332,7 +332,7 @@ barty.stations = {
         "name": "MacArthur",
         "region": "Oakland"
     },
-    MB: {
+    MLBR: {
         "StationID": "W40",
         "abbr2": "MB",
         "abbr4": "MLBR",
@@ -341,7 +341,7 @@ barty.stations = {
         "name": "Millbrae",
         "region": "Peninsula"
     },
-    SS: {
+    SSAN: {
         "StationID": "W20",
         "abbr2": "SS",
         "abbr4": "SSAN",
@@ -350,7 +350,7 @@ barty.stations = {
         "name": "South San Francisco",
         "region": "Peninsula"
     },
-    ML: {
+    MILP: {
         "StationID": "S40",
         "abbr2": "ML",
         "abbr4": "MILP",
@@ -359,7 +359,7 @@ barty.stations = {
         "name": "Milpitas",
         "region": ""
     },
-    16: {
+    "16TH": {
         "StationID": "M50",
         "abbr2": "16",
         "abbr4": "16th",
@@ -368,7 +368,7 @@ barty.stations = {
         "name": "16th Street Mission",
         "region": "City"
     },
-    OA: {
+    OAKL: {
         "StationID": "H10",
         "abbr2": "OA",
         "abbr4": "OAKL",
@@ -377,7 +377,7 @@ barty.stations = {
         "name": "Oakland Airport",
         "region": "Oakland"
     },
-    19: {
+    "19TH": {
         "StationID": "K20",
         "abbr2": "19",
         "abbr4": "19th",
@@ -386,7 +386,7 @@ barty.stations = {
         "name": "19th Street Oakland",
         "region": "Oakland"
     },
-    SH: {
+    SHAY: {
         "StationID": "A70",
         "abbr2": "SH",
         "abbr4": "SHAY",
@@ -395,7 +395,7 @@ barty.stations = {
         "name": "South Hayward",
         "region": "East Bay"
     },
-    SO: {
+    SFIA: {
         "StationID": "Y10",
         "abbr2": "SO",
         "abbr4": "SFIA",
@@ -404,7 +404,7 @@ barty.stations = {
         "name": "SFO Airport",
         "region": "Peninsula"
     },
-    SL: {
+    SANL: {
         "StationID": "A40",
         "abbr2": "SL",
         "abbr4": "SANL",
@@ -413,7 +413,7 @@ barty.stations = {
         "name": "San Leandro",
         "region": "East Bay"
     },
-    OW: {
+    WOAK: {
         "StationID": "M10",
         "abbr2": "OW",
         "abbr4": "WOAK",
@@ -422,7 +422,7 @@ barty.stations = {
         "name": "West Oakland",
         "region": "Oakland"
     },
-    SB: {
+    SBRN: {
         "StationID": "W30",
         "abbr2": "SB",
         "abbr4": "SBRN",
@@ -431,7 +431,7 @@ barty.stations = {
         "name": "San Bruno",
         "region": "Peninsula"
     },
-    OR: {
+    ORIN: {
         "StationID": "C20",
         "abbr2": "OR",
         "abbr4": "ORIN",
@@ -440,7 +440,7 @@ barty.stations = {
         "name": "Orinda",
         "region": "East Bay"
     },
-    UC: {
+    UCTY: {
         "StationID": "A80",
         "abbr2": "UC",
         "abbr4": "UCTY",
