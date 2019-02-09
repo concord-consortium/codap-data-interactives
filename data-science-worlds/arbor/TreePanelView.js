@@ -27,11 +27,8 @@
 
 /**
  * This is a view that contains ALL of the views of the arbor display.
- * The corral view, for example, is up at the top.
- *
- * Note that this view handles the "changeTree" event (see call to addEventListener)
- *
- * @param iDOMName
+ **
+ * @param iDOMName  the ID in the html for this region in the DOM
  * @constructor
  */
 TreePanelView = function (iDOMName) {
@@ -39,10 +36,10 @@ TreePanelView = function (iDOMName) {
     this.w = 200;
     this.h = 200;
     this.lastMouseDownNodeView = null;
-    this.corralViews = [];
     this.dependentVariableView = null;      //      this is a CorralAttView, one of the corralViews[]
 
-    //  this.corralMinimumWidth = 300;
+    this.corralViews = [];
+
     this.corralHeight = arbor.constants.corralHeight;
 
     this.panelPaper = new Snap(document.getElementById(iDOMName));
@@ -58,9 +55,7 @@ TreePanelView = function (iDOMName) {
     this.rootPaper = Snap(100, 100);
     this.panelPaper.append(this.rootPaper);
 
-    this.treeBackground = this.rootPaper.rect(
-        0, 0, 100, 100
-    ).attr({fill: arbor.constants.panelBackgroundColor});
+    this.treeBackground = null;     //      will be a rectangle for the background
 
     this.lineSet = Snap.set();
     this.nodeSet = Snap.set();
@@ -70,11 +65,40 @@ TreePanelView = function (iDOMName) {
     this.draggingAttribute = null;
     this.dragSVGPaper = Snap(10, 10);
 
-    this.drawTreePanelViewSetup();
+    this.setUpToDrawTreePanelView();
 
     this.panelPaper.mouseup(function (e) {
         this.dragSVGPaper.remove();     //  remove it from the DOM
     }.bind(this));
+};
+
+TreePanelView.prototype.setUpToDrawTreePanelView = function () {
+
+    this.panelPaper.attr({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
+
+    this.w = Number(this.panelPaper.attr("width")) - 44;
+    this.h = Number(this.panelPaper.attr("height"));
+
+    //  console.log("Setting up. Window width is " + window.innerWidth);
+
+    //  the corralBackgroundRect contains the attribute names (CorralAttViews)
+    //  this is just drawn, not created as a paper
+
+    this.corralBackgroundRect.attr({width: this.w});
+    this.rootPaper.attr({
+        width: this.w,
+        height: this.h - this.corralHeight,
+        x: 0,
+        y: 0
+    });
+
+    /*
+     the rootPaper holds the upper, "tree" part of the TreePanelView.
+     This DOES have its own paper (rootPaper) so that we can clear() it separately when the model changes
+     */
 };
 
 TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
@@ -100,35 +124,6 @@ TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
     return tPaper;
 };
 
-TreePanelView.prototype.drawTreePanelViewSetup = function () {
-
-    this.panelPaper.attr({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
-
-    this.w = Number(this.panelPaper.attr("width")) - 44;
-    this.h = Number(this.panelPaper.attr("height"));
-
-    //  console.log("Setting up. Window width is " + window.innerWidth);
-
-    //  the corralBackgroundRect contains the attribute names (CorralAttViews)
-    //  this is just drawn, not created as a paper
-
-    this.corralBackgroundRect.attr({width: this.w});
-    this.rootPaper.attr({
-        width: this.w,
-        height: this.h - this.corralHeight,
-        x: 0,
-        y: 0
-    });
-    //  this.treeBackground.attr({width: this.w, height: this.h - this.corralHeight})
-
-    /*
-     the rootPaper holds the upper, "tree" part of the TreePanelView.
-     This DOES have its own paper (rootPaper) so that we can clear() it separately when the model changes
-     */
-};
 
 TreePanelView.prototype.freshTreeView = function () {
 
@@ -161,10 +156,10 @@ TreePanelView.prototype.addAttributeToCorral = function (iAttribute) {
     this.corralViews.push(tCorralAttView);
 };
 
-TreePanelView.prototype.refreshCorral = function ( iStartingY ) {
+TreePanelView.prototype.refreshCorral = function (iStartingY) {
 
     //  pick the dependent variable from the model
-    var tDependentVariableName = arbor.state.dependentVariableSplit.attName;
+    const tDependentVariableName = arbor.state.dependentVariableSplit.attName;
     this.dependentVariableView = this.corralViews.reduce(
         function (acc, val) {
             return ((tDependentVariableName === val.attInBaum.attributeName) ? val : acc);
@@ -174,9 +169,9 @@ TreePanelView.prototype.refreshCorral = function ( iStartingY ) {
         corV.setLabelTextAndSize();
     });
 
-    var tPad = arbor.constants.treeObjectPadding;
-    var x = tPad;
-    var tCorralY = iStartingY + tPad;
+    const tPad = arbor.constants.treeObjectPadding;
+    let x = tPad;
+    let tCorralY = iStartingY + tPad;
 
     //  display the dependent variable first
 
@@ -189,23 +184,23 @@ TreePanelView.prototype.refreshCorral = function ( iStartingY ) {
 
         //  then loop over the others
 
-        var tIndentation = x;   //  to the right of the equals sign, we indent the atts to here.
+        const tIndentation = x;   //  to the right of the equals sign, we indent the atts to here.
 
         this.corralHeight = arbor.constants.corralHeight;
 
         this.corralViews.forEach(function (corV) {
             if (corV !== this.dependentVariableView) {      //  except for the dependent one
                 corV.moveTo(x, tCorralY);
-                var tPaperWidth = Number(this.panelPaper.attr("width"));
-                var tAttributeWidth = corV.label.getBBox().width + 2 * tPad;
+                const tPaperWidth = Number(this.panelPaper.attr("width"));
+                const tAttributeWidth = corV.label.getBBox().width + 2 * tPad;
                 x += tAttributeWidth + tPad; //  should be able to set and use the paper's width
                 if (x > tPaperWidth - tAttributeWidth) {
                     x = tIndentation;
-                    var tYIncrement = arbor.constants.nodeHeightInCorral + tPad;
+                    const tYIncrement = arbor.constants.nodeHeightInCorral + tPad;
                     tCorralY += tYIncrement;
                     this.corralHeight += tYIncrement;
                     //  this.corralBackgroundRect.attr({height: this.corralHeight});
-                    this.drawTreePanelViewSetup();
+                    this.setUpToDrawTreePanelView();
                     //  console.log("corral height now " + this.corralHeight);
                 }
             }
@@ -213,8 +208,8 @@ TreePanelView.prototype.refreshCorral = function ( iStartingY ) {
     }
 
     this.corralBackgroundRect.attr({
-        y : iStartingY,
-        height : this.corralHeight
+        y: iStartingY,
+        height: this.corralHeight
     });
 
     // this.corralMinimumWidth = (this.corralMinimumWidth > x) ? this.corralMinimumWidth : x;
@@ -239,36 +234,36 @@ TreePanelView.prototype.redrawEntireZone = function () {
 
     console.log("Redrawing TreePanelView");
 
-    this.lineSet.clear();
-    this.nodeSet.clear();
-
     if (arbor.state.tree) {    //  if not, there is no root node, and we display only the background
 
         this.rootPaper.clear();
-        this.treeBackground = this.rootPaper.rect(0, 0, this.rootPaper.attr("width"),
-            this.rootPaper.attr("height")).attr(
-            {fill: arbor.constants.panelBackgroundColor}
-        );
+        this.lineSet.clear();
+        this.nodeSet.clear();
+
+        this.treeBackground = this.rootPaper.rect(
+            0, 0, this.rootPaper.attr("width"), this.rootPaper.attr("height")).attr({
+            fill: arbor.constants.panelBackgroundColor
+        });
 
         this.rootNodeZoneView = new NodeZoneView(arbor.state.tree.rootNode, this);
 
         //  inset the treeView tPad in from all sides
 
-        var tPad = arbor.constants.treeObjectPadding;
-        var tMainTreeSize = this.rootNodeZoneView.calculateZoneSize();
+        const tPad = arbor.constants.treeObjectPadding;
+        const tMainTreeSize = this.rootNodeZoneView.calculateZoneSize();
 
         /**
          * Note that the next call is to a NodeZoneView, NOT the TreePanelView.
          * In particular, this is the main NodeZoneView, the "root" view, if you will.
          */
         this.rootNodeZoneView.redrawEntireZone({
-            x: Number(this.rootPaper.attr("width")) / 2 - tMainTreeSize.width/2,
+            x: Number(this.rootPaper.attr("width")) / 2 - tMainTreeSize.width / 2,
             y: tPad,
             width: tMainTreeSize.width,
             height: tMainTreeSize.height
         });
 
-        this.treeBackground.attr({ height : tMainTreeSize.height });
+        this.treeBackground.attr({height: tMainTreeSize.height});
 
         this.rootPaper.append(this.lineSet);
         this.rootPaper.append(this.nodeSet);

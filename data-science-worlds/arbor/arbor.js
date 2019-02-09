@@ -377,7 +377,7 @@ var arbor = {
      */
     resizeWindow: function (iEvent) {
         this.windowWidth = window.innerWidth;
-        arbor.treePanelView.drawTreePanelViewSetup();
+        arbor.treePanelView.setUpToDrawTreePanelView();
         arbor.treePanelView.redrawEntireZone();
     },
 
