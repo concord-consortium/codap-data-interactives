@@ -24,7 +24,7 @@
   "tree": {
     "filterArray": [],
     "rootNode": {
-      "baumNodeID": 42,
+      "arborNodeID": 42,
       "parentID": null,
       "LoR": "root",
       "attributeSplit": null,

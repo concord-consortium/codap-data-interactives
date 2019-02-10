@@ -378,7 +378,7 @@ var arbor = {
     resizeWindow: function (iEvent) {
         this.windowWidth = window.innerWidth;
         arbor.treePanelView.setUpToDrawTreePanelView();
-        arbor.treePanelView.redrawEntireZone();
+        arbor.treePanelView.redrawEntirePanel();
     },
 
 
@@ -400,7 +400,7 @@ var arbor = {
         console.log("Redisplay ------------------------");
         this.fixDependentVariableMechanisms();  //  sets appropriate label text
         focusSplitMgr.displayAttributeConfiguration();   //  the HTML on the main page
-        this.treePanelView.redrawEntireZone();
+        this.treePanelView.redrawEntirePanel();
     },
 
     setDependentVariableByName: function (iAttName) {

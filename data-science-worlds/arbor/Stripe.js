@@ -41,7 +41,7 @@ Stripe = function (iParent, iTextParams, iRole) {
                 .mousedown(
                     function (iEvent) {
                         this.parent.myNode.flipStopType();
-                        this.parent.myTreeView.myPanel.lastMouseDownNodeView = null;
+                        this.parent.myZoneView.myPanel.lastMouseDownNodeView = null;
                     }.bind(this)
                 );
             this.centeredText = true;

@@ -25,8 +25,8 @@
  * @constructor
  */
 Node = function (iParent, iLoR) {
-    this.baumNodeID = arbor.state.latestNodeID++;
-    this.parentID = (iParent ? iParent.baumNodeID : null);  //  parent NODE (model). NULL if this is the root.
+    this.arborNodeID = arbor.state.latestNodeID++;
+    this.parentID = (iParent ? iParent.arborNodeID : null);  //  parent NODE (model). NULL if this is the root.
     this.LoR = iLoR;        //  "L" or "R" (or "root")
 
     this.attributeSplit = null;      //  how the descendants of this node get split or otherwise configured.
@@ -48,7 +48,7 @@ Node = function (iParent, iLoR) {
     this.missingArray = [];
     this.branches = [];     //  the array of sub-Nodes
 
-    console.log("New " + this.LoR + " node id: " + this.baumNodeID + " type: " + this.stopSign);
+    console.log("New " + this.LoR + " node id: " + this.arborNodeID + " type: " + this.stopSign);
 
 };
 
@@ -65,7 +65,7 @@ Node.prototype.findNodeDownstream = function (id) {
     var out = null;
 
     if (id) {
-        if (this.baumNodeID === id) {
+        if (this.arborNodeID === id) {
             out = this;
         } else {
             this.branches.forEach(function (b) {
@@ -93,7 +93,7 @@ Node.prototype.parentNode = function () {
 
 /**
  * Called from this.populateNode()
- * and NodeBoxView.redrawMe() (maybe just to get the parent's color)
+ * and NodeBoxView.redrawNodeBoxView() (maybe just to get the parent's color)
  * @param iParent       the parent NODE (not just the ID)
  * @returns {null|*}
  */
