@@ -374,7 +374,7 @@ var arbor = {
     resizeWindow: function (iEvent) {
         this.windowWidth = window.innerWidth;
         arbor.treePanelView.setUpToDrawTreePanelView();
-        arbor.treePanelView.redrawEntireZone();
+        arbor.treePanelView.redrawEntirePanel();
     },
 
 
@@ -397,14 +397,7 @@ var arbor = {
 
         this.fixDependentVariableMechanisms();  //  sets appropriate label text
         focusSplitMgr.displayAttributeConfiguration();   //  the HTML on the main page
-        this.corralView = new CorralView();
-        this.treePanelView = new TreePanelView();  //  the main view.
-        this.corralView.refreshCorral();
-        arbor.ui.updateConfusionMatrix();
-    },
-
-    displayWidth: function () {
-        return window.innerWidth - 44;
+        this.treePanelView.redrawEntirePanel();
     },
 
     setDependentVariableByName: function (iAttName) {

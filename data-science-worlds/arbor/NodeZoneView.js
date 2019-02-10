@@ -31,46 +31,45 @@
  *
  * NOTE that the NodeBoxView gets redrawn in the constructor.
  *
- * Every tree has ONE node and (optionally) TWO subtrees (in array this.subNodeZones).
+ * Every NodeZoneView has ONE node and (optionally) TWO subtrees (in array this.subNodeZones).
  *
  * @param iNode     the root node (model) of this zoneView
- * @param iParent   the parent zoneView (view) of this zoneView
+ * @param iParent   the parent zoneView (view) of this zoneView. If this is the top one, the parent is the TreePanelView
  * @constructor
  */
 NodeZoneView = function (iNode, iParent) {
-    this.myNode = iNode;
+    this.myNode = iNode;        //  model
+    this.nodeBoxLocation = {x: 0, y: 0};   //  x, y, width, height, xc, yc ... for the NodeBoxView
 
     this.myPanel = iParent.myPanel; //  is the panel for the root view, everybody gets this from the TreePanelView.
-    this.myParentZoneView = iParent;
+    //  this.myParentZoneView = iParent;
+    this.myLocation = {x: 0, y: 0};   //      my coordinates in the parent view. Possibly redundant. Set in moveTo().
 
     //  make the subNodeZones.
     this.subNodeZones = [];     //  begin empty.
 
     if (this.myParentZoneView === this.myPanel) {
-        this.myParentZoneView = null;       //      we are the top tree
+        this.myParentZoneView = null;       //      we are the top NodeZoneView
     }
 
-    this.nodeBoxLocation = {};   //  x, y, width, height, xc, yc ... for the NodeBoxView
-    this.paper = this.myPanel.rootPaper;        //     points to the TreePanelView's "rootPaper"    // was     Snap(5, 5);        //  tiny, but it exists
+    this.paper = Snap(100, 100);  // to be reset
 
-    //  make this ZoneView's "root" nodeView
-
-    this.myBoxView = new NodeBoxView(iNode, this);
-    this.myBoxView.redrawMe();
-    this.paper.append(this.myBoxView.paper);
+    this.myBoxView = new NodeBoxView(iNode, this);  //  create, not draw
 
     this.leaf = (this.myNode.branches.length === 0 && arbor.options.showLeaves()) ? new Leaf({node: this.myNode}) : null;          //  our leaf
 
-    //  push this zone into the set of nodeZoneViews in the ur-parent Panel
-
-    this.myPanel.nodeSet.push(this.myBoxView.paper);
+    //  this.myPanel.nodeSet.push(this.myBoxView.paper);
 
     this.myNode.branches.forEach(function (iChildNode) {
-        const tTreeView = new NodeZoneView(iChildNode, this); //  makes a view of a subtree, as a NodeZoneView
-        this.subNodeZones.push(tTreeView);        //  we're maintaining the view tree
+        //  makes a view of a subtree, as a NodeZoneView. Create, not draw!
+        this.subNodeZones.push(new NodeZoneView(iChildNode, this));        //  we're maintaining the view tree
     }.bind(this))
 };
 
+NodeZoneView.prototype.moveTo = function (iLoc) {
+    this.myLocation = iLoc;
+    this.paper.attr(iLoc);
+};
 
 /**
  * Calculate the width and height of this NodeZoneView, including its "padding"
@@ -79,25 +78,29 @@ NodeZoneView = function (iNode, iParent) {
  */
 NodeZoneView.prototype.calculateZoneSize = function () {
 
-    if (this.zoneViewDimensions.width !== 0) {    //  since we're recursive, we may already have calculated this.
-        return this.zoneViewDimensions;
-    }
+    /*
+        if (this.zoneViewDimensions.width !== 0) {    //  since we're recursive, we may already have calculated this.
+            return this.zoneViewDimensions;
+        }
+    */
 
     const tPad = arbor.constants.treeObjectPadding;
     let out = {
-        width: 2 * tPad,    //  left and right edges
-        height: 2 * tPad    //  top and bottom
+        width: 0,    //  left and right edges
+        height: 0    //  top and bottom
     };
 
     const tNodeContentsSize = this.myBoxView.boxDimensions;    //  has {width: www; height: hhh}
 
-    out.height += tNodeContentsSize.height;
+    out.height = tNodeContentsSize.height;
+    out.width = tNodeContentsSize.width;
 
     /**
      * The recursion happens here...first if we're a "leaf," add the overall leaf size.
      */
     if (this.subNodeZones.length === 0) {
-        out.width += tNodeContentsSize.width;
+        //  out.width += tNodeContentsSize.width;
+
         if (arbor.options.showLeaves()) {
             out.height += tPad + arbor.constants.leafNodeHeight;
             const tLeafDimensions = this.leaf.refreshLeaf();
@@ -112,11 +115,17 @@ NodeZoneView.prototype.calculateZoneSize = function () {
             out.width += tTreeSize.width;    //  add width of each branch
             tMaxBranchHeight = tTreeSize.height > tMaxBranchHeight ? tTreeSize.height : tMaxBranchHeight;
         });
-        out.height += tPad + tMaxBranchHeight;
-        out.width += tPad;  //  the space between the branches
+        out.height += tMaxBranchHeight + tPad + arbor.constants.treeLineLabelHeight;
+        out.width += tPad;  //  the ONE space between the branches
     }
 
+
+    out.height += tPad;     //  extra space only at the bottom
     return out;
+};
+
+NodeZoneView.prototype.adjustZonePaperSize = function () {
+
 };
 
 /**
@@ -125,74 +134,76 @@ NodeZoneView.prototype.calculateZoneSize = function () {
  *
  * Note: Recursive. We use this very routine to draw subZones.
  *
- * @param inThisSpace   object with x, y, width, height.
+ * @param iLoc   object with x, y. Coordinates of x, y in parent's system
  */
-NodeZoneView.prototype.redrawEntireZone = function (inThisSpace) {  //  object with x, y, width, height
+NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, y
 
-    //  this.paper.clear();
+    let currentTotalHeight = 0;   //  we will accumulate these as we add elements
+    let currentTotalWidth = 0;
+
+    this.paper.attr(iLoc);      //  in the coordinates of the parent
+    this.paper.clear();
     //  this.background = this.paper.rect().attr({fill:"yellow"});    //  we will resize this of course
 
     //  calculate various dimensions we need for drawing
 
-    let tLeftX = inThisSpace.x;
+    //  let tLeftX = inThisSpace.x;
 
-    const tPad = arbor.constants.treeObjectPadding;
-    this.zoneViewDimensions = this.calculateZoneSize();         //  can do this since the subNodeZones exist now
-    let tCurrentY = inThisSpace.y;
+    const boxSize = this.myBoxView.redrawNodeBoxView();         //  this NodeBoxView was created in the constructor; this call adjusts its size
+    this.paper.append(this.myBoxView.paper);    //  attach it, but it's not yet in the right place.
+    //  we need to know the width of this entire ZoneView in order to place the NodeBoxView.
 
-    //  set up important members
-
-    this.nodeBoxLocation = this.myBoxView.boxDimensions;   //  sets height and width
-    this.nodeBoxLocation.x = tLeftX + (this.zoneViewDimensions.width / 2 - this.nodeBoxLocation.width / 2);
-    this.nodeBoxLocation.y = tCurrentY;
-    this.nodeBoxLocation.xc = this.nodeBoxLocation.x + this.nodeBoxLocation.width / 2;
-    this.nodeBoxLocation.yc = this.nodeBoxLocation.y + arbor.constants.connectorLineLowerOffset;
-
-    //  move the node to where it belongs
-
-    this.myBoxView.moveTo(this.nodeBoxLocation);
+    currentTotalHeight = boxSize.height;
+    currentTotalWidth = boxSize.width;
 
     //  in addition to the node itself, you need subNodeZones
 
+    tCurrentX = 0;
+    tCurrentY = currentTotalHeight;
+
     switch (this.myNode.branches.length) {
         case 2:
-            tCurrentY += this.nodeBoxLocation.height + tPad + arbor.constants.treeLineLabelHeight;
-
-            let tCurrentX = tLeftX + tPad;  //  start on the left edge of the first subtree
+            tCurrentY += arbor.constants.treeLineLabelHeight + tPad;    //  top of subZoneViews
 
             this.subNodeZones.forEach(function (iSubZoneView) {
-                const tSizeOfThisSubZone = iSubZoneView.calculateZoneSize();
-                const tSpace = {
-                    x: tCurrentX,
-                    y: tCurrentY,
-                    width: tSizeOfThisSubZone.width,
-                    height: this.zoneViewDimensions.height - (tCurrentY) + tPad
-                };
+                this.paper.append(iSubZoneView.paper);
+                const zoneSize = iSubZoneView.redrawEntireZone({x: tCurrentX, y: tCurrentY});   //  now they have good widths
+                currentTotalHeight = (tCurrentY + zoneSize.height > currentTotalHeight)
+                    ? tCurrentY + zoneSize.height : currentTotalHeight;
+                currentTotalWidth = (tCurrentX + zoneSize.width > currentTotalWidth)
+                    ? tCurrentX + zoneSize.width : currentTotalWidth;
 
-                iSubZoneView.redrawEntireZone(tSpace);       //  includes the node view
-
-                tCurrentX += tPad + tSizeOfThisSubZone.width;
-
+                tCurrentX += zoneSize.width + arbor.constants.treeObjectPadding;
             }.bind(this));
 
             break;
 
         case 0:     //  update and position the leaf
+            tCurrentY +=  arbor.constants.treeObjectPadding;     //  top of leaf
+
             if (arbor.options.showLeaves()) {
-                tCurrentY += this.nodeBoxLocation.height + tPad;
                 this.paper.append(this.leaf.paper);
                 const tLeafDimensions = this.leaf.refreshLeaf();
+                //  todo: make a leaf move-to method
                 this.leaf.paper.attr({
-                    x: tLeftX + (this.zoneViewDimensions.width / 2 - tLeafDimensions.width / 2),
+                    x: currentTotalWidth / 2 - tLeafDimensions.width / 2,
                     y: tCurrentY
                 });
+                currentTotalHeight = tCurrentY + tLeafDimensions.height;   //  todo: need padding??
             }
             break;
-
     }
+
+    //  Those contents limit the extent of this zone view; we resize our paper
+
+    this.paper.attr({
+        "height" : currentTotalHeight,
+        "width" : currentTotalWidth
+    });
 
     //  Draw line from our root nodeView up to parent if it exists.
 
+/*
     if (this.myParentZoneView) {    //  we are not the top treeView in the hierarchy
         const tParentNodeBoxLoc = this.myParentZoneView.nodeBoxLocation;
 
@@ -206,7 +217,7 @@ NodeZoneView.prototype.redrawEntireZone = function (inThisSpace) {  //  object w
 
         const tTX = this.nodeBoxLocation.xc - tText.getBBox().width / 2;
         const tTY = this.nodeBoxLocation.yc - 10;
-        tText.attr({x: tTX, y: tTY });
+        tText.attr({x: tTX, y: tTY});
 
 
         const theLineGroup = this.paper.g(tLine, tText);
@@ -217,6 +228,18 @@ NodeZoneView.prototype.redrawEntireZone = function (inThisSpace) {  //  object w
         this.myPanel.lineSet.push(theLineGroup);
 
     }
+
+*/
+
+    //  center the node box at the top of this NodeZoneView
+
+    const nodeBoxX = this.paper.attr("width") / 2 - boxSize.width / 2;
+    this.myBoxView.paper.attr({ x : nodeBoxX });
+
+    return ({
+        width: Number(this.paper.attr("width")),
+        height: Number(this.paper.attr("height"))
+    })
 
 };
 
