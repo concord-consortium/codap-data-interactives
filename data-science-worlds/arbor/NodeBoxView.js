@@ -24,9 +24,9 @@
  */
 
 
-NodeBoxView = function (iNode, iMyTreeView) {
+NodeBoxView = function (iNode, iZoneView) {
     this.myNode = iNode;
-    this.myTreeView = iMyTreeView;
+    this.myZoneView = iZoneView;        //  the view I am embedded in
 
     //  We watch this event for changes from the model,
     //  e.g., changes in number or text.
@@ -35,13 +35,7 @@ NodeBoxView = function (iNode, iMyTreeView) {
     var tPad = arbor.constants.treeObjectPadding;
     this.kStripeHeight = 20;
 
-    this.stripes = [];  //  the box is made up of a variable number of "stripes"
-
-    this.boxDimensions = {
-        x: 0, y: 0,
-        width: 0,
-        height: 0
-    };
+    this.stripes = [];  //  the box is made up of a variable number of "Stripes"
 
     this.paper = new Snap(133, 133);
 
@@ -51,14 +45,14 @@ NodeBoxView = function (iNode, iMyTreeView) {
     //  handlers
 
     this.paper.mousedown(function (iEvent) {
-        this.myTreeView.myPanel.lastMouseDownNodeView = this;
+        this.myZoneView.myPanel.lastMouseDownNodeView = this;
     }.bind(this));
 
     //  handle mouseUp events in the NodeBoxView
 
     this.paper.mouseup(function (iEvent) {
 
-        var tMouseDownPlace = this.myTreeView.myPanel.lastMouseDownNodeView;
+        var tMouseDownPlace = this.myZoneView.myPanel.lastMouseDownNodeView;
 
         if (tMouseDownPlace) {
             if (this === tMouseDownPlace) {     //  it's a click
@@ -96,8 +90,8 @@ NodeBoxView = function (iNode, iMyTreeView) {
  */
 NodeBoxView.prototype.handleNodeChange = function (iEvent) {
     console.log("changeNode event");
-    this.calculateNodeBoxViewSize();
-    //  this.redrawMe();
+    this.getNodeBoxViewSize();
+    //  this.redrawNodeBoxView();
 };
 
 /**
@@ -106,12 +100,22 @@ NodeBoxView.prototype.handleNodeChange = function (iEvent) {
  * The main thing here is to find the maximum lengths of the strings (and icons) we display,
  * in order to find the width.
  *
- * This method sets this.boxDimensions.
  */
-NodeBoxView.prototype.calculateNodeBoxViewSize = function () {
-    var tPad = arbor.constants.treeObjectPadding;
+NodeBoxView.prototype.getNodeBoxViewSize = function () {
 
-    //  find the maximum width
+    console.log("Get size for box id: "
+        + this.myNode.arborNodeID + " w: "
+        + this.paper.attr("width") + " h: "
+        + this.paper.attr("height"));
+    return {
+        width : this.paper.attr("width"),
+        height : this.paper.attr("height")
+    };
+};
+
+NodeBoxView.prototype.adjustPaperSize = function() {
+
+    //  find the maximum width of the stripes
 
     var tMaxWidthStripe = this.stripes.reduce(function (a, v) {
         var vCurrentWidth = v.minimumWidth();
@@ -120,42 +124,37 @@ NodeBoxView.prototype.calculateNodeBoxViewSize = function () {
         return (vCurrentWidth > aCurrentWidth) ? v : a;
     });
 
-    var tBoxWidth = tMaxWidthStripe.minimumWidth();
-
-
-    this.boxDimensions = {
-        width: tBoxWidth,
-        height: this.kStripeHeight * this.stripes.length
-    };
+    this.paper.attr({
+        height : this.kStripeHeight * this.stripes.length,
+        weight : tMaxWidthStripe.minimumWidth()
+    });
 };
 
-NodeBoxView.prototype.redrawMe = function () {
+NodeBoxView.prototype.redrawNodeBoxView = function () {
 
-    var tStripe = null;
+    console.log("Redraw node box: " + this.myNode.arborNodeID);
+    let tStripe = null;
     this.paper.clear(); //  nothing on this paper
     this.stripes = [];  //  fresh set of stripes
 
-    var tPad = arbor.constants.treeObjectPadding;
+    const tPad = arbor.constants.treeObjectPadding;
 
     //  The tool tip for the box itself
     this.paper.append(Snap.parse("<title>" + this.myNode.longDescription() + "</title>"));
 
-    //  this.paper.circle(100, 60, 50).attr({fill: "cornflowerblue"});
-
     //  various useful constants
 
-    var tNoCases = (this.myNode.denominator === 0);
-    var tParent = this.myNode.parentNode();     //  null if this is the root.
-    var tParSplit = this.myNode.parentSplit(tParent);  //  the parent's Split. If root, this is the dependant variable split
+    const tNoCases = (this.myNode.denominator === 0);
+    const tParent = this.myNode.parentNode();     //  null if this is the root.
+    const tParSplit = this.myNode.parentSplit(tParent);  //  the parent's Split. If root, this is the dependant variable split
 
-    var tDataBackgroundColor = (this.myNode === arbor.focusNode) ? "yellow" : "white";
+    let tDataBackgroundColor = (this.myNode === arbor.focusNode) ? "yellow" : "white";
     if (this.myNode.onTrace) {
         tDataBackgroundColor = arbor.constants.onTraceColor;
     }
-    var tDataTextColor = "#474";
+    const tDataTextColor = "#474";
 
-
-    var tText;
+    let tText;
 
     this.makeRootStripe();      //  make root node stripe
 
@@ -179,14 +178,12 @@ NodeBoxView.prototype.redrawMe = function () {
         }
     }
 
-    this.calculateNodeBoxViewSize();   //  update the dimensions based on the new text
+    this.adjustPaperSize();   //  update this.paper's dimensions based on the new text in stripes
 
-    var tXPos = 0;  //  left align
-
-    var tArgs = {
+    const tArgs = {
         height: this.kStripeHeight,
-        width: this.boxDimensions.width,      //  this includes padding
-        x: tXPos,
+        width: this.paper.attr("width"),      //  this includes padding
+        x: 0,
         y: 0
     };
 
@@ -196,9 +193,10 @@ NodeBoxView.prototype.redrawMe = function () {
         tArgs.y += this.kStripeHeight;
     }.bind(this));
 
-
-    this.paper.attr(this.boxDimensions);
-
+    return ({
+        width : Number(this.paper.attr("width")),
+        height : Number(this.paper.attr("height"))
+    })
 };
 
 NodeBoxView.prototype.makeRootStripe = function () {
@@ -234,7 +232,6 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
         tProportionText = (this.myNode.denominator !== 0) ? "(" + (tProportion * 100).toFixed(1) + "%)" : "n/a";
     }
 
-
     if (this.myNode.branches.length > 0) {    //  non-terminal, classification tree
 
         tText = this.myNode.numerator + " of " + this.myNode.denominator + ", " + tProportionText;
@@ -264,29 +261,6 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
             "data"
         );
         this.stripes.push(tStripe);
-
-        //  classification terminal stripe.
-
-        /*
-                        var tText = this.myNode.stopSign === "+" ?
-                            arbor.state.dependentVariableSplit.leftLabel :
-                            arbor.state.dependentVariableSplit.rightLabel;
-
-                        tStripe = new Stripe(
-                            this,
-                            {
-                                text: tText + " (" + this.myNode.stopSign + ")",
-                                textColor: "white",
-                                bgColor: this.myNode.stopSign === arbor.constants.diagnosisPlus ? "#333" : "#060"
-                            },
-                            "terminal"
-                        );
-
-                        this.stripes.push(tStripe);
-
-
-        */
-
 
     }
 };
@@ -346,13 +320,4 @@ NodeBoxView.prototype.isRoot = function () {
     return (this.myNode === arbor.state.tree.rootNode);
 };
 
-
-NodeBoxView.prototype.moveTo = function (iWhere) {    //  e.g., {x : 107, y : 8 }, coordinates in its parent, the tree.
-
-    //  set and record the locations as well.
-    this.boxDimensions.x = iWhere.x;
-    this.boxDimensions.y = iWhere.y;
-
-    this.paper.attr(iWhere);
-};
 
