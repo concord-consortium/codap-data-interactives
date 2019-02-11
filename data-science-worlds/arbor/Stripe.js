@@ -120,7 +120,12 @@ Stripe = function (iParent, iTextParams, iRole) {
     }
 };
 
-Stripe.prototype.resize = function (iSize) {
+/**
+ * Resize the stripe (mostly width to match the other stripes in the box.
+ * Called by NodeBoxView.redrawNodeBoxView() )
+ * @param iSize
+ */
+Stripe.prototype.resizeStripe = function (iSize) {
     this.paper.attr(iSize);
     this.bgShape.attr({width: iSize.width, height: iSize.height});
 
@@ -149,14 +154,15 @@ Stripe.prototype.resize = function (iSize) {
     }
 
     if (this.centeredText) {
-        var textWidth = this.sLabel.getBBox().width;
-        var tLeft = iSize.width / 2 - textWidth / 2;
+        const textWidth = this.sLabel.getBBox().width;
+        const tLeft = iSize.width / 2 - textWidth / 2;
         this.sLabel.attr("x", tLeft);
     }
 
 };
 
 Stripe.prototype.minimumWidth = function () {
-    var out = this.leftButtonImage ? 20 : 0;        //  todo: get 20 from somewhere else!
-    return out + this.sLabel.getBBox().width + 2 * arbor.constants.treeObjectPadding;
+    let out = this.leftButtonImage ? 20 : 0;        //  todo: get 20 from somewhere else!
+    out += this.sLabel.getBBox().width + 2 * arbor.constants.treeObjectPadding;
+    return out;
 };

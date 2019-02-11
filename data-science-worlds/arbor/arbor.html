@@ -98,6 +98,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
     <!--
         Views
     -->
+    <script src="CorralView.js" language="javascript"></script>
     <script src="TreePanelView.js" language="javascript"></script>
     <script src="NodeZoneView.js" language="javascript"></script>
     <script src="NodeBoxView.js" language="javascript"></script>
@@ -135,8 +136,10 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             <label for="showDiagnosisLeaves">show diagnosis "leaves"</label>
         </div>
 
-        <svg id="treePaper" class="noselect" width="100%" height="500">
+        <svg id="treePaper" class="noselect" width="100%" height="300">
+            <rect height="100%" width="100%" fill="dodgerblue"></rect>
         </svg>
+        <svg id="corral" class="noselect" width="100%" height="40"></svg>
 
         <div class="vBox">
             <div id="statusDiv">
@@ -264,6 +267,10 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
             is licensed (<a href="http://creativecommons.org/licenses/by/3.0/"
                               title="Creative Commons BY 3.0" target="_blank">CC 3.0</a>) by eeps media
+            <br><br>
+            Thanks to many people, including Joachim Engel, Laura Martignon, Bill Finzer, Joan Heller, Frieda Reichsman,
+            Suzanne Podworny, Thomas Wassong, and
+            Michael Schlichtig.
         </div>
     </div>
 
@@ -322,13 +329,15 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         <h3>Variables (or Attributes) and Tree Nodes</h3>
         <p>
             The names of all the variables --- the column headings in your data table --- appear
-            in a row below the tree, at the bottom of the window.
+            in a row below the tree, towards the bottom of the window.
         </p>
         <p>
             To make the tree branch according to a variable
             (which represents <i>asking a question</i> in our example),
             drag the variable into the tree and drop it on the node you want to branch.
-            <i>At the moment, you cannot see the drag!</i> Don't worry, it's dragging nevertheless.
+            <i>At the moment, you may not see the drag!</i> Don't worry, it's dragging nevertheless.
+            And if it doesn't seem to "take," try again.
+            It may be that dropping it on text doesn't work.
         </p>
         <p>
             As you will see, every node is either a "branching" node (where you ask a question) or
@@ -346,7 +355,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             and you want to study what affects income, make <b>income</b> the dependent variable.
         </p>
         <p>
-            To make a variable dependent, double-click it in the list above the tree.
+            To make a variable dependent, double-click it in the list below the tree.
         </p>
         <p>
             The dependent variable also appears at the top of the tree,

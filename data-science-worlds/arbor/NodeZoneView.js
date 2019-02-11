@@ -71,62 +71,6 @@ NodeZoneView.prototype.moveTo = function (iLoc) {
     this.paper.attr(iLoc);
 };
 
-/**
- * Calculate the width and height of this NodeZoneView, including its "padding"
- *
- * @returns {*}
- */
-NodeZoneView.prototype.calculateZoneSize = function () {
-
-    /*
-        if (this.zoneViewDimensions.width !== 0) {    //  since we're recursive, we may already have calculated this.
-            return this.zoneViewDimensions;
-        }
-    */
-
-    const tPad = arbor.constants.treeObjectPadding;
-    let out = {
-        width: 0,    //  left and right edges
-        height: 0    //  top and bottom
-    };
-
-    const tNodeContentsSize = this.myBoxView.boxDimensions;    //  has {width: www; height: hhh}
-
-    out.height = tNodeContentsSize.height;
-    out.width = tNodeContentsSize.width;
-
-    /**
-     * The recursion happens here...first if we're a "leaf," add the overall leaf size.
-     */
-    if (this.subNodeZones.length === 0) {
-        //  out.width += tNodeContentsSize.width;
-
-        if (arbor.options.showLeaves()) {
-            out.height += tPad + arbor.constants.leafNodeHeight;
-            const tLeafDimensions = this.leaf.refreshLeaf();
-            if (tLeafDimensions.width > out.width) {
-                out.width = tLeafDimensions.width
-            }
-        }
-    } else {
-        let tMaxBranchHeight = 0;
-        this.subNodeZones.forEach(function (iSubZone) {
-            const tTreeSize = iSubZone.calculateZoneSize();
-            out.width += tTreeSize.width;    //  add width of each branch
-            tMaxBranchHeight = tTreeSize.height > tMaxBranchHeight ? tTreeSize.height : tMaxBranchHeight;
-        });
-        out.height += tMaxBranchHeight + tPad + arbor.constants.treeLineLabelHeight;
-        out.width += tPad;  //  the ONE space between the branches
-    }
-
-
-    out.height += tPad;     //  extra space only at the bottom
-    return out;
-};
-
-NodeZoneView.prototype.adjustZonePaperSize = function () {
-
-};
 
 /**
  * Redraw this entire "Zone", recursively creating subNodeZones and asking them to redraw.
@@ -140,6 +84,8 @@ NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, 
 
     let currentTotalHeight = 0;   //  we will accumulate these as we add elements
     let currentTotalWidth = 0;
+    let tCurrentX = 0;
+    let tCurrentY = 0;
 
     this.paper.attr(iLoc);      //  in the coordinates of the parent
     this.paper.clear();
@@ -155,6 +101,7 @@ NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, 
 
     currentTotalHeight = boxSize.height;
     currentTotalWidth = boxSize.width;
+    let topsOfSubZoneBoxes = {};
 
     //  in addition to the node itself, you need subNodeZones
 
@@ -163,17 +110,29 @@ NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, 
 
     switch (this.myNode.branches.length) {
         case 2:
-            tCurrentY += arbor.constants.treeLineLabelHeight + tPad;    //  top of subZoneViews
+            tCurrentY += arbor.constants.treeLineLabelHeight + arbor.constants.treeObjectPadding;    //  top of subZoneViews
 
-            this.subNodeZones.forEach(function (iSubZoneView) {
-                this.paper.append(iSubZoneView.paper);
-                const zoneSize = iSubZoneView.redrawEntireZone({x: tCurrentX, y: tCurrentY});   //  now they have good widths
-                currentTotalHeight = (tCurrentY + zoneSize.height > currentTotalHeight)
-                    ? tCurrentY + zoneSize.height : currentTotalHeight;
-                currentTotalWidth = (tCurrentX + zoneSize.width > currentTotalWidth)
-                    ? tCurrentX + zoneSize.width : currentTotalWidth;
+            this.myNode.branches.forEach(function (iBranch) {
+                const tSubZoneView = new NodeZoneView( iBranch, this );
+                this.paper.append(tSubZoneView.paper);
+                const subZoneSize = tSubZoneView.redrawEntireZone({x: tCurrentX, y: tCurrentY});   //  now they have good widths
+                currentTotalHeight = (tCurrentY + subZoneSize.height > currentTotalHeight)
+                    ? tCurrentY + subZoneSize.height : currentTotalHeight;
+                currentTotalWidth = (tCurrentX + subZoneSize.width > currentTotalWidth)
+                    ? tCurrentX + subZoneSize.width : currentTotalWidth;
 
-                tCurrentX += zoneSize.width + arbor.constants.treeObjectPadding;
+                //  console.log("About to locate a subZoneView at " + tCurrentX + ", " + tCurrentY);
+                tSubZoneView.paper.attr({
+                    x : tCurrentX,
+                    y : tCurrentY,
+                    id : "SZV-for-Node-" + iBranch.arborNodeID
+                });
+
+                topsOfSubZoneBoxes[iBranch.LoR] = { x : tCurrentX + subZoneSize.width / 2, y : tCurrentY}; //  centered on top of new zone;
+
+                //  console.log("ZoneView for node " + tSubZoneView.myNode.arborNodeID + ", the paper is " + arbor.paperString(tSubZoneView.paper));
+
+                tCurrentX += subZoneSize.width + arbor.constants.treeObjectPadding;
             }.bind(this));
 
             break;
@@ -201,7 +160,8 @@ NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, 
         "width" : currentTotalWidth
     });
 
-    //  Draw line from our root nodeView up to parent if it exists.
+
+    //  Draw line from our root nodeView down to children if they exist.
 
 /*
     if (this.myParentZoneView) {    //  we are not the top treeView in the hierarchy
@@ -233,8 +193,33 @@ NodeZoneView.prototype.redrawEntireZone = function (iLoc) {  //  object with x, 
 
     //  center the node box at the top of this NodeZoneView
 
-    const nodeBoxX = this.paper.attr("width") / 2 - boxSize.width / 2;
+    const nodeBoxX = Number(this.paper.attr("width")) / 2 - boxSize.width / 2;
     this.myBoxView.paper.attr({ x : nodeBoxX });
+
+    //  add the lines and text
+
+    this.myNode.branches.forEach(b => {
+        const x1 = nodeBoxX + ((b.LoR === "L") ? boxSize.width / 3 : 2 * boxSize.width / 3);
+        const y1 = boxSize.height;
+        const x2 = topsOfSubZoneBoxes[b.LoR].x;
+        const y2 = topsOfSubZoneBoxes[b.LoR].y;
+
+        const aLine = this.paper.line(x1, y1 - 8, x2, y2 + 8).attr({
+            strokeWidth: 10,
+            stroke: (b.onTrace ? arbor.constants.onTraceColor : "white")
+        });
+
+        const maskRect = this.paper.rect(0, boxSize.height, arbor.windowWidth, y2 - y1).attr({fill : "#fff"});
+        const tText = this.paper.text(x2, y2 - 4, b.relevantParentSplitLabel);
+        const newTextHalfWidth = tText.getBBox().width / 2;
+        tText.attr({ x : x2 - newTextHalfWidth});
+
+        const theLineGroup = this.paper.g(aLine, tText).attr({ mask : maskRect });
+
+        const tBranchDescription = this.myNode.attributeSplit.branchDescription(b.LoR);
+        theLineGroup.append(Snap.parse("<title>" + tBranchDescription + "</title>"));
+
+    });
 
     return ({
         width: Number(this.paper.attr("width")),

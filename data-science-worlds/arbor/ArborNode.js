@@ -5,7 +5,7 @@
  *
  * It has a unique ID (nodeID) to facilitate restoration from save
  * It holds its parent's ID as well.
- * It has a member (LorR) that tells if it's a "left" or "right" node.
+ * It has a member (LoR) that tells if it's a "left" or "right" node.
  *
  * If it happens to be the root node, parentID is null, and LorR is "root"
  *
@@ -62,14 +62,14 @@ Node = function (iParent, iLoR) {
  * @returns {*}
  */
 Node.prototype.findNodeDownstream = function (id) {
-    var out = null;
+    let out = null;
 
     if (id) {
         if (this.arborNodeID === id) {
             out = this;
         } else {
             this.branches.forEach(function (b) {
-                var tNode = b.findNodeDownstream(id);
+                const tNode = b.findNodeDownstream(id);
                 if (tNode) {
                     out = tNode;
                 }
@@ -116,10 +116,10 @@ Node.prototype.branchThisNode = function (iAttribute) {
     //  here is where we make the new nodes and constrict their Booleans.
     //  we add each of the (two) branches separately. Left first.
 
-    var tNewNode = new Node(this, "L"); //
+    const tNewNode = new Node(this, "L"); //
     this.branches.push(tNewNode);     //  array holds the LEFT branch
 
-    var uNewNode = new Node(this, "R"); //
+    const uNewNode = new Node(this, "R"); //
     this.branches.push(uNewNode);     //  array now holds LEFT and RIGHT branches
 
     /*
@@ -140,24 +140,24 @@ Node.prototype.stubThisNode = function () {
 
     arbor.eventDispatcher.dispatchEvent("changeNode");
 
-    var tEvent = new Event("changeTree");
+    let tEvent = new Event("changeTree");
     tEvent.why = "node stubbing";
     arbor.dispatchTreeEvent(tEvent);   //  results in a redraw of the tree VIEW.
 };
 
 Node.prototype.traceCaseInTree = function (c) {
-    var tIsCaseInThisNode = false;
-    var tSignOfTerminalNode = null;
+    let tIsCaseInThisNode = false;
+    let tSignOfTerminalNode = null;
 
     if (this.branches.length === 0) {       //  we are a terminal node
-        var tWholeFilter = this.filterArray.join(" && ");
+        const tWholeFilter = this.filterArray.join(" && ");
         tIsCaseInThisNode = (eval(tWholeFilter));
         if (tIsCaseInThisNode) {
             tSignOfTerminalNode = this.stopSign;
         }
     } else {
         this.branches.forEach(function (n) {
-            var tBranchTraceResult = n.traceCaseInTree(c);
+            const tBranchTraceResult = n.traceCaseInTree(c);
             if (tBranchTraceResult.inThisNode) {     //  doing it this way (not = ||) ensures traversal of entire tree
                 tIsCaseInThisNode = true;
                 tSignOfTerminalNode = tBranchTraceResult.terminalNodeSign;
@@ -185,22 +185,22 @@ Node.prototype.clearTrace = function() {
 
 Node.prototype.findNodeStats = function () {
 
-    var tCases = arbor.state.tree.casesByFilter(this.filterArray, this.missingArray);
-    var N = tCases.length;
+    const tCases = arbor.state.tree.casesByFilter(this.filterArray, this.missingArray);
+    const N = tCases.length;
 
-    var theSplit = arbor.state.dependentVariableSplit;
+    const theSplit = arbor.state.dependentVariableSplit;
 
     if (theSplit) {
 
-        var filter = arbor.state.dependentVariableSplit.oneBoolean;
+        const filter = arbor.state.dependentVariableSplit.oneBoolean;
         this.numerator = this.numberOfCasesWhere(tCases, filter);
         this.denominator = N;
 
-        var sum = 0;
-        var tDependentVarName = theSplit.attName;     //  dependent variable name
+        let sum = 0;
+        const tDependentVarName = theSplit.attName;     //  dependent variable name
 
         tCases.forEach(function (aCase) {
-            var c = aCase.values;
+            const c = aCase.values;
             if (theSplit.isCategorical) {
                 sum += eval(filter) ? 1 : 0;
             } else {
@@ -210,11 +210,11 @@ Node.prototype.findNodeStats = function () {
 
         this.mean = sum / N;
 
-        var sse = 0;
+        let sse = 0;
 
         tCases.forEach(function (aCase) {
-            var c = aCase.values;
-            var val = theSplit.isCategorical ? (eval(filter) ? 1 : 0) : c[tDependentVarName];
+            const c = aCase.values;
+            const val = theSplit.isCategorical ? (eval(filter) ? 1 : 0) : c[tDependentVarName];
             sse += (val - sum / N) * (val - sum / N);       //      (value - mean)**2
         });
 
@@ -231,8 +231,8 @@ Node.prototype.findNodeStats = function () {
  */
 Node.prototype.populateNode = function () {
 
-    var tParent = this.parentNode();
-    var tParentSplit = this.parentSplit(tParent);
+    const tParent = this.parentNode();
+    const tParentSplit = this.parentSplit(tParent);
 
     this.filterArray = tParent ? tParent.filterArray.slice(0) : [];     //  clone the array
     this.missingArray = tParent ? tParent.missingArray.slice(0) : [];     //  clone the array
@@ -269,9 +269,9 @@ Node.prototype.populateNode = function () {
 
 
 Node.prototype.numberOfCasesWhere = function (iCases, iBoolean) {
-    var out = 0;
-    iCases.forEach(function (aCase) {
-        var c = aCase.values;
+    let out = 0;
+    iCases.forEach(function ( aCase ) {
+        const c = aCase.values;
         if (eval(iBoolean)) {
             out += 1;
         }
@@ -283,8 +283,7 @@ Node.prototype.flipStopType = function () {
     this.stopSign = (this.stopSign === arbor.constants.diagnosisPlus) ? arbor.constants.diagnosisMinus : arbor.constants.diagnosisPlus;
     console.log("Switching node to " + this.stopSign);
 
-    //arbor.eventDispatcher.dispatchEvent("changeNode");       //  todo: figure out why we make this call!
-    var tEvent = new Event("changeTree");
+    let tEvent = new Event("changeTree");
     tEvent.why="flipping node plus-minus";
     arbor.dispatchTreeEvent(tEvent);
 };
@@ -294,7 +293,7 @@ Node.prototype.flipStopType = function () {
 What is the depth of this node?
  */
 Node.prototype.depth = function () {
-    var tParent = this.parentNode();
+    const tParent = this.parentNode();
     return (tParent) ? 1 + tParent.depth() : 0;
 };
 
@@ -305,18 +304,14 @@ Node.prototype.depthDownFromHere = function () {
     if (this.branches.length === 0) {
         return 0;
     } else {
-        var Ldepth = this.branches[0].depthDownFromHere() + 1;
-        var Rdepth = this.branches[1].depthDownFromHere() + 1;
+        const Ldepth = this.branches[0].depthDownFromHere() + 1;
+        const Rdepth = this.branches[1].depthDownFromHere() + 1;
         return (Ldepth > Rdepth) ? Ldepth : Rdepth;
     }
 };
 
-Node.prototype.branchCount = function () {
-    return this.branches.length;
-};
-
 Node.prototype.leafCount = function () {
-    var oLeafCount = 0;
+    let oLeafCount = 0;
     if (this.branches.length > 0) {
         this.branches.forEach(function (iBranch) {
             oLeafCount += iBranch.leafCount();
@@ -329,7 +324,7 @@ Node.prototype.leafCount = function () {
 };
 
 Node.prototype.descendantCount = function () {
-    var oLeafCount = 0;
+    let oLeafCount = 0;
     if (this.branches.length > 0) {
         this.branches.forEach(function (iBranch) {
             oLeafCount += (1 + iBranch.descendantCount());
@@ -345,7 +340,7 @@ Node.prototype.descendantCount = function () {
  * Result counts in the form {plusNumerator: , minusNumerator: , etc. }
  */
 Node.prototype.getResultCounts = function () {
-    var tOut = {
+    let tOut = {
         sampleSize: 0,
         plusNumerator: null,    //  number in this node (and descendants) that are truly POSITIVE
         plusDenominator: null,  //  number in this node ... that are diagnosed positive
@@ -390,7 +385,7 @@ Node.prototype.getResultCounts = function () {
         }
     } else {
         this.branches.forEach(function (ixBranchNode) {
-            var tRC = ixBranchNode.getResultCounts();
+            const tRC = ixBranchNode.getResultCounts();
             tOut.sumOfSquaresOfDeviationsOfLeaves += tRC.sumOfSquaresOfDeviationsOfLeaves;
 
             if (tRC.plusDenominator) {
@@ -424,7 +419,7 @@ Node.prototype.getResultCounts = function () {
  *      Malignant (+)
  */
 Node.prototype.getLeafText = function() {
-    var tText = "";
+    let tText = "";
 
     switch (this.stopSign) {
         case arbor.constants.diagnosisPlus:
@@ -442,7 +437,7 @@ Node.prototype.getLeafText = function() {
 };
 
 Node.prototype.toString = function () {
-    var out = "Node with " + this.cases.length + " cases";
+    let out = "Node " +  this.arborNodeID + " with " + this.denominator + " cases";
     if (this.attributeSplit) {
         out += " split on " + this.attributeSplit.attName;
     }
@@ -450,13 +445,13 @@ Node.prototype.toString = function () {
 };
 
 Node.prototype.friendlySubsetDescription = function () {
-    var out = "";
-    var tAllCasesText = "all of the cases";
-    var tParent = this.parentNode();
+    let out = "";
+    const tAllCasesText = "all of the cases";
+    const tParent = this.parentNode();
     if (tParent) {
-        var tDesc = tParent.friendlySubsetDescription();
+        const tDesc = tParent.friendlySubsetDescription();
 
-        var tNewLabel = (this.LoR === "L") ?
+        const tNewLabel = (this.LoR === "L") ?
             "(" + tParent.attributeSplit.attName + "&nbsp;=&nbsp;" + tParent.attributeSplit.leftLabel + ")" :
             "(" + tParent.attributeSplit.attName + "&nbsp;=&nbsp;" + tParent.attributeSplit.rightLabel + ")";
 
@@ -474,14 +469,16 @@ Node.prototype.friendlySubsetDescription = function () {
 
 Node.prototype.longDescription = function () {
 
-    var tResultCounts = this.getResultCounts();
+    const tDependentClause = arbor.informalDVBoolean;
 
-    var tDependentClause = arbor.informalDVBoolean;
-    var tProportionText = "p(" + tDependentClause + ") = " + this.mean.toFixed(3);
-    var tMeanText = "\u03bc(" + arbor.state.dependentVariableSplit.attName + ") = " + this.mean.toFixed(0);
-    var tMSDtext = "SSD ratio: " + (tResultCounts.ssdFraction ? (tResultCounts.ssdFraction).toFixed(2) : "N/A");
+/*
+    const tResultCounts = this.getResultCounts();
+    const tProportionText = "p(" + tDependentClause + ") = " + this.mean.toFixed(3);
+    const tMeanText = "\u03bc(" + arbor.state.dependentVariableSplit.attName + ") = " + this.mean.toFixed(0);
+    const tMSDtext = "SSD ratio: " + (tResultCounts.ssdFraction ? (tResultCounts.ssdFraction).toFixed(2) : "N/A");
+*/
 
-    var out = "";
+    let out = "";
     if (!this.parentNode()) {   //  dependent variable only
         out += this.positiveNegativeDescription() + "<br>&mdash;&mdash;<br>";
     }
@@ -500,9 +497,9 @@ Node.prototype.longDescription = function () {
 };
 
 Node.prototype.positiveNegativeDescription = function() {
-    var tSplit = arbor.state.dependentVariableSplit;
+    const tSplit = arbor.state.dependentVariableSplit;
 
-    var out = "In this scenario, <br>";
+    let out = "In this scenario, <br>";
     out += "'Positive' means " + tSplit.leftLabel + " and 'negative' means " + tSplit.rightLabel + ".";
 
     return out;

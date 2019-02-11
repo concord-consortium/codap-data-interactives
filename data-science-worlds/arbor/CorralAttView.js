@@ -1,7 +1,7 @@
-CorralAttView = function (iAtt, iPanel) {
+CorralAttView = function (iAtt, iCorralView) {
     this.attInBaum = iAtt;
     this.labelText = this.attInBaum.attributeTitle;
-    this.panel = iPanel;
+    this.panel = iCorralView;
     this.w = arbor.constants.attrWidth;
     this.h = arbor.constants.attrHeight;
 
@@ -25,18 +25,18 @@ CorralAttView = function (iAtt, iPanel) {
     //  new handlers using group
 
     function movehandler(dx, dy, x, y, event) {
-        this.panel.doDrag(dx, dy, x, y, event);
-        console.log("move! (CorralAttView)");
+        arbor.treePanelView.doDrag(dx, dy, x, y, event);
+        //  console.log("move! (CorralAttView)");
     }
 
     function starthandler(x, y, event) {
-        this.panel.setLastMouseDownNodeView( this );
+        arbor.corralView.setLastMouseDownNodeView( this );
         console.log("theGroup.mousedown in " + this.labelText + " event: " + JSON.stringify(event));
-        this.panel.startDrag(this.attInBaum, this.paper, event);
+        arbor.treePanelView.startDrag(this.attInBaum, this.paper, event);
     }
 
     function endhandler( object ) {
-        console.log("end! " + JSON.stringify(object));
+        console.log("end drag! " + JSON.stringify(object));
     }
 
     this.theGroup.drag( movehandler, starthandler, endhandler, this, this, this );
