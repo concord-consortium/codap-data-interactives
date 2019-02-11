@@ -55,6 +55,7 @@ var arbor = {
 
     analysis: null,        //      connects to CODAP
     treePanelView: null,
+    corralView : null,
     attsInBaum: [],         //  the array of all the attributes in the tree
 
     focusNode: null,       //  currently-selected node
@@ -131,8 +132,8 @@ var arbor = {
         return new Promise(function (resolve, reject) {
             this.windowWidth = window.innerWidth;
             window.addEventListener("resize", this.resizeWindow);
-            this.treePanelView = new TreePanelView("treePaper");  //  the main view.
-            this.treePanelView.freshTreeView();
+            this.corralView = new CorralView( );
+            this.treePanelView = new TreePanelView( );  //  the main view.
 
             arbor.redisplay();
             resolve();
@@ -376,9 +377,11 @@ var arbor = {
      * @param iEvent
      */
     resizeWindow: function (iEvent) {
-        this.windowWidth = window.innerWidth;
-        arbor.treePanelView.setUpToDrawTreePanelView();
+        arbor.windowWidth = window.innerWidth - 44;
+        console.log("WINDOW resize to width: " + arbor.windowWidth);
+
         arbor.treePanelView.redrawEntirePanel();
+        arbor.corralView.refreshCorral();
     },
 
 
@@ -397,10 +400,15 @@ var arbor = {
     },
 
     redisplay: function () {
-        console.log("Redisplay ------------------------");
+        console.log("Redisplay (in arbor.js) ------------------------");
         this.fixDependentVariableMechanisms();  //  sets appropriate label text
         focusSplitMgr.displayAttributeConfiguration();   //  the HTML on the main page
         this.treePanelView.redrawEntirePanel();
+        this.corralView.refreshCorral();
+    },
+
+    displayWidth : function() {
+        return window.innerWidth - 44;
     },
 
     setDependentVariableByName: function (iAttName) {
@@ -636,6 +644,11 @@ var arbor = {
 
     dispatchTreeEvent: function (iEvent) {
         this.eventDispatcher.dispatchEvent(iEvent);
+    },
+
+    paperString : function(p) {
+        return "(x, y) = (" + Math.round(Number(p.attr("x"))) + ", " + Math.round(Number(p.attr("y")))
+            + ") ... (w, h) = (" + Math.round(Number(p.attr("width"))) + ", " + Math.round(Number(p.attr("height"))) + ")";
     }
 
 };
@@ -714,7 +727,10 @@ arbor.constants = {
         "leftRight": "art/left-right.png",
         "configure": "art/configure.png",
         "trash": "art/trash.png"
-    }
+    },
+
+    kTreePanelDOMName : "treePaper",
+    kCorralDOMName : "corral"
 
 
 };
