@@ -52,7 +52,7 @@ NodeBoxView = function (iNode, iZoneView) {
 
     this.paper.mouseup(function (iEvent) {
 
-        var tMouseDownPlace = this.myZoneView.myPanel.lastMouseDownNodeView;
+        const tMouseDownPlace = arbor.corralView.lastMouseDownNodeView;
 
         if (tMouseDownPlace) {
             if (this === tMouseDownPlace) {     //  it's a click
@@ -64,6 +64,7 @@ NodeBoxView = function (iNode, iZoneView) {
 
             //  dragged in from the corral, so we branch the node by that attribute
             else if (tMouseDownPlace instanceof CorralAttView) {
+                console.log("Dragged into " + this.myNode + " from " + tMouseDownPlace.labelText);
                 this.myNode.branchThisNode(tMouseDownPlace.attInBaum);
             }
 
@@ -126,18 +127,16 @@ NodeBoxView.prototype.adjustPaperSize = function() {
 
     this.paper.attr({
         height : this.kStripeHeight * this.stripes.length,
-        weight : tMaxWidthStripe.minimumWidth()
+        width : tMaxWidthStripe.minimumWidth()
     });
 };
 
 NodeBoxView.prototype.redrawNodeBoxView = function () {
 
-    console.log("Redraw node box: " + this.myNode.arborNodeID);
+    //      console.log("Redraw node box: " + this.myNode.arborNodeID);
     let tStripe = null;
     this.paper.clear(); //  nothing on this paper
     this.stripes = [];  //  fresh set of stripes
-
-    const tPad = arbor.constants.treeObjectPadding;
 
     //  The tool tip for the box itself
     this.paper.append(Snap.parse("<title>" + this.myNode.longDescription() + "</title>"));
@@ -159,7 +158,7 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
     this.makeRootStripe();      //  make root node stripe
 
     if (tNoCases) {
-        tStripe = new Stripe(this, {text: "no cases", textColor: "#696", bgColor: tDataBackgroundColor}, null);
+        const tStripe = new Stripe(this, {text: "no cases", textColor: "#696", bgColor: tDataBackgroundColor}, null);
         this.stripes.push(tStripe);
     } else {
 
@@ -188,7 +187,7 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
     };
 
     this.stripes.forEach(function (s) {
-        s.resize(tArgs);
+        s.resizeStripe(tArgs);
         this.paper.append(s.paper);
         tArgs.y += this.kStripeHeight;
     }.bind(this));
@@ -201,7 +200,6 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
 
 NodeBoxView.prototype.makeRootStripe = function () {
     var tText;
-    var tStripe = null;
 
     if (this.isRoot()) {   //  this is a root node
 
@@ -211,7 +209,7 @@ NodeBoxView.prototype.makeRootStripe = function () {
             tText = "Predict " + arbor.constants.kMu + "(" + arbor.state.dependentVariableSplit.attName + ")";
         }
 
-        tStripe = new Stripe(
+        const tStripe = new Stripe(
             this,
             {text: tText, textColor: "white", bgColor: arbor.state.dependentVariableSplit.attColor},
             "dependent-variable"
@@ -222,11 +220,10 @@ NodeBoxView.prototype.makeRootStripe = function () {
 
 
 NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
-    var tText = "";
-    var tStripe = null;
-    var tProportion = (this.myNode.denominator === 0) ? "null" : this.myNode.numerator / this.myNode.denominator;
-
-    var tProportionText = (this.myNode.denominator !== 0) ? "p = " + tProportion.newFixed(4) : "n/a";
+    let tText = "";
+    let tProportion = (this.myNode.denominator === 0) ? "null" : this.myNode.numerator / this.myNode.denominator;
+    let tStripe = null;
+    let tProportionText = (this.myNode.denominator !== 0) ? "p = " + tProportion.newFixed(4) : "n/a";
 
     if (arbor.options.usePercentages()) {
         tProportionText = (this.myNode.denominator !== 0) ? "(" + (tProportion * 100).toFixed(1) + "%)" : "n/a";
@@ -266,9 +263,9 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
 };
 
 NodeBoxView.prototype.makeRegressionDataStripes = function ( iColors ) {
-    var tText = "";
-    var tStripe = null;
-    var tMeanText = arbor.state.dependentVariableSplit.isCategorical ?
+    let tText = "";
+    let tStripe = null;
+    let tMeanText = arbor.state.dependentVariableSplit.isCategorical ?
         "p = " + this.myNode.mean.newFixed(3) :
         arbor.constants.kMu + " = " + this.myNode.mean.newFixed(3);      //  that's unicode "mu"
 
