@@ -680,13 +680,11 @@
       "action": "create",
       "resource": "component",
       "values": {
-        "name": "name-slider",
         "title": "title-slider",
         "type": "slider",
         "globalValueName": "g1",
         "lowerBound": -10,
-        "upperBound": 10,
-        "value": 0
+        "upperBound": 10
       }
     }
   },
