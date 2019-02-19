@@ -73,7 +73,7 @@ class HelpLink extends React.Component {
 
   render() {
     return (
-        <scan className="App-help" onClick={this.handleHelpClick}>Show me</scan>
+        <scan className="App-help" onClick={this.handleHelpClick}>Show me.</scan>
     )
   }
 }
@@ -206,7 +206,17 @@ class TutorialView extends React.Component {
       return iDescription.operation === iNotification.values.operation && !iDescription.requiresSpecialHandling &&
           (!iDescription.prereq || this.isAccomplished( iDescription.prereq) &&
               (!iDescription.constraints || iDescription.constraints.some( function( iConstraint) {
-                return iNotification.values[iConstraint.property] && iNotification.values[iConstraint.property] === iConstraint.value;
+                let isBool = typeof iConstraint.value === 'boolean',
+                    tNotificationHasResult = Boolean( iNotification.values.result),
+                    tNotificationValue;
+                if( tNotificationHasResult) {
+                  tNotificationValue = isBool ? Boolean(iNotification.values.result[iConstraint.property]) :
+                      iNotification.values.result[iConstraint.property];
+                }
+                else {
+                  tNotificationValue = iNotification.values[iConstraint.property];
+                }
+                return tNotificationValue === iConstraint.value;
               })));
     }.bind( this));
     if (tTask) {

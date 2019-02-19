@@ -3,7 +3,7 @@ hasMouse = !('ontouchstart' in window);
 taskDescriptions = {
   descriptions: [
     {
-      key: 'MakeScatterplot', label: 'Make a scatterplot of height vs age',
+      key: 'MakeScatterplot', label: 'Make a scatterplot of height vs age.',
       url: './resources/MakeScatterplot.mp4',
       operation: 'attributeChange', type: '',
       requiresSpecialHandling: true,
@@ -13,9 +13,10 @@ taskDescriptions = {
       </div>
     },
     {
-      key: 'SelectCases', label: 'Drag a selection rectangle around a subset of the points',
+      key: 'SelectCases', label: 'Drag a selection rectangle around a subset of the points.',
       url: './resources/SelectCases.mp4',
-      operation: 'selectCases', type: '',
+      operation: 'selectCases',
+      constraints: [ {property: 'cases', value: true}],
       prereq: 'MakeScatterplot',
       feedback: <div>
         <p>OK. Cases are selected.</p>
@@ -23,7 +24,7 @@ taskDescriptions = {
       </div>
     },
     {
-      key: 'HideUnselected', label: 'Hide the unselected cases',
+      key: 'HideUnselected', label: 'Hide the unselected cases.',
       url: './resources/HideUnselected.mp4',
       operation: 'hideUnselected', type: '',
       prereq: 'SelectCases',
@@ -33,16 +34,17 @@ taskDescriptions = {
       </div>
     },
     {
-      key: 'Deselect', label: 'Deselect all cases, including the ones in the table',
+      key: 'Deselect', label: 'Deselect all cases, including the ones in the table.',
       url: './resources/Deselect.mp4',
-      operation: 'deselectAll', type: '',
+      operation: 'selectCases',
+      constraints: [ {property: 'cases', value: false}],
       prereq: 'HideUnselected',
       feedback: <div>
         <p>Selection is important, but so is <em>deselection!</em></p>
       </div>
     },
     {
-      key: 'Rescale', label: 'Rescale the graph',
+      key: 'Rescale', label: 'Rescale the graph.',
       url: './resources/Rescale.mp4',
       operation: 'rescaleGraph', type: '',
       prereq: 'HideUnselected',
@@ -52,7 +54,7 @@ taskDescriptions = {
       </div>
     },
     {
-      key: 'MakeLegend', label: 'Add Sex as a legend to the scatterplot',
+      key: 'MakeLegend', label: 'Add Sex as a legend to the scatterplot.',
       url: './resources/MakeLegend.mp4',
       operation: 'legendAttributeChange', type: 'DG.GraphModel',
       constraints: [ {property: 'attributeName', value: 'Sex'}],
