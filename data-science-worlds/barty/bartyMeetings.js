@@ -29,7 +29,7 @@
  * global to describe the secret meeting
  */
 
-var meeting;
+let meeting;
 
 meeting = {
     day : null,     //   the weekday INDEX (Sun = 0)
@@ -64,13 +64,13 @@ meeting = {
         this.number = $("#meetingSizeSelector").val();
         this.where = $("#meetingLocationSelector").val();
         this.day = $("#meetingDaySelector").val();
-        if (this.where == 0) {
-            var tStationAbbrs = Object.keys( this.possibleStations );
+        if (this.where === 0) {
+            const tStationAbbrs = Object.keys( this.possibleStations );
             this.where = TEEUtils.pickRandomItemFrom( tStationAbbrs );
         }
-        if ( this.hour == 0 ) this.hour = TEEUtils.pickRandomItemFrom( this.possibleTimes );
-        if ( this.day == 0 )    this.day = TEEUtils.pickRandomItemFrom( [0, 1, 2, 3, 4, 5, 6] );
-        if ( this.number == 0)  this.number = TEEUtils.pickRandomItemFrom( this.possibleSizes );
+        if ( this.hour === 0 ) this.hour = TEEUtils.pickRandomItemFrom( this.possibleTimes );
+        if ( this.day === 0 )    this.day = TEEUtils.pickRandomItemFrom( [0, 1, 2, 3, 4, 5, 6] );
+        if ( this.number === 0)  this.number = TEEUtils.pickRandomItemFrom( this.possibleSizes );
 
         $("#secret").text( this.toString());
     },
@@ -78,12 +78,14 @@ meeting = {
 
     adjustCount : function(iFrom, iTo, iDay, iHour, iCount ) {
 
-        var result = Number(iCount);
-        if (($.inArray( iFrom, meeting.origins) != -1)
-            && iTo == meeting.where
-            && iDay == meeting.day
-            && iHour == this.hour) {
+        let result = Number(iCount);
+        if (($.inArray( iFrom, meeting.origins) !== -1)
+            && iTo === meeting.where
+            && iDay === meeting.day
+            && iHour === this.hour) {
             result += Math.round( this.number / this.origins.length );
+
+            console.log("Adjust count from " + iCount + " to " + result);   //  for debugging
         }
         return result;
     },

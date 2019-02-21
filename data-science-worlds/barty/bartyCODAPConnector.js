@@ -28,7 +28,10 @@
 
 barty.connector = {
 
+    caseTableEverMade : false,
+
     initialize : async function () {
+        this.caseTableEverMade = false;
         await codapInterface.init(this.iFrameDescriptor, null);
         await pluginHelper.initDataSet(this.bartyDataContextSetupObject);
 
@@ -47,6 +50,20 @@ barty.connector = {
 
     },
 
+    makeTableAppear : function() {
+        if (!this.caseTableEverMade) {
+            codapInterface.sendRequest({
+                "action": "create",
+                "resource": "component",
+                "values": {
+                    "type": "caseTable",
+                    "name": barty.constants.kBARTYDataSetName
+                }
+            })
+            this.caseTableEverMade = true;
+        }
+    },
+
     outputDataItems : function( iValArray ) {
         pluginHelper.createItems(iValArray, barty.connector.kBARTYDataSetName);
     },
@@ -54,7 +71,7 @@ barty.connector = {
     bartyDataContextSetupObject : {
         name : barty.constants.kBARTYDataSetName,
         title : barty.constants.kBARTYDataSetTitle,
-        description : "BART hourly data, not pre-organized",
+        description : "BART hourly data",
         collections : [
             {
                 name: barty.constants.kBARTYCollectionName,
@@ -75,7 +92,7 @@ barty.connector = {
                     {name: "hour", type: 'numeric', precision : 0, description : "hour (24-hour clock)"},
                     {name: "date", type: 'categorical', description : "the date"},
                     {name: "riders", type: 'numeric', precision : 0,
-                        description : "number of riders leaving the system"},
+                        description : "number of riders leaving the system that hour"},
                     {name: "startAt", type: 'categorical',
                         description : "station where these passengers entered BART"},
                     {name: "endAt", type: 'categorical',

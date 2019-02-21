@@ -19,17 +19,18 @@
 
 acs.constants = {
 
-    version: "001d",
+  version: "001d",
 
-    kACSDataSetName: "ACSdata",
-    kACSDataSetTitle: "ACSdata",
-    kACSCollectionName: "people",
-    kACSCaseTableName: "People from ACS",
+  kACSDataSetName: "ACSdata",
+  kACSDataSetTitle: "ACSdata",
+  kACSCollectionName: "people",
+  kACSCaseTableName: "People from ACS",
 
 
-    kBasePhpURL: {
-        local: "http://localhost:8888/plugins/acs/acs.php",
-        xyz: "https://codap.xyz/plugins/acs/acs.php",
-        eeps: "https://www.eeps.com/codap/acs/acs.php"
-    }
-;
+  kBasePhpURL: {
+    concord: "https://codap.concord.org/data-science-worlds/acs/acs.php",
+    local: "http://localhost:8888/plugins/acs/acs.php",
+    xyz: "https://codap.xyz/plugins/acs/acs.php",
+    eeps: "https://www.eeps.com/codap/acs/acs.php"
+  }
+};

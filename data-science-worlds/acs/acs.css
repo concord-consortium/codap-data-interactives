@@ -16,7 +16,7 @@
  *
  */
 
-body, #summary, #atts, #about  {
+body, #summary, #atts, #about, #variables  {
     margin : 0px;
     /*height : 320px;*/
     font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;

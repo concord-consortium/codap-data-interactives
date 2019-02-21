@@ -1,6 +1,10 @@
 <?php
+
 $options = array( "date_format" => DATE_RFC2822 );
 date_default_timezone_set('America/Los_Angeles');
+$now =  date("Y-m-d H:i:s (T)");     //  for debug purposes
+$tableName = "hours";       //  the name of the table in the database tat holds all the hourly data
+
 /**
     This php script feeds BART data, stored in MySQL, to a DSG Data Interactive.
 
@@ -42,12 +46,17 @@ include 'barty.establishCredentials.php';
     https://stackoverflow.com/questions/60174/how-can-i-prevent-sql-injection-in-php
 */
 function    CODAP_MySQL_connect( $host, $user, $pass, $dbname ) {
+    $now =  date("Y-m-d H:i:s (T)");     //  for debug purposes
+
     try {
         $DBH = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);	// the database handle
         $DBH->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        file_put_contents("bartdebug.txt", "\n\n----  $now connecting to " . $dbname, FILE_APPEND);
     } catch (PDOException $e) {
         print "Error connecting to the $dbname database!: " . $e->getMessage() . "<br/>";
+        file_put_contents("bartdebug.txt", "\n\n----  $now failed to connect to " . $dbname, FILE_APPEND);
+
         die();
     }
 
@@ -98,9 +107,8 @@ function console_log( $data ){
 */
 //	print_r($_GET);
 	
-file_put_contents("bartdebug.txt", "\n\n in PHP " . date(DATE_RFC2822) . " post is: " . implode(" | ",$_REQUEST) , FILE_APPEND);
+file_put_contents("bartdebug.txt", "\n\n----  $now in PHP, post is: " . implode(" | ",$_REQUEST) , FILE_APPEND);
 
-$now =  date("Y-m-d H:i:s (T)");     //  for debug purposes
 
 $command = $_REQUEST["c"];     //  this is the overall command, the only required part of the POST
 
@@ -116,8 +124,8 @@ if (isset($_REQUEST["w"])) {
 if (isset($_REQUEST["d0"])) {
     $d0 = $_REQUEST["d0"];
     $d1 = $_REQUEST["d1"];
-//    $dateRange = " ( Bdate BETWEEN '" . $d0 . "' AND '" . $d1 . "' ) ";   //  note inclusive
-    $dateRange = " ( Bdate BETWEEN :d0 AND :d1 ) ";
+//    $dateRange = " ( date BETWEEN '" . $d0 . "' AND '" . $d1 . "' ) ";   //  note inclusive
+    $dateRange = " ( date BETWEEN :d0 AND :d1 ) ";
     $params["d0"] = $d0;
     $params["d1"] = $d1;
 } else {
@@ -127,7 +135,6 @@ if (isset($_REQUEST["d0"])) {
 if (isset($_REQUEST["h0"])) {
     $h0 = $_REQUEST["h0"];
     $h1 = $_REQUEST["h1"];
-//    $hourRange = " AND ( hour BETWEEN " . $h0 . " AND " . (intval($h1) - 1) . " ) ";    //  note inclusive
     $hourRange = " AND ( hour BETWEEN :h0 AND :h1 ) ";    //  note inclusive
     $params["h0"] = $h0;
     $params["h1"] = intval($h1) - 1;
@@ -137,22 +144,16 @@ if (isset($_REQUEST["h0"])) {
 
 if (isset($_REQUEST["dow"])) {
     $dow = $_REQUEST["dow"];               //      numerical day of week Sun = 1 in MySQL (Sun = 0 is js)
-//    $dowClause = " AND DAYOFWEEK( Bdate ) = " . (intval($dow) + 1) . " ";
-    $dowClause = " AND DAYOFWEEK( Bdate ) = :dow ";
+    $dowClause = " AND DAYOFWEEK( date ) = :dow ";
     $params["dow"] = intval($dow) + 1;
 } else {
     $dowClause = " ";
 }
 
 //  the variable list part of the (long) BART query
-$varList = "id, Bdate, DAYOFWEEK(Bdate) as dow, hour, " .
-            "passengers, origin, destination ";
+$varList = "id, date, DAYOFWEEK(date) as dow, hour, riders, origin, destination ";
 
 if ($what == "counts") $varList = "COUNT(*)";
-
-//  How the JOIN clauses have to be
-$joinList = "";	//"\nJOIN stations AS entryT ON (entryT.abbr2 = X.origin) " .
-            	//"JOIN stations AS exitT ON (exitT.abbr2 = X.destination) " ;
 
 $stationClause = "";
 
@@ -160,7 +161,6 @@ $stationClause = "";
 
 if (isset($_REQUEST["stn0"])) {
     $stn0 = $_REQUEST["stn0"];
-//    $stationClause .= "AND origin = '" . $stn0 . "' ";
     $stationClause .= "AND origin = :stn0 ";
     $params["stn0"] = $stn0;
 }
@@ -169,21 +169,19 @@ if (isset($_REQUEST["stn0"])) {
 
 if (isset($_REQUEST["stn1"])) {
     $stn1 = $_REQUEST["stn1"];
-//    $stationClause .= "AND destination = '" . $stn1 . "' ";
     $stationClause .= "AND destination = :stn1 ";
     $params["stn1"] = $stn1;
 }
 
-$orderClause = "";      //      "\nORDER BY Bdate, hour";
+$orderClause = "";      //      "\nORDER BY date, hour";
 
 
 //  todo: include weekdays
 
-$query = "SELECT " . $varList . " FROM hours  \nWHERE " . $dateRange . 
-	$hourRange . $dowClause . $stationClause;
+$query = "SELECT $varList FROM $tableName \n      WHERE " . $dateRange . $hourRange . $dowClause . $stationClause;
 
 $query = stripcslashes( $query );
-file_put_contents("bartdebug.txt", "\n\n----  " . date("Y-m-d H:i:s (T)") . " submitting query: \n" . $query, FILE_APPEND);
+file_put_contents("bartdebug.txt", "\n\n----  " . $now . " submitting query: \n      " . $query, FILE_APPEND);
 
 //  connect to the database
 $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);
@@ -191,7 +189,7 @@ $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);
 //  submit the query and receive the results
 $rows = CODAP_MySQL_getQueryResult($DBH, $query, $params);
 
-file_put_contents("bartdebug.txt", "\n    " . date("Y-m-d H:i:s (T)") . " " . $command . "  got " . count($rows) . " row(s)" , FILE_APPEND);
+file_put_contents("bartdebug.txt", "\n      $now " . $command . " got " . count($rows) . " row(s)" , FILE_APPEND);
 
 //  actually get the data back to the javascript:
 echo json_encode($rows);

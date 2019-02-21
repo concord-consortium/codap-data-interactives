@@ -24,7 +24,8 @@ limitations under the License.
 
 URLs:   http://localhost:8888/barty/barty.html
 
-            local:  http://localhost:8888/plugins/barty/barty.html
+            local (MAMP):  http://localhost:8888/plugins/barty/barty.html
+            local (tim using cloned Concord repository):  http://localhost:8888/concord-plugins/data-science-worlds/barty/barty.html
 
             xyz:    https://codap.xyz/plugins/barty/barty.html
 
@@ -36,15 +37,19 @@ URLs:   http://localhost:8888/barty/barty.html
 <!--
 
 HOW TO DEPLOY THIS THING
-    I develop with a local version of the data set.
-    AFTER UPLOAD, you have to change the base URL to point to eeps for the php.
+    I (Tim) develop with a local version of the data set (MAMP).
+    AFTER UPLOAD, you have to change the base URL to point to eeps or concord for the php.
 
-    That's in barty.js at about line 70
+    You will find relevant material in barty.constants.js (about line 40) and in establishCredentials.php.
+    Also in the credential file itself, which is not in the reporitory for security reasons.
 
-    If you have to change the php, you will need to reupload THAT as well, and edit it to point to the eeps-based
-    data files.
+    Another key variable is "whence" in constants.
 
-    Then, fix the passwords, etc. at about line 90.
+    Look in the github wiki for detailed instructions.
+    https://github.com/concord-consortium/codap-data-interactives/wiki/Configuration
+
+    If you have to change the php, you will need to reupload THAT as well, and edit it to point to the appropriate
+    data files. Then, fix the passwords, etc. at about line 90.
 
     Do this editing using CyberDuck or Fetch.
 
@@ -84,6 +89,16 @@ HOW TO DEPLOY THIS THING
             $("#tabs").tabs();
             barty.initialize();
         });
+        $( "#dateControl" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            /*
+                        minDate : barty.constants.kMinDateString,
+                        maxDate : barty.constants.kMaxDateString
+            */
+        });
+
+
     </script>
 
 </head>
@@ -112,8 +127,8 @@ HOW TO DEPLOY THIS THING
         <table width="100%" style="padding: 6px; margin-bottom:6px; background-color:#ddf;">
             <tr>
                 <td style="padding: 12px">
-                    Click the <b>get data</b> button to obtain a table with data from a sample of BART riders
-                    from the 2015 Bay Area Rapid Transit (BART) ridership reports.
+                    Click the <b>get data</b> button to get a sample of BART data
+                    from Bay Area Rapid Transit (BART) ridership reports.
 
                 </td>
             </tr>
@@ -249,12 +264,12 @@ HOW TO DEPLOY THIS THING
 
     <div id="backgroundTab">
 
-        <p>This setup gives you a window into data on about 120 million BART exits in 2015.
+        <p>This setup gives you a window into data on almost 500 million BART exits from 2015 through 2018.
             Each record represents one hour at a station,
             recording how many people exited that station during the hour.
             There is a separate record from each of the
             other stations in the BART system.</p>
-        <p>As of version 002, data include all of 2015!</p>
+        <p>As of version 002k, data include all of 2015 through 2018</p>
         <p>Useful Variables</p>
         <ul>
             <li><strong>riders</strong>: number of exits during that hour.
@@ -334,13 +349,6 @@ HOW TO DEPLOY THIS THING
     </div>
 
 
-    <!--
-        <div id="debugTab">
-            <span id="query">PHP info.</span><br>
-            <span id="secret"></span>
-
-        </div>
-    -->
 
 </div>
 

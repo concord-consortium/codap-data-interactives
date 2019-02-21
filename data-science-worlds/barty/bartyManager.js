@@ -65,7 +65,7 @@ barty.manager = {
 
     /**
      * Read the UI controls and set up properties so that the data search will be correct.
-     *  Also gets the names (abbr2's) of the stations.
+     *  Also gets the names (abbr4's) of the stations.
      */
     getDataSearchCriteria: function () {
 
@@ -75,20 +75,52 @@ barty.manager = {
         this.queryData.d0 = $("#dateControl").val();              //  String of the date
         this.queryData.nd = Number($("#numberOfDaysControl").val());
 
-        var tDateZero = new Date(this.queryData.d0);
-        var tParsedD0 = tDateZero.getTime() + 60000 * tDateZero.getTimezoneOffset();
+        const tDateZero = new Date(this.queryData.d0);
+        const tParsedD0 = tDateZero.getTime() + 60000 * tDateZero.getTimezoneOffset();
 
         this.queryData.weekday = TEEUtils.dateNumberToDayOfWeek(tParsedD0);
         this.queryData.useWeekday = $("#useWeekday").is(":checked");
         this.queryData.useHour = $("#useHour").is(":checked");
 
-        var tDt = (this.queryData.nd - 1) * 86400 * 1000 * (this.queryData.useWeekday ? 7 : 1);
-        var tD1 = new Date(tParsedD0 + tDt);
+        const tDt = (this.queryData.nd - 1) * 86400 * 1000 * (this.queryData.useWeekday ? 7 : 1);
+        const tD1 = new Date(tParsedD0 + tDt);
         this.queryData.d1 = tD1.ISO_8601_string();
 
         return this.queryData;
     },
 
+    /**
+     * This function is the only place in this file that actually communicates with php, via the fetch command.
+     *
+     * @param iCommands     The commands to send. This is an object whose keys (string) are the commands in php, and the values are the values.
+     * @returns {Promise<any>}
+     */
+    sendCommand: async function (iCommands) {
+
+        let theBody = new FormData();
+        for (let key in iCommands) {
+            if (iCommands.hasOwnProperty(key)) {
+                theBody.append(key, iCommands[key])
+            }
+        }
+        //  theBody.append("whence", barty.constants.whence);      //  here is where the JS tells the PHP which server we're on.
+
+        let theRequest = new Request(
+            barty.constants.kBasePhpURL[barty.constants.whence],
+            {method: 'POST', body: theBody, headers: new Headers()}
+        );
+
+        try {
+            const theResult = await fetch(theRequest);
+            if (theResult.ok) {
+                return await theResult.json();
+            } else {
+                console.error("bartyManager.sendCommand() error: " + theResult.statusText);
+            }
+        } catch (msg) {
+            console.log('fetch sequence error: ' + msg);
+        }
+    },
 
     /**
      * assembles the "POST" string that $.ajax() needs to communicate the variables php needs to assemble
@@ -101,18 +133,17 @@ barty.manager = {
      * @param   iWhat       what thing we're getting, data or just counts
      * @returns {string}
      */
-    assembleQueryDataString: function (iCommand, iWhat) {
+    assembleQueryCommandObject: function (iCommand, iWhat) {
 
-        var dataString = "c=" + iCommand + "&whence=" + barty.constants.whence;
-        var tStationClauseString = "";
+        let commandObject = {c: iCommand, whence: barty.constants.whence};
 
         switch (iWhat) {
             case barty.constants.kGetData:
-                dataString += "&w=data";
+                commandObject["w"] = "data";
                 break;
 
             case barty.constants.kGetCounts:
-                dataString += "&w=counts";
+                commandObject["w"] = "counts";
                 break;
         }
 
@@ -123,34 +154,34 @@ barty.manager = {
                 break;
 
             case "byRoute":
-                tStationClauseString = "&stn1=" + this.queryData.stn1;   //  the abbr2 of that station
-                tStationClauseString += "&stn0=" + this.queryData.stn0;   //  the abbr2 of that station
+                commandObject["stn1"] = this.queryData.stn1;
+                commandObject["stn0"] = this.queryData.stn0;
                 break;
 
             case "byArrival":
-                tStationClauseString = "&stn1=" + this.queryData.stn1;   //  the abbr2 of that station
+                commandObject["stn1"] = this.queryData.stn1;
                 break;
 
             case "byDeparture":
-                tStationClauseString = "&stn0=" + this.queryData.stn0;   //  the abbr2 of that station
+                commandObject["stn0"] = this.queryData.stn0;
                 break;
 
             default:
                 dataString += " true LIMIT 10";
         }
 
-        dataString += "&d0=" + this.queryData.d0 + "&d1=" + this.queryData.d1;
+        commandObject["d0"] = this.queryData.d0;
+        commandObject["d1"] = this.queryData.d1;
+
         if (this.queryData.useHour) {
-            dataString += "&h0=" + this.queryData.h0 + "&h1=" + this.queryData.h1;
+            commandObject["h0"] = this.queryData.h0;
+            commandObject["h1"] = this.queryData.h1;
         }
         if (this.queryData.useWeekday) {
-            dataString += "&dow=" + this.queryData.weekday;
+            commandObject["dow"] = this.queryData.weekday;
         }
 
-        dataString += tStationClauseString; //  append the "station clause"
-
-        $("#query").html("<strong>data string for PHP</strong> : " + dataString);
-        return dataString;
+        return commandObject;       //      dataString;
     },
 
     /**
@@ -160,14 +191,14 @@ barty.manager = {
      * @returns {*}
      */
     estimateCount: function (iCommand, iQueryData) {
-        var days = iQueryData.nd;
+        const days = iQueryData.nd;
 
-        var hoursPerDay = 20;
+        let hoursPerDay = 20;
         if (iQueryData.useHour) hoursPerDay = iQueryData.h1 - iQueryData.h0;
 
-        var totalHours = days * hoursPerDay;
+        const totalHours = days * hoursPerDay;
 
-        var estimate;
+        let estimate = 42;
 
         switch (iCommand) {
             case "betweenAny":
@@ -196,45 +227,12 @@ barty.manager = {
         barty.constants.queryTypes.forEach(function (iQT) {
             barty.manager.caseCounts[iQT] = null;   //  set dirty
 
-            var tCountEstimate = barty.manager.estimateCount(iQT, barty.manager.queryData);
+            const tCountEstimate = barty.manager.estimateCount(iQT, barty.manager.queryData);
 
             barty.manager.possibleCosts[iQT] = tCountEstimate + " cases est";   //  temporary
             barty.ui.fixUI();        //  temporary
 
-
-
             if (tCountEstimate <= 1500) {
-/*
-                var tDataString = barty.manager.assembleQueryDataString(iQT, barty.constants.kGetCounts);
-                console.log("Data query string: " + tDataString);
-
-
-                $.ajax({
-                    type: "post",
-                    url: barty.constants.kBaseURL,
-                    data: tDataString,
-                    success: weGotPrice
-                });
-
-                function weGotPrice(iData) {
-                    var jData = JSON.parse(iData)[0];     //  first object in the array
-                    var tKeys = Object.keys(jData);
-                    var tCount = Number(jData[tKeys[0]]);
-
-                    barty.manager.caseCounts[iQT] = tCount;
-                    barty.manager.possibleCosts[iQT] = tCount + " cases";
-
-
-                    //  todo: fix the following loop, not working as of 2016-03-14
-
-                    if (barty.constants.queryTypes.every(function (iQT) {
-                            barty.manager.caseCounts[iQT] >= 0;
-                        })) {
-                        console.log("All case counts retrieved");
-                    }
-                }
-*/
-                //barty.manager.possibleCosts[iQT] = tCountEstimate + " cases";
                 $("#byArrivalCostText").html(barty.manager.possibleCosts["byArrival"]);
                 $("#betweenAnyCostText").html(barty.manager.possibleCosts["betweenAny"]);
                 $("#byRouteCostText").html(barty.manager.possibleCosts["byRoute"]);
@@ -247,8 +245,8 @@ barty.manager = {
                 //  todo: fix the following loop, not working as of 2016-03-14
 
                 if (barty.constants.queryTypes.every(function (iQT) {
-                        barty.manager.caseCounts[iQT] >= 0;
-                    })) {
+                    barty.manager.caseCounts[iQT] >= 0;
+                })) {
                     console.log("All case counts retrieved");
                 }
 
@@ -267,87 +265,88 @@ barty.manager = {
      *  (3) weGotData( iData ): if successful, process the array, each element using...
      *  (4) processHours : extract the individual data values from the record and create a new "leaf" case
      */
-    doBucketOfData: function () {
+    doBucketOfData: async function () {
 
-        var tEstimatedCount = barty.manager.estimateCount(this.queryData.c, this.queryData);
+        const tEstimatedCount = barty.manager.estimateCount(this.queryData.c, this.queryData);
 
-        if (tEstimatedCount < 1700) {
+        if (tEstimatedCount < barty.constants.kRecordsPerRequestLimit) {
             barty.state.requestNumber++;
 
-            var tDataString = this.assembleQueryDataString(this.queryData.c, this.kGetData);
-            var theData;
-            var tRememberedDateHour = null;
+            const tCommandObject = this.assembleQueryCommandObject(this.queryData.c, this.kGetData);
 
             $("#result").text("Looking for data. ");
 
-            barty.statusSelector.text("getting data from " + barty.constants.kDataLocation + "...");
-            $.ajax({
-                type: "post",
-                url: barty.constants.kBasePhpURL[barty.constants.whence],
-                data: tDataString,
-                success: weGotData
-            });
+            barty.statusSelector.text("waiting for data from " + barty.constants.whence + "...");
+            let theData = await this.sendCommand(tCommandObject);
+            this.weGotData(theData);
         } else {
             alert("That's too much data. Make your request smaller.");
         }
+    },
 
-        function weGotData(iData) {
-            barty.statusSelector.text("parsing data from " + barty.constants.kDataLocation + "...");
-            theData = JSON.parse(iData);
-            $("#result").text((theData.length) ? " Got " + theData.length + " records! " : "No data. ");
-            barty.statusSelector.text("loading data into CODAP...");
-            tRememberedDateHour = null;
+    weGotData: function (theParsedData) {
+        $("#result").text((theParsedData.length) ? " Got " + theParsedData.length + " records! " : "No data. ");
+        barty.statusSelector.text("loading data into CODAP...");
+        tRememberedDateHour = null;
 
-            var reorganizedData = {};
+        let reorganizedData = {};
 
-            //  output an item for each record
-            //  we will stow these values in an array for having CODAP make the cases.
+        //  output an item for each record
+        //  we will stow these values in an array for having CODAP make the cases.
 
-            var tValuesArray = [];  //  array of (CODAP-style) case values
+        let tValuesArray = [];  //  array of (CODAP-style) case values
 
-            theData.forEach(function (d) {
-                var tStartAt = barty.stations[d.origin].abbr6;
-                var tEndAt = barty.stations[d.destination].abbr6;
+        //  loop over all cases in the returned data (one per hour-station-pair)
 
-                var tAdjustedCount = meeting.adjustCount(
-                    tStartAt,
-                    tEndAt,
-                    d.dow - 1,           //      the index of the weekday
-                    d.hour,
-                    d.passengers
-                );
+        theParsedData.forEach(function (d) {
+            const tStartAt = barty.stations[d.origin].abbr6;
+            const tEndAt = barty.stations[d.destination].abbr6;
 
-                if (tAdjustedCount != d.passengers) {
-                    console.log("Adjust count from " + d.passengers + " to " + tAdjustedCount);
-                }
+            //  in case the list of stations is screwed up...
+            if (!tStartAt) {
+                console.log('Station ' + d.origin + ' not found!');
+            }
+            if (!tEndAt) {
+                console.log('Station ' + d.destination + ' not found!');
+            }
 
-                var ymd = d.Bdate.split("-");
-                var tDate = new Date(Number(ymd[0]), Number(ymd[1]) - 1, Number(ymd[2]), Number(d.hour));
-                var tFormattedDate = $.datepicker.formatDate("mm/dd/yy", tDate);
-                var tFormattedDateTime = tFormattedDate + " " + d.hour + ":00:00";
+            //  alter the count if the data includes a secret meeting!
+            const tAdjustedCount = meeting.adjustCount(
+                tStartAt,
+                tEndAt,
+                d.dow - 1,           //      the index of the weekday
+                d.hour,
+                d.riders
+            );
 
-                var tValues = {
-                    //gameNumber: barty.manager.gameNumber,
-                    request: barty.state.requestNumber,
-                    when: tFormattedDateTime,
-                    day: barty.constants.daysOfWeek[d.dow - 1],
-                    hour: d.hour,
-                    date: tDate.toDateString(),
+            const ymd = d.date.split("-");
+            const tDate = new Date(Number(ymd[0]), Number(ymd[1]) - 1, Number(ymd[2]), Number(d.hour));
+            const tFormattedDate = $.datepicker.formatDate("mm/dd/yy", tDate);
+            const tFormattedDateTime = tFormattedDate + " " + d.hour + ":00:00";
 
-                    riders: tAdjustedCount,
-                    startAt: barty.stations[d.origin].abbr6,
-                    endAt: barty.stations[d.destination].abbr6,
-                    startReg: barty.stations[d.origin].region,
-                    endReg: barty.stations[d.destination].region,
-                    id: d.id
-                };
-                tValuesArray.push(tValues);
-            });
+            //  assemble the values for the CODAP case
+            const tValues = {
+                request: barty.state.requestNumber,
+                when: tFormattedDateTime,
+                day: barty.constants.daysOfWeek[d.dow - 1],
+                hour: d.hour,
+                date: tDate.toDateString(),
 
-            barty.connector.outputDataItems(tValuesArray);      //  will create "Items"
-            barty.statusSelector.text("CODAP has the new data.");
-        }
+                riders: tAdjustedCount,
+                startAt: tStartAt,
+                endAt: tEndAt,
+                startReg: barty.stations[d.origin].region,
+                endReg: barty.stations[d.destination].region,
+                id: d.id
+            };
+            tValuesArray.push(tValues);
+        });
 
-    }
+        barty.connector.outputDataItems(tValuesArray);      //  will create "Items"
+        barty.statusSelector.text("CODAP has the new data.");
+        barty.connector.makeTableAppear();
+    },
+
+
 };
 
