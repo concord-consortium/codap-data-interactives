@@ -62,6 +62,7 @@ geigerManager = {
      * Initializes various items.
      */
     initializeComponent: function() {
+        document.getElementById('lab').onclick =  this.clickInLab;
         this.gauge = new Gauge();
         this.CODAPConnector = new GeigerCODAPConnector();
         this.gauge.setup('doseGauge','Dose',0,geigerGameModel.maxDose);
