@@ -77,6 +77,7 @@ function fetchSamplesFromPresetPool($DBH, $num, $yr, $queries) {
         return $rslt;
     } catch (Exception $e) {
         reportToFile($e);
+        return array();
     }
 }
 

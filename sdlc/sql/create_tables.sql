@@ -135,6 +135,29 @@ CREATE PROCEDURE update_presets ()
   END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS update_presets1;
+DELIMITER $$
+CREATE PROCEDURE update_presets1 (lim INT)
+BEGIN
+  CALL log_preset('begin');
+  UPDATE presets, stats
+  SET presets.randnum=rand()*stats.sum_weights
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
+    AND stats.year = presets.yr
+    AND stats.state_code IS NULL;
+  UPDATE presets
+  SET presets.ref_key=(SELECT peeps.id
+                       FROM peeps
+                       WHERE peeps.year=presets.yr
+                         AND presets.randnum > peeps.accum_yr
+                       ORDER BY peeps.accum_yr DESC
+                       LIMIT 1),
+      presets.usage_ct = 0
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL)) LIMIT lim;
+  CALL log_preset('end');
+END $$
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS make_presets;
 DELIMITER $
 CREATE PROCEDURE make_presets (iters INT)
