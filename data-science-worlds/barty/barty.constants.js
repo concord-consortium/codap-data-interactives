@@ -28,7 +28,7 @@ limitations under the License.
 
 barty.constants = {
     version: "002k",
-    whence : "local_concord",
+    whence : "concord",
 
     kRecordsPerRequestLimit : 1700,
 
