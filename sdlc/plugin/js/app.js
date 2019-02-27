@@ -23,10 +23,12 @@
 let app = {
   state: null,
   whence: "concord",
+  //whence: "local",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
   decoder: {},
   ancestries: {},
   map: null,
+  isAltPressed: false,
 
   freshState: {
     sampleNumber: 1,
@@ -40,6 +42,7 @@ let app = {
   initialize: async function () {
     app.years = await app.DBconnect.getDBInfo("getYears");
     app.states = await app.DBconnect.getDBInfo('getStates');
+    app.presetStates = await app.DBconnect.getDBInfo('getPresetState');
     await app.getAllAttributes();
     await app.CODAPconnect.initialize(null);
 
@@ -56,6 +59,20 @@ let app = {
     $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
     $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
     app.ui.updateWholeUI();
+
+    // track alt key so we can display hidden information on alt-hover.
+    $('body').on('keydown keyup', function (ev) {
+      let isAlt = ev.originalEvent.getModifierState('Alt');
+      if (isAlt !== app.isAltPressed) {
+        app.isAltPressed = isAlt;
+        if (isAlt) {
+          $('body').addClass('alt-pressed')
+        } else {
+          $('body').removeClass('alt-pressed')
+        }
+        console.log('Alt: ' + (isAlt?'down':'up'));
+      }
+    })
   },
 
   updateStateFromDOM: function (logMessage) {
