@@ -216,6 +216,12 @@ switch ($command) {
         $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
 
         break;
+    case 'getPresetState':
+        reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
+        $params = array();
+        $query = "SELECT yr,count(*) avail FROM presets WHERE usage_ct = 0 GROUP BY yr";
+        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
+        break;
 
 }
 

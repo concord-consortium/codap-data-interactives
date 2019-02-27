@@ -52,10 +52,10 @@ function    CODAP_MySQL_connect( $host, $user, $pass, $dbname ) {
         $DBH = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);	// the database handle
         $DBH->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         $DBH->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        file_put_contents("bartdebug.txt", "\n\n----  $now connecting to " . $dbname, FILE_APPEND);
+        file_put_contents("/tmp/bartdebug.txt", "\n\n----  $now connecting to " . $dbname, FILE_APPEND);
     } catch (PDOException $e) {
         print "Error connecting to the $dbname database!: " . $e->getMessage() . "<br/>";
-        file_put_contents("bartdebug.txt", "\n\n----  $now failed to connect to " . $dbname, FILE_APPEND);
+        file_put_contents("/tmp/bartdebug.txt", "\n\n----  $now failed to connect to " . $dbname, FILE_APPEND);
 
         die();
     }
@@ -107,7 +107,7 @@ function console_log( $data ){
 */
 //	print_r($_GET);
 	
-file_put_contents("bartdebug.txt", "\n\n----  $now in PHP, post is: " . implode(" | ",$_REQUEST) , FILE_APPEND);
+file_put_contents("/tmp/bartdebug.txt", "\n\n----  $now in PHP, post is: " . implode(" | ",$_REQUEST) , FILE_APPEND);
 
 
 $command = $_REQUEST["c"];     //  this is the overall command, the only required part of the POST
@@ -181,7 +181,7 @@ $orderClause = "";      //      "\nORDER BY date, hour";
 $query = "SELECT $varList FROM $tableName \n      WHERE " . $dateRange . $hourRange . $dowClause . $stationClause;
 
 $query = stripcslashes( $query );
-file_put_contents("bartdebug.txt", "\n\n----  " . $now . " submitting query: \n      " . $query, FILE_APPEND);
+file_put_contents("/tmp/bartdebug.txt", "\n\n----  " . $now . " submitting query: \n      " . $query, FILE_APPEND);
 
 //  connect to the database
 $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);
@@ -189,7 +189,7 @@ $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);
 //  submit the query and receive the results
 $rows = CODAP_MySQL_getQueryResult($DBH, $query, $params);
 
-file_put_contents("bartdebug.txt", "\n      $now " . $command . " got " . count($rows) . " row(s)" , FILE_APPEND);
+file_put_contents("/tmp/bartdebug.txt", "\n      $now " . $command . " got " . count($rows) . " row(s)" , FILE_APPEND);
 
 //  actually get the data back to the javascript:
 echo json_encode($rows);

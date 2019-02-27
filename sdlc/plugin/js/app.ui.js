@@ -107,11 +107,20 @@ app.ui = {
   },
 
   makeYearListHTML: function () {
+    function availablePresetsHTML(year) {
+      let avail = app.presetStates && app.presetStates.find(function (st) {return st.yr == year;});
+      if (avail) {
+        return '<span class="presets-count">(' + avail.avail + ')</span>';
+      } else {
+        return '';
+      }
+    }
     let out = '';
     let checked = ' checked="checked"';
     app.years.forEach(function (year) {
       let id = 'year-' + year.year;
-      out += '<div><input type="checkbox" id="' + id + '" class="select-item"' + checked + '/>' + year.year + '</div>';
+      out += '<div><input type="checkbox" id="' + id + '" class="select-item"'
+          + checked + '/>' + year.year + availablePresetsHTML(year.year) + '</div>';
       checked = '';
     });
     return out;
@@ -171,13 +180,13 @@ app.ui = {
       census: ' from decennial census data.',
       'acs,census': ' from decennial census data and the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
       'none': '.'
-    }
+    };
 
 
     let out = "";
-    const stateAttr = app.allAttributes["State"];
+    const stateAttr = app.allAttributes.State;
     let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]; });
-    const peepsPhrase = tSampleSize == 1 ? "<b>one</b> random person" : "a random sample of <b>" + tSampleSize + "</b> people";
+    const peepsPhrase = (tSampleSize == 1) ? "<b>one</b> random person" : "a random sample of <b>" + tSampleSize + "</b> people";
     const partitionPhrase = (tNumPartitions != 1) ? ' in <b>' + tNumPartitions + '</b> partitions': '';
     const surveyPhrase = surveyMap[Object.keys(tSurveys).sort().join()||'none'];
 
