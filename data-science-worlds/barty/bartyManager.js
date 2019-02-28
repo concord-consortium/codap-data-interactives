@@ -123,11 +123,10 @@ barty.manager = {
     },
 
     /**
-     * assembles the "POST" string that $.ajax() needs to communicate the variables php needs to assemble
-     * the MySQL query that will get us our data.
+     * assembles the array that we pass to php as a set of "commands," that is, an associative
+     * array with all the information needed to assemble the MySQL query string.
      *
-     * A finished string might be something like
-     *      ?c=byArrival&stn1=OR&startTime=2015-09-30 10:00:00&stopTime=2015-09-30 11:00:00
+     * That happens in the php, where this will be known as `$params`.
      *
      * @param   iCommand    the query type, e.g., "byArrival"
      * @param   iWhat       what thing we're getting, data or just counts

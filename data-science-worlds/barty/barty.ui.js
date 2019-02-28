@@ -97,7 +97,7 @@ barty.ui = {
     },
 
     /**
-     * The user has changes something (anything) in the UI for choosing data
+     * The user has changed something (anything) in the UI for choosing data
      */
     dataSelectionChanged: function () {
         this.possibleCosts = {
