@@ -43,20 +43,6 @@ var barty = {
     routeStrings: {},
 
     /**
-     * Construct a new "state"
-     */
-    freshState: {
-        score: 42,
-        statusSelector: null,
-        gameNumber: 0,
-        requestNumber: 0,
-        day: 2,
-        hour: 14,
-        where: 'Orinda',
-        number: 160
-    },
-
-    /**
      * set up barty game/sim
      */
     initialize: async function () {
@@ -65,19 +51,31 @@ var barty = {
 
         barty.state = codapInterface.getInteractiveState();
         if (jQuery.isEmptyObject(barty.state)) {
-            codapInterface.updateInteractiveState(barty.freshState);
+            codapInterface.updateInteractiveState(barty.getFreshState());
         }
 
-        meeting.restoreMeetingParameters({
-            day: barty.state.day,
-            hour: barty.state.hour,
-            where: barty.state.where,
-            number: barty.state.number
-        });
+        barty.ui.initialize();
+
+        barty.meeting.restoreMeetingParameters( this.state.meetingParameters );
 
         this.statusSelector = $("#status");
 
-        barty.ui.initialize();
         barty.manager.newGame();
+    },
+
+    getFreshState : function() {
+        return {
+            score: 42,
+            statusSelector: null,
+            gameNumber: 0,
+            requestNumber: 0,
+
+            meetingParameters : {
+                day: 2,
+                hour: 14,
+                where: 'Orinda',
+                number: 160
+            }
+        }
     }
 };

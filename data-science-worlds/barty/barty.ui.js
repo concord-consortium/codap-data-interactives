@@ -54,7 +54,7 @@ barty.ui = {
         });
 
 
-        barty.ui.makeInitialOptions();
+        barty.ui.makeInitialOptions();  //  construct menus for GAME options
 
         barty.manager.possibleCosts = {
             "betweenAny": "???",
@@ -293,15 +293,15 @@ barty.ui = {
      */
     makeMeetingTimeOptions: function (iSelector) {
         var result = "";
-        meeting.possibleTimes.forEach(
+        barty.meeting.possibleTimes.forEach(
             function (t) {
                 result += "<option value='" + t + "'>" + t + ":00 </option>";
             }
         );
         iSelector.empty().append(result);
         iSelector.append("<option value='-1' disabled>————</option>");
-        iSelector.append("<option value='0'>Surprise me</option>");
-        iSelector.val(14);
+        iSelector.append("<option value='-42'>Surprise me</option>");
+        iSelector.val(barty.state.meetingParameters.time);
     },
 
     /**
@@ -310,15 +310,15 @@ barty.ui = {
      */
     makeMeetingSizeOptions: function (iSelector) {
         var result = "";
-        meeting.possibleSizes.forEach(
+        barty.meeting.possibleSizes.forEach(
             function (s) {
                 result += "<option value='" + s + "'>" + s + " people </option>";
             }
         );
         iSelector.empty().append(result);
         iSelector.append("<option value='-1' disabled>————</option>");
-        iSelector.append("<option value='0'>Surprise me</option>");
-        iSelector.val(160);
+        iSelector.append("<option value='-42'>Surprise me</option>");
+        iSelector.val(barty.state.meetingParameters.size);
     },
 
     /**
@@ -328,14 +328,14 @@ barty.ui = {
     makeMeetingLocationOptions: function (iSelector) {
 
         var result = "";
-        Object.keys(meeting.possibleStations).forEach(
+        Object.keys(barty.meeting.possibleStations).forEach(
             function (iAbbr4) {
-                result += "<option value='" + iAbbr4 + "'>" + meeting.possibleStations[iAbbr4] + "</option>";
+                result += "<option value='" + iAbbr4 + "'>" + barty.meeting.possibleStations[iAbbr4] + "</option>";
             }
         );
         iSelector.empty().append(result);
         iSelector.append("<option value='-1' disabled>————</option>");
-        iSelector.append("<option value='0'>Surprise me</option>");
+        iSelector.append("<option value='-42'>Surprise me</option>");
     },
 
     /**
@@ -351,8 +351,8 @@ barty.ui = {
         );
         iSelector.empty().append(result);
         iSelector.append("<option value='-1' disabled>————</option>");
-        iSelector.append("<option value='0'>Surprise me</option>");
-        iSelector.val(2);      //  default to Tuesday
+        iSelector.append("<option value='-42'>Surprise me</option>");
+        iSelector.val(barty.state.meetingParameters.day);      //  default to Tuesday
     },
 
     /**
@@ -378,9 +378,9 @@ barty.ui = {
         });
 
         $("#arrivalSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#arrivalSelector").val("ORIN");   // choose default value
+        $("#arrivalSelector").val(barty.constants.kBaseStn0);   // choose default value
         $("#departureSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#departureSelector").val("EMBR");   // choose default value
+        $("#departureSelector").val(barty.constants.kBaseStn1);   // choose default value
 
 
         function compareStations(a, b) {

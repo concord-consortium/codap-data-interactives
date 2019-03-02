@@ -41,11 +41,7 @@ barty.manager = {
      * created the top-level "game' case, and records the ID for the case.
      */
     newGame: function () {
-        meeting.setMeetingValues();     //   initialize the meeting location, get them from the menus
-        barty.state.day = meeting.day;
-        barty.state.hour = meeting.hour;
-        barty.state.where = meeting.where;
-        barty.state.number = meeting.number;
+        barty.state.meetingParameters = barty.meeting.setMeetingValues();     //   initialize the meeting location, get them from the menus
 
         barty.state.gameNumber++;
         barty.manager.playing = true;
@@ -310,7 +306,7 @@ barty.manager = {
             }
 
             //  alter the count if the data includes a secret meeting!
-            const tAdjustedCount = meeting.adjustCount(
+            const tAdjustedCount = barty.meeting.adjustCount(
                 tStartAt,
                 tEndAt,
                 d.dow - 1,           //      the index of the weekday
