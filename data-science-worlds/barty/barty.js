@@ -70,6 +70,20 @@ var barty = {
             gameNumber: 0,
             requestNumber: 0,
 
+            queryData : {
+                c : "byRoute",
+                stn0 : barty.constants.kBaseStn0,
+                stn1 : barty.constants.kBaseStn1,
+                h0 : barty.constants.kBaseH0,
+                h1 : barty.constants.kBaseH1,
+                d0 : barty.constants.kBaseDateString,
+                d1 : barty.constants.kBaseDateString,   //  same day
+                nd : 1,
+                weekday : 0,            //  will ultimately be computed
+                useWeekday : false,
+                useHour : false
+            },
+
             meetingParameters : {
                 day: 2,
                 hour: 14,

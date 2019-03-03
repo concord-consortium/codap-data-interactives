@@ -36,25 +36,27 @@ barty.ui = {
      * Set up initial values
      */
     initialize: function () {
-        $("#dateControl").val(barty.constants.kBaseDateString);
+        $("#dateControl").val(barty.state.queryData.d0);
 
+/*
         //  set up hours control
 
         barty.manager.queryData.h0 = barty.constants.kBaseH0;   //  initial hour, if we're using hours
         barty.manager.queryData.h1 = barty.constants.kBaseH1;   //  final hour
+*/
 
         //  set up the slider
         $("#hourControl").slider({
             range: true,
             min: 0,
             max: 24,
-            values: [barty.manager.queryData.h0, barty.manager.queryData.h1],
+            values: [barty.state.queryData.h0, barty.state.queryData.h1],
             slide: barty.ui.hourControlSlides.bind(this),
             step: 1
         });
 
-
-        barty.ui.makeInitialOptions();  //  construct menus for GAME options
+        barty.ui.makeInitialOptions();  //  construct menus for stations and for secret meeting options
+        barty.ui.restoreOtherStateSettings();
 
         barty.manager.possibleCosts = {
             "betweenAny": "???",
@@ -64,6 +66,22 @@ barty.ui = {
         };
 
         barty.ui.fixUI();
+
+    },
+
+    restoreOtherStateSettings : function() {
+
+        //  restore the menu for how many days
+        document.getElementById("numberOfDaysControl").value = barty.state.queryData.nd;
+
+        //  restore checkboxes
+        document.getElementById("useHour").checked = barty.state.queryData.useHour;
+        document.getElementById("useWeekday").checked = barty.state.queryData.useWeekday;
+
+        //  restore which kind of data grab this is (e.g., by departure)
+
+        const radioItemName = barty.state.queryData.c + "Item";
+        document.getElementById(radioItemName).checked = true;
 
     },
 
@@ -93,6 +111,9 @@ barty.ui = {
         $("#departureSelector").val(tOldArrival);
         $("#arrivalSelector").val(tOldDeparture);
 
+        barty.state.queryData.stn0 = $("#departureSelector").val();
+        barty.state.queryData.stn1 = $("#arrivalSelector").val();
+
         this.dataSelectionChanged();
     },
 
@@ -119,8 +140,8 @@ barty.ui = {
      * @param iThis     the slider itself
      */
     hourControlSlides: function (event, iThis) {
-        barty.manager.queryData.h0 = iThis.values[0];
-        barty.manager.queryData.h1 = iThis.values[1];
+        barty.state.queryData.h0 = iThis.values[0];
+        barty.state.queryData.h1 = iThis.values[1];
         barty.ui.dataSelectionChanged();    //  update all possible consequences
     },
 
@@ -147,7 +168,7 @@ barty.ui = {
         this.fixDataSelectionText(tQD);
 
         if (tQD.useHour) {
-            $("#hourControl").show();   //  only show the hour slider if th euser is using hours
+            $("#hourControl").show();   //  only show the hour slider if the user is using hours
         } else {
             $("#hourControl").hide();   //  otherwise, user is getting all data from that day; no slider needed
         }
@@ -194,7 +215,8 @@ barty.ui = {
 
     /**
      *  Construct text that describes what the user will get if they request data
-     * @param iQD   query data record set in .manager. iQD.c, for example, is the type (e.g.,byArrival)
+     * @param iQD   query data record set in .manager but is actualy in barty.state.queryData
+     * iQD.c, for example, is the type (e.g.,byArrival)
      */
     fixDataSelectionText: function (iQD) {
 
@@ -352,7 +374,7 @@ barty.ui = {
         iSelector.empty().append(result);
         iSelector.append("<option value='-1' disabled>————</option>");
         iSelector.append("<option value='-42'>Surprise me</option>");
-        iSelector.val(barty.state.meetingParameters.day);      //  default to Tuesday
+        iSelector.val(barty.state.queryData.day);      //  set to saved value
     },
 
     /**
@@ -377,11 +399,10 @@ barty.ui = {
             theOptionText += "<option value='" + sta.abbr4 + "'>" + sta.name + "</option>";
         });
 
-        $("#arrivalSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#arrivalSelector").val(barty.constants.kBaseStn0);   // choose default value
         $("#departureSelector").empty().append(theOptionText);   // put them into the DOM
-        $("#departureSelector").val(barty.constants.kBaseStn1);   // choose default value
-
+        $("#departureSelector").val(barty.state.queryData.stn0);   // restore saved value
+        $("#arrivalSelector").empty().append(theOptionText);   // put them into the DOM
+        $("#arrivalSelector").val(barty.state.queryData.stn1);   // restore saved value
 
         function compareStations(a, b) {
             if (a.name < b.name)
