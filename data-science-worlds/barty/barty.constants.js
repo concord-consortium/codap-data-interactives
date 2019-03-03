@@ -28,7 +28,7 @@ limitations under the License.
 
 barty.constants = {
     version: "002L",
-    whence : "concord",
+    whence : "concord",     //  fix this to deploy
 
     kRecordsPerRequestLimit : 1700,
 
