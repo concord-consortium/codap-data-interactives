@@ -80,7 +80,7 @@ h3 {
     font-family: 'Rokkitt',sans-serif;font-size: 16px;
     font-weight: 700;
     width: 3.5em;
-    float: right;
+    /*  float: right;   */
 }
 
 #getCasesButton {
