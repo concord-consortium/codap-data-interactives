@@ -89,6 +89,14 @@ h1 {
   flex-grow: 3;
 }
 
+.presets-count {
+  visibility: hidden;
+}
+
+.alt-pressed #chooseSampleYearsDiv:hover .presets-count {
+  visibility: visible;
+}
+
 .plugin-content {
   min-width: 400px;
 }

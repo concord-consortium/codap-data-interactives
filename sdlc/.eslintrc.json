@@ -21,7 +21,7 @@
     "block-scoped-var": "warn",
     "consistent-return": "off", // liberal use of inconsistent returns, e.g. SproutCore properties
     "dot-notation": ["warn", { "allowKeywords": false }],
-    "eqeqeq": ["error", "allow-null"],
+    "eqeqeq": ["warn", "allow-null"],
     "no-alert": "error",
     "no-caller": "error",
     "no-eval": "error",

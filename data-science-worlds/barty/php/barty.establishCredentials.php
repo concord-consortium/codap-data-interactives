@@ -36,7 +36,7 @@ $credentialFileNames = [
 
 $thisFileName = $credentialFileNames[$whence];
 
-file_put_contents("bartdebug.txt", "\n\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credential filename: $thisFileName", FILE_APPEND);
+file_put_contents("/tmp/bartdebug.txt", "\n\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credential filename: $thisFileName", FILE_APPEND);
 
 
 try {
@@ -49,7 +49,7 @@ $user = $credentials[$whence]["user"];
 $pass = $credentials[$whence]["pass"];
 $dbname = $credentials[$whence]["dbname"];
 
-file_put_contents("bartdebug.txt", "\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credentials: $whence | $user | $dbname", FILE_APPEND);
+file_put_contents("/tmp/bartdebug.txt", "\nCRED ----  " . date("Y-m-d H:i:s (T)") . " Credentials: $whence | $user | $dbname", FILE_APPEND);
 
 
 ?>
