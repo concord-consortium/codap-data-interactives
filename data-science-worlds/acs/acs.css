@@ -17,7 +17,7 @@
  */
 
 body, #summary, #atts, #about, #variables  {
-    margin : 0px;
+    margin : 0;
     /*height : 320px;*/
     font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
     font-weight: 300;
@@ -37,7 +37,33 @@ h1 {
     font-family: 'Rokkitt',sans-serif;font-size: 22px;
     font-weight: 700;
     color : #44a;
+}
 
+h2 {
+    font-family: 'Rokkitt',sans-serif;font-size: 20px;
+    font-weight: 700;
+    color : #44a;
+}
+
+h3 {
+    font-family: 'Rokkitt',sans-serif;font-size: 18px;
+    font-weight: 700;
+    color : #44a;
+}
+
+#variables p {
+    padding-left: 1em;
+}
+
+#variables strong {
+    font-family: 'Rokkitt',sans-serif;
+    color : #44a;
+}
+
+#sampleSummary b {
+    font-family: 'Rokkitt',sans-serif;font-size: 18px;
+    font-weight: 700;
+    color : #44a;
 }
 
 #pluginHeader {
@@ -54,7 +80,7 @@ h1 {
     font-family: 'Rokkitt',sans-serif;font-size: 16px;
     font-weight: 700;
     width: 3.5em;
-    align-content: right;
+    float: right;
 }
 
 #getCasesButton {
