@@ -11,18 +11,27 @@
   ~ You may obtain a copy of the License at
   ~ http://www.apache.org/licenses/LICENSE-2.0
   ~
-  ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License
+  is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and limitations under the License.
   ~ ==========================================================================
   ~
 
 
   LOCAL, TESTING:         http://localhost:8888/plugins/acs/acs.html
-  Tim LOCAL, MAMP TESTING form Concord repository:         http://localhost:8888/concord-plugins/data-science-worlds/acs/acs.html
+  Tim LOCAL, MAMP TESTING form Concord repository:
+        http://localhost:8888/concord-plugins/data-science-worlds/acs/acs.html
   EEPS:         https://www.eeps.com/codap/acs/acs.html
 
-  WHEN UPLOADING TO EEPS
+  DEPLOYING
   * Make sure the mysql database is latest, in case of tweaks... (Export form MySQL Pro, then Import)
-  * acs.js, change <whence> to "eeps."
+
+  * acs.js, change <whence> to "eeps" or "concord" or whatever is appropriate.
+
+  * in acs.establishCrededntial.php, be sure that the suitable credentials (for "whence") are listed
+
+  * in acs.constants.js, make sure the value for the object kBasePhpURL has the "whence" as a key with the
+    corresponding URL for the php file.
 
   -->
 
@@ -111,7 +120,9 @@
 
         <h4>Key to variables in the 2013 American Community Survey</h4>
 
-        <p>The following is a summary of variable names used in the results of the American Community Survey. For a full summary of the variables, visit the <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/2013_ACSSubjectDefinitions.pdf?#" target="_blank">ACS Subject Definitions</a> (PDF).</p>
+        <p>The following is a summary of variable names used in the results of the American Community Survey.
+            For a full summary of the variables, visit the
+            <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/2013_ACSSubjectDefinitions.pdf?#" target="_blank">ACS Subject Definitions</a> (PDF).</p>
 
         <strong>Sex</strong>
         <ul>
@@ -126,7 +137,8 @@
         </ul>
 
         <strong>Race</strong>
-        <ul><li>The self-identified race of individuals who responded to the survey. In the survey, people could select more than one race in their response.</li><br>
+        <ul><li>The self-identified race of individuals who responded to the survey.
+            In the survey, people could select more than one race in their response.</li><br>
             <ul>
                 <li> White: people who have origins of Europe, the Middle East, or
                     North Africa.</li>
@@ -134,13 +146,16 @@
                     Africa.</li>
                 <li> AmInd: people who have origins in any of the original peoples of North and South America.</li>
                 <li> Asian: people having origins in the Far East, Southeast Asia, or the Indian subcontinent.</li>
-                <li> HawPacIsl: people having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands.</li>
-                <li> Other: some other race, includes people who  not included in the "White," "Black," "AmInd," "Asian," and "HawPacIsl" race categories.</li>
+                <li> HawPacIsl: people having origins in any of the original peoples
+                    of Hawaii, Guam, Samoa, or other Pacific Islands.</li>
+                <li> Other: some other race, includes people not included in the
+                    "White," "Black," "AmInd," "Asian," and "HawPacIsl" race categories.</li>
             </ul></ul>
 
         <strong> Hispanic</strong>
         <ul>
-            <li>People who identify their origin as Hispanic, Latino, or Spanish. Values include various countries of origin, and "non-hispanic."</li>
+            <li>People who identify their origin as Hispanic, Latino, or Spanish.
+                Values include various countries of origin, and "Not Hisp."</li>
         </ul>
         <strong>Employment</strong>
         <ul>
@@ -153,21 +168,33 @@
 
             <li><strong>Civilian Employed</strong></li>
             <ul>
-                <li>Civilians 16 years old and over who were "at work," that is, those who did any work at all during the reference week as paid employees, worked in their own business or profession, worked on their own farm, or worked 15 hours or more as unpaid workers on a family farm or in a family business.</li>
+                <li>Civilians 16 years old and over who were "at work," that is, those
+                    who did any work at all during the reference week as paid employees,
+                    worked in their own business or profession, worked on their own farm,
+                    or worked 15 hours or more as unpaid workers on a family farm or in a family business.</li>
             </ul>
             <br>
             <li><strong>Civilian Employed – not working</strong></li>
             <ul>
-                <li>Civilians 16 years old and over who were "with a job but not at work," that is, those who did not work during the reference week but had jobs or businesses from which they were temporarily absent due to illness, bad weather, industrial dispute, vacation, or other personal reasons.
+                <li>Civilians 16 years old and over who were "with a job but not at work," that is,
+                    those who did not work during the reference week but had jobs or businesses
+                    from which they were temporarily absent due to illness, bad weather,
+                    industrial dispute, vacation, or other personal reasons.
                 </li></ul>
             <br>
-            Note: Excluded from <i>Civilian Employed</i> and from <i>Civilian Employed – not working</i> are people whose only activity consisted of work around the house or unpaid volunteer work for religious, charitable, and similar organizations; also excluded are all institutionalized people and people on active duty in the United States Armed Forces.
+            Note: Excluded from <i>Civilian Employed</i> and from <i>Civilian Employed – not working</i>
+            are people whose only activity consisted of work around the house or unpaid volunteer work for
+            religious, charitable, and similar organizations; also excluded are all institutionalized people
+            and people on active duty in the United States Armed Forces.
         </ul>
 
         <ul>
             <li><strong>Not in Labor Force</strong></li>
             <ul>
-                <li>People who are not looking or cannot look for work. Mainly, students, homemakers, retired workers, seasonal workers interviewed in an off season who were not looking for work, institutionalized people, and people doing only incidental unpaid family work (less than 15 hours during the reference week). </li>
+                <li>People who are not looking or cannot look for work. Mainly, students, homemakers, retired workers,
+                    seasonal workers interviewed in an off season who were not looking for work,
+                    institutionalized people, and people doing only incidental unpaid family work
+                    (less than 15 hours during the reference week). </li>
             </ul>
             <br>
             <li><strong>Unemployed</strong></li>
@@ -176,7 +203,9 @@
                     <li>were neither "at work" nor "with a job but not at work" during the reference week, and
                     </li><li>were actively looking for work during the last 4 weeks, and
                 </li><li>were available to start a job.</li></ul>
-            </li><li>Also included as unemployed are civilians who did not work at all during the reference week, were waiting to be called back to a job from which they had been laid off, and were available for work except for temporary illness.</li>
+            </li><li>Also included as unemployed are civilians who did not work at all during the reference week,
+                were waiting to be called back to a job from which they had been laid off,
+                and were available for work except for temporary illness.</li>
             </ul>
 
 
@@ -195,7 +224,13 @@
                 <li>public assistance or welfare payments; </li>
                 <li>retirement, survivor, or disability pensions; </li>
                 <li>and all other income. </li>
-                <br>Note: Receipts from the following sources are not included as income: capital gains, money received from the sale of property (unless the recipient was engaged in the business of selling such property); the value of income "in kind" from food stamps, public housing subsidies, medical care, employer contributions for individuals, etc.; withdrawal of bank deposits; money borrowed; tax refunds; exchange of money between relatives living in the same household; gifts and lump-sum inheritances, insurance payments, and other types of lumpsum receipts.
+                <br>Note: Receipts from the following sources are not included as income: capital gains,
+                money received from the sale of property (unless the recipient was engaged
+                in the business of selling such property); the value of income "in kind" from food stamps,
+                public housing subsidies, medical care, employer contributions for individuals, etc.;
+                withdrawal of bank deposits; money borrowed; tax refunds; exchange of money
+                between relatives living in the same household; gifts and lump-sum inheritances,
+                insurance payments, and other types of lumpsum receipts.
             </ul>
         </li></ul>
 
