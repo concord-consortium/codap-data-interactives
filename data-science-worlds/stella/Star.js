@@ -332,7 +332,15 @@ StarView.prototype.setSizeEtc = function (  ) {
         tOpacity = 0.0;
     }
 
-    var tColor = Snap.rgb(tGray * 15, tGray * 15, tGray * 15);    //  put color in here if we want
+    const colorAmplitude = 4.0;
+    const midColor = tGray - colorAmplitude;
+
+    //  var tColor = Snap.rgb(tGray * 15, tGray * 15, tGray * 15);    //  put color in here if we want
+    const tColor = Snap.rgb(
+        (midColor + colorAmplitude * this.system.redness) * 15,
+        midColor * 15,
+        (midColor + colorAmplitude * (1 - this.system.redness)) * 15
+    );    //  put color in here
 
     //  convert to current positions!
 

@@ -107,18 +107,20 @@ stella.skyView = {
     pointAtLocation : function( iPointAt, iAnimate ) {
         this.telescopeWhere = iPointAt;
 
-        var x = iPointAt.x;
-        var y = stella.constants.universeWidth - iPointAt.y;     //  reverse y-coordinate
+        const x = iPointAt.x;
+        const y = stella.constants.universeWidth - iPointAt.y;     //  reverse y-coordinate
 
-        var tWidth = stella.constants.universeWidth / stella.state.magnification;
-        var tStrokeWidth = this.baseStrokeWidth / stella.state.magnification;
+        const tWidth = stella.constants.universeWidth / stella.state.magnification;
+        const tStrokeWidth = this.baseStrokeWidth / stella.state.magnification;
         this.viewBoxString = "0 0 " + tWidth + " " + tWidth;
 
         if ( stella.state.magnification > 1 ) {
-            var tX = x - tWidth/2;
-            var tY = y - tWidth/2;
+            const tX = x - tWidth/2;
+            const tY = y - tWidth/2;
             this.viewBoxString = tX  + " " + tY + " " + tWidth + " " + tWidth;
         }
+
+        //  actually change the view
 
         if (iAnimate) {
             this.reticlePath.animate({
@@ -134,13 +136,15 @@ stella.skyView = {
             this.paper.attr({viewBox: this.viewBoxString});
         }
 
+        //  update the status (green) text at the bottom of the view
+
         stella.ui.telescopeStatusText.text(
             "x : " + this.telescopeWhere.x.toFixed(6) +
             " y: " + this.telescopeWhere.y.toFixed(6) +
                 " (" + stella.state.magnification + "X)"
         );
 
-        //  blank the result whenever we move the telescope
+        //  blank the "result" (in the Results tab) whenever we move the telescope
 
         $("#starResultValue").val("");      //  blank the value in the box on type change
         stella.manager.starResultValueChanged( true );  //  blank the internal value
@@ -155,9 +159,7 @@ stella.skyView = {
      */
     magnify : function( iMagnification  ) {
         stella.state.magnification = iMagnification;
-        this.starViews.forEach( function (iSV) {
-            iSV.setSizeEtc(  );
-        });
+        this.updateAllStars();
     },
 
     /**
@@ -271,7 +273,12 @@ stella.skyView = {
             var tStarView = new StarView( iSys, this.paper );  //  attaches it to the Paper
             this.starViews.push( tStarView );
         }.bind(this));
+    },
 
+    updateAllStars : function() {
+        this.starViews.forEach( function (iSV) {
+            iSV.setSizeEtc(  );
+        });
     },
 
     /**

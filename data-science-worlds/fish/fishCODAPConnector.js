@@ -126,12 +126,12 @@ fish.CODAPConnector = {
 
             //      now do the update
 
-            tResource = "dataContext[" + fish.constants.kFishDataSetName + "].item[" + theItemID + "]";
+            tResource = "dataContext[" + fish.constants.kFishDataSetName + "].itemByID[" + theItemID + "]";
             tMessage = {action: "update", resource: tResource, values: tValues};    //  fish.localize.localizeValuesObject(tValues)};
             const tUpdateResult = await codapInterface.sendRequest(tMessage);
 
             if (!tUpdateResult.success) {
-                throw("unsuccessful case update, year " + iYear + " values: " + JSON.stringify(tValues));
+                throw("unsuccessful case update, year " + iYear + " message: " + JSON.stringify(tMessage));
             }
 
             return theWholeTurn;       //      resolve to the most recent turn.
