@@ -33,7 +33,7 @@ limitations under the License.
  */
 let fish = {
 
-    whence: "local",        //  local, xyz, or eeps.
+    whence: "local_concordRepository",        //  e.g., local, xyz, or eeps.
     debugThing: null,      //  UI element
 
     state: null,            //  object to hold the current state of the game. Very important.
@@ -315,6 +315,7 @@ let fish = {
         kInitialLanguage : 'en',    //  can override with URL parameter *lang*, e.g., "...fish.html?lang=es"
 
         kBaseURL: {
+            local_concordRepository: "http://localhost:8888/concord-plugins/data-science-worlds/fish/fish.php",
             local: "http://localhost:8888/plugins/fish/fish.php",
             xyz: "https://codap.xyz/projects/fish/fish.php",
             eeps: "https://www.eeps.com/codap/fish/fish.php"

@@ -27,11 +27,12 @@
 
 /**
  * global to describe the secret meeting
+ *
+ * Note that "where" is the abbr6 of the station (not abbr4)
  */
 
-let meeting;
 
-meeting = {
+barty.meeting = {
     day : null,     //   the weekday INDEX (Sun = 0)
     hour : null,        //   the time (24-hr)
     where: null,       //      the abbr6 of the station
@@ -57,31 +58,49 @@ meeting = {
         $("#meetingSizeSelector").val(this.number);
         $("#meetingLocationSelector").val(this.where);
         $("#meetingDaySelector").val(this.day);
+
     },
 
+    /**
+     * Called from barty.manager.newGame().
+     *
+     * Set the values of this (new) meeting pameters to the menu choices; then
+     * return an object describing this new meeting,
+     *
+     */
     setMeetingValues : function() {
-        this.hour = $("#meetingTimeSelector").val();
-        this.number = $("#meetingSizeSelector").val();
+        this.hour = Number($("#meetingTimeSelector").val());
+        this.number = Number($("#meetingSizeSelector").val());
         this.where = $("#meetingLocationSelector").val();
-        this.day = $("#meetingDaySelector").val();
-        if (this.where === 0) {
+        this.day = Number($("#meetingDaySelector").val());
+
+        //  choose from the list if the menu is set to "surprise me."
+
+        if (this.where === -42) {
             const tStationAbbrs = Object.keys( this.possibleStations );
             this.where = TEEUtils.pickRandomItemFrom( tStationAbbrs );
         }
-        if ( this.hour === 0 ) this.hour = TEEUtils.pickRandomItemFrom( this.possibleTimes );
-        if ( this.day === 0 )    this.day = TEEUtils.pickRandomItemFrom( [0, 1, 2, 3, 4, 5, 6] );
-        if ( this.number === 0)  this.number = TEEUtils.pickRandomItemFrom( this.possibleSizes );
+        if ( this.hour === -42 ) this.hour = TEEUtils.pickRandomItemFrom( this.possibleTimes );
+        if ( this.day === -42 )    this.day = TEEUtils.pickRandomItemFrom( [0, 1, 2, 3, 4, 5, 6] );
+        if ( this.number === -42)  this.number = TEEUtils.pickRandomItemFrom( this.possibleSizes );
 
         $("#secret").text( this.toString());
+
+        return {
+            day : this.day,
+            hour : this.hour,
+            where : this.where,
+            number : this.number
+        }
     },
 
 
     adjustCount : function(iFrom, iTo, iDay, iHour, iCount ) {
 
         let result = Number(iCount);
-        if (($.inArray( iFrom, meeting.origins) !== -1)
-            && iTo === meeting.where
-            && iDay === meeting.day
+        if (($.inArray( iFrom, this.origins) !== -1)
+            && iTo === this.where
+            && iDay === this.day
             && iHour === this.hour) {
             result += Math.round( this.number / this.origins.length );
 

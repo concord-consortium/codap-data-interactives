@@ -35,7 +35,7 @@
 stella.manager = {
 
     playing: false,
-    focusSystem: null,       //  what star are we pointing at?
+    focusSystem: null,       //  what system are we pointing at?
 
     starResultIsAuto: false,   //  did we get this latest result via the Auto button?
 
@@ -57,8 +57,9 @@ stella.manager = {
      * Often called when the user has changed something.
      */
     updateStella: function () {
-        stella.spectrumManager.displayAllSpectra();
+        stella.spectrumManager.displayAllSpectra(); //  fix the spectra
         stella.ui.fixStellaUITextAndControls();      //  fix the text
+        stella.skyView.updateAllStars();            //  fix all the stars
     },
 
     filterChanged : function() {
@@ -67,8 +68,8 @@ stella.manager = {
     },
 
     /**
-     * Called to make the given star the one we're working on.
-     * We get here by pointing, called from `pointAtStar( iStar )`.
+     * Called to make the given system the one we're working on.
+     * We get here by pointing, called from `pointAtSystem( iSys )`.
      * We get here by selection,
      * We can also focus by panning. See up().
      * @param iStar
@@ -81,8 +82,8 @@ stella.manager = {
     },
 
     /**
-     * Point at the given star.
-     * @param iStar     The star. Pass `null` to be not pointing at anything.
+     * Point at the given system.
+     * @param iSys     The system. Pass `null` to be not pointing at anything.
      */
     pointAtSystem: function (iSys) {
         if (iSys) {
@@ -189,7 +190,7 @@ stella.manager = {
     starResultValueChanged: function (iAuto) {
         stella.manager.starResultIsAuto = iAuto;
         stella.ui.starResultValue = Number($("#starResultValue").val());
-        stella.manager.updateStella();
+        //  stella.manager.updateStella();      //  no need to change stars or spectra
     },
 
     /**

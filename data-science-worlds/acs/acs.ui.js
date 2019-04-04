@@ -122,8 +122,8 @@ acs.ui = {
         out = "<p>When you press the button, you will get "
             + (tSampleSize == 1 ? "one random Californian" : "a random sample of " + tSampleSize + " Californians")
             + " from the 2013 "
-            + "<a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a>.</p> "
-            + "<p>The variables you will get are: "
+            + "<a href='https://www.census.gov/programs-surveys/acs' target='_blank'>American Community Survey</a> (ACS).</p> "
+            + "<p id='sampleSummary'>The attributes you will get are: "
             + "<b>" + aList.join("</b>, <b>") + "</b>.</p>";
 
         document.getElementById("sampleSummaryDiv").innerHTML = out;

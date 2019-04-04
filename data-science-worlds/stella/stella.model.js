@@ -116,7 +116,7 @@ stella.model = {
         dText += "</table>";
 
         $("#debugText").html(dText);
-        console.log("All " + stella.initialStarData.length + " = " + stella.model.systems.length + " systems read in, " +
+        console.log("All " + stella.initialStarData.length + ", filtered to " + stella.model.systems.length + " systems read in, " +
             "in stella.model.makeAllStars( )");
     },
 

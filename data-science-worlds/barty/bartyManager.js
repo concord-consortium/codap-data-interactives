@@ -31,7 +31,6 @@ barty.manager = {
     playing: false,
     requestNumber: 0,
 
-    queryData: {},      //  a structure that holds stuff like the stations and times
     possibleCosts: {},
     caseCounts: {},
 
@@ -41,11 +40,7 @@ barty.manager = {
      * created the top-level "game' case, and records the ID for the case.
      */
     newGame: function () {
-        meeting.setMeetingValues();     //   initialize the meeting location, get them from the menus
-        barty.state.day = meeting.day;
-        barty.state.hour = meeting.hour;
-        barty.state.where = meeting.where;
-        barty.state.number = meeting.number;
+        barty.state.meetingParameters = barty.meeting.setMeetingValues();     //   initialize the meeting location, get them from the menus
 
         barty.state.gameNumber++;
         barty.manager.playing = true;
@@ -69,24 +64,24 @@ barty.manager = {
      */
     getDataSearchCriteria: function () {
 
-        this.queryData.c = $("input:radio[name=dataChoice]:checked").val();     //  jQuery wizardry to find chosen among radio buttons
-        this.queryData.stn0 = $("#departureSelector").val();
-        this.queryData.stn1 = $("#arrivalSelector").val();
-        this.queryData.d0 = $("#dateControl").val();              //  String of the date
-        this.queryData.nd = Number($("#numberOfDaysControl").val());
+        barty.state.queryData.c = $("input:radio[name=dataChoice]:checked").val();     //  jQuery wizardry to find chosen among radio buttons
+        barty.state.queryData.stn0 = $("#departureSelector").val();
+        barty.state.queryData.stn1 = $("#arrivalSelector").val();
+        barty.state.queryData.d0 = $("#dateControl").val();              //  String of the date
+        barty.state.queryData.nd = Number($("#numberOfDaysControl").val());
 
-        const tDateZero = new Date(this.queryData.d0);
+        const tDateZero = new Date(barty.state.queryData.d0);
         const tParsedD0 = tDateZero.getTime() + 60000 * tDateZero.getTimezoneOffset();
 
-        this.queryData.weekday = TEEUtils.dateNumberToDayOfWeek(tParsedD0);
-        this.queryData.useWeekday = $("#useWeekday").is(":checked");
-        this.queryData.useHour = $("#useHour").is(":checked");
+        barty.state.queryData.weekday = TEEUtils.dateNumberToDayOfWeek(tParsedD0);
+        barty.state.queryData.useWeekday = $("#useWeekday").is(":checked");
+        barty.state.queryData.useHour = $("#useHour").is(":checked");
 
-        const tDt = (this.queryData.nd - 1) * 86400 * 1000 * (this.queryData.useWeekday ? 7 : 1);
+        const tDt = (barty.state.queryData.nd - 1) * 86400 * 1000 * (barty.state.queryData.useWeekday ? 7 : 1);
         const tD1 = new Date(tParsedD0 + tDt);
-        this.queryData.d1 = tD1.ISO_8601_string();
+        barty.state.queryData.d1 = tD1.ISO_8601_string();
 
-        return this.queryData;
+        return barty.state.queryData;
     },
 
     /**
@@ -123,11 +118,10 @@ barty.manager = {
     },
 
     /**
-     * assembles the "POST" string that $.ajax() needs to communicate the variables php needs to assemble
-     * the MySQL query that will get us our data.
+     * assembles the array that we pass to php as a set of "commands," that is, an associative
+     * array with all the information needed to assemble the MySQL query string.
      *
-     * A finished string might be something like
-     *      ?c=byArrival&stn1=OR&startTime=2015-09-30 10:00:00&stopTime=2015-09-30 11:00:00
+     * That happens in the php, where this will be known as `$params`.
      *
      * @param   iCommand    the query type, e.g., "byArrival"
      * @param   iWhat       what thing we're getting, data or just counts
@@ -135,7 +129,7 @@ barty.manager = {
      */
     assembleQueryCommandObject: function (iCommand, iWhat) {
 
-        let commandObject = {c: iCommand, whence: barty.constants.whence};
+        let commandObject = {"c": iCommand, "whence" : barty.constants.whence};
 
         switch (iWhat) {
             case barty.constants.kGetData:
@@ -154,31 +148,31 @@ barty.manager = {
                 break;
 
             case "byRoute":
-                commandObject["stn1"] = this.queryData.stn1;
-                commandObject["stn0"] = this.queryData.stn0;
-                break;
-
-            case "byArrival":
-                commandObject["stn1"] = this.queryData.stn1;
+                commandObject["stn0"] = barty.state.queryData.stn0;     //  departure station
+                commandObject["stn1"] = barty.state.queryData.stn1;
                 break;
 
             case "byDeparture":
-                commandObject["stn0"] = this.queryData.stn0;
+                commandObject["stn0"] = barty.state.queryData.stn0;
+                break;
+
+            case "byArrival":
+                commandObject["stn1"] = barty.state.queryData.stn1;
                 break;
 
             default:
-                dataString += " true LIMIT 10";
+                alert("Dang! Unknown command in manager.assembleQueryCommandObject(): " + iCommand);
         }
 
-        commandObject["d0"] = this.queryData.d0;
-        commandObject["d1"] = this.queryData.d1;
+        commandObject["d0"] = barty.state.queryData.d0;
+        commandObject["d1"] = barty.state.queryData.d1;
 
-        if (this.queryData.useHour) {
-            commandObject["h0"] = this.queryData.h0;
-            commandObject["h1"] = this.queryData.h1;
+        if (barty.state.queryData.useHour) {
+            commandObject["h0"] = barty.state.queryData.h0;
+            commandObject["h1"] = barty.state.queryData.h1;
         }
-        if (this.queryData.useWeekday) {
-            commandObject["dow"] = this.queryData.weekday;
+        if (barty.state.queryData.useWeekday) {
+            commandObject["dow"] = barty.state.queryData.weekday;
         }
 
         return commandObject;       //      dataString;
@@ -227,7 +221,7 @@ barty.manager = {
         barty.constants.queryTypes.forEach(function (iQT) {
             barty.manager.caseCounts[iQT] = null;   //  set dirty
 
-            const tCountEstimate = barty.manager.estimateCount(iQT, barty.manager.queryData);
+            const tCountEstimate = barty.manager.estimateCount(iQT, barty.state.queryData);
 
             barty.manager.possibleCosts[iQT] = tCountEstimate + " cases est";   //  temporary
             barty.ui.fixUI();        //  temporary
@@ -244,11 +238,13 @@ barty.manager = {
 
                 //  todo: fix the following loop, not working as of 2016-03-14
 
+/*
                 if (barty.constants.queryTypes.every(function (iQT) {
                     barty.manager.caseCounts[iQT] >= 0;
                 })) {
                     console.log("All case counts retrieved");
                 }
+*/
 
             }
         });
@@ -267,12 +263,12 @@ barty.manager = {
      */
     doBucketOfData: async function () {
 
-        const tEstimatedCount = barty.manager.estimateCount(this.queryData.c, this.queryData);
+        const tEstimatedCount = barty.manager.estimateCount(barty.state.queryData.c, barty.state.queryData);
 
         if (tEstimatedCount < barty.constants.kRecordsPerRequestLimit) {
             barty.state.requestNumber++;
 
-            const tCommandObject = this.assembleQueryCommandObject(this.queryData.c, this.kGetData);
+            const tCommandObject = this.assembleQueryCommandObject(barty.state.queryData.c, this.kGetData);
 
             $("#result").text("Looking for data. ");
 
@@ -287,9 +283,11 @@ barty.manager = {
     weGotData: function (theParsedData) {
         $("#result").text((theParsedData.length) ? " Got " + theParsedData.length + " records! " : "No data. ");
         barty.statusSelector.text("loading data into CODAP...");
-        tRememberedDateHour = null;
+/*
+        let tRememberedDateHour = null;
 
         let reorganizedData = {};
+*/
 
         //  output an item for each record
         //  we will stow these values in an array for having CODAP make the cases.
@@ -311,7 +309,7 @@ barty.manager = {
             }
 
             //  alter the count if the data includes a secret meeting!
-            const tAdjustedCount = meeting.adjustCount(
+            const tAdjustedCount = barty.meeting.adjustCount(
                 tStartAt,
                 tEndAt,
                 d.dow - 1,           //      the index of the weekday

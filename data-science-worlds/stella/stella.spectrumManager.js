@@ -43,7 +43,8 @@ stella.spectrumManager = {
     spectrumParametersChanged: function () {
         this.setSpectrogramWavelengthsToTypedValues();       //  read min and max from boxes in the UI
         this.updateLabSpectrum();
-        stella.manager.updateStella();  //  todo: event!
+        this.displayAllSpectra();
+        //  stella.manager.updateStella();  //  todo: event!
     },
 
     /**
