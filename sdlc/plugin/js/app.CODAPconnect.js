@@ -206,6 +206,7 @@ app.CODAPconnect = {
     name: 'sdlc',
     title: 'USS Data Portal',
     dimensions: {width: 444, height: 555},
-    preventDataContextReorg: false              //  todo: figure out why this seems not to work!
+    preventDataContextReorg: false,
+    cannotClose: true
   }
 };
