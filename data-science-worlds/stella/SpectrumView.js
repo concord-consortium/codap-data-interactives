@@ -43,6 +43,7 @@
 var SpectrumView = function (iSVGName, iManager) {
     this.paper = new Snap(document.getElementById(iSVGName));        //      snap.svg paper
     this.manager = iManager;
+    this.targetLabel = "my target";
 
     //  this.initialize( this.paper.node.clientWidth, this.paper.node.clientHeight);
     this.initialize(300, 60);     //      todo: fix this kludge! Why can't we get the dimensions from the width and height in html? It works for stella.skyview!
@@ -98,7 +99,7 @@ SpectrumView.prototype.adjustLimits = function (iMin, iMax) {
  * @returns {string}
  */
 SpectrumView.prototype.toString = function () {
-    var out = "Spectrogram of " + this.spectrum.source.id + " " + this.lambdaMin + "-" + this.lambdaMax + " nm";
+    var out = this.spectrum.source.id;
 
     return out;
 };
@@ -112,6 +113,7 @@ SpectrumView.prototype.displayLabSpectrum = function (iSpectrum) {
 
     //  make two channel arrays, one full-range, one zoomed.
     if (iSpectrum) {
+        this.targetLabel = this.spectrum.source.id;
         this.channels = this.spectrum.channelize(this.lambdaMinPossible, this.lambdaMaxPossible, this.nBins);   //  array of objects { intensity, min, max}
         this.zoomChannels = this.spectrum.channelize(this.lambdaMin, this.lambdaMax, this.nBins);   //  array of objects { intensity, min, max}
     }
@@ -131,7 +133,7 @@ SpectrumView.prototype.displaySkySpectrum = function (iSystem) {
     this.channels = [];
 
     if (iSystem) {
-        var channelSets = [];
+        var channelSets = [];       //  one "channel set" for each object. We add them down below.
         var zoomChannelSets = [];
 
         iSystem.stars.forEach(
