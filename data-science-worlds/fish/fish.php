@@ -188,7 +188,7 @@ function generateNewGameCode($DBH, $words)
 //  ------------    Connected ------------
 
 
-//  error_log('CRED TEST: whence ' . $whence . " user " . $user . " pass " . $pass . " dbname " . $dbname);
+error_log('CRED TEST: whence ' . $whence . " user " . $user . " pass " . $pass . " dbname " . $dbname);
 
 $DBH = CODAP_MySQL_connect("localhost", $user, $pass, $dbname);     //  works under MAMP....
 

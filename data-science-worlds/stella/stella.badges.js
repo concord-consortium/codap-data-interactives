@@ -51,6 +51,7 @@ stella.badges = {
     /**
      * We just got a new result that is deemed worthy.
      * What badge(s) does it count towards?
+     * Add the points in.
      * @param iResult
      */
     checkNewResultForBadgeProgress: function (iResult) {
@@ -58,6 +59,7 @@ stella.badges = {
             if (this.badgeStatus.hasOwnProperty(iBadge)) {
 
                 var tStat = this.badgeStatus[iBadge];
+                const oldLevel = tStat.level;
 
                 tStat.badgeComponents.forEach(function (iBadgeComponent) {
                     if (iBadgeComponent.fitsInComponent(iResult)) {
@@ -73,7 +75,11 @@ stella.badges = {
                         }
                     }
                 });
-                tStat.setAwardLevel();
+                tStat.setAwardLevel()
+                const newLevel = tStat.level;
+                if (newLevel != oldLevel) {
+                    alert("You just got level " + newLevel + " in " + tStat.name);
+                }
             }
         }
     },

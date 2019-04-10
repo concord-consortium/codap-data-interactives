@@ -27,8 +27,8 @@ limitations under the License.
 */
 
 barty.constants = {
-    version: "002k",
-    whence : "local_concord",
+    version: "002L",
+    whence : "concord",     //  fix this to deploy
 
     kRecordsPerRequestLimit : 1700,
 
@@ -40,6 +40,9 @@ barty.constants = {
     kMinDateString : "2015-01-01",
     kMaxDateString : "2018-12-31",
 
+    /**
+     * This object contains the locations for the php files, keyed by `whence`, above.
+     */
     kBasePhpURL: {
         local: "http://localhost:8888/plugins/barty/php/getBARTYdata.php",
         local_concord: "http://localhost:8888/concord-plugins/data-science-worlds/barty/php/getBARTYdata.php",
@@ -56,6 +59,8 @@ barty.constants = {
     queryTypes: ["byArrival", "byDeparture", "byRoute", "betweenAny"],
     kBaseH0: 8,        //      default starting hour
     kBaseH1: 14,       //      default ending hour for search
+    kBaseStn0 : "ORIN", //  default origin station
+    kBaseStn1 : "EMBR", //  default destination station
 
     kGetData: "data",
     kGetCounts: "counts",

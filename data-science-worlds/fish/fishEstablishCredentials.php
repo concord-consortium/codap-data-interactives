@@ -13,6 +13,7 @@
 $whence = $_REQUEST['whence'];
 
 $credentialFileNames = [
+    "local_concordRepository" => "/Applications/MAMP/cred/fishCred.php",
     "local" => "/Applications/MAMP/cred/fishCred.php",
     "eeps" => "/home1/denofinq/cred/fishCred.php"
 ];

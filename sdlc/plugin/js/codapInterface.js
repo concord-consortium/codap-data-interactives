@@ -239,13 +239,7 @@ var codapInterface = {
             }
 
             var getFrameReq = {action: 'get', resource: 'interactiveFrame'};
-            var newFrame = {
-                name: iConfig.name,
-                title: iConfig.title,
-                version: iConfig.version,
-                dimensions: iConfig.dimensions,
-                preventBringToFront: iConfig.preventBringToFront
-            };
+            var newFrame = iConfig || {};
             var updateFrameReq = {
                 action: 'update',
                 resource: 'interactiveFrame',

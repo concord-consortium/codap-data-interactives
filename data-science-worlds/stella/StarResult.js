@@ -57,6 +57,8 @@ StarResult = function ( iMine, iAuto ) {
 
     this.points = iAuto ? 0 : this.evaluateResult();    //  sets true, trueDisplay
 
+    this.source = "self";
+
     if (this.points > 0 || iAuto) {
         stella.connector.emitStarResult(this, function(iResult) {
             console.log("StarResult callback says: " + JSON.stringify(iResult));

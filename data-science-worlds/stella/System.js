@@ -57,6 +57,14 @@ var System = function (iData) {
         this.stars.push(tStar);
     }.bind(this));
 
+    //  subtract blue from red to get a "redness".
+    //  Empirically, red - blue ranges from –0.7 to + 1.3.
+    //  So we transform it to be between 0 (blue) and 1 (red)
+
+    const tRed = this.bright(stella.constants.filters.F600);
+    const tBlue = this.bright(stella.constants.filters.F400);
+    this.redness = ( tRed - tBlue + 0.7) / 2.0;
+
 };
 
 /**

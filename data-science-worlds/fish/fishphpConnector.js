@@ -69,8 +69,11 @@ fish.phpConnector = {
         }
         theBody.append("whence", fish.whence);      //  here is where the JS tells the PHP which server we're on.
 
+        const theURL = fish.constants.kBaseURL[fish.whence];
+
+        //  console.log("sendCommand url:" + theURL);       //  debug
         let theRequest = new Request(
-            fish.constants.kBaseURL[fish.whence],
+            theURL,
             {method: 'POST', body: theBody, headers: new Headers()}
             //{method: 'POST', body: theBody, headers: {"Content-Type": "application/json; charset=utf-8"}}
         );
