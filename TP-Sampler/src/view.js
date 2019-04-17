@@ -713,12 +713,12 @@ define(function() {
       return function() {
         if (_this.isRunning() || device === "collector") return;
 
-        var loc = this.node.getClientRects()[0],
+        var loc = this.node.getBoundingClientRect(),
             text = variables[i],
             width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
         variableNameInput.style.display = "block";
-        variableNameInput.style.top = (loc.top + loc.height/2) + "px";
-        variableNameInput.style.left = (loc.left) + "px";
+        variableNameInput.style.top = (loc.y + loc.height/2) + "px";
+        variableNameInput.style.left = (loc.x) + "px";
         variableNameInput.style.width = width;
         variableNameInput.value = text;
         variableNameInput.focus();
