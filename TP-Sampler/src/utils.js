@@ -67,6 +67,23 @@ define(function() {
     return isCaps1 === isCaps2;
   }
 
+  function parseSpecifier(spec) {
+    var list = spec.split(',');
+    var arr = [];
+    var seq;
+    list.forEach(function (item) {
+      if (/^.+(-| to ).+/.test(item)) {
+        seq = parseSequence(item);
+        if (seq) {
+          arr = arr.concat(seq);
+        }
+      } else {
+        arr.push(item);
+      }
+    });
+    return arr.length?arr:null;
+  }
+
   function testParsing() {
     var equals = function(arr1, arr2) {
       if (arr1 === null || arr2 === null) return true;
@@ -77,28 +94,34 @@ define(function() {
       return true;
     };
     // invalid sequences
-    console.assert(equals(parseSequence("ab to bc"), null));
-    console.assert(equals(parseSequence("-a to b"), null));
-    console.assert(equals(parseSequence("a to -b"), null));
-    console.assert(equals(parseSequence("1- to 2"), null));
-    console.assert(equals(parseSequence("1 to 2-"), null));
-    console.assert(equals(parseSequence("1 to a"), null));
-    console.assert(equals(parseSequence("A to 2"), null));
-    console.assert(equals(parseSequence("a to A"), null));
+    console.assert(equals(parseSpecifier("ab to bc"), null));
+    console.assert(equals(parseSpecifier("-a to b"), null));
+    console.assert(equals(parseSpecifier("a to -b"), null));
+    console.assert(equals(parseSpecifier("1- to 2"), null));
+    console.assert(equals(parseSpecifier("1 to 2-"), null));
+    console.assert(equals(parseSpecifier("1 to a"), null));
+    console.assert(equals(parseSpecifier("A to 2"), null));
+    console.assert(equals(parseSpecifier("a to A"), null));
 
     // numbers
-    console.assert(equals(parseSequence("0 to 2"), ["0", "1", "2"]));
-    console.assert(equals(parseSequence("0 - 2"),  ["0", "1", "2"]));
-    console.assert(equals(parseSequence("0.0 to 0.3"), ["0.0", "0.1", "0.2", "0.3"]));
-    console.assert(equals(parseSequence("0 to 0.02"), ["0.00", "0.01", "0.02"]));
-    console.assert(equals(parseSequence("-1 - 1"), ["-1", "0", "1"]));
-    console.assert(equals(parseSequence("0 - -2"), ["0", "-1", "-2"]));
+    console.assert(equals(parseSpecifier("0 to 2"), ["0", "1", "2"]));
+    console.assert(equals(parseSpecifier("0 - 2"),  ["0", "1", "2"]));
+    console.assert(equals(parseSpecifier("0.0 to 0.3"), ["0.0", "0.1", "0.2", "0.3"]));
+    console.assert(equals(parseSpecifier("0 to 0.02"), ["0.00", "0.01", "0.02"]));
+    console.assert(equals(parseSpecifier("-1 - 1"), ["-1", "0", "1"]));
+    console.assert(equals(parseSpecifier("0 - -2"), ["0", "-1", "-2"]));
 
     // strings
-    console.assert(equals(parseSequence("a to c"), ["a", "b", "c"]));
-    console.assert(equals(parseSequence("a-c"),    ["a", "b", "c"]));
-    console.assert(equals(parseSequence("A to C"), ["A", "B", "C"]));
-    console.assert(equals(parseSequence("D to B"), ["D", "C", "B"]));
+    console.assert(equals(parseSpecifier("a to c"), ["a", "b", "c"]));
+    console.assert(equals(parseSpecifier("a-c"),    ["a", "b", "c"]));
+    console.assert(equals(parseSpecifier("A to C"), ["A", "B", "C"]));
+    console.assert(equals(parseSpecifier("D to B"), ["D", "C", "B"]));
+
+    // lists
+    console.assert(equals(parseSpecifier('a,a,a,b'), ['a','a','a','b']));
+
+    // combos
+    console.assert(equals(parseSpecifier('cat,dog,X-Z,fish'), ['cat','dog','X','Y','Z','fish']));
   }
 
   // run assertion test on module load
@@ -107,6 +130,7 @@ define(function() {
   return {
     fill: fill,
     shuffle: shuffle,
-    parseSequence: parseSequence
+    parseSequence: parseSequence,
+    parseSpecifier: parseSpecifier
   };
 });
