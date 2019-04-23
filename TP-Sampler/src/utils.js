@@ -20,7 +20,7 @@ define(function() {
   function parseSequence(seq) {
     // strip all spaces
     seq = seq.replace(/ /g, "");
-    var m = /^(-?[\d\.]+|\w)(-|to)(-?[\d\.]+|\w)$/g.exec(seq);
+    var m = /^(-?[\d.]+|\w)(-|to)(-?[\d.]+|\w)$/g.exec(seq);
     if (!m || m.length < 4) {
       return null;
     }

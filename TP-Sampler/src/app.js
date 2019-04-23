@@ -157,7 +157,7 @@ function(Snap, CodapCom, View, ui, utils) {
       tMax = variables.reduce(function (iCurrMax, iValue) {
         return (iCurrMax === '' || Number(iCurrMax) < Number(iValue)) ? iValue : iCurrMax;
       }, '');
-      tResult = String(Number(tMax) + 1)
+      tResult = String(Number(tMax) + 1);
     }
     else {
       tMax = variables.reduce(function (iCurrMax, iValue) {
