@@ -285,7 +285,9 @@ define([
                   return res.name;
                 });
                 _this.collectionAttributes = results[1].values.attrs.map(function (attr) {
-                  attr.id = null; return attr;
+                  // we will use the attribute definitions to create new attributes
+                  // so we take the precaution of removing identifiers.
+                  delete attr.id; delete attr.guid; return attr;
                 });
                 addAttributes();    // throw this over the wall
                 return results[2];
