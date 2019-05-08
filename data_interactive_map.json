@@ -506,6 +506,16 @@
       ]
     },
     {
+      "title": "USS Data Portal",
+      "description": "Portal to US census and American Community Survey Data",
+      "path": "https://codap.concord.org/sdlc/plugin/",
+      "aegis": "sdlc",
+      "visible": "false",
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
       "title": "Sensor Interactive (InquirySpace 2 version)",
       "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
       "width": 600,
@@ -702,30 +712,6 @@
       "aegis": "DSG",
       "categories": [
         "Data Worlds"
-      ]
-    },
-    {
-      "title": "USS Data Portal",
-      "description": "Portal to US census and American Community Survey Data",
-      "width": 400,
-      "height": 600,
-      "path": "https://codap.concord.org/sdlc/plugin/",
-      "aegis": "sdlc",
-      "visible": "false",
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
-      "title": "USS Data Portal",
-      "description": "Portal to US census and American Community Survey Data",
-      "width": 400,
-      "height": 600,
-      "path": "https://codap.concord.org/sdlc/plugin/",
-      "aegis": "sdlc",
-      "visible": "false",
-      "categories": [
-        "Partners"
       ]
     }
   ]
