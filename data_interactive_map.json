@@ -506,16 +506,6 @@
       ]
     },
     {
-      "title": "USS Data Portal",
-      "description": "Portal to US census and American Community Survey Data",
-      "path": "https://codap.concord.org/sdlc/plugin/",
-      "aegis": "sdlc",
-      "visible": "false",
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
       "title": "Sensor Interactive (InquirySpace 2 version)",
       "description": "Collect data using Vernier sensors and send the data to CODAP for further analysis",
       "width": 600,
@@ -593,7 +583,16 @@
         "Utilities"
       ]
     },
-
+    {
+      "title": "USS Data Portal",
+      "description": "Portal to US census and American Community Survey Data",
+      "path": "https://codap.concord.org/sdlc/plugin/index.html",
+      "aegis": "sdlc",
+      "visible": "false",
+      "categories": [
+        "Partners"
+      ]
+    },
     {
       "title": "acs",
       "description": "ACS data portal: 20000 Californans in 2013",
