@@ -157,7 +157,7 @@ function(Snap, CodapCom, View, ui, utils) {
       tMax = variables.reduce(function (iCurrMax, iValue) {
         return (iCurrMax === '' || Number(iCurrMax) < Number(iValue)) ? iValue : iCurrMax;
       }, '');
-      tResult = String(Number(tMax) + 1)
+      tResult = String(Number(tMax) + 1);
     }
     else {
       tMax = variables.reduce(function (iCurrMax, iValue) {
@@ -202,14 +202,14 @@ function(Snap, CodapCom, View, ui, utils) {
 
     var sequenceRequest = showSequencePrompt();
     if (sequenceRequest) {
-      var sequence = utils.parseSequence(sequenceRequest);
+      var sequence = utils.parseSpecifier(sequenceRequest);
       if (sequence) {
         // swap contents of sequence into variables without updating variables reference
         variables.length = 0;
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
         codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
-      else alert('Sorry. Unable to parse that. Here are some valid range expressions: 1-50, -5 to 5, 1.0 to 5.0, or A-Z');
+      else alert('Sorry. Unable to parse that. Here are some valid list and range expressions: "a,b,b,b", "cat,cat,dog", "1-50", "-5 to 5", "1.0 to 5.0", or "A-Z"');
     }
 
     view.render();
@@ -217,7 +217,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function showSequencePrompt() {
     // eslint-disable-next-line no-alert
-    return window.prompt("Enter a range (e.g. 1-50, -5 to 5, 1.0 to 5.0, A-Z)", "a to c");
+    return window.prompt('Enter a list (e.g. "cat, cat, dog") or a range (e.g. "1-50", "-5 to 5", "1.0 to 5.0", "A-Z")', "a to c");
   }
 
   /**

@@ -214,6 +214,11 @@ taskDescriptions = {
       );
     }
     return tFeedback;
+  },
+  taskExists: function (iKey) {
+    return this.descriptions.find(function (iDesc) {
+      return iKey === iDesc.key;
+    });
   }
 };
 
