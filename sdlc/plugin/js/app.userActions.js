@@ -33,6 +33,7 @@ app.userActions = {
       tData.forEach( c => {
           //  c is a case object
         let sampleData = c.sample_data;
+        if (!sampleData) { return; }
         let o = { sample : app.state.sampleNumber };
         app.state.selectedAttributes.forEach(function (attrTitle) {
           let attr = app.allAttributes[attrTitle];
