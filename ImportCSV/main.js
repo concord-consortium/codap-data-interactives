@@ -40,12 +40,16 @@ let codapConfig = {
 let config = {
   firstRowIsAttrList: true,
   chunkSize: 200,
-  dataSetName: constants.defaultDataSetName,
+  datasetName: constants.defaultDataSetName,
   collectionName: constants.defaultCollectionName,
   attrName: constants.defaultAttrName,
 
 }
 
+function parseCSV(data) {
+  let parse = Papa.parse(data);
+  return parse.data;
+}
 
 function fetchAndParseURL(url) {
   return fetch(url)
@@ -53,8 +57,7 @@ function fetchAndParseURL(url) {
         return new Promise(function (resolve, reject){
           if (resp.ok)
             resp.text().then(function (data) {
-              let parse = Papa.parse(data)
-              let tab = parse.data;
+              let tab = parseCSV(data);
               console.log('made table: ' + (tab && tab.length));
               resolve(tab);
             });
@@ -62,27 +65,43 @@ function fetchAndParseURL(url) {
       });
 
 }
+function populateFromTextThenExit(text, config) {
+  let data = parseCSV(text)
+  codapHelper.sendDataSetToCODAP(data, config)
+      // .then(function () { codapHelper.openTextBox(constants.name, config.datasetName); })// need file path
+      .then(codapHelper.closeSelf)
+      .catch(function (ex) {
+        uiControl.displayError(ex);
+      });
+}
 
+function populateFromURLThenExit(url, config) {
+  fetchAndParseURL(url)
+      .then(function (data) { codapHelper.sendDataSetToCODAP(data, config); })
+      .then(function () { codapHelper.openTextBox(constants.name, url); })
+      .then(codapHelper.closeSelf)
+      .catch(function (ex) {
+        uiControl.displayError(ex);
+      });
+}
 
 function main() {
   codapHelper.init(codapConfig).then(function (pluginState) {
     console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
 
-    // for now
-    if (!pluginState || !pluginState.url) pluginState = {url : 'http://localhost/~jsandoe/Automobiles.csv'};
 
-    if (pluginState && pluginState.url) {
-      fetchAndParseURL(pluginState.url)
-          .then(function (data) { codapHelper.sendDataSetToCODAP(data, config); })
-          .then(function () { codapHelper.openTextBoxInCODAP(constants.name, pluginState.url); })
-          .then(codapHelper.closeSelf)
-          .catch(function (ex) {
-            uiControl.displayError(ex);
-          });
+    if (pluginState) {
+      if (pluginState.url) {
+        populateFromURLThenExit(pluginState.url, config);
+      } else if (pluginState.text) {
+        populateFromTextThenExit(pluginState.text, config);
+      }
     }
   })
   .catch(function (msg) {
     uiControl.displayError(msg);
+    // TODO Here we should put up a file entry dialog and capability to open
+    //  CODAP in an IFrame
   });
 }
 
