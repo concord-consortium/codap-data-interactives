@@ -27,11 +27,11 @@ function init (codapConfig) {
   return codapInterface.init(codapConfig);
 }
 
-function findMatchingDataSetInCODAP(name, attrs) {
+function findMatchingDataSet(name, attrs) {
 
 }
 
-function defineDataSetInCODAP(datasetName, collectionName, attrs) {
+function defineDataSet(datasetName, collectionName, attrs) {
   let request = {
     action: 'create',
     resource: 'dataContext',
@@ -49,7 +49,7 @@ function defineDataSetInCODAP(datasetName, collectionName, attrs) {
   return codapInterface.sendRequest(request, handleFailedMessage);
 }
 
-function openCaseTableForDataSetInCODAP(name) {
+function openCaseTableForDataSet(name) {
   let request = {
     action: 'create',
     resource: 'component',
@@ -67,7 +67,7 @@ function openCaseTableForDataSetInCODAP(name) {
  * @param message
  * @return {Promise}
  */
-function openTextBoxInCODAP(title, message) {
+function openTextBox(title, message) {
   let request = {
     action: 'create',
     resource: 'component',
@@ -99,22 +99,37 @@ function getTableStats(data) {
 }
 
 function sendRowsToCODAP(config, attrArray, rows) {
-  let request = {
-    action: 'create',
-    resource: 'dataContext[' + config.dataSetName +
-        '].collection[' + config.collectionName + '].case',
-    values: []
+
+  function sendOneChunk(chunk){
+    let request = {
+      action: 'create',
+      resource: 'dataContext[' + config.datasetName +
+          '].collection[' + config.collectionName + '].case'
+    }
+    let cases = chunk.map(function (row) {
+          let myCase = {values:{}};
+          attrArray.forEach(function (attr, attrIx) {
+            myCase.values[attr] = row[attrIx];
+          })
+          return myCase;
+        });
+    request.values = cases;
+    return codapInterface.sendRequest(request, handleFailedMessage);
   }
 
-  let cases = rows.map(function (row) {
-    let myCase = {values:{}};
-    attrArray.forEach(function (attr, ix) {
-      myCase.values[attr] = row[ix];
-    })
-    return myCase;
-  });
-  request.values = cases;
-  return codapInterface.sendRequest(request, handleFailedMessage);
+  let chunkSize = config.chunkSize;
+  let requestQueue = null;
+  let numRows = rows.length;
+
+  for (let ix = 0; ix < numRows; ix += chunkSize) {
+    var chunk = rows.slice(ix, ix + chunkSize);
+    // if (!requestQueue) {
+      requestQueue = sendOneChunk(chunk);
+    // } else {
+    //   requestQueue.then(function () {return sendOneChunk(chunk)});
+    // }
+  }
+  return requestQueue;
 }
 
 /**
@@ -134,20 +149,24 @@ function sendDataSetToCODAP(data, config) {
       attrs[i] = config.attrName + i;
     }
   }
-  return defineDataSetInCODAP(config.dataSetName, config.collectionName, attrs)
-      .then(function () { return openCaseTableForDataSetInCODAP(config.dataSetName)})
+  return defineDataSet(config.datasetName, config.collectionName, attrs)
+      .then(function () { return openCaseTableForDataSet(config.datasetName)})
       .then(function () { return sendRowsToCODAP(config, attrs, data)});
 }
 
 function closeSelf() {
-  // TBD
+  let request = {
+    action: 'delete',
+    resource: 'interactiveFrame'
+  };
+  return codapInterface.sendRequest(request, handleFailedMessage);
 }
 
 let codapHelper = {
   init: init,
-  findMatchingDataSetInCODAP: findMatchingDataSetInCODAP,
-  openCaseTableForDataSetInCODAP: openCaseTableForDataSetInCODAP,
-  openTextBoxInCODAP: openTextBoxInCODAP,
+  findMatchingDataSet: findMatchingDataSet,
+  openCaseTableForDataSet: openCaseTableForDataSet,
+  openTextBox: openTextBox,
   sendDataSetToCODAP: sendDataSetToCODAP,
   closeSelf: closeSelf,
 }
