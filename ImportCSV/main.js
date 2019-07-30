@@ -17,8 +17,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
- import {uiControl} from './modules/uiControl.js';
-/*global Papa, codapInterface */
+ /*global Papa */
+import {uiControl} from './modules/uiControl';
+import {codapHelper} from './modules/codapHelper';
 
 let constants = {
   name: 'Import CSV',
@@ -33,11 +34,12 @@ let codapConfig = {
   name: constants.name,
   title: constants.name,
   version: 0.1,
-  dimensions: {width: 400, height: 300}
+  dimensions: {width: 400, height: 100}
 }
 
 let config = {
-  firstRowIsAttr: true,
+  firstRowIsAttrList: true,
+  chunkSize: 200,
   dataSetName: constants.defaultDataSetName,
   collectionName: constants.defaultCollectionName,
   attrName: constants.defaultAttrName,
@@ -61,103 +63,9 @@ function fetchAndParseURL(url) {
 
 }
 
-function findMatchingDataSetInCODAP(name, attrs) {
-
-}
-
-function defineDataSetInCODAP(name, attrs) {
-  let request = {
-    action: 'create',
-    resource: 'dataContext',
-    values: {
-      name: name,
-      title: name,
-      collections: [
-        {
-          name: config.collectionName,
-          attrs: attrs.map(function (attr) {return {name: attr}; })
-        }
-      ]
-    }
-  }
-  codapInterface.sendRequest(request, handleFailedMessage);
-}
-
-function openCaseTableForDataSetInCODAP(name) {
-
-}
-
-function openTextBoxInCODAP(title, message) {
-  let request = {
-    action: 'create',
-    resource: 'component',
-    values: {
-      type: 'text',
-      text: message,
-      title: title
-    }
-  }
-  codapInterface.sendRequest(request, handleFailedMessage);
-}
-
-function handleFailedMessage(response, request) {
-  if (!response || !response.success) {
-    console.log("CODAP Request failed: " + JSON.stringify(request));
-  }
-}
-
-function sendRowsToCODAP(attrArray, rows) {
-  let request = {
-    action: 'create',
-    resource: 'dataContext[' + config.dataSetName +
-        '].collection[' + config.collectionName + '].case',
-    values: []
-  }
-
-  let cases = rows.map(function (row) {
-    let myCase = {values:{}};
-    attrArray.forEach(function (attr, ix) {
-      myCase.values[attr] = row[ix];
-    })
-    return myCase;
-  });
-  request.values = cases;
-  codapInterface.sendRequest(request, handleFailedMessage);
-}
-
-function getTableStats(data) {
-  var stats = {
-    numberOfRows: data.length,
-    maxWidth: 0,
-    minWidth: Math.MAX_INT
-  };
-
-  stats.maxWidth = data.reduce(function (maxWidth, row) {return Math.max(maxWidth, row.length);}, 0);
-  stats.minWidth = data.reduce(function (minWidth, row) {return Math.min(minWidth, row.length);}, Math.MAX_INT);
-  return stats;
-}
-
-function sendDataSetToCODAP(data, config) {
-  let attrs = null;
-  if (config.firstRowIsAttr) {
-    attrs = data.shift();
-  }
-  let tableStats = getTableStats(data);
-  if (!attrs) {
-    for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = config.attrName + i;
-    }
-  }
-  defineDataSetInCODAP(config.dataSetName, attrs);
-  sendRowsToCODAP(attrs, data);
-}
-
-function closeSelf() {
-  // TBD
-}
 
 function main() {
-  codapInterface.init(codapConfig).then(function (pluginState) {
+  codapHelper.init(codapConfig).then(function (pluginState) {
     console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
 
     // for now
@@ -165,9 +73,9 @@ function main() {
 
     if (pluginState && pluginState.url) {
       fetchAndParseURL(pluginState.url)
-          .then(function (data) { sendDataSetToCODAP(data, config); })
-          .then(function () { openTextBoxInCODAP(constants.name, pluginState.url); })
-          .then(closeSelf)
+          .then(function (data) { codapHelper.sendDataSetToCODAP(data, config); })
+          .then(function () { codapHelper.openTextBoxInCODAP(constants.name, pluginState.url); })
+          .then(codapHelper.closeSelf)
           .catch(function (ex) {
             uiControl.displayError(ex);
           });
