@@ -93,11 +93,11 @@ function main() {
   codapHelper.init(codapConfig).then(function (pluginState) {
     console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
 
-    Object.keys(config).forEach(function (key) {
-      if (pluginState[key] != null) config[key] = pluginState[key];
-    });
-
     if (pluginState) {
+      Object.keys(config).forEach(function (key) {
+        if (pluginState[key] != null) config[key] = pluginState[key];
+      });
+
       if (pluginState.url) {
         config.resourceDescription = composeResourceDescription(pluginState.url);
         populateFromURLThenExit(pluginState.url, config);

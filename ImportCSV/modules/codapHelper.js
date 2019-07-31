@@ -27,10 +27,6 @@ function init (codapConfig) {
   return codapInterface.init(codapConfig);
 }
 
-function findMatchingDataSet(name, attrs) {
-
-}
-
 function defineDataSet(datasetName, collectionName, attrs) {
   let request = {
     action: 'create',
@@ -46,7 +42,7 @@ function defineDataSet(datasetName, collectionName, attrs) {
       ]
     }
   }
-  return codapInterface.sendRequest(request, handleFailedMessage);
+  return codapInterface.sendRequest(request);
 }
 
 function openCaseTableForDataSet(name) {
@@ -98,7 +94,7 @@ function getTableStats(data) {
   return stats;
 }
 
-function sendRowsToCODAP(config, attrArray, rows) {
+function sendRowsToCODAP(dataSetID, config, attrArray, rows) {
 
   function sendOneChunk(){
     if (chunkIx > numRows) {
@@ -108,7 +104,7 @@ function sendRowsToCODAP(config, attrArray, rows) {
     chunkIx = chunkIx + chunkSize;
     let request = {
       action: 'create',
-      resource: 'dataContext[' + config.datasetName +
+      resource: 'dataContext[' + dataSetID +
           '].collection[' + config.collectionName + '].case'
     }
     let cases = chunk.map(function (row) {
@@ -130,7 +126,7 @@ function sendRowsToCODAP(config, attrArray, rows) {
 
 /**
  *
- * @param data
+ * @param data: an array of arrays
  * @param config
  * @return {Promise}
  */
@@ -140,20 +136,28 @@ function sendDataSetToCODAP(data, config) {
     attrs = data.shift();
   }
   let tableStats = getTableStats(data);
+  let datasetID = null;
   if (!attrs) {
     for (let i = 0; i < tableStats.maxWidth; i++) {
       attrs[i] = config.attrName + i;
     }
   }
   return defineDataSet(config.datasetName, config.collectionName, attrs)
-      .then(function () {
-        if (config.openCaseTable) {
-          return openCaseTableForDataSet(config.datasetName)
+      .then(function (result) {
+        if (result.success) {
+          datasetID = result.values.id;
+          if (config.openCaseTable) {
+            return openCaseTableForDataSet(datasetID);
+          } else {
+            return Promise.resolve(result);
+          }
         } else {
-          return Promise.resolve();
+          return Promise.reject('Failed to create dataset.')
         }
       })
-      .then(function () { return sendRowsToCODAP(config, attrs, data)});
+      .then(function () {
+        return sendRowsToCODAP(datasetID, config, attrs, data);
+      });
 }
 
 function closeSelf() {
@@ -166,7 +170,6 @@ function closeSelf() {
 
 let codapHelper = {
   init: init,
-  findMatchingDataSet: findMatchingDataSet,
   openCaseTableForDataSet: openCaseTableForDataSet,
   openTextBox: openTextBox,
   sendDataSetToCODAP: sendDataSetToCODAP,
