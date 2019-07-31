@@ -43,11 +43,12 @@ let config = {
   datasetName: constants.defaultDataSetName,
   collectionName: constants.defaultCollectionName,
   attrName: constants.defaultAttrName,
-
+  openCaseTable: true,
+  resourceDescription: 'unknown'
 }
 
 function parseCSV(data) {
-  let parse = Papa.parse(data);
+  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
   return parse.data;
 }
 
@@ -63,12 +64,11 @@ function fetchAndParseURL(url) {
             });
         })
       });
-
 }
 function populateFromTextThenExit(text, config) {
-  let data = parseCSV(text)
+  let data = parseCSV(text);
   codapHelper.sendDataSetToCODAP(data, config)
-      // .then(function () { codapHelper.openTextBox(constants.name, config.datasetName); })// need file path
+      .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })// need file path
       .then(codapHelper.closeSelf)
       .catch(function (ex) {
         uiControl.displayError(ex);
@@ -77,23 +77,32 @@ function populateFromTextThenExit(text, config) {
 
 function populateFromURLThenExit(url, config) {
   fetchAndParseURL(url)
-      .then(function (data) { codapHelper.sendDataSetToCODAP(data, config); })
-      .then(function () { codapHelper.openTextBox(constants.name, url); })
+      .then(function (data) { return codapHelper.sendDataSetToCODAP(data, config); })
+      .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })
       .then(codapHelper.closeSelf)
       .catch(function (ex) {
         uiControl.displayError(ex);
       });
 }
 
+function composeResourceDescription(src) {
+  return `source: ${src}\nimported: ${new Date()}`
+}
+
 function main() {
   codapHelper.init(codapConfig).then(function (pluginState) {
     console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
 
+    Object.keys(config).forEach(function (key) {
+      if (pluginState[key] != null) config[key] = pluginState[key];
+    });
 
     if (pluginState) {
       if (pluginState.url) {
+        config.resourceDescription = composeResourceDescription(pluginState.url);
         populateFromURLThenExit(pluginState.url, config);
       } else if (pluginState.text) {
+        config.resourceDescription = composeResourceDescription('local file -- ' + (pluginState.filename || pluginState.name));
         populateFromTextThenExit(pluginState.text, config);
       }
     }

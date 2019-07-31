@@ -100,7 +100,12 @@ function getTableStats(data) {
 
 function sendRowsToCODAP(config, attrArray, rows) {
 
-  function sendOneChunk(chunk){
+  function sendOneChunk(){
+    if (chunkIx > numRows) {
+      return Promise.resolve();
+    }
+    let chunk = rows.slice(chunkIx, chunkIx + chunkSize);
+    chunkIx = chunkIx + chunkSize;
     let request = {
       action: 'create',
       resource: 'dataContext[' + config.datasetName +
@@ -114,22 +119,13 @@ function sendRowsToCODAP(config, attrArray, rows) {
           return myCase;
         });
     request.values = cases;
-    return codapInterface.sendRequest(request, handleFailedMessage);
+    return codapInterface.sendRequest(request, handleFailedMessage).then(sendOneChunk);
   }
 
   let chunkSize = config.chunkSize;
-  let requestQueue = null;
   let numRows = rows.length;
-
-  for (let ix = 0; ix < numRows; ix += chunkSize) {
-    var chunk = rows.slice(ix, ix + chunkSize);
-    // if (!requestQueue) {
-      requestQueue = sendOneChunk(chunk);
-    // } else {
-    //   requestQueue.then(function () {return sendOneChunk(chunk)});
-    // }
-  }
-  return requestQueue;
+  let chunkIx = 0;
+  return sendOneChunk();
 }
 
 /**
@@ -150,7 +146,13 @@ function sendDataSetToCODAP(data, config) {
     }
   }
   return defineDataSet(config.datasetName, config.collectionName, attrs)
-      .then(function () { return openCaseTableForDataSet(config.datasetName)})
+      .then(function () {
+        if (config.openCaseTable) {
+          return openCaseTableForDataSet(config.datasetName)
+        } else {
+          return Promise.resolve();
+        }
+      })
       .then(function () { return sendRowsToCODAP(config, attrs, data)});
 }
 
