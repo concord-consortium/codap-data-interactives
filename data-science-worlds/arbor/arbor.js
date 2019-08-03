@@ -405,6 +405,7 @@ var arbor = {
         focusSplitMgr.displayAttributeConfiguration();   //  the HTML on the main page
         this.treePanelView.redrawEntirePanel();
         this.corralView.refreshCorral();
+        arbor.ui.updateConfusionMatrix();
     },
 
     displayWidth : function() {

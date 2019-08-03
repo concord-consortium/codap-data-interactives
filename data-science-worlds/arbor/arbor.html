@@ -62,6 +62,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
     <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.min.css">
     <link rel='stylesheet' type='text/css' href='arbor.css'/>
+    <link rel='stylesheet' type='text/css' href='confusion-matrix.css'/>
 
     <!-- These two scripts take care of the communication with CODAP  -->
     <script src="../common/iframe-phone.js"></script>
@@ -85,6 +86,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         Models and Controllers
     -->
     <script src="arbor.js" ></script>
+    <script src="arbor-ui.js" ></script>
     <script src="arborCODAPConnector.js" ></script>
     <script src="arbor.selectionManager.js" ></script>
     <script src="focusSplitMgr.js" ></script>
@@ -123,7 +125,24 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         <li><a href="#tree">tree</a></li>
         <li><a href="#settings">settings</a></li>
         <li><a href="#help">help</a></li>
+        <li><a href="#table">table</a></li>
     </ul>
+
+    <div id="table">
+        <div id="confusion-matrix">
+            <div id="truth-head" class="box">truth</div>
+            <div id="truth-positive-head" class="box">sick</div>
+            <div id="truth-negative-head" class="box">well</div>
+            <div id="diag-head" class="box">diag</div>
+            <div id="diag-positive-head" class="box">sick</div>
+            <div id="diag-negative-head" class="box">well</div>
+            <div id="TP" class="cell">30</div>
+            <div id="TN" class="cell">40</div>
+            <div id="FP" class="cell">10</div>
+            <div id="FN" class="cell">20</div>
+            <div id="grand" class="box">100</div>
+        </div>
+    </div>
 
     <div id="tree">
 <!--
@@ -278,7 +297,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
 
     <div id="help">
-        <h1>Instructions!</h1>
+        <h1>Instructions!!</h1>
         <p>This CODAP plug-in lets you make decision or prediction trees based on the data in the document. Here are the
             basics:</p>
         <ul>
