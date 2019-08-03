@@ -398,6 +398,12 @@ var arbor = {
         this.fixDependentVariableMechanisms();  //  sets appropriate label text
         focusSplitMgr.displayAttributeConfiguration();   //  the HTML on the main page
         this.treePanelView.redrawEntirePanel();
+        this.corralView.refreshCorral();
+        arbor.ui.updateConfusionMatrix();
+    },
+
+    displayWidth : function() {
+        return window.innerWidth - 44;
     },
 
     setDependentVariableByName: function (iAttName) {
