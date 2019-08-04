@@ -86,42 +86,59 @@ Analysis.prototype.getStructureAndData = function () {
 
     //  function to process the list of collections
 
-    var processCollectionList = function (iResult) {
+    var processCollectionList = async function (iResult) {
         this.collections = iResult.values;
-        var tCollectionNames = TEEUtils.getListOfOneFieldInArrayOfObjects(this.collections, "name");
+        const tCollectionNames = TEEUtils.getListOfOneFieldInArrayOfObjects(this.collections, "name");
         if (tCollectionNames.indexOf(this.currentCollectionName) < 0) {
             this.specifyCurrentCollection(this.collections[0].name);
         }
-        this.host.gotCollectionList(this.collections);
+
+        let theAttributeList = [];
+
+        //  read sequentially so that the attribute names stay in order
+
+        for (const name of tCollectionNames) {
+            const tResource = "dataContext[" +
+                this.currentDataContextName + "].collection[" +
+                name + "].attributeList";
+            const tArg = {action: "get", resource: tResource};
+            console.log("Looking for attributes with " + tResource);
+            const result = await codapInterface.sendRequest(tArg);
+            const theAtts = result.values;
+
+            theAttributeList = theAttributeList.concat(theAtts);
+        }
+//          this.host.gotCollectionList(this.collections);
 
         //  now get attribute list
 
+/*
         var tResource = "dataContext[" +
             this.currentDataContextName + "].collection[" +
             this.currentCollectionName + "].attributeList";
         var tArg = {action: "get", resource: tResource};
         console.log("Looking for attributes with " + tResource);
+*/
 
-        return codapInterface.sendRequest(tArg);
+        return theAttributeList;
 
     };
 
     //  function to process the list of attribute names and request the cases
 
-    var processAttributeList = function (iResult) {
-        this.attributes = iResult.values;       //  iResult.values;               //  this is an array of objects where name is the attribute name, title the title, etc.
+    const processAttributeList = function (iResult) {
+        this.attributes = iResult;       //  iResult.values;    //  this is an array of objects where name is the attribute name, title the title, etc.
 
         this.host.gotAttributeList(this.attributes);    //  also assigns a default dependent if necessary
 
         var tCompoundRequest = [];
 
         this.attributes.forEach(function (a) {
-            var tResource = "dataContext[" + this.currentDataContextName + "].collection["
-                + this.currentCollectionName + "].attribute[" + a.name + "]";
+            var tResource = "dataContext[" + this.currentDataContextName + "].attribute[" + a.name + "]";
             var tOneRequest = {
                 "action": "get",
                 "resource": tResource
-            }
+            };
             tCompoundRequest.push(tOneRequest);
         }.bind(this));
 
@@ -134,7 +151,6 @@ Analysis.prototype.getStructureAndData = function () {
 
     };
 
-
     var processIndividualAttributes = function(iResult) {
 
         iResult.forEach( function(res) {
@@ -146,10 +162,9 @@ Analysis.prototype.getStructureAndData = function () {
             }
         }.bind(this));
 
-        //  now ask for the cases
+        //  now ask for the ITEMS (formerly, cases)
 
-        var tResource = "dataContext[" + this.currentDataContextName + "].collection[" +
-            this.currentCollectionName + "].allCases";
+        var tResource = "dataContext[" + this.currentDataContextName + "].itemSearch[*]";
         var tArg = {action: "get", resource: tResource};
         return codapInterface.sendRequest(tArg);
     };
@@ -161,8 +176,8 @@ Analysis.prototype.getStructureAndData = function () {
             if (iResult.success) {
                 var tCases = [];
 
-                iResult.values.cases.forEach(function (rawCase) {
-                    tCases.push(rawCase.case);  //  note not rawCase.case.values as before. So we will need to get values. This is to preserve the id.
+                iResult.values.forEach( (rawCase) => {
+                    tCases.push(rawCase);  //  note not rawCase.case.values as before. So we will need to get values. This is to preserve the id.
                 });
 
                 this.cases = tCases;

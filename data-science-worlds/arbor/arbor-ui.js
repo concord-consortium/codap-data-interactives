@@ -33,8 +33,10 @@ arbor.ui = {
         const kPositive = arbor.state.dependentVariableSplit.leftLabel;
         const kNegative = arbor.state.dependentVariableSplit.rightLabel;
 
-        document.getElementById("table-head").innerHTML
-            = "<span class='confusionHed'>Table</span><br>" + tRes.sampleSize + " cases";
+        document.getElementById("table-head").innerHTML =
+            "<span class='confusionHed'>" +
+            arbor.state.dependentVariableName +
+            "</span><br>" + tRes.sampleSize + " cases";
 
         document.getElementById("truth-positive-head").innerHTML = kPositive + " (" + (tRes.TP + tRes.FN + tRes.PU) + ")";
         document.getElementById("truth-negative-head").innerHTML = kNegative + " (" + (tRes.FP + tRes.TN + tRes.NU) + ")";
