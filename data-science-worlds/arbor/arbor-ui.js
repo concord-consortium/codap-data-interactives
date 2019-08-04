@@ -30,11 +30,25 @@ arbor.ui = {
 
     updateConfusionMatrix : function () {
         const tRes = arbor.state.tree.rootNode.getResultCounts();
+        const kPositive = arbor.state.dependentVariableSplit.leftLabel;
+        const kNegative = arbor.state.dependentVariableSplit.rightLabel;
+
+        document.getElementById("table-head").innerHTML
+            = "<span class='confusionHed'>Table</span><br>" + tRes.sampleSize + " cases";
+
+        document.getElementById("truth-positive-head").innerHTML = kPositive + " (" + (tRes.TP + tRes.FN + tRes.PU) + ")";
+        document.getElementById("truth-negative-head").innerHTML = kNegative + " (" + (tRes.FP + tRes.TN + tRes.NU) + ")";
+        document.getElementById("pred-positive-head").innerHTML = kPositive + " (" + (tRes.TP + tRes.FP) + ")";
+        document.getElementById("pred-negative-head").innerHTML = kNegative + " (" + (tRes.TN + tRes.FN) + ")";
+
+        document.getElementById("no-pred-head").innerHTML = "no prediction (" + (tRes.PU + tRes.NU) + ")";
 
         document.getElementById("TP").innerHTML = tRes.TP;
         document.getElementById("FP").innerHTML = tRes.FP;
         document.getElementById("TN").innerHTML = tRes.TN;
         document.getElementById("FN").innerHTML = tRes.FN;
+        document.getElementById("PU").innerHTML = tRes.PU;
+        document.getElementById("NU").innerHTML = tRes.NU;
 
     }
 };

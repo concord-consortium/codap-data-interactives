@@ -123,38 +123,36 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 <div id="tabs">
     <ul>
         <li><a href="#tree">tree</a></li>
+        <li><a href="#table">table</a></li>
         <li><a href="#settings">settings</a></li>
         <li><a href="#help">help</a></li>
-        <li><a href="#table">table</a></li>
     </ul>
 
     <div id="table">
         <div id="confusion-matrix">
+            <div id="table-head" class="box">bar</div>
             <div id="truth-head" class="box">truth</div>
             <div id="truth-positive-head" class="box">sick</div>
             <div id="truth-negative-head" class="box">well</div>
-            <div id="diag-head" class="box">diag</div>
-            <div id="diag-positive-head" class="box">sick</div>
-            <div id="diag-negative-head" class="box">well</div>
+            <div id="pred-head" class="box">prediction</div>
+            <div id="pred-positive-head" class="box">sick</div>
+            <div id="pred-negative-head" class="box">well</div>
             <div id="TP" class="cell">30</div>
             <div id="TN" class="cell">40</div>
             <div id="FP" class="cell">10</div>
             <div id="FN" class="cell">20</div>
-            <div id="grand" class="box">100</div>
+
+            <div id="no-pred-head" class="no-pred">no prediction</div>
+            <div id="PU" class="no-pred">44</div>
+            <div id="NU" class="no-pred">66</div>
         </div>
     </div>
 
     <div id="tree">
-<!--
-        <div draggable="true" ondragstart="console.log('...drag start in html...')" )>Drag me!</div>
-        <svg draggable="true" ondragstart="console.log('...drag start in svg...')" width="100" height="20" )>
-            <rect x="0" y="0" width="100" height="20" fill="dodgerblue"></rect>
-        </svg>
--->
 
         <div>
             <input id="showDiagnosisLeaves" type="checkbox" onchange="arbor.refreshBaum('views')">
-            <label for="showDiagnosisLeaves">show diagnosis "leaves"</label>
+            <label for="showDiagnosisLeaves">show prediction "leaves"</label>
         </div>
 
         <svg id="treePaper" class="noselect" width="100%" height="300">
@@ -304,7 +302,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             <li>Drag a variable from the bottom "variable palette" to a node to make a branch. YOU WILL NOT SEE IT DRAG.
                 That's OK.
             </li>
-            <li>Click the <b>Show diagnosis leaves</b> box to assign diagnoses to your tree.</li>
+            <li>Click the <b>Show prediction leaves</b> box to assign predictions to your tree.</li>
             <li>Click a node to select it and all its cases (it turns yellow).</li>
             <li>Click <img height="14" width="14" src="art/configure.png"> to configure the selected node.</li>
             <li>Stats about your current tree appear below the tree.</li>
@@ -331,7 +329,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             each depending on the answers to the previous ones.
         </p>
         <p>
-            After any question, we can decide to stop and choose a diagnosis (or <i>prediction</i>).
+            After any question, we can decide to stop and choose a prediction (or <i>diagnosis</i>).
             We will say that our diagnosis is positive (that we think you have Fbola) or negative.
             The positive and negative diagnoses have black and green blocks.
         </p>
@@ -362,7 +360,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         </p>
         <p>
             As you will see, every node is either a "branching" node (where you ask a question) or
-            a "terminal" node (where you give a diagnosis). You can think of the terminal nodes as leaves on the tree.
+            a "terminal" node (where you give a diagnosis or prediction). You can think of the terminal nodes as leaves on the tree.
             They are labeled + or –. (At the beginning, they start out labeled (?).)
         </p>
         <p>

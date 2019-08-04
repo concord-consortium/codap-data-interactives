@@ -148,7 +148,8 @@ Analysis.prototype.getStructureAndData = function () {
 
         //  now ask for the cases
 
-        var tResource = "dataContext[" + this.currentDataContextName + "].collection[" + this.currentCollectionName + "].allCases";
+        var tResource = "dataContext[" + this.currentDataContextName + "].collection[" +
+            this.currentCollectionName + "].allCases";
         var tArg = {action: "get", resource: tResource};
         return codapInterface.sendRequest(tArg);
     };

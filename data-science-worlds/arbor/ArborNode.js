@@ -163,21 +163,21 @@ Node.prototype.traceCaseInTree = function (c) {
                 tSignOfTerminalNode = tBranchTraceResult.terminalNodeSign;
             }
         });
- //       console.log('Tracing case, non-terminal node: ' + JSON.stringify(c));
+        //       console.log('Tracing case, non-terminal node: ' + JSON.stringify(c));
     }
     this.onTrace = tIsCaseInThisNode;
     return {
-        inThisNode : tIsCaseInThisNode,
-        terminalNodeSign : tSignOfTerminalNode
+        inThisNode: tIsCaseInThisNode,
+        terminalNodeSign: tSignOfTerminalNode
     };
 };
 
 /**
  * Clear the onTrace flag for the entire tree
  */
-Node.prototype.clearTrace = function() {
+Node.prototype.clearTrace = function () {
     this.onTrace = false;
-    this.branches.forEach( function(n) {
+    this.branches.forEach(function (n) {
         n.clearTrace();
     })
 };
@@ -270,7 +270,7 @@ Node.prototype.populateNode = function () {
 
 Node.prototype.numberOfCasesWhere = function (iCases, iBoolean) {
     let out = 0;
-    iCases.forEach(function ( aCase ) {
+    iCases.forEach(function (aCase) {
         const c = aCase.values;
         if (eval(iBoolean)) {
             out += 1;
@@ -284,7 +284,7 @@ Node.prototype.flipStopType = function () {
     console.log("Switching node to " + this.stopSign);
 
     let tEvent = new Event("changeTree");
-    tEvent.why="flipping node plus-minus";
+    tEvent.why = "flipping node plus-minus";
     arbor.dispatchTreeEvent(tEvent);
 };
 
@@ -342,10 +342,13 @@ Node.prototype.descendantCount = function () {
 Node.prototype.getResultCounts = function () {
     let tOut = {
         sampleSize: 0,
-        plusNumerator: null,    //  number in this node (and descendants) that are truly POSITIVE
-        plusDenominator: null,  //  number in this node ... that are diagnosed positive
-        minusNumerator: null,
-        minusDenominator: null,
+        plusNumerator: 0,    //  number in this node (and descendants) that are truly POSITIVE
+        plusDenominator: 0,  //  number in this node ... that are diagnosed positive
+        minusNumerator: 0,
+        minusDenominator: 0,
+        undiagNumerator: 0,    //  positives among undiagnosed
+        undiagDenominator: 0,  //  total undiagnosed
+
 
         ssdFraction: null,
         sumOfSquaresOfDeviationsOfLeaves: 0
@@ -363,18 +366,12 @@ Node.prototype.getResultCounts = function () {
         if (this.stopSign === arbor.constants.diagnosisPlus) {
             tOut.plusNumerator = this.numerator;
             tOut.plusDenominator = this.denominator;
-            tOut.minusDenominator = 0;
-            tOut.minusNumerator = 0;
         } else if (this.stopSign === arbor.constants.diagnosisMinus) {
             tOut.minusNumerator = this.numerator;
             tOut.minusDenominator = this.denominator;
-            tOut.plusDenominator = 0;
-            tOut.plusNumerator = 0;
         } else if (this.stopSign === arbor.constants.diagnosisNone) {
-            tOut.minusNumerator = 0;
-            tOut.minusDenominator = 0;
-            tOut.plusDenominator = 0;
-            tOut.plusNumerator = 0;
+            tOut.undiagNumerator = this.numerator;
+            tOut.undiagDenominator = this.denominator;
         } else {
             alert(
                 "Node.getResultCounts() unexpected data, neither "
@@ -388,14 +385,12 @@ Node.prototype.getResultCounts = function () {
             const tRC = ixBranchNode.getResultCounts();
             tOut.sumOfSquaresOfDeviationsOfLeaves += tRC.sumOfSquaresOfDeviationsOfLeaves;
 
-            if (tRC.plusDenominator) {
-                tOut.plusDenominator += tRC.plusDenominator;
-                tOut.plusNumerator += tRC.plusNumerator;
-            }
-            if (tRC.minusDenominator) {
-                tOut.minusDenominator += tRC.minusDenominator;
-                tOut.minusNumerator += tRC.minusNumerator;
-            }
+            tOut.plusDenominator += tRC.plusDenominator;
+            tOut.plusNumerator += tRC.plusNumerator;
+            tOut.minusDenominator += tRC.minusDenominator;
+            tOut.minusNumerator += tRC.minusNumerator;
+            tOut.undiagDenominator += tRC.undiagDenominator;
+            tOut.undiagNumerator += tRC.undiagNumerator;
         })
     }
 
@@ -403,6 +398,8 @@ Node.prototype.getResultCounts = function () {
     tOut.FP = tOut.plusDenominator - tOut.plusNumerator;
     tOut.FN = tOut.minusNumerator;
     tOut.TN = tOut.minusDenominator - tOut.minusNumerator;
+    tOut.PU = tOut.undiagNumerator;
+    tOut.NU = tOut.undiagDenominator - tOut.undiagNumerator;
 
     tOut.sensitivity = tOut.TP / (tOut.TP + tOut.FN);
     tOut.specificity = tOut.TN / (tOut.TN + tOut.FP);
@@ -418,7 +415,7 @@ Node.prototype.getResultCounts = function () {
  * Something like
  *      Malignant (+)
  */
-Node.prototype.getLeafText = function() {
+Node.prototype.getLeafText = function () {
     let tText = "";
 
     switch (this.stopSign) {
@@ -437,7 +434,7 @@ Node.prototype.getLeafText = function() {
 };
 
 Node.prototype.toString = function () {
-    let out = "Node " +  this.arborNodeID + " with " + this.denominator + " cases";
+    let out = "Node " + this.arborNodeID + " with " + this.denominator + " cases";
     if (this.attributeSplit) {
         out += " split on " + this.attributeSplit.attName;
     }
@@ -456,7 +453,7 @@ Node.prototype.friendlySubsetDescription = function () {
             "(" + tParent.attributeSplit.attName + "&nbsp;=&nbsp;" + tParent.attributeSplit.rightLabel + ")";
 
         if (tDesc === tAllCasesText) {
-            out =  tNewLabel;
+            out = tNewLabel;
         } else {
             out = tDesc + " &&nbsp;" + tNewLabel;
         }
@@ -471,12 +468,12 @@ Node.prototype.longDescription = function () {
 
     const tDependentClause = arbor.informalDVBoolean;
 
-/*
-    const tResultCounts = this.getResultCounts();
-    const tProportionText = "p(" + tDependentClause + ") = " + this.mean.toFixed(3);
-    const tMeanText = "\u03bc(" + arbor.state.dependentVariableSplit.attName + ") = " + this.mean.toFixed(0);
-    const tMSDtext = "SSD ratio: " + (tResultCounts.ssdFraction ? (tResultCounts.ssdFraction).toFixed(2) : "N/A");
-*/
+    /*
+        const tResultCounts = this.getResultCounts();
+        const tProportionText = "p(" + tDependentClause + ") = " + this.mean.toFixed(3);
+        const tMeanText = "\u03bc(" + arbor.state.dependentVariableSplit.attName + ") = " + this.mean.toFixed(0);
+        const tMSDtext = "SSD ratio: " + (tResultCounts.ssdFraction ? (tResultCounts.ssdFraction).toFixed(2) : "N/A");
+    */
 
     let out = "";
     if (!this.parentNode()) {   //  dependent variable only
@@ -489,14 +486,14 @@ Node.prototype.longDescription = function () {
     //  out += (arbor.state.dependentVariableSplit.isCategorical ? tProportionText : (tMeanText + " " + tMSDtext));
 
     if (this.attributeSplit) {
-        out +=  "<br>&mdash;&mdash;<br>";
+        out += "<br>&mdash;&mdash;<br>";
         out += "Then we ask about " + this.attributeSplit.attName;
     }
 
     return out;
 };
 
-Node.prototype.positiveNegativeDescription = function() {
+Node.prototype.positiveNegativeDescription = function () {
     const tSplit = arbor.state.dependentVariableSplit;
 
     let out = "In this scenario, <br>";
