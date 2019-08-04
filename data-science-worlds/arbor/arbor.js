@@ -402,7 +402,7 @@ var arbor = {
         arbor.ui.updateConfusionMatrix();
     },
 
-    displayWidth : function() {
+    displayWidth: function () {
         return window.innerWidth - 44;
     },
 
