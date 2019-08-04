@@ -136,6 +136,23 @@ Analysis.prototype.getStructureAndData = async function () {
         return theTotalAttributeList;
     };
 
+    var processIndividualAttributes = function(iResult) {
+
+        iResult.forEach( function(res) {
+            if (res.success) {
+                var tName = res.values.name;
+                if (tName !== 'diagnosis' && tName !== 'analysis' && tName !== 'source') {     //  todo: cope with this kludge that special-cases "diagnosis" and "analysis"
+                    this.host.gotOneAttribute(res.values);
+                }
+            }
+        }.bind(this));
+
+        //  now ask for the ITEMS (formerly, cases)
+
+        var tResource = "dataContext[" + this.currentDataContextName + "].itemSearch[*]";
+        var tArg = {action: "get", resource: tResource};
+        return codapInterface.sendRequest(tArg);
+    };
 
     //  function to process THE CASES!
 
