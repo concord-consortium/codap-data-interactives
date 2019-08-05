@@ -44,10 +44,10 @@ Analysis.prototype.initialize = function () {
     this.dataContexts = [];
     this.currentDataContextName = "";
 
-    this.collections = [];
-    this.currentCollectionName = "";
+    this.collections = [];  // array of objects with { name : 'people', etc }
+    this.topCollectionName = "";
 
-    this.attributes = [];
+    this.attributes = [];   //  array of objects like : {name : 'height', title : 'height'...}
     this.currentAttributeName = "";
 
     this.cases = [];
@@ -65,63 +65,45 @@ Analysis.prototype.getStructureAndData = function () {
 
     //  function to get the list of data contexts
 
-    var getListOfDataContexts = function () {
-        var tArg = {action: "get", resource: "dataContextList"};
+    const getListOfDataContexts = function () {
+        const tArg = {action: "get", resource: "dataContextList"};
         return codapInterface.sendRequest(tArg);
     };
 
     //  function to deal with the data contexts
 
-    var processDataContextList = function (iResult) {
+    const processDataContextList = function (iResult) {
         this.dataContexts = iResult.values;
-        var tDataContextNames = TEEUtils.getListOfOneFieldInArrayOfObjects(this.dataContexts, "name");
+        const tDataContextNames = TEEUtils.getListOfOneFieldInArrayOfObjects(this.dataContexts, "name");
         if (tDataContextNames.indexOf(this.currentDataContextName) < 0) {
             console.log("Data Context [" + this.currentDataContextName + "] not found in list of DCs");
             this.specifyCurrentDataContext(this.dataContexts[0].name);
         }
         this.host.gotDataContextList(this.dataContexts);
-        var tArg = {action: "get", resource: "dataContext[" + this.currentDataContextName + "].collectionList"};
+        const tArg = {action: "get", resource: "dataContext[" + this.currentDataContextName + "].collectionList"};
         return codapInterface.sendRequest(tArg);
     };
 
-    //  function to process the list of collections
+    //  function to process the list of collections and set the name of the top collection
 
-    var processCollectionList = async function (iResult) {
+    const processCollectionList = async function (iResult) {
         this.collections = iResult.values;
-        const tCollectionNames = TEEUtils.getListOfOneFieldInArrayOfObjects(this.collections, "name");
-        if (tCollectionNames.indexOf(this.currentCollectionName) < 0) {
-            this.specifyCurrentCollection(this.collections[0].name);
-        }
+        this.topCollectionName = this.collections[0].name;
 
-        let theAttributeList = [];
+        let theTotalAttributeList = [];
 
-        //  read sequentially so that the attribute names stay in order
+        //  read sequentially though all collections so that the attribute names stay in order
 
-        for (const name of tCollectionNames) {
-            const tResource = "dataContext[" +
-                this.currentDataContextName + "].collection[" +
-                name + "].attributeList";
+        for (const c of this.collections) {
+            const tResource = "dataContext[" + this.currentDataContextName + "].collection[" + c.name + "].attributeList";
             const tArg = {action: "get", resource: tResource};
-            console.log("Looking for attributes with " + tResource);
+            console.log("Looking for attributes in collection " + c.name);
             const result = await codapInterface.sendRequest(tArg);
             const theAtts = result.values;
 
-            theAttributeList = theAttributeList.concat(theAtts);
+            theTotalAttributeList = theTotalAttributeList.concat(theAtts);
         }
-//          this.host.gotCollectionList(this.collections);
-
-        //  now get attribute list
-
-/*
-        var tResource = "dataContext[" +
-            this.currentDataContextName + "].collection[" +
-            this.currentCollectionName + "].attributeList";
-        var tArg = {action: "get", resource: tResource};
-        console.log("Looking for attributes with " + tResource);
-*/
-
-        return theAttributeList;
-
+        return theTotalAttributeList;
     };
 
     //  function to process the list of attribute names and request the cases
