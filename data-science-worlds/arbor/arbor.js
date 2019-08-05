@@ -530,11 +530,7 @@ var arbor = {
      * Called when we successfully get the attribute list from CODAP
      * @param iList     a list of the attributes. We need theAttribute.name
      */
-    gotAttributeList: function (iList) {
-
-        console.log("gotAttributeList: [ " + TEEUtils.getListOfOneFieldInArrayOfObjects(iList, "name").join(" | ") + " ]");
-
-        //  make the whole AttsInBaum thing
+    refreshAttributeList: function (iList) {
 
         this.attsInBaum = [];           //      new attribute list whenever we change collection? Correct? maybe not.
     },
