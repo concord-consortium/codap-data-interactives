@@ -230,11 +230,6 @@ Analysis.prototype.specifyCurrentDataContext = function (iDCName) {
 
 };
 
-Analysis.prototype.specifyCurrentCollection = function (iCollName) {
-    this.currentCollectionName = iCollName;
-    console.log("Analysis.specifyCurrentCollection: " + this.currentCollectionName);
-};
-
 
 /*
     Making <options> lists for menus
