@@ -14,7 +14,10 @@ Stripe = function (iParent, iTextParams, iRole) {
         this.paper.circle(0, 0, 40).attr({fill : this.sBGColor }) :
         this.paper.rect(0, 0, 40, 40).attr({fill: this.sBGColor});
 
-    this.sLabel = this.paper.text(arbor.constants.treeObjectPadding, 15.5, this.sText).attr({fill: this.sTextColor});
+    this.sLabel = this.paper.text(arbor.constants.treeObjectPadding, 15.5, this.sText).attr({
+        fill: this.sTextColor,
+        pointerEvents : "none"
+    });
 
     //  Define the button image. Will be resized and positioned later
 

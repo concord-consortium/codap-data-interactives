@@ -19,13 +19,30 @@ arbor.codapConnector = {
             iValues,
             arbor.constants.kClassTreeDataSetName
         ); // no callback.
+        codapInterface.sendRequest({
+            "action": "create",
+            "resource": "component",
+            "values": {
+                "type": "caseTable",
+                "dataContext": arbor.constants.kClassTreeDataSetName
+            }
+        })
     },
 
     createRegressionTreeItem : function(iValues ) {
         pluginHelper.createItems(
             iValues,
             arbor.constants.kRegressTreeDataSetName
-        )
+        );
+        codapInterface.sendRequest({
+            "action": "create",
+            "resource": "component",
+            "values": {
+                "type": "caseTable",
+                "dataContext": arbor.constants.kRegressTreeDataSetName
+            }
+        })
+
     }
 
 };

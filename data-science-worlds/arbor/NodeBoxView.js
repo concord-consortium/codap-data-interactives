@@ -27,6 +27,7 @@
 NodeBoxView = function (iNode, iZoneView) {
     this.myNode = iNode;
     this.myZoneView = iZoneView;        //  the view I am embedded in
+    this.paper = new Snap(133, 133);
 
     //  We watch this event for changes from the model,
     //  e.g., changes in number or text.
@@ -37,8 +38,6 @@ NodeBoxView = function (iNode, iZoneView) {
 
     this.stripes = [];  //  the box is made up of a variable number of "Stripes"
 
-    this.paper = new Snap(133, 133);
-
     //  the tool tip
     this.paper.append(Snap.parse("<title>" + this.myNode.longDescription() + "</title>"));
 
@@ -48,39 +47,38 @@ NodeBoxView = function (iNode, iZoneView) {
         this.myZoneView.myPanel.lastMouseDownNodeView = this;
     }.bind(this));
 
-    //  handle mouseUp events in the NodeBoxView
 
-    this.paper.mouseup(function (iEvent) {
+};
 
-        const tMouseDownPlace = arbor.corralView.lastMouseDownNodeView;
+NodeBoxView.prototype.mouseUpHandler = function(iEvent) {
+    console.log("    Mouse up in view for " + this.myNode.toString());
+    const tMouseDownPlace = arbor.corralView.lastMouseDownNodeView;
 
-        if (tMouseDownPlace) {
-            if (this === tMouseDownPlace) {     //  it's a click
-                if (iEvent.shiftKey || iEvent.altKey || iEvent.ctrlKey) {
-                    this.myNode.stubThisNode();
-                }
-            }
-            //  it's not a click, we've dragged in from somewhere else...
-
-            //  dragged in from the corral, so we branch the node by that attribute
-            else if (tMouseDownPlace instanceof CorralAttView) {
-                console.log("Dragged into " + this.myNode + " from " + tMouseDownPlace.labelText);
-                this.myNode.branchThisNode(tMouseDownPlace.attInBaum);
-            }
-
-            //  dragged in from another node, so we branch it by THAT node's attribute, if it exists
-            else if (tMouseDownPlace instanceof NodeBoxView) {
-                if (tMouseDownPlace.myNode.attributeSplit) {
-                    var tName = tMouseDownPlace.myNode.attributeSplit.attName;
-                    var tAtt = arbor.getAttributeByName(tName);
-                    this.myNode.branchThisNode(tAtt);
-                }
+    if (tMouseDownPlace) {
+        if (this === tMouseDownPlace) {     //  it's a click
+            if (iEvent.shiftKey || iEvent.altKey || iEvent.ctrlKey) {
+                this.myNode.stubThisNode();
             }
         }
+        //  it's not a click, we've dragged in from somewhere else...
 
-        arbor.setFocusNode(this.myNode);
+        //  dragged in from the corral, so we branch the node by that attribute
+        else if (tMouseDownPlace instanceof CorralAttView) {
+            console.log("Dragged into " + this.myNode + " from " + tMouseDownPlace.labelText);
+            this.myNode.branchThisNode(tMouseDownPlace.attInBaum);
+        }
 
-    }.bind(this));
+        //  dragged in from another node, so we branch it by THAT node's attribute, if it exists
+        else if (tMouseDownPlace instanceof NodeBoxView) {
+            if (tMouseDownPlace.myNode.attributeSplit) {
+                var tName = tMouseDownPlace.myNode.attributeSplit.attName;
+                var tAtt = arbor.getAttributeByName(tName);
+                this.myNode.branchThisNode(tAtt);
+            }
+        }
+    }
+
+    arbor.setFocusNode(this.myNode);
 
 };
 
@@ -136,6 +134,12 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
     //      console.log("Redraw node box: " + this.myNode.arborNodeID);
     let tStripe = null;
     this.paper.clear(); //  nothing on this paper
+    this.theGroup = this.paper.g();     //  fresh group
+
+    //  handle mouseUp events in the NodeBoxView
+    this.theGroup.mouseup(this.mouseUpHandler.bind(this));
+    this.theGroup.node.setAttribute("class", "node-box-view-group");  //  this is that css thing
+
     this.stripes = [];  //  fresh set of stripes
 
     //  The tool tip for the box itself
@@ -189,6 +193,7 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
     this.stripes.forEach(function (s) {
         s.resizeStripe(tArgs);
         this.paper.append(s.paper);
+        this.theGroup.add(s.paper);
         tArgs.y += this.kStripeHeight;
     }.bind(this));
 

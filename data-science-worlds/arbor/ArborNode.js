@@ -434,10 +434,7 @@ Node.prototype.getLeafText = function () {
 };
 
 Node.prototype.toString = function () {
-    let out = "Node " + this.arborNodeID + " with " + this.denominator + " cases";
-    if (this.attributeSplit) {
-        out += " split on " + this.attributeSplit.attName;
-    }
+    let out = "Node " + this.arborNodeID + " (" + this.LoR +  ") N = " + this.denominator;
     return out;
 };
 

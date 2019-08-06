@@ -61,6 +61,7 @@ TreePanelView = function ( ) {
 
     this.panelPaper.mouseup(function (e) {
         this.dragSVGPaper.remove();     //  remove it from the DOM
+        console.log("    mouse up in tree panel view");
     }.bind(this));
 };
 
@@ -83,7 +84,7 @@ TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
         y: tLabelHeight - tGap
     });
 
-    tPaper.drag(this.doDrag, null, null, this, this, this);
+    //  tPaper.drag(this.doDrag, null, null, this, this, this);
 
     return tPaper;
 };

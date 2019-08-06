@@ -146,6 +146,17 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             <div id="PU" class="no-pred">44</div>
             <div id="NU" class="no-pred">66</div>
         </div>
+        <div class="hBox" style = "padding-top : 2em;">
+            <div align="left">
+                <button id="refreshAllButton" onclick="arbor.refreshBaum('all')">refresh everything</button>
+                <button id="refreshDataButton" onclick="arbor.refreshBaum('data')">refresh data</button>
+            </div>
+            &nbsp;&nbsp;&nbsp;
+            <div align="right">
+                <button onclick="arbor.emitTreeData()">emit data</button>
+            </div>
+        </div>
+
     </div>
 
     <div id="tree">
@@ -173,11 +184,6 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
                 <div align="right">
                     <button onclick="arbor.emitTreeData()">emit data</button>
                 </div>
-                <!-- To get this back, also un-comment arborr.js about line 506, where tButton's text gets set.
-                                <div>
-                                    <button id="configureButton" onclick="showHideAttributeConfigurationSection()">configure</button>
-                                </div>
-                -->
             </div>
         </div>
 
