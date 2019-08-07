@@ -123,7 +123,7 @@ arbor.newCases = {
                             var tOneRequest = {
                                 "action" : "update",
                                 "resource": "dataContext[" + arbor.analysis.currentDataContextName
-                                + "].collection[" + arbor.analysis.currentCollectionName
+                                + "].collection[" + arbor.analysis.bottomCollectionName
                                 + "].caseByID[" + id + "]",
                                 "values": {"values": tNewValues }
                             };

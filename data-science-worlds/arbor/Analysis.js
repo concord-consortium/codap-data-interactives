@@ -46,6 +46,7 @@ Analysis.prototype.initialize = function () {
 
     this.collections = [];  // array of objects with { name : 'people', etc }
     this.topCollectionName = "";
+    this.bottomCollectionName = "";
 
     this.attributes = [];   //  array of objects like : {name : 'height', title : 'height'...}
     this.currentAttributeName = "";
@@ -91,6 +92,7 @@ Analysis.prototype.getStructureAndData = async function () {
     const processCollectionList = async function (iResult) {
         this.collections = iResult.values;
         this.topCollectionName = this.collections[0].name;
+        this.bottomCollectionName = this.collections[this.collections.length - 1].name;
 
         let theTotalAttributeList = [];
         this.host.refreshAttributeList();   //  set attsInBaum to []

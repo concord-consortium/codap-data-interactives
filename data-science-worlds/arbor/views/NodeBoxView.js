@@ -27,7 +27,7 @@
 NodeBoxView = function (iNode, iZoneView) {
     this.myNode = iNode;
     this.myZoneView = iZoneView;        //  the view I am embedded in
-    this.paper = new Snap(133, 133);
+    this.paper = new Snap(133, 133).attr({"class": "NBV-" + iNode.arborNodeID});
 
     //  We watch this event for changes from the model,
     //  e.g., changes in number or text.
@@ -47,10 +47,11 @@ NodeBoxView = function (iNode, iZoneView) {
         this.myZoneView.myPanel.lastMouseDownNodeView = this;
     }.bind(this));
 
-
+    this.drawNodeBoxView();
+    //  return this;
 };
 
-NodeBoxView.prototype.mouseUpHandler = function(iEvent) {
+NodeBoxView.prototype.mouseUpHandler = function (iEvent) {
     console.log("    Mouse up in view for " + this.myNode.toString());
     const tMouseDownPlace = arbor.corralView.lastMouseDownNodeView;
 
@@ -107,12 +108,12 @@ NodeBoxView.prototype.getNodeBoxViewSize = function () {
         + this.paper.attr("width") + " h: "
         + this.paper.attr("height"));
     return {
-        width : this.paper.attr("width"),
-        height : this.paper.attr("height")
+        width: this.paper.attr("width"),
+        height: this.paper.attr("height")
     };
 };
 
-NodeBoxView.prototype.adjustPaperSize = function() {
+NodeBoxView.prototype.adjustPaperSize = function () {
 
     //  find the maximum width of the stripes
 
@@ -124,12 +125,12 @@ NodeBoxView.prototype.adjustPaperSize = function() {
     });
 
     this.paper.attr({
-        height : this.kStripeHeight * this.stripes.length,
-        width : tMaxWidthStripe.minimumWidth()
+        height: this.kStripeHeight * this.stripes.length,
+        width: tMaxWidthStripe.minimumWidth()
     });
 };
 
-NodeBoxView.prototype.redrawNodeBoxView = function () {
+NodeBoxView.prototype.drawNodeBoxView = function () {
 
     //      console.log("Redraw node box: " + this.myNode.arborNodeID);
     let tStripe = null;
@@ -159,7 +160,9 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
 
     let tText;
 
-    this.makeRootStripe();      //  make root node stripe
+    if (this.isRoot()) {
+        this.stripes.push(this.makeRootStripe());    //  make root node stripe
+    }
 
     if (tNoCases) {
         const tStripe = new Stripe(this, {text: "no cases", textColor: "#696", bgColor: tDataBackgroundColor}, null);
@@ -169,15 +172,15 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
         //  data stripes
 
         if (arbor.state.treeType === "classification") {
-            this.makeClassificationDataStripes( {text : tDataTextColor, bg : tDataBackgroundColor });
+            this.makeAndAddClassificationDataStripes({text: tDataTextColor, bg: tDataBackgroundColor});
         } else {    //  this is a regression tree
-            this.makeRegressionDataStripes( {text : tDataTextColor, bg : tDataBackgroundColor });
+            this.makeAndAddRegressionDataStripes({text: tDataTextColor, bg: tDataBackgroundColor});
         }
 
         //  make stripe for the name of the branching variable, if any
 
         if (this.myNode.branches.length > 0) {
-            this.makeBranchingStripe();
+            this.stripes.push(this.makeBranchingStripe());
         }
     }
 
@@ -197,34 +200,27 @@ NodeBoxView.prototype.redrawNodeBoxView = function () {
         tArgs.y += this.kStripeHeight;
     }.bind(this));
 
-    return ({
-        width : Number(this.paper.attr("width")),
-        height : Number(this.paper.attr("height"))
-    })
+    //  return this.paper;
 };
 
 NodeBoxView.prototype.makeRootStripe = function () {
-    var tText;
+    let tText;
 
-    if (this.isRoot()) {   //  this is a root node
-
-        if (arbor.state.treeType === "classification") {
-            tText = "Predict " + arbor.state.dependentVariableSplit.attName + " = " + arbor.state.dependentVariableSplit.leftLabel;
-        } else {
-            tText = "Predict " + arbor.constants.kMu + "(" + arbor.state.dependentVariableSplit.attName + ")";
-        }
-
-        const tStripe = new Stripe(
-            this,
-            {text: tText, textColor: "white", bgColor: arbor.state.dependentVariableSplit.attColor},
-            "dependent-variable"
-        );
-        this.stripes.push(tStripe);
+    if (arbor.state.treeType === "classification") {
+        tText = "Predict " + arbor.state.dependentVariableSplit.attName + " = " + arbor.state.dependentVariableSplit.leftLabel;
+    } else {
+        tText = "Predict " + arbor.constants.kMu + "(" + arbor.state.dependentVariableSplit.attName + ")";
     }
+
+    const tStripe = new Stripe(
+        this,
+        {text: tText, textColor: "white", bgColor: arbor.state.dependentVariableSplit.attColor},
+        "dependent-variable"
+    );
+    return tStripe;
 };
 
-
-NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
+NodeBoxView.prototype.makeAndAddClassificationDataStripes = function (iColors) {
     let tText = "";
     let tProportion = (this.myNode.denominator === 0) ? "null" : this.myNode.numerator / this.myNode.denominator;
     let tStripe = null;
@@ -240,7 +236,7 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
 
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg },
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
@@ -251,7 +247,7 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
 
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg},
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
@@ -259,15 +255,14 @@ NodeBoxView.prototype.makeClassificationDataStripes = function ( iColors ) {
         tText = tProportionText;
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg },
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
-
     }
 };
 
-NodeBoxView.prototype.makeRegressionDataStripes = function ( iColors ) {
+NodeBoxView.prototype.makeAndAddRegressionDataStripes = function (iColors) {
     let tText = "";
     let tStripe = null;
     let tMeanText = arbor.state.dependentVariableSplit.isCategorical ?
@@ -279,7 +274,7 @@ NodeBoxView.prototype.makeRegressionDataStripes = function ( iColors ) {
         tText = "N = " + this.myNode.denominator + ", " + tMeanText;
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg},
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
@@ -288,7 +283,7 @@ NodeBoxView.prototype.makeRegressionDataStripes = function ( iColors ) {
         tText = "N = " + this.myNode.denominator;
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg},
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
@@ -296,17 +291,15 @@ NodeBoxView.prototype.makeRegressionDataStripes = function ( iColors ) {
         tText = tMeanText;
         tStripe = new Stripe(
             this,
-            {text: tText, textColor: iColors.text , bgColor: iColors.bg},
+            {text: tText, textColor: iColors.text, bgColor: iColors.bg},
             "data"
         );
         this.stripes.push(tStripe);
-
     }
-
 };
 
-NodeBoxView.prototype.makeBranchingStripe = function() {
-    var tStripe = new Stripe(
+NodeBoxView.prototype.makeBranchingStripe = function () {
+    const tStripe = new Stripe(
         this,
         {
             text: this.myNode.attributeSplit.attName + "?",
@@ -315,7 +308,7 @@ NodeBoxView.prototype.makeBranchingStripe = function() {
         },
         "branching"
     );
-    this.stripes.push(tStripe);
+    return tStripe;
 };
 
 NodeBoxView.prototype.isRoot = function () {

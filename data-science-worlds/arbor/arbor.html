@@ -61,8 +61,8 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
     <title>Arbor</title>
 
     <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.min.css">
-    <link rel='stylesheet' type='text/css' href='arbor.css'/>
-    <link rel='stylesheet' type='text/css' href='confusion-matrix.css'/>
+    <link rel='stylesheet' type='text/css' href='css/arbor.css'/>
+    <link rel='stylesheet' type='text/css' href='css/confusion-matrix.css'/>
 
     <!-- These two scripts take care of the communication with CODAP  -->
     <script src="../common/iframe-phone.js"></script>
@@ -96,18 +96,18 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
     <script src="ArborTree.js" ></script>
     <script src="ArborNode.js" ></script>
     <script src="AttributeSplit.js" ></script>
-    <script src="Stripe.js" ></script>
+    <script src="views/Stripe.js" ></script>
     <script src="Leaf.js" ></script>
 
     <!--
         Views
     -->
-    <script src="CorralView.js" ></script>
-    <script src="TreePanelView.js" ></script>
-    <script src="NodeZoneView.js" ></script>
-    <script src="NodeBoxView.js" ></script>
-    <script src="CorralAttView.js" ></script>
-    <script src="DiagnosisView.js" ></script>
+    <script src="views/CorralView.js" ></script>
+    <script src="views/TreePanelView.js" ></script>
+    <script src="views/NodeZoneView.js" ></script>
+    <script src="views/NodeBoxView.js" ></script>
+    <script src="views/CorralAttView.js" ></script>
+    <script src="views/DiagnosisView.js" ></script>
 
     <!--
         Set up JQUERY-UI stuff
@@ -147,12 +147,12 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             <div id="NU" class="no-pred">66</div>
         </div>
         <div class="hBox" style = "padding-top : 2em;">
-            <div align="left">
-                <button id="refreshAllButton" onclick="arbor.refreshBaum('all')">refresh everything</button>
-                <button id="refreshDataButton" onclick="arbor.refreshBaum('data')">refresh data</button>
+            <div>
+                <button onclick="arbor.refreshBaum('all')">refresh everything</button>
+                <button onclick="arbor.refreshBaum('data')">refresh data</button>
             </div>
             &nbsp;&nbsp;&nbsp;
-            <div align="right">
+            <div>
                 <button onclick="arbor.emitTreeData()">emit data</button>
             </div>
         </div>
@@ -176,12 +176,12 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
                 <span id="resultsText">No results yet</span>
             </div>
             <div class="hBox">
-                <div align="left">
+                <div>
                     <button id="refreshAllButton" onclick="arbor.refreshBaum('all')">refresh everything</button>
                     <button id="refreshDataButton" onclick="arbor.refreshBaum('data')">refresh data</button>
                 </div>
                 &nbsp;&nbsp;&nbsp;
-                <div align="right">
+                <div>
                     <button onclick="arbor.emitTreeData()">emit data</button>
                 </div>
             </div>

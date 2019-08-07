@@ -50,32 +50,32 @@ TreePanelView = function ( ) {
 
     //  create (but do not draw) the root NodeZoneView.
 
-    this.rootNodeZoneView = new NodeZoneView(arbor.state.tree.rootNode, this);
-
     this.treeBackground = this.panelPaper
         .rect(0, 0, 10, 10)
         .attr({"fill" : arbor.constants.panelBackgroundColor, "id" : "treeBackground"});     //      will be a rectangle for the background
 
     this.draggingAttribute = null;
-    this.dragSVGPaper = Snap(10, 10);
+    this.rootNodeZoneView = null;
 
     this.panelPaper.mouseup(function (e) {
-        this.dragSVGPaper.remove();     //  remove it from the DOM
+        //  this.dragSVGPaper.remove();     //  remove it from the DOM
         console.log("    mouse up in tree panel view");
     }.bind(this));
+
+    this.redrawEntirePanel();
 };
 
 
 TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
-    var tLabelHeight = arbor.constants.nodeHeightInCorral;
-    var tLabel = iAttInBaum.attributeName;
-    var tPaper = Snap(20, tLabelHeight).attr({x: iWhere.x, y: iWhere.y});
-    var tBG = tPaper.rect(0, 0, 20, tLabelHeight).attr({fill: "#cde"});
+    const tLabelHeight = arbor.constants.nodeHeightInCorral;
+    const tLabel = iAttInBaum.attributeName;
+    const tPaper = Snap(20, tLabelHeight).attr({x: iWhere.x, y: iWhere.y});
+    let tBG = tPaper.rect(0, 0, 20, tLabelHeight).attr({fill: "#cde"});
 
-    var tTX = tPaper.text(0, 0, tLabel);
-    var tBBox = tTX.getBBox();
+    let tTX = tPaper.text(0, 0, tLabel);
+    const tBBox = tTX.getBBox();
 
-    var tGap = (tLabelHeight - tBBox.height) / 2;
+    const tGap = (tLabelHeight - tBBox.height) / 2;
 
     tPaper.attr({width: tBBox.width + 2 * tGap});
     tBG.attr({width: tPaper.attr("width")});
@@ -85,7 +85,6 @@ TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
     });
 
     //  tPaper.drag(this.doDrag, null, null, this, this, this);
-
     return tPaper;
 };
 
@@ -96,21 +95,25 @@ TreePanelView.prototype.createDragSVGPaper = function (iAttInBaum, iWhere) {
 TreePanelView.prototype.redrawEntirePanel = function (  ) {
 
     this.panelPaper.clear();
+    //  todo: understand the rect() call in the next line
     this.treeBackground = this.panelPaper.rect().attr({fill : arbor.constants.panelBackgroundColor});
+    this.rootNodeZoneView = new NodeZoneView(arbor.state.tree.rootNode, this);
+
+    this.panelPaper.append(this.rootNodeZoneView.paper);
 
     const tPad = arbor.constants.treeObjectPadding;
     console.log("Redrawing TreePanelView to " + Math.round(arbor.windowWidth) + " px");
 
     if (arbor.state.tree) {    //  if not, there is no root node, and we display only the background
 
-        const rootZoneSize = this.rootNodeZoneView.redrawEntireZone({x : 0, y: 0} ); //  draw; not yet positioned.
-        this.panelPaper.append(this.rootNodeZoneView.paper);
+        const rootZoneSize = this.rootNodeZoneView.getZoneViewSize();
+        //  this.panelPaper.append(this.rootNodeZoneView.paper);
 
         /**
          * Note that the next call is to a NodeZoneView, NOT the TreePanelView.
          * In particular, this is the main NodeZoneView, the "root" view, if you will.
          */
-        this.rootNodeZoneView.redrawEntireZone({
+        this.rootNodeZoneView.paper.attr({
             x: arbor.windowWidth / 2 - rootZoneSize.width / 2,
             y: tPad
         });
@@ -127,7 +130,7 @@ TreePanelView.prototype.redrawEntirePanel = function (  ) {
         var tViewWidth = rootZoneSize.width + 2 * tPad;
         if (tViewWidth < arbor.windowWidth) tViewWidth = arbor.windowWidth;
 */
-        var tViewHeight = rootZoneSize.height + 2 * tPad;   //  in the panel view, yes, above and below,
+        const tViewHeight = rootZoneSize.height + 2 * tPad;   //  in the panel view, yes, above and below,
 
         this.panelPaper.attr({
             width: arbor.windowWidth,
@@ -147,7 +150,7 @@ TreePanelView.prototype.redrawEntirePanel = function (  ) {
 
 TreePanelView.prototype.startDrag = function (iAtt, paper, event) {
     this.draggingAttribute = iAtt;
-    var tWhere = {x: event.offsetX, y: event.offsetY};
+    const tWhere = {x: event.offsetX, y: event.offsetY};
     this.dragSVGPaper = this.createDragSVGPaper(this.draggingAttribute, tWhere);
     this.panelPaper.append(this.dragSVGPaper);
 
@@ -162,7 +165,7 @@ TreePanelView.prototype.stopDrag = function (paper, event) {
 };
 
 TreePanelView.prototype.doDrag = function (dx, dy, x, y, event) {
-    var tWhere = {x: event.offsetX, y: event.offsetY};
+    const tWhere = {x: event.offsetX, y: event.offsetY};
     this.dragSVGPaper.attr(tWhere);
 
  //   console.log("doDrag " + event.offsetX + " " + event.offsetY);

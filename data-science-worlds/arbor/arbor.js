@@ -46,6 +46,7 @@
  * * incorporate confusion matrix / double tree
  */
 
+/* global codapInterface */
 /**
  *
  * @type {{analysis: null, treePanelView: null, attsInBaum: Array, focusNode: null, focusSplit: null, windowWidth: null, state: {}, dependentVariableBoolean: [string], informalDVBoolean: string, informalDVBooleanReversed: string, dependentVariableSplit: null, iFrameDescription: {version: string, name: string, title: string, dimensions: {width: number, height: number}, preventDataContextReorg: boolean}, initialize: arbor.initialize, refreshBaum: arbor.refreshBaum, emitTreeData: arbor.emitTreeData, handleTreeChange: arbor.handleTreeChange, freshState: arbor.freshState, getAndRestoreModel: arbor.getAndRestoreModel, doBaumRestoration: arbor.doBaumRestoration, parseState: arbor.parseState, restoreTree: arbor.restoreTree, restoreNode: arbor.restoreNode, restoreSplit: arbor.restoreSplit, resizeWindow: arbor.resizeWindow, repopulate: arbor.repopulate, redisplay: arbor.redisplay, setDependentVariableByName: arbor.setDependentVariableByName, changeToNewDependentVariable: arbor.changeToNewDependentVariable, changeCurrentSplitTypeUsingMenu: arbor.changeCurrentSplitTypeUsingMenu, setFocusNode: arbor.setFocusNode, setFocusSplit: arbor.setFocusSplit, changeFocusSplitValues: arbor.changeFocusSplitValues, swapFocusSplit: arbor.swapFocusSplit, changeAttributeConfiguration: arbor.changeAttributeConfiguration, displayAttributeConfiguration: arbor.displayAttributeConfiguration, fixDependentVariableMechanisms: arbor.fixDependentVariableMechanisms, gotDataContextList: arbor.gotDataContextList, gotCollectionList: arbor.gotCollectionList, gotAttributeList: arbor.gotAttributeList, getAttributeByName: arbor.getAttributeByName, changeDataContext: arbor.changeDataContext, changeCollection: arbor.changeCollection, changeTreeTypeUsingMenu: arbor.changeTreeTypeUsingMenu, setTreeTypeByString: arbor.setTreeTypeByString, forceChangeFocusAttribute: arbor.forceChangeFocusAttribute, displayStatus: arbor.displayStatus, displayResults: arbor.displayResults, assembleAttributeAndCategoryNames: arbor.assembleAttributeAndCategoryNames, dispatchTreeEvent: arbor.dispatchTreeEvent}}
@@ -307,12 +308,12 @@ var arbor = {
 
         //  dependent variable
 
-        var dvn = iState.dependentVariableName;
-        var tAtt = this.attsInBaum.reduce(function (acc, val) {
+        const dvn = iState.dependentVariableName;
+        const tAtt = this.attsInBaum.reduce(function (acc, val) {
             return ((val.attributeName === dvn) ? val : acc);
         });
 
-        var tSavedSplit = iState.dependentVariableSplit;
+        const tSavedSplit = iState.dependentVariableSplit;
 
         this.setDependentVariableByName(tAtt.attributeName);
 
@@ -331,9 +332,7 @@ var arbor = {
      * Makes an empty, initial tree and a clean display
      */
     restoreTree: function (iTree) {
-        //  var outTree = new Tree();
-
-        var outTree = Object.assign(new Tree(), iTree);     //  now it's labeled as a tree.
+        let outTree = Object.assign(new Tree(), iTree);     //  now it's labeled as a tree.
 
         //  fix the root node
         outTree.rootNode = this.restoreNode(outTree.rootNode);
@@ -341,10 +340,10 @@ var arbor = {
     },
 
     restoreNode: function (iNode) {
-        var outNode = Object.assign(new Node(), iNode);
+        let outNode = Object.assign(new Node(), iNode);
 
         //  fix its split, if any
-        var tSplit = outNode.attributeSplit;
+        const tSplit = outNode.attributeSplit;
 
         if (tSplit) {
             outNode.attributeSplit = this.restoreSplit(tSplit);
@@ -352,7 +351,7 @@ var arbor = {
 
         //  fix its descendants
 
-        var tBranches = [];
+        let tBranches = [];
         outNode.branches.forEach(function (subNode) {
             subNode = this.restoreNode(subNode);
             tBranches.push(subNode);
@@ -364,8 +363,8 @@ var arbor = {
     },
 
     restoreSplit: function (iSplit) {
-        var tAttName = iSplit.attName;
-        var tAtt = this.getAttributeByName(tAttName);
+        const tAttName = iSplit.attName;
+        const tAtt = this.getAttributeByName(tAttName);
         return outSplit = Object.assign(new AttributeSplit(tAtt), iSplit);
     },
 
@@ -413,7 +412,7 @@ var arbor = {
     setDependentVariableByName: function (iAttName) {
 
         //  which attribute (attInBaum) corresponds to this name?
-        var theAttribute = this.attsInBaum.reduce(function (acc, val) {
+        const theAttribute = this.attsInBaum.reduce(function (acc, val) {
             return ((iAttName === val.attributeName) ? val : acc);
         });
 
@@ -462,7 +461,7 @@ var arbor = {
 
             //  set focusSplit:
 
-            var tSplit = this.state.dependentVariableSplit;
+            let tSplit = this.state.dependentVariableSplit;
 
             if (this.focusNode.attributeSplit) {
                 tSplit = this.focusNode.attributeSplit;
@@ -472,14 +471,14 @@ var arbor = {
 
             focusSplitMgr.setFocusSplit(tSplit);
 
-            var tEvent = new Event("changeTree");
+            let tEvent = new Event("changeTree");
             tEvent.why = "set focus on a node";
             arbor.dispatchTreeEvent(tEvent);   //  results in a redraw of the tree VIEW.
+            console.log("    ** dispatch " + JSON.stringify(tEvent));
 
             //  trigger the selection of the cases in that node
 
             arbor.selectionManager.selectCasesInNode(this.focusNode);
-
         }
     },
 
@@ -518,9 +517,10 @@ var arbor = {
     /**
      * When CODAP gives us the list of collections (in Analysis), we are informed and make a menu.
      * @param iList
+     * todo : see if we need this any more
      */
     gotCollectionList: function (iList) {
-        var collm = $("#collectionMenu");
+        let collm = $("#collectionMenu");
         collm.empty().append(this.analysis.makeOptionsList(iList));
         collm.val(iList[0].name);  //  first item by default
         this.changeCollection();  //  make sure analysis knows
