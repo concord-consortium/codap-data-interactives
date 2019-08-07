@@ -180,7 +180,9 @@ NodeZoneView.prototype.redrawEntireZone = function ( ) {  //  object with x, y
             stroke: (b.onTrace ? arbor.constants.onTraceColor : "white")
         });
 
-        const maskRect = this.paper.rect(0, Number(boxPaper.attr("height")), arbor.windowWidth, y2 - y1).attr({fill : "#fff"});
+        const maskRect = this.paper
+            .rect(0, Number(boxPaper.attr("height")), arbor.displayWidth(), y2 - y1)
+            .attr({fill : "#fff"});
         const tText = this.paper.text(x2, y2 - 4, b.relevantParentSplitLabel);
         const newTextHalfWidth = tText.getBBox().width / 2;
         tText.attr({ x : x2 - newTextHalfWidth});

@@ -84,7 +84,7 @@ CorralView.prototype.setLastMouseDownNodeView = function (iCorralAttView) {
 
 CorralView.prototype.refreshCorral = function (  ) {
 
-    console.log("Redrawing Corral to " + Math.round(arbor.windowWidth) + " px");
+    console.log("Redrawing Corral to " + Math.round(arbor.displayWidth()) + " px");
 
     this.corralPaper.clear();
     this.corralPaper = new Snap(document.getElementById(arbor.constants.kCorralDOMName));
@@ -126,28 +126,30 @@ CorralView.prototype.refreshCorral = function (  ) {
 
         this.corralAttViews.forEach(function (corV) {
             if (corV !== this.dependentVariableView) {      //  except for the dependent one
-                corV.moveTo(x, tCorralY);
                 const tAttributeWidth = corV.label.getBBox().width + 2 * tPad;
-                x += tAttributeWidth + tPad; //  should be able to set and use the paper's width
 
                 //  wrap the attributes if there are too many for one line...
 
-                if (x > arbor.windowWidth - tAttributeWidth) {
+                if (x > arbor.displayWidth() - tAttributeWidth) {
                     x = tIndentation;
                     const tYIncrement = arbor.constants.nodeHeightInCorral + tPad;
                     tCorralY += tYIncrement;
                     this.corralHeight += tYIncrement;
-                    //  this.corralBackgroundRect.attr({height: this.corralHeight});
-                    //  this.setUpToDrawTreePanelView();
-                    //  console.log("corral height now " + this.corralHeight);
                 }
+                corV.moveTo(x, tCorralY);
+                x += tAttributeWidth + tPad;
+
             }
         }.bind(this));
     }
 
     this.corralBackgroundRect.attr({
         height: this.corralHeight,
-        width : arbor.windowWidth
+        width : arbor.displayWidth()
+    });
+    this.corralPaper.attr({
+        height: this.corralHeight,
+        width : arbor.displayWidth()
     });
 
     // this.corralMinimumWidth = (this.corralMinimumWidth > x) ? this.corralMinimumWidth : x;

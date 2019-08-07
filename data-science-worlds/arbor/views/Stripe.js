@@ -9,7 +9,7 @@ Stripe = function (iParent, iTextParams, iRole) {
     this.centeredText = false;
 
 
-    this.paper = Snap(100, 100);
+    this.paper = Snap(100, 100).attr({"class" : iRole + "-stripe"});
     this.bgShape = iRole === "terminal" ?
         this.paper.circle(0, 0, 40).attr({fill : this.sBGColor }) :
         this.paper.rect(0, 0, 40, 40).attr({fill: this.sBGColor});
@@ -77,16 +77,6 @@ Stripe = function (iParent, iTextParams, iRole) {
             break;
 
         case "dependent-variable":
-/*
-            this.leftButtonImage = this.paper.image(arbor.constants.buttonImageFilenames.leftRight, 0, 0, 32, 32)
-                .append(Snap.parse("<title>" + toolTipTexts.dependent + "</title>"))
-                .mousedown(
-                    function (iEvent) {
-                        arbor.setFocusSplit(arbor.state.dependentVariableSplit);
-                        arbor.swapFocusSplit();              //  actually do the swap
-                    }.bind(this)
-                )
-*/
             this.rightButtonImage = null;
             break;
 

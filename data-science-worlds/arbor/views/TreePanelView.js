@@ -41,18 +41,15 @@ TreePanelView = function ( ) {
     this.dependentVariableView = null;      //      this is a CorralAttView, one of the corralAttViews[]
     this.rootNodeZoneView = null;           //      the top NodeZoneView for this tree
 
-
     /**
      * The paper for the entire TreePanelView.
      * @type {*|*|*|*|*}
      */
     this.panelPaper = new Snap(document.getElementById(arbor.constants.kTreePanelDOMName));
-
-    //  create (but do not draw) the root NodeZoneView.
-
-    this.treeBackground = this.panelPaper
+    this.treePanelBackgroundRect = this.panelPaper
         .rect(0, 0, 10, 10)
-        .attr({"fill" : arbor.constants.panelBackgroundColor, "id" : "treeBackground"});     //      will be a rectangle for the background
+        .attr({"fill" : arbor.constants.panelBackgroundColor, "id" : "tree-panel-background-rect"});     //      will be a rectangle for the background
+
 
     this.draggingAttribute = null;
     this.rootNodeZoneView = null;
@@ -96,49 +93,39 @@ TreePanelView.prototype.redrawEntirePanel = function (  ) {
 
     this.panelPaper.clear();
     //  todo: understand the rect() call in the next line
-    this.treeBackground = this.panelPaper.rect().attr({fill : arbor.constants.panelBackgroundColor});
+    this.treePanelBackgroundRect = this.panelPaper.rect().attr({fill : arbor.constants.panelBackgroundColor});
     this.rootNodeZoneView = new NodeZoneView(arbor.state.tree.rootNode, this);
 
     this.panelPaper.append(this.rootNodeZoneView.paper);
 
     const tPad = arbor.constants.treeObjectPadding;
-    console.log("Redrawing TreePanelView to " + Math.round(arbor.windowWidth) + " px");
+    console.log("Redrawing TreePanelView to " + Math.round(arbor.displayWidth()) + " px");
 
     if (arbor.state.tree) {    //  if not, there is no root node, and we display only the background
 
         const rootZoneSize = this.rootNodeZoneView.getZoneViewSize();
-        //  this.panelPaper.append(this.rootNodeZoneView.paper);
-
         /**
          * Note that the next call is to a NodeZoneView, NOT the TreePanelView.
          * In particular, this is the main NodeZoneView, the "root" view, if you will.
          */
         this.rootNodeZoneView.paper.attr({
-            x: arbor.windowWidth / 2 - rootZoneSize.width / 2,
+            x: arbor.displayWidth() / 2 - rootZoneSize.width / 2,
             y: tPad
         });
 
-        this.treeBackground.attr({height: rootZoneSize.height, id : "tree-background-rect"});
+        this.treePanelBackgroundRect.attr({height: rootZoneSize.height, id : "tree-background-rect"});
 
         arbor.displayResults(arbor.state.tree.resultString());    //  strip at the bottom
 
-        //  this.refreshCorral(rootZoneSize.height);
-
-        //  resize the panel
-
-/*
-        var tViewWidth = rootZoneSize.width + 2 * tPad;
-        if (tViewWidth < arbor.windowWidth) tViewWidth = arbor.windowWidth;
-*/
         const tViewHeight = rootZoneSize.height + 2 * tPad;   //  in the panel view, yes, above and below,
 
         this.panelPaper.attr({
-            width: arbor.windowWidth,
+            width: arbor.displayWidth(),
             height: tViewHeight
         });
 
-        this.treeBackground.attr({
-            width: arbor.windowWidth,
+        this.treePanelBackgroundRect.attr({
+            width: arbor.displayWidth(),
             height: tViewHeight
         });
 
@@ -167,6 +154,4 @@ TreePanelView.prototype.stopDrag = function (paper, event) {
 TreePanelView.prototype.doDrag = function (dx, dy, x, y, event) {
     const tWhere = {x: event.offsetX, y: event.offsetY};
     this.dragSVGPaper.attr(tWhere);
-
- //   console.log("doDrag " + event.offsetX + " " + event.offsetY);
 };
