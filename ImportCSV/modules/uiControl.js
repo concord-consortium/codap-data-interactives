@@ -19,15 +19,54 @@
 let messageArea = document.getElementById('message-area');
 
 function displayMessage(message) {
-  messageArea.innerHTML = message;
+  messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
 }
 function displayError(message) {
+  console.log('ImportCVS Plugin: ' + message);
   displayMessage('<span class="error">' + message + '</span>')
+}
+
+/**
+ * Shows a page section.
+ * Assumes sectionName is the id of the DOM node and that visibility is controlled
+ * by the 'hidden' property of the node.
+ * @param sectionName
+ * @param isVisible
+ */
+function showSection(sectionName, isVisible) {
+  if (isVisible == null) isVisible = true;
+  let section = document.getElementById(sectionName);
+  section.hidden = !isVisible;
+}
+
+function getHeight() {
+  let section = document.getElementById('submit-area');
+  let height = section.offsetTop + section.offsetHeight + 40;
+  return height;
+}
+
+function getValueOfRadioGroup(name) {
+
+  // let els = document.querySelectorAll('input[type=radio]');
+  // let checkedEl = Array.from(els).find(function (el) {
+  //   return (el.name=name && el.checked && el.checked === 'checked');
+  // });
+  // if (checkedEl) return checkedEl.value;
+  return document.forms[0]['target-operation'].value;
+}
+
+function installButtonHandler(selector, handler) {
+  let el = document.querySelector(selector);
+  if (el) el.onclick = handler;
 }
 
 let uiControl ={
   displayError: displayError,
-  displayMessage: displayMessage
+  displayMessage: displayMessage,
+  getHeight: getHeight,
+  getValueOfRadioGroup: getValueOfRadioGroup,
+  installButtonHandler: installButtonHandler,
+  showSection: showSection
 };
 
 export {
