@@ -199,7 +199,7 @@ function retrieveData() {
     return readAndParseFile(pluginState.file, config)
   } else if (pluginState.text) {
     config.resourceDescription = composeResourceDescription('local file -- ' + config.source, config.importDate);
-    return Promise.resolve(pluginState.text);
+    return Promise.resolve(parseCSVString(pluginState.text));
   }
 }
 
@@ -247,13 +247,12 @@ function main() {
         let pluginState = config.pluginState;
 
         if (pluginState) {
-          config.pluginState = pluginState;
           Object.keys(config).forEach(function (key) {
             if (pluginState[key] != null) config[key] = pluginState[key];
           });
 
           config.importDate = new Date();
-          config.source = pluginState.url || pluginState.file.name ||pluginState.filename || pluginState.name;
+          config.source = pluginState.url || pluginState.filename || pluginState.name;
 
           return retrieveData(pluginState)
               .then(function (data) {
