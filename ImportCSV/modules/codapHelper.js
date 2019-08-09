@@ -34,23 +34,7 @@ function _getPluginID(pluginStatus) {
       });
 }
 
-// function handleFailedMessage(response, request) {
-//   if (!response || !response.success) {
-//     console.log("CODAP Request failed: " + JSON.stringify(request));
-//   }
-// }
-
 function _getTableStats(data) {
-  // var stats = {
-  //   numberOfRows: data.length,
-  //   maxWidth: 0,
-  //   minWidth: Math.MAX_INT
-  // };
-  //
-  //
-  // stats.maxWidth = data.reduce(function (maxWidth, row) {return Math.max(maxWidth, row.length);}, 0);
-  // stats.minWidth = data.reduce(function (minWidth, row) {return Math.min(minWidth, row.length);}, Math.MAX_INT);
-  // return stats;
   return data.reduce(function (stats, row) {
       stats.maxWidth = Math.max(stats.maxWidth, row.length);
       stats.minWidth = Math.min(stats.minWidth, row.length);
@@ -72,16 +56,16 @@ function sendRowsToCODAP(dataSetID, config, attrArray, rows) {
     let request = {
       action: 'create',
       resource: 'dataContext[' + dataSetID +
-          '].collection[' + config.collectionName + '].case'
+          '].item'
     }
-    let cases = chunk.map(function (row) {
-          let myCase = {values:{}};
+    let items = chunk.map(function (row) {
+          let item = {values:{}};
           attrArray.forEach(function (attr, attrIx) {
-            myCase.values[attr] = row[attrIx];
+            item.values[attr] = row[attrIx];
           })
-          return myCase;
+          return item;
         });
-    request.values = cases;
+    request.values = items;
     return codapInterface.sendRequest(request).then(sendOneChunk);
   }
 
