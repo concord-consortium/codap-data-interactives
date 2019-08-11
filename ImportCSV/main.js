@@ -38,30 +38,26 @@ let codapConfig = {
 
 let config = {
   attrName: constants.defaultAttrName,
+  attributeNames: null,
   chunkSize: 200,
   collectionName: constants.defaultCollectionName,
   data: null,
+  dataStartingRow: null,
+  datasetID: null,
   datasetName: constants.defaultDataSetName,
   downsampling: 'none', // none || random || everyNth || last || first
   downsamplingTargetCount: null, // count we aim to achieve by downsampling
   firstRowIsAttrList: true,
+  importDate: null,
   matchingDataset: null,
   openCaseTable: true,
   operation: 'auto', // auto || new || append || replace
   pluginState: null,
   resourceDescription: 'unknown',
+  source: null,
 }
 
-/**
- * Parses a CSV dataset in the form of a string.
- * @param data
- * @return {*}
- */
-function parseCSVString(data) {
-  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
-  return parse.data;
-}
-
+// *** BEGIN get the data ***
 /**
  * Fetches a URL and parses as a CSV String
  * @param url
@@ -82,48 +78,6 @@ function fetchAndParseURL(url) {
       });
 }
 
-// function populateFromTextThenExit(text, config) {
-//   let data = parseCSVString(text);
-//   return codapHelper.sendDataSetToCODAP(data, config)
-//       .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })// need file path
-//       .then(codapHelper.closeSelf)
-//       .catch(function (ex) {
-//         uiControl.displayError(ex);
-//         codapHelper.setVisibility(true);
-//       });
-// }
-
-// function populateFromFileThenExit(file, config) {
-//   function handleAbnormal() {
-//     console.log("Abort or error on file read.");
-//   }
-//   function handleRead() {
-//     let data = parseCSVString(this.result);
-//     return codapHelper.sendDataSetToCODAP(data, config)
-//         .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })// need file path
-//         .then(codapHelper.closeSelf)
-//         .catch(function (ex) {
-//           uiControl.displayError(ex);
-//           codapHelper.setVisibility(true);
-//         });
-//   }
-//   let reader = new FileReader ();
-//   reader.onabort = handleAbnormal;
-//   reader.onerror = handleAbnormal;
-//   reader.onload = handleRead;
-//   return reader.readAsText(file);
-// }
-
-function populateFromDataThenExit(data, config) {
-  return codapHelper.sendDataSetToCODAP(data, config)
-      .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })// need file path
-      .then(codapHelper.closeSelf)
-      .catch(function (ex) {
-        uiControl.displayError(ex);
-        codapHelper.setVisibility(true);
-      });
-}
-
 function readAndParseFile(file, config) {
   return new Promise(function (resolve, reject) {
     function handleAbnormal() {
@@ -141,52 +95,8 @@ function readAndParseFile(file, config) {
   });
 }
 
-// function populateFromURLThenExit(url, config) {
-//   return fetchAndParseURL(url)
-//       .then(function (data) { return codapHelper.sendDataSetToCODAP(data, config); })
-//       .then(function () { return codapHelper.openTextBox(config.datasetName, config.resourceDescription); })
-//       .then(codapHelper.closeSelf)
-//       .catch(function (ex) {
-//         uiControl.displayError(ex);
-//         codapHelper.setVisibility(true);
-//       });
-// }
-
 function composeResourceDescription(src, time) {
-  return `source: ${src}\nimported: ${time}`
-}
-
-/**
- * Attempts to identify whether there is a matching dataset to the one currently
- * under consideration. Does this by comparing metadata.
- * @param datasetList
- */
-function findMatchingSource(datasetList) {
-  console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
-  let found = datasetList && datasetList.find(function (dataset) {
-    return dataset.metadata && dataset.metadata.source === config.source;
-  });
-
-  if (found) {
-    console.log('findMatchingSource: found match for "' + config.source + '"');
-    config.operation = 'new';
-    config.matchingDataset = found;
-    uiControl.displayMessage('There already exists a dataset from the same ' +
-        'source. It was uploaded on ' + found.metadata.importDate +
-        '. What would you like to do?');
-    uiControl.showSection('target-options', true);
-    codapHelper.setVisibility(true);
-    adjustPluginHeight();
-  }
-}
-
-function autoImportData() {
-  if (config.operation === 'auto') {
-    let data = config.data;
-    return populateFromDataThenExit(data, config);
-  } else {
-    return Promise.resolve();
-  }
+  return `source: ${src}\nimported: ${time.toLocaleString()}`
 }
 
 function retrieveData() {
@@ -202,6 +112,34 @@ function retrieveData() {
     return Promise.resolve(parseCSVString(pluginState.text));
   }
 }
+// *** END get the data ***
+
+// *** BEGIN parse the data
+/**
+ * Parses a CSV dataset in the form of a string.
+ * @param data
+ * @return {*}
+ */
+function parseCSVString(data) {
+  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
+  return parse.data;
+}
+// *** END parse the data
+
+// *** BEGIN Analyze the data
+/**
+ * Attempts to identify whether there is a matching dataset to the one currently
+ * under consideration. Does this by comparing metadata.
+ * @param datasetList
+ */
+function findMatchingSource(datasetList) {
+  console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
+  let found = datasetList && datasetList.find(function (dataset) {
+    return dataset.metadata && dataset.metadata.source === config.source;
+  });
+
+  return found;
+}
 
 /**
  * Makes sure plugin can be displayed.
@@ -214,19 +152,117 @@ function adjustPluginHeight() {
   }
 }
 
+async function determineIfAutoImportApplies() {
+  findOrCreateAttributeNames(config.data, config);
+  let dataSetList = await codapHelper.retrieveDatasetList();
+  let matchingDataset = findMatchingSource(dataSetList);
+  if (matchingDataset) {
+    console.log('findMatchingSource: found match for "' + config.source + '"');
+    config.operation = 'new';
+    config.matchingDataset = matchingDataset;
+    uiControl.displayMessage('There already exists a dataset from the same ' +
+        'source. It was uploaded on ' + matchingDataset.metadata.importDate.toLocaleString() +
+        '. What would you like to do?');
+    uiControl.showSection('target-options', true);
+    codapHelper.setVisibility(true);
+    adjustPluginHeight();
+  }
+  return !matchingDataset;
+}
+// *** END Analyze the data
+
+
+// *** BEGIN send the data to codap
+function getTableStats(data) {
+  return data.reduce(function (stats, row) {
+        stats.maxWidth = Math.max(stats.maxWidth, row.length);
+        stats.minWidth = Math.min(stats.minWidth, row.length);
+        return stats;
+      },
+      {maxWidth: 0, minWidth: Number.MAX_SAFE_INTEGER, numberOfRows: data.length}
+  );
+}
+
+function findOrCreateAttributeNames(data, config) {
+  let tableStats = getTableStats(data);
+  let attrs = [];
+  if (config.firstRowIsAttrList && tableStats.numberOfRows > 0) {
+    attrs = data[0];
+    config.dataStartingRow = 1;
+  } else {
+    config.dataStartingRow = 0;
+    for (let i = 0; i < tableStats.maxWidth; i++) {
+      attrs[i] = config.attrName + i;
+    }
+  }
+  config.attributeNames = attrs;
+}
+
+async function createDataSetInCODAP(data, config) {
+  let tableConfig = {
+    datasetName: config.datasetName,
+    collectionName: config.collectionName,
+    attributeNames: config.attributeNames,
+    dataStartingRow: config.dataStartingRow,
+    source: config.source,
+    importDate: config.importDate,
+  }
+  return await codapHelper.defineDataSet(tableConfig);
+}
+
 /**
  * Orchestrates sending data to codap according to user selections.
  *
  */
-function sendDataToCODAP() {
-  // subsample = all | random | every-nth | first-n | last-n
-  let subsampling = uiControl.getValueOfRadioGroup('subsample');
+function handleSubmit() {
+  // downsample = all | random | every-nth | first-n | last-n
+  config.downsampling = uiControl.getValueOfRadioGroup('downsample');
   // operation = new | replace | append
-  let operation = uiControl.getValueOfRadioGroup('target-operation');
+  config.operation = uiControl.getValueOfRadioGroup('target-operation');
 
-
+  importData();
 }
-function main() {
+
+function clearDatasetInCODAP(id) {
+  return codapHelper.clearDataset(id);
+}
+
+async function importData() {
+  let data = config.data;
+  let result = null;
+  if (config.operation === 'auto' || config.operation === 'new') {
+
+    result = await createDataSetInCODAP(data, config);
+    if (result && result.success) {
+      config.datasetID = result.values.id;
+    }
+    codapHelper.openCaseTableForDataSet(config.datasetID);
+    codapHelper.openTextBox(config.datasetName, config.resourceDescription);
+  }
+
+  if (config.operation === 'append' || config.operation === 'replace') {
+    config.datasetID = config.matchingDataset.id;
+  }
+
+  if (config.operation === 'replace') {
+    result = await clearDatasetInCODAP(config.datasetID);
+  }
+
+  result = await codapHelper.sendRowsToCODAP(config.datasetID,
+      config.attributeNames, data, config.chunkSize, config.dataStartingRow);
+  if (!result || !result.success) {
+    uiControl.displayError((result && result.error) || "Error sending data to CODAP");
+  }
+
+  result = await codapHelper.closeSelf();
+
+  return result;
+    // return populateFromDataThenExit(data, config);
+}
+// *** END send the data to codap
+
+async function main() {
+  // create handlers
   uiControl.installButtonHandler('#cancel', function(ev) {
     ev.preventDefault();
     codapHelper.closeSelf();
@@ -234,49 +270,39 @@ function main() {
   });
   uiControl.installButtonHandler('#submit', function (ev) {
     ev.preventDefault();
-    sendDataToCODAP();
+    handleSubmit();
     return false;
   });
-  codapHelper.init(codapConfig)
-      .then(function (pluginState) {
-        console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
-        config.pluginState = pluginState;
-        return codapHelper.setVisibility(false);
-      })
-      .then(function () {
-        let pluginState = config.pluginState;
 
-        if (pluginState) {
-          Object.keys(config).forEach(function (key) {
-            if (pluginState[key] != null) config[key] = pluginState[key];
-          });
+  // initialize CODAP
+  let pluginState = await codapHelper.init(codapConfig)
 
-          config.importDate = new Date();
-          config.source = pluginState.url || pluginState.filename || pluginState.name;
+  // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
+  config.pluginState = pluginState;
 
-          return retrieveData(pluginState)
-              .then(function (data) {
-                new Promise(function (resolve, reject){
-                  config.data = data;
-                  resolve();
-                })
-              })
-              .then(codapHelper.retrieveDatasetList)
-              .then(findMatchingSource)
-              .then(autoImportData);
-        } else {
-          uiControl.showSection('source-input', true);
-          codapHelper.setVisibility(true);
-        }
-      })
-      .catch(function (msg) {
-        if (msg && msg.toString().startsWith('handleResponse: CODAP request timed out')) {
-          msg = 'There is a problem connecting with CODAP';
-        }
-        uiControl.displayError(msg);
-        // TODO Here we should put up a file entry dialog and capability to open
-        //  CODAP in an IFrame
-      });
+  codapHelper.setVisibility(false);
+
+  // then, if there is data or a url, get it and create the data set
+  // otherwise display a dialog
+  if (pluginState) {
+    // copy to config
+    Object.keys(config).forEach(function (key) {
+      if (pluginState[key] != null) config[key] = pluginState[key];
+    });
+
+    config.importDate = new Date();
+    config.source = pluginState.url || pluginState.filename || pluginState.name;
+
+    config.data = await retrieveData(pluginState);
+
+    let autoImport = await determineIfAutoImportApplies();
+    if (autoImport) {
+      importData();
+    }
+  } else {
+    uiControl.showSection('source-input', true);
+    codapHelper.setVisibility(true);
+  }
 }
 
 main();

@@ -20,7 +20,19 @@
 
 let pluginID = null;
 
-function _getPluginID(pluginStatus) {
+
+/**
+ * Initializes the codap interface.
+ * @param codapConfig
+ * @return {Promise}
+ */
+function init (codapConfig) {
+  return codapInterface.init(codapConfig)
+      .then(_getIDOfSelf);
+}
+
+
+function _getIDOfSelf(pluginStatus) {
   return codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
       .then(function (result) {
         return new Promise(function(resolve, reject) {
@@ -34,53 +46,12 @@ function _getPluginID(pluginStatus) {
       });
 }
 
-function _getTableStats(data) {
-  return data.reduce(function (stats, row) {
-      stats.maxWidth = Math.max(stats.maxWidth, row.length);
-      stats.minWidth = Math.min(stats.minWidth, row.length);
-      return stats;
-    },
-    {maxWidth: 0, minWidth: Number.MAX_SAFE_INTEGER, numberOfRows: data.length}
-  );
-}
-
-
-function sendRowsToCODAP(dataSetID, config, attrArray, rows) {
-
-  function sendOneChunk(){
-    if (chunkIx > numRows) {
-      return Promise.resolve();
-    }
-    let chunk = rows.slice(chunkIx, chunkIx + chunkSize);
-    chunkIx = chunkIx + chunkSize;
-    let request = {
-      action: 'create',
-      resource: 'dataContext[' + dataSetID +
-          '].item'
-    }
-    let items = chunk.map(function (row) {
-          let item = {values:{}};
-          attrArray.forEach(function (attr, attrIx) {
-            item.values[attr] = row[attrIx];
-          })
-          return item;
-        });
-    request.values = items;
-    return codapInterface.sendRequest(request).then(sendOneChunk);
-  }
-
-  let chunkSize = config.chunkSize;
-  let numRows = rows.length;
-  let chunkIx = 0;
-  return sendOneChunk();
-}
-
 /**
  * Resets the height of the plugin.
  * @param height
  * @return {Promise<never>|*|void}
  */
-function adjustHeight(height) {
+function adjustHeightOfSelf(height) {
   if (pluginID == null) {
     return Promise.reject('Communication not established');
   }
@@ -90,6 +61,30 @@ function adjustHeight(height) {
     resource: 'component[' + pluginID + "]",
     values: {
       dimensions: {height: height}
+    }
+  }
+  return codapInterface.sendRequest(request);
+}
+
+/**
+ * Makes the component visible or not, depending on the
+ * @param isVisible
+ * @return {*|void}
+ */
+function setVisibilityOfSelf(isVisible) {
+  if (isVisible == null) {
+    isVisible = true;
+  }
+  if (pluginID == null) {
+    return Promise.reject('Communication not established');
+  }
+  let request = {
+    action: 'update',
+    resource: 'component[' + pluginID + ']',
+    values: {
+      dimensions: {
+        isVisible: isVisible
+      }
     }
   }
   return codapInterface.sendRequest(request);
@@ -108,6 +103,7 @@ function closeSelf() {
   return codapInterface.sendRequest(request);
 }
 
+
 /**
  * Defines a dataset.
  * @param datasetName
@@ -117,21 +113,21 @@ function closeSelf() {
  * @param importDate
  * @return {Promise}
  */
-function defineDataSet(datasetName, collectionName, attrs, source, importDate) {
+function defineDataSet(config) {
   let request = {
     action: 'create',
     resource: 'dataContext',
     values: {
-      name: datasetName,
-      title: datasetName,
+      name: config.datasetName,
+      title: config.datasetName,
       metadata: {
-        source: source,
-        importDate: importDate
+        source: config.source,
+        importDate: config.importDate
       },
       collections: [
         {
-          name: collectionName,
-          attrs: attrs.map(function (attr) {return {name: attr}; })
+          name: config.collectionName,
+          attrs: config.attributeNames.map(function (attr) {return {name: attr}; })
         }
       ]
     }
@@ -139,14 +135,40 @@ function defineDataSet(datasetName, collectionName, attrs, source, importDate) {
   return codapInterface.sendRequest(request);
 }
 
-/**
- * Initializes the codap interface.
- * @param codapConfig
- * @return {Promise}
- */
-function init (codapConfig) {
-  return codapInterface.init(codapConfig)
-      .then(_getPluginID);
+function clearDataset(id) {
+  let request = {
+    action: 'delete',
+    resource: `dataContext[${id}].allCases`
+  };
+  return codapInterface.sendRequest(request);
+}
+
+function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
+
+  function sendOneChunk(){
+    if (chunkIx > numRows) {
+      return Promise.resolve();
+    }
+    let chunk = rows.slice(chunkIx, chunkIx + chunkSize);
+    chunkIx = chunkIx + chunkSize;
+    let request = {
+      action: 'create',
+      resource: `dataContext[${datasetID}].item`
+    }
+    let items = chunk.map(function (row) {
+          let item = {values:{}};
+          attrArray.forEach(function (attr, attrIx) {
+            item.values[attr] = row[attrIx];
+          })
+          return item;
+        });
+    request.values = items;
+    return codapInterface.sendRequest(request).then(sendOneChunk);
+  }
+
+  let numRows = rows.length;
+  let chunkIx = dataStartingRow || 0;
+  return sendOneChunk();
 }
 
 function openCaseTableForDataSet(name) {
@@ -180,6 +202,7 @@ function openTextBox(title, message) {
   return codapInterface.sendRequest(request);
 }
 
+
 /**
  * Fetches a list of dataset definitions from CODAP.
  * @return {Promise}
@@ -204,76 +227,18 @@ function retrieveDatasetList () {
       })
 }
 
-/**
- *
- * @param data: an array of arrays
- * @param config
- * @return {Promise}
- */
-function sendDataSetToCODAP(data, config) {
-  let attrs = null;
-  if (config.firstRowIsAttrList) {
-    attrs = data.shift();
-  }
-  let tableStats = _getTableStats(data);
-  let datasetID = null;
-  if (!attrs) {
-    for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = config.attrName + i;
-    }
-  }
-  return defineDataSet(config.datasetName, config.collectionName, attrs, config.source, config.importDate)
-      .then(function (result) {
-        if (result.success) {
-          datasetID = result.values.id;
-          if (config.openCaseTable) {
-            return openCaseTableForDataSet(config.datasetName);
-          } else {
-            return Promise.resolve(result);
-          }
-        } else {
-          return Promise.reject('Failed to create dataset.')
-        }
-      })
-      .then(function () {
-        return sendRowsToCODAP(datasetID, config, attrs, data);
-      });
-}
-
-/**
- * Makes the component visible or not, depending on the
- * @param isVisible
- * @return {*|void}
- */
-function setVisibility(isVisible) {
-  if (isVisible == null) {
-    isVisible = true;
-  }
-  if (pluginID == null) {
-    return Promise.reject('Communication not established');
-  }
-  let request = {
-    action: 'update',
-    resource: 'component[' + pluginID + ']',
-    values: {
-      dimensions: {
-        isVisible: isVisible
-      }
-    }
-  }
-  return codapInterface.sendRequest(request);
-}
 
 let codapHelper = {
-  adjustHeight: adjustHeight,
-  closeSelf: closeSelf,
-  defineDataSet: defineDataSet,
   init: init,
+  adjustHeight: adjustHeightOfSelf,
+  clearDataset: clearDataset,
+  closeSelf: closeSelf,
+  setVisibility: setVisibilityOfSelf,
+  defineDataSet: defineDataSet,
   openCaseTableForDataSet: openCaseTableForDataSet,
   openTextBox: openTextBox,
   retrieveDatasetList: retrieveDatasetList,
-  sendDataSetToCODAP: sendDataSetToCODAP,
-  setVisibility: setVisibility
+  sendRowsToCODAP: sendRowsToCODAP,
 }
 
 export {codapHelper};
