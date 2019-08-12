@@ -45,14 +45,12 @@ function getHeight() {
   return height;
 }
 
-function getValueOfRadioGroup(name) {
+function getInputValue(name) {
+  return document.forms[0][name].value;
+}
 
-  // let els = document.querySelectorAll('input[type=radio]');
-  // let checkedEl = Array.from(els).find(function (el) {
-  //   return (el.name=name && el.checked && el.checked === 'checked');
-  // });
-  // if (checkedEl) return checkedEl.value;
-  return document.forms[0]['target-operation'].value;
+function setInputValue(name, value) {
+  document.forms[0][name].value = value;
 }
 
 function installButtonHandler(selector, handler) {
@@ -64,8 +62,9 @@ let uiControl ={
   displayError: displayError,
   displayMessage: displayMessage,
   getHeight: getHeight,
-  getValueOfRadioGroup: getValueOfRadioGroup,
+  getInputValue: getInputValue,
   installButtonHandler: installButtonHandler,
+  setInputValue: setInputValue,
   showSection: showSection
 };
 

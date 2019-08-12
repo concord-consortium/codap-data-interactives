@@ -16,12 +16,13 @@
     <div class="section-title">downsample Options</div>
     <div class="option-list">
       <label><input type="radio" name="downsample" value="all" checked="checked">Don't downsample</label>
-      <label><input type="radio" name="downsample" value="random" >Randomly select</label>
-      <label><input type="radio" name="downsample" value="every-nth" >Select every nth</label>
+      <label><input type="radio" name="downsample" value="random" >Randomly select <input type="number" name="random-sample-size" min="0" max="99999"/> rows</label>
+      <label><input type="radio" name="downsample" value="every-nth" >Select every nth where 'n' is <input type="number" name="pick-interval" min="1" max="999"/></label>
+<!--
       <label><input type="radio" name="downsample" value="last-n" >Select last n</label>
       <label><input type="radio" name="downsample" value="first-n" >Select first n</label>
+-->
     </div>
-    <label>Pick: <input type="number" title="pick-size" /></label>
   </div>
   <div id="target-options" class="panel" hidden>
     <div class="section-title">Target Options</div>

@@ -22,12 +22,13 @@ import {uiControl} from './modules/uiControl';
 import {codapHelper} from './modules/codapHelper';
 
 let constants = {
-  name: 'Import CSV',
-  thresholdRowCount: 3000,
+  chunkSize: 200, // number of items to transmit at a time
+  defaultAttrName: 'attr', // default attribute name prefix
+  defaultCollectionName: 'cases', // default collection name
+  defaultDataSetName: 'dataset', // default dataset name
+  name: 'Import CSV',  // plugin name
   thresholdColCount: 40,
-  defaultDataSetName: 'dataset',
-  defaultCollectionName: 'cases',
-  defaultAttrName: 'attr'
+  thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
 
 let codapConfig = {
@@ -37,9 +38,7 @@ let codapConfig = {
 }
 
 let config = {
-  attrName: constants.defaultAttrName,
   attributeNames: null,
-  chunkSize: 200,
   collectionName: constants.defaultCollectionName,
   data: null,
   dataStartingRow: null,
@@ -47,6 +46,7 @@ let config = {
   datasetName: constants.defaultDataSetName,
   downsampling: 'none', // none || random || everyNth || last || first
   downsamplingTargetCount: null, // count we aim to achieve by downsampling
+  downsamplingEveryNthInterval: null,// n, if everyNth is selected
   firstRowIsAttrList: true,
   importDate: null,
   matchingDataset: null,
@@ -57,7 +57,7 @@ let config = {
   source: null,
 }
 
-// *** BEGIN get the data ***
+
 /**
  * Fetches a URL and parses as a CSV String
  * @param url
@@ -70,7 +70,7 @@ function fetchAndParseURL(url) {
           if (resp.ok) {
             resp.text().then(function (data) {
               let tab = parseCSVString(data);
-              console.log('made table: ' + (tab && tab.length));
+              // console.log('made table: ' + (tab && tab.length));
               resolve(tab);
             });
           }
@@ -78,6 +78,12 @@ function fetchAndParseURL(url) {
       });
 }
 
+/**
+ * Fetches the contents of a file and parses as a CSV String
+ * @param file
+ * @param config
+ * @return {Promise}
+ */
 function readAndParseFile(file, config) {
   return new Promise(function (resolve, reject) {
     function handleAbnormal() {
@@ -95,10 +101,20 @@ function readAndParseFile(file, config) {
   });
 }
 
+/**
+ * Compose a resource description to display in a text box.
+ * @param src
+ * @param time
+ * @return {string}
+ */
 function composeResourceDescription(src, time) {
   return `source: ${src}\nimported: ${time.toLocaleString()}`
 }
 
+/**
+ * Retrieve data in whatever form provided and parse as a CSV String
+ * @return {Promise}
+ */
 function retrieveData() {
   let pluginState = config.pluginState;
   if (pluginState.url) {
@@ -112,9 +128,7 @@ function retrieveData() {
     return Promise.resolve(parseCSVString(pluginState.text));
   }
 }
-// *** END get the data ***
 
-// *** BEGIN parse the data
 /**
  * Parses a CSV dataset in the form of a string.
  * @param data
@@ -124,16 +138,15 @@ function parseCSVString(data) {
   let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
   return parse.data;
 }
-// *** END parse the data
 
-// *** BEGIN Analyze the data
+
 /**
  * Attempts to identify whether there is a matching dataset to the one currently
  * under consideration. Does this by comparing metadata.
  * @param datasetList
  */
 function findMatchingSource(datasetList) {
-  console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
+  // console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
   let found = datasetList && datasetList.find(function (dataset) {
     return dataset.metadata && dataset.metadata.source === config.source;
   });
@@ -152,27 +165,104 @@ function adjustPluginHeight() {
   }
 }
 
+/**
+ * Autoimport applies if the CSV is short and could not already be present.
+ *
+ * @return {Promise<boolean>}
+ */
 async function determineIfAutoImportApplies() {
   findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
   let matchingDataset = findMatchingSource(dataSetList);
+  let numRows = config.data.length;
+
   if (matchingDataset) {
-    console.log('findMatchingSource: found match for "' + config.source + '"');
-    config.operation = 'new';
+    // console.log('findMatchingSource: found match for "' + config.source + '"');
     config.matchingDataset = matchingDataset;
     uiControl.displayMessage('There already exists a dataset from the same ' +
-        'source. It was uploaded on ' + matchingDataset.metadata.importDate.toLocaleString() +
+        `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
         '. What would you like to do?');
     uiControl.showSection('target-options', true);
     codapHelper.setVisibility(true);
     adjustPluginHeight();
   }
-  return !matchingDataset;
+  let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
+  if (sizeAboveThreshold) {
+    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
+      `More than ${constants.thresholdRowCount} rows could lead to sluggish performance for some activities in the current version of CODAP.` +
+        'You may wish to work with a subsample of the data at first. ' +
+        'You can always replace it with the full data set later.'
+    );
+    uiControl.showSection('downsample-options', true);
+    uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
+    uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
+    codapHelper.setVisibility(true);
+    adjustPluginHeight();
+  }
+  return !(matchingDataset || sizeAboveThreshold);
 }
-// *** END Analyze the data
 
 
-// *** BEGIN send the data to codap
+/**
+ * Downsamples a dataset by random selection without replacement.
+ * @param data {Array[{Array}]}
+ * @param targetCount {Positive Integer}
+ * @param start {Positive Integer} Index of first row with data.
+ * @return {Array[{Array}]}
+ */
+function downsampleRandom(data, targetCount, start) {
+  let dataLength = data.length - start;
+  let ct = Math.min(dataLength, Math.max(0, targetCount));
+  let randomAreSelected = ct < (dataLength/2);
+  let pickArray = new Array(dataLength).fill(!randomAreSelected);
+  if (!randomAreSelected) {
+    ct = dataLength - ct;
+  }
+
+  // construct an array of selection choices
+  let i = 0;
+  while (i < ct) {
+    let value = Math.floor(Math.random()*dataLength);
+    if (pickArray[value] !== randomAreSelected) {
+      i++;
+      pickArray[value] = randomAreSelected;
+    }
+  }
+
+  let newData = [];
+  // copy the non-data rows
+  for (let ix = 0; ix < start; ix += 1) {
+    newData.push(data[ix]);
+  }
+  // use pick array to determine if we should add each row of original table to new
+  pickArray.forEach(function(shouldPick, ix) {
+    if (shouldPick) newData.push(data[ix + start]);
+  });
+
+  return newData;
+}
+
+/**
+ * Downsamples a data set by picking every nth row.
+ * @param data {Array[{Array}]}
+ * @param interval {Positive Integer}
+ * @param start {Positive Integer} Index of the first row that has data
+ * @return {Array[{Array}]}
+ */
+function downsampleEveryNth(data, interval, start) {
+  let newArray = [];
+
+  for (let ix = 0; ix < start; ix += 1) {
+    newArray.push(data[ix]);
+  }
+
+  for (let ix = start; ix < data.length; ix += interval) {
+    newArray.push(data[ix]);
+  }
+  return newArray;
+}
+
+
 function getTableStats(data) {
   return data.reduce(function (stats, row) {
         stats.maxWidth = Math.max(stats.maxWidth, row.length);
@@ -192,7 +282,7 @@ function findOrCreateAttributeNames(data, config) {
   } else {
     config.dataStartingRow = 0;
     for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = config.attrName + i;
+      attrs[i] = constants.defaultAttrName + i;
     }
   }
   config.attributeNames = attrs;
@@ -216,17 +306,49 @@ async function createDataSetInCODAP(data, config) {
  */
 function handleSubmit() {
   // downsample = all | random | every-nth | first-n | last-n
-  config.downsampling = uiControl.getValueOfRadioGroup('downsample');
+  config.downsampling = uiControl.getInputValue('downsample');
   // operation = new | replace | append
-  config.operation = uiControl.getValueOfRadioGroup('target-operation');
+  config.operation = uiControl.getInputValue('target-operation');
+  config.downsamplingTargetCount = uiControl.getInputValue('random-sample-size');
+  config.downsamplingEveryNthInterval = uiControl.getInputValue('pick-interval');
+
+  if (config.downsampling === 'random') {
+    config.data = downsampleRandom(config.data,
+        Number(config.downsamplingTargetCount), config.dataStartingRow);
+  } else if (config.downsampling === 'every-nth') {
+    config.data = downsampleEveryNth(config.data,
+        Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
+  }
 
   importData();
 }
 
+/**
+ * Orchestrates clearing of a dataset in CODAP
+ */
 function clearDatasetInCODAP(id) {
   return codapHelper.clearDataset(id);
 }
 
+/**
+ * Orchestrate the various import operations.
+ *
+ * 1. if needed, create dataset in CODAP.
+ * 2. if inserting in existing dataset, set up the proper ID.
+ * 3. If replacing existing dataset, clear it.
+ * 4. Send rows as items.
+ *
+ * Uses various values in config that it assumes have already been initialized:
+ *   * data: the data as an array of arrays
+ *   * operation: ['auto'|'new'|'append'|'replace']
+ *   * datasetID: CODAP id for dataset.
+ *   * datasetName: CODAP name for dataset.
+ *   * resourceDescription:
+ *   * matchingDataset: the one to append to or replace
+ *   * attributeNames: array of attribute names
+ *   * dataStartingRow: first row containing data
+ * @return {Promise<*>}
+ */
 async function importData() {
   let data = config.data;
   let result = null;
@@ -249,7 +371,7 @@ async function importData() {
   }
 
   result = await codapHelper.sendRowsToCODAP(config.datasetID,
-      config.attributeNames, data, config.chunkSize, config.dataStartingRow);
+      config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
   if (!result || !result.success) {
     uiControl.displayError((result && result.error) || "Error sending data to CODAP");
   }
@@ -259,8 +381,19 @@ async function importData() {
   return result;
     // return populateFromDataThenExit(data, config);
 }
-// *** END send the data to codap
 
+
+/**
+ * Start here.
+ *
+ * 0. set up handlers
+ * 1. connect to CODAP
+ * 2. if there is data, read and parse it
+ * 3. see if data can be autoimported
+ * 4. if so autoimport and quit
+ *
+ * @return {Promise<void>}
+ */
 async function main() {
   // create handlers
   uiControl.installButtonHandler('#cancel', function(ev) {
