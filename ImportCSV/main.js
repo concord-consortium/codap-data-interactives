@@ -183,8 +183,7 @@ async function determineIfAutoImportApplies() {
         `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
         '. What would you like to do?');
     uiControl.showSection('target-options', true);
-    codapHelper.setVisibility(true);
-    adjustPluginHeight();
+    codapHelper.setVisibility(true).then(adjustPluginHeight);
   }
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
@@ -196,8 +195,7 @@ async function determineIfAutoImportApplies() {
     uiControl.showSection('downsample-options', true);
     uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
     uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
-    codapHelper.setVisibility(true);
-    adjustPluginHeight();
+    codapHelper.setVisibility(true).then(adjustPluginHeight);
   }
   return !(matchingDataset || sizeAboveThreshold);
 }
@@ -374,6 +372,7 @@ async function importData() {
       config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
   if (!result || !result.success) {
     uiControl.displayError((result && result.error) || "Error sending data to CODAP");
+    codapHelper.setVisibility(true).then(adjustPluginHeight);
   }
 
   result = await codapHelper.closeSelf();

@@ -80,12 +80,20 @@ function setVisibilityOfSelf(isVisible) {
   }
   let request = {
     action: 'update',
-    resource: 'component[' + pluginID + ']',
+    resource: `component[${pluginID}]`,
     values: {
-      dimensions: {
-        isVisible: isVisible
-      }
+      isVisible: isVisible
     }
+  }
+  if (isVisible) {
+    request = [request];
+    request.push({
+      action: 'notify',
+      resource: `component[${pluginID}]`,
+      values: {
+        request: 'select'
+      }
+    })
   }
   return codapInterface.sendRequest(request);
 }
