@@ -20,6 +20,7 @@ let messageArea = document.getElementById('message-area');
 
 function displayMessage(message) {
   messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
+  showSection('message-area', true);
 }
 function displayError(message) {
   console.log('ImportCVS Plugin: ' + message);
@@ -36,7 +37,11 @@ function displayError(message) {
 function showSection(sectionName, isVisible) {
   if (isVisible == null) isVisible = true;
   let section = document.getElementById(sectionName);
-  section.hidden = !isVisible;
+  if (section) {
+    section.hidden = !isVisible;
+  } else {
+    console.warn('Import CSV: showSection on nonexistent section: ' + sectionName);
+  }
 }
 
 function getHeight() {

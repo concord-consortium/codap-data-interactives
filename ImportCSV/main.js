@@ -144,15 +144,33 @@ function parseCSVString(data) {
  * Attempts to identify whether there is a matching dataset to the one currently
  * under consideration. Does this by comparing metadata.
  * @param datasetList
+ * @param {string} resourceName
  */
-function findMatchingSource(datasetList) {
+function findMatchingSource(datasetList, resourceName) {
   // console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
-  let found = datasetList && datasetList.find(function (dataset) {
-    return dataset.metadata && dataset.metadata.source === config.source;
+  let foundDataset = datasetList && datasetList.find(function (dataset) {
+    return dataset.metadata && dataset.metadata.source === resourceName;
   });
 
-  return found;
+  return foundDataset;
 }
+
+function findDatasetMatchingAttributes(datasetList, attributeNames) {
+  let foundDataset = datasetList && datasetList.find(function (dataset) {
+    var existingDatasetAttributeNames = [];
+    dataset.collections && dataset.collections.forEach(function (collection) {
+      collection.attrs && collection.attrs.forEach(function (attr) {
+        existingDatasetAttributeNames.push(attr.name || attr.title);
+      });
+    });
+    let unmatchedAttributeName = attributeNames.find(function (name) {
+      return (existingDatasetAttributeNames.indexOf(name) < 0);
+    });
+    return !unmatchedAttributeName;
+  });
+  return foundDataset;
+}
+
 
 /**
  * Makes sure plugin can be displayed.
@@ -173,17 +191,26 @@ function adjustPluginHeight() {
 async function determineIfAutoImportApplies() {
   findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
-  let matchingDataset = findMatchingSource(dataSetList);
+  let matchingDataset = findMatchingSource(dataSetList, config.source);
   let numRows = config.data.length;
 
   if (matchingDataset) {
-    // console.log('findMatchingSource: found match for "' + config.source + '"');
     config.matchingDataset = matchingDataset;
     uiControl.displayMessage('There already exists a dataset from the same ' +
         `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
         '. What would you like to do?');
     uiControl.showSection('target-options', true);
     codapHelper.setVisibility(true).then(adjustPluginHeight);
+  } else {
+    matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
+    if (matchingDataset) {
+      config.matchingDataset = matchingDataset;
+      uiControl.displayMessage(`The existing dataset, "${matchingDataset.name}",' + 
+          ' has the same attributes as this new CSV file. ` +
+          'Would you like to append the new data or replace the existing set?');
+      uiControl.showSection('target-options', true);
+      codapHelper.setVisibility(true).then(adjustPluginHeight);
+    }
   }
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
