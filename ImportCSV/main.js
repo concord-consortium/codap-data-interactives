@@ -17,9 +17,10 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
- /*global Papa */
-import {uiControl} from './modules/uiControl';
-import {codapHelper} from './modules/codapHelper';
+/*global Papa */
+
+import * as uiControl from './modules/uiControl';
+import * as codapHelper from './modules/codapHelper';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
@@ -179,7 +180,7 @@ function adjustPluginHeight() {
   let pageHeight = uiControl.getHeight();
   let pluginHeight = config.pluginState && config.pluginState.dimensions && config.pluginState.dimensions.height;
   if (!pluginHeight || pageHeight>pluginHeight) {
-    codapHelper.adjustHeight(pageHeight);
+    codapHelper.adjustHeightOfSelf(pageHeight);
   }
 }
 
@@ -200,7 +201,7 @@ async function determineIfAutoImportApplies() {
         `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
         '. What would you like to do?');
     uiControl.showSection('target-options', true);
-    codapHelper.setVisibility(true).then(adjustPluginHeight);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   } else {
     matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
     if (matchingDataset) {
@@ -209,7 +210,7 @@ async function determineIfAutoImportApplies() {
           ' has the same attributes as this new CSV file. ` +
           'Would you like to append the new data or replace the existing set?');
       uiControl.showSection('target-options', true);
-      codapHelper.setVisibility(true).then(adjustPluginHeight);
+      codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
     }
   }
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
@@ -222,7 +223,7 @@ async function determineIfAutoImportApplies() {
     uiControl.showSection('downsample-options', true);
     uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
     uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
-    codapHelper.setVisibility(true).then(adjustPluginHeight);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   }
   return !(matchingDataset || sizeAboveThreshold);
 }
@@ -399,7 +400,7 @@ async function importData() {
       config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
   if (!result || !result.success) {
     uiControl.displayError((result && result.error) || "Error sending data to CODAP");
-    codapHelper.setVisibility(true).then(adjustPluginHeight);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   }
 
   result = await codapHelper.closeSelf();
@@ -439,7 +440,7 @@ async function main() {
   // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
   config.pluginState = pluginState;
 
-  codapHelper.setVisibility(false);
+  codapHelper.setVisibilityOfSelf(false);
 
   // then, if there is data or a url, get it and create the data set
   // otherwise display a dialog
@@ -460,7 +461,7 @@ async function main() {
     }
   } else {
     uiControl.showSection('source-input', true);
-    codapHelper.setVisibility(true);
+    codapHelper.setVisibilityOfSelf(true);
   }
 }
 

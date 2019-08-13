@@ -63,16 +63,12 @@ function installButtonHandler(selector, handler) {
   if (el) el.onclick = handler;
 }
 
-let uiControl ={
-  displayError: displayError,
-  displayMessage: displayMessage,
-  getHeight: getHeight,
-  getInputValue: getInputValue,
-  installButtonHandler: installButtonHandler,
-  setInputValue: setInputValue,
-  showSection: showSection
-};
-
 export {
-  uiControl
+  displayError,
+  displayMessage,
+  getHeight,
+  getInputValue,
+  installButtonHandler,
+  setInputValue,
+  showSection
 };

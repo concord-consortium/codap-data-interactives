@@ -236,17 +236,15 @@ function retrieveDatasetList () {
 }
 
 
-let codapHelper = {
-  init: init,
-  adjustHeight: adjustHeightOfSelf,
-  clearDataset: clearDataset,
-  closeSelf: closeSelf,
-  setVisibility: setVisibilityOfSelf,
-  defineDataSet: defineDataSet,
-  openCaseTableForDataSet: openCaseTableForDataSet,
-  openTextBox: openTextBox,
-  retrieveDatasetList: retrieveDatasetList,
-  sendRowsToCODAP: sendRowsToCODAP,
+export {
+  init,
+  adjustHeightOfSelf,
+  clearDataset,
+  closeSelf,
+  setVisibilityOfSelf,
+  defineDataSet,
+  openCaseTableForDataSet,
+  openTextBox,
+  retrieveDatasetList,
+  sendRowsToCODAP,
 }
-
-export {codapHelper};
