@@ -390,35 +390,35 @@ function injectThumbnailInGeojsonFeature(feature) {
 //   doc.components.push(component);
 //   return component;
 // }
-//
-// function visitProperties(obj, fn, depth) {
-//   if (depth===undefined) {
-//     depth = 5;
-//   }
-//   if (depth < 0) return;
-//
-//   var retval = fn(obj);
-//
-//   if (!retval && (typeof obj === 'object')) {
-//     for (var p in obj) {
-//       if (obj.hasOwnProperty(p)) {
-//         retval = visitProperties(obj[p], fn, depth-1);
-//         if (retval) { break; }
-//       }
-//     }
-//   }
-//   return retval;
-// }
-//
-//
-// function convertTopoJSONToGeoJSON(topo) {
-//   var collection = visitProperties(topo, function (obj) {
-//     if (obj && obj.type === 'GeometryCollection') { return obj; }
-//   });
-//   if (collection) {
-//     return topojson.feature(topo, collection);
-//   }
-// }
+
+function visitProperties(obj, fn, depth) {
+  if (depth===undefined) {
+    depth = 5;
+  }
+  if (depth < 0) return;
+
+  var retval = fn(obj);
+
+  if (!retval && (typeof obj === 'object')) {
+    for (var p in obj) {
+      if (obj.hasOwnProperty(p)) {
+        retval = visitProperties(obj[p], fn, depth-1);
+        if (retval) { break; }
+      }
+    }
+  }
+  return retval;
+}
+
+
+function convertTopoJSONToGeoJSON(topo) {
+  var collection = visitProperties(topo, function (obj) {
+    if (obj && obj.type === 'GeometryCollection') { return obj; }
+  });
+  if (collection) {
+    return topojson.feature(topo, collection);
+  }
+}
 //
 // function geojsonToCODAP(geojsonDoc, url/*, options*/) {
 //   function isKey(geoJSONObject, propertyName) {
@@ -639,10 +639,10 @@ function createItems(geoJSONObject, featureKeys) {
               feature.properties);
     }
     featureKeys.forEach(function (key) {
-      items.push({}, itemTemplate, {type: key, key: feature.properties[key]});
+      items.push(Object.assign({}, itemTemplate, {type: key, key: feature.properties[key]}));
     });
     if (feature.id) {
-      items.push({}, itemTemplate, {type: 'id', key: feature.id})
+      items.push(Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
     }
   });
   return items;

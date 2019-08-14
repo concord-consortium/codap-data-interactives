@@ -17,15 +17,16 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-/*global Papa */
 
 import * as uiControl from './modules/uiControl';
 import * as codapHelper from './modules/codapHelper';
+import * as geojsonHelper from './modules/geojsonHelper';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
   defaultAttrName: 'attr', // default attribute name prefix
-  defaultCollectionName: 'cases', // default collection name
+  defaultParentCollectionName: 'features', // default collection name
+  defaultChildCollectionName: 'keys',
   defaultDataSetName: 'dataset', // default dataset name
   name: 'Import GeoJSON',  // plugin name
   thresholdColCount: 40,
@@ -40,15 +41,14 @@ let codapConfig = {
 
 let config = {
   attributeNames: null,
-  collectionName: constants.defaultCollectionName,
+  parentCollectionName: constants.defaultParentCollectionName,
+  childCollectionName: constants.defaultChildCollectionName,
   data: null,
-  dataStartingRow: null,
   datasetID: null,
   datasetName: constants.defaultDataSetName,
   downsampling: 'none', // none || random || everyNth || last || first
   downsamplingTargetCount: null, // count we aim to achieve by downsampling
   downsamplingEveryNthInterval: null,// n, if everyNth is selected
-  firstRowIsAttrList: true,
   importDate: null,
   matchingDataset: null,
   openCaseTable: true,
@@ -178,42 +178,43 @@ function adjustPluginHeight() {
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies() {
-  findOrCreateAttributeNames(config.data, config);
-  let dataSetList = await codapHelper.retrieveDatasetList();
-  let matchingDataset = findMatchingSource(dataSetList, config.source);
-  let numRows = config.data.length;
-
-  if (matchingDataset) {
-    config.matchingDataset = matchingDataset;
-    uiControl.displayMessage('There already exists a dataset from the same ' +
-        `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
-        '. What would you like to do?');
-    uiControl.showSection('target-options', true);
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  } else {
-    matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
-    if (matchingDataset) {
-      config.matchingDataset = matchingDataset;
-      uiControl.displayMessage(`The existing dataset, "${matchingDataset.name}",' + 
-          ' has the same attributes as this new CSV file. ` +
-          'Would you like to append the new data or replace the existing set?');
-      uiControl.showSection('target-options', true);
-      codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-    }
-  }
-  let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
-  if (sizeAboveThreshold) {
-    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
-      `More than ${constants.thresholdRowCount} rows could lead to sluggish performance for some activities in the current version of CODAP.` +
-        'You may wish to work with a subsample of the data at first. ' +
-        'You can always replace it with the full data set later.'
-    );
-    uiControl.showSection('downsample-options', true);
-    uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
-    uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  }
-  return !(matchingDataset || sizeAboveThreshold);
+  return true;
+  // findOrCreateAttributeNames(config.data, config);
+  // let dataSetList = await codapHelper.retrieveDatasetList();
+  // let matchingDataset = findMatchingSource(dataSetList, config.source);
+  // let numRows = config.data.length;
+  //
+  // if (matchingDataset) {
+  //   config.matchingDataset = matchingDataset;
+  //   uiControl.displayMessage('There already exists a dataset from the same ' +
+  //       `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
+  //       '. What would you like to do?');
+  //   uiControl.showSection('target-options', true);
+  //   codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  // } else {
+  //   matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
+  //   if (matchingDataset) {
+  //     config.matchingDataset = matchingDataset;
+  //     uiControl.displayMessage(`The existing dataset, "${matchingDataset.name}",' +
+  //         ' has the same attributes as this new CSV file. ` +
+  //         'Would you like to append the new data or replace the existing set?');
+  //     uiControl.showSection('target-options', true);
+  //     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  //   }
+  // }
+  // let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
+  // if (sizeAboveThreshold) {
+  //   uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
+  //     `More than ${constants.thresholdRowCount} rows could lead to sluggish performance for some activities in the current version of CODAP.` +
+  //       'You may wish to work with a subsample of the data at first. ' +
+  //       'You can always replace it with the full data set later.'
+  //   );
+  //   uiControl.showSection('downsample-options', true);
+  //   uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
+  //   uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
+  //   codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  // }
+  // return !(matchingDataset || sizeAboveThreshold);
 }
 
 
@@ -277,40 +278,12 @@ function downsampleEveryNth(data, interval, start) {
 }
 
 
-function getTableStats(data) {
-  return data.reduce(function (stats, row) {
-        stats.maxWidth = Math.max(stats.maxWidth, row.length);
-        stats.minWidth = Math.min(stats.minWidth, row.length);
-        return stats;
-      },
-      {maxWidth: 0, minWidth: Number.MAX_SAFE_INTEGER, numberOfRows: data.length}
-  );
-}
-
-function findOrCreateAttributeNames(data, config) {
-  let tableStats = getTableStats(data);
-  let attrs = [];
-  if (config.firstRowIsAttrList && tableStats.numberOfRows > 0) {
-    attrs = data[0];
-    config.dataStartingRow = 1;
-  } else {
-    config.dataStartingRow = 0;
-    for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = constants.defaultAttrName + i;
-    }
-  }
-  config.attributeNames = attrs;
-}
-
 async function createDataSetInCODAP(data, config) {
-  let tableConfig = {
-    datasetName: config.datasetName,
-    collectionName: config.collectionName,
-    attributeNames: config.attributeNames,
-    dataStartingRow: config.dataStartingRow,
-    source: config.source,
-    importDate: config.importDate,
-  }
+  let geoJSONObject = geojsonHelper.prepareGeoJSONObject(data, config.source);
+  config.data = data = geoJSONObject;
+  let result = geojsonHelper.defineDataset(data, config.source)
+  let tableConfig = result.dataset;
+  config.keyNames = result.featureKeys;
   return await codapHelper.defineDataSet(tableConfig);
 }
 
@@ -374,6 +347,7 @@ async function importData() {
     }
     codapHelper.openCaseTableForDataSet(config.datasetID);
     codapHelper.openTextBox(config.datasetName, config.resourceDescription);
+    codapHelper.openMap();
   }
 
   if (config.operation === 'append' || config.operation === 'replace') {
@@ -384,8 +358,9 @@ async function importData() {
     result = await clearDatasetInCODAP(config.datasetID);
   }
 
-  result = await codapHelper.sendRowsToCODAP(config.datasetID,
-      config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
+  result = await codapHelper.sendToCODAP('create',
+      `dataContext[${config.datasetID}].item`,
+      geojsonHelper.createItems(config.data, config.keyNames));
   if (!result || !result.success) {
     uiControl.displayError((result && result.error) || "Error sending data to CODAP");
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);

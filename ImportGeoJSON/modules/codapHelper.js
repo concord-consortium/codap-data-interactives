@@ -121,24 +121,11 @@ function closeSelf() {
  * @param importDate
  * @return {Promise}
  */
-function defineDataSet(config) {
+function defineDataSet(datasetDefinition) {
   let request = {
     action: 'create',
     resource: 'dataContext',
-    values: {
-      name: config.datasetName,
-      title: config.datasetName,
-      metadata: {
-        source: config.source,
-        importDate: config.importDate
-      },
-      collections: [
-        {
-          name: config.collectionName,
-          attrs: config.attributeNames.map(function (attr) {return {name: attr}; })
-        }
-      ]
-    }
+    values: datasetDefinition
   }
   return codapInterface.sendRequest(request);
 }
@@ -151,8 +138,9 @@ function clearDataset(id) {
   return codapInterface.sendRequest(request);
 }
 
-function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
+function sendRowsToCODAP(/*datasetID, attrArray, rows, chunkSize, dataStartingRow*/) {
 
+/*
   function sendOneChunk(){
     if (chunkIx > numRows) {
       return Promise.resolve();
@@ -177,6 +165,8 @@ function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow)
   let numRows = rows.length;
   let chunkIx = dataStartingRow || 0;
   return sendOneChunk();
+
+ */
 }
 
 function openCaseTableForDataSet(name) {
@@ -191,6 +181,18 @@ function openCaseTableForDataSet(name) {
   return codapInterface.sendRequest(request);
 }
 
+function openMap(name) {
+  name = name || 'My Map';
+  let request = {
+    action: 'create',
+    resource: 'component',
+    values: {
+      type: 'map',
+      dataContext: name,
+    }
+  };
+  return codapInterface.sendRequest(request);
+}
 /**
  *
  * @param title
@@ -235,6 +237,10 @@ function retrieveDatasetList () {
       })
 }
 
+function sendToCODAP(action, resource, values) {
+  return codapInterface.sendRequest({action: action, resource: resource, values: values});
+}
+
 
 export {
   init,
@@ -244,7 +250,9 @@ export {
   setVisibilityOfSelf,
   defineDataSet,
   openCaseTableForDataSet,
+  openMap,
   openTextBox,
   retrieveDatasetList,
   sendRowsToCODAP,
+  sendToCODAP,
 }
