@@ -525,9 +525,10 @@ var arbor = {
 
     /**
      * Called when we successfully get the attribute list from CODAP
+     * (2019-08-14) caled when we START getting the list of attributes in Analysis
      * @param iList     a list of the attributes. We need theAttribute.name
      */
-    refreshAttributeList: function (iList) {
+    resetAttributeList: function (iList) {
 
         this.attsInBaum = [];           //      new attribute list whenever we change collection? Correct? maybe not.
     },

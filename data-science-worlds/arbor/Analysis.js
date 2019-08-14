@@ -83,19 +83,41 @@ Analysis.prototype.getStructureAndData = async function () {
             this.specifyCurrentDataContext(this.dataContexts[0].name);
         }
         this.host.gotDataContextList(this.dataContexts);
-        const tArg = {action: "get", resource: "dataContext[" + this.currentDataContextName + "].collectionList"};
+        //  const tArg = {action: "get", resource: "dataContext[" + this.currentDataContextName + "].collectionList"};
+        const tArg = {action: "get", resource: "dataContext[" + this.currentDataContextName + "]"};
         return codapInterface.sendRequest(tArg);
     };
 
-    //  function to process the list of collections and set the name of the top collection
+    /**
+     * Process the CODAP get Data Context result to get all the attributes and the collections
+     * @param iResult
+     * @returns {Promise<void>}
+     */
+    const processDataContext = async function(iResult) {
+        this.host.resetAttributeList();   //  set attsInBaum to []
+        this.collections = iResult.values.collections;
+        this.topCollectionName = this.collections[0].name;
+        this.bottomCollectionName = this.collections[this.collections.length - 1].name;
 
+        for (c of this.collections) {
+            for (a of c.attrs) {
+                if (this.excludedAttributeNames.indexOf(a.name) < 0) {     //  todo: cope with this kludge that special-cases "diagnosis" and "analysis"
+                    this.host.gotOneAttribute(a);
+                }
+            }
+        }
+    };
+
+    //  function to process the list of collections and set the name of the top and bottom collections
+
+    //  todo: see if we need this any more...
     const processCollectionList = async function (iResult) {
         this.collections = iResult.values;
         this.topCollectionName = this.collections[0].name;
         this.bottomCollectionName = this.collections[this.collections.length - 1].name;
 
         let theTotalAttributeList = [];
-        this.host.refreshAttributeList();   //  set attsInBaum to []
+        this.host.resetAttributeList();   //  set attsInBaum to []
 
         //  read sequentially though all collections so that the attribute names stay in order
 
@@ -181,7 +203,8 @@ Analysis.prototype.getStructureAndData = async function () {
 
     await getListOfDataContexts()
         .then(processDataContextList.bind(this))    //  includes asking for list of collections
-        .then(processCollectionList.bind(this));     //  includes asking for list of attributes
+        .then(processDataContext.bind(this));     //  includes getting list of attributes
+        //  .then(processCollectionList.bind(this));     //  includes asking for list of attributes
     this.cases = await this.getCasesRecursivelyFromCollection(this.topCollectionName);
     console.log("Success reading in " + this.cases.length + " cases.");
 
@@ -248,6 +271,11 @@ Analysis.prototype.getData = function () {
 
 //  older from here out
 
+/**
+ * Given a data context name (possibly new), set up the tree to read that data.
+ * Importantly, includes registering our interest in changes (new cases) in that dataset.
+ * @param iDCName
+ */
 Analysis.prototype.specifyCurrentDataContext = function (iDCName) {
 
     if (iDCName === this.currentDataContextName) {  //  not a new specification!
