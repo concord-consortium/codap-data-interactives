@@ -39,17 +39,24 @@ arbor.newCases = {
         }
     },
 
+    /**
+     * Event handler set in Analysis.specifyCurrentDataContext()
+     * The data context we're looking at has a "create cases" event.
+     *
+     * @param iCommand
+     * @param iCallback
+     * @returns {PromiseLike<T>}
+     */
     newCasesInData: function (iCommand, iCallback) {
-        console.log('Baum detected new data! ' + iCommand.resource);
-        var newCases = [];
+        console.log('Arbor detected new data! ' + iCommand.resource);
+        let newCases = [];
 
         if (iCommand.values.operation === "createCases") {
             var theIDs = iCommand.values.result.caseIDs;
-            console.log("   ... and it's a createCases, " + theIDs.length + " cases: " + theIDs.toString());
+            console.log("   ... and it's a createCases, " + theIDs.length + " case(s): " + theIDs.toString());
 
-
-            var assembleAndIssueCompoundRequestForChangedItems = function () {
-                var tCompoundRequest = [];
+            const assembleAndIssueCompoundRequestForChangedItems = function () {
+                let tCompoundRequest = [];
 
                 //  loop over all IDs, constructing the compound request
                 //  todo: if possible, get items rather than cases, by caseID
@@ -66,22 +73,25 @@ arbor.newCases = {
                 return codapInterface.sendRequest(tCompoundRequest);
             };
 
-            var processAndChangeItemsWithDiagnosesAndPrepareUpdateRequest = function (iResult) {
+            const processAndChangeItemsWithDiagnosesAndPrepareUpdateRequest = function (iResult) {
 
                 /*
                 At the moment, this is quite Arbor-sepcific.
                 Specific named attributes: health, diagnosis, score, analysis
                  */
-                var tCompoundRequest = [];
-                var tString = "";
+                let tCompoundRequest = [];
+                let tString = "";
 
                 console.log('Received cases from CODAP, ' + iResult.length + ' items');
                 iResult.forEach(function (r) {
                     if (r.success) {
-                        var id = r.values.case.id;
-                        var c = r.values.case.values;
+                        const id = r.values.case.id;
+                        const c = r.values.case.values;
 
                         //  arbor.newCases.checkForNewValuesInAttributes(c);
+
+                        //  Check to make sure that the case has a "source" === "auto" and that "diagnosis" does not exist.
+                        //  THIS IS FRAGILE! :)
 
                         if (c.diagnosis) {
                             console.log('case ' + id + ' already diagnosed');
@@ -92,10 +102,10 @@ arbor.newCases = {
 
                             //  get the tree's result for this case
 
-                            var theTrace = arbor.state.tree.traceCaseInTree(c);
-                            var theScore = 0;
-                            var theAnalysis = "";
-                            var theTerminalValue = "";
+                            const theTrace = arbor.state.tree.traceCaseInTree(c);
+                            let theScore = 0;
+                            let theAnalysis = "";
+                            let theTerminalValue = "";
 
                             tString += id + theTrace.terminalNodeSign + " ";
 
@@ -112,15 +122,14 @@ arbor.newCases = {
                                 theAnalysis += theTrace.terminalNodeSign === "+" ? "P" : "N";
                             }
 
-
                             //  The update request!
                             //  todo: fix so this doesn't depend on the collection name! (only the dataContext)
 
-                            var tNewValues = {};
+                            let tNewValues = {};
                             tNewValues[arbor.constants.diagnosisAttributeName] = theTerminalValue;
                             tNewValues[arbor.constants.analysisAttributeName] = theAnalysis;
 
-                            var tOneRequest = {
+                            const tOneRequest = {
                                 "action" : "update",
                                 "resource": "dataContext[" + arbor.analysis.currentDataContextName
                                 + "].collection[" + arbor.analysis.bottomCollectionName
@@ -145,11 +154,11 @@ arbor.newCases = {
 
             };
 
-            var processResultOfUpdateRequests = function (iResult) {
+            const processResultOfUpdateRequests = function (iResult) {
                 if (iResult !== undefined) {
                     return new Promise(function (resolve, reject) {
                         iResult = pluginHelper.arrayify(iResult);
-                        var allSucceeded = true;
+                        let allSucceeded = true;
                         iResult.forEach(function (r) {
                             if (!r.success) {
                                 allSucceeded = false;
@@ -172,7 +181,7 @@ arbor.newCases = {
                 .then(processAndChangeItemsWithDiagnosesAndPrepareUpdateRequest.bind(this))
                 .then(processResultOfUpdateRequests.bind(this))
                 .then( function() {
-                    console.log("\n***** refreshing data after successful update in BAUM *****")
+                    console.log("\n***** refreshing data after successful update in Arbor *****")
                     arbor.refreshBaum("data");
                 });
         }

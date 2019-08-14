@@ -71,7 +71,7 @@ var arbor = {
     dependentVariableSplit: null,
 
     iFrameDescription: {
-        version: '001y',
+        version: '002a',
         name: 'arbor',
         title: 'diagnostic tree',
         dimensions: {width: 500, height: 555},
@@ -92,7 +92,7 @@ var arbor = {
             this
         );
 
-        //  register to receive notifications about selection
+        //  register to receive notifications about selection in the tree result datasets
         codapInterface.on(
             'notify',
             'dataContextChangeNotice[' + arbor.constants.kClassTreeDataSetName + ']',
@@ -108,7 +108,7 @@ var arbor = {
         );
 
 
-        await codapInterface.init(this.iFrameDescription, null)
+        await codapInterface.init(this.iFrameDescription, null);
         await arbor.getAndRestoreModel();   //  includes getInteractiveState
         await arbor.getAndRestoreViews();   //
 
@@ -122,6 +122,7 @@ var arbor = {
         await Promise.all(tInitDatasetPromises)
         //  other post-dataset initialization goes here
 
+        //  make the tables reorg-able
         const tMessage = {
             "action": "update",
             "resource": "interactiveFrame",
@@ -132,6 +133,7 @@ var arbor = {
         };
 
         const updateResult = await codapInterface.sendRequest(tMessage);
+
         arbor.repopulate();
         arbor.redisplay();
     },
@@ -386,9 +388,9 @@ var arbor = {
     repopulate: function () {
         console.log("   repopulate begins");
         this.state.tree.populateTree();               //  count up how many are in what bin throughout the tree, leaving structure intact
-        console.log("       populated with " + this.analysis.cases.length + " cases");
+        //  console.log("       populated with " + this.analysis.cases.length + " cases");
         focusSplitMgr.theSplit.updateSplitStats(this.analysis.cases);    //  update these stats based on all cases
-        console.log("       splitStats updated");
+        //  console.log("       splitStats updated");
         console.log("   repopulate ends");
     },
 
@@ -524,8 +526,8 @@ var arbor = {
     },
 
     /**
-     * Called when we successfully get the attribute list from CODAP
-     * (2019-08-14) caled when we START getting the list of attributes in Analysis
+     * (2019-08-14) caled when we START getting the list of attributes in Analysis;
+     * we need the list to be empty!
      * @param iList     a list of the attributes. We need theAttribute.name
      */
     resetAttributeList: function (iList) {
@@ -533,6 +535,13 @@ var arbor = {
         this.attsInBaum = [];           //      new attribute list whenever we change collection? Correct? maybe not.
     },
 
+    /**
+     * Called by a loop in processDataContext in this file,
+     * as part of the setup for an analysis.
+     *
+     * Creates the attInBaum, creates the category map.
+     * @param iValues
+     */
     gotOneAttribute: function (iValues) {
         console.log("   >>> got " + iValues.name);
 
@@ -555,7 +564,7 @@ var arbor = {
     },
 
     /**
-     * Get the attribute (AttInBaum by name. Used by AttributeSplit.makeInitialSplitParameters();
+     * Get the attribute (AttInBaum) by name. Used by AttributeSplit.makeInitialSplitParameters();
      * @param iName
      * @returns {*}
      */
@@ -585,9 +594,11 @@ var arbor = {
     },
 
     setTreeTypeByString: function (iType) {
-        this.state.treeType = iType;
-        $("#treeTypeMenu").val(this.state.treeType);
-        console.log("Changing tree type to " + this.state.treeType);
+        if (this.state.treeType !== iType) {
+            this.state.treeType = iType;
+            $("#treeTypeMenu").val(this.state.treeType);
+            console.log("Changing tree type to " + this.state.treeType);
+        }
     },
 
     /*

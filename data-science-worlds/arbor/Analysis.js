@@ -34,9 +34,10 @@
  * @param iHost
  * @constructor
  */
+
 const Analysis = function (iHost) {
 
-    this.host = iHost;            //  the object that has invoked this analysis
+    this.host = iHost;            //  the object that has invoked this analysis, probably arbor
     this.initialize();
 };
 
@@ -111,6 +112,7 @@ Analysis.prototype.getStructureAndData = async function () {
     //  function to process the list of collections and set the name of the top and bottom collections
 
     //  todo: see if we need this any more...
+/*
     const processCollectionList = async function (iResult) {
         this.collections = iResult.values;
         this.topCollectionName = this.collections[0].name;
@@ -157,6 +159,7 @@ Analysis.prototype.getStructureAndData = async function () {
         }   //  end of loop over collections
         return theTotalAttributeList;
     };
+*/
 
     var processIndividualAttributes = function(iResult) {
 
@@ -292,7 +295,6 @@ Analysis.prototype.specifyCurrentDataContext = function (iDCName) {
             arbor.newCases.newCasesInData
         );
     }
-
 };
 
 
