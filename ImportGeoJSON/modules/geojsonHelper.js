@@ -572,16 +572,18 @@ function defineDataset(geoJSONObject, url) {
 
   // identify all feature properties
   let featureProperties = {};
-  geoJSONObject.features.forEach(function (feature) {
-    if (feature.geometry && feature.geometry.type === 'Point') {
-      hasPointData = true;
-    } else {
-      hasShapeData = true;
-    }
-    Object.keys(feature.properties).forEach(function (key) {
-      featureProperties[key] = true;
+  if (geoJSONObject.features) {
+    geoJSONObject.features.forEach(function (feature) {
+      if (feature.geometry && feature.geometry.type === 'Point') {
+        hasPointData = true;
+      } else {
+        hasShapeData = true;
+      }
+      Object.keys(feature.properties).forEach(function (key) {
+        featureProperties[key] = true;
+      });
     });
-  });
+  }
 
   let featureKeys = [];
   // identify properties that have unique non-null values for each feature
@@ -611,40 +613,46 @@ function defineDataset(geoJSONObject, url) {
     parentCollection.attrs.push({name: 'latitude'});
     parentCollection.attrs.push({name: 'longitude'});
   }
-  let childCollection = {
-    name: 'keys',
-    parent: 'boundaries',
-    attrs: [
-      {name: 'type'},
-      {name: 'key'}
-    ]
-  };
   context.collections.push(parentCollection);
-  context.collections.push(childCollection);
+  if (featureKeys.length) {
+    let childCollection = {
+      name: 'keys', parent: 'boundaries', attrs: [{name: 'type'}, {name: 'key'}]
+    };
+    context.collections.push(childCollection);
+  }
   return {featureKeys: featureKeys, dataset: context};
 }
 
 function createItems(geoJSONObject, featureKeys) {
   let items = [];
-  geoJSONObject.features.forEach(function (feature) {
-    let type = feature.geometry && feature.geometry.type;
-    let itemTemplate = {};
-    if (type === 'Point') {
-      let point = feature.geometry.coordinates;
-      itemTemplate = Object.assign({latitude: point[1], longitude: point[0]}, feature.properties);
-    } else {
-      // create parent case
-      itemTemplate = Object.assign({boundary: JSON.stringify(
-                injectThumbnailInGeojsonFeature(feature.geometry))},
-              feature.properties);
-    }
-    featureKeys.forEach(function (key) {
-      items.push(Object.assign({}, itemTemplate, {type: key, key: feature.properties[key]}));
+  if (geoJSONObject.features) {
+    geoJSONObject.features.forEach(function (feature) {
+      let type = feature.geometry && feature.geometry.type;
+      let itemTemplate = {};
+      if (type === 'Point') {
+        let point = feature.geometry.coordinates;
+        itemTemplate = Object.assign({latitude: point[1], longitude: point[0]},
+            feature.properties);
+      } else {
+        // create parent case
+        itemTemplate = Object.assign({
+          boundary: JSON.stringify(
+              injectThumbnailInGeojsonFeature(feature.geometry))
+        }, feature.properties);
+      }
+      featureKeys.forEach(function (key) {
+        items.push(Object.assign({}, itemTemplate,
+            {type: key, key: feature.properties[key]}));
+      });
+      if (feature.id) {
+        items.push(
+            Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
+      } else if (featureKeys.length === 0) {
+        // if there are otherwise no keys, we make one up...
+        items.push(itemTemplate);
+      }
     });
-    if (feature.id) {
-      items.push(Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
-    }
-  });
+  }
   return items;
 }
 
