@@ -17,7 +17,7 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool ImportCSV ImportGeoJSON"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool ImportCSV ImportGeoJSON ImportXls"
 HIDDEN_DIRS="Common"
 BUILT_PLUGIN_DIRS="onboarding"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
