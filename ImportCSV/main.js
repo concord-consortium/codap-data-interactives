@@ -485,7 +485,12 @@ async function main() {
     config.importDate = new Date();
     config.source = pluginState.url || pluginState.filename || pluginState.name;
 
-    config.data = await retrieveData(pluginState);
+    try {
+      config.data = await retrieveData(pluginState);
+    } catch (ex) {
+      uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
+      codapHelper.setVisibilityOfSelf(true);
+    }
 
     let autoImport = await determineIfAutoImportApplies();
     if (autoImport) {
