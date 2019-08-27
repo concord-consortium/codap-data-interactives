@@ -18,9 +18,16 @@
 // ==========================================================================
 let messageArea = document.getElementById('message-area');
 
-function displayMessage(message) {
-  messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
-  showSection('message-area', true);
+function displayMessage(message, selector) {
+  if (selector == null) {
+    messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
+    showSection('message-area', true);
+  } else {
+    var el = document.querySelector(selector)
+    if (el) {
+      el.textContent = message;
+    }
+  }
 }
 function displayError(message) {
   console.log('ImportCVS Plugin: ' + message);

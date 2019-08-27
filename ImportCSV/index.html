@@ -19,23 +19,33 @@
         <div><input type="file" accept="text/csv,text/plain" name="source-input-file"></div>
       </div>
 
-      <div id="downsample-options" class="panel" hidden>
-        <div class="section-title">Downsample Options</div>
+      <div id="downsample-options" hidden>
+        <div id="downsample-message" class="panel message"></div>
+        <div class="section-title panel">Downsample Options...</div>
         <div class="option-list">
-          <label><input type="radio" name="downsample" value="all" checked="checked">Don't downsample</label>
-          <label><input type="radio" name="downsample" value="random" >Randomly select <input type="number" name="random-sample-size" min="0" max="99999"/> rows</label>
-          <label><input type="radio" name="downsample" value="every-nth" >Select every nth where 'n' is <input type="number" name="pick-interval" min="1" max="999"/></label>
-    <!--      <label><input type="radio" name="downsample" value="last-n" >Select last n</label>-->
-    <!--      <label><input type="radio" name="downsample" value="first-n" >Select first n</label>-->
+          <label class="panel">
+            <input type="radio" name="downsample" value="random" checked="checked">
+            Randomly select
+            <input type="number" name="random-sample-size" min="0" max="99999" step="500"/> rows
+          </label>
+          <label class="panel">
+            <input type="radio" name="downsample" value="every-nth" >
+            Select every
+            <input type="number" name="pick-interval" min="1" max="99"/>th row
+          </label>
+          <label class="panel">
+            <input type="radio" name="downsample" value="all">Import all rows
+          </label>
         </div>
       </div>
 
-      <div id="target-options" class="panel" hidden>
-        <div class="section-title">Target Options</div>
+      <div id="target-options" hidden>
+        <div id="target-message" class="panel message"></div>
+        <div class="panel">Target Options...</div>
         <div class="option-list">
-          <label><input type="radio" name="target-operation" value="replace">Replace existing data set</label>
-          <label><input type="radio" name="target-operation" value="append">Append to existing data set</label>
-          <label><input type="radio" name="target-operation" value="new" checked="checked">Create new data set</label>
+          <label class="panel"><input type="radio" name="target-operation" value="replace" checked="checked">Replace existing dataset with this one</label>
+          <label class="panel"><input type="radio" name="target-operation" value="append">Append this dataset to the existing one</label>
+          <label class="panel"><input type="radio" name="target-operation" value="new">Create a new data set</label>
         </div>
       </div>
 

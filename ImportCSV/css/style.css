@@ -2,6 +2,12 @@ body {
   background-color: white;
   font-family: "Museo Sans",Montserrat-Regular,sans-serif;
   font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+input[type=number] {
+  text-align: right;
 }
 
 #content {
@@ -46,15 +52,20 @@ body {
   font-variant-caps: petite-caps;
 }
 
+/*
 .section-title {
   font-size: smaller;
 }
+*/
 .panel {
-  min-height: 30px;
-  margin: 10px 10px 0 10px;
-  background-color: rgb(231, 231, 231);
+  background-color: rgba(231, 231, 231, 0.7);
   border-radius: 6px;
-  padding: 10px;
+  font-family: MuseoSans-500,sans-serif;
+  line-height: 16.8px;
+  margin: 5px 10px 0 10px;
+  min-height: 20px;
+  padding: 0;
+  right: 0;
 }
 
 .option-list {

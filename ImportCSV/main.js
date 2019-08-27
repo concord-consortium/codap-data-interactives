@@ -183,6 +183,34 @@ function adjustPluginHeight() {
   }
 }
 
+let relativeTimeFormat = new Intl.RelativeTimeFormat();
+
+function relTime(time) {
+  if (!(time instanceof Date)) {
+    time = new Date(time);
+  }
+  let delta = (time - new Date())/1000;
+  if (Math.abs(delta) < 60) {
+    return (relativeTimeFormat.format(Math.round(delta), 'second'));
+  }
+  else {
+    (delta /= 60 )
+  }
+  if (Math.abs(delta) < 60) {
+    return (relativeTimeFormat.format(Math.round(delta), 'minute'));
+  }
+  else {
+    (delta /= 60 )
+  }
+  if (Math.abs(delta) < 24) {
+    return (relativeTimeFormat.format(Math.round(delta), 'hour'));
+  }
+  else {
+    (delta /= 24 )
+  }
+  return (relativeTimeFormat.format(Math.round(delta), 'day'));
+
+}
 /**
  * Autoimport applies if the CSV is short and could not already be present.
  *
@@ -193,12 +221,13 @@ async function determineIfAutoImportApplies() {
   let dataSetList = await codapHelper.retrieveDatasetList();
   let matchingDataset = findMatchingSource(dataSetList, config.source);
   let numRows = config.data.length;
+  let numberFormat = new Intl.NumberFormat();
 
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
-    uiControl.displayMessage('There already exists a dataset from the same ' +
-        `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
-        '. What would you like to do?');
+    uiControl.displayMessage('There already exists a dataset like this one.' +
+        ` It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
+        '#target-message');
     uiControl.showSection('target-options', true);
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   } else {
@@ -214,10 +243,10 @@ async function determineIfAutoImportApplies() {
   }
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
-    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
-      `More than ${constants.thresholdRowCount} rows could lead to sluggish performance for some activities in the current version of CODAP.` +
-        'You may wish to work with a subsample of the data at first. ' +
-        'You can always replace it with the full data set later.'
+    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
+      ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
+        ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
+        '#downsample-message'
     );
     uiControl.showSection('downsample-options', true);
     uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
