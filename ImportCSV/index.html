@@ -24,7 +24,7 @@
         <div class="section-title panel">Downsample Options...</div>
         <div class="option-list">
           <label class="panel">
-            <input type="radio" name="downsample" value="random" checked="checked">
+            <input type="radio" name="downsample" value="random">
             Randomly select
             <input type="number" name="random-sample-size" min="0" max="99999" step="500"/> rows
           </label>
@@ -34,7 +34,7 @@
             <input type="number" name="pick-interval" min="1" max="99"/>th row
           </label>
           <label class="panel">
-            <input type="radio" name="downsample" value="all">Import all rows
+            <input type="radio" name="downsample" value="all" checked="checked">Import all rows
           </label>
         </div>
       </div>
@@ -43,9 +43,9 @@
         <div id="target-message" class="panel message"></div>
         <div class="panel">Target Options...</div>
         <div class="option-list">
-          <label class="panel"><input type="radio" name="target-operation" value="replace" checked="checked">Replace existing dataset with this one</label>
+          <label class="panel"><input type="radio" name="target-operation" value="replace">Replace existing dataset with this one</label>
           <label class="panel"><input type="radio" name="target-operation" value="append">Append this dataset to the existing one</label>
-          <label class="panel"><input type="radio" name="target-operation" value="new">Create a new data set</label>
+          <label class="panel"><input type="radio" name="target-operation" value="new" checked="checked">Create a new data set</label>
         </div>
       </div>
 

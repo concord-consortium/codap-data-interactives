@@ -155,7 +155,7 @@ function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow)
 
   function sendOneChunk(){
     if (chunkIx > numRows) {
-      return Promise.resolve();
+      return Promise.resolve({success: true});
     }
     let chunk = rows.slice(chunkIx, chunkIx + chunkSize);
     chunkIx = chunkIx + chunkSize;
@@ -210,7 +210,16 @@ function openTextBox(title, message) {
   return codapInterface.sendRequest(request);
 }
 
-
+function indicateBusy(isBusy) {
+  let request = {
+    action: 'notify',
+    resource: 'interactiveFrame',
+    values: {
+      request: isBusy? 'indicateBusy': 'indicateIdle'
+    }
+  }
+  return codapInterface.sendRequest(request)
+}
 /**
  * Fetches a list of dataset definitions from CODAP.
  * @return {Promise}
@@ -241,6 +250,7 @@ export {
   adjustHeightOfSelf,
   clearDataset,
   closeSelf,
+  indicateBusy,
   setVisibilityOfSelf,
   defineDataSet,
   openCaseTableForDataSet,

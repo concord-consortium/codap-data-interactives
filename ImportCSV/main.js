@@ -27,6 +27,8 @@ let constants = {
   defaultAttrName: 'attr', // default attribute name prefix
   defaultCollectionName: 'cases', // default collection name
   defaultDataSetName: 'dataset', // default dataset name
+  defaultTargetOperation: 'replace',
+  defaultDownsample: 'random',
   name: 'Import CSV',  // plugin name
   thresholdColCount: 40,
   thresholdRowCount: 5000, // beyond this size datasets are considered large
@@ -219,28 +221,20 @@ function relTime(time) {
 async function determineIfAutoImportApplies() {
   findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
-  let matchingDataset = findMatchingSource(dataSetList, config.source);
   let numRows = config.data.length;
   let numberFormat = new Intl.NumberFormat();
 
+  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
-    uiControl.displayMessage('There already exists a dataset like this one.' +
-        ` It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
+    uiControl.displayMessage('There already exists a dataset like this one,' +
+        `"${matchingDataset.title}". It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
         '#target-message');
+    uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
     uiControl.showSection('target-options', true);
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  } else {
-    matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
-    if (matchingDataset) {
-      config.matchingDataset = matchingDataset;
-      uiControl.displayMessage(`The existing dataset, "${matchingDataset.name}",' + 
-          ' has the same attributes as this new CSV file. ` +
-          'Would you like to append the new data or replace the existing set?');
-      uiControl.showSection('target-options', true);
-      codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-    }
   }
+
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
     uiControl.displayMessage(`The CSV file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
@@ -251,6 +245,7 @@ async function determineIfAutoImportApplies() {
     uiControl.showSection('downsample-options', true);
     uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
     uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
+    uiControl.setInputValue('downsample', constants.defaultDownsample);
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   }
   return !(matchingDataset || sizeAboveThreshold);
@@ -404,6 +399,7 @@ function handleSubmit() {
           Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
     }
 
+    codapHelper.setVisibilityOfSelf(false);
     importData();
   } else {
     handleFileInputs();
@@ -459,12 +455,13 @@ async function importData() {
 
   result = await codapHelper.sendRowsToCODAP(config.datasetID,
       config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
-  if (!result || !result.success) {
-    uiControl.displayError((result && result.error) || "Error sending data to CODAP");
+  if (!(!result || !result.success)) {
+    result = await codapHelper.closeSelf();
+  } else {
+    uiControl.displayError(
+        (result && result.error) || "Error sending data to CODAP");
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   }
-
-  result = await codapHelper.closeSelf();
 
   return result;
     // return populateFromDataThenExit(data, config);
@@ -495,7 +492,7 @@ async function main() {
     return false;
   });
 
-  // initialize CODAP
+  // initialize CODAP connection
   let pluginState = await codapHelper.init(codapConfig)
 
   // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
@@ -515,10 +512,13 @@ async function main() {
     config.source = pluginState.url || pluginState.filename || pluginState.name;
 
     try {
+      codapHelper.indicateBusy(true);
       config.data = await retrieveData(pluginState);
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
       codapHelper.setVisibilityOfSelf(true);
+    } finally {
+      codapHelper.indicateBusy(false);
     }
 
     let autoImport = await determineIfAutoImportApplies();
