@@ -81,10 +81,9 @@ function fetchAndParseURL(url) {
 /**
  * Fetches the contents of a file and parses as a CSV String
  * @param file
- * @param config
  * @return {Promise}
  */
-function readAndParseFile(file, config) {
+function readAndParseFile(file) {
   return new Promise(function (resolve, reject) {
     function handleAbnormal() {
       reject("Abort or error on file read.");
@@ -287,27 +286,60 @@ async function createDataSetInCODAP(data, config) {
   return await codapHelper.defineDataSet(tableConfig);
 }
 
+async function handleFileInputs() {
+  let url = uiControl.getInputValue('source-input-url');
+  let file = uiControl.getInputValue('source-input-file');
+  if (url) {
+    // uiControl.displayMessage('got url: ' + url);
+    config.source = url;
+    config.importDate = new Date();
+    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
+    config.data = await fetchAndParseURL(url);
+  } else if (file) {
+    // uiControl.displayMessage('got file: ' + file);
+    let fileList = uiControl.getInputFileList('source-input-file');
+    if (fileList) {
+      config.source = fileList[0].name;
+      config.importDate = new Date();
+      config.resourceDescription = composeResourceDescription(config.source, config.importDate);
+      config.data = await readAndParseFile(fileList[0]);
+    }
+  }
+  if (config.data) {
+    let isAuto = await determineIfAutoImportApplies();
+    if (isAuto) {
+      importData();
+    }
+  }
+}
+
 /**
  * Orchestrates sending data to codap according to user selections.
  *
  */
 function handleSubmit() {
-  // downsample = all | random | every-nth | first-n | last-n
-  config.downsampling = uiControl.getInputValue('downsample');
-  // operation = new | replace | append
-  config.operation = uiControl.getInputValue('target-operation');
-  config.downsamplingTargetCount = uiControl.getInputValue('random-sample-size');
-  config.downsamplingEveryNthInterval = uiControl.getInputValue('pick-interval');
+  if (config.source) {
+    // downsample = all | random | every-nth | first-n | last-n
+    config.downsampling = uiControl.getInputValue('downsample');
+    // operation = new | replace | append
+    config.operation = uiControl.getInputValue('target-operation');
+    config.downsamplingTargetCount = uiControl.getInputValue(
+        'random-sample-size');
+    config.downsamplingEveryNthInterval = uiControl.getInputValue(
+        'pick-interval');
 
-  if (config.downsampling === 'random') {
-    config.data = downsampleRandom(config.data,
-        Number(config.downsamplingTargetCount), config.dataStartingRow);
-  } else if (config.downsampling === 'every-nth') {
-    config.data = downsampleEveryNth(config.data,
-        Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
+    if (config.downsampling === 'random') {
+      config.data = downsampleRandom(config.data,
+          Number(config.downsamplingTargetCount), config.dataStartingRow);
+    } else if (config.downsampling === 'every-nth') {
+      config.data = downsampleEveryNth(config.data,
+          Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
+    }
+
+    importData();
+  } else {
+    handleFileInputs();
   }
-
-  importData();
 }
 
 /**

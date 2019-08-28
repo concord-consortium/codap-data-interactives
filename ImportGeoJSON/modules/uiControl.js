@@ -58,6 +58,10 @@ function setInputValue(name, value) {
   document.forms[0][name].value = value;
 }
 
+function getInputFileList(name) {
+  return document.forms[0][name].files;
+}
+
 function installButtonHandler(selector, handler) {
   let el = document.querySelector(selector);
   if (el) el.onclick = handler;
@@ -67,6 +71,7 @@ export {
   displayError,
   displayMessage,
   getHeight,
+  getInputFileList,
   getInputValue,
   installButtonHandler,
   setInputValue,
