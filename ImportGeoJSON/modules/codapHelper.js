@@ -181,9 +181,13 @@ function openCaseTableForDataSet(name) {
   return codapInterface.sendRequest(request);
 }
 
-function openMap(name) {
+async function openMap(name) {
   name = name || 'My Map';
-  let request = {
+  let componentListRequest = {
+    action: 'get',
+    resource: 'componentList'
+  };
+  let openMapRequest = {
     action: 'create',
     resource: 'component',
     values: {
@@ -191,7 +195,18 @@ function openMap(name) {
       dataContext: name,
     }
   };
-  return codapInterface.sendRequest(request);
+  let result = await codapInterface.sendRequest(componentListRequest);
+  let found = null;
+  if (result && result.success) {
+    found = result.values.find(function (componentInfo) {
+      return componentInfo.type === 'map';
+    })
+  }
+  if (!found) {
+    return codapInterface.sendRequest(openMapRequest);
+  } else {
+    return Promise.resolve({success: true});
+  }
 }
 /**
  *

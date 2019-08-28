@@ -177,19 +177,18 @@ function adjustPluginHeight() {
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies() {
-  return true;
   // findOrCreateAttributeNames(config.data, config);
-  // let dataSetList = await codapHelper.retrieveDatasetList();
-  // let matchingDataset = findMatchingSource(dataSetList, config.source);
+  let dataSetList = await codapHelper.retrieveDatasetList();
+  let matchingDataset = findMatchingSource(dataSetList, config.source);
   // let numRows = config.data.length;
-  //
-  // if (matchingDataset) {
-  //   config.matchingDataset = matchingDataset;
-  //   uiControl.displayMessage('There already exists a dataset from the same ' +
-  //       `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
-  //       '. What would you like to do?');
-  //   uiControl.showSection('target-options', true);
-  //   codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+
+  if (matchingDataset) {
+    config.matchingDataset = matchingDataset;
+    uiControl.displayMessage('There already exists a dataset from the same ' +
+        `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
+        '. What would you like to do?');
+    uiControl.showSection('target-options', true);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   // } else {
   //   matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
   //   if (matchingDataset) {
@@ -200,7 +199,7 @@ async function determineIfAutoImportApplies() {
   //     uiControl.showSection('target-options', true);
   //     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   //   }
-  // }
+  }
   // let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   // if (sizeAboveThreshold) {
   //   uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
@@ -213,7 +212,7 @@ async function determineIfAutoImportApplies() {
   //   uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
   //   codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   // }
-  // return !(matchingDataset || sizeAboveThreshold);
+  return !(matchingDataset /*|| sizeAboveThreshold*/);
 }
 
 
@@ -369,39 +368,45 @@ function clearDatasetInCODAP(id) {
  * @return {Promise<*>}
  */
 async function importData() {
-  let data = config.data;
-  let result = null;
-  if (config.operation === 'auto' || config.operation === 'new') {
+  try {
 
-    result = await createDataSetInCODAP(data, config);
-    if (result && result.success) {
-      config.datasetID = result.values.id;
+    let data = config.data;
+    let result = null;
+    if (config.operation === 'auto' || config.operation === 'new') {
+
+      result = await createDataSetInCODAP(data, config);
+      if (result && result.success) {
+        config.datasetID = result.values.id;
+      }
+      codapHelper.openCaseTableForDataSet(config.datasetID);
+      codapHelper.openTextBox(config.datasetName, config.resourceDescription);
+      codapHelper.openMap();
     }
-    codapHelper.openCaseTableForDataSet(config.datasetID);
-    codapHelper.openTextBox(config.datasetName, config.resourceDescription);
-    codapHelper.openMap();
+
+    if (config.operation === 'append' || config.operation === 'replace') {
+      config.datasetID = config.matchingDataset.id;
+    }
+
+    if (config.operation === 'replace') {
+      result = await clearDatasetInCODAP(config.datasetID);
+    }
+
+    result = await codapHelper.sendToCODAP('create',
+        `dataContext[${config.datasetID}].item`,
+        geojsonHelper.createItems(config.data, config.keyNames));
+    if (!result || !result.success) {
+      uiControl.displayError((result && result.error) || "Error sending data to CODAP");
+      codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+    }
+
+    result = await codapHelper.closeSelf();
+
+    return result;
+      // return populateFromDataThenExit(data, config);
   }
-
-  if (config.operation === 'append' || config.operation === 'replace') {
-    config.datasetID = config.matchingDataset.id;
+  catch (ex) {
+    uiControl.displayError('Could not import this file -- ' + ex);
   }
-
-  if (config.operation === 'replace') {
-    result = await clearDatasetInCODAP(config.datasetID);
-  }
-
-  result = await codapHelper.sendToCODAP('create',
-      `dataContext[${config.datasetID}].item`,
-      geojsonHelper.createItems(config.data, config.keyNames));
-  if (!result || !result.success) {
-    uiControl.displayError((result && result.error) || "Error sending data to CODAP");
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  }
-
-  result = await codapHelper.closeSelf();
-
-  return result;
-    // return populateFromDataThenExit(data, config);
 }
 
 
