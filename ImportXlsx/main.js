@@ -27,7 +27,7 @@ let constants = {
   defaultAttrName: 'attr', // default attribute name prefix
   defaultCollectionName: 'cases', // default collection name
   defaultDataSetName: 'dataset', // default dataset name
-  name: 'Import XLS',  // plugin name
+  name: 'Import XLSX',  // plugin name
   thresholdColCount: 40,
   thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
@@ -125,6 +125,9 @@ function retrieveData() {
   } else if (pluginState.text) {
     config.resourceDescription = composeResourceDescription('local file -- ' + config.source, config.importDate);
     return Promise.resolve((typeof pluginState.text === 'string')? JSON.parse(pluginState.text):pluginState.text);
+  } else if (pluginState.arrayBuffer) {
+    config.resourceDescription = composeResourceDescription('local file -- ' + config.source, config.importDate);
+    return Promise.resolve( xlsHelper.parseArrayBuffer(pluginState.arrayBuffer));
   }
 }
 
@@ -172,6 +175,9 @@ function adjustPluginHeight() {
 }
 
 function getTableStats(data) {
+  if (!data) {
+    return;
+  }
   return data.reduce(function (stats, row) {
         stats.maxWidth = Math.max(stats.maxWidth, row.length);
         stats.minWidth = Math.min(stats.minWidth, row.length);
