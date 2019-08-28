@@ -54,6 +54,10 @@ function getInputValue(name) {
   return document.forms[0][name].value;
 }
 
+function getInputFileList(name) {
+  return document.forms[0][name].files;
+}
+
 function setInputValue(name, value) {
   document.forms[0][name].value = value;
 }
@@ -68,6 +72,7 @@ export {
   displayMessage,
   getHeight,
   getInputValue,
+  getInputFileList,
   installButtonHandler,
   setInputValue,
   showSection
