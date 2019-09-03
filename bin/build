@@ -5,16 +5,16 @@
 #
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
-HOMEDIR=$DIRNAME/..
+HOMEDIR="$DIRNAME/.."
 
 # make sure we are in the root directory of the plugin folder
-cd $HOMEDIR
+cd "$HOMEDIR"
 
 # Set env
-TARGET=$PWD/target # Where to put zip.
-WORKING=$TARGET/build
+TARGET="$PWD/target" # Where to put zip.
+WORKING="$TARGET/build"
 BUILD_NUM=`cat lib/build-num.txt`
-BUILD_DIR=$WORKING/plugins
+BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
 STATIC_PLUGIN_DIRS="TP-Sampler DrawTool ImportCSV"
@@ -23,7 +23,7 @@ BUILT_PLUGIN_DIRS="onboarding"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 
-PLUGIN_MAP_FILE=${HOMEDIR}/data_interactive_map.json
+PLUGIN_MAP_FILE="${HOMEDIR}/data_interactive_map.json"
 PUBLISHED_PLUGIN_MAP_FILE=published-plugins.json
 
 JSON_PARSER=jq
@@ -47,12 +47,12 @@ function echoPlugins() {
 function buildPlugins() {
   for plugin in $*; do
     echo Building $plugin
-    ( cd $plugin && npm run clean && npm run build && cp -r target $BUILD_DIR/$plugin )
+    ( cd $plugin && npm run clean && npm run build && cp -r target "$BUILD_DIR/$plugin" )
   done
 }
 
 function copyStaticPlugins() {
-  cp -r $* $BUILD_DIR
+  cp -r $* "$BUILD_DIR"
 }
 
 function usage() {
@@ -67,17 +67,17 @@ function error() {
 # check for needed programs
 which -s $JSON_PARSER || error "Please install $JSON_PARSER."
 
-mkdir -p $TARGET
-mkdir -p $BUILD_DIR
-rm -rf $WORKING
-mkdir -p $WORKING/plugins
+mkdir -p "$TARGET"
+mkdir -p "$BUILD_DIR"
+rm -rf "$WORKING"
+mkdir -p "$WORKING/plugins"
 echo "Build: $BUILD_NUM"
 echoPlugins $ALL_DIRS
 copyStaticPlugins $COPIED_DIRS
 buildPlugins $BUILT_PLUGIN_DIRS
 makeIndexJSON $STATIC_PLUGIN_DIRS
-cp $PUBLISHED_PLUGIN_MAP_FILE $BUILD_DIR
+cp "$PUBLISHED_PLUGIN_MAP_FILE" "$BUILD_DIR"
 
- ( cd $WORKING ; zip -rq $TARGET/$ZIP_FILENAME plugins )
+ ( cd "$WORKING" ; zip -rq "$TARGET/$ZIP_FILENAME" plugins )
 #rm $BUILD_DIR
 #rm $PUBLISHED_PLUGIN_MAP_FILE
