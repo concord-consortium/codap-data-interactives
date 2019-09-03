@@ -714,23 +714,11 @@
       ]
     },
     {
-      "title": "USS Data Portal",
-      "description": "Portal to US census and American Community Survey Data",
-      "width": 400,
-      "height": 600,
-      "path": "https://codap.concord.org/sdlc/plugin/",
-      "aegis": "sdlc",
-      "visible": "false",
-      "categories": [
-        "Partners"
-      ]
-    },
-    {
       "title": "Table Sharing",
       "description": "Allows students to share their data",
       "width": 400,
       "height": 600,
-      "path": "https://codap-shared-table-plugin.concord.org/branch/master/",
+      "path": "https://codap-shared-table-plugin.concord.org/branch/master/index.html",
       "visible": "false",
       "categories": [
         "Partners"
