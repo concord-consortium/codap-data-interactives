@@ -12,12 +12,12 @@ cd $HOMEDIR
 
 # Set env
 TARGET=$PWD/target # Where to put zip.
-WORKING=/tmp/$PROGNAME.$$
+WORKING=$TARGET/build
 BUILD_NUM=`cat lib/build-num.txt`
-BUILD_DIR=$WORKING/build_$BUILD_NUM
+BUILD_DIR=$WORKING/plugins
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool ImportCSV"
 HIDDEN_DIRS="Common"
 BUILT_PLUGIN_DIRS="onboarding"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
@@ -69,6 +69,8 @@ which -s $JSON_PARSER || error "Please install $JSON_PARSER."
 
 mkdir -p $TARGET
 mkdir -p $BUILD_DIR
+rm -rf $WORKING
+mkdir -p $WORKING/plugins
 echo "Build: $BUILD_NUM"
 echoPlugins $ALL_DIRS
 copyStaticPlugins $COPIED_DIRS
@@ -76,6 +78,6 @@ buildPlugins $BUILT_PLUGIN_DIRS
 makeIndexJSON $STATIC_PLUGIN_DIRS
 cp $PUBLISHED_PLUGIN_MAP_FILE $BUILD_DIR
 
- ( cd $WORKING ; zip -rq $TARGET/$ZIP_FILENAME build_$BUILD_NUM )
+ ( cd $WORKING ; zip -rq $TARGET/$ZIP_FILENAME plugins )
 #rm $BUILD_DIR
 #rm $PUBLISHED_PLUGIN_MAP_FILE
