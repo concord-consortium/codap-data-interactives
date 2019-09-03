@@ -715,6 +715,17 @@
       "categories": [
         "Partners"
       ]
+    },
+    {
+      "title": "Table Sharing",
+      "description": "Allows students to share their data",
+      "width": 400,
+      "height": 600,
+      "path": "https://codap-shared-table-plugin.concord.org/branch/master/",
+      "visible": "false",
+      "categories": [
+        "Partners"
+      ]
     }
   ]
 }
