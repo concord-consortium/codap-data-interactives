@@ -70,7 +70,7 @@ let app = {
         } else {
           $('body').removeClass('alt-pressed')
         }
-        console.log('Alt: ' + (isAlt?'down':'up'));
+        // console.log('Alt: ' + (isAlt?'down':'up'));
       }
     })
   },

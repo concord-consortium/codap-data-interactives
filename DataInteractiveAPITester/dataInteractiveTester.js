@@ -434,6 +434,8 @@ $(function () {
           dataContextList: 'dataContext',
           globalList: 'global',
           itemByCaseID: 'item',
+          itemByID: 'item',
+          itemCount: 'item',
           itemSearch: 'item'
         };
 

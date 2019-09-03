@@ -268,11 +268,11 @@ app.config = {
       'be of any race.'
     },
     {
-      title: 'Hispanic-dummy_recode',
+      title: 'Hispanic_recode',
       ipumsName: 'HISPAN',
       group: 2,
       defCheck: false,
-      description: 'Hispanic-dummy: recode identifies whether individuals are ' +
+      description: 'identifies whether individuals are ' +
       'of Hispanic, Spanish, or Latino origin. Recodes the Hispanic variable ' +
       'into two codes.',
       format: 'categorical',
@@ -351,7 +351,7 @@ app.config = {
     },
     {
       ipumsName: 'CITIZEN',
-      title: 'Citizen-dummy_recode',
+      title: 'Citizen_recode',
       group: 2,
       defCheck: false,
       format: 'categorical',

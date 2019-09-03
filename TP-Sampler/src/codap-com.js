@@ -47,6 +47,7 @@ define([
           title: appName,
           dimensions: {width: 235, height: 400},
           version: 'v0.4 (#' + window.codapPluginConfig.buildNumber + ')',
+          preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
         });
       },
@@ -257,11 +258,7 @@ define([
                 codapInterface.sendRequest({
                   action: 'create',
                   resource: getTargetDataSetPhrase() + '.collection[items].attribute',
-                  values: [
-                    {
-                      name: attr
-                    }
-                  ]
+                  values: [attr]
                 });
               }
             });
@@ -278,7 +275,7 @@ define([
                 },
                 {     // get the columns we'll be needing
                   action: 'get',
-                  resource: _this.collectionResourceName + '.attributeList'
+                  resource: _this.collectionResourceName
                 },
                 {     // get the number of cases
                   action: 'get',
@@ -288,8 +285,10 @@ define([
                 _this.drawAttributes = results[0].values.map(function (res) {
                   return res.name;
                 });
-                _this.collectionAttributes = results[1].values.map(function (res) {
-                  return res.name;
+                _this.collectionAttributes = results[1].values.attrs.map(function (attr) {
+                  // we will use the attribute definitions to create new attributes
+                  // so we take the precaution of removing identifiers.
+                  delete attr.id; delete attr.guid; return attr;
                 });
                 addAttributes();    // throw this over the wall
                 return results[2];

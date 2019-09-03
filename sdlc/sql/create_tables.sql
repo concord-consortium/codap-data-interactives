@@ -1,25 +1,26 @@
 DROP TABLE IF EXISTS peeps;
-CREATE TABLE peeps (
-   id INT NOT NULL AUTO_INCREMENT,
-   year SMALLINT,
-   state_code SMALLINT,
-   perwt DECIMAL (10,2),
-   accum_yr DECIMAL (12,2),
-   accum_yr_st DECIMAL (12,2),
-   sample_data VARCHAR(1024),
-   PRIMARY KEY (id)
+CREATE TABLE `peeps` (
+  `id` int(11) NOT NULL,
+  `year` smallint(6) DEFAULT NULL,
+  `state_code` smallint(6) DEFAULT NULL,
+  `perwt` decimal(10,2) DEFAULT NULL,
+  `accum_yr` decimal(12,2) DEFAULT NULL,
+  `accum_yr_st` decimal(12,2) DEFAULT NULL,
+  `sample_data` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_accum_yr` (`year`,`accum_yr`)
  );
 
 CREATE INDEX idx_accum_yr_st ON peeps (state_code, year, accum_yr_st);
 CREATE INDEX idx_accum_yr ON peeps (year, accum_yr);
 
 DROP TABLE IF EXISTS stats;
-CREATE TABLE stats (
-  id INT NOT NULL AUTO_INCREMENT,
-  year SMALLINT,
-  state_code SMALLINT,
-  sum_weights DECIMAL(12,2),
-  PRIMARY KEY (id)
+CREATE TABLE `stats` (
+  `id` int(11) NOT NULL,
+  `year` smallint(6) DEFAULT NULL,
+  `state_code` smallint(6) DEFAULT NULL,
+  `sum_weights` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS pumas;
@@ -56,18 +57,18 @@ CREATE PROCEDURE InsertRandom(IN NumRows INT,
 DELIMITER ;
 
 DROP TABLE IF EXISTS presets;
-CREATE TABLE presets (
-  yr SMALLINT,
-  randnum FLOAT,
-  ref_key INT,
-  usage_ct SMALLINT
+CREATE TABLE `presets` (
+  `yr` smallint(6) DEFAULT NULL,
+  `randnum` float DEFAULT NULL,
+  `ref_key` int(11) DEFAULT NULL,
+  `usage_ct` smallint(6) DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS preset_log;
-CREATE TABLE preset_log (
-  eventtime DATETIME,
-  eventtype VARCHAR(10),
-  update_count INT
+CREATE TABLE `preset_log` (
+  `eventtime` datetime DEFAULT NULL,
+  `eventtype` varchar(10) DEFAULT NULL,
+  `update_count` int(11) DEFAULT NULL
 );
 
 DROP PROCEDURE IF EXISTS log_preset;

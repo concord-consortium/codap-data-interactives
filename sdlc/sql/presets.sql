@@ -61,6 +61,62 @@ CREATE PROCEDURE update_presets ()
   END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS update_presets1;
+DELIMITER $$
+CREATE PROCEDURE update_presets1 (lim INT)
+BEGIN
+  CALL log_preset('begin');
+  UPDATE presets, stats
+  SET presets.randnum=rand()*stats.sum_weights
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
+    AND stats.year = presets.yr
+    AND stats.state_code IS NULL;
+  UPDATE presets
+  SET presets.ref_key=(SELECT peeps.id
+                       FROM peeps
+                       WHERE peeps.year=presets.yr
+                         AND presets.randnum > peeps.accum_yr
+                       ORDER BY peeps.accum_yr DESC
+                       LIMIT 1),
+      presets.usage_ct = 0
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL)) LIMIT lim;
+  CALL log_preset('end');
+END$$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS update_presets2;
+DELIMITER $$
+CREATE PROCEDURE update_presets2 (lim INT)
+BEGIN
+  CALL log_preset('begin');
+#   UPDATE presets,stats
+#     SET presets.randnum=rand()*stats.sum_weights,
+#         presets.ref_key=(SELECT peeps.id
+#                          FROM peeps
+#                          WHERE peeps.year=presets.yr
+#                            AND presets.randnum > peeps.accum_yr
+#                          ORDER BY peeps.accum_yr DESC
+#                          LIMIT 1),
+#         presets.usage_ct = 0
+#     WHERE (presets.ref_key IS NULL)
+#       AND stats.year = presets.yr
+#       AND stats.state_code IS NULL
+#     LIMIT lim;
+  UPDATE presets
+    SET presets.randnum=rand()*(SELECT sum_weights FROM stats WHERE year = presets.yr and state_code IS NULL),
+        presets.ref_key=(SELECT peeps.id
+                         FROM peeps
+                         WHERE peeps.year=presets.yr
+                           AND presets.randnum > peeps.accum_yr
+                         ORDER BY peeps.accum_yr DESC
+                         LIMIT 1),
+        presets.usage_ct = presets.usage_ct - 1
+    ORDER BY presets.usage_ct
+    LIMIT lim;
+  CALL log_preset('end');
+END$$
+DELIMITER ;
+
 DROP PROCEDURE IF EXISTS get_samples;
 DELIMITER $$
 CREATE PROCEDURE get_samples (IN numrows INT, IN yar SMALLINT)
