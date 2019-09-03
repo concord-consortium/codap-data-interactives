@@ -583,7 +583,16 @@
         "Utilities"
       ]
     },
-
+    {
+      "title": "USS Data Portal",
+      "description": "Portal to US census and American Community Survey Data",
+      "path": "https://codap.concord.org/sdlc/plugin/index.html",
+      "aegis": "sdlc",
+      "visible": "false",
+      "categories": [
+        "Partners"
+      ]
+    },
     {
       "title": "acs",
       "description": "ACS data portal: 20000 Californans in 2013",
@@ -705,12 +714,11 @@
       ]
     },
     {
-      "title": "USS Data Portal",
-      "description": "Portal to US census and American Community Survey Data",
+      "title": "Table Sharing",
+      "description": "Allows students to share their data",
       "width": 400,
       "height": 600,
-      "path": "https://codap.concord.org/sdlc/plugin/",
-      "aegis": "sdlc",
+      "path": "https://codap-shared-table-plugin.concord.org/branch/master/index.html",
       "visible": "false",
       "categories": [
         "Partners"
