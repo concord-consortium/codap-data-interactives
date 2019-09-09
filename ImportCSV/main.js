@@ -185,14 +185,18 @@ function adjustPluginHeight() {
   }
 }
 
-let relativeTimeFormat = new Intl.RelativeTimeFormat();
+let relativeTimeFormat = Intl.RelativeTimeFormat && new Intl.RelativeTimeFormat();
 
 function relTime(time) {
   if (!(time instanceof Date)) {
     time = new Date(time);
   }
   let delta = (time - new Date())/1000;
-  if (Math.abs(delta) < 60) {
+  // Safari, as of 9/2019 does not implement RelativeTimeFormat, so we fake it
+  if (!relativeTimeFormat) {
+    return `${-Math.round(delta)} seconds ago`;
+  }
+  else if (Math.abs(delta) < 60) {
     return (relativeTimeFormat.format(Math.round(delta), 'second'));
   }
   else {
@@ -208,10 +212,9 @@ function relTime(time) {
     return (relativeTimeFormat.format(Math.round(delta), 'hour'));
   }
   else {
-    (delta /= 24 )
+    delta /= 24;
+    return (relativeTimeFormat.format(Math.round(delta), 'day'));
   }
-  return (relativeTimeFormat.format(Math.round(delta), 'day'));
-
 }
 /**
  * Autoimport applies if the CSV is short and could not already be present.
@@ -222,7 +225,7 @@ async function determineIfAutoImportApplies() {
   findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
   let numRows = config.data.length;
-  let numberFormat = new Intl.NumberFormat();
+  let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
   let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
   if (matchingDataset) {
