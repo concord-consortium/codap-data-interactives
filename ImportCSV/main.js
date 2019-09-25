@@ -168,7 +168,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
     let unmatchedAttributeName = attributeNames.find(function (name) {
       return (existingDatasetAttributeNames.indexOf(name) < 0);
     });
-    return !unmatchedAttributeName;
+    return (unmatchedAttributeName == null);
   });
   return foundDataset;
 }
@@ -444,7 +444,7 @@ async function importData() {
     if (result && result.success) {
       config.datasetID = result.values.id;
     }
-    codapHelper.openCaseTableForDataSet(config.datasetID);
+    codapHelper.openCaseTableForDataSet(config.datasetName);
     codapHelper.openTextBox(config.datasetName, config.resourceDescription);
   }
 

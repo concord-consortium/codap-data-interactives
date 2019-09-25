@@ -179,13 +179,13 @@ function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow)
   return sendOneChunk();
 }
 
-function openCaseTableForDataSet(name) {
+function openCaseTableForDataSet(dataContext) {
   let request = {
     action: 'create',
     resource: 'component',
     values: {
       type: 'caseTable',
-      dataContext: name,
+      dataContext: dataContext,
     }
   }
   return codapInterface.sendRequest(request);
