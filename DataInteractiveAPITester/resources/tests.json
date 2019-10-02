@@ -72,12 +72,12 @@
   },
 
   {
-    "name": "Notify Interactive Frame is dirty",
+    "name": "Request guide configuration menu",
     "message": {
       "action": "notify",
       "resource": "interactiveFrame",
       "values": {
-        "action": "openGuideConfiguration"
+        "request": "openGuideConfiguration"
       }
     },
     "expect": {
