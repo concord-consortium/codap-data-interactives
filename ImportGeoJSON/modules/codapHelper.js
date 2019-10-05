@@ -138,12 +138,11 @@ function clearDataset(id) {
   return codapInterface.sendRequest(request);
 }
 
-function sendRowsToCODAP(/*datasetID, attrArray, rows, chunkSize, dataStartingRow*/) {
+function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
 
-/*
   function sendOneChunk(){
     if (chunkIx > numRows) {
-      return Promise.resolve();
+      return Promise.resolve({success: true});
     }
     let chunk = rows.slice(chunkIx, chunkIx + chunkSize);
     chunkIx = chunkIx + chunkSize;
@@ -165,17 +164,15 @@ function sendRowsToCODAP(/*datasetID, attrArray, rows, chunkSize, dataStartingRo
   let numRows = rows.length;
   let chunkIx = dataStartingRow || 0;
   return sendOneChunk();
-
- */
 }
 
-function openCaseTableForDataSet(name) {
+function openCaseTableForDataSet(dataContext) {
   let request = {
     action: 'create',
     resource: 'component',
     values: {
       type: 'caseTable',
-      dataContext: name,
+      dataContext: dataContext,
     }
   }
   return codapInterface.sendRequest(request);
@@ -227,7 +224,16 @@ function openTextBox(title, message) {
   return codapInterface.sendRequest(request);
 }
 
-
+function indicateBusy(isBusy) {
+  let request = {
+    action: 'notify',
+    resource: 'interactiveFrame',
+    values: {
+      request: isBusy? 'indicateBusy': 'indicateIdle'
+    }
+  }
+  return codapInterface.sendRequest(request)
+}
 /**
  * Fetches a list of dataset definitions from CODAP.
  * @return {Promise}
@@ -262,6 +268,7 @@ export {
   adjustHeightOfSelf,
   clearDataset,
   closeSelf,
+  indicateBusy,
   setVisibilityOfSelf,
   defineDataSet,
   openCaseTableForDataSet,

@@ -339,6 +339,39 @@ function isPropertyAKey(geoJSONObject, propertyName) {
   });
 }
 
+function determineAttributeSet(geoJSONObject) {
+  var hasShapeData = false;
+  var hasPointData = false;
+
+  // identify all feature properties
+  let featureProperties = {};
+  if (geoJSONObject.features) {
+    geoJSONObject.features.forEach(function (feature) {
+      if (feature.geometry && feature.geometry.type === 'Point') {
+        hasPointData = true;
+      } else {
+        hasShapeData = true;
+      }
+      Object.keys(feature.properties).forEach(function (key) {
+        featureProperties[key] = true;
+      });
+    });
+  }
+
+  let attributeNames = [];
+  Object.keys(featureProperties).forEach(function (propertyName) {
+    attributeNames.push(propertyName);
+  });
+  if (hasShapeData) {
+    attributeNames.push('boundary');
+  }
+  if (hasPointData) {
+    attributeNames.push('latitude');
+    attributeNames.push('longitude');
+  }
+  return attributeNames;
+}
+
 /**
  * Analyzes a geoJSON object and computes: a dataset object definition that will
  * contain the geoJSON features and a list of feature keys. These are keys that
@@ -348,7 +381,7 @@ function isPropertyAKey(geoJSONObject, propertyName) {
  * @param url
  * @return {{featureKeys: Array, dataset: {collections: Array, meta: {source: *, createDate: Date}, name: string}}}
  */
-function defineDataset(geoJSONObject, url) {
+function defineDataset(geoJSONObject, url, datasetName, collectionName, createKeySubcollection) {
   var hasShapeData = false;
   var hasPointData = false;
 
@@ -369,22 +402,24 @@ function defineDataset(geoJSONObject, url) {
 
   let featureKeys = [];
   // identify properties that have unique non-null values for each feature
-  Object.keys(featureProperties).forEach(function (property) {
-    if (isPropertyAKey(geoJSONObject, property)) {
-      featureKeys.push(property);
-    }
-  });
+  if (createKeySubcollection) {
+    Object.keys(featureProperties).forEach(function (property) {
+      if (isPropertyAKey(geoJSONObject, property)) {
+        featureKeys.push(property);
+      }
+    });
+  }
 
   // create data context structure
   let context = {
-    name: 'data',
-    meta: {
+    name: datasetName || 'data',
+    metadata: {
       source: url,
-      createDate: new Date()
+      importDate: new Date()
     },
     collections: []
   };
-  let parentCollection = {name: 'boundaries', attrs: []};
+  let parentCollection = {name: collectionName || 'boundaries', attrs: []};
   Object.keys(featureProperties).forEach(function (propertyName) {
     parentCollection.attrs.push({name: propertyName});
   });
@@ -422,15 +457,19 @@ function createItems(geoJSONObject, featureKeys) {
               injectThumbnailInGeojsonFeature(feature.geometry))
         }, feature.properties);
       }
-      featureKeys.forEach(function (key) {
-        items.push(Object.assign({}, itemTemplate,
-            {type: key, key: feature.properties[key]}));
-      });
-      if (feature.id) {
-        items.push(
-            Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
-      } else if (featureKeys.length === 0) {
-        // if there are otherwise no keys, we make one up...
+      if (featureKeys && featureKeys.length) {
+        featureKeys.forEach(function (key) {
+          items.push(Object.assign({}, itemTemplate,
+              {type: key, key: feature.properties[key]}));
+        });
+        if (feature.id) {
+          items.push(
+              Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
+        } else if (featureKeys.length === 0) {
+          // if there are otherwise no keys, we make one up...
+          items.push(itemTemplate);
+        }
+      } else {
         items.push(itemTemplate);
       }
     });
@@ -438,4 +477,18 @@ function createItems(geoJSONObject, featureKeys) {
   return items;
 }
 
-export {prepareGeoJSONObject, defineDataset, createItems};
+function getNumRows(geoJSONObject) {
+  if (geoJSONObject.features) {
+    return geoJSONObject.features.length;
+  } else {
+    return 0;
+  }
+}
+
+export {
+  createItems,
+  defineDataset,
+  determineAttributeSet,
+  getNumRows,
+  prepareGeoJSONObject,
+};

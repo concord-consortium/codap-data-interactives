@@ -166,7 +166,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
       });
     });
     let unmatchedAttributeName = attributeNames.find(function (name) {
-      return (existingDatasetAttributeNames.indexOf(name) < 0);
+      return name && (existingDatasetAttributeNames.indexOf(name) < 0);
     });
     return (unmatchedAttributeName == null);
   });

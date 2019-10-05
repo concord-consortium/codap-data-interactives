@@ -25,12 +25,14 @@ import * as geojsonHelper from './modules/geojsonHelper';
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
   defaultAttrName: 'attr', // default attribute name prefix
-  defaultParentCollectionName: 'features', // default collection name
+  defaultCollectionName: 'features', // default collection name
   defaultChildCollectionName: 'keys',
   defaultDataSetName: 'dataset', // default dataset name
+  defaultTargetOperation: 'replace',
+  defaultDownsample: 'random',
   name: 'Import GeoJSON',  // plugin name
   thresholdColCount: 40,
-  thresholdRowCount: 5000, // beyond this size datasets are considered large
+  thresholdRowCount: 50, // beyond this size datasets are considered large
 }
 
 let codapConfig = {
@@ -41,11 +43,14 @@ let codapConfig = {
 
 let config = {
   attributeNames: null,
-  parentCollectionName: constants.defaultParentCollectionName,
+  collectionName: constants.defaultCollectionName,
   childCollectionName: constants.defaultChildCollectionName,
+  createKeySubcollection: false, // key subcollection supports the lookupBoundary()
+                                // codap function and is not generally necessary
   data: null,
   datasetID: null,
   datasetName: constants.defaultDataSetName,
+  dataStartingRow: 0,
   downsampling: 'none', // none || random || everyNth || last || first
   downsamplingTargetCount: null, // count we aim to achieve by downsampling
   downsamplingEveryNthInterval: null,// n, if everyNth is selected
@@ -154,7 +159,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
     let unmatchedAttributeName = attributeNames.find(function (name) {
       return (existingDatasetAttributeNames.indexOf(name) < 0);
     });
-    return !unmatchedAttributeName;
+    return (unmatchedAttributeName == null);
   });
   return foundDataset;
 }
@@ -171,48 +176,72 @@ function adjustPluginHeight() {
   }
 }
 
+let relativeTimeFormat = Intl.RelativeTimeFormat && new Intl.RelativeTimeFormat();
+
+function relTime(time) {
+  if (!(time instanceof Date)) {
+    time = new Date(time);
+  }
+  let delta = (time - new Date())/1000;
+  // Safari, as of 9/2019 does not implement RelativeTimeFormat, so we fake it
+  if (!relativeTimeFormat) {
+    return `${-Math.round(delta)} seconds ago`;
+  }
+  else if (Math.abs(delta) < 60) {
+    return (relativeTimeFormat.format(Math.round(delta), 'second'));
+  }
+  else {
+    (delta /= 60 )
+  }
+  if (Math.abs(delta) < 60) {
+    return (relativeTimeFormat.format(Math.round(delta), 'minute'));
+  }
+  else {
+    (delta /= 60 )
+  }
+  if (Math.abs(delta) < 24) {
+    return (relativeTimeFormat.format(Math.round(delta), 'hour'));
+  }
+  else {
+    delta /= 24;
+    return (relativeTimeFormat.format(Math.round(delta), 'day'));
+  }
+}
 /**
  * Autoimport applies if the CSV is short and could not already be present.
  *
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies() {
-  // findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
-  let matchingDataset = findMatchingSource(dataSetList, config.source);
-  // let numRows = config.data.length;
+  let numRows = geojsonHelper.getNumRows(config.data);
+  let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
+  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
-    uiControl.displayMessage('There already exists a dataset from the same ' +
-        `source. It was uploaded on ${matchingDataset.metadata.importDate.toLocaleString()}` +
-        '. What would you like to do?');
+    uiControl.displayMessage('There already exists a dataset like this one,' +
+        `"${matchingDataset.title}". It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
+        '#target-message');
+    uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
     uiControl.showSection('target-options', true);
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  // } else {
-  //   matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
-  //   if (matchingDataset) {
-  //     config.matchingDataset = matchingDataset;
-  //     uiControl.displayMessage(`The existing dataset, "${matchingDataset.name}",' +
-  //         ' has the same attributes as this new CSV file. ` +
-  //         'Would you like to append the new data or replace the existing set?');
-  //     uiControl.showSection('target-options', true);
-  //     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  //   }
   }
-  // let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
-  // if (sizeAboveThreshold) {
-  //   uiControl.displayMessage(`The CSV file, "${config.source}" has ${numRows} rows.` +
-  //     `More than ${constants.thresholdRowCount} rows could lead to sluggish performance for some activities in the current version of CODAP.` +
-  //       'You may wish to work with a subsample of the data at first. ' +
-  //       'You can always replace it with the full data set later.'
-  //   );
-  //   uiControl.showSection('downsample-options', true);
-  //   uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
-  //   uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
-  //   codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  // }
-  return !(matchingDataset /*|| sizeAboveThreshold*/);
+
+  let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
+  if (sizeAboveThreshold) {
+    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
+      ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
+        ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
+        '#downsample-message'
+    );
+    uiControl.showSection('downsample-options', true);
+    uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
+    uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
+    uiControl.setInputValue('downsample', constants.defaultDownsample);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  }
+  return !(matchingDataset || sizeAboveThreshold);
 }
 
 
@@ -279,7 +308,8 @@ function downsampleEveryNth(data, interval, start) {
 async function createDataSetInCODAP(data, config) {
   let geoJSONObject = geojsonHelper.prepareGeoJSONObject(data, config.source);
   config.data = data = geoJSONObject;
-  let result = geojsonHelper.defineDataset(data, config.source)
+  let result = geojsonHelper.defineDataset(data, config.source, config.datasetName,
+      config.collectionName, config.createKeySubcollection);
   let tableConfig = result.dataset;
   config.keyNames = result.featureKeys;
   return await codapHelper.defineDataSet(tableConfig);
@@ -328,13 +358,14 @@ function handleSubmit() {
         'pick-interval');
 
     if (config.downsampling === 'random') {
-      config.data = downsampleRandom(config.data,
+      config.data.features = downsampleRandom(config.data.features,
           Number(config.downsamplingTargetCount), config.dataStartingRow);
     } else if (config.downsampling === 'every-nth') {
-      config.data = downsampleEveryNth(config.data,
+      config.data.features = downsampleEveryNth(config.data.features,
           Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
     }
 
+    codapHelper.setVisibilityOfSelf(false);
     importData();
   } else {
     handleFileInputs();
@@ -378,7 +409,7 @@ async function importData() {
       if (result && result.success) {
         config.datasetID = result.values.id;
       }
-      codapHelper.openCaseTableForDataSet(config.datasetID);
+      codapHelper.openCaseTableForDataSet(config.datasetName);
       codapHelper.openTextBox(config.datasetName, config.resourceDescription);
       codapHelper.openMap();
     }
@@ -434,7 +465,7 @@ async function main() {
     return false;
   });
 
-  // initialize CODAP
+  // initialize CODAP connection
   let pluginState = await codapHelper.init(codapConfig)
 
   // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
@@ -453,8 +484,17 @@ async function main() {
     config.importDate = new Date();
     config.source = pluginState.url || pluginState.filename || pluginState.name;
 
-    config.data = await retrieveData(pluginState);
+    try {
+      codapHelper.indicateBusy(true);
+      config.data = await retrieveData(pluginState);
+    } catch (ex) {
+      uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
+      codapHelper.setVisibilityOfSelf(true);
+    } finally {
+      codapHelper.indicateBusy(false);
+    }
 
+    config.attributeNames = geojsonHelper.determineAttributeSet(config.data);
     let autoImport = await determineIfAutoImportApplies();
     if (autoImport) {
       importData();

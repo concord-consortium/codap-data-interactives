@@ -18,9 +18,16 @@
 // ==========================================================================
 let messageArea = document.getElementById('message-area');
 
-function displayMessage(message) {
+function displayMessage(message, selector) {
+  if (selector == null) {
   messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
   showSection('message-area', true);
+  } else {
+    var el = document.querySelector(selector)
+    if (el) {
+      el.textContent = message;
+    }
+  }
 }
 function displayError(message) {
   console.log('ImportCVS Plugin: ' + message);
@@ -54,12 +61,12 @@ function getInputValue(name) {
   return document.forms[0][name].value;
 }
 
-function setInputValue(name, value) {
-  document.forms[0][name].value = value;
-}
-
 function getInputFileList(name) {
   return document.forms[0][name].files;
+}
+
+function setInputValue(name, value) {
+  document.forms[0][name].value = value;
 }
 
 function installButtonHandler(selector, handler) {
