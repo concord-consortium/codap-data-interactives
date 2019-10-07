@@ -17,10 +17,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-/*global Papa */
 
 import * as uiControl from './modules/uiControl';
 import * as codapHelper from './modules/codapHelper';
+import * as csvImporter from './modules/csvImporter';
+// import * as DataSet from './modules/DataSet';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
@@ -41,7 +42,7 @@ let codapConfig = {
 }
 
 let config = {
-  attributeNames: null,
+  // attributeNames: null,
   collectionName: constants.defaultCollectionName,
   data: null,
   dataStartingRow: null,
@@ -56,91 +57,8 @@ let config = {
   openCaseTable: true,
   operation: 'auto', // auto || new || append || replace
   pluginState: null,
-  resourceDescription: 'unknown',
   source: null,
 }
-
-
-/**
- * Fetches a URL and parses as a CSV String
- * @param url
- * @return {Promise}
- */
-function fetchAndParseURL(url) {
-  return fetch(url)
-      .then(function (resp) {
-        return new Promise(function (resolve, reject){
-          if (resp.ok) {
-            resp.text().then(function (data) {
-              let tab = parseCSVString(data);
-              // console.log('made table: ' + (tab && tab.length));
-              resolve(tab);
-            });
-          }
-        });
-      });
-}
-
-/**
- * Fetches the contents of a file and parses as a CSV String
- * @param file
- * @return {Promise}
- */
-function readAndParseFile(file) {
-  return new Promise(function (resolve, reject) {
-    function handleAbnormal() {
-      reject("Abort or error on file read.");
-    }
-    function handleRead() {
-      let data = parseCSVString(this.result);
-      resolve(data)
-    }
-    let reader = new FileReader ();
-    reader.onabort = handleAbnormal;
-    reader.onerror = handleAbnormal;
-    reader.onload = handleRead;
-    return reader.readAsText(file);
-  });
-}
-
-/**
- * Compose a resource description to display in a text box.
- * @param src
- * @param time
- * @return {string}
- */
-function composeResourceDescription(src, time) {
-  return `source: ${src}\nimported: ${time.toLocaleString()}`
-}
-
-/**
- * Retrieve data in whatever form provided and parse as a CSV String
- * @return {Promise}
- */
-function retrieveData() {
-  let pluginState = config.pluginState;
-  if (pluginState.url) {
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    return fetchAndParseURL(pluginState.url, config);
-  } else if (pluginState.file) {
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    return readAndParseFile(pluginState.file, config)
-  } else if (pluginState.text) {
-    config.resourceDescription = composeResourceDescription('local file -- ' + config.source, config.importDate);
-    return Promise.resolve(parseCSVString(pluginState.text));
-  }
-}
-
-/**
- * Parses a CSV dataset in the form of a string.
- * @param data
- * @return {*}
- */
-function parseCSVString(data) {
-  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
-  return parse.data;
-}
-
 
 /**
  * Attempts to identify whether there is a matching dataset to the one currently
@@ -222,12 +140,12 @@ function relTime(time) {
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies() {
-  findOrCreateAttributeNames(config.data, config);
+  // findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
-  let numRows = config.data.length;
+  let numRows = config.dataSet.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
-  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
+  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.dataSet.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
     uiControl.displayMessage('There already exists a dataset like this one,' +
@@ -315,36 +233,11 @@ function downsampleEveryNth(data, interval, start) {
 }
 
 
-function getTableStats(data) {
-  return data.reduce(function (stats, row) {
-        stats.maxWidth = Math.max(stats.maxWidth, row.length);
-        stats.minWidth = Math.min(stats.minWidth, row.length);
-        return stats;
-      },
-      {maxWidth: 0, minWidth: Number.MAX_SAFE_INTEGER, numberOfRows: data.length}
-  );
-}
-
-function findOrCreateAttributeNames(data, config) {
-  let tableStats = getTableStats(data);
-  let attrs = [];
-  if (config.firstRowIsAttrList && tableStats.numberOfRows > 0) {
-    attrs = data[0];
-    config.dataStartingRow = 1;
-  } else {
-    config.dataStartingRow = 0;
-    for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = constants.defaultAttrName + i;
-    }
-  }
-  config.attributeNames = attrs;
-}
-
 async function createDataSetInCODAP(data, config) {
   let tableConfig = {
     datasetName: config.datasetName,
     collectionName: config.collectionName,
-    attributeNames: config.attributeNames,
+    attributeNames: config.dataSet.attributeNames,
     dataStartingRow: config.dataStartingRow,
     source: config.source,
     importDate: config.importDate,
@@ -355,23 +248,8 @@ async function createDataSetInCODAP(data, config) {
 async function handleFileInputs() {
   let url = uiControl.getInputValue('source-input-url');
   let file = uiControl.getInputValue('source-input-file');
-  if (url) {
-    // uiControl.displayMessage('got url: ' + url);
-    config.source = url;
-    config.importDate = new Date();
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    config.data = await fetchAndParseURL(url);
-  } else if (file) {
-    // uiControl.displayMessage('got file: ' + file);
-    let fileList = uiControl.getInputFileList('source-input-file');
-    if (fileList) {
-      config.source = fileList[0].name;
-      config.importDate = new Date();
-      config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-      config.data = await readAndParseFile(fileList[0]);
-    }
-  }
-  if (config.data) {
+  config.dataSet = await csvImporter.retrieveData({url: url, file: file});
+  if (config.dataSet) {
     let isAuto = await determineIfAutoImportApplies();
     if (isAuto) {
       importData();
@@ -395,10 +273,10 @@ function handleSubmit() {
         'pick-interval');
 
     if (config.downsampling === 'random') {
-      config.data = downsampleRandom(config.data,
+      config.dataSet.table = downsampleRandom(config.dataSet.table,
           Number(config.downsamplingTargetCount), config.dataStartingRow);
     } else if (config.downsampling === 'every-nth') {
-      config.data = downsampleEveryNth(config.data,
+      config.dataSet.table = downsampleEveryNth(config.dataSet.table,
           Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
     }
 
@@ -436,7 +314,7 @@ function clearDatasetInCODAP(id) {
  * @return {Promise<*>}
  */
 async function importData() {
-  let data = config.data;
+  let data = config.dataSet.table;
   let result = null;
   if (config.operation === 'auto' || config.operation === 'new') {
 
@@ -445,7 +323,7 @@ async function importData() {
       config.datasetID = result.values.id;
     }
     codapHelper.openCaseTableForDataSet(config.datasetName);
-    codapHelper.openTextBox(config.datasetName, config.resourceDescription);
+    codapHelper.openTextBox(config.datasetName, config.dataSet.resourceDescription);
   }
 
   if (config.operation === 'append' || config.operation === 'replace') {
@@ -457,7 +335,7 @@ async function importData() {
   }
 
   result = await codapHelper.sendRowsToCODAP(config.datasetID,
-      config.attributeNames, data, constants.chunkSize, config.dataStartingRow);
+      config.dataSet.attributeNames, data, constants.chunkSize, config.dataStartingRow);
   if (!(!result || !result.success)) {
     result = await codapHelper.closeSelf();
   } else {
@@ -516,7 +394,7 @@ async function main() {
 
     try {
       codapHelper.indicateBusy(true);
-      config.data = await retrieveData(pluginState);
+      config.dataSet = await csvImporter.retrieveData(pluginState);
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
       codapHelper.setVisibilityOfSelf(true);
