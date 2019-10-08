@@ -20,6 +20,7 @@
 
 import * as uiControl from './modules/uiControl';
 import * as codapHelper from './modules/codapHelper';
+import * as geoJSONImporter from './modules/geoJSONImporter';
 import * as geojsonHelper from './modules/geojsonHelper';
 
 let constants = {
@@ -32,7 +33,7 @@ let constants = {
   defaultDownsample: 'random',
   name: 'Import GeoJSON',  // plugin name
   thresholdColCount: 40,
-  thresholdRowCount: 50, // beyond this size datasets are considered large
+  thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
 
 let codapConfig = {
@@ -42,7 +43,6 @@ let codapConfig = {
 }
 
 let config = {
-  attributeNames: null,
   collectionName: constants.defaultCollectionName,
   childCollectionName: constants.defaultChildCollectionName,
   createKeySubcollection: false, // key subcollection supports the lookupBoundary()
@@ -61,76 +61,6 @@ let config = {
   pluginState: null,
   resourceDescription: 'unknown',
   source: null,
-}
-
-
-/**
- * Fetches a URL and parses as a CSV String
- * @param url
- * @return {Promise}
- */
-function fetchAndParseURL(url) {
-  return fetch(url)
-      .then(function (resp) {
-        return new Promise(function (resolve, reject){
-          if (resp.ok) {
-            resp.text().then(function (data) {
-              let tab = JSON.parse(data);
-              resolve(tab);
-            });
-          }
-        });
-      });
-}
-
-/**
- * Fetches the contents of a file and parses as a CSV String
- * @param file
- * @return {Promise}
- */
-function readAndParseFile(file) {
-  return new Promise(function (resolve, reject) {
-    function handleAbnormal() {
-      reject("Abort or error on file read.");
-    }
-    function handleRead() {
-      let data = JSON.parse(this.result);
-      resolve(data)
-    }
-    let reader = new FileReader ();
-    reader.onabort = handleAbnormal;
-    reader.onerror = handleAbnormal;
-    reader.onload = handleRead;
-    return reader.readAsText(file);
-  });
-}
-
-/**
- * Compose a resource description to display in a text box.
- * @param src
- * @param time
- * @return {string}
- */
-function composeResourceDescription(src, time) {
-  return `source: ${src}\nimported: ${time.toLocaleString()}`
-}
-
-/**
- * Retrieve data in whatever form provided and parse as a CSV String
- * @return {Promise}
- */
-function retrieveData() {
-  let pluginState = config.pluginState;
-  if (pluginState.url) {
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    return fetchAndParseURL(pluginState.url, config);
-  } else if (pluginState.file) {
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    return readAndParseFile(pluginState.file, config)
-  } else if (pluginState.text) {
-    config.resourceDescription = composeResourceDescription('local file -- ' + config.source, config.importDate);
-    return Promise.resolve((typeof pluginState.text === 'string')? JSON.parse(pluginState.text):pluginState.text);
-  }
 }
 
 /**
@@ -157,7 +87,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
       });
     });
     let unmatchedAttributeName = attributeNames.find(function (name) {
-      return (existingDatasetAttributeNames.indexOf(name) < 0);
+      return name && (existingDatasetAttributeNames.indexOf(name) < 0);
     });
     return (unmatchedAttributeName == null);
   });
@@ -214,10 +144,10 @@ function relTime(time) {
  */
 async function determineIfAutoImportApplies() {
   let dataSetList = await codapHelper.retrieveDatasetList();
-  let numRows = geojsonHelper.getNumRows(config.data);
+  let numRows = config.sourceDataset.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
-  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.attributeNames);
+  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
     uiControl.displayMessage('There already exists a dataset like this one,' +
@@ -306,35 +236,23 @@ function downsampleEveryNth(data, interval, start) {
 
 
 async function createDataSetInCODAP(data, config) {
-  let geoJSONObject = geojsonHelper.prepareGeoJSONObject(data, config.source);
-  config.data = data = geoJSONObject;
-  let result = geojsonHelper.defineDataset(data, config.source, config.datasetName,
-      config.collectionName, config.createKeySubcollection);
-  let tableConfig = result.dataset;
-  config.keyNames = result.featureKeys;
+  let tableConfig = {
+    datasetName: config.datasetName,
+    collectionName: config.collectionName,
+    attributeNames: config.sourceDataset.attributeNames,
+    dataStartingRow: config.dataStartingRow,
+    source: config.source,
+    importDate: config.importDate,
+  }
+
   return await codapHelper.defineDataSet(tableConfig);
 }
 
 async function handleFileInputs() {
   let url = uiControl.getInputValue('source-input-url');
   let file = uiControl.getInputValue('source-input-file');
-  if (url) {
-    // uiControl.displayMessage('got url: ' + url);
-    config.source = url;
-    config.importDate = new Date();
-    config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-    config.data = await fetchAndParseURL(url);
-  } else if (file) {
-    // uiControl.displayMessage('got file: ' + file);
-    let fileList = uiControl.getInputFileList('source-input-file');
-    if (fileList) {
-      config.source = fileList[0].name;
-      config.importDate = new Date();
-      config.resourceDescription = composeResourceDescription(config.source, config.importDate);
-      config.data = await readAndParseFile(fileList[0]);
-    }
-  }
-  if (config.data) {
+  config.sourceDataset = await geoJSONImporter.retrieveData({url: url, file: file});
+  if (config.sourceDataset) {
     let isAuto = await determineIfAutoImportApplies();
     if (isAuto) {
       importData();
@@ -358,10 +276,10 @@ function handleSubmit() {
         'pick-interval');
 
     if (config.downsampling === 'random') {
-      config.data.features = downsampleRandom(config.data.features,
+      config.sourceDataset.table = downsampleRandom(config.sourceDataset.table,
           Number(config.downsamplingTargetCount), config.dataStartingRow);
     } else if (config.downsampling === 'every-nth') {
-      config.data.features = downsampleEveryNth(config.data.features,
+      config.sourceDataset.table = downsampleEveryNth(config.sourceDataset.table,
           Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
     }
 
@@ -400,8 +318,7 @@ function clearDatasetInCODAP(id) {
  */
 async function importData() {
   try {
-
-    let data = config.data;
+    let data = config.sourceDataset.table;
     let result = null;
     if (config.operation === 'auto' || config.operation === 'new') {
 
@@ -410,7 +327,7 @@ async function importData() {
         config.datasetID = result.values.id;
       }
       codapHelper.openCaseTableForDataSet(config.datasetName);
-      codapHelper.openTextBox(config.datasetName, config.resourceDescription);
+      codapHelper.openTextBox(config.datasetName, config.sourceDataset.resourceDescription);
       codapHelper.openMap();
     }
 
@@ -422,15 +339,15 @@ async function importData() {
       result = await clearDatasetInCODAP(config.datasetID);
     }
 
-    result = await codapHelper.sendToCODAP('create',
-        `dataContext[${config.datasetID}].item`,
-        geojsonHelper.createItems(config.data, config.keyNames));
-    if (!result || !result.success) {
+  result = await codapHelper.sendRowsToCODAP(config.datasetID,
+      config.sourceDataset.attributeNames, data, constants.chunkSize, config.dataStartingRow);
+    if (result && result.success) {
+      result = await codapHelper.closeSelf();
+    }
+    else {
       uiControl.displayError((result && result.error) || "Error sending data to CODAP");
       codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
     }
-
-    result = await codapHelper.closeSelf();
 
     return result;
       // return populateFromDataThenExit(data, config);
@@ -486,15 +403,18 @@ async function main() {
 
     try {
       codapHelper.indicateBusy(true);
-      config.data = await retrieveData(pluginState);
+      config.sourceDataset = await geoJSONImporter.retrieveData(pluginState);
+      config.data = config.sourceDataset.table;
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
       codapHelper.setVisibilityOfSelf(true);
     } finally {
       codapHelper.indicateBusy(false);
     }
+    if (!config.data) {
+      return;
+    }
 
-    config.attributeNames = geojsonHelper.determineAttributeSet(config.data);
     let autoImport = await determineIfAutoImportApplies();
     if (autoImport) {
       importData();

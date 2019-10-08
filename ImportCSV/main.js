@@ -140,7 +140,6 @@ function relTime(time) {
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies() {
-  // findOrCreateAttributeNames(config.data, config);
   let dataSetList = await codapHelper.retrieveDatasetList();
   let numRows = config.dataSet.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
@@ -336,9 +335,10 @@ async function importData() {
 
   result = await codapHelper.sendRowsToCODAP(config.datasetID,
       config.dataSet.attributeNames, data, constants.chunkSize, config.dataStartingRow);
-  if (!(!result || !result.success)) {
+  if (result && result.success) {
     result = await codapHelper.closeSelf();
-  } else {
+  }
+  else {
     uiControl.displayError(
         (result && result.error) || "Error sending data to CODAP");
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);

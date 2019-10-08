@@ -439,40 +439,46 @@ function defineDataset(geoJSONObject, url, datasetName, collectionName, createKe
   }
   return {featureKeys: featureKeys, dataset: context};
 }
+function createItemList (feature, featureKeys) {
+  let type = feature.geometry && feature.geometry.type;
+  let itemTemplate = {};
+  let items = [];
+  if (type === 'Point') {
+    let point = feature.geometry.coordinates;
+    itemTemplate = Object.assign({latitude: point[1], longitude: point[0]},
+        feature.properties);
+  } else {
+    // create parent case
+    itemTemplate = Object.assign({
+      boundary: JSON.stringify(
+          injectThumbnailInGeojsonFeature(feature.geometry))
+    }, feature.properties);
+  }
+  if (featureKeys && featureKeys.length) {
+    featureKeys.forEach(function (key) {
+      items.push(Object.assign({}, itemTemplate,
+          {type: key, key: feature.properties[key]}));
+    });
+    if (feature.id) {
+      items.push(
+          Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
+    } else if (featureKeys.length === 0) {
+      // if there are otherwise no keys, we make one up...
+      items.push(itemTemplate);
+    }
+  } else {
+    items.push(itemTemplate);
+  }
+  return items;
+}
 
 function createItems(geoJSONObject, featureKeys) {
   let items = [];
   if (geoJSONObject.features) {
     geoJSONObject.features.forEach(function (feature) {
-      let type = feature.geometry && feature.geometry.type;
-      let itemTemplate = {};
-      if (type === 'Point') {
-        let point = feature.geometry.coordinates;
-        itemTemplate = Object.assign({latitude: point[1], longitude: point[0]},
-            feature.properties);
-      } else {
-        // create parent case
-        itemTemplate = Object.assign({
-          boundary: JSON.stringify(
-              injectThumbnailInGeojsonFeature(feature.geometry))
-        }, feature.properties);
-      }
-      if (featureKeys && featureKeys.length) {
-        featureKeys.forEach(function (key) {
-          items.push(Object.assign({}, itemTemplate,
-              {type: key, key: feature.properties[key]}));
-        });
-        if (feature.id) {
-          items.push(
-              Object.assign({}, itemTemplate, {type: 'id', key: feature.id}));
-        } else if (featureKeys.length === 0) {
-          // if there are otherwise no keys, we make one up...
-          items.push(itemTemplate);
-        }
-      } else {
-        items.push(itemTemplate);
-      }
-    });
+      let itemList = this.createItemList(feature, featureKeys);
+      items = items.concat(itemList);
+    }.bind(this));
   }
   return items;
 }
@@ -487,6 +493,7 @@ function getNumRows(geoJSONObject) {
 
 export {
   createItems,
+  createItemList,
   defineDataset,
   determineAttributeSet,
   getNumRows,

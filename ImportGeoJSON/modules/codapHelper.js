@@ -121,11 +121,27 @@ function closeSelf() {
  * @param importDate
  * @return {Promise}
  */
-function defineDataSet(datasetDefinition) {
+function defineDataSet(config) {
+  let attrList = config.attributeNames.map(function (attr) {
+    return {name: attr, type: (attr==='boundary')?attr:null};
+  });
   let request = {
     action: 'create',
     resource: 'dataContext',
-    values: datasetDefinition
+    values: {
+      name: config.datasetName,
+      title: config.datasetName,
+      metadata: {
+        source: config.source,
+        importDate: config.importDate
+      },
+      collections: [
+        {
+          name: config.collectionName,
+          attrs: attrList
+        }
+      ]
+    }
   }
   return codapInterface.sendRequest(request);
 }
