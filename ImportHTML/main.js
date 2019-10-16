@@ -139,8 +139,7 @@ function relTime(time) {
  *
  * @return {Promise<boolean>}
  */
-async function determineIfAutoImportApplies() {
-  let dataSetList = await codapHelper.retrieveDatasetList();
+async function determineIfAutoImportApplies(dataSetList) {
   let numRows = config.dataSet.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
@@ -234,7 +233,7 @@ function downsampleEveryNth(data, interval, start) {
 
 async function createDataSetInCODAP(data, config) {
   let tableConfig = {
-    datasetName: config.datasetName,
+    datasetName: config.dataSet.datasetName,
     collectionName: config.collectionName,
     attributeNames: config.dataSet.attributeNames,
     dataStartingRow: config.dataStartingRow,
@@ -251,7 +250,7 @@ async function handleFileInputs() {
   if (config.dataSet) {
     let isAuto = await determineIfAutoImportApplies();
     if (isAuto) {
-      importData();
+      importDataIntoCODAP();
     }
   }
 }
@@ -261,7 +260,7 @@ async function handleFileInputs() {
  *
  */
 function handleSubmit() {
-  if (config.source) {
+  if (config.dataSet) {
     // downsample = all | random | every-nth | first-n | last-n
     config.downsampling = uiControl.getInputValue('downsample');
     // operation = new | replace | append
@@ -273,14 +272,14 @@ function handleSubmit() {
 
     if (config.downsampling === 'random') {
       config.dataSet.table = downsampleRandom(config.dataSet.table,
-          Number(config.downsamplingTargetCount), config.dataStartingRow);
+          Number(config.downsamplingTargetCount), config.dataSet.dataStartingRow);
     } else if (config.downsampling === 'every-nth') {
       config.dataSet.table = downsampleEveryNth(config.dataSet.table,
-          Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
+          Number(config.downsamplingEveryNthInterval), config.dataSet.dataStartingRow);
     }
 
     codapHelper.setVisibilityOfSelf(false);
-    importData();
+    importDataIntoCODAP();
   } else {
     handleFileInputs();
   }
@@ -312,7 +311,7 @@ function clearDatasetInCODAP(id) {
  *   * dataStartingRow: first row containing data
  * @return {Promise<*>}
  */
-async function importData() {
+async function importDataIntoCODAP() {
   let data = config.dataSet.table;
   let result = null;
   if (config.operation === 'auto' || config.operation === 'new') {
@@ -321,8 +320,8 @@ async function importData() {
     if (result && result.success) {
       config.datasetID = result.values.id;
     }
-    codapHelper.openCaseTableForDataSet(config.datasetName);
-    codapHelper.openTextBox(config.datasetName, config.dataSet.resourceDescription);
+    codapHelper.openCaseTableForDataSet(config.dataSet.datasetName);
+    codapHelper.openTextBox(config.dataSet.datasetName, config.dataSet.resourceDescription);
   }
 
   if (config.operation === 'append' || config.operation === 'replace') {
@@ -334,7 +333,7 @@ async function importData() {
   }
 
   result = await codapHelper.sendRowsToCODAP(config.datasetID,
-      config.dataSet.attributeNames, data, constants.chunkSize, config.dataStartingRow);
+      config.dataSet.attributeNames, data, constants.chunkSize, config.dataSet.dataStartingRow);
   if (result && result.success) {
     result = await codapHelper.closeSelf();
   }
@@ -348,7 +347,21 @@ async function importData() {
     // return populateFromDataThenExit(data, config);
 }
 
-
+function ensureUniqueDatasetName(proposedName, existingDatasetDefs) {
+  let newName = proposedName
+  let existingNames = existingDatasetDefs? existingDatasetDefs.map(function (dsd) {
+    return dsd.name || dsd.title;
+  }): [];
+  while (existingNames.includes(newName)) {
+    let match = /^(.*)_([0-9]+)$/.exec(newName);
+    if (match) {
+      newName = `${match[1]}_${Number(match[2])+1}`;
+    } else {
+      newName = `${newName}_1`;
+    }
+  }
+  return newName;
+}
 /**
  * Start here.
  *
@@ -402,9 +415,11 @@ async function main() {
       codapHelper.indicateBusy(false);
     }
 
-    let autoImport = await determineIfAutoImportApplies();
+    let exitingDatasets = await codapHelper.retrieveDatasetList();
+    config.dataSet.datasetName = ensureUniqueDatasetName(config.datasetName, exitingDatasets);
+    let autoImport = await determineIfAutoImportApplies(exitingDatasets);
     if (autoImport) {
-      importData();
+      await importDataIntoCODAP();
     }
   } else {
     uiControl.showSection('source-input', true);

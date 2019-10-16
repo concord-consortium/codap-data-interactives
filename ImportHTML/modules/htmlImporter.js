@@ -107,7 +107,7 @@ function extractHTMLTable(htmlText) {
     tableRowEls.forEach(function (rowEl) {
       let cells = rowEl.querySelectorAll('td,th');
       let row = [];
-      cells.forEach(function (cell) {row.push(cell.innerText)})
+      cells.forEach(function (cell) {row.push(cell.innerText.trim())})
       table.push(row);
     })
     return table;
@@ -133,8 +133,8 @@ async function retrieveData(config) {
     dataSet.table = await readAndParseFile(config.file);
     dataSet.sourceType = 'file';
   } else if (config.text) {
-    dataSet.resourceDescription = composeResourceDescription('local file -- ' +
-        (config.name || config.filename), importDate);
+    dataSet.resourceDescription = composeResourceDescription('clipboard html',
+        importDate);
     dataSet.table = await Promise.resolve(extractHTMLTable(config.text));
     dataSet.sourceType = 'text';
   }
