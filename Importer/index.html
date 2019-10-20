@@ -2,10 +2,11 @@
 <head>
   <title>Import CSV to CODAP</title>
   <link rel="stylesheet" type="text/css" href="css/style.css" >
-  <script src="lib/topojson.js"></script>
   <script src="lib/iframe-phone.js"></script>
   <script src="lib/CodapInterface.js"></script>
   <script src="main.js" type="module"></script>
+  <script src="lib/papaparse.min.js"></script>
+  <script src="lib/topojson.js"></script>
 </head>
 <body>
   <form action="#">
@@ -16,7 +17,7 @@
       <div id="source-input" class="panel" hidden>
         <div><label>Enter url: <input type="url" name="source-input-url"></label></div>
         or
-        <div><input type="file" accept="application/json,application/geo+json,application/vnd.geo+json,text/json" name="source-input-file"></div>
+        <div><input type="file" accept="text/csv,text/plain,application/json,application/geo+json,application/vnd.geo+json,text/json" name="source-input-file"></div>
       </div>
 
       <div id="downsample-options" hidden>

@@ -20,18 +20,19 @@
 
 import * as uiControl from './modules/uiControl';
 import * as codapHelper from './modules/codapHelper';
+import * as csvImporter from './modules/csvImporter';
+import * as htmlImporter from './modules/htmlImporter';
 import * as geoJSONImporter from './modules/geoJSONImporter';
-import * as geojsonHelper from './modules/geojsonHelper';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
   defaultAttrName: 'attr', // default attribute name prefix
-  defaultCollectionName: 'features', // default collection name
-  defaultChildCollectionName: 'keys',
+  defaultCollectionName: 'cases', // default collection name
   defaultDataSetName: 'dataset', // default dataset name
+  defaultContentType: 'text/csv',
   defaultTargetOperation: 'replace',
   defaultDownsample: 'random',
-  name: 'Import GeoJSON',  // plugin name
+  name: 'Importer',  // plugin name
   thresholdColCount: 40,
   thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
@@ -43,23 +44,25 @@ let codapConfig = {
 }
 
 let config = {
+  // attributeNames: null,
   collectionName: constants.defaultCollectionName,
+  contentType: constants.defaultContentType,
   childCollectionName: constants.defaultChildCollectionName,
   createKeySubcollection: false, // key subcollection supports the lookupBoundary()
                                 // codap function and is not generally necessary
   data: null,
+  dataStartingRow: null,
   datasetID: null,
   datasetName: constants.defaultDataSetName,
-  dataStartingRow: 0,
   downsampling: 'none', // none || random || everyNth || last || first
   downsamplingTargetCount: null, // count we aim to achieve by downsampling
   downsamplingEveryNthInterval: null,// n, if everyNth is selected
+  firstRowIsAttrList: true,
   importDate: null,
   matchingDataset: null,
   openCaseTable: true,
   operation: 'auto', // auto || new || append || replace
   pluginState: null,
-  resourceDescription: 'unknown',
   source: null,
 }
 
@@ -138,12 +141,11 @@ function relTime(time) {
   }
 }
 /**
- * Autoimport applies if the CSV is short and could not already be present.
+ * Autoimport applies if the dataset is short and could not already be present.
  *
  * @return {Promise<boolean>}
  */
-async function determineIfAutoImportApplies() {
-  let dataSetList = await codapHelper.retrieveDatasetList();
+async function determineIfAutoImportApplies(dataSetList) {
   let numRows = config.sourceDataset.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
@@ -160,7 +162,7 @@ async function determineIfAutoImportApplies() {
 
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
-    uiControl.displayMessage(`The CSV file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
+    uiControl.displayMessage(`The imported file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
       ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
         ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
         '#downsample-message'
@@ -237,25 +239,46 @@ function downsampleEveryNth(data, interval, start) {
 
 async function createDataSetInCODAP(data, config) {
   let tableConfig = {
-    datasetName: config.datasetName,
+    datasetName: config.sourceDataset.datasetName,
     collectionName: config.collectionName,
     attributeNames: config.sourceDataset.attributeNames,
     dataStartingRow: config.dataStartingRow,
     source: config.source,
     importDate: config.importDate,
   }
-
   return await codapHelper.defineDataSet(tableConfig);
+}
+
+function inferContentType(file, url) {
+
+}
+
+async function retrieveData(retrievalProperties) {
+  let contentType = retrievalProperties.contentType;
+  let dataset = null;
+  if (!contentType) {
+    contentType = inferContentType(retrievalProperties.file, retrievalProperties.url);
+  }
+  if (contentType === 'text/csv') {
+    dataset = await csvImporter.retrieveData(retrievalProperties);
+  }
+  else if (contentType === 'text/html') {
+    dataset = htmlImporter.retrieveData(retrievalProperties);
+  }
+  else if (contentType === 'application/geo+json') {
+    dataset = geoJSONImporter.retrieveData(retrievalProperties);
+  }
+  return dataset;
 }
 
 async function handleFileInputs() {
   let url = uiControl.getInputValue('source-input-url');
   let file = uiControl.getInputValue('source-input-file');
-  config.sourceDataset = await geoJSONImporter.retrieveData({url: url, file: file});
+  config.sourceDataset = await retrieveData({url: url, file: file});
   if (config.sourceDataset) {
     let isAuto = await determineIfAutoImportApplies();
     if (isAuto) {
-      importData();
+      await importDataIntoCODAP();
     }
   }
 }
@@ -265,7 +288,7 @@ async function handleFileInputs() {
  *
  */
 function handleSubmit() {
-  if (config.source) {
+  if (config.sourceDataset) {
     // downsample = all | random | every-nth | first-n | last-n
     config.downsampling = uiControl.getInputValue('downsample');
     // operation = new | replace | append
@@ -277,14 +300,14 @@ function handleSubmit() {
 
     if (config.downsampling === 'random') {
       config.sourceDataset.table = downsampleRandom(config.sourceDataset.table,
-          Number(config.downsamplingTargetCount), config.dataStartingRow);
+          Number(config.downsamplingTargetCount), config.sourceDataset.dataStartingRow);
     } else if (config.downsampling === 'every-nth') {
       config.sourceDataset.table = downsampleEveryNth(config.sourceDataset.table,
-          Number(config.downsamplingEveryNthInterval), config.dataStartingRow);
+          Number(config.downsamplingEveryNthInterval), config.sourceDataset.dataStartingRow);
     }
 
     codapHelper.setVisibilityOfSelf(false);
-    importData();
+    importDataIntoCODAP();
   } else {
     handleFileInputs();
   }
@@ -316,7 +339,7 @@ function clearDatasetInCODAP(id) {
  *   * dataStartingRow: first row containing data
  * @return {Promise<*>}
  */
-async function importData() {
+async function importDataIntoCODAP() {
   try {
     let data = config.sourceDataset.table;
     let result = null;
@@ -326,9 +349,11 @@ async function importData() {
       if (result && result.success) {
         config.datasetID = result.values.id;
       }
-      codapHelper.openCaseTableForDataSet(config.datasetName);
-      codapHelper.openTextBox(config.datasetName, config.sourceDataset.resourceDescription);
-      codapHelper.openMap();
+      codapHelper.openCaseTableForDataSet(config.sourceDataset.datasetName);
+      codapHelper.openTextBox(config.sourceDataset.datasetName, config.sourceDataset.resourceDescription);
+      if (config.contentType === 'application/geo+json') {
+        codapHelper.openMap();
+      }
     }
 
     if (config.operation === 'append' || config.operation === 'replace') {
@@ -339,25 +364,40 @@ async function importData() {
       result = await clearDatasetInCODAP(config.datasetID);
     }
 
-  result = await codapHelper.sendRowsToCODAP(config.datasetID,
-      config.sourceDataset.attributeNames, data, constants.chunkSize, config.dataStartingRow);
+    result = await codapHelper.sendRowsToCODAP(config.datasetID,
+        config.sourceDataset.attributeNames, data, constants.chunkSize, config.sourceDataset.dataStartingRow);
     if (result && result.success) {
       result = await codapHelper.closeSelf();
     }
     else {
-      uiControl.displayError((result && result.error) || "Error sending data to CODAP");
+      uiControl.displayError(
+          (result && result.error) || "Error sending data to CODAP");
       codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
     }
 
     return result;
-      // return populateFromDataThenExit(data, config);
+    // return populateFromDataThenExit(data, config);
   }
-  catch (ex) {
+  catch (ex){
     uiControl.displayError('Could not import this file -- ' + ex);
   }
 }
 
-
+function ensureUniqueDatasetName(proposedName, existingDatasetDefs) {
+  let newName = proposedName
+  let existingNames = existingDatasetDefs? existingDatasetDefs.map(function (dsd) {
+    return dsd.name || dsd.title;
+  }): [];
+  while (existingNames.includes(newName)) {
+    let match = /^(.*)_([0-9]+)$/.exec(newName);
+    if (match) {
+      newName = `${match[1]}_${Number(match[2])+1}`;
+    } else {
+      newName = `${newName}_1`;
+    }
+  }
+  return newName;
+}
 /**
  * Start here.
  *
@@ -403,21 +443,22 @@ async function main() {
 
     try {
       codapHelper.indicateBusy(true);
-      config.sourceDataset = await geoJSONImporter.retrieveData(pluginState);
-      config.data = config.sourceDataset.table;
+      config.sourceDataset = await retrieveData(pluginState);
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
       codapHelper.setVisibilityOfSelf(true);
     } finally {
       codapHelper.indicateBusy(false);
     }
-    if (!config.data) {
+    if (!config.sourceDataset || !config.sourceDataset.table) {
       return;
     }
 
-    let autoImport = await determineIfAutoImportApplies();
+    let exitingDatasets = await codapHelper.retrieveDatasetList();
+    config.sourceDataset.datasetName = ensureUniqueDatasetName(config.datasetName, exitingDatasets);
+    let autoImport = await determineIfAutoImportApplies(exitingDatasets);
     if (autoImport) {
-      importData();
+      await importDataIntoCODAP();
     }
   } else {
     uiControl.showSection('source-input', true);

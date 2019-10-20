@@ -20,8 +20,8 @@ let messageArea = document.getElementById('message-area');
 
 function displayMessage(message, selector) {
   if (selector == null) {
-  messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
-  showSection('message-area', true);
+    messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
+    showSection('message-area', true);
   } else {
     var el = document.querySelector(selector)
     if (el) {
