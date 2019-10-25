@@ -72,7 +72,7 @@ function composeResourceDescription(src, time) {
 }
 
 function getTableStats(data) {
-  return data.reduce(function (stats, row) {
+  return data && data.reduce(function (stats, row) {
         stats.maxWidth = Math.max(stats.maxWidth, row.length);
         stats.minWidth = Math.min(stats.minWidth, row.length);
         return stats;
@@ -85,13 +85,15 @@ function findOrCreateAttributeNames(dataSet) {
   let table = dataSet.table;
   let tableStats = getTableStats(table);
   let attrs = [];
-  if (dataSet.firstRowIsAttrList && tableStats.numberOfRows > 0) {
-    attrs = table[0];
-    dataSet.dataStartingRow = 1;
-  } else {
-    dataSet.dataStartingRow = 0;
-    for (let i = 0; i < tableStats.maxWidth; i++) {
-      attrs[i] = dataSet.defaultAttrName + i;
+  if (tableStats) {
+    if (dataSet.firstRowIsAttrList && tableStats.numberOfRows > 0) {
+      attrs = table[0];
+      dataSet.dataStartingRow = 1;
+    } else {
+      dataSet.dataStartingRow = 0;
+      for (let i = 0; i < tableStats.maxWidth; i++) {
+        attrs[i] = dataSet.defaultAttrName + i;
+      }
     }
   }
   dataSet.attributeNames = attrs;
@@ -103,13 +105,33 @@ function extractHTMLTable(htmlText) {
   let tableEl = el.querySelector('table');
   if (tableEl) {
     let table = [];
-    let tableRowEls = tableEl.querySelectorAll('tr');
-    tableRowEls.forEach(function (rowEl) {
-      let cells = rowEl.querySelectorAll('td,th');
+    let tableRowEls = tableEl.rows;
+    for (let ix = tableRowEls.length - 1; ix >= 0 ; ix -= 1) {
+      let rowEl = tableRowEls[ix];
+      let cells = rowEl.cells;
       let row = [];
-      cells.forEach(function (cell) {row.push(cell.innerText.trim())})
-      table.push(row);
-    })
+      table[ix] = row;
+      for (let jx = cells.length - 1; jx >= 0; jx -= 1) {
+        let cellEl = cells[jx];
+        let colSpan = Number(cellEl.colSpan);
+        let rowSpan = Number(cellEl.rowSpan);
+        let cellText = cellEl.innerText.trim();
+        if (colSpan>1 || rowSpan>1) {
+          for (let rowX = 0; rowX < Math.min(rowSpan, tableRowEls.length-ix); rowX += 1) {
+            for (let colX = 0; colX < colSpan; colX++) {
+              if (rowX || colX) {
+                table[ix+rowX].splice(jx, 0, cellText);
+              } else {
+                row[jx] = cellText;
+              }
+            }
+          }
+        }
+        else {
+          row[jx] = cellText;
+        }
+      }
+    }
     return table;
   }
 }

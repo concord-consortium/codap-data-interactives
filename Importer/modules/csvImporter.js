@@ -73,7 +73,7 @@ function composeResourceDescription(src, time) {
 }
 
 function getTableStats(data) {
-  return data.reduce(function (stats, row) {
+  return data && data.reduce(function (stats, row) {
         stats.maxWidth = Math.max(stats.maxWidth, row.length);
         stats.minWidth = Math.min(stats.minWidth, row.length);
         return stats;
@@ -113,7 +113,7 @@ async function retrieveData(config) {
     dataSet.table = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';
   } else if (config.file) {
-    dataSet.resourceDescription = composeResourceDescription(config.file, importDate);
+    dataSet.resourceDescription = composeResourceDescription(config.file.name, importDate);
     dataSet.table = await readAndParseFile(config.file);
     dataSet.sourceType = 'file';
   } else if (config.text) {
