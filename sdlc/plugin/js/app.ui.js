@@ -37,8 +37,12 @@ app.ui = {
    * @param dependents
    */
   checkDependentSelected: function (dependents) {
+    let selectedAttributes = app.state && app.state.selectedAttributes;
+    if (!selectedAttributes) {
+      return false;
+    }
     return dependents.every(function (dep) {
-      return (app.state.selectedAttributes.includes(dep));
+      return (selectedAttributes.includes(dep));
     });
   },
 
@@ -98,11 +102,13 @@ app.ui = {
   makeStateListHTML: function () {
     let out = '<div><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</div>';
     let stateAttribute = app.allAttributes.State;
-    app.states.forEach(function (state) {
-      let id = 'state-' + state.state_code;
-      let name = stateAttribute.categories[state.state_code];
-      out += '<div><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</div>';
-    });
+    if (app.states) {
+      app.states.forEach(function (state) {
+        let id = 'state-' + state.state_code;
+        let name = stateAttribute.categories[state.state_code];
+        out += '<div><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</div>';
+      });
+    }
     return out;
   },
 
@@ -117,12 +123,14 @@ app.ui = {
     }
     let out = '';
     let checked = ' checked="checked"';
-    app.years.forEach(function (year) {
-      let id = 'year-' + year.year;
-      out += '<div><input type="checkbox" id="' + id + '" class="select-item"'
-          + checked + '/>' + year.year + availablePresetsHTML(year.year) + '</div>';
-      checked = '';
-    });
+    if (app.years) {
+      app.years.forEach(function (year) {
+        let id = 'year-' + year.year;
+        out += '<div><input type="checkbox" id="' + id + '" class="select-item"'
+            + checked + '/>' + year.year + availablePresetsHTML(year.year) + '</div>';
+        checked = '';
+      });
+    }
     return out;
   },
 
