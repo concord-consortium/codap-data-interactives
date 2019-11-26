@@ -29,6 +29,7 @@ app.ui = {
   },
 
   refreshText: function () {
+    $('#sampleSizeInput').val(app.state.requestedSampleSize || 1000);
     $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;
   },
 

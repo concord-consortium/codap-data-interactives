@@ -83,6 +83,7 @@ let app = {
       this.state.selectedYears = app.userActions.getSelectedYears();
       this.state.selectedStates = app.userActions.getSelectedStates();
       this.state.selectedAttributes = app.userActions.getSelectedAttrs();
+      this.state.requestedSampleSize = app.userActions.getRequestedSampleSize();
       if (logMessage) {
         this.CODAPconnect.logAction(logMessage);
       }
@@ -128,10 +129,8 @@ let app = {
       let codebookDef = dataDictionary.find(function (def) {
         return def.name === configAttr.ipumsName;
       });
-      if (codebookDef) {
-        let tA = new Attribute(codebookDef, configAttr);
-        app.allAttributes[tA.title] = tA;
-      }
+      let tA = new Attribute(codebookDef, configAttr, app.allAttributes);
+      app.allAttributes[tA.title] = tA;
     });
 
     $("#chooseAttributeDiv").html(app.ui.makeBasicCheckboxesHTML());

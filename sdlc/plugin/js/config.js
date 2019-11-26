@@ -69,7 +69,7 @@ app.config = {
     {
       title: 'Age_recode',
       group: 1,
-      ipumsName: 'AGE',
+      originalAttr: 'Age',
       format: 'categorical',
       defCheck: false,
       description: 'reports the individual’s age in years as of the ' +
@@ -216,7 +216,7 @@ app.config = {
       'but not available after 2014.'
     },
     {
-      ipumsName: 'RACE',
+      originalAttr: ['Race-multi','Hispanic'],
       title: 'Race_ethnicity-multi_recode',
       group: 2,
       format: 'categorical',
@@ -224,20 +224,38 @@ app.config = {
       description: 'reports each respondent’s combined race and Hispanic ' +
       'ethnicity status, grouped into 7 primary categories. Caution needed ' +
       'when making comparisons over time.',
-      formula: "(Hispanic!='Not Hispanic')?" +
-          "'Hispanic':(`Race-multi`='White')?'Non-Hispanic White':" +
-          "(`Race-multi`='Black/African American/Negro')?'Non-Hispanic Black':" +
-          "(`Race-multi`='Other Asian or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
-          "(`Race-multi`='Chinese')?'Non-Hispanic Asian or Pacific Islander':" +
-          "(`Race-multi`='Japanese')?'Non-Hispanic Asian or Pacific Islander':" +
-          "(`Race-multi`='American Indian or Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
-          "(`Race-multi`='Three or more major races')?'Non-Hispanic two or more major races':" +
-          "(`Race-multi`='Two major races')?'Non-Hispanic two or more major races':" +
-          "'Non-Hispanic Other race'",
-      formulaDependents: 'Hispanic,Race-multi'
+      // formula: "(Hispanic!='Not Hispanic')?" +
+      //     "'Hispanic':(`Race-multi`='White')?'Non-Hispanic White':" +
+      //     "(`Race-multi`='Black/African American/Negro')?'Non-Hispanic Black':" +
+      //     "(`Race-multi`='Other Asian or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
+      //     "(`Race-multi`='Chinese')?'Non-Hispanic Asian or Pacific Islander':" +
+      //     "(`Race-multi`='Japanese')?'Non-Hispanic Asian or Pacific Islander':" +
+      //     "(`Race-multi`='American Indian or Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
+      //     "(`Race-multi`='Three or more major races')?'Non-Hispanic two or more major races':" +
+      //     "(`Race-multi`='Two major races')?'Non-Hispanic two or more major races':" +
+      //     "'Non-Hispanic Other race'",
+      // formulaDependents: 'Hispanic,Race-multi',
+      multirangeMap: [
+        {range:{Hispanic:{from:1, to:4}}, recodeTo: 0},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 1, to: 1}}, recodeTo: 1},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 2, to: 2}}, recodeTo: 2},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 3, to: 3}}, recodeTo: 3},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 4, to: 6}}, recodeTo: 4},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 7, to: 7}}, recodeTo: 6},
+        {range:{Hispanic:{from:0, to:0}, 'Race-multi':{from: 8, to: 9}}, recodeTo: 5}
+      ],
+      categories: [
+/*0*/   'Hispanic',
+/*1*/   'Non-Hispanic White',
+/*2*/   'Non-Hispanic Black',
+/*3*/   'Non-Hispanic American Indian/Alaska Native',
+/*4*/   'Non-Hispanic Asian and/or Pacific Islander',
+/*5*/   'Non-Hispanic two or more major races',
+/*6*/   'Non-Hispanic Other race'
+      ]
     },
     {
-      ipumsName: 'RACESING',
+      originalAttr: ['Race-single', 'Hispanic'],
       title: 'Race_ethnicity-single_recode',
       group: 2,
       format: 'categorical',
@@ -245,15 +263,31 @@ app.config = {
       description: 'reports each respondent’s combined race and Hispanic ' +
       'ethnicity status, grouped into 6 primary categories. Comparable over ' +
       'time, but not available after 2014.',
-      formula: "(Hispanic!='Not Hispanic')?'Hispanic':" +
-          "(`Race-single`='')?'Non-Hispanic':" +
-          "(`Race-single`='White')?'Non-Hispanic White':" +
-          "(`Race-single`='Black')?'Non-Hispanic Black':" +
-          "(`Race-single`='American Indian/Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
-          "(`Race-single`='Asian and/or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
-          "(`Race-single`='Other race, non-Hispanic')?'Non-Hispanic Other race':" +
-          "'Non-Hispanic Other'",
-      formulaDependents: 'Hispanic,Race-single'
+      // formula: "(Hispanic!='Not Hispanic')?'Hispanic':" +
+      //     "(`Race-single`='')?'Non-Hispanic':" +
+      //     "(`Race-single`='White')?'Non-Hispanic White':" +
+      //     "(`Race-single`='Black')?'Non-Hispanic Black':" +
+      //     "(`Race-single`='American Indian/Alaska Native')?'Non-Hispanic American Indian/Alaska Native':" +
+      //     "(`Race-single`='Asian and/or Pacific Islander')?'Non-Hispanic Asian or Pacific Islander':" +
+      //     "(`Race-single`='Other race, non-Hispanic')?'Non-Hispanic Other race':" +
+      //     "'Non-Hispanic Other'",
+      // formulaDependents: 'Hispanic,Race-single',
+      multirangeMap: [
+        {range:{Hispanic:{from:1, to:4}}, recodeTo: 0},
+        {range:{Hispanic:{from:0, to:0}, 'Race-single':{from: 1, to: 1}}, recodeTo: 1},
+        {range:{Hispanic:{from:0, to:0}, 'Race-single':{from: 2, to: 2}}, recodeTo: 2},
+        {range:{Hispanic:{from:0, to:0}, 'Race-single':{from: 3, to: 3}}, recodeTo: 3},
+        {range:{Hispanic:{from:0, to:0}, 'Race-single':{from: 4, to: 4}}, recodeTo: 4},
+        {range:{Hispanic:{from:0, to:0}, 'Race-single':{from: 5, to: 5}}, recodeTo: 5}
+      ],
+      categories: [
+        'Hispanic',
+        'Non-Hispanic White',
+        'Non-Hispanic Black',
+        'Non-Hispanic American Indian/Alaska Native',
+        'Non-Hispanic Asian and/or Pacific Islander',
+        'Non-Hispanic Other race'
+      ]
     },
 
     {
@@ -269,7 +303,7 @@ app.config = {
     },
     {
       title: 'Hispanic_recode',
-      ipumsName: 'HISPAN',
+      originalAttr: 'Hispanic',
       group: 2,
       defCheck: false,
       description: 'identifies whether individuals are ' +
@@ -350,7 +384,7 @@ app.config = {
       '6 categories.'
     },
     {
-      ipumsName: 'CITIZEN',
+      originalAttr: 'Citizen',
       title: 'Citizen_recode',
       group: 2,
       defCheck: false,
@@ -386,7 +420,7 @@ app.config = {
       'Birth region.'
     },
     {
-      ipumsName: 'BPL',
+      originalAttr: 'Birthplace',
       title: 'Birthplace_recode',
       group: 2,
       format: 'categorical',
@@ -484,9 +518,10 @@ app.config = {
       'There are several hundred occupation categories.'
     },
     {
-      ipumsName: 'OCC1950',
+      originalAttr: 'Occupation_1950_basis',
       title: 'Occupation_1950_basis_recode',
       group: 3,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the person’s primary occupation, using a ' +
       'simplified version of the Census Bureau’s 1950 occupational ' +
@@ -532,9 +567,10 @@ app.config = {
       'collected prior to 1950.'
     },
     {
-      ipumsName: 'OCC1990',
+      originalAttr: 'Occupation_1990_basis',
       title: 'Occupation_1990_basis_recode',
       group: 3,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the person’s primary occupation, using a ' +
       'simplified version of the Census Bureau’s 1990 occupational ' +
@@ -572,9 +608,10 @@ app.config = {
       description: 'reports the industry of the individual, using the 1950 Census Bureau industrial classification system.'
     },
     {
-      ipumsName: 'IND1950',
+      originalAttr: 'Industry_1950',
       title: 'Industry_1950_recode',
       group: 3,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the person’s primary occupation, using a simplified version of the Census Bureau’s 1950 industry classification system. There are 9 primary categories.',
       rangeMap: [
@@ -612,9 +649,10 @@ app.config = {
       description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system. There are several hundred industry categories. This attribute is not available for data collected prior to 1950.'
     },
     {
-      ipumsName: 'IND1990',
+      originalAttr: 'Industry_1990',
       title: 'Industry_1990_recode',
       group: 3,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the industry of the individual, using a simplified version of the 1990 Census Bureau industrial classification system, from 1950 forward. There are 9 primary categories.  This attribute is not available for data collected prior to 1950.',
       rangeMap: [
@@ -710,9 +748,10 @@ app.config = {
       description: 'identifies the U.S. Census region and division where the individual lives. There are four primary regions and nine primary divisions of the U.S., with additional categories for mixed divisions. Consider using Region_recode or Region-division_recode for less detailed versions of this variable.'
     },
     {
-      ipumsName: 'REGION',
+      originalAttr: 'Region',
       title: 'Region_recode',
       group: 5,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the U.S. Census region where the person lives, with 4 region categories.',
       rangeMap: [
@@ -732,9 +771,10 @@ app.config = {
       ]
     },
     {
-      ipumsName: 'REGION',
+      originalAttr: 'Region',
       title: 'Region-division_recode',
       group: 5,
+      format: 'categorical',
       defCheck: false,
       description: 'reports the U.S. Census division where the person lives, with 9 division categories.',
       rangeMap: [

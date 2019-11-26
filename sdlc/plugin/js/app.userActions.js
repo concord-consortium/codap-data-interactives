@@ -113,6 +113,13 @@ app.userActions = {
     return rslt;
   },
 
+  /**
+   * This is the raw request, not the quantity we will actually return
+   */
+  getRequestedSampleSize: function () {
+    return $("#sampleSizeInput")[0].value;
+  },
+
   getSelectedSampleSize: function () {
     let requestedSize = $("#sampleSizeInput")[0].value;
     let numPartitions = app.getPartitionCount();
@@ -123,5 +130,10 @@ app.userActions = {
 
   getKeepExistingDataOption: function () {
     app.state.keepExistingData = $('#keepExistingDataCheckbox').is(':checked');
+  },
+  updateRequestedSampleSize: function () {
+    let requestedSize = $("#sampleSizeInput")[0].value;
+    app.state.requestedSampleSize = requestedSize;
+    app.ui.updateWholeUI();
   }
 };
