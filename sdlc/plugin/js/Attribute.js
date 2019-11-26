@@ -101,9 +101,13 @@ class Attribute {
       }.bind(this));
       found = this.multirangeMap.find(function (constraint) {
         return originalAttr.reduce(function(prior, attrName, attrIx) {
+          let value = rawValues[attrIx];
           let test = constraint.range[attrName];
+          if (!(value && value.trim().length)) {
+            return false;
+          }
           if (test) {
-            return prior && (test.from <= rawValues[attrIx] && test.to >= rawValues[attrIx]);
+            return prior && (test.from <= value && test.to >= value);
           } else {
             return prior;
           }
@@ -112,9 +116,11 @@ class Attribute {
     }
     else if (this.rangeMap) {
       let rawValue = this.getAttributesRawValue(originalAttr, dataString);
-      found = this.rangeMap.find(function(range) {
-        return (range.from<=rawValue && range.to >= rawValue);
-      });
+      if (rawValue.trim()) {
+        found = this.rangeMap.find(function(range) {
+          return (range.from<=rawValue && range.to >= rawValue);
+        });
+      }
     }
     if (found) {
       result = found.recodeTo;
@@ -131,7 +137,9 @@ class Attribute {
       rawValue = this.getRawValue(dataString);
     }
 
-    if (this.format === 'categorical' && this.categories) {
+    if (rawValue == null) {
+      result = '';
+    } else if (this.format === 'categorical' && this.categories) {
       result = this.categories[Number(rawValue)];
       if (result == null) {result = rawValue;}
     } else {
