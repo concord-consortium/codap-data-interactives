@@ -28,18 +28,24 @@ app.DBconnect = {
     }
     theBody.append("whence", app.whence);
 
+    app.addLog('Send request: ' + JSON.stringify(iCommands));
     let theRequest = new Request(app.constants.kBasePhpURL[app.whence],
         {method: 'POST', body: theBody, headers: new Headers()});
 
     try {
       const theResult = await fetch(theRequest);
-      if (theResult.ok) {
-        return theResult.json();
+      if (theResult && theResult.ok) {
+        let result = await theResult.json();
+        app.addLog('Good response: ' + (Array.isArray(result)?('rows='+result.length):''));
+        return result;
       } else {
         console.error("sendCommand bad result error: " + theResult.statusText);
+        app.addLog('Error response: /status,text/ [' +
+            [theResult.status, theResult.statusText].join + ']');
       }
     } catch (msg) {
       console.log('fetch error in DBconnect.sendCommand(): ' + msg);
+      app.addLog('Error response: ' + msg);
     }
   },
 

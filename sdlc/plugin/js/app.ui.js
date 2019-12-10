@@ -26,8 +26,18 @@ app.ui = {
     app.ui.refreshYearCheckboxes();
     app.ui.refreshSampleSummary();
     app.ui.refreshText();
+    app.ui.refreshLog();
   },
 
+  refreshLog: function () {
+    let activityLog = app.state.activityLog;
+    let tabContentNode = $('#log .tab-content');
+    let tableRows = activityLog && activityLog.map(function (logEntry) {
+      return $('<tr>').append($('<td>').text(logEntry.time)).append($('<td>').text(logEntry.message));
+    });
+    let table = $('<table>').append(tableRows);
+    tabContentNode.empty().append(table);
+  },
   refreshText: function () {
     $('#sampleSizeInput').val(app.state.requestedSampleSize || 1000);
     $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;

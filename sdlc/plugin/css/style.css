@@ -16,7 +16,7 @@
  *
  */
 
-body, #summary, #atts, #states, #sampleYears, #about {
+body, #summary, #atts, #states, #sampleYears, #about, #log {
   margin : 0;
   /*height : 320px;*/
   font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
@@ -98,7 +98,7 @@ h1 {
 }
 
 .plugin-content {
-  min-width: 400px;
+  min-width: 480px;
 }
 
 body .ui-tabs .ui-tabs-panel {
@@ -114,6 +114,23 @@ body .ui-tabs .ui-tabs-panel {
 .plugin-content .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
   padding: .25em .5em;
 }
+
 .plugin-content .ui-tabs {
   overflow-x: hidden; /* otherwise tabs create a new row */
+}
+
+#log .tab-content {
+  padding: 0;
+}
+#log table {
+  font-size: smaller;
+}
+#log td {
+  padding:.25em;
+}
+#log tr:nth-child(odd) {
+  background-color: rgba(255,255,255,.33);
+}
+#log tr:nth-child(even) {
+  background-color: rgba(255,255,255,.66);
 }

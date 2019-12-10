@@ -26,6 +26,14 @@ app.userActions = {
       let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
         app.state.selectedStates, app.state.selectedYears);
 
+      // If tData is empty, there must have been an error. We are relying on
+      // lower layers to log the failure.
+      if (!tData) {
+        app.ui.displayStatus('Error...');
+        app.ui.updateWholeUI();
+        return;
+      }
+
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
       app.ui.displayStatus('Formatting data...');
@@ -60,6 +68,7 @@ app.userActions = {
       console.log(ex);
       app.ui.displayStatus('Error...');
     }
+    app.ui.updateWholeUI();
   },
 
   changeAttributeCheckbox : function(iAttName) {

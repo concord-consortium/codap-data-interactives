@@ -23,7 +23,7 @@
 let app = {
   state: null,
   whence: "concord",
-  //whence: "local",
+  // whence: "local",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
   decoder: {},
   ancestries: {},
@@ -36,15 +36,26 @@ let app = {
     selectedYears: [2017],
     selectedStates: [],
     selectedAttributes: ['Sex', 'Age', 'Year', 'State'],
-    keepExistingData: false
+    keepExistingData: false,
+    activityLog: []
+  },
+
+  logConnectionInfo: function () {
+    let info = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (info) {
+      this.addLog('Connection: ' + [info.type, info.effectiveType,
+        info.saveData, info.rtt, info.downlink, info.downlinkMax].join('/') );
+      this.ui.updateWholeUI();
+    }
   },
 
   initialize: async function () {
+    await app.CODAPconnect.initialize(null);
+    app.logConnectionInfo();
     app.years = await app.DBconnect.getDBInfo("getYears");
     app.states = await app.DBconnect.getDBInfo('getStates');
     app.presetStates = await app.DBconnect.getDBInfo('getPresetState');
     await app.getAllAttributes();
-    await app.CODAPconnect.initialize(null);
 
     //      Make sure the correct tab panel comes to the front when the text link is clicked
 
@@ -89,6 +100,15 @@ let app = {
       }
     }
     this.ui.updateWholeUI();
+  },
+
+  addLog: function (logMessage) {
+    if (this.state) {
+      if (!this.state.activityLog) {
+        this.state.activityLog = [];
+      }
+      this.state.activityLog.push({time:new Date().toLocaleString(), message: logMessage});
+    }
   },
 
   getDataDictionary: function (codebook) {
