@@ -22,8 +22,8 @@
 
 let app = {
   state: null,
-  whence: "concord",
-  // whence: "local",
+  //whence: "concord",
+   whence: "local",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
   decoder: {},
   ancestries: {},
