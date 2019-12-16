@@ -79,7 +79,8 @@ function composeResourceDescription(src, time) {
 async function retrieveData(config) {
   let sourceDataset = {
     firstRowIsAttrList: true,
-    defaultAttrName: 'attr'
+    defaultAttrName: 'attr',
+    dataStartingRow: 0
   };
   let importDate = new Date();
   let featureSet = null;
