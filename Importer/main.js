@@ -281,6 +281,8 @@ async function handleFileInputs() {
     if (isAuto) {
       await importDataIntoCODAP();
     }
+  } else {
+    await codapHelper.closeSelf();
   }
 }
 
@@ -289,7 +291,7 @@ async function handleFileInputs() {
  *
  */
 function handleSubmit() {
-  if (config.sourceDataset) {
+  if (config.sourceDataset && config.sourceDataset.table) {
     // downsample = all | random | every-nth | first-n | last-n
     config.downsampling = uiControl.getInputValue('downsample');
     // operation = new | replace | append
@@ -447,19 +449,24 @@ async function main() {
       config.sourceDataset = await retrieveData(pluginState);
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
+      // uiControl.showSection('source-input');
       codapHelper.setVisibilityOfSelf(true);
+      return;
     } finally {
       codapHelper.indicateBusy(false);
     }
     if (!config.sourceDataset || !config.sourceDataset.table) {
-      return;
+      uiControl.displayMessage("Could not find tabular data in a format that can be imported into CODAP");
+      // uiControl.showSection('source-input');
+      codapHelper.setVisibilityOfSelf(true);
     }
-
-    let exitingDatasets = await codapHelper.retrieveDatasetList();
-    config.sourceDataset.datasetName = ensureUniqueDatasetName(config.datasetName, exitingDatasets);
-    let autoImport = await determineIfAutoImportApplies(exitingDatasets);
-    if (autoImport) {
-      await importDataIntoCODAP();
+    else {
+      let exitingDatasets = await codapHelper.retrieveDatasetList();
+      config.sourceDataset.datasetName = ensureUniqueDatasetName(config.datasetName, exitingDatasets);
+      let autoImport = await determineIfAutoImportApplies(exitingDatasets);
+      if (autoImport) {
+        await importDataIntoCODAP();
+      }
     }
   } else {
     uiControl.showSection('source-input', true);
