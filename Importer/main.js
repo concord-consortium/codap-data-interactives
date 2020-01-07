@@ -40,6 +40,7 @@ let constants = {
 let codapConfig = {
   name: constants.name,
   title: constants.name,
+  dimensions: {width: 300, height: 200},
   version: 0.1
 }
 

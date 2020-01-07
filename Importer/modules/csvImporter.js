@@ -109,16 +109,17 @@ async function retrieveData(config) {
   };
   let importDate = new Date();
   if (config.url) {
-    dataSet.resourceDescription = composeResourceDescription(config.url, importDate);
+    let name = config.datasetName || config.url;
+    dataSet.resourceDescription = composeResourceDescription(name, importDate);
     dataSet.table = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';
   } else if (config.file) {
-    dataSet.resourceDescription = composeResourceDescription(config.file.name, importDate);
+    dataSet.resourceDescription = composeResourceDescription(config.datasetName || config.file.name, importDate);
     dataSet.table = await readAndParseFile(config.file);
     dataSet.sourceType = 'file';
   } else if (config.text) {
     dataSet.resourceDescription = composeResourceDescription('local file -- ' +
-        (config.name || config.filename), importDate);
+        (config.datasetName || config.filename ), importDate);
     dataSet.table = await Promise.resolve(parseCSVString(config.text));
     dataSet.sourceType = 'text';
   }
