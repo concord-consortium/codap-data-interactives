@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 2019-08-23.
+ 
+ 
+ ==========================================================================
+index in noaa-cdo
+
+    Author:   Tim Erickson
+
+Copyright (c) 2019 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+
+LOCAL:  http://localhost:8888/plugins/noaa-cdo/
+simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shared=113045
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>NOAA-CDO</title>
+
+    <link rel='stylesheet' type='text/css' href='css/noaa-cdo.css'/>
+
+    <script src="../common/iframe-phone.js"></script>
+    <script src="../common/codapInterface.js"></script>
+    <script src="../common/pluginHelper.js"></script>
+
+    <!--    Specific JS for this app     -->
+    <script src="noaa-cdo.js"></script>
+    <script src="noaa.ui.js"></script>
+    <script src="CODAPconnect.js"></script>
+    <script src="noaaStations.js"></script>
+    <script src="noaaDataTypes.js"></script>
+
+</head>
+<body>
+
+<label for="startDate">Start date:</label>
+<input type="date" id="startDate" onchange="noaa.dateChange()" name="data-start"
+       value="2018-01-01" min="1950-01-01" max="2019-06-30">
+<br>
+<label for="endDate">End date:</label>
+<input type="date" id="endDate" onchange="noaa.dateChange()" name="data-end"
+       value="2018-01-31" min="1950-01-01" max="2019-06-30">
+<br>
+<input type="radio" value="GSOM" name="frequencyControl" checked> monthly |
+<input type="radio" value="GHCND"  name="frequencyControl"> daily
+<hr>
+<button onclick="noaa.doGet()">get data</button>
+<button onclick="noaa.connect.createSpreader()">make spreader</button>
+<div id="results"></div>
+
+<details>
+    <summary>stations</summary>
+    <div id="stationUI">
+    </div>
+</details>
+<details>
+    <summary>data</summary>
+    <div id="dataTypeUI">
+    </div>
+</details>
+<details>
+    <summary>credits</summary>
+    <div>
+        Menne, M.J., I. Durre, R.S. Vose, B.E. Gleason, and T.G. Houston, 2012:  An overview
+        of the Global Historical Climatology Network-Daily Database.
+        <i>Journal of Atmospheric and Oceanic Technology</i>, 29, 897-910,
+        doi:10.1175/JTECH-D-11-00103.1.
+    </div>
+</details>
+<p>NOAA limits us to 1000 records per request.</p>
+</body>
+
+<script>
+    window.onload = function () {
+        noaa.initialize();
+    }
+</script>
+
+</html>
