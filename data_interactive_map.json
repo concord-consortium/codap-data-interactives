@@ -723,6 +723,17 @@
       "categories": [
         "Partners"
       ]
+    },
+    {
+      "title": "NOAA Weather",
+      "description": "Get weather data from selected US weather stations",
+      "width": 400,
+      "height": 600,
+      "path": "/NOAA-weather",
+      "visible": "true",
+      "categories": [
+        "Partners"
+      ]
     }
   ]
 }
