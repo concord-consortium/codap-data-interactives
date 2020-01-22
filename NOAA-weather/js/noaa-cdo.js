@@ -1,9 +1,10 @@
+
 /*
 ==========================================================================
 
  * Created by tim on 8/22/19.
- 
- 
+
+
  ==========================================================================
 noaa-cdo in noaa-cdo
 
@@ -25,10 +26,7 @@ limitations under the License.
 ==========================================================================
 
 */
-
-let noaa;
-
-noaa = {
+let noaa = {
 
     initialize: function () {
         noaa.state.startDate = noaa.constants.defaultStart;
@@ -38,32 +36,32 @@ noaa = {
         noaa.ui.initialize();
     },
 
-    dataValues : [],
-    dataRecords: [],
+    dataValues: [], dataRecords: [],
 
-    state : {
-        startDate : null,
-        endDate : null,
-        database : null,
+    state: {
+        startDate: null, endDate: null, database: null,
     },
 
-    stationIDs : [
-        "GHCND:USW00023234",        //  KSFO
+    stationIDs: ["GHCND:USW00023234",        //  KSFO
         "GHCND:USW00023174",      //  KLAX
     ],
 
     doGet: async function () {
         let theText = "Default text";
         let nRecords = 0;
-        noaa.state.database  = document.querySelector("input[name='frequencyControl']:checked").value;
+        noaa.state.database = document.querySelector(
+            "input[name='frequencyControl']:checked").value;
 
+        const startDate = noaa.state.startDate;
+        const endDate = noaa.state.endDate;
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
-        const tStationIDClause = "&stationid=" + noaa.ui.getCheckedStations().join("&stationid=");
-        const tDataTypeIDClause = "&datatypeid=" + noaa.ui.getCheckedDataTypes().join("&datatypeid=");
-        const tDateClause = "&startdate=" + noaa.state.startDate + "&enddate=" + noaa.state.endDate;
+        const tStationIDClause = "&stationid=" + noaa.ui.getCheckedStations().join(
+            "&stationid=");
+        const tDataTypeIDClause = "&datatypeid=" + noaa.ui.getCheckedDataTypes().join(
+            "&datatypeid=");
+        const tDateClause = "&startdate=" + startDate + "&enddate=" + endDate;
 
-        let tURL = noaa.constants.noaaBaseURL + "data?limit=" + noaa.constants.recordCountLimit +
-            tDatasetIDClause + tStationIDClause + tDataTypeIDClause + tDateClause;
+        let tURL = noaa.constants.noaaBaseURL + "data?limit=" + noaa.constants.recordCountLimit + tDatasetIDClause + tStationIDClause + tDataTypeIDClause + tDateClause;
 
         let tHeaders = new Headers();
         tHeaders.append("token", noaa.constants.noaaToken);
@@ -71,43 +69,57 @@ noaa = {
         let resultText = "";
         noaa.dataValues = [];
         try {
-            const tResult = await fetch(tRequest);
-            if (tResult.ok) {
-                const theJSON = await tResult.json();
-                theJSON.results.forEach( (r) => {
-                    nRecords++;
-                    theText += "<br>" + JSON.stringify(r);
-                    const aValue = noaa.convertNOAAtoValue(r);
-                    noaa.dataValues.push(aValue);
-                });
-                noaa.dataValues.forEach(function (aValue) {
-                    let dataRecord = noaa.dataRecords.find(function (r) {
-                        return (aValue.when === r.when && aValue.where === r.where)
-                    });
-                    if (!dataRecord) {
-                        dataRecord = {
-                            when: aValue.when,
-                            where: aValue.where
-                        }
-                        noaa.dataRecords.push(dataRecord);
+            if (new Date(startDate) <= new Date(endDate)) {
+                const tResult = await fetch(tRequest);
+                if (tResult.ok) {
+                    const theJSON = await tResult.json();
+                    if (theJSON.results) {
+                        theJSON.results.forEach((r) => {
+                            nRecords++;
+                            theText += "<br>" + JSON.stringify(r);
+                            const aValue = noaa.convertNOAAtoValue(r);
+                            noaa.dataValues.push(aValue);
+                        });
+                        noaa.dataValues.forEach(function (aValue) {
+                            let dataRecord = noaa.dataRecords.find(
+                                function (r) {
+                                    return (aValue.when === r.when && aValue.where === r.where)
+                                });
+                            if (!dataRecord) {
+                                dataRecord = {
+                                    when: aValue.when, where: aValue.where
+                                }
+                                noaa.dataRecords.push(dataRecord);
+                            }
+                            dataRecord[aValue.what] = aValue.value;
+                        });
+                        noaa.connect.createNOAAItems(noaa.dataRecords,
+                            noaa.ui.getCheckedDataTypes());
+                        resultText = "Retrieved " + noaa.dataRecords.length + " cases";
+                    } else {
+                        resultText = 'Retrieved no observations';
                     }
-                    dataRecord[aValue.what] = aValue.value;
-                });
-                noaa.connect.createNOAAItems(noaa.dataRecords, noaa.ui.getCheckedDataTypes());
-                resultText =  "Retrieved " + nRecords + " observations";
+                } else {
+                    console.error("noaa.doGet() error: " + tResult.statusText);
+                    resultText = "Error. No observations retrieved.";
+                }
             } else {
-                console.error("noaa.doGet() error: " + tResult.statusText);
-                resultText = "Error. No records retrieved.";
+                resultText = 'End date must be on or after start date';
             }
         } catch (msg) {
             console.log('fetch error: ' + msg);
+            resultText = 'fetch error: ' + msg;
             theText = msg;
         }
-
-        document.getElementById("results").innerHTML = resultText;
+        this.setResultMessage(resultText);
     },
 
-    convertNOAAtoValue : function( iRecord ) {
+    setResultMessage: function (resultText) {
+        document.getElementById("results").innerHTML = resultText;
+
+    },
+
+    convertNOAAtoValue: function (iRecord) {
         let out = {};
         out.when = iRecord.date;
         out.where = noaa.decodeData("where", iRecord.station);
@@ -117,13 +129,13 @@ noaa = {
         return out;
     },
 
-    dateChange : function() {
+    dateChange: function () {
         noaa.state.startDate = document.getElementById("startDate").value;
         noaa.state.endDate = document.getElementById("endDate").value;
     },
 
-    decodeData : function( iField, iValue ) {
-        switch(iField) {
+    decodeData: function (iField, iValue) {
+        switch (iField) {
             case "where":
                 return noaa.stations[iValue].name;
             case "AWND":
@@ -137,28 +149,28 @@ noaa = {
                 return decoder(iValue);
                 break;
             case "what":
-                return  noaa.dataTypes[iValue].name;
+                return noaa.dataTypes[iValue].name;
         }
         return iValue;
 
     },
 
     constants: {
-        version : "000c",
+        version: "0001",
 
-        noaaToken: "XYMtyBtfgNMlwHKGadTjKhWkHjVWsOPu",
+        noaaToken: "rOoVmDbneHBSRPVuwNQkoLblqTSkeayC",
         noaaBaseURL: "https://www.ncdc.noaa.gov/cdo-web/api/v2/",
         defaultStart: "2018-01-01",
         defaultEnd: "2018-01-31",
-        recordCountLimit : 1000,
+        recordCountLimit: 1000,
 
-        DSName : "noaa",
-        DSTitle : "noaa",
-        dimensions : {height : 120, width : 333},
-        tallDimensions : {height : 444, width : 333},
+        DSName: "NOAA-Weather",
+        DSTitle: "NOAA Weather",
+        dimensions: {height: 120, width: 333},
+        tallDimensions: {height: 444, width: 333},
 
-        spreader : {
-            "URL" :   "https://codap.xyz/plugins/spreader/",      //  "http://localhost:8888/plugins/spreader/",
+        spreader: {
+            "URL": "https://codap.xyz/plugins/spreader/",      //  "http://localhost:8888/plugins/spreader/",
             "dimensions": {height: 210, width: 380},
         }
     },
