@@ -39,6 +39,7 @@ noaa = {
     },
 
     dataValues : [],
+    dataRecords: [],
 
     state : {
         startDate : null,
@@ -79,7 +80,20 @@ noaa = {
                     const aValue = noaa.convertNOAAtoValue(r);
                     noaa.dataValues.push(aValue);
                 });
-                noaa.connect.createNOAAItems(noaa.dataValues);
+                noaa.dataValues.forEach(function (aValue) {
+                    let dataRecord = noaa.dataRecords.find(function (r) {
+                        return (aValue.when === r.when && aValue.where === r.where)
+                    });
+                    if (!dataRecord) {
+                        dataRecord = {
+                            when: aValue.when,
+                            where: aValue.where
+                        }
+                        noaa.dataRecords.push(dataRecord);
+                    }
+                    dataRecord[aValue.what] = aValue.value;
+                });
+                noaa.connect.createNOAAItems(noaa.dataRecords, noaa.ui.getCheckedDataTypes());
                 resultText =  "Retrieved " + nRecords + " observations";
             } else {
                 console.error("noaa.doGet() error: " + tResult.statusText);
