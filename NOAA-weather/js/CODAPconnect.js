@@ -25,7 +25,7 @@ limitations under the License.
 ==========================================================================
 
 */
-
+/*global noaa:true */
 noaa.connect = {
 
     initialize : async function () {
@@ -42,22 +42,7 @@ noaa.connect = {
             }
         };
         await codapInterface.sendRequest(tMessage);
-    },
-
-    createSpreader: function () {
-        const theSpreaderRequest = {
-            "action": "create",
-            "resource": "component",
-            "values": {
-                "type": "game",
-                "name": "name-webview",
-                "title": "data spreader",
-                "URL": noaa.constants.spreader.URL,
-                "dimensions": noaa.constants.spreader.dimensions,
-            }
-        };
-
-        codapInterface.sendRequest(theSpreaderRequest);
+        this.createStationsDataset();
     },
 
     /**
@@ -80,7 +65,7 @@ noaa.connect = {
     /**
      * Creates new attributes for any that do not already exist.
      * @param attrNames
-     * @return a Promise fullfilled when all attributes are created.
+     * @return a Promise fulfilled when all attributes are created.
      */
     updateDataset: async function (typeNames) {
         const result = await codapInterface.sendRequest({
@@ -110,6 +95,81 @@ noaa.connect = {
             }
         }.bind(this));
         return Promise.all(promises);
+    },
+
+    createStationsDataset: async function () {
+        const stations = noaa.stations;
+        let result = await codapInterface.sendRequest({
+            action: 'get',
+            resource: 'dataContext[US-Weather-Stations]'
+        });
+        const componentsResult = await codapInterface.sendRequest({
+            action: 'get',
+            resource: 'componentList'
+        });
+        const hasMap = componentsResult
+            && componentsResult.success
+            && componentsResult.values.find(function (component) {
+            return component.type==="map";
+        });
+
+        if (!result || !result.success) {
+            result = await codapInterface.sendRequest({
+                action: 'create',
+                resource: 'dataContext',
+                values: {
+                    name: 'US-Weather-Stations',
+                    label: "US Weather Stations",
+                    collections: [{
+                        name: "US Weather Stations",
+                        attrs: [
+                            { name: 'name' },
+                            { name: 'datacoverage' },
+                            { name: 'elevation' },
+                            { name: 'elevationUnit' },
+                            { name: 'id' },
+                            { name: 'maxdate' },
+                            { name: 'mindate' },
+                            { name: 'latitude' },
+                            { name: 'longitude' },
+                        ]
+                    }]
+                }
+            });
+            result = await codapInterface.sendRequest({
+                action: 'create',
+                resource: 'dataContext[US-Weather-Stations].item',
+                values: stations
+            });
+            if (!hasMap) {
+                result = await codapInterface.sendRequest({
+                    action: 'create',
+                    resource: 'component',
+                    values: {
+                        type: 'map',
+                        name: 'Weather Stations',
+                        dimensions: {
+                            height: 240,
+                            width: 320
+                        }
+                    }
+                })
+            }
+        }
+        codapInterface.on('notify', 'dataContextChangeNotice[US-Weather-Stations]', function (req, obj){
+            if (req.values.operation === 'selectCases') {
+                const result = req.values.result;
+                const myCase = result && result.cases[0];
+                if (myCase) {
+                    noaa.selectedStation = noaa.stations.find(function (sta) {
+                        return myCase.values.id === sta.id;
+                    });
+                } else {
+                    noaa.selectedStation = null;
+                }
+                noaa.ui.setStationName(noaa.selectedStation?noaa.selectedStation.name:'');
+            }
+        });
     },
 
     /**
@@ -153,16 +213,23 @@ noaa.connect = {
             {
                 name: noaa.constants.DSName,
                 labels: {
+                    singleCase: "station",
+                    pluralCase: "stations",
+                },
+                attrs: [
+                    {name: "where", type: 'categorical', description: "weather station"}
+                ]
+            },
+            {
+                name: "Observations",
+                parent: noaa.constants.DSName,
+                labels: {
                     singleCase: "observation",
                     pluralCase: "observations",
                     setOfCasesWithArticle: "a group of records"
                 },
                 attrs: [
-                    {name: "where", type: 'categorical', description: "weather station"},
-                    {name: "when", type: 'date', description : "what day"}/*,
-                    {name: "what", type : 'categorical', description : "the type of observation"},
-                    {name: "value", type: 'numeric', precision : 2, description : "the value for the observation"},
-                    {name: "units", type: 'categorical', description : "the units for the observation"},*/
+                    {name: "when", type: 'date', description : "what day"}
                 ]
             }
         ]

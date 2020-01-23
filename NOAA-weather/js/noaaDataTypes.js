@@ -25,7 +25,7 @@ limitations under the License.
 ==========================================================================
 
 */
-
+/*global noaa:true */
 noaa.defaultDataTypes = ["TMAX"];
 
 noaa.dataTypes = {

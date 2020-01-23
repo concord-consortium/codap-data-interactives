@@ -41,6 +41,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
     <script src="lib/iframe-phone.js"></script>
     <script src="lib/codapInterface.js"></script>
     <script src="lib/pluginHelper.js"></script>
+    <script src="lib/dayjs.min.js"></script>
 
     <!--    Specific JS for this app     -->
     <script src="js/noaa-cdo.js"></script>
@@ -54,24 +55,21 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 
 <label for="startDate">Start date:</label>
 <input type="date" id="startDate" onchange="noaa.dateChange()" name="data-start"
-       value="2018-01-01" min="1950-01-01" max="2019-06-30">
+       value="2018-01-01">
 <br>
 <label for="endDate">End date:</label>
 <input type="date" id="endDate" onchange="noaa.dateChange()" name="data-end"
-       value="2018-01-31" min="1950-01-01" max="2019-06-30">
+       value="2018-01-31">
 <br>
-<input type="radio" value="GSOM" name="frequencyControl" checked> monthly |
-<input type="radio" value="GHCND"  name="frequencyControl"> daily
+<input type="radio" value="GSOM" name="frequencyControl"> monthly |
+<input type="radio" value="GHCND"  name="frequencyControl" checked> daily
+<br>
+Weather Station: <span id="stationName"></span>
 <hr>
 <button onclick="noaa.doGet()">get data</button>
 <!--<button onclick="noaa.connect.createSpreader()">make spreader</button>-->
 <div id="results"></div>
 
-<details>
-    <summary>stations</summary>
-    <div id="stationUI">
-    </div>
-</details>
 <details>
     <summary>data</summary>
     <div id="dataTypeUI">

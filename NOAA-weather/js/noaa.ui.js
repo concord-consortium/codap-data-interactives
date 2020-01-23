@@ -30,18 +30,14 @@ limitations under the License.
 noaa.ui = {
 
     initialize : function() {
-        document.getElementById("stationUI").innerHTML = this.makeBoxes(noaa.stations, noaa.defaultStations);
+        document.getElementById('startDate').value = noaa.state.startDate;
+        document.getElementById('endDate').value = noaa.state.endDate;
         document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(noaa.dataTypes, noaa.defaultDataTypes);
+        document.getElementById('stationName').innerHTML = noaa.selectedStation.name;
     },
 
     getCheckedStations : function() {
-        let out = [];
-        for (const theKey in noaa.stations) {
-            if (document.getElementById(theKey).checked) {
-                out.push(theKey);
-            }
-        }
-        return out;
+        return [noaa.selectedStation && noaa.selectedStation.id];
     },
 
     getCheckedDataTypes : function() {
@@ -65,5 +61,7 @@ noaa.ui = {
         }
         return out;
     },
-
+    setStationName: function (stationName) {
+        document.getElementById('stationName').innerText = stationName;
+    }
 };

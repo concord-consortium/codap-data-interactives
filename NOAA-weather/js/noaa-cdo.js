@@ -26,11 +26,16 @@ limitations under the License.
 ==========================================================================
 
 */
-let noaa = {
+var noaa = {
 
     initialize: function () {
-        noaa.state.startDate = noaa.constants.defaultStart;
-        noaa.state.endDate = noaa.constants.defaultEnd;
+        const today = dayjs();
+        const monthAgo = today.subtract(1, 'month');
+        noaa.state.startDate = monthAgo.format('YYYY-MM-DD');
+        noaa.state.endDate = today.format('YYYY-MM-DD');
+        noaa.selectedStation = noaa.stations.find(function (sta) {
+            return sta.id === noaa.constants.defaultStationID;
+        })
 
         noaa.connect.initialize();
         noaa.ui.initialize();
@@ -42,9 +47,7 @@ let noaa = {
         startDate: null, endDate: null, database: null,
     },
 
-    stationIDs: ["GHCND:USW00023234",        //  KSFO
-        "GHCND:USW00023174",      //  KLAX
-    ],
+    stationIDs: ['GHCND:USW00014755'],
 
     doGet: async function () {
         let theText = "Default text";
@@ -74,12 +77,14 @@ let noaa = {
                 if (tResult.ok) {
                     const theJSON = await tResult.json();
                     if (theJSON.results) {
+                        noaa.dataValues = [];
                         theJSON.results.forEach((r) => {
                             nRecords++;
                             theText += "<br>" + JSON.stringify(r);
                             const aValue = noaa.convertNOAAtoValue(r);
                             noaa.dataValues.push(aValue);
                         });
+                        noaa.dataRecords = [];
                         noaa.dataValues.forEach(function (aValue) {
                             let dataRecord = noaa.dataRecords.find(
                                 function (r) {
@@ -93,7 +98,7 @@ let noaa = {
                             }
                             dataRecord[aValue.what] = aValue.value;
                         });
-                        noaa.connect.createNOAAItems(noaa.dataRecords,
+                        await noaa.connect.createNOAAItems(noaa.dataRecords,
                             noaa.ui.getCheckedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
                     } else {
@@ -134,10 +139,17 @@ let noaa = {
         noaa.state.endDate = document.getElementById("endDate").value;
     },
 
+    findStation: function (id) {
+        return noaa.stations.find(function (sta) {return id === sta.id; });
+    },
+
     decodeData: function (iField, iValue) {
+        let result = null;
         switch (iField) {
             case "where":
-                return noaa.stations[iValue].name;
+                const station = this.findStation(iValue);
+                result = station?station.name: null;
+                break;
             case "AWND":
             case "TMAX":
             case "TMIN":
@@ -146,12 +158,12 @@ let noaa = {
             case "EVAP":
             case "PRCP":
                 const decoder = noaa.dataTypes[iField].decode[noaa.state.database];
-                return decoder(iValue);
+                result = decoder(iValue);
                 break;
             case "what":
-                return noaa.dataTypes[iValue].name;
+                result = noaa.dataTypes[iValue].name;
         }
-        return iValue;
+        return result || iValue;
 
     },
 
@@ -160,19 +172,15 @@ let noaa = {
 
         noaaToken: "rOoVmDbneHBSRPVuwNQkoLblqTSkeayC",
         noaaBaseURL: "https://www.ncdc.noaa.gov/cdo-web/api/v2/",
-        defaultStart: "2018-01-01",
-        defaultEnd: "2018-01-31",
+        defaultStart: "2020-01-01",
+        defaultEnd: "2020-01-31",
+        defaultStationID: 'GHCND:USW00014755',
         recordCountLimit: 1000,
 
         DSName: "NOAA-Weather",
         DSTitle: "NOAA Weather",
         dimensions: {height: 120, width: 333},
         tallDimensions: {height: 444, width: 333},
-
-        spreader: {
-            "URL": "https://codap.xyz/plugins/spreader/",      //  "http://localhost:8888/plugins/spreader/",
-            "dimensions": {height: 210, width: 380},
-        }
     },
 
 };
