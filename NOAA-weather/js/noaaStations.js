@@ -46,6 +46,17 @@ noaa.stations = [
     "longitude": -70.801659
   },
   {
+    "elevation": 285.3,
+    "mindate": "2009-07-03",
+    "maxdate": "2020-01-24",
+    "latitude": 43.879283,
+    "name": "MADISON 1.7 SE, NH US",
+    "datacoverage": 0.9785,
+    "id": "GHCND:US1NHCR0009",
+    "elevationUnit": "METERS",
+    "longitude": -71.126633
+  },
+  {
     "elevation": 156.1,
     "mindate": "2009-07-04",
     "maxdate": "2020-01-25",
@@ -90,6 +101,28 @@ noaa.stations = [
     "longitude": -71.21556667
   },
   {
+    "elevation": 143.9,
+    "mindate": "2018-07-21",
+    "maxdate": "2019-09-15",
+    "latitude": 43.840388,
+    "name": "TAMWORTH 3.4 ESE, NH US",
+    "datacoverage": 0.4976,
+    "id": "GHCND:US1NHCR0043",
+    "elevationUnit": "METERS",
+    "longitude": -71.195443
+  },
+  {
+    "elevation": 354.8,
+    "mindate": "2009-07-09",
+    "maxdate": "2019-09-22",
+    "latitude": 44.62395,
+    "name": "DUMMER 4.3 NW, NH US",
+    "datacoverage": 0.4182,
+    "id": "GHCND:US1NHCS0003",
+    "elevationUnit": "METERS",
+    "longitude": -71.314417
+  },
+  {
     "elevation": 372.5,
     "mindate": "2009-07-20",
     "maxdate": "2020-01-24",
@@ -112,6 +145,61 @@ noaa.stations = [
     "longitude": -71.2695348
   },
   {
+    "elevation": 384.4,
+    "mindate": "2011-10-30",
+    "maxdate": "2019-07-18",
+    "latitude": 44.2353756,
+    "name": "FRANCONIA 0.8 NE, NH US",
+    "datacoverage": 0.8826,
+    "id": "GHCND:US1NHGR0023",
+    "elevationUnit": "METERS",
+    "longitude": -71.7387771
+  },
+  {
+    "elevation": 269.4,
+    "mindate": "2018-11-02",
+    "maxdate": "2020-01-25",
+    "latitude": 43.79048,
+    "name": "PLYMOUTH 3.7 N, NH US",
+    "datacoverage": 0.9178,
+    "id": "GHCND:US1NHGR0049",
+    "elevationUnit": "METERS",
+    "longitude": -71.68413
+  },
+  {
+    "elevation": 292.9,
+    "mindate": "2019-03-04",
+    "maxdate": "2019-08-09",
+    "latitude": 43.8095459,
+    "name": "CAMPTON 2.0 ESE, NH US",
+    "datacoverage": 0.8364,
+    "id": "GHCND:US1NHGR0050",
+    "elevationUnit": "METERS",
+    "longitude": -71.607186
+  },
+  {
+    "elevation": 430.7,
+    "mindate": "2009-03-26",
+    "maxdate": "2020-01-25",
+    "latitude": 44.5833,
+    "name": "GRANBY 1.4 NW, VT US",
+    "datacoverage": 0.2448,
+    "id": "GHCND:US1VTES0001",
+    "elevationUnit": "METERS",
+    "longitude": -71.7787
+  },
+  {
+    "elevation": 448.7,
+    "mindate": "2014-11-02",
+    "maxdate": "2020-01-25",
+    "latitude": 44.493245,
+    "name": "LUNENBURG 2.3 NNW, VT US",
+    "datacoverage": 0.9911,
+    "id": "GHCND:US1VTES0003",
+    "elevationUnit": "METERS",
+    "longitude": -71.704463
+  },
+  {
     "elevation": 280.4,
     "mindate": "1886-06-01",
     "maxdate": "2020-01-25",
@@ -121,6 +209,28 @@ noaa.stations = [
     "id": "GHCND:USC00270690",
     "elevationUnit": "METERS",
     "longitude": -71.18552
+  },
+  {
+    "elevation": 341.4,
+    "mindate": "1960-07-01",
+    "maxdate": "2020-01-22",
+    "latitude": 44.86102,
+    "name": "COLEBROOK 3 SW, NH US",
+    "datacoverage": 0.9273,
+    "id": "GHCND:USC00271647",
+    "elevationUnit": "METERS",
+    "longitude": -71.53921
+  },
+  {
+    "elevation": 210.9,
+    "mindate": "2011-01-16",
+    "maxdate": "2020-01-25",
+    "latitude": 43.8099,
+    "name": "EAST SANDWICH, NH US",
+    "datacoverage": 0.9906,
+    "id": "GHCND:USC00272303",
+    "elevationUnit": "METERS",
+    "longitude": -71.3425
   },
   {
     "elevation": 378,
@@ -167,6 +277,28 @@ noaa.stations = [
     "longitude": -71.2833
   },
   {
+    "elevation": 376.4,
+    "mindate": "1963-08-01",
+    "maxdate": "2020-01-24",
+    "latitude": 44.4169,
+    "name": "JEFFERSON, NH US",
+    "datacoverage": 0.7571,
+    "id": "GHCND:USC00274329",
+    "elevationUnit": "METERS",
+    "longitude": -71.5008
+  },
+  {
+    "elevation": 262.1,
+    "mindate": "1892-10-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.49576,
+    "name": "LANCASTER, NH US",
+    "datacoverage": 0.6758,
+    "id": "GHCND:USC00274556",
+    "elevationUnit": "METERS",
+    "longitude": -71.57668
+  },
+  {
     "elevation": 159.1,
     "mindate": "1974-03-01",
     "maxdate": "2020-01-25",
@@ -176,6 +308,17 @@ noaa.stations = [
     "id": "GHCND:USC00275995",
     "elevationUnit": "METERS",
     "longitude": -71.1297
+  },
+  {
+    "elevation": 289.6,
+    "mindate": "1902-11-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.68199,
+    "name": "NORTH STRATFORD, NH US",
+    "datacoverage": 0.5794,
+    "id": "GHCND:USC00276234",
+    "elevationUnit": "METERS",
+    "longitude": -71.58575
   },
   {
     "elevation": 617.2,
@@ -189,6 +332,39 @@ noaa.stations = [
     "longitude": -71.2525
   },
   {
+    "elevation": 435.6,
+    "mindate": "2016-08-01",
+    "maxdate": "2020-01-25",
+    "latitude": 43.9459,
+    "name": "WATERVILLE VALLEY NEPP, NH US",
+    "datacoverage": 1,
+    "id": "GHCND:USC00278961",
+    "elevationUnit": "METERS",
+    "longitude": -71.511
+  },
+  {
+    "elevation": 463,
+    "mindate": "1931-01-11",
+    "maxdate": "2019-11-30",
+    "latitude": 44.50673,
+    "name": "YORK POND, NH US",
+    "datacoverage": 0.8513,
+    "id": "GHCND:USC00279966",
+    "elevationUnit": "METERS",
+    "longitude": -71.33357
+  },
+  {
+    "elevation": 256,
+    "mindate": "1930-05-01",
+    "maxdate": "2020-01-19",
+    "latitude": 44.4112,
+    "name": "GILMAN, VT US",
+    "datacoverage": 0.9318,
+    "id": "GHCND:USC00433341",
+    "elevationUnit": "METERS",
+    "longitude": -71.7186
+  },
+  {
     "elevation": 140.2,
     "mindate": "2003-03-24",
     "maxdate": "2020-01-25",
@@ -198,6 +374,17 @@ noaa.stations = [
     "id": "GHCND:USR0000NWMT",
     "elevationUnit": "METERS",
     "longitude": -71.1406
+  },
+  {
+    "elevation": 379.5,
+    "mindate": "2003-07-30",
+    "maxdate": "2020-01-25",
+    "latitude": 44.77,
+    "name": "NULHEGAN VERMONT, VT US",
+    "datacoverage": 0.9917,
+    "id": "GHCND:USR0000VNUL",
+    "elevationUnit": "METERS",
+    "longitude": -71.7017
   },
   {
     "elevation": 135.6,
@@ -11749,17 +11936,6 @@ noaa.stations = [
     "id": "GHCND:USC00278614",
     "elevationUnit": "METERS",
     "longitude": -71.26628
-  },
-  {
-    "elevation": 435.6,
-    "mindate": "2016-08-01",
-    "maxdate": "2020-01-20",
-    "latitude": 43.9459,
-    "name": "WATERVILLE VALLEY NEPP, NH US",
-    "datacoverage": 1,
-    "id": "GHCND:USC00278961",
-    "elevationUnit": "METERS",
-    "longitude": -71.511
   },
   {
     "elevation": 87.8,
