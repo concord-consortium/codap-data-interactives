@@ -35,6 +35,194 @@ noaa.defaultStations = ["GHCND:USC00040693", "GHCND:USC00049152"];     //  berke
 
 noaa.stations = [
   {
+    "elevation": 228.6,
+    "mindate": "2012-07-05",
+    "maxdate": "2019-11-06",
+    "latitude": 44.377379,
+    "name": "BETHEL 1.9 SSW, ME US",
+    "datacoverage": 0.2175,
+    "id": "GHCND:US1MEOX0014",
+    "elevationUnit": "METERS",
+    "longitude": -70.801659
+  },
+  {
+    "elevation": 156.1,
+    "mindate": "2009-07-04",
+    "maxdate": "2020-01-25",
+    "latitude": 44.03556,
+    "name": "NORTH CONWAY 1.4 SSW, NH US",
+    "datacoverage": 0.9611,
+    "id": "GHCND:US1NHCR0011",
+    "elevationUnit": "METERS",
+    "longitude": -71.140076
+  },
+  {
+    "elevation": 209.7,
+    "mindate": "2009-07-01",
+    "maxdate": "2020-01-12",
+    "latitude": 44.112796,
+    "name": "INTERVALE 2.7 N, NH US",
+    "datacoverage": 0.8514,
+    "id": "GHCND:US1NHCR0012",
+    "elevationUnit": "METERS",
+    "longitude": -71.139602
+  },
+  {
+    "elevation": 355.4,
+    "mindate": "2009-12-08",
+    "maxdate": "2020-01-25",
+    "latitude": 44.190694,
+    "name": "JACKSON 3.7 NW, NH US",
+    "datacoverage": 0.9084,
+    "id": "GHCND:US1NHCR0015",
+    "elevationUnit": "METERS",
+    "longitude": -71.225989
+  },
+  {
+    "elevation": 201.2,
+    "mindate": "2017-12-04",
+    "maxdate": "2020-01-10",
+    "latitude": 43.92648333,
+    "name": "ALBANY 2.8 SW, NH US",
+    "datacoverage": 0.599,
+    "id": "GHCND:US1NHCR0041",
+    "elevationUnit": "METERS",
+    "longitude": -71.21556667
+  },
+  {
+    "elevation": 372.5,
+    "mindate": "2009-07-20",
+    "maxdate": "2020-01-24",
+    "latitude": 44.4763958,
+    "name": "BERLIN 3.9 ESE, NH US",
+    "datacoverage": 0.8058,
+    "id": "GHCND:US1NHCS0006",
+    "elevationUnit": "METERS",
+    "longitude": -71.1772647
+  },
+  {
+    "elevation": 541,
+    "mindate": "2008-10-06",
+    "maxdate": "2020-01-25",
+    "latitude": 44.388238,
+    "name": "RANDOLPH 1.4 NE, NH US",
+    "datacoverage": 0.9114,
+    "id": "GHCND:US1NHCS0010",
+    "elevationUnit": "METERS",
+    "longitude": -71.2695348
+  },
+  {
+    "elevation": 280.4,
+    "mindate": "1886-06-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.4535,
+    "name": "BERLIN, NH US",
+    "datacoverage": 0.7854,
+    "id": "GHCND:USC00270690",
+    "elevationUnit": "METERS",
+    "longitude": -71.18552
+  },
+  {
+    "elevation": 378,
+    "mindate": "2016-08-01",
+    "maxdate": "2020-01-02",
+    "latitude": 44.7925,
+    "name": "ERROL AIRPORT, NH US",
+    "datacoverage": 0.9768,
+    "id": "GHCND:USC00272846",
+    "elevationUnit": "METERS",
+    "longitude": -71.1634
+  },
+  {
+    "elevation": 243.8,
+    "mindate": "2013-09-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.3933,
+    "name": "GORHAM AIRPORT, NH US",
+    "datacoverage": 0.9919,
+    "id": "GHCND:USC00273488",
+    "elevationUnit": "METERS",
+    "longitude": -71.1947
+  },
+  {
+    "elevation": 1061.9,
+    "mindate": "2016-12-18",
+    "maxdate": "2019-04-07",
+    "latitude": 44.2663,
+    "name": "HARVARD CABIN SNOWPLOT, NH US",
+    "datacoverage": 0.2949,
+    "id": "GHCND:USC00273856",
+    "elevationUnit": "METERS",
+    "longitude": -71.27793
+  },
+  {
+    "elevation": 1142.7,
+    "mindate": "2016-12-11",
+    "maxdate": "2020-01-25",
+    "latitude": 44.2613,
+    "name": "HERMIT LAKE SNOWPLOT, NH US",
+    "datacoverage": 0.539,
+    "id": "GHCND:USC00273860",
+    "elevationUnit": "METERS",
+    "longitude": -71.2833
+  },
+  {
+    "elevation": 159.1,
+    "mindate": "1974-03-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.0562,
+    "name": "NORTH CONWAY, NH US",
+    "datacoverage": 0.9962,
+    "id": "GHCND:USC00275995",
+    "elevationUnit": "METERS",
+    "longitude": -71.1297
+  },
+  {
+    "elevation": 617.2,
+    "mindate": "1930-01-01",
+    "maxdate": "2020-01-25",
+    "latitude": 44.258,
+    "name": "PINKHAM NOTCH, NH US",
+    "datacoverage": 0.9878,
+    "id": "GHCND:USC00276818",
+    "elevationUnit": "METERS",
+    "longitude": -71.2525
+  },
+  {
+    "elevation": 140.2,
+    "mindate": "2003-03-24",
+    "maxdate": "2020-01-25",
+    "latitude": 43.9806,
+    "name": "WHITE MOUNTAIN NF NEW HAMPSHIR, NH US",
+    "datacoverage": 0.9706,
+    "id": "GHCND:USR0000NWMT",
+    "elevationUnit": "METERS",
+    "longitude": -71.1406
+  },
+  {
+    "elevation": 135.6,
+    "mindate": "1996-07-01",
+    "maxdate": "2020-01-24",
+    "latitude": 43.99056,
+    "name": "FRYEBURG EASTERN SLOPES REGL AIRPORT, ME US",
+    "datacoverage": 0.994,
+    "id": "GHCND:USW00054772",
+    "elevationUnit": "METERS",
+    "longitude": -70.9475
+  },
+  {
+    "elevation": 353,
+    "mindate": "1996-07-01",
+    "maxdate": "2020-01-24",
+    "latitude": 44.57611,
+    "name": "BERLIN MUNICIPAL AIRPORT, NH US",
+    "datacoverage": 0.9947,
+    "id": "GHCND:USW00094700",
+    "elevationUnit": "METERS",
+    "longitude": -71.17861
+  },
+
+  {
     "elevation": 77.4,
     "mindate": "1957-03-01",
     "maxdate": "2020-01-20",
@@ -11550,17 +11738,6 @@ noaa.stations = [
     "id": "GHCND:USC00275703",
     "elevationUnit": "METERS",
     "longitude": -71.4802
-  },
-  {
-    "elevation": 159.1,
-    "mindate": "1974-03-01",
-    "maxdate": "2020-01-20",
-    "latitude": 44.0562,
-    "name": "NORTH CONWAY, NH US",
-    "datacoverage": 0.9962,
-    "id": "GHCND:USC00275995",
-    "elevationUnit": "METERS",
-    "longitude": -71.1297
   },
   {
     "elevation": 164.9,
