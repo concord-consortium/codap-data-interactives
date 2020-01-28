@@ -29,25 +29,33 @@ limitations under the License.
 
 noaa.ui = {
 
-    initialize : function() {
-        document.getElementById('startDate').value = noaa.state.startDate;
-        document.getElementById('endDate').value = noaa.state.endDate;
-        document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(noaa.dataTypes, noaa.defaultDataTypes);
-        document.getElementById('stationName').innerHTML = noaa.selectedStation.name;
-    },
-
-    getCheckedStations : function() {
-        return [noaa.selectedStation && noaa.selectedStation.id];
-    },
-
-    getCheckedDataTypes : function() {
-        let out = [];
-        for (const theKey in noaa.dataTypes) {
-            if (document.getElementById(theKey).checked) {
-                out.push(theKey);
+    initialize : function(state, dataTypes) {
+        function setDataType(selectedTypes, type, isSelected) {
+            if (isSelected) {
+                if(selectedTypes.indexOf(type) < 0) {
+                    selectedTypes.push(type);
+                }
+            } else {
+                const typeIx = selectedTypes.indexOf(type);
+                if (typeIx >= 0) {
+                    selectedTypes.splice(typeIx, 1);
+                }
             }
         }
-        return out;
+        document.getElementById('startDate').value = state.startDate;
+        document.getElementById('endDate').value = state.endDate;
+        document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(dataTypes, state.selectedDataTypes);
+        document.getElementById('stationName').innerHTML = state.selectedStation.name;
+
+        // activate datatype checkboxes
+        const dataTypeInputs = Array.from(document.body.querySelectorAll('#dataTypeUI input'));
+        dataTypeInputs.forEach(function (node) {
+           node.onclick = function (ev) {
+               if (this.type==='checkbox') {
+                   setDataType(state.selectedDataTypes, this.id, this.checked);
+               }
+           }
+        });
     },
 
     makeBoxes : function(iChoices, iDefaults) {

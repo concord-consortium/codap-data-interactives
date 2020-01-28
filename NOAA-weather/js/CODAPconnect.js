@@ -45,6 +45,10 @@ noaa.connect = {
         this.createStationsDataset();
     },
 
+    getInteractiveState: async function() {
+        return await codapInterface.getInteractiveState();
+    },
+
     /**
      * Creates an attribute
      * @param name
@@ -161,13 +165,13 @@ noaa.connect = {
                 const result = req.values.result;
                 const myCase = result && result.cases[0];
                 if (myCase) {
-                    noaa.selectedStation = noaa.stations.find(function (sta) {
+                    noaa.state.selectedStation = noaa.stations.find(function (sta) {
                         return myCase.values.id === sta.id;
                     });
                 } else {
-                    noaa.selectedStation = null;
+                    noaa.state.selectedStation = null;
                 }
-                noaa.ui.setStationName(noaa.selectedStation?noaa.selectedStation.name:'');
+                noaa.ui.setStationName(noaa.state.selectedStation?noaa.state.selectedStation.name:'');
             }
         });
     },

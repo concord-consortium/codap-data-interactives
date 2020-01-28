@@ -28,17 +28,21 @@ limitations under the License.
 */
 var noaa = {
 
-    initialize: function () {
+    initialize: async function () {
         const today = dayjs();
         const monthAgo = today.subtract(1, 'month');
-        noaa.state.startDate = monthAgo.format('YYYY-MM-DD');
-        noaa.state.endDate = today.format('YYYY-MM-DD');
-        noaa.selectedStation = noaa.stations.find(function (sta) {
+
+        await noaa.connect.initialize();
+        var state = await noaa.connect.getInteractiveState() || {};
+        state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
+        state.endDate = state.endDate || today.format('YYYY-MM-DD');
+        state.selectedStation = state.selectedStation || noaa.stations.find(function (sta) {
             return sta.id === noaa.constants.defaultStationID;
         })
+        state.selectedDataTypes = state.selectedDataTypes || noaa.defaultDataTypes;
+        noaa.state = state;
 
-        noaa.connect.initialize();
-        noaa.ui.initialize();
+        noaa.ui.initialize(state, noaa.dataTypes);
     },
 
     dataValues: [], dataRecords: [],
@@ -58,9 +62,9 @@ var noaa = {
         const startDate = noaa.state.startDate;
         const endDate = noaa.state.endDate;
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
-        const tStationIDClause = "&stationid=" + noaa.ui.getCheckedStations().join(
+        const tStationIDClause = "&stationid=" + noaa.getCheckedStations().join(
             "&stationid=");
-        const tDataTypeIDClause = "&datatypeid=" + noaa.ui.getCheckedDataTypes().join(
+        const tDataTypeIDClause = "&datatypeid=" + noaa.getCheckedDataTypes().join(
             "&datatypeid=");
         const tDateClause = "&startdate=" + startDate + "&enddate=" + endDate;
 
@@ -99,7 +103,7 @@ var noaa = {
                             dataRecord[aValue.what] = aValue.value;
                         });
                         await noaa.connect.createNOAAItems(noaa.dataRecords,
-                            noaa.ui.getCheckedDataTypes());
+                            noaa.getCheckedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
                     } else {
                         resultText = 'Retrieved no observations';
@@ -141,6 +145,14 @@ var noaa = {
 
     findStation: function (id) {
         return noaa.stations.find(function (sta) {return id === sta.id; });
+    },
+
+    getCheckedStations : function() {
+        return [noaa.state.selectedStation && noaa.state.selectedStation.id];
+    },
+
+    getCheckedDataTypes : function() {
+        return noaa.state.selectedDataTypes;
     },
 
     decodeData: function (iField, iValue) {
