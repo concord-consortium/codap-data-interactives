@@ -98,8 +98,13 @@ var noaa = {
                                     return (aValue.when === r.when && aValue.where === r.where)
                                 });
                             if (!dataRecord) {
+
                                 dataRecord = {
-                                    when: aValue.when, where: aValue.where
+                                    when: aValue.when,
+                                    where: aValue.where,
+                                    latitude: aValue.station.latitude,
+                                    longitude: aValue.station.longitude,
+                                    elevation: aValue.station.elevation
                                 }
                                 noaa.dataRecords.push(dataRecord);
                             }
@@ -133,6 +138,7 @@ var noaa = {
 
     convertNOAAtoValue: function (iRecord) {
         let out = {};
+        out.station = this.findStation(iRecord.station);
         out.when = iRecord.date;
         out.where = noaa.decodeData("where", iRecord.station);
         out.what = noaa.decodeData("what", iRecord.datatype);

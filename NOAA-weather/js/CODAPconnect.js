@@ -129,7 +129,7 @@ noaa.connect = {
                         attrs: [
                             { name: 'name' },
                             { name: 'datacoverage' },
-                            { name: 'elevation' },
+                            { name: 'elevation'},
                             { name: 'elevationUnit' },
                             { name: 'id' },
                             { name: 'maxdate' },
@@ -221,7 +221,10 @@ noaa.connect = {
                     pluralCase: "stations",
                 },
                 attrs: [
-                    {name: "where", type: 'categorical', description: "weather station"}
+                    {name: "where", type: 'categorical', description: "weather station"},
+                    {name: "latitude", type: 'numeric', description: "Latitude of weather station"},
+                    {name: "longitude", type: 'numeric', description: "Longitude of weather station"},
+                    {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "meters"},
                 ]
             },
             {
