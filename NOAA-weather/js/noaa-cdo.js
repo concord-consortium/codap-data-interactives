@@ -40,6 +40,9 @@ var noaa = {
             return sta.id === noaa.constants.defaultStationID;
         })
         state.selectedDataTypes = state.selectedDataTypes || noaa.defaultDataTypes;
+        state.customDataTypes && state.customDataTypes.forEach(function (name) {
+            noaa.dataTypes[name] = {name:name};
+        });
         noaa.state = state;
 
         noaa.ui.initialize(state, noaa.dataTypes);

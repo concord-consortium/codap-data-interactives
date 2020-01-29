@@ -25,7 +25,9 @@ limitations under the License.
 ==========================================================================
 
 */
-
+body {
+    font-family: MuseoSans-500, sans-serif;
+}
 details {
     /*border: 1px solid #aaa;*/
     border-radius: 4px;
@@ -54,4 +56,16 @@ p, label {
     margin: 0;
     font-family: Verdana, sans-serif;
     font-size : x-small;
+}
+
+#get-button {
+    background: green;
+    color: white;
+    border-radius: 6px;
+    float: right;
+}
+
+div#dataTypeUI {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 }

@@ -30,6 +30,31 @@ limitations under the License.
 noaa.ui = {
 
     initialize : function(state, dataTypes) {
+        var _this = this;
+        function addCustomDatatype (ev) {
+            // get value
+            var value = ev.target.value;
+            if (value && (noaa.dataTypeIDs.indexOf(value) >= 0)) {
+                // verify that datatype exists
+                // make new datatype checkbox
+                var newCheckHTML = _this.makeNewCheckbox(value, value, true);
+                // make new record
+                dataTypes[value] = {name: value};
+                // append to dom
+                const insertionPoint = document.body.querySelector('#dataTypeUI div:last-child');
+                insertionPoint.insertAdjacentHTML('beforeBegin', newCheckHTML);
+                // clear current input
+                ev.target.value = '';
+                ev.target.focus();
+                // add datatype selection to state
+                setDataType(state.selectedDataTypes, value, true);
+                // add custom datatype to stat
+                if (!state.customDataTypes) {
+                    state.customDataTypes = [];
+                }
+                state.customDataTypes.push(value);
+            }
+        };
         function setDataType(selectedTypes, type, isSelected) {
             if (isSelected) {
                 if(selectedTypes.indexOf(type) < 0) {
@@ -56,17 +81,29 @@ noaa.ui = {
                }
            }
         });
+        const newTypeInput = document.getElementById('newDataType');
+        newTypeInput.onblur = addCustomDatatype;
+        newTypeInput.onkeydown = function (ev) {
+            if (ev.code==='Enter') {
+                addCustomDatatype(ev);
+            }
+            return true;
+        }
     },
 
-    makeBoxes : function(iChoices, iDefaults) {
+    makeNewCheckbox: function  (key, name, isChecked) {
+        const isCheckedClause = isChecked ? " checked" : "";
+        return '<div><label><input type="checkbox" id="' + key + '" ' +
+            isCheckedClause + '/>' + name + '</label></div>';
+    },
+    makeBoxes : function(iChoices, iSelectionList) {
         let out = "";
 
         for (const theKey in iChoices) {
             const theName = iChoices[theKey].name;
-            const isCheckedClause = (iDefaults.indexOf(theKey) === -1) ? "" : " checked";
-            out += "<input type='checkbox' id='" + theKey + "'" +  isCheckedClause + ">" +
-                "<label for='" + theKey + "'>" + theName + "</label><br>";
+            out += this.makeNewCheckbox(theKey, theName, (iSelectionList.indexOf(theKey) !== -1))
         }
+        out += '<div><input type="text" id="newDataType" title="Enter NOAA CDO Datatype here" placeholder="Custom CDO Datatype"/>'
         return out;
     },
     setStationName: function (stationName) {
