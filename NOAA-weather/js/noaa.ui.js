@@ -53,6 +53,8 @@ noaa.ui = {
                     state.customDataTypes = [];
                 }
                 state.customDataTypes.push(value);
+            } else if (value) {
+                noaa.setResultMessage('"' + value + '" is not a valid NOAA CDO DataType')
             }
         };
         function setDataType(selectedTypes, type, isSelected) {
