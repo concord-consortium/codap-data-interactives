@@ -46,6 +46,9 @@ var noaa = {
         noaa.state = state;
 
         noaa.ui.initialize(state, noaa.dataTypes);
+
+        noaa.ui.setEventHandler('#startDate,#endDate', 'change', noaa.dateChange);
+        noaa.ui.setEventHandler('#get-button', 'click', noaa.doGet);
     },
 
     dataValues: [], dataRecords: [],
@@ -132,8 +135,7 @@ var noaa = {
     },
 
     setResultMessage: function (resultText) {
-        document.getElementById("results").innerHTML = resultText;
-
+        noaa.ui.setMessage(resultText);
     },
 
     convertNOAAtoValue: function (iRecord) {
@@ -205,3 +207,5 @@ var noaa = {
     },
 
 };
+
+window.addEventListener('load', noaa.initialize);

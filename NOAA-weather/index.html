@@ -54,22 +54,23 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 <body>
 <div>
 <label for="startDate">Start date:
-<input type="date" id="startDate" onchange="noaa.dateChange()" name="data-start"
-       value="2018-01-01">
+<input type="date" id="startDate" name="data-start" />
 </label>
-</div><div>
+</div>
+<div>
 <label for="endDate">End date:
-<input type="date" id="endDate" onchange="noaa.dateChange()" name="data-end"
-       value="2018-01-31">
+<input type="date" id="endDate" name="data-end" />
 </label>
-</div><div>
+</div>
+<div>
 <label><input type="radio" value="GSOM" name="frequencyControl" > monthly</label> |
 <label><input type="radio" value="GHCND"  name="frequencyControl" checked> daily</label>
-</div><div>
+</div>
+<p>
 Weather Station: <span id="stationName"></span>
+</p>
 <summary>Attributes</summary>
 <div id="dataTypeUI"></div>
-</div>
 
 <p>NOAA limits the number of results that may be returned.
     The product of the number of reports and the number of data types requested
@@ -77,9 +78,9 @@ Weather Station: <span id="stationName"></span>
     returns.
 </p>
 <hr>
-<div><button id="get-button" onclick="noaa.doGet()">get data</button></div>
+<div><button id="get-button">get data</button></div>
 
-<div id="results"></div>
+<div id="message-area"></div>
 
 <!--<details>-->
 <!--    <summary>credits</summary>-->
@@ -92,10 +93,12 @@ Weather Station: <span id="stationName"></span>
 <!--</details>-->
 </body>
 
+<!--
 <script>
     window.onload = function () {
         noaa.initialize();
     }
 </script>
+-->
 
 </html>

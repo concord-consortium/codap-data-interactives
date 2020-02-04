@@ -31,6 +31,8 @@ noaa.ui = {
 
     initialize : function(state, dataTypes) {
         var _this = this;
+        this.updateView(state);
+
         function addCustomDatatype (ev) {
             // get value
             var value = ev.target.value;
@@ -54,7 +56,7 @@ noaa.ui = {
                 }
                 state.customDataTypes.push(value);
             } else if (value) {
-                noaa.setResultMessage('"' + value + '" is not a valid NOAA CDO DataType')
+                noaa.ui.setMessage('"' + value + '" is not a valid NOAA CDO DataType')
             }
         };
         function setDataType(selectedTypes, type, isSelected) {
@@ -69,10 +71,8 @@ noaa.ui = {
                 }
             }
         }
-        document.getElementById('startDate').value = state.startDate;
-        document.getElementById('endDate').value = state.endDate;
+
         document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(dataTypes, state.selectedDataTypes);
-        document.getElementById('stationName').innerHTML = state.selectedStation.name;
 
         // activate datatype checkboxes
         const dataTypeInputs = Array.from(document.body.querySelectorAll('#dataTypeUI input'));
@@ -93,11 +93,18 @@ noaa.ui = {
         }
     },
 
+    updateView: function(state) {
+        document.getElementById('startDate').value = state.startDate;
+        document.getElementById('endDate').value = state.endDate;
+        document.getElementById('stationName').innerHTML = state.selectedStation.name;
+    },
+
     makeNewCheckbox: function  (key, name, isChecked) {
         const isCheckedClause = isChecked ? " checked" : "";
         return '<div><label><input type="checkbox" id="' + key + '" ' +
             isCheckedClause + '/>' + name + '</label></div>';
     },
+
     makeBoxes : function(iChoices, iSelectionList) {
         let out = "";
 
@@ -108,7 +115,20 @@ noaa.ui = {
         out += '<div><input type="text" id="newDataType" title="Enter NOAA CDO Datatype here" placeholder="Custom CDO Datatype"/>'
         return out;
     },
+
+    setEventHandler: function (selector, event, handler) {
+        const elements = document.querySelectorAll(selector);
+        if (!elements) { return; }
+        elements.forEach(function (el) {
+            el.addEventListener(event, handler);
+        });
+    },
+
     setStationName: function (stationName) {
         document.getElementById('stationName').innerText = stationName;
+    },
+
+    setMessage: function (message) {
+        document.getElementById("message-area").innerHTML = message;
     }
 };
