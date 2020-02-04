@@ -68,6 +68,7 @@ var noaa = {
 
         const startDate = noaa.state.startDate;
         const endDate = noaa.state.endDate;
+        const reportType = noaa.state.database==='GHCND'?'daily':'monthly';
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
         const tStationIDClause = "&stationid=" + noaa.getCheckedStations().join(
             "&stationid=");
@@ -110,7 +111,8 @@ var noaa = {
                                     where: aValue.where,
                                     latitude: aValue.station.latitude,
                                     longitude: aValue.station.longitude,
-                                    elevation: aValue.station.elevation
+                                    elevation: aValue.station.elevation,
+                                    'report type': reportType
                                 }
                                 noaa.dataRecords.push(dataRecord);
                             }

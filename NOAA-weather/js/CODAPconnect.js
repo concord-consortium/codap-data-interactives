@@ -225,6 +225,7 @@ noaa.connect = {
                     {name: "latitude", type: 'numeric', description: "Latitude of weather station"},
                     {name: "longitude", type: 'numeric', description: "Longitude of weather station"},
                     {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "meters"},
+                    {name: "report type", type: 'categorical', description: 'Daily summary or monthly summary'}
                 ]
             },
             {
