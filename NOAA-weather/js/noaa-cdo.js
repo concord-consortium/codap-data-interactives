@@ -59,7 +59,8 @@ var noaa = {
 
     stationIDs: ['GHCND:USW00014755'],
 
-    doGet: async function () {
+    doGet: async function (ev) {
+        noaa.ui.setWaitCursor(true);
         let theText = "Default text";
         let nRecords = 0;
         noaa.state.database = document.querySelector(
@@ -83,8 +84,10 @@ var noaa = {
         noaa.dataValues = [];
         try {
             if (new Date(startDate) <= new Date(endDate)) {
+                noaa.ui.setMessage('Fetching weather records from NOAA');
                 const tResult = await fetch(tRequest);
                 if (tResult.ok) {
+                    noaa.ui.setMessage('Converting weather records')
                     const theJSON = await tResult.json();
                     if (theJSON.results) {
                         noaa.dataValues = [];
@@ -113,6 +116,7 @@ var noaa = {
                             }
                             dataRecord[aValue.what] = aValue.value;
                         });
+                        noaa.ui.setMessage('Sending weather records to CODAP')
                         await noaa.connect.createNOAAItems(noaa.dataRecords,
                             noaa.getCheckedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
@@ -120,8 +124,18 @@ var noaa = {
                         resultText = 'Retrieved no observations';
                     }
                 } else {
-                    console.error("noaa.doGet() error: " + tResult.statusText);
-                    resultText = "Error. No observations retrieved.";
+                    const result = await tResult.text();
+                    var errorMessage = tResult.statusText;
+                    if (result.length && (result[0] === '<')) {
+                        try {
+                            let xmlDoc = new DOMParser().parseFromString(result, 'text/xml');
+                            errorMessage = xmlDoc.getElementsByTagName('userMessage')[0].innerHTML;
+                            errorMessage += '(' + xmlDoc.getElementsByTagName('developerMessage')[0].innerHTML + ')';
+                        } catch (e) {}
+                    }
+                    console.warn('noaa.doGet(): ' + result);
+                    console.warn("noaa.doGet() error: " + errorMessage);
+                    resultText = "Error: " + errorMessage;
                 }
             } else {
                 resultText = 'End date must be on or after start date';
@@ -131,11 +145,11 @@ var noaa = {
             resultText = 'fetch error: ' + msg;
             theText = msg;
         }
-        this.setResultMessage(resultText);
-    },
-
-    setResultMessage: function (resultText) {
         noaa.ui.setMessage(resultText);
+        ev.preventDefault();
+        this.blur();
+        noaa.ui.setWaitCursor(false);
+        return true;
     },
 
     convertNOAAtoValue: function (iRecord) {

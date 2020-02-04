@@ -130,5 +130,13 @@ noaa.ui = {
 
     setMessage: function (message) {
         document.getElementById("message-area").innerHTML = message;
+    },
+
+    setWaitCursor: function(isWait) {
+        if (isWait) {
+            document.body.classList.add('fetching');
+        } else {
+            document.body.classList.remove('fetching');
+        }
     }
 };

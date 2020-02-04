@@ -25,8 +25,13 @@ limitations under the License.
 ==========================================================================
 
 */
+html {
+    height: 100vh;
+}
+
 body {
     font-family: MuseoSans-500, sans-serif;
+    min-height: 100vh;
 }
 details {
     /*border: 1px solid #aaa;*/
@@ -68,4 +73,8 @@ p, label {
 div#dataTypeUI {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+body.fetching {
+    cursor:progress;
 }
