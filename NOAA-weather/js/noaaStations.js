@@ -408,7 +408,7 @@ noaa.stations = [
     "elevationUnit": "METERS",
     "longitude": -71.17861
   },
-
+/*
   {
     "elevation": 77.4,
     "mindate": "1957-03-01",
@@ -420,6 +420,9 @@ noaa.stations = [
     "elevationUnit": "METERS",
     "longitude": 144.8
   },
+
+ */
+/*
   {
     "elevation": 30.2,
     "mindate": "2017-03-27",
@@ -464,6 +467,8 @@ noaa.stations = [
     "elevationUnit": "METERS",
     "longitude": -66.43
   },
+
+ */
   {
     "elevation": 410,
     "mindate": "2006-04-07",
