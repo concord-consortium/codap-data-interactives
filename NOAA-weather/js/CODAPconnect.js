@@ -153,8 +153,8 @@ noaa.connect = {
                         type: 'map',
                         name: 'Weather Stations',
                         dimensions: {
-                            height: 240,
-                            width: 320
+                            height: 350,
+                            width: 500
                         }
                     }
                 })
