@@ -194,8 +194,10 @@ var noaa = {
             case "SNOW":
             case "EVAP":
             case "PRCP":
-                const decoder = noaa.dataTypes[iField].decode[noaa.state.database];
-                result = decoder(iValue);
+                const decoder = noaa.dataTypes[iField]
+                    && noaa.dataTypes[iField].decode
+                    && noaa.dataTypes[iField].decode[noaa.state.database];
+                result = decoder?decoder(iValue):iValue;
                 break;
             case "what":
                 result = noaa.dataTypes[iValue].name;
