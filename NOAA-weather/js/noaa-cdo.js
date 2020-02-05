@@ -32,7 +32,7 @@ var noaa = {
         const today = dayjs();
         const monthAgo = today.subtract(1, 'month');
 
-        await noaa.connect.initialize();
+        await noaa.connect.initialize(noaa.constants);
         var state = await noaa.connect.getInteractiveState() || {};
         state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
         state.endDate = state.endDate || today.format('YYYY-MM-DD');
@@ -44,6 +44,12 @@ var noaa = {
             noaa.dataTypes[name] = {name:name};
         });
         noaa.state = state;
+        noaa.connect.createStationsDataset(noaa.stations, function (stationID) {
+            noaa.state.selectedStation = stationID? noaa.stations.find(function (sta) {
+                        return stationID === sta.id;
+                    }): null;
+            noaa.ui.setStationName(noaa.state.selectedStation?noaa.state.selectedStation.name:'');
+        });
 
         noaa.ui.initialize(state, noaa.dataTypes);
 
@@ -68,10 +74,14 @@ var noaa = {
 
         const startDate = noaa.state.startDate;
         const endDate = noaa.state.endDate;
+        const reportType = noaa.state.database==='GHCND'?'daily':'monthly';
+        const typeNames = noaa.getCheckedDataTypes().map(function (dataType) {
+            return dataType.name;
+        })
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
         const tStationIDClause = "&stationid=" + noaa.getCheckedStations().join(
             "&stationid=");
-        const tDataTypeIDClause = "&datatypeid=" + noaa.getCheckedDataTypes().join(
+        const tDataTypeIDClause = "&datatypeid=" + typeNames.join(
             "&datatypeid=");
         const tDateClause = "&startdate=" + startDate + "&enddate=" + endDate;
 
@@ -110,15 +120,16 @@ var noaa = {
                                     where: aValue.where,
                                     latitude: aValue.station.latitude,
                                     longitude: aValue.station.longitude,
-                                    elevation: aValue.station.elevation
+                                    elevation: aValue.station.elevation,
+                                    'report type': reportType
                                 }
                                 noaa.dataRecords.push(dataRecord);
                             }
                             dataRecord[aValue.what] = aValue.value;
                         });
                         noaa.ui.setMessage('Sending weather records to CODAP')
-                        await noaa.connect.createNOAAItems(noaa.dataRecords,
-                            noaa.getCheckedDataTypes());
+                        await noaa.connect.createNOAAItems(noaa.constants,
+                            noaa.dataRecords, noaa.getCheckedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
                     } else {
                         resultText = 'Retrieved no observations';
@@ -177,7 +188,9 @@ var noaa = {
     },
 
     getCheckedDataTypes : function() {
-        return noaa.state.selectedDataTypes;
+        return noaa.state.selectedDataTypes.map(function (typeName) {
+            return noaa.dataTypes[typeName];
+        });
     },
 
     decodeData: function (iField, iValue) {
