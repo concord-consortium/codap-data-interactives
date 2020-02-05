@@ -31,8 +31,6 @@ Find station IDs:
 https://www.ncdc.noaa.gov/cdo-web/search
 */
 /*global noaa:true */
-noaa.defaultStations = ["GHCND:USC00040693", "GHCND:USC00049152"];     //  berkeley, ucla
-
 noaa.stations = [
   {
     "elevation": 228.6,

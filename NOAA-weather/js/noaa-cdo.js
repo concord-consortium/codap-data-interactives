@@ -55,6 +55,50 @@ var noaa = {
 
         noaa.ui.setEventHandler('#startDate,#endDate', 'change', noaa.dateChange);
         noaa.ui.setEventHandler('#get-button', 'click', noaa.doGet);
+        noaa.ui.setEventHandler('#newDataType', 'blur', this.newDataTypeHandler);
+        noaa.ui.setEventHandler('#newDataType', 'keydown', function (ev) {
+            if (ev.code==='Enter' || ev.code === 'Tab') {
+                noaa.newDataTypeHandler(ev);
+            }
+            return true;
+        });
+    },
+
+    newDataTypeHandler: function (ev) {
+        function setDataType(selectedTypes, type, isSelected) {
+            if (isSelected) {
+                if(selectedTypes.indexOf(type) < 0) {
+                    selectedTypes.push(type);
+                }
+            } else {
+                const typeIx = selectedTypes.indexOf(type);
+                if (typeIx >= 0) {
+                    selectedTypes.splice(typeIx, 1);
+                }
+            }
+        }
+        // get value
+        var value = ev.target.value;
+        // verify that datatype exists
+        if (value && (noaa.dataTypeIDs.indexOf(value) >= 0)) {
+            // make new record
+            noaa.dataTypes[value] = {name: value};
+            // make new datatype checkbox
+            const newCheckHTML = noaa.ui.makeNewCheckbox(value, value, true);
+            noaa.ui.insertCheckboxAtEnd(newCheckHTML);
+            // clear current input
+            ev.target.value = '';
+            ev.target.focus();
+            // add datatype selection to state
+            setDataType(noaa.state.selectedDataTypes, value, true);
+            // add custom datatype to stat
+            if (!noaa.state.customDataTypes) {
+                noaa.state.customDataTypes = [];
+            }
+            noaa.state.customDataTypes.push(value);
+        } else if (value) {
+            noaa.ui.setMessage('"' + value + '" is not a valid NOAA CDO DataType');
+        }
     },
 
     dataValues: [], dataRecords: [],
