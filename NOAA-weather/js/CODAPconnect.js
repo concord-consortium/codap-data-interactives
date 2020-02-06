@@ -180,6 +180,9 @@ noaa.connect = {
         });
     },
 
+    addNotificationHandler: function (action, resource, handler) {
+        codapInterface.on(action, resource, handler);
+    },
     /**
      * Tell CODAP to make items.
      * @param pluginProperties object: must name DSName, name of weather dataset.
@@ -202,6 +205,28 @@ noaa.connect = {
                 "type": "caseTable",
                 "dataContext": props.DSName
             }
+        });
+    },
+
+    selectStations: async function (stationNames) {
+        const dsName = 'US-Weather-Stations';
+        const collectionName = 'US Weather Stations';
+        const req = stationNames.map(function (stationName) {
+           return {
+               action: 'get',
+               resource: `dataContext[${dsName}].collection[${collectionName}].caseSearch[name==${stationName}]`
+           }
+        });
+        const reply = await codapInterface.sendRequest(req);
+        const selectionList = reply.filter(function (r) {
+                return r && r.success;
+            }).map(function (r) {
+                return r.values[0].id;
+            });
+        await codapInterface.sendRequest({
+            action: 'create',
+            resource: `dataContext[${dsName}].selectionList`,
+            values: selectionList
         });
     },
 

@@ -46,10 +46,12 @@ var noaa = {
         noaa.state = state;
         noaa.connect.createStationsDataset(noaa.stations, function (stationID) {
             noaa.state.selectedStation = stationID? noaa.stations.find(function (sta) {
-                        return stationID === sta.id;
-                    }): null;
+                    return stationID === sta.id;
+            }): null;
             noaa.ui.setStationName(noaa.state.selectedStation?noaa.state.selectedStation.name:'');
         });
+        noaa.connect.addNotificationHandler('notify',
+            `dataContextChangeNotice[${noaa.constants.DSName}]`, noaa.noaaWeatherSelectionHandler );
 
         noaa.ui.initialize(state, noaa.dataTypes);
 
@@ -101,10 +103,27 @@ var noaa = {
         }
     },
 
+    noaaWeatherSelectionHandler: async function (req) {
+        if (req.values.operation === 'selectCases') {
+            const myCases = req.values.result && req.values.result.cases;
+            const myStations = myCases.filter(function (myCase) {
+               return (myCase.collection.name === noaa.constants.DSName);
+            }).map(function (myCase) {
+                return (myCase.values.where);
+            });
+            await noaa.connect.selectStations(myStations);
+        }
+    },
+
     dataValues: [], dataRecords: [],
 
     state: {
-        startDate: null, endDate: null, database: null,
+        startDate: null,
+        endDate: null,
+        database: null,
+        selectedStation: null,
+        selectedDataTypes: null,
+        customDataTypes: null
     },
 
     stationIDs: ['GHCND:USW00014755'],
@@ -119,11 +138,11 @@ var noaa = {
         const startDate = noaa.state.startDate;
         const endDate = noaa.state.endDate;
         const reportType = noaa.state.database==='GHCND'?'daily':'monthly';
-        const typeNames = noaa.getCheckedDataTypes().map(function (dataType) {
+        const typeNames = noaa.getSelectedDataTypes().map(function (dataType) {
             return dataType.name;
         })
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
-        const tStationIDClause = "&stationid=" + noaa.getCheckedStations().join(
+        const tStationIDClause = "&stationid=" + noaa.getSelectedStations().join(
             "&stationid=");
         const tDataTypeIDClause = "&datatypeid=" + typeNames.join(
             "&datatypeid=");
@@ -173,7 +192,7 @@ var noaa = {
                         });
                         noaa.ui.setMessage('Sending weather records to CODAP')
                         await noaa.connect.createNOAAItems(noaa.constants,
-                            noaa.dataRecords, noaa.getCheckedDataTypes());
+                            noaa.dataRecords, noaa.getSelectedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
                     } else {
                         resultText = 'Retrieved no observations';
@@ -227,11 +246,11 @@ var noaa = {
         return noaa.stations.find(function (sta) {return id === sta.id; });
     },
 
-    getCheckedStations : function() {
+    getSelectedStations : function() {
         return [noaa.state.selectedStation && noaa.state.selectedStation.id];
     },
 
-    getCheckedDataTypes : function() {
+    getSelectedDataTypes : function() {
         return noaa.state.selectedDataTypes.map(function (typeName) {
             return noaa.dataTypes[typeName];
         });
