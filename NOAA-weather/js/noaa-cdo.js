@@ -32,7 +32,7 @@ var noaa = {
         const today = dayjs();
         const monthAgo = today.subtract(1, 'month');
 
-        await noaa.connect.initialize();
+        await noaa.connect.initialize(noaa.constants);
         var state = await noaa.connect.getInteractiveState() || {};
         state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
         state.endDate = state.endDate || today.format('YYYY-MM-DD');
@@ -44,17 +44,86 @@ var noaa = {
             noaa.dataTypes[name] = {name:name};
         });
         noaa.state = state;
+        noaa.connect.createStationsDataset(noaa.stations, function (stationID) {
+            noaa.state.selectedStation = stationID? noaa.stations.find(function (sta) {
+                    return stationID === sta.id;
+            }): null;
+            noaa.ui.setStationName(noaa.state.selectedStation?noaa.state.selectedStation.name:'');
+        });
+        noaa.connect.addNotificationHandler('notify',
+            `dataContextChangeNotice[${noaa.constants.DSName}]`, noaa.noaaWeatherSelectionHandler );
 
         noaa.ui.initialize(state, noaa.dataTypes);
 
         noaa.ui.setEventHandler('#startDate,#endDate', 'change', noaa.dateChange);
         noaa.ui.setEventHandler('#get-button', 'click', noaa.doGet);
+        noaa.ui.setEventHandler('#newDataType', 'blur', this.newDataTypeHandler);
+        noaa.ui.setEventHandler('#newDataType', 'keydown', function (ev) {
+            if (ev.code==='Enter' || ev.code === 'Tab') {
+                noaa.newDataTypeHandler(ev);
+            }
+            return true;
+        });
+    },
+
+    newDataTypeHandler: function (ev) {
+        function setDataType(selectedTypes, type, isSelected) {
+            if (isSelected) {
+                if(selectedTypes.indexOf(type) < 0) {
+                    selectedTypes.push(type);
+                }
+            } else {
+                const typeIx = selectedTypes.indexOf(type);
+                if (typeIx >= 0) {
+                    selectedTypes.splice(typeIx, 1);
+                }
+            }
+        }
+        // get value
+        var value = ev.target.value;
+        // verify that datatype exists
+        if (value && (noaa.dataTypeIDs.indexOf(value) >= 0)) {
+            // make new record
+            noaa.dataTypes[value] = {name: value};
+            // make new datatype checkbox
+            const newCheckHTML = noaa.ui.makeNewCheckbox(value, value, true);
+            noaa.ui.insertCheckboxAtEnd(newCheckHTML);
+            // clear current input
+            ev.target.value = '';
+            ev.target.focus();
+            // add datatype selection to state
+            setDataType(noaa.state.selectedDataTypes, value, true);
+            // add custom datatype to stat
+            if (!noaa.state.customDataTypes) {
+                noaa.state.customDataTypes = [];
+            }
+            noaa.state.customDataTypes.push(value);
+        } else if (value) {
+            noaa.ui.setMessage('"' + value + '" is not a valid NOAA CDO DataType');
+        }
+    },
+
+    noaaWeatherSelectionHandler: async function (req) {
+        if (req.values.operation === 'selectCases') {
+            const myCases = req.values.result && req.values.result.cases;
+            const myStations = myCases.filter(function (myCase) {
+               return (myCase.collection.name === noaa.constants.DSName);
+            }).map(function (myCase) {
+                return (myCase.values.where);
+            });
+            await noaa.connect.selectStations(myStations);
+        }
     },
 
     dataValues: [], dataRecords: [],
 
     state: {
-        startDate: null, endDate: null, database: null,
+        startDate: null,
+        endDate: null,
+        database: null,
+        selectedStation: null,
+        selectedDataTypes: null,
+        customDataTypes: null
     },
 
     stationIDs: ['GHCND:USW00014755'],
@@ -69,10 +138,13 @@ var noaa = {
         const startDate = noaa.state.startDate;
         const endDate = noaa.state.endDate;
         const reportType = noaa.state.database==='GHCND'?'daily':'monthly';
+        const typeNames = noaa.getSelectedDataTypes().map(function (dataType) {
+            return dataType.name;
+        })
         const tDatasetIDClause = "&datasetid=" + noaa.state.database;
-        const tStationIDClause = "&stationid=" + noaa.getCheckedStations().join(
+        const tStationIDClause = "&stationid=" + noaa.getSelectedStations().join(
             "&stationid=");
-        const tDataTypeIDClause = "&datatypeid=" + noaa.getCheckedDataTypes().join(
+        const tDataTypeIDClause = "&datatypeid=" + typeNames.join(
             "&datatypeid=");
         const tDateClause = "&startdate=" + startDate + "&enddate=" + endDate;
 
@@ -119,8 +191,8 @@ var noaa = {
                             dataRecord[aValue.what] = aValue.value;
                         });
                         noaa.ui.setMessage('Sending weather records to CODAP')
-                        await noaa.connect.createNOAAItems(noaa.dataRecords,
-                            noaa.getCheckedDataTypes());
+                        await noaa.connect.createNOAAItems(noaa.constants,
+                            noaa.dataRecords, noaa.getSelectedDataTypes());
                         resultText = "Retrieved " + noaa.dataRecords.length + " cases";
                     } else {
                         resultText = 'Retrieved no observations';
@@ -174,12 +246,14 @@ var noaa = {
         return noaa.stations.find(function (sta) {return id === sta.id; });
     },
 
-    getCheckedStations : function() {
+    getSelectedStations : function() {
         return [noaa.state.selectedStation && noaa.state.selectedStation.id];
     },
 
-    getCheckedDataTypes : function() {
-        return noaa.state.selectedDataTypes;
+    getSelectedDataTypes : function() {
+        return noaa.state.selectedDataTypes.map(function (typeName) {
+            return noaa.dataTypes[typeName];
+        });
     },
 
     decodeData: function (iField, iValue) {
