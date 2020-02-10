@@ -283,7 +283,7 @@ var noaa = {
     },
 
     constants: {
-        version: "0003",
+        version: "0004",
 
         noaaToken: "rOoVmDbneHBSRPVuwNQkoLblqTSkeayC",
         noaaBaseURL: "https://www.ncdc.noaa.gov/cdo-web/api/v2/",
