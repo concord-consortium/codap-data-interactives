@@ -83,6 +83,10 @@ function findMatchingSource(datasetList, resourceName) {
 }
 
 function findDatasetMatchingAttributes(datasetList, attributeNames) {
+  let canonicalAttributeNames = attributeNames.map(function (name) {
+    let parts = codapHelper.analyzeRawName(name, true);
+    return parts.baseName;
+  });
   let foundDataset = datasetList && datasetList.find(function (dataset) {
     var existingDatasetAttributeNames = [];
     dataset.collections && dataset.collections.forEach(function (collection) {
@@ -90,7 +94,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
         existingDatasetAttributeNames.push(attr.name || attr.title);
       });
     });
-    let unmatchedAttributeName = attributeNames.find(function (name) {
+    let unmatchedAttributeName = canonicalAttributeNames.find(function (name) {
       return name && (existingDatasetAttributeNames.indexOf(name) < 0);
     });
     return (unmatchedAttributeName == null);
