@@ -132,6 +132,7 @@ app.config = {
       ipumsName: 'EDUC',
       title: 'Education-years',
       hasCategoryMap: true,
+      displayMe: false,
       group: 1,
       defCheck: false,
       description: 'reports the individual’s level of educational ' +
@@ -200,6 +201,7 @@ app.config = {
     {
       ipumsName: 'RACE',
       title: 'Race-multi',
+      displayMe: false,
       group: 2,
       defCheck: false,
       description: 'reports each individual’s race according to 9 categories, ' +
@@ -210,6 +212,7 @@ app.config = {
       ipumsName: 'RACESING',
       title: 'Race-single',
       group: 2,
+      displayMe: false,
       defCheck: false,
       description: 'assigns individuals to one of 5 race categories and ' +
       'assigns a single race to multiple-race people. Comparable over time, ' +
@@ -413,6 +416,7 @@ app.config = {
       ipumsName: 'BPL',
       title: 'Birthplace',
       group: 2,
+      displayMe: false,
       defCheck: false,
       description: 'reports where in the world the respondent was born. ' +
       'Includes up to 188 location categories. Consider working instead ' +
@@ -511,6 +515,7 @@ app.config = {
     {
       ipumsName: 'OCC1950',
       title: 'Occupation_1950_basis',
+      displayMe: false,
       group: 3,
       defCheck: false,
       description: 'reports the person’s primary occupation, using ' +
@@ -559,6 +564,7 @@ app.config = {
       ipumsName: 'OCC1990',
       title: 'Occupation_1990_basis',
       group: 3,
+      displayMe: false,
       defCheck: false,
       description: 'reports the person’s primary occupation, using a ' +
       'modified version of the 1990 Census Bureau occupational ' +
@@ -604,6 +610,7 @@ app.config = {
       ipumsName: 'IND1950',
       title: 'Industry_1950',
       group: 3,
+      displayMe: false,
       defCheck: false,
       description: 'reports the industry of the individual, using the 1950 Census Bureau industrial classification system.'
     },
@@ -644,6 +651,7 @@ app.config = {
     {
       ipumsName: 'IND1990',
       title: 'Industry_1990',
+      displayMe: false,
       group: 3,
       defCheck: false,
       description: 'reports the industry of the individual, using the 1990 Census Bureau industrial classification system. There are several hundred industry categories. This attribute is not available for data collected prior to 1950.'
@@ -744,6 +752,7 @@ app.config = {
       ipumsName: 'REGION',
       title: 'Region',
       group: 5,
+      displayMe: false,
       defCheck: false,
       description: 'identifies the U.S. Census region and division where the individual lives. There are four primary regions and nine primary divisions of the U.S., with additional categories for mixed divisions. Consider using Region_recode or Region-division_recode for less detailed versions of this variable.'
     },
