@@ -26,6 +26,11 @@ limitations under the License.
 ==========================================================================
 
 */
+//import connect from './CODAPconnect.js';
+// import * as ui from './noaa.ui.js';
+// import * from './noaaDataTypes';
+// import * as stations from './noaaStations';
+
 var noaa = {
 
     initialize: async function () {
@@ -300,4 +305,6 @@ var noaa = {
 
 };
 
+
+// noaa.connect = connect;
 window.addEventListener('load', noaa.initialize);

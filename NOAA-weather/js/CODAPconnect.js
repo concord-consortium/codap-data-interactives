@@ -284,3 +284,5 @@ noaa.connect = {
         };
     }
 };
+
+//export {connect};

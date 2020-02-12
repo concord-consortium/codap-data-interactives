@@ -153,8 +153,12 @@ async function determineIfAutoImportApplies(dataSetList) {
   let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
+    let matchingMetadata = matchingDataset.metadata || {};
+    let uploadTimeSentence = matchingMetadata.importDate
+        ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
+        : '';
     uiControl.displayMessage('There already exists a dataset like this one,' +
-        `"${matchingDataset.title}". It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
+        ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
         '#target-message');
     uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
     uiControl.showSection('target-options', true);
