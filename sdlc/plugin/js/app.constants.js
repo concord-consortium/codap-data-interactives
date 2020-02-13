@@ -18,7 +18,7 @@
 /* global app */
 
 app.constants = {
-  version: "v0002",
+  version: "v0003",
 
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
