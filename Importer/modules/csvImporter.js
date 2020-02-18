@@ -108,7 +108,12 @@ async function retrieveData(config) {
     defaultAttrName: 'attr'
   };
   let importDate = new Date();
-  if (config.url) {
+  if (config.text) {
+    dataSet.resourceDescription = composeResourceDescription('local file -- ' +
+        (config.datasetName || config.filename ), importDate);
+    dataSet.table = await Promise.resolve(parseCSVString(config.text));
+    dataSet.sourceType = 'text';
+  } else if (config.url) {
     let name = config.datasetName || config.url;
     dataSet.resourceDescription = composeResourceDescription(name, importDate);
     dataSet.table = await fetchAndParseURL(config.url);
@@ -117,11 +122,9 @@ async function retrieveData(config) {
     dataSet.resourceDescription = composeResourceDescription(config.datasetName || config.file.name, importDate);
     dataSet.table = await readAndParseFile(config.file);
     dataSet.sourceType = 'file';
-  } else if (config.text) {
-    dataSet.resourceDescription = composeResourceDescription('local file -- ' +
-        (config.datasetName || config.filename ), importDate);
-    dataSet.table = await Promise.resolve(parseCSVString(config.text));
-    dataSet.sourceType = 'text';
+  } else
+  {
+    console.log('csvImporter: expected text, url, or file: found none');
   }
   findOrCreateAttributeNames(dataSet);
   return dataSet;

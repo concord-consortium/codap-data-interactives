@@ -268,7 +268,7 @@ async function retrieveData(retrievalProperties) {
   if (!contentType) {
     contentType = inferContentType(retrievalProperties.file, retrievalProperties.url);
   }
-  if (contentType === 'text/csv') {
+  if (contentType === 'text/csv' || contentType === 'text/plain') {
     dataset = await csvImporter.retrieveData(retrievalProperties);
   }
   else if (contentType === 'text/html') {
