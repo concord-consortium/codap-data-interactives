@@ -293,10 +293,10 @@ function analyzeRawName(iName, iReplaceNonWordCharacters) {
   let tUnitMatch = tReg.exec(iName.trim());
   let tUnit = (tUnitMatch && tUnitMatch.length)? tUnitMatch[1]: null;
 
-  let tNewName = iName.trim().replace(tReg, '');  // Get rid of parenthesized units
+  let tNewName = iName.trim().replace(tReg, '').replace('_', ' ');  // Get rid of parenthesized units
 
   if (iReplaceNonWordCharacters)
-    tNewName = tNewName.replace(/\W/g, '_');  // Replace non-word characters with underscore
+    tNewName = tNewName.replace(/\W /g, '_');  // Replace non-word characters with underscore
   // if after all this we have an empty string replace with a default name.
   if (tNewName.length === 0) {
     tNewName = 'attr';
