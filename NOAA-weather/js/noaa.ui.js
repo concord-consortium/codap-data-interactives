@@ -40,7 +40,7 @@ noaa.ui = {
         dataTypeInputs.forEach(function (node) {
            node.onclick = function (ev) {
                if (this.type==='checkbox') {
-                   setDataType(state.selectedDataTypes, this.id, this.checked);
+                   noaa.setDataType(this.id, this.checked);
                }
            }
         });

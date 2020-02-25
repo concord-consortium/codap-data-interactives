@@ -71,19 +71,21 @@ var noaa = {
         });
     },
 
-    newDataTypeHandler: function (ev) {
-        function setDataType(selectedTypes, type, isSelected) {
-            if (isSelected) {
-                if(selectedTypes.indexOf(type) < 0) {
-                    selectedTypes.push(type);
-                }
-            } else {
-                const typeIx = selectedTypes.indexOf(type);
-                if (typeIx >= 0) {
-                    selectedTypes.splice(typeIx, 1);
-                }
+    setDataType: function (type, isSelected) {
+        let selectedTypes = noaa.state.selectedDataTypes;
+        if (isSelected) {
+            if(selectedTypes.indexOf(type) < 0) {
+                selectedTypes.push(type);
+            }
+        } else {
+            const typeIx = selectedTypes.indexOf(type);
+            if (typeIx >= 0) {
+                selectedTypes.splice(typeIx, 1);
             }
         }
+    },
+
+    newDataTypeHandler: function (ev) {
         // get value
         var value = ev.target.value;
         // verify that datatype exists
@@ -97,7 +99,7 @@ var noaa = {
             ev.target.value = '';
             ev.target.focus();
             // add datatype selection to state
-            setDataType(noaa.state.selectedDataTypes, value, true);
+            noaa.setDataType(value, true);
             // add custom datatype to stat
             if (!noaa.state.customDataTypes) {
                 noaa.state.customDataTypes = [];
@@ -288,7 +290,7 @@ var noaa = {
     },
 
     constants: {
-        version: "0004",
+        version: "v0005",
 
         noaaToken: "rOoVmDbneHBSRPVuwNQkoLblqTSkeayC",
         noaaBaseURL: "https://www.ncdc.noaa.gov/cdo-web/api/v2/",
