@@ -31,7 +31,12 @@ Find station IDs:
 https://www.ncdc.noaa.gov/cdo-web/search
 */
 /*global noaa:true */
-noaa.stations = [
+function findStation (id) {
+  return stations.find(function (sta) {return id === sta.id; });
+}
+
+
+let stations = [
   {
     "elevation": 228.6,
     "mindate": "2012-07-05",
@@ -26330,3 +26335,4 @@ noaa.stations = [
   }
 ];
 
+export {findStation, stations};

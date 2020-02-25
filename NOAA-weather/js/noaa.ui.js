@@ -27,24 +27,28 @@ limitations under the License.
 */
 
 
-noaa.ui = {
+let ui = {
 
-    initialize : function(state, dataTypes) {
+    initialize : function(state, dataTypes, eventHandlers) {
         var _this = this;
         this.updateView(state);
 
         document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(dataTypes, state.selectedDataTypes);
 
-        // activate datatype checkboxes
-        const dataTypeInputs = Array.from(document.body.querySelectorAll('#dataTypeUI input'));
-        dataTypeInputs.forEach(function (node) {
-           node.onclick = function (ev) {
-               if (this.type==='checkbox') {
-                   noaa.setDataType(this.id, this.checked);
-               }
-           }
-        });
         const newTypeInput = document.getElementById('newDataType');
+
+        this.setEventHandler('#dataTypeUI input', 'click', eventHandlers.dataTypeSelector)
+        this.setEventHandler('#startDate,#endDate', 'change', eventHandlers.dateChange);
+        this.setEventHandler('#get-button', 'click', eventHandlers.getData);
+        this.setEventHandler('#newDataType', 'blur', eventHandlers.newDataType);
+        this.setEventHandler('#newDataType', 'keydown', function (ev) {
+            if (ev.code==='Enter' || ev.code === 'Tab') {
+                eventHandlers.newDataType(ev);
+            }
+            return true;
+        });
+        this.setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
+
     },
 
     updateView: function(state) {
@@ -100,3 +104,5 @@ noaa.ui = {
         }
     }
 };
+
+export {ui};

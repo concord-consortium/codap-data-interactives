@@ -26,9 +26,9 @@ limitations under the License.
 
 */
 /*global noaa:true */
-noaa.defaultDataTypes = ["TMAX"];
+let defaultDataTypes = ["TMAX"];
 
-noaa.dataTypes = {
+let dataTypes = {
     "TMAX": {
         "name": "tMax",
         "units" : "°C",
@@ -137,7 +137,7 @@ noaa.dataTypes = {
 // All remotely current dataType ids.
 // From this query:
 // curl -H token:myToken 'https://www.ncdc.noaa.gov/cdo-web/api/v2/datatypes?limit=1000&startdate=2011-01-01' | jq '[.results[].id]'
-noaa.dataTypeIDs = [
+let dataTypeIDs = [
     "ALL",
     "AWND",
     "CDSD",
@@ -522,3 +522,5 @@ noaa.dataTypeIDs = [
     "WT21",
     "WT22"
 ];
+
+export {defaultDataTypes, dataTypes, dataTypeIDs};
