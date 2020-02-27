@@ -50,7 +50,7 @@ var noaaNCEIConnect = {
                 // const typeNames = noaaNCEIConnect.getSelectedDataTypes().map(function (dataType) {
                 //     return dataType.name;
                 // })
-                const tDatasetIDClause = "dataset=" + 'daily-summaries';
+                const tDatasetIDClause = "dataset=" + noaaNCEIConnect.state.database;
                 const tStationIDClause = "stations=" + noaaNCEIConnect.getSelectedStations().join();
                 const tDataTypeIDClause = "dataTypes=" + noaaNCEIConnect.state.selectedDataTypes.join();
                 const tstartDateClause = "startDate=" + startDate;
@@ -75,16 +75,16 @@ var noaaNCEIConnect = {
             }
         }
 
-        async function processResults(results) {
+        async function processResults(results, reportType) {
             let dataRecords = [];
             results.forEach((r) => {
                 nRecords++;
                 theText += "<br>" + JSON.stringify(r);
                 const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
-                aValue.latitude = aValue.station.latitude,
-                aValue.longitude = aValue.station.longitude,
-                aValue.elevation = aValue.station.elevation,
-                aValue['report type'] = reportType
+                aValue.latitude = aValue.station.latitude;
+                aValue.longitude = aValue.station.longitude;
+                aValue.elevation = aValue.station.elevation;
+                aValue['report type'] = reportType;
                 dataRecords.push(aValue);
             });
             ui.setMessage('Sending weather records to CODAP')
@@ -112,7 +112,7 @@ var noaaNCEIConnect = {
         let theText = "Default text";
         let nRecords = 0;
 
-        const reportType = noaaNCEIConnect.state.database==='GHCND'?'daily':'monthly';
+        const reportType = noaaNCEIConnect.constants.reportTypeMap[noaaNCEIConnect.state.database];
         let tURL = composeURL();
 
         // let tHeaders = new Headers();
@@ -129,7 +129,7 @@ var noaaNCEIConnect = {
                     ui.setMessage('Converting weather records')
                     const theJSON = await tResult.json();
                     if (theJSON) {
-                        resultText = await processResults(theJSON);
+                        resultText = await processResults(theJSON, reportType);
                     } else {
                         resultText = 'Retrieved no observations';
                     }

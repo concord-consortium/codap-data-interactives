@@ -37,6 +37,11 @@ let constants = {
   recordCountLimit: 1000,
   tallDimensions: {height: 444, width: 333},
   version: 'v0005',
+  reportTypeMap: {
+    'daily-summaries': 'daily',
+    'global-summary-of-the-month': 'monthly',
+    'global-hourly': 'hourly'
+  }
 }
 
 let state = {
@@ -75,7 +80,7 @@ function initializeState(state) {
   const monthAgo = today.subtract(1, 'month');
   state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
   state.endDate = state.endDate || today.format('YYYY-MM-DD');
-  state.database = state.database || 'GHCND';
+  state.database = state.database || 'daily-summaries';
 
   state.selectedStation = state.selectedStation || stationDB.findStation(constants.defaultStationID);
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;

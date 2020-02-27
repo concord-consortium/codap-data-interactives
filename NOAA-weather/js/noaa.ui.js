@@ -69,7 +69,7 @@ let ui = {
         // append to dom
         const insertionPoint = document.body.querySelector('#dataTypeUI div:last-child');
         insertionPoint.insertAdjacentHTML('beforeBegin', checkboxHTML);
-        el.addEventListener('click', this.eventHandlers.dataTypeSelector);
+        insertionPoint.previousElementSibling.addEventListener('click', this.eventHandlers.dataTypeSelector);
     },
 
     makeBoxes : function(iChoices, iSelectionList) {
