@@ -35,7 +35,7 @@ let dataTypes = {
         "description": "Maximum temperature",
         "decode": {
             "GHCND": function (v) {
-                return v / 10;
+                return v;
             },
             "GSOM": function (v) {
                 return v;
@@ -49,7 +49,7 @@ let dataTypes = {
         "description": "Minimum temperature",
         "decode": {
             "GHCND": function (v) {
-                return v / 10;
+                return v;
             },
             "GSOM": function (v) {
                 return v;
@@ -63,7 +63,7 @@ let dataTypes = {
         "description": "Average temperature",
         "decode": {
             "GHCND": function (v) {
-                return v / 10;
+                return v;
             },
             "GSOM": function (v) {
                 return v;

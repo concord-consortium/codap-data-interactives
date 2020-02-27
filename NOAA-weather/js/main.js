@@ -17,24 +17,26 @@
 //  limitations under the License.
 // ==========================================================================
 /* global noaa */
-import {findStation, stations} from './noaaStations';
+import * as stationDB from './noaaStations';
 import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes';
 import {ui} from './noaa.ui';
 import * as codapConnect from './CODAPconnect.js';
-import {noaaCDOConnect} from "./noaa-cdo";
+// import {noaaCDOConnect} from './noaa-cdo';
+import {noaaNCEIConnect} from './noaa-ncei';
 
 let constants = {
-  defaultEnd: "2020-01-31",
-  defaultStart: "2020-01-01",
-  defaultStationID: 'GHCND:USW00014755',
+  defaultEnd: '2020-01-31',
+  defaultStart: '2020-01-01',
+  defaultStationID: 'USW00014755',
   dimensions: {height: 120, width: 333},
-  DSName: "NOAA-Weather",
-  DSTitle: "NOAA Weather",
-  noaaBaseURL: "https://www.ncdc.noaa.gov/cdo-web/api/v2/",
-  noaaToken: "rOoVmDbneHBSRPVuwNQkoLblqTSkeayC",
+  DSName: 'NOAA-Weather',
+  DSTitle: 'NOAA Weather',
+  noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/',
+  noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
+  nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
   tallDimensions: {height: 444, width: 333},
-  version: "v0005",
+  version: 'v0005',
 }
 
 let state = {
@@ -53,7 +55,7 @@ async function initialize() {
 
   initializeState(state);
 
-  codapConnect.createStationsDataset(stations, stationSelectionHandler);
+  codapConnect.createStationsDataset(stationDB.stations, stationSelectionHandler);
   codapConnect.addNotificationHandler('notify',
       `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
 
@@ -61,11 +63,11 @@ async function initialize() {
     dataTypeSelector: dataTypeSelectionHandler,
     dateChange: dateChangeHandler,
     frequencyControl: frequencyControlHandler,
-    getData: noaaCDOConnect.doGetHandler,
+    getData: noaaNCEIConnect.doGetHandler,
     newDataType: newDataTypeHandler,
   });
 
-  noaaCDOConnect.initialize(state, constants);
+  noaaNCEIConnect.initialize(state, constants);
 }
 
 function initializeState(state) {
@@ -75,13 +77,25 @@ function initializeState(state) {
   state.endDate = state.endDate || today.format('YYYY-MM-DD');
   state.database = state.database || 'GHCND';
 
-  state.selectedStation = state.selectedStation || stations.find(function (sta) {
-    return sta.id === constants.defaultStationID;
-  })
+  state.selectedStation = state.selectedStation || stationDB.findStation(constants.defaultStationID);
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
   state.customDataTypes && state.customDataTypes.forEach(function (name) {
     dataTypes[name] = {name:name};
   });
+}
+
+function setDataType(type, isSelected) {
+  let selectedTypes = state.selectedDataTypes;
+  if (isSelected) {
+    if(selectedTypes.indexOf(type) < 0) {
+      selectedTypes.push(type);
+    }
+  } else {
+    const typeIx = selectedTypes.indexOf(type);
+    if (typeIx >= 0) {
+      selectedTypes.splice(typeIx, 1);
+    }
+  }
 }
 
 /*
@@ -100,24 +114,8 @@ async function noaaWeatherSelectionHandler(req) {
 }
 
 function stationSelectionHandler(stationID) {
-  state.selectedStation = stationID? stations.find(function (sta) {
-    return stationID === sta.id;
-  }): null;
+  state.selectedStation = stationID? stationDB.findStation(stationID) : null;
   ui.setStationName(state.selectedStation?state.selectedStation.name:'');
-}
-
-function setDataType(type, isSelected) {
-  let selectedTypes = state.selectedDataTypes;
-  if (isSelected) {
-    if(selectedTypes.indexOf(type) < 0) {
-      selectedTypes.push(type);
-    }
-  } else {
-    const typeIx = selectedTypes.indexOf(type);
-    if (typeIx >= 0) {
-      selectedTypes.splice(typeIx, 1);
-    }
-  }
 }
 
 /*
@@ -146,6 +144,7 @@ function newDataTypeHandler(ev) {
   } else if (value) {
     ui.setMessage('"' + value + '" is not a valid NOAA CDO DataType');
   }
+  ev.stopPropagation();
 }
 
 function frequencyControlHandler (event) {
@@ -153,8 +152,8 @@ function frequencyControlHandler (event) {
 }
 
 function dateChangeHandler() {
-  state.startDate = document.getElementById("startDate").value;
-  state.endDate = document.getElementById("endDate").value;
+  state.startDate = document.getElementById('startDate').value;
+  state.endDate = document.getElementById('endDate').value;
 }
 
 function dataTypeSelectionHandler(ev) {

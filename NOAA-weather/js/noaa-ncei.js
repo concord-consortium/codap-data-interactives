@@ -31,7 +31,7 @@ import {ui} from './noaa.ui';
 import {dataTypes} from './noaaDataTypes';
 import {findStation, stations} from './noaaStations';
 
-var noaaCDOConnect = {
+var noaaNCEIConnect = {
 
     state: null,
 
@@ -44,57 +44,52 @@ var noaaCDOConnect = {
 
     doGetHandler: async function (ev) {
         function composeURL () {
-            const startDate = noaaCDOConnect.state.startDate;
-            const endDate = noaaCDOConnect.state.endDate;
+            const startDate = noaaNCEIConnect.state.startDate;
+            const endDate = noaaNCEIConnect.state.endDate;
             if (new Date(startDate) <= new Date(endDate)) {
-                const typeNames = noaaCDOConnect.getSelectedDataTypes().map(function (dataType) {
-                    return dataType.name;
-                })
-                const tDatasetIDClause = "&datasetid=" + noaaCDOConnect.state.database;
-                const tStationIDClause = "&stationid=" + noaaCDOConnect.getSelectedStations().join(
-                    "&stationid=");
-                const tDataTypeIDClause = "&datatypeid=" + typeNames.join(
-                    "&datatypeid=");
-                const tDateClause = "&startdate=" + startDate + "&enddate=" + endDate;
+                // const typeNames = noaaNCEIConnect.getSelectedDataTypes().map(function (dataType) {
+                //     return dataType.name;
+                // })
+                const tDatasetIDClause = "dataset=" + 'daily-summaries';
+                const tStationIDClause = "stations=" + noaaNCEIConnect.getSelectedStations().join();
+                const tDataTypeIDClause = "dataTypes=" + noaaNCEIConnect.state.selectedDataTypes.join();
+                const tstartDateClause = "startDate=" + startDate;
+                const tEndDateClause = "endDate=" + endDate;
+                const tUnitClause = 'units=metric';
+                const tFormatClause = 'format=json';
 
-                let tURL = noaaCDOConnect.constants.noaaBaseURL + "data?limit="
-                    + noaaCDOConnect.constants.recordCountLimit + tDatasetIDClause
-                    + tStationIDClause + tDataTypeIDClause + tDateClause;
+                let tURL = [
+                    noaaNCEIConnect.constants.nceiBaseURL,
+                    [
+                        tDatasetIDClause,
+                        tStationIDClause,
+                        tstartDateClause,
+                        tEndDateClause,
+                        tFormatClause,
+                        tDataTypeIDClause,
+                        tUnitClause
+                    ].join('&')
+                ].join('?');
+                console.log("Fetching: " + tURL);
                 return tURL
             }
         }
 
         async function processResults(results) {
-            let dataValues = [];
+            let dataRecords = [];
             results.forEach((r) => {
                 nRecords++;
                 theText += "<br>" + JSON.stringify(r);
-                const aValue = noaaCDOConnect.convertNOAAtoValue(r);
-                dataValues.push(aValue);
-            });
-            let dataRecords = [];
-            dataValues.forEach(function (aValue) {
-                let dataRecord = dataRecords.find(
-                    function (r) {
-                        return (aValue.when === r.when && aValue.where === r.where)
-                    });
-                if (!dataRecord) {
-
-                    dataRecord = {
-                        when: aValue.when,
-                        where: aValue.where,
-                        latitude: aValue.station.latitude,
-                        longitude: aValue.station.longitude,
-                        elevation: aValue.station.elevation,
-                        'report type': reportType
-                    }
-                    dataRecords.push(dataRecord);
-                }
-                dataRecord[aValue.what] = aValue.value;
+                const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
+                aValue.latitude = aValue.station.latitude,
+                aValue.longitude = aValue.station.longitude,
+                aValue.elevation = aValue.station.elevation,
+                aValue['report type'] = reportType
+                dataRecords.push(aValue);
             });
             ui.setMessage('Sending weather records to CODAP')
-            await codapConnect.createNOAAItems(noaaCDOConnect.constants,
-                dataRecords, noaaCDOConnect.getSelectedDataTypes());
+            await codapConnect.createNOAAItems(noaaNCEIConnect.constants,
+                dataRecords, noaaNCEIConnect.getSelectedDataTypes());
             resultText = "Retrieved " + dataRecords.length + " cases";
             return resultText;
         }
@@ -107,8 +102,8 @@ var noaaCDOConnect = {
                     errorMessage += '(' + xmlDoc.getElementsByTagName('developerMessage')[0].innerHTML + ')';
                 } catch (e) {}
             }
-            console.warn('noaaCDOConnect.doGetHandler(): ' + result);
-            console.warn("noaaCDOConnect.doGetHandler() error: " + errorMessage);
+            console.warn('noaaNCEIConnect.doGetHandler(): ' + result);
+            console.warn("noaaNCEIConnect.doGetHandler() error: " + errorMessage);
             return errorMessage;
         }
 
@@ -117,13 +112,13 @@ var noaaCDOConnect = {
         let theText = "Default text";
         let nRecords = 0;
 
-        const reportType = noaaCDOConnect.state.database==='GHCND'?'daily':'monthly';
+        const reportType = noaaNCEIConnect.state.database==='GHCND'?'daily':'monthly';
         let tURL = composeURL();
 
-        let tHeaders = new Headers();
-        tHeaders.append("token", noaaCDOConnect.constants.noaaToken);
-
-        const tRequest = new Request(tURL, {headers: tHeaders});
+        // let tHeaders = new Headers();
+        // tHeaders.append("token", noaaNCEIConnect.constants.noaaToken);
+        //
+        const tRequest = new Request(tURL/*, {headers: tHeaders}*/);
 
         let resultText = "";
         try {
@@ -133,8 +128,8 @@ var noaaCDOConnect = {
                 if (tResult.ok) {
                     ui.setMessage('Converting weather records')
                     const theJSON = await tResult.json();
-                    if (theJSON.results) {
-                        resultText = await processResults(theJSON.results);
+                    if (theJSON) {
+                        resultText = await processResults(theJSON);
                     } else {
                         resultText = 'Retrieved no observations';
                     }
@@ -158,14 +153,26 @@ var noaaCDOConnect = {
         return true;
     },
 
-    convertNOAAtoValue: function (iRecord) {
+    convertNOAARecordToValue: function (iRecord) {
         let out = {};
-        out.station = findStation(iRecord.station);
-        out.when = iRecord.date;
-        out.where = this.decodeData("where", iRecord.station);
-        out.what = this.decodeData("what", iRecord.datatype);
-        out.value = this.decodeData(iRecord.datatype, iRecord.value);
-        out.units = dataTypes[iRecord.datatype].units;
+        Object.keys(iRecord).forEach(function (key) {
+          let value = iRecord[key];
+          let dataTypeName;
+          switch (key) {
+              case 'DATE':
+                  dataTypeName = 'when';
+                  break;
+              case 'STATION':
+                  dataTypeName = 'where';
+                  out.station = findStation(iRecord.STATION);
+                  break;
+              default:
+                  dataTypeName = dataTypes[key] && dataTypes[key].name;
+          }
+          if (dataTypeName) {
+              out[dataTypeName] = noaaNCEIConnect.decodeData(key, value);
+          }
+        });
         return out;
     },
 
@@ -182,7 +189,7 @@ var noaaCDOConnect = {
     decodeData: function (iField, iValue) {
         let result = null;
         switch (iField) {
-            case "where":
+            case "STATION":
                 const station = findStation(iValue);
                 result = station?station.name: null;
                 break;
@@ -198,11 +205,9 @@ var noaaCDOConnect = {
                     && dataTypes[iField].decode[this.state.database];
                 result = decoder?decoder(iValue):iValue;
                 break;
-            case "what":
-                result = dataTypes[iValue].name;
         }
         return result || iValue;
     }
 };
 
-export {noaaCDOConnect}
+export {noaaNCEIConnect}

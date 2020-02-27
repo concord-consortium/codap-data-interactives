@@ -28,8 +28,10 @@ limitations under the License.
 
 
 let ui = {
+    eventHandlers: null,
 
     initialize : function(state, dataTypes, eventHandlers) {
+        this.eventHandlers = eventHandlers;
         var _this = this;
         this.updateView(state);
 
@@ -42,10 +44,10 @@ let ui = {
         this.setEventHandler('#get-button', 'click', eventHandlers.getData);
         this.setEventHandler('#newDataType', 'blur', eventHandlers.newDataType);
         this.setEventHandler('#newDataType', 'keydown', function (ev) {
-            if (ev.code==='Enter' || ev.code === 'Tab') {
+            if (ev.code==='Enter') {
                 eventHandlers.newDataType(ev);
             }
-            return true;
+            return;
         });
         this.setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
 
@@ -67,6 +69,7 @@ let ui = {
         // append to dom
         const insertionPoint = document.body.querySelector('#dataTypeUI div:last-child');
         insertionPoint.insertAdjacentHTML('beforeBegin', checkboxHTML);
+        el.addEventListener('click', this.eventHandlers.dataTypeSelector);
     },
 
     makeBoxes : function(iChoices, iSelectionList) {
