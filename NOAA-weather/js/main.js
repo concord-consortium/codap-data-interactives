@@ -19,7 +19,7 @@
 /* global noaa */
 import * as stationDB from './noaaStations.js';
 import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes.js';
-import {ui} from './noaa.ui.js';
+import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 // import {noaaCDOConnect} from './noaa-cdo';
 import {noaaNCEIConnect} from './noaa-ncei.js';
@@ -27,16 +27,16 @@ import {noaaNCEIConnect} from './noaa-ncei.js';
 let constants = {
   defaultEnd: '2020-01-31',
   defaultStart: '2020-01-01',
+  defaultDateGranularity: 'day',
   defaultStationID: 'USW00014755',
-  dimensions: {height: 120, width: 333},
+  dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/',
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
-  tallDimensions: {height: 444, width: 333},
-  version: 'v0006',
+  version: 'v0007',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
@@ -47,7 +47,9 @@ let constants = {
 let state = {
   customDataTypes: null,
   database: null,
+  dateGranularity: null,
   endDate: null,
+  sampleFrequency: null,
   selectedDataTypes: null,
   selectedStation: null,
   startDate: null,
@@ -55,25 +57,37 @@ let state = {
 
 async function initialize() {
 
-  await codapConnect.initialize(constants);
-  state = await codapConnect.getInteractiveState() || {};
+  try {
+    await codapConnect.initialize(constants);
+    state = await codapConnect.getInteractiveState() || {};
+  } catch (ex) {
+    console.log('Connection to codap unsuccessful.')
+  }
 
-  initializeState(state);
+  try {
 
-  codapConnect.createStationsDataset(stationDB.stations, stationSelectionHandler);
-  codapConnect.addNotificationHandler('notify',
-      `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+    initializeState(state);
 
-  ui.initialize(state, dataTypes, {
-    dataTypeSelector: dataTypeSelectionHandler,
-    dateChange: dateChangeHandler,
-    frequencyControl: frequencyControlHandler,
-    getData: noaaNCEIConnect.doGetHandler,
-    newDataType: newDataTypeHandler,
-  });
+    codapConnect.createStationsDataset(stationDB.stations, stationSelectionHandler);
 
-  noaaNCEIConnect.initialize(state, constants);
+    // Set up notification handler to respond to Weather Station selection
+    codapConnect.addNotificationHandler('notify',
+        `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+
+    ui.initialize(state, dataTypes, {
+      dataTypeSelector: dataTypeSelectionHandler,
+      frequencyControl: sourceDatasetSelectionHandler,
+      getData: noaaNCEIConnect.doGetHandler,
+      newDataType: newDataTypeHandler,
+      dateRangeSubmit: dateRangeSubmitHandler
+    });
+
+    noaaNCEIConnect.initialize(state, constants);
+  } catch (ex) {
+    console.warn("NOAA-weather failed init", ex);
+  }
 }
+
 
 function initializeState(state) {
   const today = dayjs();
@@ -81,6 +95,7 @@ function initializeState(state) {
   state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
   state.endDate = state.endDate || today.format('YYYY-MM-DD');
   state.database = state.database || 'daily-summaries';
+  state.sampleFrequency = constants.reportTypeMap[state.database];
 
   state.selectedStation = state.selectedStation || stationDB.findStation(constants.defaultStationID);
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
@@ -120,7 +135,8 @@ async function noaaWeatherSelectionHandler(req) {
 
 function stationSelectionHandler(stationID) {
   state.selectedStation = stationID? stationDB.findStation(stationID) : null;
-  ui.setStationName(state.selectedStation?state.selectedStation.name:'');
+  ui.updateView(state);
+  ui.setTransferStatus('inactive', 'Selected new weather station');
 }
 
 /*
@@ -147,24 +163,58 @@ function newDataTypeHandler(ev) {
     }
     state.customDataTypes.push(value);
   } else if (value) {
-    ui.setMessage('"' + value + '" is not a valid NOAA CDO DataType');
+    ui.setTransferStatus('failure', '"' + value + '" is not a valid NOAA DataType');
   }
   ev.stopPropagation();
 }
 
-function frequencyControlHandler (event) {
+function sourceDatasetSelectionHandler (event) {
   state.database = event.target.value;
+  state.sampleFrequency = constants.reportTypeMap[state.database];
+  ui.updateView(state);
 }
 
-function dateChangeHandler() {
-  state.startDate = document.getElementById('startDate').value;
-  state.endDate = document.getElementById('endDate').value;
+function dataTypeSelectAllHandler(el, ev) {
+  let isChecked = el.checked;
+  if (el.type === 'checkbox') {
+    Object.keys(dataTypes).forEach(function (key) {
+      setDataType(key, isChecked);
+    });
+    setDataType('all-datatypes', isChecked);
+    ui.setTransferStatus('inactive', 'selected all attributes');
+  }
 }
 
 function dataTypeSelectionHandler(ev) {
-  if (this.type === 'checkbox') {
+  if (this.id === 'all-datatypes') {
+    dataTypeSelectAllHandler(this, ev);
+  } else if (this.type === 'checkbox') {
     setDataType(this.id, this.checked);
+    ui.setTransferStatus('inactive', 'selected an attribute');
   }
+  ui.updateView(state);
 }
+
+/**
+ * Either values will have a {drsStartDate, drsEndDate} combination or
+ * {drsEndDate, drsDuration} with duration interpreted as months. We create
+ * state.startDate and state.endDate as strings in YYYY-MM-DD format.
+ * @param values {{drsStartDate,drsEndDate,drsDuration}}
+ */
+function dateRangeSubmitHandler(values) {
+  function asString(d) {
+    return (typeof d === 'string')? d: new dayjs(d).format('YYYY-MM-DD');
+  }
+  if (values.drsDuration) {
+    state.endDate = asString(values.drsEndDate);
+    state.startDate = new dayjs(state.endDate).subtract(values.drsDuration, 'month').format('YYYY-MM-DD');
+  } else {
+    state.startDate = asString(values.drsStartDate);
+    state.endDate = asString(values.drsEndDate) || asString(values.drsStartDate);
+  }
+  ui.updateView(state);
+}
+
+export {constants};
 
 initialize();

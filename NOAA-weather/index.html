@@ -34,50 +34,176 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 
 <head>
     <meta charset="UTF-8">
-    <title>NOAA-CDO</title>
+    <title>NOAA-Weather</title>
 
-    <link rel='stylesheet' type='text/css' href='css/noaa-cdo.css'/>
+    <link rel='stylesheet' type='text/css' href='css/style.css'/>
+    <link rel='stylesheet' type='text/css' href='css/flatpickr.css'/>
 
     <script src="lib/iframe-phone.js"></script>
     <script src="lib/codapInterface.js"></script>
     <script src="lib/pluginHelper.js"></script>
     <script src="lib/dayjs.min.js"></script>
+    <script src="lib/flatpickr.min.js"></script>
 
     <!--    Specific JS for this app     -->
     <script src="js/main.js" type="module"></script>
-
 </head>
 <body>
-<div>
-<label for="startDate">Start date:
-<input type="date" id="startDate" name="data-start" />
-</label>
-</div>
-<div>
-<label for="endDate">End date:
-<input type="date" id="endDate" name="data-end" />
-</label>
-</div>
-<div>
-<label><input type="radio" value="global-summary-of-the-month" name="frequencyControl" > monthly</label> |
-<label><input type="radio" value="daily-summaries"  name="frequencyControl" checked> daily</label><!-- |
-<label><input type="radio" value="global-hourly"  name="frequencyControl"> hourly</label>-->
-</div>
-<p>
-Weather Station: <span id="stationName"></span>
-</p>
-<div>Attributes</div>
-<div id="dataTypeUI"></div>
 
-<p>NOAA limits the number of results that may be returned.
-    The product of the number of reports and the number of data types requested
-    must be less than 1,000. Please be aware of the possibility of incomplete
-    returns.
-</p>
-<hr>
-<div><button id="get-button">get data</button></div>
+<div id="content">
 
-<div id="message-area"></div>
+<div id="wx-intro-section" class="wx-pop-up">
+    <div class="wx-section-header-line">
+        <span>Retrieve weather data from observing stations.</span>
+        <span class="wx-info-button wx-pop-up-anchor"></span>
+    </div>
+    <div class="wx-cover"></div>
+    <div class="wx-pop-up-container">
+        <div class="wx-pop-up-content" >
+            <div class="wx-pop-up-header">
+                More Information
+            </div>
+            <div class="wx-pop-up-body">
+                <div id="wx-settings-section" class="wx-dropdown wx-hide">
+                    <div class="wx-section-header-line wx-dropdown-header">
+                        <span class="wx-section-title">Settings</span>
+                        <span class="wx-dropdown-indicator"></span>
+                    </div>
+                    <div class="wx-dropdown-body">
+                        <div>Units</div>
+                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-metric" value="metric" checked /><label for="wx-option-units-metric">Metric</label></div>
+                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-standard" value="standard"/><label for="wx-option-units-standard">Standard</label></div>
+                    </div>
+                </div>
+                <div id="wx-about-section" class="wx-dropdown wx-down">
+                    <div class="wx-section-header-line">
+                        <div class="wx-section-title">About</div>
+                        <span class="wx-dropdown-indicator"></span>
+                    </div>
+                    <div class="wx-dropdown-body">
+                        Blah, blah, ...
+                    </div>
+                </div>
+            </div>
+            <div id="wx-info-close-section" class="wx-pop-up-footer">
+                <div class="wx-section-header-line wx-control-row">
+                    <span><button id="wx-info-close-button" class="wx-button">Close</button></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="wx-fixed-section-divider"/>
+
+<div id="wx-date-section">
+    <div id="wx-database-selection" class="wx-section-header-line">
+        <span class="wx-section-title">Date Range</span>
+        <span id="wx-dataset-form">
+            <span class="wx-form-label">Data:</span>
+            <input type="radio" value="global-summary-of-the-month" id="wx-gsom" name="frequencyControl" >
+            <label for="wx-gsom">monthly</label>
+            <input type="radio" value="daily-summaries"  id="wx-daily" name="frequencyControl" checked>
+            <label for="wx-daily">daily</label><!--
+            <label><input type="radio" value="global-hourly"  name="frequencyControl"> hourly</label>-->
+        </span>
+    </div>
+    <div id="wx-day-or-month-selector" class="wx-pop-over-placeholder" >
+        <div class="wx-day-selector flatpickr">
+            <input type="text" placeholder="Select Date.." data-input>
+            <span class="wx-calendar-button"></span>
+        </div>
+        <div id="wx-date-range-selection-dialog" class="wx-pop-over">
+            <div class="wx-pop-over-anchor">
+                <div id="wx-date-range"></div>
+                <span class="wx-calendar-button"></span>
+            </div>
+            <div class="wx-pop-over-body">
+<!--                <div>-->
+<!--                    <label>-->
+<!--                        <input type="radio" name="date-range-mode" value="duration-dialog" checked />-->
+<!--                        Set range by duration-->
+<!--                    </label>-->
+<!--                </div>-->
+                <div id="wx-date-range-form">
+                    <label>The
+                    <input type="number" id="wx-drs-duration" min="1" />
+                    <span id="wx-time-unit">days</span>
+                    preceding
+                    <input type="date" id="wx-drs-end-date" value=""/>
+                    </label>
+    <!--                <select><option>days</option><option>months</option></select>-->
+                </div>
+<!--                <div>-->
+<!--                    <label>-->
+<!--                        <input type="radio" name="date-range-mode" value="dual-calendar-dialog" />-->
+<!--                        Set custom range-->
+<!--                    </label>-->
+
+<!--                </div>-->
+<!--                <div  id="wx-double-calendar">-->
+<!--                    double calendar (tbd)-->
+<!--                </div>-->
+                <div class="wx-control-row">
+                    <button id="wx-cancel-date-range" class="wx-button">Cancel</button>
+                    <button id="wx-set-date-range" class="wx-button">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="wx-main-scroll-area" class="wx-scroll-area">
+
+    <div id="wx-location-section" class="wx-dropdown wx-down">
+        <div class="wx-section-header-line wx-dropdown-header">
+            <span class="wx-section-title">Station Location</span>
+            <span id="wx-stationName" class="wx-user-selection"></span>
+            <span class="wx-dropdown-indicator wx-down"></span>
+        </div>
+        <div class="wx-dropdown-body">
+            Choose a different weather station by selecting it on the map.
+        </div>
+    </div>
+
+    <hr class="wx-fixed-section-divider"/>
+
+    <div id="wx-attribute-section" class="wx-dropdown wx-up">
+        <div class="wx-section-header-line wx-dropdown-header">
+            <span class="wx-section-title">Attributes</span>
+            <span class="wx-selection-count"></span>
+            <span class="wx-data-type-selection wx-user-selection"></span>
+            <span class="wx-dropdown-indicator wx-down"></span>
+        </div>
+        <div class="wx-dropdown-body">
+            <p>
+                Choose attributes to include in your data set from the list below.
+            </p>
+            <table id="wx-data-type-table">
+                <thead>
+                    <tr>
+                        <th><input id="all-datatypes" type="checkbox" class="wx-data-type-checkbox"/></th>
+                        <th>Attributes</th>
+                        <th>Abbr.</th>
+                        <th>Units</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="wx-summary-section">
+    <div class="wx-section-header-line wx-summary">
+        <span class="wx-status-graphic"></span>
+        <span class="wx-message-area"></span>
+        <span><button id="wx-get-button" class="wx-button">Get Data</button></span>
+    </div>
+</div>
+
+</div>
 
 </body>
 
