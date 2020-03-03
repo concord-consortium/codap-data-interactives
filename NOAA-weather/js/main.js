@@ -17,12 +17,12 @@
 //  limitations under the License.
 // ==========================================================================
 /* global noaa */
-import * as stationDB from './noaaStations';
-import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes';
-import {ui} from './noaa.ui';
+import * as stationDB from './noaaStations.js';
+import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes.js';
+import {ui} from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 // import {noaaCDOConnect} from './noaa-cdo';
-import {noaaNCEIConnect} from './noaa-ncei';
+import {noaaNCEIConnect} from './noaa-ncei.js';
 
 let constants = {
   defaultEnd: '2020-01-31',
