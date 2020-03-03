@@ -28,8 +28,8 @@ limitations under the License.
 */
 import * as codapConnect from './CODAPconnect.js';
 import {ui} from './noaa.ui';
-import {dataTypes} from './noaaDataTypes';
-import {findStation, stations} from './noaaStations';
+import {dataTypes} from './noaaDataTypes.js';
+import {findStation, stations} from './noaaStations.js';
 
 var noaaNCEIConnect = {
 
