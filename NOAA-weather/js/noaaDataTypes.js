@@ -26,7 +26,7 @@ limitations under the License.
 
 */
 /*global noaa:true */
-let defaultDataTypes = ["TMAX"];
+let defaultDataTypes = ["TMAX", "TMIN"];
 
 let dataTypes = {
     "TMAX": {

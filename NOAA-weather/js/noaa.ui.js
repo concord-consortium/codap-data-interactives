@@ -26,86 +26,308 @@ limitations under the License.
 
 */
 
+/*global flatpickr */
+import {dataTypes} from "./noaaDataTypes";
+// import * as flatpickr from "./flatpickr.js";
 
-let ui = {
-    eventHandlers: null,
+let eventHandlers = null
+let flatpickrInstance = null;
 
-    initialize : function(state, dataTypes, eventHandlers) {
-        this.eventHandlers = eventHandlers;
-        var _this = this;
-        this.updateView(state);
+/**
+ *
+ * @param state
+ * @param dataTypes
+ * @param iEventHandlers: expect an object with handlers for
+ *      dataTypeSelector/click,
+ *      frequencyControl/click,
+ *      getData/click,
+ *      dataSet/click
+ *
+ *      In all cases, handlers should expect 'this' to be the DOM element and
+ *      one argument, the event.
+ */
+function initialize(state, dataTypes, iEventHandlers) {
+    eventHandlers = iEventHandlers;
 
-        document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(dataTypes, state.selectedDataTypes);
+    renderDataTypes(dataTypes);
+    updateView(state);
 
-        const newTypeInput = document.getElementById('newDataType');
+    // const newTypeInput = document.getElementById('newDataType');
 
-        this.setEventHandler('#dataTypeUI input', 'click', eventHandlers.dataTypeSelector)
-        this.setEventHandler('#startDate,#endDate', 'change', eventHandlers.dateChange);
-        this.setEventHandler('#get-button', 'click', eventHandlers.getData);
-        this.setEventHandler('#newDataType', 'blur', eventHandlers.newDataType);
-        this.setEventHandler('#newDataType', 'keydown', function (ev) {
-            if (ev.code==='Enter') {
-                eventHandlers.newDataType(ev);
-            }
-            return;
-        });
-        this.setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
-
-    },
-
-    updateView: function(state) {
-        document.getElementById('startDate').value = state.startDate;
-        document.getElementById('endDate').value = state.endDate;
-        document.getElementById('stationName').innerHTML = state.selectedStation.name;
-    },
-
-    makeNewCheckbox: function  (key, name, isChecked) {
-        const isCheckedClause = isChecked ? " checked" : "";
-        return '<div><label><input type="checkbox" id="' + key + '" ' +
-            isCheckedClause + '/>' + name + '</label></div>';
-    },
-
-    insertCheckboxAtEnd: function (checkboxHTML) {
-        // append to dom
-        const insertionPoint = document.body.querySelector('#dataTypeUI div:last-child');
-        insertionPoint.insertAdjacentHTML('beforeBegin', checkboxHTML);
-        insertionPoint.previousElementSibling.addEventListener('click', this.eventHandlers.dataTypeSelector);
-    },
-
-    makeBoxes : function(iChoices, iSelectionList) {
-        let out = "";
-
-        for (const theKey in iChoices) {
-            const theName = iChoices[theKey].name;
-            out += this.makeNewCheckbox(theKey, theName, (iSelectionList.indexOf(theKey) !== -1))
-        }
-        out += '<div><input type="text" id="newDataType" title="Enter NOAA CDO Datatype here" placeholder="Custom CDO Datatype"/>'
-        return out;
-    },
-
-    setEventHandler: function (selector, event, handler) {
-        const elements = document.querySelectorAll(selector);
-        if (!elements) { return; }
-        elements.forEach(function (el) {
-            el.addEventListener(event, handler);
-        });
-    },
-
-    setStationName: function (stationName) {
-        document.getElementById('stationName').innerText = stationName;
-    },
-
-    setMessage: function (message) {
-        document.getElementById("message-area").innerHTML = message;
-    },
-
-    setWaitCursor: function(isWait) {
-        if (isWait) {
-            document.body.classList.add('fetching');
+    setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
+    setEventHandler('#wx-get-button', 'click', eventHandlers.getData);
+    setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
+    setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+        let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
+        let isClosed = sectionEl.classList.contains('wx-up');
+        if (isClosed) {
+            sectionEl.classList.remove('wx-up');
+            sectionEl.classList.add('wx-down');
         } else {
-            document.body.classList.remove('fetching');
+            sectionEl.classList.remove('wx-down');
+            sectionEl.classList.add('wx-up');
         }
-    }
-};
+    });
 
-export {ui};
+    setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (ev) {
+        let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
+        togglePopUp(parentEl);
+    });
+
+    setEventHandler('.wx-pop-over-anchor', 'click', function (ev) {
+        let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
+        togglePopOver(parentEl);
+    });
+
+    setEventHandler('#wx-cancel-date-range', 'click', function (ev) {
+        let el = findAncestorElementWithClass(this, 'wx-pop-over');
+        togglePopOver(el);
+    });
+
+    setEventHandler('#wx-set-date-range', 'click', function (ev) {
+        let el = findAncestorElementWithClass(this, 'wx-pop-over');
+        let values = {
+            drsEndDate: el.querySelector('#wx-drs-end-date').value,
+            drsDuration: el.querySelector('#wx-drs-duration').value
+        };
+        if (eventHandlers.dateRangeSubmit) {
+            eventHandlers.dateRangeSubmit(values);
+        }
+        togglePopOver(el);
+    })
+    function logit(e, o1) {
+        console.log(e, o1);
+    }
+    flatpickrInstance = flatpickr('.wx-day-selector', {
+        maxDate: "today",
+        mode: "range",
+        wrap: true,
+        onChange: function (dates) {
+            let values = {
+                drsStartDate: dates[0],
+                drsEndDate: dates[1],
+            };
+            if (eventHandlers.dateRangeSubmit) {
+                eventHandlers.dateRangeSubmit(values);
+            }
+        },
+        onClose: function (o) { logit('onClose', o);},
+        onOpen: function (o) { logit('onOpen', o);},
+        onReady: function (o) { logit('onReady', o); },
+        onValueUpdate: function (o) { logit('onValueUpdate', o); },
+        onDayCreate: function (o) { logit('onDayCreate', o); },
+        onKeyDown: function (o) { logit('onKeyDown', o); },
+        onDestroy: function (o) { logit('onDestroy', o); },
+        onMonthChange: function (o) { logit('onMonthChange', o); },
+        onPreCalendarPosition: function (o) { logit('onPreCalendarPosition', o); }
+    });
+
+}
+
+function findAncestorElementWithClass(el, myClass) {
+    while (el !== null && el.parentElement !== el) {
+        if (el.classList.contains(myClass)) {
+            return el;
+        }
+        el = el.parentElement;
+    }
+}
+
+function togglePopOver(el) {
+    let isOpen = el.classList.contains('wx-open');
+    if (isOpen) {
+        el.classList.remove('wx-open');
+    } else {
+        el.classList.add('wx-open');
+    }
+}
+
+function togglePopUp(el) {
+    let isOpen = el.classList.contains('wx-open');
+    if (isOpen) {
+        el.classList.remove('wx-open');
+    } else {
+        el.classList.add('wx-open');
+    }
+}
+function updateView(state) {
+    document.getElementById('wx-stationName').innerHTML = state.selectedStation.name;
+
+    let startDate = new Date(state.startDate);
+    let endDate = new Date(state.endDate);
+    updateDateSelectorView(state.sampleFrequency);
+    updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
+    updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
+    updateDataTypeSummary(dataTypes, state.selectedDataTypes);
+    updateDataTypes(dataTypes, state.selectedDataTypes);
+}
+
+/**
+ *
+ * @param startDate {Date}
+ * @param endDate {Date}
+ * @param sampleFrequency {'daily'|'monthly'}
+ */
+function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
+    // let formatStr = (sampleFrequency === 'monthly')?'MMM YYYY':'MM/DD/YYYY';
+    let formatStr = 'MMM YYYY';
+    let startStr = dayjs(startDate).format(formatStr);
+    let endStr = dayjs(endDate).format(formatStr);
+    let el = document.querySelector('#wx-date-range');
+    if (el)  {
+        el.innerText = `${startStr} to ${endStr}`;
+    }
+    formatStr = 'YYYY-MM-DD';
+    startStr = dayjs(startDate).format(formatStr);
+    endStr = dayjs(endDate).format(formatStr);
+    el = document.querySelector('.wx-day-selector input');
+    if (el)  {
+        el.value = `${startStr} to ${endStr}`;
+    }
+}
+
+function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
+    let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+    if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
+    let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
+    if (duration === 1) {
+        durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
+    }
+    let durationTimeUnitEl = document.querySelector('#wx-time-unit');
+    let endDateEl = document.querySelector('#wx-drs-end-date');
+    let durationEl = document.querySelector('#wx-drs-duration');
+    durationTimeUnitEl.innerHTML = durationUnit;
+    endDateEl.valueAsDate = endDate/*.toLocaleDateString()*/;
+    durationEl.value = duration;
+}
+
+function updateDateSelectorView(sampleFrequency) {
+    let dayRangeSelector = document.querySelector('.wx-day-selector');
+    let monthRangeSelector = document.querySelector('#wx-date-range-selection-dialog');
+    if (sampleFrequency === 'monthly') {
+        monthRangeSelector.classList.remove('wx-hide');
+        dayRangeSelector.classList.add('wx-hide');
+    } else {
+        dayRangeSelector.classList.remove('wx-hide');
+        monthRangeSelector.classList.add('wx-hide');
+    }
+}
+function createElementWithProperties(tag, properties) {
+    let el = document.createElement(tag);
+    for (let key in properties) {
+        el[key] = properties[key];
+    }
+    return el;
+}
+
+function makeDataTypeRow (key, name, description, units) {
+    let checkbox = createElementWithProperties('input', {
+            id: key,
+            type: 'checkbox'
+        });
+    checkbox.classList.add('wx-data-type-checkbox');
+    let cell = document.createElement('td');
+    cell.appendChild(checkbox);
+
+    let row = document.createElement('tr');
+    row.appendChild(cell);
+    row.appendChild(createElementWithProperties('td', {textContent: description}));
+    row.appendChild(createElementWithProperties('td', {textContent: name}));
+    row.appendChild(createElementWithProperties('td', {textContent: units}));
+    return row;
+}
+
+function renderDataTypes(dataTypes, iSelectionList) {
+    let insertionPoint = document.querySelector('#wx-data-type-table tbody');
+
+    for (const theKey in dataTypes) {
+        const dataType = dataTypes[theKey];
+        insertionPoint.appendChild(makeDataTypeRow(theKey, dataType.name, dataType.description,
+            dataType.units));
+    }
+}
+
+function setEventHandler (selector, event, handler) {
+    const elements = document.querySelectorAll(selector);
+    if (!elements) { return; }
+    elements.forEach(function (el) {
+        el.addEventListener(event, handler);
+    });
+}
+
+function setStationName(stationName) {
+    document.getElementById('stationName').innerText = stationName;
+}
+
+function setMessage(message) {
+    document.querySelector(".wx-message-area").innerHTML = message;
+}
+
+/**
+ *
+ * @param status {'inactive', 'retrieving', 'transferring', 'success', 'failure'}
+ * @param message
+ */
+function setTransferStatus(status, message) {
+    let getButtonIsActive = true;
+    let el = document.querySelector('.wx-summary');
+    let statusClass = '';
+    if (status === 'retrieving' || status === 'transferring') {
+        getButtonIsActive = false;
+        statusClass = 'wx-transfer-in-progress';
+    } else if (status === 'success') {
+        statusClass = 'wx-transfer-success';
+    } else if (status === 'failure') {
+        statusClass = 'wx-transfer-failure';
+    }
+    el.classList.remove('wx-transfer-in-progress', 'wx-transfer-success', 'wx-transfer-failure');
+    if (statusClass) { el.classList.add(statusClass); }
+
+    el.querySelector('button').disabled=!getButtonIsActive;
+    setWaitCursor(!getButtonIsActive);
+    setMessage(message);
+}
+
+function setWaitCursor(isWait) {
+    if (isWait) {
+        document.body.classList.add('fetching');
+    } else {
+        document.body.classList.remove('fetching');
+    }
+}
+
+function updateDataTypeSummary(dataTypes, selectedTypes) {
+    let countDisplay = document.querySelector('.wx-selection-count');
+    let summaryListDisplay = document.querySelector('.wx-data-type-selection');
+    let summaryList = selectedTypes.filter(function (dt) {
+        return dataTypes[dt];
+    }).map(function (key) {
+            let type = dataTypes[key];
+            return type.name;
+        });
+    summaryListDisplay.innerText = summaryList.join(', ');
+    countDisplay.innerText = String(summaryList.length);
+}
+
+function updateDataTypes(dataTypes, selectedTypes) {
+    let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
+    let checkBoxHash = {};
+    checkBoxes && checkBoxes.forEach(function (el) {
+        el.checked = false;
+        checkBoxHash[el.id] = el;
+    });
+    selectedTypes.forEach(function (id) {
+        if (checkBoxHash[id]) {
+            checkBoxHash[id].checked = true;
+        }
+    });
+}
+
+export {
+    initialize,
+    setMessage,
+    setTransferStatus,
+    setWaitCursor,
+    updateDataTypeSummary,
+    updateView
+};

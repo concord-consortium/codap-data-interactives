@@ -27,9 +27,9 @@ limitations under the License.
 
 */
 import * as codapConnect from './CODAPconnect.js';
-import {ui} from './noaa.ui.js';
+import * as ui from './noaa.ui.js';
 import {dataTypes} from './noaaDataTypes.js';
-import {findStation, stations} from './noaaStations.js';
+import {findStation} from './noaaStations.js';
 
 var noaaNCEIConnect = {
 
@@ -52,7 +52,10 @@ var noaaNCEIConnect = {
                 // })
                 const tDatasetIDClause = "dataset=" + noaaNCEIConnect.state.database;
                 const tStationIDClause = "stations=" + noaaNCEIConnect.getSelectedStations().join();
-                const tDataTypeIDClause = "dataTypes=" + noaaNCEIConnect.state.selectedDataTypes.join();
+                const dataTypes = noaaNCEIConnect.state.selectedDataTypes.filter(function (dt) {
+                    return dt !== 'all-datatypes';
+                });
+                const tDataTypeIDClause = "dataTypes=" + dataTypes.join();
                 const tstartDateClause = "startDate=" + startDate;
                 const tEndDateClause = "endDate=" + endDate;
                 const tUnitClause = 'units=metric';
@@ -109,6 +112,7 @@ var noaaNCEIConnect = {
 
 
         ui.setWaitCursor(true);
+        ui.setTransferStatus('retrieving', 'Fetching weather records from NOAA');
         let theText = "Default text";
         let nRecords = 0;
 
@@ -121,15 +125,16 @@ var noaaNCEIConnect = {
         const tRequest = new Request(tURL/*, {headers: tHeaders}*/);
 
         let resultText = "";
+        let resultStatus = 'failure';
         try {
             if (tURL) {
-                ui.setMessage('Fetching weather records from NOAA');
                 const tResult = await fetch(tRequest);
                 if (tResult.ok) {
-                    ui.setMessage('Converting weather records')
+                    ui.setTransferStatus('retrieving', 'Converting weather records')
                     const theJSON = await tResult.json();
                     if (theJSON) {
                         resultText = await processResults(theJSON, reportType);
+                        resultStatus = 'success';
                     } else {
                         resultText = 'Retrieved no observations';
                     }
@@ -146,7 +151,7 @@ var noaaNCEIConnect = {
             resultText = 'fetch error: ' + msg;
             theText = msg;
         }
-        ui.setMessage(resultText);
+        ui.setTransferStatus(resultStatus, resultText);
         ev.preventDefault();
         this.blur();
         ui.setWaitCursor(false);
@@ -181,10 +186,13 @@ var noaaNCEIConnect = {
     },
 
     getSelectedDataTypes : function() {
-        return this.state.selectedDataTypes.map(function (typeName) {
+        return this.state.selectedDataTypes.filter(function (dt) {
+            return !!dataTypes[dt];
+        }).map(function (typeName) {
             return dataTypes[typeName];
         });
-    },
+
+    }   ,
 
     decodeData: function (iField, iValue) {
         let result = null;

@@ -240,7 +240,7 @@ function getPluginDescriptor(props) {
         name: props.DSName,
         title: props.DSTitle,
         version: props.version,
-        dimensions: props.tallDimensions,      //      dimensions,
+        dimensions: props.dimensions,      //      dimensions,
     }
 }
 
