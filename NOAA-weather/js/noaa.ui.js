@@ -27,49 +27,85 @@ limitations under the License.
 */
 
 
-noaa.ui = {
+let ui = {
+    eventHandlers: null,
 
-    initialize : function(state, dataTypes) {
-        function setDataType(selectedTypes, type, isSelected) {
-            if (isSelected) {
-                if(selectedTypes.indexOf(type) < 0) {
-                    selectedTypes.push(type);
-                }
-            } else {
-                const typeIx = selectedTypes.indexOf(type);
-                if (typeIx >= 0) {
-                    selectedTypes.splice(typeIx, 1);
-                }
-            }
-        }
-        document.getElementById('startDate').value = state.startDate;
-        document.getElementById('endDate').value = state.endDate;
+    initialize : function(state, dataTypes, eventHandlers) {
+        this.eventHandlers = eventHandlers;
+        var _this = this;
+        this.updateView(state);
+
         document.getElementById("dataTypeUI").innerHTML = this.makeBoxes(dataTypes, state.selectedDataTypes);
-        document.getElementById('stationName').innerHTML = state.selectedStation.name;
 
-        // activate datatype checkboxes
-        const dataTypeInputs = Array.from(document.body.querySelectorAll('#dataTypeUI input'));
-        dataTypeInputs.forEach(function (node) {
-           node.onclick = function (ev) {
-               if (this.type==='checkbox') {
-                   setDataType(state.selectedDataTypes, this.id, this.checked);
-               }
-           }
+        const newTypeInput = document.getElementById('newDataType');
+
+        this.setEventHandler('#dataTypeUI input', 'click', eventHandlers.dataTypeSelector)
+        this.setEventHandler('#startDate,#endDate', 'change', eventHandlers.dateChange);
+        this.setEventHandler('#get-button', 'click', eventHandlers.getData);
+        this.setEventHandler('#newDataType', 'blur', eventHandlers.newDataType);
+        this.setEventHandler('#newDataType', 'keydown', function (ev) {
+            if (ev.code==='Enter') {
+                eventHandlers.newDataType(ev);
+            }
+            return;
         });
+        this.setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
+
     },
 
-    makeBoxes : function(iChoices, iDefaults) {
+    updateView: function(state) {
+        document.getElementById('startDate').value = state.startDate;
+        document.getElementById('endDate').value = state.endDate;
+        document.getElementById('stationName').innerHTML = state.selectedStation.name;
+    },
+
+    makeNewCheckbox: function  (key, name, isChecked) {
+        const isCheckedClause = isChecked ? " checked" : "";
+        return '<div><label><input type="checkbox" id="' + key + '" ' +
+            isCheckedClause + '/>' + name + '</label></div>';
+    },
+
+    insertCheckboxAtEnd: function (checkboxHTML) {
+        // append to dom
+        const insertionPoint = document.body.querySelector('#dataTypeUI div:last-child');
+        insertionPoint.insertAdjacentHTML('beforeBegin', checkboxHTML);
+        insertionPoint.previousElementSibling.addEventListener('click', this.eventHandlers.dataTypeSelector);
+    },
+
+    makeBoxes : function(iChoices, iSelectionList) {
         let out = "";
 
         for (const theKey in iChoices) {
             const theName = iChoices[theKey].name;
-            const isCheckedClause = (iDefaults.indexOf(theKey) === -1) ? "" : " checked";
-            out += "<input type='checkbox' id='" + theKey + "'" +  isCheckedClause + ">" +
-                "<label for='" + theKey + "'>" + theName + "</label><br>";
+            out += this.makeNewCheckbox(theKey, theName, (iSelectionList.indexOf(theKey) !== -1))
         }
+        out += '<div><input type="text" id="newDataType" title="Enter NOAA CDO Datatype here" placeholder="Custom CDO Datatype"/>'
         return out;
     },
+
+    setEventHandler: function (selector, event, handler) {
+        const elements = document.querySelectorAll(selector);
+        if (!elements) { return; }
+        elements.forEach(function (el) {
+            el.addEventListener(event, handler);
+        });
+    },
+
     setStationName: function (stationName) {
         document.getElementById('stationName').innerText = stationName;
+    },
+
+    setMessage: function (message) {
+        document.getElementById("message-area").innerHTML = message;
+    },
+
+    setWaitCursor: function(isWait) {
+        if (isWait) {
+            document.body.classList.add('fetching');
+        } else {
+            document.body.classList.remove('fetching');
+        }
     }
 };
+
+export {ui};

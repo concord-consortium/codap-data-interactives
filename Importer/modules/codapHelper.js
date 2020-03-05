@@ -123,7 +123,8 @@ function closeSelf() {
  */
 function defineDataSet(config) {
   let attrList = config.attributeNames.map(function (attr) {
-    return {name: attr, type: (attr==='boundary')?attr:null};
+    let nameParts = analyzeRawName(attr);
+    return {name: attr, unit: nameParts.unit, type: (attr.toLowerCase()==='boundary')? 'boundary': null};
   });
   let request = {
     action: 'create',
@@ -278,10 +279,35 @@ function sendToCODAP(action, resource, values) {
   return codapInterface.sendRequest({action: action, resource: resource, values: values});
 }
 
+/**
+ * Names ending with terminal parenthetical expressions have the parenthetical
+ * expression trimmed in CODAP. The usage is to interpret the expression as
+ * a unit. This utility analyzes a string and returns an object that separates
+ * its baseName and unit.
+ * @param iName
+ * @param iReplaceNonWordCharacters
+ * @return {{name: string}}
+ */
+function analyzeRawName(iName, iReplaceNonWordCharacters) {
+  let tReg = /\(([^)]*)\)$/g;  // Identifies parenthesized substring at end
+  let tUnitMatch = tReg.exec(iName.trim());
+  let tUnit = (tUnitMatch && tUnitMatch.length)? tUnitMatch[1]: null;
+
+  let tNewName = iName.trim().replace(tReg, '').replace('_', ' ');  // Get rid of parenthesized units
+
+  if (iReplaceNonWordCharacters)
+    tNewName = tNewName.replace(/\W /g, '_');  // Replace non-word characters with underscore
+  // if after all this we have an empty string replace with a default name.
+  if (tNewName.length === 0) {
+    tNewName = 'attr';
+  }
+  return {baseName: tNewName, unit: tUnit};
+};
 
 export {
   init,
   adjustHeightOfSelf,
+  analyzeRawName,
   clearDataset,
   closeSelf,
   indicateBusy,

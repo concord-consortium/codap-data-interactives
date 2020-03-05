@@ -44,53 +44,41 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
     <script src="lib/dayjs.min.js"></script>
 
     <!--    Specific JS for this app     -->
-    <script src="js/noaa-cdo.js"></script>
-    <script src="js/noaa.ui.js"></script>
-    <script src="js/CODAPconnect.js"></script>
-    <script src="js/noaaStations.js"></script>
-    <script src="js/noaaDataTypes.js"></script>
+    <script src="js/main.js" type="module"></script>
 
 </head>
 <body>
-
-<label for="startDate">Start date:</label>
-<input type="date" id="startDate" onchange="noaa.dateChange()" name="data-start"
-       value="2018-01-01">
-<br>
-<label for="endDate">End date:</label>
-<input type="date" id="endDate" onchange="noaa.dateChange()" name="data-end"
-       value="2018-01-31">
-<br>
-<label><input type="radio" value="GSOM" name="frequencyControl" > monthly</label> |
-<label><input type="radio" value="GHCND"  name="frequencyControl" checked> daily</label>
-<br>
+<div>
+<label for="startDate">Start date:
+<input type="date" id="startDate" name="data-start" />
+</label>
+</div>
+<div>
+<label for="endDate">End date:
+<input type="date" id="endDate" name="data-end" />
+</label>
+</div>
+<div>
+<label><input type="radio" value="global-summary-of-the-month" name="frequencyControl" > monthly</label> |
+<label><input type="radio" value="daily-summaries"  name="frequencyControl" checked> daily</label><!-- |
+<label><input type="radio" value="global-hourly"  name="frequencyControl"> hourly</label>-->
+</div>
+<p>
 Weather Station: <span id="stationName"></span>
+</p>
+<div>Attributes</div>
+<div id="dataTypeUI"></div>
+
+<p>NOAA limits the number of results that may be returned.
+    The product of the number of reports and the number of data types requested
+    must be less than 1,000. Please be aware of the possibility of incomplete
+    returns.
+</p>
 <hr>
-<button onclick="noaa.doGet()">get data</button>
-<!--<button onclick="noaa.connect.createSpreader()">make spreader</button>-->
-<div id="results"></div>
+<div><button id="get-button">get data</button></div>
 
-<details>
-    <summary>data</summary>
-    <div id="dataTypeUI">
-    </div>
-</details>
-<details>
-    <summary>credits</summary>
-    <div>
-        Menne, M.J., I. Durre, R.S. Vose, B.E. Gleason, and T.G. Houston, 2012:  An overview
-        of the Global Historical Climatology Network-Daily Database.
-        <i>Journal of Atmospheric and Oceanic Technology</i>, 29, 897-910,
-        doi:10.1175/JTECH-D-11-00103.1.
-    </div>
-</details>
-<p>NOAA limits the number of results that may be returned.</p>
+<div id="message-area"></div>
+
 </body>
-
-<script>
-    window.onload = function () {
-        noaa.initialize();
-    }
-</script>
 
 </html>

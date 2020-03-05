@@ -31,9 +31,12 @@ Find station IDs:
 https://www.ncdc.noaa.gov/cdo-web/search
 */
 /*global noaa:true */
-noaa.defaultStations = ["GHCND:USC00040693", "GHCND:USC00049152"];     //  berkeley, ucla
+function findStation (id) {
+  return stations.find(function (sta) {return id === sta.id; });
+}
 
-noaa.stations = [
+
+let stations = [
   {
     "elevation": 228.6,
     "mindate": "2012-07-05",
@@ -41,7 +44,7 @@ noaa.stations = [
     "latitude": 44.377379,
     "name": "BETHEL 1.9 SSW, ME US",
     "datacoverage": 0.2175,
-    "id": "GHCND:US1MEOX0014",
+    "id": "US1MEOX0014",
     "elevationUnit": "METERS",
     "longitude": -70.801659
   },
@@ -52,7 +55,7 @@ noaa.stations = [
     "latitude": 43.879283,
     "name": "MADISON 1.7 SE, NH US",
     "datacoverage": 0.9785,
-    "id": "GHCND:US1NHCR0009",
+    "id": "US1NHCR0009",
     "elevationUnit": "METERS",
     "longitude": -71.126633
   },
@@ -63,7 +66,7 @@ noaa.stations = [
     "latitude": 44.03556,
     "name": "NORTH CONWAY 1.4 SSW, NH US",
     "datacoverage": 0.9611,
-    "id": "GHCND:US1NHCR0011",
+    "id": "US1NHCR0011",
     "elevationUnit": "METERS",
     "longitude": -71.140076
   },
@@ -74,7 +77,7 @@ noaa.stations = [
     "latitude": 44.112796,
     "name": "INTERVALE 2.7 N, NH US",
     "datacoverage": 0.8514,
-    "id": "GHCND:US1NHCR0012",
+    "id": "US1NHCR0012",
     "elevationUnit": "METERS",
     "longitude": -71.139602
   },
@@ -85,7 +88,7 @@ noaa.stations = [
     "latitude": 44.190694,
     "name": "JACKSON 3.7 NW, NH US",
     "datacoverage": 0.9084,
-    "id": "GHCND:US1NHCR0015",
+    "id": "US1NHCR0015",
     "elevationUnit": "METERS",
     "longitude": -71.225989
   },
@@ -96,7 +99,7 @@ noaa.stations = [
     "latitude": 43.92648333,
     "name": "ALBANY 2.8 SW, NH US",
     "datacoverage": 0.599,
-    "id": "GHCND:US1NHCR0041",
+    "id": "US1NHCR0041",
     "elevationUnit": "METERS",
     "longitude": -71.21556667
   },
@@ -107,7 +110,7 @@ noaa.stations = [
     "latitude": 43.840388,
     "name": "TAMWORTH 3.4 ESE, NH US",
     "datacoverage": 0.4976,
-    "id": "GHCND:US1NHCR0043",
+    "id": "US1NHCR0043",
     "elevationUnit": "METERS",
     "longitude": -71.195443
   },
@@ -118,7 +121,7 @@ noaa.stations = [
     "latitude": 44.62395,
     "name": "DUMMER 4.3 NW, NH US",
     "datacoverage": 0.4182,
-    "id": "GHCND:US1NHCS0003",
+    "id": "US1NHCS0003",
     "elevationUnit": "METERS",
     "longitude": -71.314417
   },
@@ -129,7 +132,7 @@ noaa.stations = [
     "latitude": 44.4763958,
     "name": "BERLIN 3.9 ESE, NH US",
     "datacoverage": 0.8058,
-    "id": "GHCND:US1NHCS0006",
+    "id": "US1NHCS0006",
     "elevationUnit": "METERS",
     "longitude": -71.1772647
   },
@@ -140,7 +143,7 @@ noaa.stations = [
     "latitude": 44.388238,
     "name": "RANDOLPH 1.4 NE, NH US",
     "datacoverage": 0.9114,
-    "id": "GHCND:US1NHCS0010",
+    "id": "US1NHCS0010",
     "elevationUnit": "METERS",
     "longitude": -71.2695348
   },
@@ -151,7 +154,7 @@ noaa.stations = [
     "latitude": 44.2353756,
     "name": "FRANCONIA 0.8 NE, NH US",
     "datacoverage": 0.8826,
-    "id": "GHCND:US1NHGR0023",
+    "id": "US1NHGR0023",
     "elevationUnit": "METERS",
     "longitude": -71.7387771
   },
@@ -162,7 +165,7 @@ noaa.stations = [
     "latitude": 43.79048,
     "name": "PLYMOUTH 3.7 N, NH US",
     "datacoverage": 0.9178,
-    "id": "GHCND:US1NHGR0049",
+    "id": "US1NHGR0049",
     "elevationUnit": "METERS",
     "longitude": -71.68413
   },
@@ -173,7 +176,7 @@ noaa.stations = [
     "latitude": 43.8095459,
     "name": "CAMPTON 2.0 ESE, NH US",
     "datacoverage": 0.8364,
-    "id": "GHCND:US1NHGR0050",
+    "id": "US1NHGR0050",
     "elevationUnit": "METERS",
     "longitude": -71.607186
   },
@@ -184,7 +187,7 @@ noaa.stations = [
     "latitude": 44.5833,
     "name": "GRANBY 1.4 NW, VT US",
     "datacoverage": 0.2448,
-    "id": "GHCND:US1VTES0001",
+    "id": "US1VTES0001",
     "elevationUnit": "METERS",
     "longitude": -71.7787
   },
@@ -195,7 +198,7 @@ noaa.stations = [
     "latitude": 44.493245,
     "name": "LUNENBURG 2.3 NNW, VT US",
     "datacoverage": 0.9911,
-    "id": "GHCND:US1VTES0003",
+    "id": "US1VTES0003",
     "elevationUnit": "METERS",
     "longitude": -71.704463
   },
@@ -206,7 +209,7 @@ noaa.stations = [
     "latitude": 44.4535,
     "name": "BERLIN, NH US",
     "datacoverage": 0.7854,
-    "id": "GHCND:USC00270690",
+    "id": "USC00270690",
     "elevationUnit": "METERS",
     "longitude": -71.18552
   },
@@ -217,7 +220,7 @@ noaa.stations = [
     "latitude": 44.86102,
     "name": "COLEBROOK 3 SW, NH US",
     "datacoverage": 0.9273,
-    "id": "GHCND:USC00271647",
+    "id": "USC00271647",
     "elevationUnit": "METERS",
     "longitude": -71.53921
   },
@@ -228,7 +231,7 @@ noaa.stations = [
     "latitude": 43.8099,
     "name": "EAST SANDWICH, NH US",
     "datacoverage": 0.9906,
-    "id": "GHCND:USC00272303",
+    "id": "USC00272303",
     "elevationUnit": "METERS",
     "longitude": -71.3425
   },
@@ -239,7 +242,7 @@ noaa.stations = [
     "latitude": 44.7925,
     "name": "ERROL AIRPORT, NH US",
     "datacoverage": 0.9768,
-    "id": "GHCND:USC00272846",
+    "id": "USC00272846",
     "elevationUnit": "METERS",
     "longitude": -71.1634
   },
@@ -250,7 +253,7 @@ noaa.stations = [
     "latitude": 44.3933,
     "name": "GORHAM AIRPORT, NH US",
     "datacoverage": 0.9919,
-    "id": "GHCND:USC00273488",
+    "id": "USC00273488",
     "elevationUnit": "METERS",
     "longitude": -71.1947
   },
@@ -261,7 +264,7 @@ noaa.stations = [
     "latitude": 44.2663,
     "name": "HARVARD CABIN SNOWPLOT, NH US",
     "datacoverage": 0.2949,
-    "id": "GHCND:USC00273856",
+    "id": "USC00273856",
     "elevationUnit": "METERS",
     "longitude": -71.27793
   },
@@ -272,7 +275,7 @@ noaa.stations = [
     "latitude": 44.2613,
     "name": "HERMIT LAKE SNOWPLOT, NH US",
     "datacoverage": 0.539,
-    "id": "GHCND:USC00273860",
+    "id": "USC00273860",
     "elevationUnit": "METERS",
     "longitude": -71.2833
   },
@@ -283,7 +286,7 @@ noaa.stations = [
     "latitude": 44.4169,
     "name": "JEFFERSON, NH US",
     "datacoverage": 0.7571,
-    "id": "GHCND:USC00274329",
+    "id": "USC00274329",
     "elevationUnit": "METERS",
     "longitude": -71.5008
   },
@@ -294,7 +297,7 @@ noaa.stations = [
     "latitude": 44.49576,
     "name": "LANCASTER, NH US",
     "datacoverage": 0.6758,
-    "id": "GHCND:USC00274556",
+    "id": "USC00274556",
     "elevationUnit": "METERS",
     "longitude": -71.57668
   },
@@ -305,7 +308,7 @@ noaa.stations = [
     "latitude": 44.0562,
     "name": "NORTH CONWAY, NH US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00275995",
+    "id": "USC00275995",
     "elevationUnit": "METERS",
     "longitude": -71.1297
   },
@@ -316,7 +319,7 @@ noaa.stations = [
     "latitude": 44.68199,
     "name": "NORTH STRATFORD, NH US",
     "datacoverage": 0.5794,
-    "id": "GHCND:USC00276234",
+    "id": "USC00276234",
     "elevationUnit": "METERS",
     "longitude": -71.58575
   },
@@ -327,7 +330,7 @@ noaa.stations = [
     "latitude": 44.258,
     "name": "PINKHAM NOTCH, NH US",
     "datacoverage": 0.9878,
-    "id": "GHCND:USC00276818",
+    "id": "USC00276818",
     "elevationUnit": "METERS",
     "longitude": -71.2525
   },
@@ -338,7 +341,7 @@ noaa.stations = [
     "latitude": 43.9459,
     "name": "WATERVILLE VALLEY NEPP, NH US",
     "datacoverage": 1,
-    "id": "GHCND:USC00278961",
+    "id": "USC00278961",
     "elevationUnit": "METERS",
     "longitude": -71.511
   },
@@ -349,7 +352,7 @@ noaa.stations = [
     "latitude": 44.50673,
     "name": "YORK POND, NH US",
     "datacoverage": 0.8513,
-    "id": "GHCND:USC00279966",
+    "id": "USC00279966",
     "elevationUnit": "METERS",
     "longitude": -71.33357
   },
@@ -360,7 +363,7 @@ noaa.stations = [
     "latitude": 44.4112,
     "name": "GILMAN, VT US",
     "datacoverage": 0.9318,
-    "id": "GHCND:USC00433341",
+    "id": "USC00433341",
     "elevationUnit": "METERS",
     "longitude": -71.7186
   },
@@ -371,7 +374,7 @@ noaa.stations = [
     "latitude": 43.9806,
     "name": "WHITE MOUNTAIN NF NEW HAMPSHIR, NH US",
     "datacoverage": 0.9706,
-    "id": "GHCND:USR0000NWMT",
+    "id": "USR0000NWMT",
     "elevationUnit": "METERS",
     "longitude": -71.1406
   },
@@ -382,7 +385,7 @@ noaa.stations = [
     "latitude": 44.77,
     "name": "NULHEGAN VERMONT, VT US",
     "datacoverage": 0.9917,
-    "id": "GHCND:USR0000VNUL",
+    "id": "USR0000VNUL",
     "elevationUnit": "METERS",
     "longitude": -71.7017
   },
@@ -393,7 +396,7 @@ noaa.stations = [
     "latitude": 43.99056,
     "name": "FRYEBURG EASTERN SLOPES REGL AIRPORT, ME US",
     "datacoverage": 0.994,
-    "id": "GHCND:USW00054772",
+    "id": "USW00054772",
     "elevationUnit": "METERS",
     "longitude": -70.9475
   },
@@ -404,11 +407,11 @@ noaa.stations = [
     "latitude": 44.57611,
     "name": "BERLIN MUNICIPAL AIRPORT, NH US",
     "datacoverage": 0.9947,
-    "id": "GHCND:USW00094700",
+    "id": "USW00094700",
     "elevationUnit": "METERS",
     "longitude": -71.17861
   },
-
+/*
   {
     "elevation": 77.4,
     "mindate": "1957-03-01",
@@ -416,10 +419,13 @@ noaa.stations = [
     "latitude": 13.48333,
     "name": "GUAM INTERNATIONAL AIRPORT, US",
     "datacoverage": 0.9999,
-    "id": "GHCND:GQW00041415",
+    "id": "GQW00041415",
     "elevationUnit": "METERS",
     "longitude": 144.8
   },
+
+ */
+/*
   {
     "elevation": 30.2,
     "mindate": "2017-03-27",
@@ -427,7 +433,7 @@ noaa.stations = [
     "latitude": 18.0280797,
     "name": "JUANA DIAZ 2.9 SW, US",
     "datacoverage": 1,
-    "id": "GHCND:RQ1PRJD0002",
+    "id": "RQ1PRJD0002",
     "elevationUnit": "METERS",
     "longitude": -66.5383357
   },
@@ -438,7 +444,7 @@ noaa.stations = [
     "latitude": 18.21704,
     "name": "MAYAGUEZ ARRIBA, US",
     "datacoverage": 0.9984,
-    "id": "GHCND:RQ1PRMY0005",
+    "id": "RQ1PRMY0005",
     "elevationUnit": "METERS",
     "longitude": -67.116726
   },
@@ -449,7 +455,7 @@ noaa.stations = [
     "latitude": 18.2159,
     "name": "HACIENDA CONSTANZA 2 W, US",
     "datacoverage": 0.9985,
-    "id": "GHCND:RQC00664331",
+    "id": "RQC00664331",
     "elevationUnit": "METERS",
     "longitude": -67.0883
   },
@@ -460,10 +466,12 @@ noaa.stations = [
     "latitude": 18.3849,
     "name": "PALMAREJO VEGA BAJA, US",
     "datacoverage": 0.9969,
-    "id": "GHCND:RQC00666730",
+    "id": "RQC00666730",
     "elevationUnit": "METERS",
     "longitude": -66.43
   },
+
+ */
   {
     "elevation": 410,
     "mindate": "2006-04-07",
@@ -471,7 +479,7 @@ noaa.stations = [
     "latitude": 40.118,
     "name": "DILLER 3.0 E, NE US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US10gage022",
+    "id": "US10gage022",
     "elevationUnit": "METERS",
     "longitude": -96.879
   },
@@ -482,7 +490,7 @@ noaa.stations = [
     "latitude": 61.1529,
     "name": "ANCHORAGE 4.7 SSW, AK US",
     "datacoverage": 1,
-    "id": "GHCND:US1AKAB0052",
+    "id": "US1AKAB0052",
     "elevationUnit": "METERS",
     "longitude": -149.9346
   },
@@ -493,7 +501,7 @@ noaa.stations = [
     "latitude": 61.61847,
     "name": "PALMER 1.7 WNW, AK US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1AKMS0011",
+    "id": "US1AKMS0011",
     "elevationUnit": "METERS",
     "longitude": -149.12576
   },
@@ -504,7 +512,7 @@ noaa.stations = [
     "latitude": 30.548289,
     "name": "FAIRHOPE 2.3 N, AL US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1ALBW0001",
+    "id": "US1ALBW0001",
     "elevationUnit": "METERS",
     "longitude": -87.888701
   },
@@ -515,7 +523,7 @@ noaa.stations = [
     "latitude": 30.516588,
     "name": "FAIRHOPE 2.2 E, AL US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1ALBW0071",
+    "id": "US1ALBW0071",
     "elevationUnit": "METERS",
     "longitude": -87.847389
   },
@@ -526,7 +534,7 @@ noaa.stations = [
     "latitude": 34.443141,
     "name": "FORT PAYNE 1.4 WSW, AL US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1ALDK0009",
+    "id": "US1ALDK0009",
     "elevationUnit": "METERS",
     "longitude": -85.715898
   },
@@ -537,7 +545,7 @@ noaa.stations = [
     "latitude": 32.678426,
     "name": "WETUMPKA 9.9 NNE, AL US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1ALEL0018",
+    "id": "US1ALEL0018",
     "elevationUnit": "METERS",
     "longitude": -86.140235
   },
@@ -548,7 +556,7 @@ noaa.stations = [
     "latitude": 34.734519,
     "name": "WOODVILLE 8.0 NNE, AL US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1ALJC0012",
+    "id": "US1ALJC0012",
     "elevationUnit": "METERS",
     "longitude": -86.210018
   },
@@ -559,7 +567,7 @@ noaa.stations = [
     "latitude": 34.66892,
     "name": "HAMPTON COVE 1.0 NW, AL US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1ALMD0042",
+    "id": "US1ALMD0042",
     "elevationUnit": "METERS",
     "longitude": -86.49463
   },
@@ -570,7 +578,7 @@ noaa.stations = [
     "latitude": 32.032274,
     "name": "RAMER 1.5 SE, AL US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1ALMY0006",
+    "id": "US1ALMY0006",
     "elevationUnit": "METERS",
     "longitude": -86.205587
   },
@@ -581,7 +589,7 @@ noaa.stations = [
     "latitude": 32.37835,
     "name": "MONTGOMERY 8.8 E, AL US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1ALMY0014",
+    "id": "US1ALMY0014",
     "elevationUnit": "METERS",
     "longitude": -86.13699
   },
@@ -592,7 +600,7 @@ noaa.stations = [
     "latitude": 33.203389,
     "name": "ROANOKE 4.2 NNE, AL US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1ALRN0002",
+    "id": "US1ALRN0002",
     "elevationUnit": "METERS",
     "longitude": -85.348472
   },
@@ -603,7 +611,7 @@ noaa.stations = [
     "latitude": 36.327549,
     "name": "DECATUR 2.6 ESE, AR US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1ARBT0012",
+    "id": "US1ARBT0012",
     "elevationUnit": "METERS",
     "longitude": -94.413031
   },
@@ -614,7 +622,7 @@ noaa.stations = [
     "latitude": 36.2787704467773,
     "name": "BENTONVILLE 6.6 SSW, AR US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1ARBT0045",
+    "id": "US1ARBT0045",
     "elevationUnit": "METERS",
     "longitude": -94.2437057495117
   },
@@ -625,7 +633,7 @@ noaa.stations = [
     "latitude": 35.446719,
     "name": "HEBER SPRINGS 5.5 SE, AR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ARCB0010",
+    "id": "US1ARCB0010",
     "elevationUnit": "METERS",
     "longitude": -91.96551
   },
@@ -636,7 +644,7 @@ noaa.stations = [
     "latitude": 34.46006393,
     "name": "HOT SPRINGS 2.3 S, AR US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1ARGL0016",
+    "id": "US1ARGL0016",
     "elevationUnit": "METERS",
     "longitude": -93.04961395
   },
@@ -647,7 +655,7 @@ noaa.stations = [
     "latitude": 34.964631,
     "name": "AUSTIN 2.5 SSE, AR US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1ARLK0001",
+    "id": "US1ARLK0001",
     "elevationUnit": "METERS",
     "longitude": -91.965714
   },
@@ -658,7 +666,7 @@ noaa.stations = [
     "latitude": 36.02228,
     "name": "SMITHVILLE 4.4 SSE, AR US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1ARLW0002",
+    "id": "US1ARLW0002",
     "elevationUnit": "METERS",
     "longitude": -91.27124
   },
@@ -669,7 +677,7 @@ noaa.stations = [
     "latitude": 34.033057,
     "name": "DELIGHT 0.3 NNW, AR US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1ARPK0001",
+    "id": "US1ARPK0001",
     "elevationUnit": "METERS",
     "longitude": -93.506937
   },
@@ -680,7 +688,7 @@ noaa.stations = [
     "latitude": 34.596627,
     "name": "MENA 1.2 NNE, AR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ARPL0006",
+    "id": "US1ARPL0006",
     "elevationUnit": "METERS",
     "longitude": -94.229619
   },
@@ -691,7 +699,7 @@ noaa.stations = [
     "latitude": 34.892348,
     "name": "SHERWOOD 4.6 NNW, AR US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1ARPS0026",
+    "id": "US1ARPS0026",
     "elevationUnit": "METERS",
     "longitude": -92.243897
   },
@@ -702,7 +710,7 @@ noaa.stations = [
     "latitude": 34.82398,
     "name": "NORTH LITTLE ROCK 2.5 N, AR US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1ARPS0058",
+    "id": "US1ARPS0058",
     "elevationUnit": "METERS",
     "longitude": -92.25307
   },
@@ -713,7 +721,7 @@ noaa.stations = [
     "latitude": 36.2407,
     "name": "ASH FLAT 1.3 NE, AR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ARSH0019",
+    "id": "US1ARSH0019",
     "elevationUnit": "METERS",
     "longitude": -91.5922
   },
@@ -724,7 +732,7 @@ noaa.stations = [
     "latitude": 34.536,
     "name": "BENTON 10.9 WSW, AR US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1ARSL0023",
+    "id": "US1ARSL0023",
     "elevationUnit": "METERS",
     "longitude": -92.76508
   },
@@ -735,7 +743,7 @@ noaa.stations = [
     "latitude": 34.606697,
     "name": "SHANNON HILLS 2.2 ESE, AR US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1ARSL0035",
+    "id": "US1ARSL0035",
     "elevationUnit": "METERS",
     "longitude": -92.374671
   },
@@ -746,7 +754,7 @@ noaa.stations = [
     "latitude": 34.56606,
     "name": "LITTLE ROCK 11.1 SSE, AR US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1ARSL0036",
+    "id": "US1ARSL0036",
     "elevationUnit": "METERS",
     "longitude": -92.31321
   },
@@ -757,7 +765,7 @@ noaa.stations = [
     "latitude": 31.5489898005297,
     "name": "SIERRA VISTA 1.3 E, AZ US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1AZCH0017",
+    "id": "US1AZCH0017",
     "elevationUnit": "METERS",
     "longitude": -110.277607440948
   },
@@ -768,7 +776,7 @@ noaa.stations = [
     "latitude": 31.458302,
     "name": "DOUGLAS 8.8 NNW, AZ US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1AZCH0069",
+    "id": "US1AZCH0069",
     "elevationUnit": "METERS",
     "longitude": -109.596941
   },
@@ -779,7 +787,7 @@ noaa.stations = [
     "latitude": 35.612592,
     "name": "DOLAN SPRINGS 1.4 NNE, AZ US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1AZMH0027",
+    "id": "US1AZMH0027",
     "elevationUnit": "METERS",
     "longitude": -114.26617
   },
@@ -790,7 +798,7 @@ noaa.stations = [
     "latitude": 33.340431,
     "name": "TEMPE 3.3 S, AZ US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1AZMR0032",
+    "id": "US1AZMR0032",
     "elevationUnit": "METERS",
     "longitude": -111.930331
   },
@@ -801,7 +809,7 @@ noaa.stations = [
     "latitude": 33.374088,
     "name": "GILBERT 3.8 NW, AZ US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1AZMR0075",
+    "id": "US1AZMR0075",
     "elevationUnit": "METERS",
     "longitude": -111.805307
   },
@@ -812,7 +820,7 @@ noaa.stations = [
     "latitude": 33.33644,
     "name": "LAVEEN 3.0 SE, AZ US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1AZMR0111",
+    "id": "US1AZMR0111",
     "elevationUnit": "METERS",
     "longitude": -112.149714
   },
@@ -823,7 +831,7 @@ noaa.stations = [
     "latitude": 33.221277,
     "name": "CHANDLER 6.6 SE, AZ US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1AZMR0157",
+    "id": "US1AZMR0157",
     "elevationUnit": "METERS",
     "longitude": -111.775611
   },
@@ -834,7 +842,7 @@ noaa.stations = [
     "latitude": 33.5511,
     "name": "PHOENIX 8.8 NNW, AZ US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1AZMR0211",
+    "id": "US1AZMR0211",
     "elevationUnit": "METERS",
     "longitude": -112.14659
   },
@@ -845,7 +853,7 @@ noaa.stations = [
     "latitude": 33.367131,
     "name": "GILBERT 3.6 ENE, AZ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1AZMR0218",
+    "id": "US1AZMR0218",
     "elevationUnit": "METERS",
     "longitude": -111.720364
   },
@@ -856,7 +864,7 @@ noaa.stations = [
     "latitude": 33.293836,
     "name": "PHOENIX 10.2 S, AZ US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1AZMR0313",
+    "id": "US1AZMR0313",
     "elevationUnit": "METERS",
     "longitude": -112.088809
   },
@@ -867,7 +875,7 @@ noaa.stations = [
     "latitude": 33.350355,
     "name": "PHOENIX 6.3 SSW, AZ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1AZMR0326",
+    "id": "US1AZMR0326",
     "elevationUnit": "METERS",
     "longitude": -112.094526
   },
@@ -878,7 +886,7 @@ noaa.stations = [
     "latitude": 33.800591,
     "name": "CAVE CREEK 9.4 WSW, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZMR0372",
+    "id": "US1AZMR0372",
     "elevationUnit": "METERS",
     "longitude": -112.109868
   },
@@ -889,7 +897,7 @@ noaa.stations = [
     "latitude": 33.37021,
     "name": "MESA 4.3 SW, AZ US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1AZMR0442",
+    "id": "US1AZMR0442",
     "elevationUnit": "METERS",
     "longitude": -111.864501
   },
@@ -900,7 +908,7 @@ noaa.stations = [
     "latitude": 33.5762748718262,
     "name": "WADDELL 0.2 W, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZMR0448",
+    "id": "US1AZMR0448",
     "elevationUnit": "METERS",
     "longitude": -112.453590393066
   },
@@ -911,7 +919,7 @@ noaa.stations = [
     "latitude": 33.39289,
     "name": "BUCKEYE 13.7 W, AZ US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1AZMR0466",
+    "id": "US1AZMR0466",
     "elevationUnit": "METERS",
     "longitude": -112.815469
   },
@@ -922,7 +930,7 @@ noaa.stations = [
     "latitude": 33.576277286346,
     "name": "FOUNTAIN HILLS 3.6 SW, AZ US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1AZMR0470",
+    "id": "US1AZMR0470",
     "elevationUnit": "METERS",
     "longitude": -111.75691924095
   },
@@ -933,7 +941,7 @@ noaa.stations = [
     "latitude": 34.110928,
     "name": "PINETOP LAKESIDE 4.0 ESE, AZ US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1AZNV0007",
+    "id": "US1AZNV0007",
     "elevationUnit": "METERS",
     "longitude": -109.900314
   },
@@ -944,7 +952,7 @@ noaa.stations = [
     "latitude": 34.189592,
     "name": "SHOW LOW 4.2 S, AZ US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1AZNV0042",
+    "id": "US1AZNV0042",
     "elevationUnit": "METERS",
     "longitude": -110.013096
   },
@@ -955,7 +963,7 @@ noaa.stations = [
     "latitude": 32.276347,
     "name": "TUCSON 8.0 NW, AZ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1AZPM0062",
+    "id": "US1AZPM0062",
     "elevationUnit": "METERS",
     "longitude": -110.990448
   },
@@ -966,7 +974,7 @@ noaa.stations = [
     "latitude": 32.22607,
     "name": "TUCSON 5.8 ENE, AZ US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1AZPM0082",
+    "id": "US1AZPM0082",
     "elevationUnit": "METERS",
     "longitude": -110.79839
   },
@@ -977,7 +985,7 @@ noaa.stations = [
     "latitude": 32.139041,
     "name": "TUCSON 10.5 ESE, AZ US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1AZPM0111",
+    "id": "US1AZPM0111",
     "elevationUnit": "METERS",
     "longitude": -110.76738
   },
@@ -988,7 +996,7 @@ noaa.stations = [
     "latitude": 32.3585,
     "name": "TUCSON 12.3 NW, AZ US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1AZPM0206",
+    "id": "US1AZPM0206",
     "elevationUnit": "METERS",
     "longitude": -111.0515
   },
@@ -999,7 +1007,7 @@ noaa.stations = [
     "latitude": 32.489208,
     "name": "CATALINA 2.5 ESE, AZ US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1AZPM0231",
+    "id": "US1AZPM0231",
     "elevationUnit": "METERS",
     "longitude": -110.884141
   },
@@ -1010,7 +1018,7 @@ noaa.stations = [
     "latitude": 32.129715,
     "name": "VALENCIA WEST 1.1 E, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZPM0318",
+    "id": "US1AZPM0318",
     "elevationUnit": "METERS",
     "longitude": -111.129873
   },
@@ -1021,7 +1029,7 @@ noaa.stations = [
     "latitude": 32.2841,
     "name": "TUCSON 9.9 WNW, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZPM0339",
+    "id": "US1AZPM0339",
     "elevationUnit": "METERS",
     "longitude": -111.0709
   },
@@ -1032,7 +1040,7 @@ noaa.stations = [
     "latitude": 31.8731,
     "name": "GREEN VALLEY 1.4 NNW, AZ US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1AZPM0347",
+    "id": "US1AZPM0347",
     "elevationUnit": "METERS",
     "longitude": -111.00455
   },
@@ -1043,7 +1051,7 @@ noaa.stations = [
     "latitude": 32.261755,
     "name": "TUCSON 2.9 N, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZPM0365",
+    "id": "US1AZPM0365",
     "elevationUnit": "METERS",
     "longitude": -110.92942
   },
@@ -1054,7 +1062,7 @@ noaa.stations = [
     "latitude": 33.29818,
     "name": "QUEEN VALLEY 0.2 E, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZPN0077",
+    "id": "US1AZPN0077",
     "elevationUnit": "METERS",
     "longitude": -111.2866
   },
@@ -1065,7 +1073,7 @@ noaa.stations = [
     "latitude": 31.437,
     "name": "RIO RICO 4.4 WSW, AZ US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1AZSC0013",
+    "id": "US1AZSC0013",
     "elevationUnit": "METERS",
     "longitude": -111.0396
   },
@@ -1076,7 +1084,7 @@ noaa.stations = [
     "latitude": 34.2821129,
     "name": "MAYER 8.5 SSE, AZ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1AZYV0005",
+    "id": "US1AZYV0005",
     "elevationUnit": "METERS",
     "longitude": -112.198348
   },
@@ -1087,7 +1095,7 @@ noaa.stations = [
     "latitude": 34.5997,
     "name": "CAMP VERDE 3.2 NNW, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:US1AZYV0136",
+    "id": "US1AZYV0136",
     "elevationUnit": "METERS",
     "longitude": -111.8778
   },
@@ -1098,7 +1106,7 @@ noaa.stations = [
     "latitude": 37.7778,
     "name": "OAKLAND 1.2 ENE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CAAL0030",
+    "id": "US1CAAL0030",
     "elevationUnit": "METERS",
     "longitude": -122.2032
   },
@@ -1109,7 +1117,7 @@ noaa.stations = [
     "latitude": 39.334813,
     "name": "GRIDLEY 3.3 SE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CABT0026",
+    "id": "US1CABT0026",
     "elevationUnit": "METERS",
     "longitude": -121.645757
   },
@@ -1120,7 +1128,7 @@ noaa.stations = [
     "latitude": 39.406398,
     "name": "PALERMO 2.7 SE, CA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1CABT0033",
+    "id": "US1CABT0033",
     "elevationUnit": "METERS",
     "longitude": -121.499978
   },
@@ -1131,7 +1139,7 @@ noaa.stations = [
     "latitude": 37.989778,
     "name": "MARTINEZ 0.8 SSE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CACC0001",
+    "id": "US1CACC0001",
     "elevationUnit": "METERS",
     "longitude": -122.108496
   },
@@ -1142,7 +1150,7 @@ noaa.stations = [
     "latitude": 37.884602,
     "name": "WALNUT CREEK 1.4 SSE, CA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1CACC0018",
+    "id": "US1CACC0018",
     "elevationUnit": "METERS",
     "longitude": -122.028472
   },
@@ -1153,7 +1161,7 @@ noaa.stations = [
     "latitude": 37.936324,
     "name": "EL CERRITO 1.3 NW, CA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1CACC0028",
+    "id": "US1CACC0028",
     "elevationUnit": "METERS",
     "longitude": -122.3157
   },
@@ -1164,7 +1172,7 @@ noaa.stations = [
     "latitude": 38.69527,
     "name": "PLACERVILLE 3.7 SW, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1CAED0003",
+    "id": "US1CAED0003",
     "elevationUnit": "METERS",
     "longitude": -120.84895
   },
@@ -1175,7 +1183,7 @@ noaa.stations = [
     "latitude": 38.7338447570801,
     "name": "CAMINO 2.0 WSW, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CAED0017",
+    "id": "US1CAED0017",
     "elevationUnit": "METERS",
     "longitude": -120.711006164551
   },
@@ -1186,7 +1194,7 @@ noaa.stations = [
     "latitude": 40.9778,
     "name": "MCKINLEYVILLE 2.3 NE, CA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1CAHM0009",
+    "id": "US1CAHM0009",
     "elevationUnit": "METERS",
     "longitude": -124.086
   },
@@ -1197,7 +1205,7 @@ noaa.stations = [
     "latitude": 40.47343,
     "name": "BRIDGEVILLE 5.2 ENE, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1CAHM0026",
+    "id": "US1CAHM0026",
     "elevationUnit": "METERS",
     "longitude": -123.70131
   },
@@ -1208,7 +1216,7 @@ noaa.stations = [
     "latitude": 40.7642,
     "name": "EUREKA 2.2 S, CA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1CAHM0035",
+    "id": "US1CAHM0035",
     "elevationUnit": "METERS",
     "longitude": -124.1476
   },
@@ -1219,7 +1227,7 @@ noaa.stations = [
     "latitude": 35.6345,
     "name": "INYOKERN 9.4 WSW, CA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1CAKN0001",
+    "id": "US1CAKN0001",
     "elevationUnit": "METERS",
     "longitude": -117.9782
   },
@@ -1230,7 +1238,7 @@ noaa.stations = [
     "latitude": 35.331142,
     "name": "BAKERSFIELD 6.1 WSW, CA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1CAKN0022",
+    "id": "US1CAKN0022",
     "elevationUnit": "METERS",
     "longitude": -119.107783
   },
@@ -1241,7 +1249,7 @@ noaa.stations = [
     "latitude": 34.1689,
     "name": "GLENDALE 2.4 WSW, CA US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1CALA0001",
+    "id": "US1CALA0001",
     "elevationUnit": "METERS",
     "longitude": -118.2947
   },
@@ -1252,7 +1260,7 @@ noaa.stations = [
     "latitude": 33.986232,
     "name": "WHITTIER 2.9 WNW, CA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1CALA0010",
+    "id": "US1CALA0010",
     "elevationUnit": "METERS",
     "longitude": -118.066418
   },
@@ -1263,7 +1271,7 @@ noaa.stations = [
     "latitude": 39.1682014465332,
     "name": "UPPER LAKE 3.6 W, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CALK0009",
+    "id": "US1CALK0009",
     "elevationUnit": "METERS",
     "longitude": -122.977813720703
   },
@@ -1274,7 +1282,7 @@ noaa.stations = [
     "latitude": 37.036736,
     "name": "LAKE MADERA 1.3 NNE, CA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1CAMA0009",
+    "id": "US1CAMA0009",
     "elevationUnit": "METERS",
     "longitude": -119.984218
   },
@@ -1285,7 +1293,7 @@ noaa.stations = [
     "latitude": 37.32167,
     "name": "OAKHURST 0.9 SSE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CAMA0016",
+    "id": "US1CAMA0016",
     "elevationUnit": "METERS",
     "longitude": -119.64094
   },
@@ -1296,7 +1304,7 @@ noaa.stations = [
     "latitude": 41.5135,
     "name": "ALTURAS 9.5 E, CA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1CAMC0004",
+    "id": "US1CAMC0004",
     "elevationUnit": "METERS",
     "longitude": -120.3648
   },
@@ -1307,7 +1315,7 @@ noaa.stations = [
     "latitude": 39.2381553649902,
     "name": "GRASS VALLEY 1.3 NNE, CA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1CANV0035",
+    "id": "US1CANV0035",
     "elevationUnit": "METERS",
     "longitude": -121.046287536621
   },
@@ -1318,7 +1326,7 @@ noaa.stations = [
     "latitude": 33.595421,
     "name": "MISSION VIEJO 1.3 SSE, CA US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1CAOR0019",
+    "id": "US1CAOR0019",
     "elevationUnit": "METERS",
     "longitude": -117.644161
   },
@@ -1329,7 +1337,7 @@ noaa.stations = [
     "latitude": 33.788592,
     "name": "ORANGE 2.1 ESE, CA US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1CAOR0077",
+    "id": "US1CAOR0077",
     "elevationUnit": "METERS",
     "longitude": -117.792437
   },
@@ -1340,7 +1348,7 @@ noaa.stations = [
     "latitude": 39.302062,
     "name": "SODA SPRINGS 1.5 SSW, CA US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1CAPC0001",
+    "id": "US1CAPC0001",
     "elevationUnit": "METERS",
     "longitude": -120.383677
   },
@@ -1351,7 +1359,7 @@ noaa.stations = [
     "latitude": 38.808811,
     "name": "ROCKLIN 2.5 W, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1CAPC0035",
+    "id": "US1CAPC0035",
     "elevationUnit": "METERS",
     "longitude": -121.286011
   },
@@ -1362,7 +1370,7 @@ noaa.stations = [
     "latitude": 33.7307,
     "name": "CORONA 12.8 SE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CARV0008",
+    "id": "US1CARV0008",
     "elevationUnit": "METERS",
     "longitude": -117.4276
   },
@@ -1373,7 +1381,7 @@ noaa.stations = [
     "latitude": 33.60811,
     "name": "MURRIETA 3.6 NNE, CA US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1CARV0043",
+    "id": "US1CARV0043",
     "elevationUnit": "METERS",
     "longitude": -117.187842
   },
@@ -1384,7 +1392,7 @@ noaa.stations = [
     "latitude": 38.570137,
     "name": "RANCHO CORDOVA 5.9 ESE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CASA0061",
+    "id": "US1CASA0061",
     "elevationUnit": "METERS",
     "longitude": -121.196535
   },
@@ -1395,7 +1403,7 @@ noaa.stations = [
     "latitude": 37.364707,
     "name": "SUNNYVALE 1.9 SE, CA US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1CASC0003",
+    "id": "US1CASC0003",
     "elevationUnit": "METERS",
     "longitude": -122.004155
   },
@@ -1406,7 +1414,7 @@ noaa.stations = [
     "latitude": 37.15603,
     "name": "LOS GATOS 5.4 SSW, CA US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1CASC0040",
+    "id": "US1CASC0040",
     "elevationUnit": "METERS",
     "longitude": -121.98754
   },
@@ -1417,7 +1425,7 @@ noaa.stations = [
     "latitude": 33.1472,
     "name": "SAN MARCOS 2.5 ENE, CA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1CASD0001",
+    "id": "US1CASD0001",
     "elevationUnit": "METERS",
     "longitude": -117.1316
   },
@@ -1428,7 +1436,7 @@ noaa.stations = [
     "latitude": 32.790748,
     "name": "EL CAJON 1.5WSW, CA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1CASD0009",
+    "id": "US1CASD0009",
     "elevationUnit": "METERS",
     "longitude": -116.986977
   },
@@ -1439,7 +1447,7 @@ noaa.stations = [
     "latitude": 32.9956,
     "name": "POWAY 3.2NE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CASD0012",
+    "id": "US1CASD0012",
     "elevationUnit": "METERS",
     "longitude": -117.00441
   },
@@ -1450,7 +1458,7 @@ noaa.stations = [
     "latitude": 32.76984,
     "name": "LA MESA 2.6E, CA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1CASD0090",
+    "id": "US1CASD0090",
     "elevationUnit": "METERS",
     "longitude": -116.978811
   },
@@ -1461,7 +1469,7 @@ noaa.stations = [
     "latitude": 33.079419,
     "name": "CARLSBAD 8.3SE, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1CASD0097",
+    "id": "US1CASD0097",
     "elevationUnit": "METERS",
     "longitude": -117.24189
   },
@@ -1472,7 +1480,7 @@ noaa.stations = [
     "latitude": 33.310784,
     "name": "VALLEY CENTER 6.4N, CA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1CASD0101",
+    "id": "US1CASD0101",
     "elevationUnit": "METERS",
     "longitude": -117.040908
   },
@@ -1483,7 +1491,7 @@ noaa.stations = [
     "latitude": 32.86508,
     "name": "DESCANSO 0.8 N, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CASD0104",
+    "id": "US1CASD0104",
     "elevationUnit": "METERS",
     "longitude": -116.61753
   },
@@ -1494,7 +1502,7 @@ noaa.stations = [
     "latitude": 32.81391,
     "name": "SAN DIEGO 1.9 W, CA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1CASD0173",
+    "id": "US1CASD0173",
     "elevationUnit": "METERS",
     "longitude": -117.16925
   },
@@ -1505,7 +1513,7 @@ noaa.stations = [
     "latitude": 32.81535,
     "name": "EL CAJON 2.2 ENE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CASD0180",
+    "id": "US1CASD0180",
     "elevationUnit": "METERS",
     "longitude": -116.926941
   },
@@ -1516,7 +1524,7 @@ noaa.stations = [
     "latitude": 40.51805555,
     "name": "REDDING 3.8 S, CA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1CASH0051",
+    "id": "US1CASH0051",
     "elevationUnit": "METERS",
     "longitude": -122.36916666
   },
@@ -1527,7 +1535,7 @@ noaa.stations = [
     "latitude": 38.062693,
     "name": "LINDEN 5.8 ENE, CA US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1CASJ0001",
+    "id": "US1CASJ0001",
     "elevationUnit": "METERS",
     "longitude": -121.007916
   },
@@ -1538,7 +1546,7 @@ noaa.stations = [
     "latitude": 41.632265,
     "name": "GRENADA 0.8 SW, CA US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1CASK0020",
+    "id": "US1CASK0020",
     "elevationUnit": "METERS",
     "longitude": -122.537255
   },
@@ -1549,7 +1557,7 @@ noaa.stations = [
     "latitude": 37.612115,
     "name": "PACIFICA 0.3 W, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1CASM0001",
+    "id": "US1CASM0001",
     "elevationUnit": "METERS",
     "longitude": -122.48254
   },
@@ -1560,7 +1568,7 @@ noaa.stations = [
     "latitude": 37.54883,
     "name": "FOSTER CITY 1.3 SW, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CASM0006",
+    "id": "US1CASM0006",
     "elevationUnit": "METERS",
     "longitude": -122.2587
   },
@@ -1571,7 +1579,7 @@ noaa.stations = [
     "latitude": 38.375265,
     "name": "SEBASTOPOL 4.5 WSW, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1CASN0016",
+    "id": "US1CASN0016",
     "elevationUnit": "METERS",
     "longitude": -122.903541
   },
@@ -1582,7 +1590,7 @@ noaa.stations = [
     "latitude": 38.377824,
     "name": "GLEN ELLEN 1.5 N, CA US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1CASN0080",
+    "id": "US1CASN0080",
     "elevationUnit": "METERS",
     "longitude": -122.534275
   },
@@ -1593,7 +1601,7 @@ noaa.stations = [
     "latitude": 38.469852,
     "name": "SANTA ROSA 2.3 NW, CA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1CASN0112",
+    "id": "US1CASN0112",
     "elevationUnit": "METERS",
     "longitude": -122.733314
   },
@@ -1604,7 +1612,7 @@ noaa.stations = [
     "latitude": 34.097337,
     "name": "JOSHUA TREE 2.0 S, CA US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1CASR0014",
+    "id": "US1CASR0014",
     "elevationUnit": "METERS",
     "longitude": -116.31783
   },
@@ -1615,7 +1623,7 @@ noaa.stations = [
     "latitude": 37.693058013916,
     "name": "MODESTO 4.1 NW, CA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1CASS0006",
+    "id": "US1CASS0006",
     "elevationUnit": "METERS",
     "longitude": -121.056518554688
   },
@@ -1626,7 +1634,7 @@ noaa.stations = [
     "latitude": 38.5613,
     "name": "DAVIS 6.3 W, CA US",
     "datacoverage": 1,
-    "id": "GHCND:US1CAYL0021",
+    "id": "US1CAYL0021",
     "elevationUnit": "METERS",
     "longitude": -121.852198
   },
@@ -1637,7 +1645,7 @@ noaa.stations = [
     "latitude": 39.9941,
     "name": "BOULDER 2.9 S, CO US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1COBO0004",
+    "id": "US1COBO0004",
     "elevationUnit": "METERS",
     "longitude": -105.2573
   },
@@ -1648,7 +1656,7 @@ noaa.stations = [
     "latitude": 40.0242,
     "name": "BOULDER 1.3 NW, CO US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1COBO0072",
+    "id": "US1COBO0072",
     "elevationUnit": "METERS",
     "longitude": -105.2689
   },
@@ -1659,7 +1667,7 @@ noaa.stations = [
     "latitude": 40.1103,
     "name": "WARD 4.6 NE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COBO0202",
+    "id": "US1COBO0202",
     "elevationUnit": "METERS",
     "longitude": -105.4391
   },
@@ -1670,7 +1678,7 @@ noaa.stations = [
     "latitude": 40.102041,
     "name": "NIWOT 2.3 W, CO US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1COBO0248",
+    "id": "US1COBO0248",
     "elevationUnit": "METERS",
     "longitude": -105.198728
   },
@@ -1681,7 +1689,7 @@ noaa.stations = [
     "latitude": 39.977,
     "name": "BOULDER 3.5 S, CO US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1COBO0286",
+    "id": "US1COBO0286",
     "elevationUnit": "METERS",
     "longitude": -105.2576
   },
@@ -1692,7 +1700,7 @@ noaa.stations = [
     "latitude": 40.0456,
     "name": "BOULDER 1.8 NW, CO US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1COBO0465",
+    "id": "US1COBO0465",
     "elevationUnit": "METERS",
     "longitude": -105.275351
   },
@@ -1703,7 +1711,7 @@ noaa.stations = [
     "latitude": 39.524475,
     "name": "PARKER 2.5 WNW, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1CODG0282",
+    "id": "US1CODG0282",
     "elevationUnit": "METERS",
     "longitude": -104.807063
   },
@@ -1714,7 +1722,7 @@ noaa.stations = [
     "latitude": 38.814372,
     "name": "HOTCHKISS 4.9 W, CO US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1CODL0049",
+    "id": "US1CODL0049",
     "elevationUnit": "METERS",
     "longitude": -107.80785
   },
@@ -1725,7 +1733,7 @@ noaa.stations = [
     "latitude": 39.1125,
     "name": "MONUMENT 2.9 N, CO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1COEP0055",
+    "id": "US1COEP0055",
     "elevationUnit": "METERS",
     "longitude": -104.859
   },
@@ -1736,7 +1744,7 @@ noaa.stations = [
     "latitude": 39.0410041,
     "name": "BLACK FOREST 3.8 W, CO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1COEP0396",
+    "id": "US1COEP0396",
     "elevationUnit": "METERS",
     "longitude": -104.7379468
   },
@@ -1747,7 +1755,7 @@ noaa.stations = [
     "latitude": 39.397817,
     "name": "CARBONDALE 0.5 W, CO US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1COGF0047",
+    "id": "US1COGF0047",
     "elevationUnit": "METERS",
     "longitude": -107.2227
   },
@@ -1758,7 +1766,7 @@ noaa.stations = [
     "latitude": 38.639122,
     "name": "GUNNISON 6.6 N, CO US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1COGN0040",
+    "id": "US1COGN0040",
     "elevationUnit": "METERS",
     "longitude": -106.940753
   },
@@ -1769,7 +1777,7 @@ noaa.stations = [
     "latitude": 39.07911,
     "name": "MARBLE 0.5 NNW, CO US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1COGN0050",
+    "id": "US1COGN0050",
     "elevationUnit": "METERS",
     "longitude": -107.190612
   },
@@ -1780,7 +1788,7 @@ noaa.stations = [
     "latitude": 37.60339,
     "name": "WALSENBURG 11.5 W, CO US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1COHF0041",
+    "id": "US1COHF0041",
     "elevationUnit": "METERS",
     "longitude": -104.9905
   },
@@ -1791,7 +1799,7 @@ noaa.stations = [
     "latitude": 39.5795,
     "name": "EVERGREEN 4.2 SSE, CO US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1COJF0157",
+    "id": "US1COJF0157",
     "elevationUnit": "METERS",
     "longitude": -105.2789
   },
@@ -1802,7 +1810,7 @@ noaa.stations = [
     "latitude": 39.6082,
     "name": "LITTLETON 6.4 W, CO US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1COJF0212",
+    "id": "US1COJF0212",
     "elevationUnit": "METERS",
     "longitude": -105.1371
   },
@@ -1813,7 +1821,7 @@ noaa.stations = [
     "latitude": 39.756366,
     "name": "WHEAT RIDGE 2.8 WSW, CO US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1COJF0290",
+    "id": "US1COJF0290",
     "elevationUnit": "METERS",
     "longitude": -105.146817
   },
@@ -1824,7 +1832,7 @@ noaa.stations = [
     "latitude": 39.67736,
     "name": "LAKEWOOD 1.7 SW, CO US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1COJF0333",
+    "id": "US1COJF0333",
     "elevationUnit": "METERS",
     "longitude": -105.136721
   },
@@ -1835,7 +1843,7 @@ noaa.stations = [
     "latitude": 39.6244,
     "name": "EVERGREEN 2.0 ESE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COJF0395",
+    "id": "US1COJF0395",
     "elevationUnit": "METERS",
     "longitude": -105.3068
   },
@@ -1846,7 +1854,7 @@ noaa.stations = [
     "latitude": 39.848753,
     "name": "ARVADA 3.5 WNW, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COJF0457",
+    "id": "US1COJF0457",
     "elevationUnit": "METERS",
     "longitude": -105.162186
   },
@@ -1857,7 +1865,7 @@ noaa.stations = [
     "latitude": 40.514722,
     "name": "STERLING 15 SE, CO US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1COLG0040",
+    "id": "US1COLG0040",
     "elevationUnit": "METERS",
     "longitude": -102.990556
   },
@@ -1868,7 +1876,7 @@ noaa.stations = [
     "latitude": 38.6779,
     "name": "KARVAL 9.8 WSW, CO US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1COLN0018",
+    "id": "US1COLN0018",
     "elevationUnit": "METERS",
     "longitude": -103.7049
   },
@@ -1879,7 +1887,7 @@ noaa.stations = [
     "latitude": 40.3926,
     "name": "LOV 4.0 W, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COLR0509",
+    "id": "US1COLR0509",
     "elevationUnit": "METERS",
     "longitude": -105.1587
   },
@@ -1890,7 +1898,7 @@ noaa.stations = [
     "latitude": 40.3922,
     "name": "LOVELAND 2.0 SSE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COLR0662",
+    "id": "US1COLR0662",
     "elevationUnit": "METERS",
     "longitude": -105.05393
   },
@@ -1901,7 +1909,7 @@ noaa.stations = [
     "latitude": 40.495523,
     "name": "FORT COLLINS 4.2 S, CO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1COLR0758",
+    "id": "US1COLR0758",
     "elevationUnit": "METERS",
     "longitude": -105.05669
   },
@@ -1912,7 +1920,7 @@ noaa.stations = [
     "latitude": 40.2843,
     "name": "BERTHOUD 4.4 WSW, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COLR0922",
+    "id": "US1COLR0922",
     "elevationUnit": "METERS",
     "longitude": -105.1608
   },
@@ -1923,7 +1931,7 @@ noaa.stations = [
     "latitude": 40.427677154541,
     "name": "LOVELAND 2.8 WNW, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COLR1109",
+    "id": "US1COLR1109",
     "elevationUnit": "METERS",
     "longitude": -105.124092102051
   },
@@ -1934,7 +1942,7 @@ noaa.stations = [
     "latitude": 39.087994,
     "name": "GRAND JUNCTION 2.3 E, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COME0125",
+    "id": "US1COME0125",
     "elevationUnit": "METERS",
     "longitude": -108.509153
   },
@@ -1945,7 +1953,7 @@ noaa.stations = [
     "latitude": 39.080928,
     "name": "GRAND JUNCTION 3.6 W, CO US",
     "datacoverage": 1,
-    "id": "GHCND:US1COME0137",
+    "id": "US1COME0137",
     "elevationUnit": "METERS",
     "longitude": -108.61919
   },
@@ -1956,7 +1964,7 @@ noaa.stations = [
     "latitude": 40.29305,
     "name": "HILLROSE 2.5 SSW, CO US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1COMR0081",
+    "id": "US1COMR0081",
     "elevationUnit": "METERS",
     "longitude": -103.54646
   },
@@ -1967,7 +1975,7 @@ noaa.stations = [
     "latitude": 38.259312,
     "name": "PUEBLO 4.7 SE, CO US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1COPU0103",
+    "id": "US1COPU0103",
     "elevationUnit": "METERS",
     "longitude": -104.547806
   },
@@ -1978,7 +1986,7 @@ noaa.stations = [
     "latitude": 38.264332,
     "name": "PUEBLO 2.5 SSW, CO US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1COPU0109",
+    "id": "US1COPU0109",
     "elevationUnit": "METERS",
     "longitude": -104.633345
   },
@@ -1989,7 +1997,7 @@ noaa.stations = [
     "latitude": 38.4003,
     "name": "PUEBLO WEST 3.7 NNE, CO US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1COPU0134",
+    "id": "US1COPU0134",
     "elevationUnit": "METERS",
     "longitude": -104.6989
   },
@@ -2000,7 +2008,7 @@ noaa.stations = [
     "latitude": 40.475368,
     "name": "STEAMBOAT SPRINGS 0.7 ESE, CO US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1CORT0053",
+    "id": "US1CORT0053",
     "elevationUnit": "METERS",
     "longitude": -106.808496
   },
@@ -2011,7 +2019,7 @@ noaa.stations = [
     "latitude": 40.2917,
     "name": "GREELEY 10.5 SSE, CO US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1COWE0043",
+    "id": "US1COWE0043",
     "elevationUnit": "METERS",
     "longitude": -104.6394
   },
@@ -2022,7 +2030,7 @@ noaa.stations = [
     "latitude": 40.438,
     "name": "GREELEY 4.6 WNW, CO US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1COWE0318",
+    "id": "US1COWE0318",
     "elevationUnit": "METERS",
     "longitude": -104.807
   },
@@ -2033,7 +2041,7 @@ noaa.stations = [
     "latitude": 39.97743,
     "name": "VERNON 3.6 NNE, CO US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1COYU0062",
+    "id": "US1COYU0062",
     "elevationUnit": "METERS",
     "longitude": -102.250747
   },
@@ -2044,7 +2052,7 @@ noaa.stations = [
     "latitude": 41.6225,
     "name": "KENSINGTON 0.7 WSW, CT US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1CTHR0080",
+    "id": "US1CTHR0080",
     "elevationUnit": "METERS",
     "longitude": -72.78289
   },
@@ -2055,7 +2063,7 @@ noaa.stations = [
     "latitude": 42.002,
     "name": "COLEBROOK 1.0 NE, CT US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1CTLT0015",
+    "id": "US1CTLT0015",
     "elevationUnit": "METERS",
     "longitude": -73.0825
   },
@@ -2066,7 +2074,7 @@ noaa.stations = [
     "latitude": 41.501067,
     "name": "HIGGANUM 0.7 N, CT US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1CTMD0023",
+    "id": "US1CTMD0023",
     "elevationUnit": "METERS",
     "longitude": -72.555951
   },
@@ -2077,7 +2085,7 @@ noaa.stations = [
     "latitude": 41.5103,
     "name": "MIDDLEFIELD 0.6 SE, CT US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1CTMD0025",
+    "id": "US1CTMD0025",
     "elevationUnit": "METERS",
     "longitude": -72.705
   },
@@ -2088,7 +2096,7 @@ noaa.stations = [
     "latitude": 41.403135,
     "name": "SEYMOUR 1.5 NE, CT US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1CTNH0047",
+    "id": "US1CTNH0047",
     "elevationUnit": "METERS",
     "longitude": -73.04835
   },
@@ -2099,7 +2107,7 @@ noaa.stations = [
     "latitude": 41.584855,
     "name": "NORWICH 2.5 NNE, CT US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1CTNL0010",
+    "id": "US1CTNL0010",
     "elevationUnit": "METERS",
     "longitude": -72.076749
   },
@@ -2110,7 +2118,7 @@ noaa.stations = [
     "latitude": 41.608825,
     "name": "GRISWOLD 0.9 N, CT US",
     "datacoverage": 1,
-    "id": "GHCND:US1CTNL0021",
+    "id": "US1CTNL0021",
     "elevationUnit": "METERS",
     "longitude": -71.930861
   },
@@ -2121,7 +2129,7 @@ noaa.stations = [
     "latitude": 41.30129,
     "name": "OLD LYME 3.4 ESE, CT US",
     "datacoverage": 1,
-    "id": "GHCND:US1CTNL0038",
+    "id": "US1CTNL0038",
     "elevationUnit": "METERS",
     "longitude": -72.26666
   },
@@ -2132,7 +2140,7 @@ noaa.stations = [
     "latitude": 41.995532,
     "name": "CENTRAL SOMERS 0.3 N, CT US",
     "datacoverage": 1,
-    "id": "GHCND:US1CTTL0015",
+    "id": "US1CTTL0015",
     "elevationUnit": "METERS",
     "longitude": -72.44127
   },
@@ -2143,7 +2151,7 @@ noaa.stations = [
     "latitude": 41.731808,
     "name": "MOOSUP 1.7 NE, CT US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1CTWN0008",
+    "id": "US1CTWN0008",
     "elevationUnit": "METERS",
     "longitude": -71.846671
   },
@@ -2154,7 +2162,7 @@ noaa.stations = [
     "latitude": 39.624942,
     "name": "NEWARK 3.9 SSW, DE US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1DENC0002",
+    "id": "US1DENC0002",
     "elevationUnit": "METERS",
     "longitude": -75.786129
   },
@@ -2165,7 +2173,7 @@ noaa.stations = [
     "latitude": 39.725585,
     "name": "NEWPORT 2.4 WNW, DE US",
     "datacoverage": 1,
-    "id": "GHCND:US1DENC0010",
+    "id": "US1DENC0010",
     "elevationUnit": "METERS",
     "longitude": -75.648791
   },
@@ -2176,7 +2184,7 @@ noaa.stations = [
     "latitude": 38.605,
     "name": "LAUREL 3.5 NNE, DE US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1DESS0064",
+    "id": "US1DESS0064",
     "elevationUnit": "METERS",
     "longitude": -75.5601
   },
@@ -2187,7 +2195,7 @@ noaa.stations = [
     "latitude": 27.951176,
     "name": "PALM BAY 2.6 SSE, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLBV0001",
+    "id": "US1FLBV0001",
     "elevationUnit": "METERS",
     "longitude": -80.64202
   },
@@ -2198,7 +2206,7 @@ noaa.stations = [
     "latitude": 26.118211,
     "name": "PLANTATION 3.4 E, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLBW0076",
+    "id": "US1FLBW0076",
     "elevationUnit": "METERS",
     "longitude": -80.206628
   },
@@ -2209,7 +2217,7 @@ noaa.stations = [
     "latitude": 26.170664,
     "name": "OAKLAND PARK 0.3 SE, FL US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1FLBW0127",
+    "id": "US1FLBW0127",
     "elevationUnit": "METERS",
     "longitude": -80.150142
   },
@@ -2220,7 +2228,7 @@ noaa.stations = [
     "latitude": 29.81717,
     "name": "KEYSTONE HEIGHTS 6.9 ENE, FL US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1FLCY0003",
+    "id": "US1FLCY0003",
     "elevationUnit": "METERS",
     "longitude": -81.92745
   },
@@ -2231,7 +2239,7 @@ noaa.stations = [
     "latitude": 30.06164,
     "name": "FLEMING ISLAND 2.2 S, FL US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1FLCY0037",
+    "id": "US1FLCY0037",
     "elevationUnit": "METERS",
     "longitude": -81.71337
   },
@@ -2242,7 +2250,7 @@ noaa.stations = [
     "latitude": 30.568513,
     "name": "GONZALEZ 2.1 E, FL US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1FLES0015",
+    "id": "US1FLES0015",
     "elevationUnit": "METERS",
     "longitude": -87.254739
   },
@@ -2253,7 +2261,7 @@ noaa.stations = [
     "latitude": 29.456418,
     "name": "FLAGLER BEACH 1.3 SE, FL US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1FLFL0033",
+    "id": "US1FLFL0033",
     "elevationUnit": "METERS",
     "longitude": -81.116289
   },
@@ -2264,7 +2272,7 @@ noaa.stations = [
     "latitude": 30.582286,
     "name": "HAVANA 4.2 SW, FL US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1FLGD0002",
+    "id": "US1FLGD0002",
     "elevationUnit": "METERS",
     "longitude": -84.467118
   },
@@ -2275,7 +2283,7 @@ noaa.stations = [
     "latitude": 27.9125,
     "name": "VALRICO 2.2 SE, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLHB0004",
+    "id": "US1FLHB0004",
     "elevationUnit": "METERS",
     "longitude": -82.2261
   },
@@ -2286,7 +2294,7 @@ noaa.stations = [
     "latitude": 28.08232,
     "name": "CITRUS PARK 1.3 ENE, FL US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1FLHB0005",
+    "id": "US1FLHB0005",
     "elevationUnit": "METERS",
     "longitude": -82.549328
   },
@@ -2297,7 +2305,7 @@ noaa.stations = [
     "latitude": 28.107081,
     "name": "GREATER NORTHDALE 0.4 ENE, FL US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1FLHB0048",
+    "id": "US1FLHB0048",
     "elevationUnit": "METERS",
     "longitude": -82.513162
   },
@@ -2308,7 +2316,7 @@ noaa.stations = [
     "latitude": 28.0126,
     "name": "TAMPA 5.0 NNE, FL US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1FLHB0055",
+    "id": "US1FLHB0055",
     "elevationUnit": "METERS",
     "longitude": -82.4155
   },
@@ -2319,7 +2327,7 @@ noaa.stations = [
     "latitude": 27.80473,
     "name": "RIVERVIEW 4.8 SSW, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLHB0098",
+    "id": "US1FLHB0098",
     "elevationUnit": "METERS",
     "longitude": -82.34099
   },
@@ -2330,7 +2338,7 @@ noaa.stations = [
     "latitude": 27.7822,
     "name": "APOLLO BEACH 2.7 ENE, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLHB0130",
+    "id": "US1FLHB0130",
     "elevationUnit": "METERS",
     "longitude": -82.3645
   },
@@ -2341,7 +2349,7 @@ noaa.stations = [
     "latitude": 28.086432,
     "name": "GREATER NORTHDALE 1.2 S, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLHB0140",
+    "id": "US1FLHB0140",
     "elevationUnit": "METERS",
     "longitude": -82.515349
   },
@@ -2352,7 +2360,7 @@ noaa.stations = [
     "latitude": 30.5576877593994,
     "name": "MONTICELLO 4.3 ENE, FL US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1FLJF0009",
+    "id": "US1FLJF0009",
     "elevationUnit": "METERS",
     "longitude": -83.8015670776367
   },
@@ -2363,7 +2371,7 @@ noaa.stations = [
     "latitude": 28.799,
     "name": "MOUNT PLYMOUTH 0.2 WSW, FL US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1FLLK0005",
+    "id": "US1FLLK0005",
     "elevationUnit": "METERS",
     "longitude": -81.535
   },
@@ -2374,7 +2382,7 @@ noaa.stations = [
     "latitude": 30.442466,
     "name": "TALLAHASSEE 5.2 E, FL US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1FLLN0047",
+    "id": "US1FLLN0047",
     "elevationUnit": "METERS",
     "longitude": -84.194941
   },
@@ -2385,7 +2393,7 @@ noaa.stations = [
     "latitude": 29.04094,
     "name": "INGLIS 0.6 N, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLLV0015",
+    "id": "US1FLLV0015",
     "elevationUnit": "METERS",
     "longitude": -82.65981
   },
@@ -2396,7 +2404,7 @@ noaa.stations = [
     "latitude": 27.413209,
     "name": "LAKEWOOD RANCH 3.5 E, FL US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1FLMA0029",
+    "id": "US1FLMA0029",
     "elevationUnit": "METERS",
     "longitude": -82.368345
   },
@@ -2407,7 +2415,7 @@ noaa.stations = [
     "latitude": 25.665,
     "name": "HAMMOCKS 0.5 SSE, FL US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1FLMD0022",
+    "id": "US1FLMD0022",
     "elevationUnit": "METERS",
     "longitude": -80.4395
   },
@@ -2418,7 +2426,7 @@ noaa.stations = [
     "latitude": 25.727376,
     "name": "KENDALE LAKES 1.4 N, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLMD0092",
+    "id": "US1FLMD0092",
     "elevationUnit": "METERS",
     "longitude": -80.405869
   },
@@ -2429,7 +2437,7 @@ noaa.stations = [
     "latitude": 29.457061,
     "name": "MICANOPY 3.6 SSW, FL US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1FLMR0013",
+    "id": "US1FLMR0013",
     "elevationUnit": "METERS",
     "longitude": -82.299833
   },
@@ -2440,7 +2448,7 @@ noaa.stations = [
     "latitude": 28.980161,
     "name": "THE VILLAGES 3.7 NNW, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLMR0066",
+    "id": "US1FLMR0066",
     "elevationUnit": "METERS",
     "longitude": -82.023016
   },
@@ -2451,7 +2459,7 @@ noaa.stations = [
     "latitude": 30.4109,
     "name": "MARY ESTHER 0.6 E, FL US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1FLOK0029",
+    "id": "US1FLOK0029",
     "elevationUnit": "METERS",
     "longitude": -86.6475
   },
@@ -2462,7 +2470,7 @@ noaa.stations = [
     "latitude": 28.5743007659912,
     "name": "ORLANDO 4.9 N, FL US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1FLOR0027",
+    "id": "US1FLOR0027",
     "elevationUnit": "METERS",
     "longitude": -81.385139465332
   },
@@ -2473,7 +2481,7 @@ noaa.stations = [
     "latitude": 28.5139054,
     "name": "ORLANDO 2.2 WNW, FL US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1FLOR0046",
+    "id": "US1FLOR0046",
     "elevationUnit": "METERS",
     "longitude": -81.409581
   },
@@ -2484,7 +2492,7 @@ noaa.stations = [
     "latitude": 28.00292,
     "name": "CLEARWATER 1.6 N, FL US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1FLPN0083",
+    "id": "US1FLPN0083",
     "elevationUnit": "METERS",
     "longitude": -82.76236
   },
@@ -2495,7 +2503,7 @@ noaa.stations = [
     "latitude": 27.88195,
     "name": "LARGO 3.1 SE, FL US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1FLPN0094",
+    "id": "US1FLPN0094",
     "elevationUnit": "METERS",
     "longitude": -82.74113
   },
@@ -2506,7 +2514,7 @@ noaa.stations = [
     "latitude": 27.26259,
     "name": "PORT ST. LUCIE 1.8 SW, FL US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1FLSL0050",
+    "id": "US1FLSL0050",
     "elevationUnit": "METERS",
     "longitude": -80.37666
   },
@@ -2517,7 +2525,7 @@ noaa.stations = [
     "latitude": 29.0374069213867,
     "name": "DELAND 2.0 W, FL US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1FLVL0021",
+    "id": "US1FLVL0021",
     "elevationUnit": "METERS",
     "longitude": -81.3299255371094
   },
@@ -2528,7 +2536,7 @@ noaa.stations = [
     "latitude": 29.1,
     "name": "PORT ORANGE 2.9 WSW, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLVL0044",
+    "id": "US1FLVL0044",
     "elevationUnit": "METERS",
     "longitude": -81.05276
   },
@@ -2539,7 +2547,7 @@ noaa.stations = [
     "latitude": 29.1452,
     "name": "PORT ORANGE 2.5 NNE, FL US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1FLVL0060",
+    "id": "US1FLVL0060",
     "elevationUnit": "METERS",
     "longitude": -80.99597
   },
@@ -2550,7 +2558,7 @@ noaa.stations = [
     "latitude": 29.332109,
     "name": "ORMOND BY THE SEA 0.8 SSE, FL US",
     "datacoverage": 1,
-    "id": "GHCND:US1FLVL0081",
+    "id": "US1FLVL0081",
     "elevationUnit": "METERS",
     "longitude": -81.064317
   },
@@ -2561,7 +2569,7 @@ noaa.stations = [
     "latitude": 30.776521,
     "name": "DE FUNIAK SPRINGS 4.1 NNW, FL US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1FLWT0022",
+    "id": "US1FLWT0022",
     "elevationUnit": "METERS",
     "longitude": -86.144959
   },
@@ -2572,7 +2580,7 @@ noaa.stations = [
     "latitude": 32.838347,
     "name": "MACON 6.3 E, GA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1GABB0016",
+    "id": "US1GABB0016",
     "elevationUnit": "METERS",
     "longitude": -83.548249
   },
@@ -2583,7 +2591,7 @@ noaa.stations = [
     "latitude": 31.9455,
     "name": "RICHMOND HILL 0.5 NE, GA US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1GABR0002",
+    "id": "US1GABR0002",
     "elevationUnit": "METERS",
     "longitude": -81.3002
   },
@@ -2594,7 +2602,7 @@ noaa.stations = [
     "latitude": 34.53944444,
     "name": "SUMMERVILLE 9.4 ENE, GA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1GACG0011",
+    "id": "US1GACG0011",
     "elevationUnit": "METERS",
     "longitude": -85.20083333
   },
@@ -2605,7 +2613,7 @@ noaa.stations = [
     "latitude": 33.42731,
     "name": "SHARPSBURG 6.0 N, GA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1GACW0002",
+    "id": "US1GACW0002",
     "elevationUnit": "METERS",
     "longitude": -84.66073
   },
@@ -2616,7 +2624,7 @@ noaa.stations = [
     "latitude": 33.384001,
     "name": "NEWNAN 2.6 W, GA US",
     "datacoverage": 1,
-    "id": "GHCND:US1GACW0009",
+    "id": "US1GACW0009",
     "elevationUnit": "METERS",
     "longitude": -84.833787
   },
@@ -2627,7 +2635,7 @@ noaa.stations = [
     "latitude": 32.270433,
     "name": "MARLOW 0.0 S, GA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1GAEF0013",
+    "id": "US1GAEF0013",
     "elevationUnit": "METERS",
     "longitude": -81.392146
   },
@@ -2638,7 +2646,7 @@ noaa.stations = [
     "latitude": 34.165947004121,
     "name": "CUMMING 3.1 SSE, GA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1GAFS0020",
+    "id": "US1GAFS0020",
     "elevationUnit": "METERS",
     "longitude": -84.1164444386959
   },
@@ -2649,7 +2657,7 @@ noaa.stations = [
     "latitude": 33.701367,
     "name": "EAST POINT 6.3 WNW, GA US",
     "datacoverage": 1,
-    "id": "GHCND:US1GAFT0019",
+    "id": "US1GAFT0019",
     "elevationUnit": "METERS",
     "longitude": -84.572244
   },
@@ -2660,7 +2668,7 @@ noaa.stations = [
     "latitude": 34.774199,
     "name": "HELEN 9.5 ENE, GA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1GAHB0005",
+    "id": "US1GAHB0005",
     "elevationUnit": "METERS",
     "longitude": -83.580019
   },
@@ -2671,7 +2679,7 @@ noaa.stations = [
     "latitude": 32.64852,
     "name": "BYRON 2.0 E, GA US",
     "datacoverage": 1,
-    "id": "GHCND:US1GAHS0024",
+    "id": "US1GAHS0024",
     "elevationUnit": "METERS",
     "longitude": -83.72424
   },
@@ -2682,7 +2690,7 @@ noaa.stations = [
     "latitude": 34.404068,
     "name": "HARTWELL 5.6 NW, GA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1GAHT0002",
+    "id": "US1GAHT0002",
     "elevationUnit": "METERS",
     "longitude": -83.008125
   },
@@ -2693,7 +2701,7 @@ noaa.stations = [
     "latitude": 31.424722,
     "name": "DARIEN 4.2 NNE, GA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1GAMI0003",
+    "id": "US1GAMI0003",
     "elevationUnit": "METERS",
     "longitude": -81.395833
   },
@@ -2704,7 +2712,7 @@ noaa.stations = [
     "latitude": 31.57226599,
     "name": "TOWNSEND 5.5 SE, GA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1GAMI0005",
+    "id": "US1GAMI0005",
     "elevationUnit": "METERS",
     "longitude": -81.36061917
   },
@@ -2715,7 +2723,7 @@ noaa.stations = [
     "latitude": 32.914261,
     "name": "FORSYTH 8.3 S, GA US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1GAMN0010",
+    "id": "US1GAMN0010",
     "elevationUnit": "METERS",
     "longitude": -83.941625
   },
@@ -2726,7 +2734,7 @@ noaa.stations = [
     "latitude": 33.86014,
     "name": "ARNOLDSVILLE 3.7 SSW, GA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1GAOG0012",
+    "id": "US1GAOG0012",
     "elevationUnit": "METERS",
     "longitude": -83.24175
   },
@@ -2737,7 +2745,7 @@ noaa.stations = [
     "latitude": 31.996184,
     "name": "MCRAE 6.6 SE, GA US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1GATE0004",
+    "id": "US1GATE0004",
     "elevationUnit": "METERS",
     "longitude": -82.819866
   },
@@ -2748,7 +2756,7 @@ noaa.stations = [
     "latitude": 30.8176,
     "name": "THOMASVILLE 5.1 ESE, GA US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1GATH0004",
+    "id": "US1GATH0004",
     "elevationUnit": "METERS",
     "longitude": -83.8965
   },
@@ -2759,7 +2767,7 @@ noaa.stations = [
     "latitude": 34.8362998962402,
     "name": "BLAIRSVILLE 8.5 WSW, GA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1GAUN0008",
+    "id": "US1GAUN0008",
     "elevationUnit": "METERS",
     "longitude": -84.0943145751953
   },
@@ -2770,7 +2778,7 @@ noaa.stations = [
     "latitude": 19.073249,
     "name": "NAALEHU 5.7 W, HI US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1HIHI0012",
+    "id": "US1HIHI0012",
     "elevationUnit": "METERS",
     "longitude": -155.663229
   },
@@ -2781,7 +2789,7 @@ noaa.stations = [
     "latitude": 20.041679,
     "name": "HONOKAA 2.5 SSW, HI US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1HIHI0033",
+    "id": "US1HIHI0033",
     "elevationUnit": "METERS",
     "longitude": -155.477707
   },
@@ -2792,7 +2800,7 @@ noaa.stations = [
     "latitude": 20.019048,
     "name": "PAAUILO 2.4 SW, HI US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1HIHI0050",
+    "id": "US1HIHI0050",
     "elevationUnit": "METERS",
     "longitude": -155.398803
   },
@@ -2803,7 +2811,7 @@ noaa.stations = [
     "latitude": 21.987,
     "name": "LIHUE 1.3 NE, HI US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1HIKI0009",
+    "id": "US1HIKI0009",
     "elevationUnit": "METERS",
     "longitude": -159.338
   },
@@ -2814,7 +2822,7 @@ noaa.stations = [
     "latitude": 41.04128,
     "name": "MURRAY 1.7 W, IA US",
     "datacoverage": 1,
-    "id": "GHCND:US1IACL0004",
+    "id": "US1IACL0004",
     "elevationUnit": "METERS",
     "longitude": -93.98046
   },
@@ -2825,7 +2833,7 @@ noaa.stations = [
     "latitude": 41.843637,
     "name": "CALAMUS 2.0 NE, IA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1IACN0002",
+    "id": "US1IACN0002",
     "elevationUnit": "METERS",
     "longitude": -90.72746
   },
@@ -2836,7 +2844,7 @@ noaa.stations = [
     "latitude": 40.626167,
     "name": "BLOOMFIELD 8.6 SSW, IA US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1IADV0003",
+    "id": "US1IADV0003",
     "elevationUnit": "METERS",
     "longitude": -92.4543
   },
@@ -2847,7 +2855,7 @@ noaa.stations = [
     "latitude": 41.799126,
     "name": "JAMAICA 3.2 S, IA US",
     "datacoverage": 1,
-    "id": "GHCND:US1IAGT0001",
+    "id": "US1IAGT0001",
     "elevationUnit": "METERS",
     "longitude": -94.309307
   },
@@ -2858,7 +2866,7 @@ noaa.stations = [
     "latitude": 40.914155,
     "name": "NEW LONDON 1.5 SW, IA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1IAHY0001",
+    "id": "US1IAHY0001",
     "elevationUnit": "METERS",
     "longitude": -91.429263
   },
@@ -2869,7 +2877,7 @@ noaa.stations = [
     "latitude": 43.28372,
     "name": "OSAGE 4.7 E, IA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1IAMT0001",
+    "id": "US1IAMT0001",
     "elevationUnit": "METERS",
     "longitude": -92.71764
   },
@@ -2880,7 +2888,7 @@ noaa.stations = [
     "latitude": 42.044777,
     "name": "AMES 1.5 NNE, IA US",
     "datacoverage": 1,
-    "id": "GHCND:US1IASR0002",
+    "id": "US1IASR0002",
     "elevationUnit": "METERS",
     "longitude": -93.617361
   },
@@ -2891,7 +2899,7 @@ noaa.stations = [
     "latitude": 41.526432,
     "name": "DAVENPORT 0.9 SSW, IA US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1IAST0004",
+    "id": "US1IAST0004",
     "elevationUnit": "METERS",
     "longitude": -90.585801
   },
@@ -2902,7 +2910,7 @@ noaa.stations = [
     "latitude": 41.54013,
     "name": "BETTENDORF 2.2 SE, IA US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1IAST0008",
+    "id": "US1IAST0008",
     "elevationUnit": "METERS",
     "longitude": -90.44924
   },
@@ -2913,7 +2921,7 @@ noaa.stations = [
     "latitude": 41.644656,
     "name": "ELDRIDGE 0.7 SSW, IA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1IAST0030",
+    "id": "US1IAST0030",
     "elevationUnit": "METERS",
     "longitude": -90.587065
   },
@@ -2924,7 +2932,7 @@ noaa.stations = [
     "latitude": 42.642564,
     "name": "BADGER 3.1 NW, IA US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1IAWB0005",
+    "id": "US1IAWB0005",
     "elevationUnit": "METERS",
     "longitude": -94.18785
   },
@@ -2935,7 +2943,7 @@ noaa.stations = [
     "latitude": 43.6695,
     "name": "BOISE 5.3 NW, ID US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1IDAD0002",
+    "id": "US1IDAD0002",
     "elevationUnit": "METERS",
     "longitude": -116.2653
   },
@@ -2946,7 +2954,7 @@ noaa.stations = [
     "latitude": 43.550843,
     "name": "MERIDIAN 4.8 SSE, ID US",
     "datacoverage": 1,
-    "id": "GHCND:US1IDAD0045",
+    "id": "US1IDAD0045",
     "elevationUnit": "METERS",
     "longitude": -116.352631
   },
@@ -2957,7 +2965,7 @@ noaa.stations = [
     "latitude": 43.617649,
     "name": "IDAHO FALLS 11.7 NE, ID US",
     "datacoverage": 1,
-    "id": "GHCND:US1IDBV0006",
+    "id": "US1IDBV0006",
     "elevationUnit": "METERS",
     "longitude": -111.884038
   },
@@ -2968,7 +2976,7 @@ noaa.stations = [
     "latitude": 43.6453119,
     "name": "NAMPA 4.8 NNW, ID US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1IDCY0015",
+    "id": "US1IDCY0015",
     "elevationUnit": "METERS",
     "longitude": -116.593965
   },
@@ -2979,7 +2987,7 @@ noaa.stations = [
     "latitude": 42.946264,
     "name": "HAMMETT 2.0 W, ID US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1IDEL0005",
+    "id": "US1IDEL0005",
     "elevationUnit": "METERS",
     "longitude": -115.468999
   },
@@ -2990,7 +2998,7 @@ noaa.stations = [
     "latitude": 46.7544,
     "name": "MOSCOW 1.7 N, ID US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1IDLT0001",
+    "id": "US1IDLT0001",
     "elevationUnit": "METERS",
     "longitude": -117.0005
   },
@@ -3001,7 +3009,7 @@ noaa.stations = [
     "latitude": 42.399979,
     "name": "CAPRON 0.1 N, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILBN0014",
+    "id": "US1ILBN0014",
     "elevationUnit": "METERS",
     "longitude": -88.742418
   },
@@ -3012,7 +3020,7 @@ noaa.stations = [
     "latitude": 40.0944976806641,
     "name": "URBANA 4.2 ESE, IL US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1ILCP0095",
+    "id": "US1ILCP0095",
     "elevationUnit": "METERS",
     "longitude": -88.1281814575195
   },
@@ -3023,7 +3031,7 @@ noaa.stations = [
     "latitude": 40.120601,
     "name": "CHAMPAIGN 0.6 NNE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILCP0111",
+    "id": "US1ILCP0111",
     "elevationUnit": "METERS",
     "longitude": -88.261352
   },
@@ -3034,7 +3042,7 @@ noaa.stations = [
     "latitude": 41.650638,
     "name": "SOMONAUK 1.9 NE, IL US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1ILDK0024",
+    "id": "US1ILDK0024",
     "elevationUnit": "METERS",
     "longitude": -88.656638
   },
@@ -3045,7 +3053,7 @@ noaa.stations = [
     "latitude": 41.89287,
     "name": "ELMHURST 0.8 ESE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILDP0109",
+    "id": "US1ILDP0109",
     "elevationUnit": "METERS",
     "longitude": -87.929556
   },
@@ -3056,7 +3064,7 @@ noaa.stations = [
     "latitude": 41.743129,
     "name": "DARIEN 0.4 SSE, IL US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1ILDP0118",
+    "id": "US1ILDP0118",
     "elevationUnit": "METERS",
     "longitude": -87.974629
   },
@@ -3067,7 +3075,7 @@ noaa.stations = [
     "latitude": 41.803318,
     "name": "DOWNERS GROVE 0.4 NNE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILDP0127",
+    "id": "US1ILDP0127",
     "elevationUnit": "METERS",
     "longitude": -88.015427
   },
@@ -3078,7 +3086,7 @@ noaa.stations = [
     "latitude": 41.8798,
     "name": "WHEATON 2.0 NNE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILDP0132",
+    "id": "US1ILDP0132",
     "elevationUnit": "METERS",
     "longitude": -88.0863
   },
@@ -3089,7 +3097,7 @@ noaa.stations = [
     "latitude": 38.373824,
     "name": "ALBION 0.2 SW, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILEW0003",
+    "id": "US1ILEW0003",
     "elevationUnit": "METERS",
     "longitude": -88.059299
   },
@@ -3100,7 +3108,7 @@ noaa.stations = [
     "latitude": 41.341389,
     "name": "CARBON HILL 3.1 N, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILGY0001",
+    "id": "US1ILGY0001",
     "elevationUnit": "METERS",
     "longitude": -88.298056
   },
@@ -3111,7 +3119,7 @@ noaa.stations = [
     "latitude": 40.8783798,
     "name": "ASHKUM 5.6 E, IL US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1ILIR0002",
+    "id": "US1ILIR0002",
     "elevationUnit": "METERS",
     "longitude": -87.84622
   },
@@ -3122,7 +3130,7 @@ noaa.stations = [
     "latitude": 37.588417,
     "name": "NEW BURNSIDE 1.8 ENE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILJH0001",
+    "id": "US1ILJH0001",
     "elevationUnit": "METERS",
     "longitude": -88.743179
   },
@@ -3133,7 +3141,7 @@ noaa.stations = [
     "latitude": 37.814097,
     "name": "DE SOTO 0.3 ESE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILJK0014",
+    "id": "US1ILJK0014",
     "elevationUnit": "METERS",
     "longitude": -89.223066
   },
@@ -3144,7 +3152,7 @@ noaa.stations = [
     "latitude": 39.11824,
     "name": "YALE 0.1 SSW, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILJS0005",
+    "id": "US1ILJS0005",
     "elevationUnit": "METERS",
     "longitude": -88.02512
   },
@@ -3155,7 +3163,7 @@ noaa.stations = [
     "latitude": 42.095,
     "name": "SLEEPY HOLLOW 0.7 W, IL US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1ILKN0118",
+    "id": "US1ILKN0118",
     "elevationUnit": "METERS",
     "longitude": -88.3279
   },
@@ -3166,7 +3174,7 @@ noaa.stations = [
     "latitude": 40.913564,
     "name": "KNOXVILLE 0.7 NW, IL US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1ILKX0009",
+    "id": "US1ILKX0009",
     "elevationUnit": "METERS",
     "longitude": -90.293505
   },
@@ -3177,7 +3185,7 @@ noaa.stations = [
     "latitude": 41.372759,
     "name": "OTTAWA 1.6 N, IL US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1ILLS0017",
+    "id": "US1ILLS0017",
     "elevationUnit": "METERS",
     "longitude": -88.841506
   },
@@ -3188,7 +3196,7 @@ noaa.stations = [
     "latitude": 39.066387,
     "name": "MOUNT OLIVE 0.4 S, IL US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1ILMP0010",
+    "id": "US1ILMP0010",
     "elevationUnit": "METERS",
     "longitude": -89.72805
   },
@@ -3199,7 +3207,7 @@ noaa.stations = [
     "latitude": 40.768333,
     "name": "PEORIA 3.4 WNW, IL US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1ILPR0008",
+    "id": "US1ILPR0008",
     "elevationUnit": "METERS",
     "longitude": -89.667222
   },
@@ -3210,7 +3218,7 @@ noaa.stations = [
     "latitude": 40.189041,
     "name": "MANSFIELD 3.0 WSW, IL US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1ILPT0013",
+    "id": "US1ILPT0013",
     "elevationUnit": "METERS",
     "longitude": -88.558361
   },
@@ -3221,7 +3229,7 @@ noaa.stations = [
     "latitude": 38.509621,
     "name": "BELLEVILLE 2.2 SE, IL US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1ILSC0003",
+    "id": "US1ILSC0003",
     "elevationUnit": "METERS",
     "longitude": -89.971091
   },
@@ -3232,7 +3240,7 @@ noaa.stations = [
     "latitude": 39.84662,
     "name": "RIVERTON 0.2 SE, IL US",
     "datacoverage": 1,
-    "id": "GHCND:US1ILSG0060",
+    "id": "US1ILSG0060",
     "elevationUnit": "METERS",
     "longitude": -89.53693
   },
@@ -3243,7 +3251,7 @@ noaa.stations = [
     "latitude": 37.559734672,
     "name": "COBDEN 4.1 ENE, IL US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1ILUN0008",
+    "id": "US1ILUN0008",
     "elevationUnit": "METERS",
     "longitude": -89.187950492
   },
@@ -3254,7 +3262,7 @@ noaa.stations = [
     "latitude": 40.264737,
     "name": "HENNING 3.4 SSE, IL US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1ILVR0004",
+    "id": "US1ILVR0004",
     "elevationUnit": "METERS",
     "longitude": -87.665615
   },
@@ -3265,7 +3273,7 @@ noaa.stations = [
     "latitude": 41.816004,
     "name": "MORRISON 3.2 E, IL US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1ILWD0005",
+    "id": "US1ILWD0005",
     "elevationUnit": "METERS",
     "longitude": -89.904
   },
@@ -3276,7 +3284,7 @@ noaa.stations = [
     "latitude": 40.742606,
     "name": "EL PASO 0.6 WNW, IL US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1ILWF0021",
+    "id": "US1ILWF0021",
     "elevationUnit": "METERS",
     "longitude": -89.024646
   },
@@ -3287,7 +3295,7 @@ noaa.stations = [
     "latitude": 41.333615,
     "name": "PEOTONE 0.4 ENE, IL US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1ILWL0046",
+    "id": "US1ILWL0046",
     "elevationUnit": "METERS",
     "longitude": -87.789061
   },
@@ -3298,7 +3306,7 @@ noaa.stations = [
     "latitude": 41.581908,
     "name": "PLAINFIELD 2.4 SSE, IL US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1ILWL0051",
+    "id": "US1ILWL0051",
     "elevationUnit": "METERS",
     "longitude": -88.193674
   },
@@ -3309,7 +3317,7 @@ noaa.stations = [
     "latitude": 39.27934,
     "name": "W9DBA MORGANTOWN 6.7 SSE, IN US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1INBR0005",
+    "id": "US1INBR0005",
     "elevationUnit": "METERS",
     "longitude": -86.231082
   },
@@ -3320,7 +3328,7 @@ noaa.stations = [
     "latitude": 38.297265,
     "name": "JEFFERSONVILLE 0.4 SE, IN US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1INCK0023",
+    "id": "US1INCK0023",
     "elevationUnit": "METERS",
     "longitude": -85.71975
   },
@@ -3331,7 +3339,7 @@ noaa.stations = [
     "latitude": 38.29294,
     "name": "HUNTINGBURG 0.4 SSW, IN US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1INDB0001",
+    "id": "US1INDB0001",
     "elevationUnit": "METERS",
     "longitude": -86.9611
   },
@@ -3342,7 +3350,7 @@ noaa.stations = [
     "latitude": 38.67543,
     "name": "WASHINGTON 1.5 NW, IN US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1INDV0001",
+    "id": "US1INDV0001",
     "elevationUnit": "METERS",
     "longitude": -87.18996
   },
@@ -3353,7 +3361,7 @@ noaa.stations = [
     "latitude": 41.56551,
     "name": "WAKARUSA 2.4 NNE, IN US",
     "datacoverage": 1,
-    "id": "GHCND:US1INEL0008",
+    "id": "US1INEL0008",
     "elevationUnit": "METERS",
     "longitude": -85.9933
   },
@@ -3364,7 +3372,7 @@ noaa.stations = [
     "latitude": 41.642487,
     "name": "ELKHART 4.8 SW, IN US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1INEL0036",
+    "id": "US1INEL0036",
     "elevationUnit": "METERS",
     "longitude": -86.04149
   },
@@ -3375,7 +3383,7 @@ noaa.stations = [
     "latitude": 41.557751,
     "name": "GOSHEN 3.0 WSW, IN US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1INEL0039",
+    "id": "US1INEL0039",
     "elevationUnit": "METERS",
     "longitude": -85.883424
   },
@@ -3386,7 +3394,7 @@ noaa.stations = [
     "latitude": 39.937,
     "name": "MCCORDSVILLE 2.6 NE, IN US",
     "datacoverage": 1,
-    "id": "GHCND:US1INHN0011",
+    "id": "US1INHN0011",
     "elevationUnit": "METERS",
     "longitude": -85.9
   },
@@ -3397,7 +3405,7 @@ noaa.stations = [
     "latitude": 38.695977,
     "name": "HANOVER 1.4 S, IN US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1INJF0001",
+    "id": "US1INJF0001",
     "elevationUnit": "METERS",
     "longitude": -85.472744
   },
@@ -3408,7 +3416,7 @@ noaa.stations = [
     "latitude": 41.415247,
     "name": "ST. JOHN 2.8 SE, IN US",
     "datacoverage": 1,
-    "id": "GHCND:US1INLK0099",
+    "id": "US1INLK0099",
     "elevationUnit": "METERS",
     "longitude": -87.443594
   },
@@ -3419,7 +3427,7 @@ noaa.stations = [
     "latitude": 41.5904,
     "name": "LA PORTE 1.6 SW, IN US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1INLP0007",
+    "id": "US1INLP0007",
     "elevationUnit": "METERS",
     "longitude": -86.7343
   },
@@ -3430,7 +3438,7 @@ noaa.stations = [
     "latitude": 41.611438,
     "name": "LA PORTE 1.3 ENE, IN US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1INLP0028",
+    "id": "US1INLP0028",
     "elevationUnit": "METERS",
     "longitude": -86.690707
   },
@@ -3441,7 +3449,7 @@ noaa.stations = [
     "latitude": 39.39605,
     "name": "MARTINSVILLE 2.3 SE, IN US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1INMG0021",
+    "id": "US1INMG0021",
     "elevationUnit": "METERS",
     "longitude": -86.39561667
   },
@@ -3452,7 +3460,7 @@ noaa.stations = [
     "latitude": 41.329704,
     "name": "PLYMOUTH 2.5 WSW, IN US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1INML0006",
+    "id": "US1INML0006",
     "elevationUnit": "METERS",
     "longitude": -86.356804
   },
@@ -3463,7 +3471,7 @@ noaa.stations = [
     "latitude": 41.341605,
     "name": "ALBION 3.7 S, IN US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1INNB0011",
+    "id": "US1INNB0011",
     "elevationUnit": "METERS",
     "longitude": -85.415637
   },
@@ -3474,7 +3482,7 @@ noaa.stations = [
     "latitude": 39.185767,
     "name": "SPENCER 7.0 S, IN US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1INOW0009",
+    "id": "US1INOW0009",
     "elevationUnit": "METERS",
     "longitude": -86.778233
   },
@@ -3485,7 +3493,7 @@ noaa.stations = [
     "latitude": 39.16916,
     "name": "OSGOOD 4.1 NE, IN US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1INRP0004",
+    "id": "US1INRP0004",
     "elevationUnit": "METERS",
     "longitude": -85.23612
   },
@@ -3496,7 +3504,7 @@ noaa.stations = [
     "latitude": 41.6209,
     "name": "SOUTH BEND 4.6 SE, IN US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1INSJ0028",
+    "id": "US1INSJ0028",
     "elevationUnit": "METERS",
     "longitude": -86.2152
   },
@@ -3507,7 +3515,7 @@ noaa.stations = [
     "latitude": 41.4869,
     "name": "WALKERTON 4.1 ENE, IN US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1INSJ0034",
+    "id": "US1INSJ0034",
     "elevationUnit": "METERS",
     "longitude": -86.4082
   },
@@ -3518,7 +3526,7 @@ noaa.stations = [
     "latitude": 38.080463,
     "name": "BOONVILLE 2.4 N, IN US",
     "datacoverage": 1,
-    "id": "GHCND:US1INWK0005",
+    "id": "US1INWK0005",
     "elevationUnit": "METERS",
     "longitude": -87.275781
   },
@@ -3529,7 +3537,7 @@ noaa.stations = [
     "latitude": 37.921478,
     "name": "DEVON 0.1 SE, KS US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1KSBB0017",
+    "id": "US1KSBB0017",
     "elevationUnit": "METERS",
     "longitude": -94.817663
   },
@@ -3540,7 +3548,7 @@ noaa.stations = [
     "latitude": 37.678181,
     "name": "AUGUSTA 1.0 S, KS US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1KSBU0014",
+    "id": "US1KSBU0014",
     "elevationUnit": "METERS",
     "longitude": -96.97227
   },
@@ -3551,7 +3559,7 @@ noaa.stations = [
     "latitude": 37.8038661,
     "name": "EL DORADO 1.2 S, KS US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1KSBU0025",
+    "id": "US1KSBU0025",
     "elevationUnit": "METERS",
     "longitude": -96.8601425
   },
@@ -3562,7 +3570,7 @@ noaa.stations = [
     "latitude": 37.946895,
     "name": "EL DORADO 10.6 NE, KS US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1KSBU0034",
+    "id": "US1KSBU0034",
     "elevationUnit": "METERS",
     "longitude": -96.74801
   },
@@ -3573,7 +3581,7 @@ noaa.stations = [
     "latitude": 39.8127,
     "name": "NORCATUR 3.1 WSW, KS US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1KSDC0001",
+    "id": "US1KSDC0001",
     "elevationUnit": "METERS",
     "longitude": -100.2421
   },
@@ -3584,7 +3592,7 @@ noaa.stations = [
     "latitude": 39.7704,
     "name": "NORCATUR 4.4 S, KS US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1KSDC0002",
+    "id": "US1KSDC0002",
     "elevationUnit": "METERS",
     "longitude": -100.1813
   },
@@ -3595,7 +3603,7 @@ noaa.stations = [
     "latitude": 39.9632,
     "name": "TRAER 2.5 NNW, KS US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1KSDC0003",
+    "id": "US1KSDC0003",
     "elevationUnit": "METERS",
     "longitude": -100.6672
   },
@@ -3606,7 +3614,7 @@ noaa.stations = [
     "latitude": 38.9340589,
     "name": "ABILENE 5.4 E, KS US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1KSDK0030",
+    "id": "US1KSDK0030",
     "elevationUnit": "METERS",
     "longitude": -97.1237575
   },
@@ -3617,7 +3625,7 @@ noaa.stations = [
     "latitude": 37.77731,
     "name": "DODGE CITY 2.5 NW, KS US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1KSFO0003",
+    "id": "US1KSFO0003",
     "elevationUnit": "METERS",
     "longitude": -100.05358
   },
@@ -3628,7 +3636,7 @@ noaa.stations = [
     "latitude": 37.599017,
     "name": "ULYSSES 3.8 ENE, KS US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1KSGT0005",
+    "id": "US1KSGT0005",
     "elevationUnit": "METERS",
     "longitude": -101.29114
   },
@@ -3639,7 +3647,7 @@ noaa.stations = [
     "latitude": 37.750096,
     "name": "EUREKA 5.4 SSE, KS US",
     "datacoverage": 1,
-    "id": "GHCND:US1KSGW0006",
+    "id": "US1KSGW0006",
     "elevationUnit": "METERS",
     "longitude": -96.250369
   },
@@ -3650,7 +3658,7 @@ noaa.stations = [
     "latitude": 38.35184,
     "name": "MARION 0.2 NE, KS US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1KSMN0025",
+    "id": "US1KSMN0025",
     "elevationUnit": "METERS",
     "longitude": -97.013074
   },
@@ -3661,7 +3669,7 @@ noaa.stations = [
     "latitude": 37.574322,
     "name": "ERIE 0.4 NNW, KS US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1KSNO0009",
+    "id": "US1KSNO0009",
     "elevationUnit": "METERS",
     "longitude": -95.24604
   },
@@ -3672,7 +3680,7 @@ noaa.stations = [
     "latitude": 38.6956,
     "name": "ARNOLD 4.8 NNW, KS US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1KSNS0006",
+    "id": "US1KSNS0006",
     "elevationUnit": "METERS",
     "longitude": -100.0664
   },
@@ -3683,7 +3691,7 @@ noaa.stations = [
     "latitude": 39.27861111,
     "name": "NATOMA 6.7 NNE, KS US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1KSOB0005",
+    "id": "US1KSOB0005",
     "elevationUnit": "METERS",
     "longitude": -98.97694444
   },
@@ -3694,7 +3702,7 @@ noaa.stations = [
     "latitude": 37.625909,
     "name": "PRATT 1.6 SSE, KS US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1KSPR0013",
+    "id": "US1KSPR0013",
     "elevationUnit": "METERS",
     "longitude": -98.723993
   },
@@ -3705,7 +3713,7 @@ noaa.stations = [
     "latitude": 39.18569,
     "name": "MANHATTAN 3.0 W, KS US",
     "datacoverage": 1,
-    "id": "GHCND:US1KSRL0048",
+    "id": "US1KSRL0048",
     "elevationUnit": "METERS",
     "longitude": -96.64659
   },
@@ -3716,7 +3724,7 @@ noaa.stations = [
     "latitude": 37.88916015625,
     "name": "ARLINGTON 0.5 S, KS US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1KSRN0052",
+    "id": "US1KSRN0052",
     "elevationUnit": "METERS",
     "longitude": -98.1773376464844
   },
@@ -3727,7 +3735,7 @@ noaa.stations = [
     "latitude": 38.9161592,
     "name": "SALINA 7.0 N, KS US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1KSSA0011",
+    "id": "US1KSSA0011",
     "elevationUnit": "METERS",
     "longitude": -97.5999385
   },
@@ -3738,7 +3746,7 @@ noaa.stations = [
     "latitude": 38.856487,
     "name": "BROOKVILLE 5.9 NNW, KS US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1KSSA0014",
+    "id": "US1KSSA0014",
     "elevationUnit": "METERS",
     "longitude": -97.888343
   },
@@ -3749,7 +3757,7 @@ noaa.stations = [
     "latitude": 37.6916,
     "name": "MAIZE 5.7 S, KS US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1KSSG0002",
+    "id": "US1KSSG0002",
     "elevationUnit": "METERS",
     "longitude": -97.4797
   },
@@ -3760,7 +3768,7 @@ noaa.stations = [
     "latitude": 37.6925,
     "name": "WICHITA 7.9 W, KS US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1KSSG0020",
+    "id": "US1KSSG0020",
     "elevationUnit": "METERS",
     "longitude": -97.4877
   },
@@ -3771,7 +3779,7 @@ noaa.stations = [
     "latitude": 37.7953,
     "name": "WICHITA 7.4 NNW, KS US",
     "datacoverage": 1,
-    "id": "GHCND:US1KSSG0069",
+    "id": "US1KSSG0069",
     "elevationUnit": "METERS",
     "longitude": -97.3761
   },
@@ -3782,7 +3790,7 @@ noaa.stations = [
     "latitude": 37.86543,
     "name": "VALLEY CENTER 3.5 NE, KS US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1KSSG0130",
+    "id": "US1KSSG0130",
     "elevationUnit": "METERS",
     "longitude": -97.32257
   },
@@ -3793,7 +3801,7 @@ noaa.stations = [
     "latitude": 37.7678,
     "name": "BEL AIRE 0.7 WNW, KS US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1KSSG0144",
+    "id": "US1KSSG0144",
     "elevationUnit": "METERS",
     "longitude": -97.2798
   },
@@ -3804,7 +3812,7 @@ noaa.stations = [
     "latitude": 39.781767,
     "name": "SMITH CENTER 0.2 NW, KS US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1KSSM0002",
+    "id": "US1KSSM0002",
     "elevationUnit": "METERS",
     "longitude": -98.784942
   },
@@ -3815,7 +3823,7 @@ noaa.stations = [
     "latitude": 39.39472,
     "name": "COLBY 0.6 NNW, KS US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1KSTH0018",
+    "id": "US1KSTH0018",
     "elevationUnit": "METERS",
     "longitude": -101.05094
   },
@@ -3826,7 +3834,7 @@ noaa.stations = [
     "latitude": 36.7207,
     "name": "SCOTTSVILLE 9.2 ESE, KY US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1KYAL0004",
+    "id": "US1KYAL0004",
     "elevationUnit": "METERS",
     "longitude": -86.0349
   },
@@ -3837,7 +3845,7 @@ noaa.stations = [
     "latitude": 37.465372,
     "name": "JACKSON 8.4 SE, KY US",
     "datacoverage": 1,
-    "id": "GHCND:US1KYBE0005",
+    "id": "US1KYBE0005",
     "elevationUnit": "METERS",
     "longitude": -83.280179
   },
@@ -3848,7 +3856,7 @@ noaa.stations = [
     "latitude": 36.71632,
     "name": "OAK GROVE 4.6 NW, KY US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1KYCH0009",
+    "id": "US1KYCH0009",
     "elevationUnit": "METERS",
     "longitude": -87.48404
   },
@@ -3859,7 +3867,7 @@ noaa.stations = [
     "latitude": 37.524503,
     "name": "BRADFORDSVILLE 8.5 ENE, KY US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1KYCS0001",
+    "id": "US1KYCS0001",
     "elevationUnit": "METERS",
     "longitude": -84.996532
   },
@@ -3870,7 +3878,7 @@ noaa.stations = [
     "latitude": 37.30528,
     "name": "LIBERTY 1.1 SE, KY US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1KYCS0004",
+    "id": "US1KYCS0004",
     "elevationUnit": "METERS",
     "longitude": -84.918305
   },
@@ -3881,7 +3889,7 @@ noaa.stations = [
     "latitude": 38.527222,
     "name": "RIBOLT 3.0 S, KY US",
     "datacoverage": 1,
-    "id": "GHCND:US1KYLW0003",
+    "id": "US1KYLW0003",
     "elevationUnit": "METERS",
     "longitude": -83.516297
   },
@@ -3892,7 +3900,7 @@ noaa.stations = [
     "latitude": 37.732695,
     "name": "NEW HAVEN 6.4 NE, KY US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1KYNL0004",
+    "id": "US1KYNL0004",
     "elevationUnit": "METERS",
     "longitude": -85.517378
   },
@@ -3903,7 +3911,7 @@ noaa.stations = [
     "latitude": 38.361959,
     "name": "PARK LAKE 1.8 NE, KY US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1KYOL0001",
+    "id": "US1KYOL0001",
     "elevationUnit": "METERS",
     "longitude": -85.447846
   },
@@ -3914,7 +3922,7 @@ noaa.stations = [
     "latitude": 38.6609441,
     "name": "BEDFORD 4.7 N, KY US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1KYTB0008",
+    "id": "US1KYTB0008",
     "elevationUnit": "METERS",
     "longitude": -85.3233818
   },
@@ -3925,7 +3933,7 @@ noaa.stations = [
     "latitude": 36.653418,
     "name": "GUTHRIE 0.8 WNW, KY US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1KYTD0002",
+    "id": "US1KYTD0002",
     "elevationUnit": "METERS",
     "longitude": -87.184011
   },
@@ -3936,7 +3944,7 @@ noaa.stations = [
     "latitude": 30.158418,
     "name": "GONZALES 4.0 S, LA US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1LAAS0005",
+    "id": "US1LAAS0005",
     "elevationUnit": "METERS",
     "longitude": -90.920684
   },
@@ -3947,7 +3955,7 @@ noaa.stations = [
     "latitude": 32.54475,
     "name": "SWARTZ 2.0 SSW, LA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1LAOC0001",
+    "id": "US1LAOC0001",
     "elevationUnit": "METERS",
     "longitude": -92.0039
   },
@@ -3958,7 +3966,7 @@ noaa.stations = [
     "latitude": 31.262413,
     "name": "ALEXANDRIA 2.8 SW, LA US",
     "datacoverage": 1,
-    "id": "GHCND:US1LARP0007",
+    "id": "US1LARP0007",
     "elevationUnit": "METERS",
     "longitude": -92.494619
   },
@@ -3969,7 +3977,7 @@ noaa.stations = [
     "latitude": 30.300063,
     "name": "SLIDELL 1.7 NE, LA US",
     "datacoverage": 1,
-    "id": "GHCND:US1LAST0023",
+    "id": "US1LAST0023",
     "elevationUnit": "METERS",
     "longitude": -89.759247
   },
@@ -3980,7 +3988,7 @@ noaa.stations = [
     "latitude": 41.553061,
     "name": "FALMOUTH 3.0 E, MA US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1MABA0003",
+    "id": "US1MABA0003",
     "elevationUnit": "METERS",
     "longitude": -70.550358
   },
@@ -3991,7 +3999,7 @@ noaa.stations = [
     "latitude": 41.6943,
     "name": "BARNSTABLE 3.6 W, MA US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1MABA0059",
+    "id": "US1MABA0059",
     "elevationUnit": "METERS",
     "longitude": -70.3696
   },
@@ -4002,7 +4010,7 @@ noaa.stations = [
     "latitude": 41.534589,
     "name": "DARTMOUTH 2.5 SSW, MA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1MABR0014",
+    "id": "US1MABR0014",
     "elevationUnit": "METERS",
     "longitude": -71.021972
   },
@@ -4013,7 +4021,7 @@ noaa.stations = [
     "latitude": 41.858026,
     "name": "DIGHTON 3.3 NNW, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MABR0058",
+    "id": "US1MABR0058",
     "elevationUnit": "METERS",
     "longitude": -71.1473342
   },
@@ -4024,7 +4032,7 @@ noaa.stations = [
     "latitude": 42.794490814209,
     "name": "HAVERHILL 0.7 N, MA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1MAES0020",
+    "id": "US1MAES0020",
     "elevationUnit": "METERS",
     "longitude": -71.0860595703125
   },
@@ -4035,7 +4043,7 @@ noaa.stations = [
     "latitude": 42.568494,
     "name": "DANVERS 0.8 ESE, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAES0041",
+    "id": "US1MAES0041",
     "elevationUnit": "METERS",
     "longitude": -70.935267
   },
@@ -4046,7 +4054,7 @@ noaa.stations = [
     "latitude": 42.6565953,
     "name": "ANDOVER 0.6 E, MA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1MAES0048",
+    "id": "US1MAES0048",
     "elevationUnit": "METERS",
     "longitude": -71.130485
   },
@@ -4057,7 +4065,7 @@ noaa.stations = [
     "latitude": 42.581336,
     "name": "MIDDLETON 1.4 SSW, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAES0058",
+    "id": "US1MAES0058",
     "elevationUnit": "METERS",
     "longitude": -71.027075
   },
@@ -4068,7 +4076,7 @@ noaa.stations = [
     "latitude": 42.87322,
     "name": "AMESBURY 1.2 N, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAES0059",
+    "id": "US1MAES0059",
     "elevationUnit": "METERS",
     "longitude": -70.9302
   },
@@ -4079,7 +4087,7 @@ noaa.stations = [
     "latitude": 42.5087884068489,
     "name": "CONWAY 0.9 SW, MA US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1MAFR0010",
+    "id": "US1MAFR0010",
     "elevationUnit": "METERS",
     "longitude": -72.6973506063223
   },
@@ -4090,7 +4098,7 @@ noaa.stations = [
     "latitude": 42.687163,
     "name": "COLRAIN 3.7 WNW, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAFR0031",
+    "id": "US1MAFR0031",
     "elevationUnit": "METERS",
     "longitude": -72.75112
   },
@@ -4101,7 +4109,7 @@ noaa.stations = [
     "latitude": 42.145237,
     "name": "LUDLOW 2.3 SW, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAHD0025",
+    "id": "US1MAHD0025",
     "elevationUnit": "METERS",
     "longitude": -72.516502
   },
@@ -4112,7 +4120,7 @@ noaa.stations = [
     "latitude": 42.467455,
     "name": "ACTON 1.3 SW, MA US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1MAMD0012",
+    "id": "US1MAMD0012",
     "elevationUnit": "METERS",
     "longitude": -71.481997
   },
@@ -4123,7 +4131,7 @@ noaa.stations = [
     "latitude": 42.20069,
     "name": "HOLLISTON 2.4 W, MA US",
     "datacoverage": 1,
-    "id": "GHCND:US1MAMD0106",
+    "id": "US1MAMD0106",
     "elevationUnit": "METERS",
     "longitude": -71.479819
   },
@@ -4134,7 +4142,7 @@ noaa.stations = [
     "latitude": 42.197582,
     "name": "NORWOOD 1.3 NW, MA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1MANF0001",
+    "id": "US1MANF0001",
     "elevationUnit": "METERS",
     "longitude": -71.213728
   },
@@ -4145,7 +4153,7 @@ noaa.stations = [
     "latitude": 39.1321,
     "name": "SEVERN 2.0 W, MD US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1MDAA0004",
+    "id": "US1MDAA0004",
     "elevationUnit": "METERS",
     "longitude": -76.728
   },
@@ -4156,7 +4164,7 @@ noaa.stations = [
     "latitude": 39.576776,
     "name": "CRESAPTOWN BEL AIR 0.9 SSE, MD US",
     "datacoverage": 1,
-    "id": "GHCND:US1MDAL0002",
+    "id": "US1MDAL0002",
     "elevationUnit": "METERS",
     "longitude": -78.849789
   },
@@ -4167,7 +4175,7 @@ noaa.stations = [
     "latitude": 39.470726,
     "name": "REISTERSTOWN 1.2 NW, MD US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1MDBL0035",
+    "id": "US1MDBL0035",
     "elevationUnit": "METERS",
     "longitude": -76.829937
   },
@@ -4178,7 +4186,7 @@ noaa.stations = [
     "latitude": 39.531345,
     "name": "WESTMINSTER 3.4 SSW, MD US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1MDCR0036",
+    "id": "US1MDCR0036",
     "elevationUnit": "METERS",
     "longitude": -77.020798
   },
@@ -4189,7 +4197,7 @@ noaa.stations = [
     "latitude": 39.667363,
     "name": "THURMONT 3.0 N, MD US",
     "datacoverage": 1,
-    "id": "GHCND:US1MDFR0030",
+    "id": "US1MDFR0030",
     "elevationUnit": "METERS",
     "longitude": -77.40411
   },
@@ -4200,7 +4208,7 @@ noaa.stations = [
     "latitude": 39.620699,
     "name": "ACCIDENT 3.9 E, MD US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1MDGR0012",
+    "id": "US1MDGR0012",
     "elevationUnit": "METERS",
     "longitude": -79.247508
   },
@@ -4211,7 +4219,7 @@ noaa.stations = [
     "latitude": 39.7025,
     "name": "NORRISVILLE 0.6 WSW, MD US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1MDHR0023",
+    "id": "US1MDHR0023",
     "elevationUnit": "METERS",
     "longitude": -76.5447
   },
@@ -4222,7 +4230,7 @@ noaa.stations = [
     "latitude": 39.2021,
     "name": "ELKRIDGE 1.8 W, MD US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1MDHW0003",
+    "id": "US1MDHW0003",
     "elevationUnit": "METERS",
     "longitude": -76.7843
   },
@@ -4233,7 +4241,7 @@ noaa.stations = [
     "latitude": 39.2361,
     "name": "COLUMBIA 2.3 N, MD US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1MDHW0018",
+    "id": "US1MDHW0018",
     "elevationUnit": "METERS",
     "longitude": -76.8605
   },
@@ -4244,7 +4252,7 @@ noaa.stations = [
     "latitude": 39.271389,
     "name": "GLENWOOD 1.2 SSW, MD US",
     "datacoverage": 1,
-    "id": "GHCND:US1MDHW0047",
+    "id": "US1MDHW0047",
     "elevationUnit": "METERS",
     "longitude": -77.03722
   },
@@ -4255,7 +4263,7 @@ noaa.stations = [
     "latitude": 39.249314,
     "name": "CLARKSBURG 2.1 NE, MD US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1MDMG0029",
+    "id": "US1MDMG0029",
     "elevationUnit": "METERS",
     "longitude": -77.243724
   },
@@ -4266,7 +4274,7 @@ noaa.stations = [
     "latitude": 39.080732,
     "name": "SILVER SPRING 6.4 NNE, MD US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1MDMG0106",
+    "id": "US1MDMG0106",
     "elevationUnit": "METERS",
     "longitude": -77.008126
   },
@@ -4277,7 +4285,7 @@ noaa.stations = [
     "latitude": 39.462521,
     "name": "KEEDYSVILLE 2.0 SSE, MD US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1MDWH0020",
+    "id": "US1MDWH0020",
     "elevationUnit": "METERS",
     "longitude": -77.680527
   },
@@ -4288,7 +4296,7 @@ noaa.stations = [
     "latitude": 38.446644,
     "name": "BISHOPVILLE 3.1 E, MD US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1MDWR0004",
+    "id": "US1MDWR0004",
     "elevationUnit": "METERS",
     "longitude": -75.134006
   },
@@ -4299,7 +4307,7 @@ noaa.stations = [
     "latitude": 44.073426,
     "name": "MECHANIC FALLS 2.7 S, ME US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1MEAN0040",
+    "id": "US1MEAN0040",
     "elevationUnit": "METERS",
     "longitude": -70.401514
   },
@@ -4310,7 +4318,7 @@ noaa.stations = [
     "latitude": 43.88806,
     "name": "WESTPORT ISLAND 2.2 SSW, ME US",
     "datacoverage": 1,
-    "id": "GHCND:US1MELN0021",
+    "id": "US1MELN0021",
     "elevationUnit": "METERS",
     "longitude": -69.70889
   },
@@ -4321,7 +4329,7 @@ noaa.stations = [
     "latitude": 44.91044,
     "name": "EASTPORT 1.4 ESE, ME US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1MEWS0031",
+    "id": "US1MEWS0031",
     "elevationUnit": "METERS",
     "longitude": -66.985721
   },
@@ -4332,7 +4340,7 @@ noaa.stations = [
     "latitude": 42.957642,
     "name": "SARANAC 2.6 NE, MI US",
     "datacoverage": 1,
-    "id": "GHCND:US1MIIN0001",
+    "id": "US1MIIN0001",
     "elevationUnit": "METERS",
     "longitude": -85.173759
   },
@@ -4343,7 +4351,7 @@ noaa.stations = [
     "latitude": 43.47427,
     "name": "SHEPHERD 3.7 SSE, MI US",
     "datacoverage": 1,
-    "id": "GHCND:US1MIIS0005",
+    "id": "US1MIIS0005",
     "elevationUnit": "METERS",
     "longitude": -84.66728
   },
@@ -4354,7 +4362,7 @@ noaa.stations = [
     "latitude": 42.897161,
     "name": "GRANDVILLE 1.3 WSW, MI US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1MIKN0014",
+    "id": "US1MIKN0014",
     "elevationUnit": "METERS",
     "longitude": -85.779139
   },
@@ -4365,7 +4373,7 @@ noaa.stations = [
     "latitude": 42.768322,
     "name": "FENTON 6.2 WSW, MI US",
     "datacoverage": 1,
-    "id": "GHCND:US1MILV0026",
+    "id": "US1MILV0026",
     "elevationUnit": "METERS",
     "longitude": -83.829286
   },
@@ -4376,7 +4384,7 @@ noaa.stations = [
     "latitude": 42.66549,
     "name": "CHESTERFIELD 2.4 E, MI US",
     "datacoverage": 1,
-    "id": "GHCND:US1MIMB0065",
+    "id": "US1MIMB0065",
     "elevationUnit": "METERS",
     "longitude": -82.79473
   },
@@ -4387,7 +4395,7 @@ noaa.stations = [
     "latitude": 43.562697,
     "name": "MECOSTA 4.6 SSW, MI US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1MIME0010",
+    "id": "US1MIME0010",
     "elevationUnit": "METERS",
     "longitude": -85.280632
   },
@@ -4398,7 +4406,7 @@ noaa.stations = [
     "latitude": 42.996173,
     "name": "PORT HURON 1.6 W, MI US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1MISC0003",
+    "id": "US1MISC0003",
     "elevationUnit": "METERS",
     "longitude": -82.464307
   },
@@ -4409,7 +4417,7 @@ noaa.stations = [
     "latitude": 42.304488,
     "name": "DEXTER 2.2 SE, MI US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1MIWS0031",
+    "id": "US1MIWS0031",
     "elevationUnit": "METERS",
     "longitude": -83.855344
   },
@@ -4420,7 +4428,7 @@ noaa.stations = [
     "latitude": 42.3419570922852,
     "name": "DEARBORN HEIGHTS 1.8 NW, MI US",
     "datacoverage": 1,
-    "id": "GHCND:US1MIWY0043",
+    "id": "US1MIWY0043",
     "elevationUnit": "METERS",
     "longitude": -83.3020706176758
   },
@@ -4431,7 +4439,7 @@ noaa.stations = [
     "latitude": 44.3216717,
     "name": "NEW ULM 0.8 NW, MN US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1MNBW0002",
+    "id": "US1MNBW0002",
     "elevationUnit": "METERS",
     "longitude": -94.4771122
   },
@@ -4442,7 +4450,7 @@ noaa.stations = [
     "latitude": 47.839227,
     "name": "HOVLAND 0.1 NE, MN US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MNCK0007",
+    "id": "US1MNCK0007",
     "elevationUnit": "METERS",
     "longitude": -89.971193
   },
@@ -4453,7 +4461,7 @@ noaa.stations = [
     "latitude": 44.8567,
     "name": "VICTORIA 1.6 WSW, MN US",
     "datacoverage": 1,
-    "id": "GHCND:US1MNCV0022",
+    "id": "US1MNCV0022",
     "elevationUnit": "METERS",
     "longitude": -93.6864
   },
@@ -4464,7 +4472,7 @@ noaa.stations = [
     "latitude": 44.760805,
     "name": "ROSEMOUNT 3.3 WNW, MN US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1MNDK0011",
+    "id": "US1MNDK0011",
     "elevationUnit": "METERS",
     "longitude": -93.130011
   },
@@ -4475,7 +4483,7 @@ noaa.stations = [
     "latitude": 45.018005,
     "name": "ROBBINSDALE 0.6 SSE, MN US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1MNHN0128",
+    "id": "US1MNHN0128",
     "elevationUnit": "METERS",
     "longitude": -93.329513
   },
@@ -4486,7 +4494,7 @@ noaa.stations = [
     "latitude": 44.9660301208496,
     "name": "HUTCHINSON 5.6 N, MN US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MNMC0012",
+    "id": "US1MNMC0012",
     "elevationUnit": "METERS",
     "longitude": -94.3645477294922
   },
@@ -4497,7 +4505,7 @@ noaa.stations = [
     "latitude": 45.9688628,
     "name": "LITTLE FALLS 1.2 SW, MN US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1MNMR0004",
+    "id": "US1MNMR0004",
     "elevationUnit": "METERS",
     "longitude": -94.377201
   },
@@ -4508,7 +4516,7 @@ noaa.stations = [
     "latitude": 43.645017,
     "name": "FAIRMONT 0.7 E, MN US",
     "datacoverage": 1,
-    "id": "GHCND:US1MNMT0006",
+    "id": "US1MNMT0006",
     "elevationUnit": "METERS",
     "longitude": -94.448608
   },
@@ -4519,7 +4527,7 @@ noaa.stations = [
     "latitude": 47.2601667,
     "name": "TWIN VALLEY 0.1 NE, MN US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MNNR0001",
+    "id": "US1MNNR0001",
     "elevationUnit": "METERS",
     "longitude": -96.2576667
   },
@@ -4530,7 +4538,7 @@ noaa.stations = [
     "latitude": 45.89189,
     "name": "BROOK PARK 3.9 S, MN US",
     "datacoverage": 1,
-    "id": "GHCND:US1MNPN0017",
+    "id": "US1MNPN0017",
     "elevationUnit": "METERS",
     "longitude": -93.063064
   },
@@ -4541,7 +4549,7 @@ noaa.stations = [
     "latitude": 44.4640053,
     "name": "MONTGOMERY 3.2 ENE, MN US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1MNRC0001",
+    "id": "US1MNRC0001",
     "elevationUnit": "METERS",
     "longitude": -93.5197647
   },
@@ -4552,7 +4560,7 @@ noaa.stations = [
     "latitude": 44.519989,
     "name": "NEW PRAGUE 4.8 ESE, MN US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1MNRC0011",
+    "id": "US1MNRC0011",
     "elevationUnit": "METERS",
     "longitude": -93.484666
   },
@@ -4563,7 +4571,7 @@ noaa.stations = [
     "latitude": 45.035019,
     "name": "ROSEVILLE 2.1 NW, MN US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1MNRM0015",
+    "id": "US1MNRM0015",
     "elevationUnit": "METERS",
     "longitude": -93.186205
   },
@@ -4574,7 +4582,7 @@ noaa.stations = [
     "latitude": 44.80662,
     "name": "RENVILLE 3.7 ENE, MN US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1MNRV0011",
+    "id": "US1MNRV0011",
     "elevationUnit": "METERS",
     "longitude": -95.13941
   },
@@ -4585,7 +4593,7 @@ noaa.stations = [
     "latitude": 36.61445,
     "name": "CASSVILLE 4.8 SSE, MO US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1MOBY0025",
+    "id": "US1MOBY0025",
     "elevationUnit": "METERS",
     "longitude": -93.83634
   },
@@ -4596,7 +4604,7 @@ noaa.stations = [
     "latitude": 38.6783667,
     "name": "HOLTS SUMMIT 2.5 NNE, MO US",
     "datacoverage": 1,
-    "id": "GHCND:US1MOCW0012",
+    "id": "US1MOCW0012",
     "elevationUnit": "METERS",
     "longitude": -92.1014472
   },
@@ -4607,7 +4615,7 @@ noaa.stations = [
     "latitude": 39.249849,
     "name": "GLADSTONE 2.6 N, MO US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1MOCY0016",
+    "id": "US1MOCY0016",
     "elevationUnit": "METERS",
     "longitude": -94.560952
   },
@@ -4618,7 +4626,7 @@ noaa.stations = [
     "latitude": 39.7918,
     "name": "STEWARTSVILLE 2.8 NNE, MO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1MODK0001",
+    "id": "US1MODK0001",
     "elevationUnit": "METERS",
     "longitude": -94.4804
   },
@@ -4629,7 +4637,7 @@ noaa.stations = [
     "latitude": 37.635556,
     "name": "BUFFALO 1.3 WSW, MO US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1MODL0021",
+    "id": "US1MODL0021",
     "elevationUnit": "METERS",
     "longitude": -93.116111
   },
@@ -4640,7 +4648,7 @@ noaa.stations = [
     "latitude": 38.573995,
     "name": "NEW HAVEN 2.3 S, MO US",
     "datacoverage": 1,
-    "id": "GHCND:US1MOFR0027",
+    "id": "US1MOFR0027",
     "elevationUnit": "METERS",
     "longitude": -91.212671
   },
@@ -4651,7 +4659,7 @@ noaa.stations = [
     "latitude": 38.9669,
     "name": "COLUMBIA 1.3 NW, MO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MOFSA019",
+    "id": "US1MOFSA019",
     "elevationUnit": "METERS",
     "longitude": -92.3443
   },
@@ -4662,7 +4670,7 @@ noaa.stations = [
     "latitude": 37.9559,
     "name": "LINN CREEK 9.4 SE, MO US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1MOFSA029",
+    "id": "US1MOFSA029",
     "elevationUnit": "METERS",
     "longitude": -92.5711
   },
@@ -4673,7 +4681,7 @@ noaa.stations = [
     "latitude": 38.6545,
     "name": "HARRISONVILLE 0.4 W, MO US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1MOFSA037",
+    "id": "US1MOFSA037",
     "elevationUnit": "METERS",
     "longitude": -94.3569
   },
@@ -4684,7 +4692,7 @@ noaa.stations = [
     "latitude": 37.6984,
     "name": "STOCKTON 0.2 NW, MO US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1MOFSA039",
+    "id": "US1MOFSA039",
     "elevationUnit": "METERS",
     "longitude": -93.7986
   },
@@ -4695,7 +4703,7 @@ noaa.stations = [
     "latitude": 37.6322,
     "name": "BUFFALO 1.0 SW, MO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MOFSA059",
+    "id": "US1MOFSA059",
     "elevationUnit": "METERS",
     "longitude": -93.1046
   },
@@ -4706,7 +4714,7 @@ noaa.stations = [
     "latitude": 37.66047,
     "name": "SALEM 1.8 NW, MO US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1MOFSA065",
+    "id": "US1MOFSA065",
     "elevationUnit": "METERS",
     "longitude": -91.55348
   },
@@ -4717,7 +4725,7 @@ noaa.stations = [
     "latitude": 38.4562,
     "name": "UNION 0.8 NE, MO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1MOFSA071",
+    "id": "US1MOFSA071",
     "elevationUnit": "METERS",
     "longitude": -91.0013
   },
@@ -4728,7 +4736,7 @@ noaa.stations = [
     "latitude": 39.1148,
     "name": "FAYETTE 2.3 S, MO US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1MOFSA089",
+    "id": "US1MOFSA089",
     "elevationUnit": "METERS",
     "longitude": -92.6891
   },
@@ -4739,7 +4747,7 @@ noaa.stations = [
     "latitude": 37.1469,
     "name": "CARTHAGE 1.5 S, MO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1MOFSA097",
+    "id": "US1MOFSA097",
     "elevationUnit": "METERS",
     "longitude": -94.3084
   },
@@ -4750,7 +4758,7 @@ noaa.stations = [
     "latitude": 37.6675,
     "name": "LEBANON 1.3 E, MO US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1MOFSA105",
+    "id": "US1MOFSA105",
     "elevationUnit": "METERS",
     "longitude": -92.6366
   },
@@ -4761,7 +4769,7 @@ noaa.stations = [
     "latitude": 39.7824,
     "name": "BROOKFIELD 1.2 WSW, MO US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1MOFSA115",
+    "id": "US1MOFSA115",
     "elevationUnit": "METERS",
     "longitude": -93.0979
   },
@@ -4772,7 +4780,7 @@ noaa.stations = [
     "latitude": 38.2428,
     "name": "VIENNA 4.3 NNW, MO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1MOFSA125",
+    "id": "US1MOFSA125",
     "elevationUnit": "METERS",
     "longitude": -91.9825
   },
@@ -4783,7 +4791,7 @@ noaa.stations = [
     "latitude": 39.3326,
     "name": "BOWLING GREEN 0.6 SE, MO US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1MOFSA163",
+    "id": "US1MOFSA163",
     "elevationUnit": "METERS",
     "longitude": -91.1884
   },
@@ -4794,7 +4802,7 @@ noaa.stations = [
     "latitude": 40.0668305,
     "name": "TRENTON 7.8 E, MO US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1MOGY0003",
+    "id": "US1MOGY0003",
     "elevationUnit": "METERS",
     "longitude": -93.4575786
   },
@@ -4805,7 +4813,7 @@ noaa.stations = [
     "latitude": 36.758174,
     "name": "WEST PLAINS 1.5 NW, MO US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1MOHL0041",
+    "id": "US1MOHL0041",
     "elevationUnit": "METERS",
     "longitude": -91.880707
   },
@@ -4816,7 +4824,7 @@ noaa.stations = [
     "latitude": 39.039458,
     "name": "BLUE SPRINGS 2.3 WNW, MO US",
     "datacoverage": 1,
-    "id": "GHCND:US1MOJC0044",
+    "id": "US1MOJC0044",
     "elevationUnit": "METERS",
     "longitude": -94.311042
   },
@@ -4827,7 +4835,7 @@ noaa.stations = [
     "latitude": 37.6458,
     "name": "LEBANON 2.4 SE, MO US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1MOLD0021",
+    "id": "US1MOLD0021",
     "elevationUnit": "METERS",
     "longitude": -92.6298
   },
@@ -4838,7 +4846,7 @@ noaa.stations = [
     "latitude": 39.789509,
     "name": "MACON 4.6 NE, MO US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1MOMC0002",
+    "id": "US1MOMC0002",
     "elevationUnit": "METERS",
     "longitude": -92.413763
   },
@@ -4849,7 +4857,7 @@ noaa.stations = [
     "latitude": 39.0922274,
     "name": "MIDDLETOWN 3.5 SW, MO US",
     "datacoverage": 1,
-    "id": "GHCND:US1MOMY0002",
+    "id": "US1MOMY0002",
     "elevationUnit": "METERS",
     "longitude": -91.461289
   },
@@ -4860,7 +4868,7 @@ noaa.stations = [
     "latitude": 37.977,
     "name": "ROLLA 3.7 WNW, MO US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1MOPH0053",
+    "id": "US1MOPH0053",
     "elevationUnit": "METERS",
     "longitude": -91.823
   },
@@ -4871,7 +4879,7 @@ noaa.stations = [
     "latitude": 38.62469,
     "name": "GREEN RIDGE 0.3 NNW, MO US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1MOPS0002",
+    "id": "US1MOPS0002",
     "elevationUnit": "METERS",
     "longitude": -93.41113
   },
@@ -4882,7 +4890,7 @@ noaa.stations = [
     "latitude": 36.667,
     "name": "FAIRDEALING 6.0 W, MO US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1MORP0006",
+    "id": "US1MORP0006",
     "elevationUnit": "METERS",
     "longitude": -90.969
   },
@@ -4893,7 +4901,7 @@ noaa.stations = [
     "latitude": 37.2235,
     "name": "SCOTT CITY 0.9 E, MO US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1MOSC0005",
+    "id": "US1MOSC0005",
     "elevationUnit": "METERS",
     "longitude": -89.51659
   },
@@ -4904,7 +4912,7 @@ noaa.stations = [
     "latitude": 39.146194,
     "name": "BLACKBURN 3.0 NNE, MO US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1MOSN0002",
+    "id": "US1MOSN0002",
     "elevationUnit": "METERS",
     "longitude": -93.467972
   },
@@ -4915,7 +4923,7 @@ noaa.stations = [
     "latitude": 37.126894,
     "name": "SUMMERSVILLE 3.6 S, MO US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1MOTX0044",
+    "id": "US1MOTX0044",
     "elevationUnit": "METERS",
     "longitude": -91.66529
   },
@@ -4926,7 +4934,7 @@ noaa.stations = [
     "latitude": 37.3232994,
     "name": "MARSHFIELD 4.1 WSW, MO US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1MOWB0030",
+    "id": "US1MOWB0030",
     "elevationUnit": "METERS",
     "longitude": -92.9826965
   },
@@ -4937,7 +4945,7 @@ noaa.stations = [
     "latitude": 34.1759515,
     "name": "CLARKSDALE 2.9 SW, MS US",
     "datacoverage": 1,
-    "id": "GHCND:US1MSCH0003",
+    "id": "US1MSCH0003",
     "elevationUnit": "METERS",
     "longitude": -90.6179579
   },
@@ -4948,7 +4956,7 @@ noaa.stations = [
     "latitude": 30.455758,
     "name": "PASS CHRISTIAN 9.8 NNW, MS US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1MSHR0037",
+    "id": "US1MSHR0037",
     "elevationUnit": "METERS",
     "longitude": -89.283504
   },
@@ -4959,7 +4967,7 @@ noaa.stations = [
     "latitude": 32.5498,
     "name": "COLLINSVILLE 4.0 NNE, MS US",
     "datacoverage": 1,
-    "id": "GHCND:US1MSLD0008",
+    "id": "US1MSLD0008",
     "elevationUnit": "METERS",
     "longitude": -88.8206
   },
@@ -4970,7 +4978,7 @@ noaa.stations = [
     "latitude": 32.3491,
     "name": "MERIDIAN 2.9 SW, MS US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1MSLD0009",
+    "id": "US1MSLD0009",
     "elevationUnit": "METERS",
     "longitude": -88.7448
   },
@@ -4981,7 +4989,7 @@ noaa.stations = [
     "latitude": 32.3518,
     "name": "FLOWOOD 2.9 NE, MS US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1MSRN0002",
+    "id": "US1MSRN0002",
     "elevationUnit": "METERS",
     "longitude": -90.0688
   },
@@ -4992,7 +5000,7 @@ noaa.stations = [
     "latitude": 32.247031,
     "name": "PELAHATCHIE 4.7 S, MS US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1MSRN0043",
+    "id": "US1MSRN0043",
     "elevationUnit": "METERS",
     "longitude": -89.795855
   },
@@ -5003,7 +5011,7 @@ noaa.stations = [
     "latitude": 34.595869,
     "name": "SENATOBIA 1.5 S, MS US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1MSTT0001",
+    "id": "US1MSTT0001",
     "elevationUnit": "METERS",
     "longitude": -89.970935
   },
@@ -5014,7 +5022,7 @@ noaa.stations = [
     "latitude": 32.97507,
     "name": "NOXAPATER 3.3 WSW, MS US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1MSWN0002",
+    "id": "US1MSWN0002",
     "elevationUnit": "METERS",
     "longitude": -89.11696
   },
@@ -5025,7 +5033,7 @@ noaa.stations = [
     "latitude": 32.1541089,
     "name": "VICKSBURG 12.3 S, MS US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1MSWR0007",
+    "id": "US1MSWR0007",
     "elevationUnit": "METERS",
     "longitude": -90.9074381
   },
@@ -5036,7 +5044,7 @@ noaa.stations = [
     "latitude": 46.16611111,
     "name": "ANACONDA 7.4 NW, MT US",
     "datacoverage": 1,
-    "id": "GHCND:US1MTDL0001",
+    "id": "US1MTDL0001",
     "elevationUnit": "METERS",
     "longitude": -113.0852778
   },
@@ -5047,7 +5055,7 @@ noaa.stations = [
     "latitude": 46.992616,
     "name": "GLENDIVE 16.9 WSW, MT US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1MTDW0002",
+    "id": "US1MTDW0002",
     "elevationUnit": "METERS",
     "longitude": -105.024788
   },
@@ -5058,7 +5066,7 @@ noaa.stations = [
     "latitude": 45.6578,
     "name": "BOZEMAN 1.5 SSE, MT US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1MTGN0011",
+    "id": "US1MTGN0011",
     "elevationUnit": "METERS",
     "longitude": -111.0272
   },
@@ -5069,7 +5077,7 @@ noaa.stations = [
     "latitude": 46.298986,
     "name": "RYEGATE 0.3 E, MT US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1MTGV0002",
+    "id": "US1MTGV0002",
     "elevationUnit": "METERS",
     "longitude": -109.247105
   },
@@ -5080,7 +5088,7 @@ noaa.stations = [
     "latitude": 48.051086,
     "name": "BIGFORK 3.5 ESE, MT US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1MTLK0015",
+    "id": "US1MTLK0015",
     "elevationUnit": "METERS",
     "longitude": -114.002952
   },
@@ -5091,7 +5099,7 @@ noaa.stations = [
     "latitude": 45.635694,
     "name": "LIVINGSTON 6.6 ESE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:US1MTPK0007",
+    "id": "US1MTPK0007",
     "elevationUnit": "METERS",
     "longitude": -110.433056
   },
@@ -5102,7 +5110,7 @@ noaa.stations = [
     "latitude": 45.66932,
     "name": "BROADUS 18.8 NNW, MT US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1MTPR0001",
+    "id": "US1MTPR0001",
     "elevationUnit": "METERS",
     "longitude": -105.62355
   },
@@ -5113,7 +5121,7 @@ noaa.stations = [
     "latitude": 45.667811,
     "name": "VOLBORG 18 SW, MT US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1MTPR0002",
+    "id": "US1MTPR0002",
     "elevationUnit": "METERS",
     "longitude": -105.899022
   },
@@ -5124,7 +5132,7 @@ noaa.stations = [
     "latitude": 35.47906,
     "name": "ARDEN 1.6 ENE, NC US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1NCBC0041",
+    "id": "US1NCBC0041",
     "elevationUnit": "METERS",
     "longitude": -82.49238
   },
@@ -5135,7 +5143,7 @@ noaa.stations = [
     "latitude": 35.802483,
     "name": "MARS HILL 2.6 SE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCBC0144",
+    "id": "US1NCBC0144",
     "elevationUnit": "METERS",
     "longitude": -82.515531
   },
@@ -5146,7 +5154,7 @@ noaa.stations = [
     "latitude": 35.61842,
     "name": "LEICESTER 4.5 SW, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCBC0150",
+    "id": "US1NCBC0150",
     "elevationUnit": "METERS",
     "longitude": -82.763046
   },
@@ -5157,7 +5165,7 @@ noaa.stations = [
     "latitude": 35.5197,
     "name": "BATH 4.1 NNW, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCBF0031",
+    "id": "US1NCBF0031",
     "elevationUnit": "METERS",
     "longitude": -76.8445
   },
@@ -5168,7 +5176,7 @@ noaa.stations = [
     "latitude": 35.7266,
     "name": "GLEN ALPINE 0.7 WSW, NC US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1NCBK0004",
+    "id": "US1NCBK0004",
     "elevationUnit": "METERS",
     "longitude": -81.7902
   },
@@ -5179,7 +5187,7 @@ noaa.stations = [
     "latitude": 35.0195,
     "name": "STEDMAN 1.0 NW, NC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NCCM0086",
+    "id": "US1NCCM0086",
     "elevationUnit": "METERS",
     "longitude": -78.7125
   },
@@ -5190,7 +5198,7 @@ noaa.stations = [
     "latitude": 35.054,
     "name": "HAYESVILLE 5.2 E, NC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1NCCY0003",
+    "id": "US1NCCY0003",
     "elevationUnit": "METERS",
     "longitude": -83.728
   },
@@ -5201,7 +5209,7 @@ noaa.stations = [
     "latitude": 35.9914,
     "name": "DURHAM 1.2 NW, NC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NCDH0006",
+    "id": "US1NCDH0006",
     "elevationUnit": "METERS",
     "longitude": -78.931
   },
@@ -5212,7 +5220,7 @@ noaa.stations = [
     "latitude": 35.580543,
     "name": "RODANTHE 1.0 SSE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCDR0051",
+    "id": "US1NCDR0051",
     "elevationUnit": "METERS",
     "longitude": -75.464628
   },
@@ -5223,7 +5231,7 @@ noaa.stations = [
     "latitude": 35.941354,
     "name": "ADVANCE 0.2 ESE, NC US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1NCDV0002",
+    "id": "US1NCDV0002",
     "elevationUnit": "METERS",
     "longitude": -80.413365
   },
@@ -5234,7 +5242,7 @@ noaa.stations = [
     "latitude": 35.970495,
     "name": "LOUISBURG 10.6 SSE, NC US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1NCFK0020",
+    "id": "US1NCFK0020",
     "elevationUnit": "METERS",
     "longitude": -78.196786
   },
@@ -5245,7 +5253,7 @@ noaa.stations = [
     "latitude": 36.1515,
     "name": "GREENSBORO 5.3 NNE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCGL0008",
+    "id": "US1NCGL0008",
     "elevationUnit": "METERS",
     "longitude": -79.7968
   },
@@ -5256,7 +5264,7 @@ noaa.stations = [
     "latitude": 35.5389,
     "name": "MAGGIE VALLEY 2.9 ENE, NC US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1NCHW0002",
+    "id": "US1NCHW0002",
     "elevationUnit": "METERS",
     "longitude": -83.0467
   },
@@ -5267,7 +5275,7 @@ noaa.stations = [
     "latitude": 35.493224,
     "name": "WAYNESVILLE 1.0 NW, NC US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1NCHW0025",
+    "id": "US1NCHW0025",
     "elevationUnit": "METERS",
     "longitude": -83.012711
   },
@@ -5278,7 +5286,7 @@ noaa.stations = [
     "latitude": 35.689161,
     "name": "WENDELL 6.5 S, NC US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1NCJH0015",
+    "id": "US1NCJH0015",
     "elevationUnit": "METERS",
     "longitude": -78.3482
   },
@@ -5289,7 +5297,7 @@ noaa.stations = [
     "latitude": 35.536,
     "name": "KENLY 4.2 SSE, NC US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1NCJH0080",
+    "id": "US1NCJH0080",
     "elevationUnit": "METERS",
     "longitude": -78.1004
   },
@@ -5300,7 +5308,7 @@ noaa.stations = [
     "latitude": 35.662195,
     "name": "CLAYTON 6.6 E, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCJH0086",
+    "id": "US1NCJH0086",
     "elevationUnit": "METERS",
     "longitude": -78.342539
   },
@@ -5311,7 +5319,7 @@ noaa.stations = [
     "latitude": 35.300700366497,
     "name": "KINSTON 5.1 WNW, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCLR0010",
+    "id": "US1NCLR0010",
     "elevationUnit": "METERS",
     "longitude": -77.6762118190527
   },
@@ -5322,7 +5330,7 @@ noaa.stations = [
     "latitude": 35.288973,
     "name": "KINSTON 4.4 WNW, NC US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1NCLR0023",
+    "id": "US1NCLR0023",
     "elevationUnit": "METERS",
     "longitude": -77.666513
   },
@@ -5333,7 +5341,7 @@ noaa.stations = [
     "latitude": 35.6891,
     "name": "PLEASANT GARDENS 0.8 WSW, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCMD0009",
+    "id": "US1NCMD0009",
     "elevationUnit": "METERS",
     "longitude": -82.0742
   },
@@ -5344,7 +5352,7 @@ noaa.stations = [
     "latitude": 35.21841,
     "name": "CHARLOTTE 3.9 WNW, NC US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1NCMK0092",
+    "id": "US1NCMK0092",
     "elevationUnit": "METERS",
     "longitude": -80.89898
   },
@@ -5355,7 +5363,7 @@ noaa.stations = [
     "latitude": 35.152125,
     "name": "CHARLOTTE 4.1 SE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCMK0094",
+    "id": "US1NCMK0094",
     "elevationUnit": "METERS",
     "longitude": -80.78645
   },
@@ -5366,7 +5374,7 @@ noaa.stations = [
     "latitude": 35.8196,
     "name": "HOT SPRINGS 5.6 SSW, NC US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1NCMS0024",
+    "id": "US1NCMS0024",
     "elevationUnit": "METERS",
     "longitude": -82.87238333
   },
@@ -5377,7 +5385,7 @@ noaa.stations = [
     "latitude": 35.8251463,
     "name": "MARS HILL 6.8 E, NC US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1NCMS0028",
+    "id": "US1NCMS0028",
     "elevationUnit": "METERS",
     "longitude": -82.4297128
   },
@@ -5388,7 +5396,7 @@ noaa.stations = [
     "latitude": 35.970875,
     "name": "NASHVILLE 3.2 W, NC US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1NCNS0002",
+    "id": "US1NCNS0002",
     "elevationUnit": "METERS",
     "longitude": -78.010894
   },
@@ -5399,7 +5407,7 @@ noaa.stations = [
     "latitude": 34.710851,
     "name": "SWANSBORO 1.4 N, NC US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1NCON0086",
+    "id": "US1NCON0086",
     "elevationUnit": "METERS",
     "longitude": -77.129041
   },
@@ -5410,7 +5418,7 @@ noaa.stations = [
     "latitude": 35.2968509,
     "name": "LOWLAND 0.2 SE, NC US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1NCPM0021",
+    "id": "US1NCPM0021",
     "elevationUnit": "METERS",
     "longitude": -76.5612869
   },
@@ -5421,7 +5429,7 @@ noaa.stations = [
     "latitude": 35.5258,
     "name": "WINTERVILLE 3.5 W, NC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1NCPT0007",
+    "id": "US1NCPT0007",
     "elevationUnit": "METERS",
     "longitude": -77.4605
   },
@@ -5432,7 +5440,7 @@ noaa.stations = [
     "latitude": 34.512735,
     "name": "LUMBERTON 8.6 SSE, NC US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1NCRB0017",
+    "id": "US1NCRB0017",
     "elevationUnit": "METERS",
     "longitude": -78.975122
   },
@@ -5443,7 +5451,7 @@ noaa.stations = [
     "latitude": 35.699342,
     "name": "ASHEBORO 5.0 WSW, NC US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1NCRN0038",
+    "id": "US1NCRN0038",
     "elevationUnit": "METERS",
     "longitude": -79.89746
   },
@@ -5454,7 +5462,7 @@ noaa.stations = [
     "latitude": 35.098589,
     "name": "ROSEBORO 10.0 N, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCSM0022",
+    "id": "US1NCSM0022",
     "elevationUnit": "METERS",
     "longitude": -78.50821
   },
@@ -5465,7 +5473,7 @@ noaa.stations = [
     "latitude": 36.366946,
     "name": "DOBSON 2.3 SE, NC US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1NCSR0002",
+    "id": "US1NCSR0002",
     "elevationUnit": "METERS",
     "longitude": -80.692741
   },
@@ -5476,7 +5484,7 @@ noaa.stations = [
     "latitude": 35.059478,
     "name": "SAPPHIRE 4.6 SW, NC US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1NCTR0029",
+    "id": "US1NCTR0029",
     "elevationUnit": "METERS",
     "longitude": -83.008389
   },
@@ -5487,7 +5495,7 @@ noaa.stations = [
     "latitude": 35.020746,
     "name": "MONROE 2.4 N, NC US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1NCUN0001",
+    "id": "US1NCUN0001",
     "elevationUnit": "METERS",
     "longitude": -80.53429
   },
@@ -5498,7 +5506,7 @@ noaa.stations = [
     "latitude": 35.1187,
     "name": "MONROE 9.2 N, NC US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1NCUN0010",
+    "id": "US1NCUN0010",
     "elevationUnit": "METERS",
     "longitude": -80.51475
   },
@@ -5509,7 +5517,7 @@ noaa.stations = [
     "latitude": 35.862421,
     "name": "RALEIGH 5.9 ENE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCWK0013",
+    "id": "US1NCWK0013",
     "elevationUnit": "METERS",
     "longitude": -78.566454
   },
@@ -5520,7 +5528,7 @@ noaa.stations = [
     "latitude": 35.838056,
     "name": "RALEIGH 5.7 ENE, NC US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1NCWK0027",
+    "id": "US1NCWK0027",
     "elevationUnit": "METERS",
     "longitude": -78.559722
   },
@@ -5531,7 +5539,7 @@ noaa.stations = [
     "latitude": 35.9425,
     "name": "RALEIGH 8.4 N, NC US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1NCWK0061",
+    "id": "US1NCWK0061",
     "elevationUnit": "METERS",
     "longitude": -78.6812
   },
@@ -5542,7 +5550,7 @@ noaa.stations = [
     "latitude": 35.871259,
     "name": "RALEIGH 3.6 NNE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:US1NCWK0203",
+    "id": "US1NCWK0203",
     "elevationUnit": "METERS",
     "longitude": -78.638678
   },
@@ -5553,7 +5561,7 @@ noaa.stations = [
     "latitude": 35.977313,
     "name": "GORMAN 7.2 SE, NC US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1NCWK0255",
+    "id": "US1NCWK0255",
     "elevationUnit": "METERS",
     "longitude": -78.708743
   },
@@ -5564,7 +5572,7 @@ noaa.stations = [
     "latitude": 48.232831,
     "name": "TOWNER 11.9 SE, ND US",
     "datacoverage": 1,
-    "id": "GHCND:US1NDPR0006",
+    "id": "US1NDPR0006",
     "elevationUnit": "METERS",
     "longitude": -100.214821
   },
@@ -5575,7 +5583,7 @@ noaa.stations = [
     "latitude": 48.9188,
     "name": "DUNSEITH 7.4 N, ND US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1NDRL0007",
+    "id": "US1NDRL0007",
     "elevationUnit": "METERS",
     "longitude": -100.0703
   },
@@ -5586,7 +5594,7 @@ noaa.stations = [
     "latitude": 48.2627,
     "name": "MINOT 4.1 WNW, ND US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NDWR0021",
+    "id": "US1NDWR0021",
     "elevationUnit": "METERS",
     "longitude": -101.373189
   },
@@ -5597,7 +5605,7 @@ noaa.stations = [
     "latitude": 40.594882,
     "name": "HASTINGS 2.0 WNW, NE US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1NEAD0002",
+    "id": "US1NEAD0002",
     "elevationUnit": "METERS",
     "longitude": -98.426962
   },
@@ -5608,7 +5616,7 @@ noaa.stations = [
     "latitude": 40.5622,
     "name": "HASTINGS 1.9 S, NE US",
     "datacoverage": 1,
-    "id": "GHCND:US1NEAD0007",
+    "id": "US1NEAD0007",
     "elevationUnit": "METERS",
     "longitude": -98.3836
   },
@@ -5619,7 +5627,7 @@ noaa.stations = [
     "latitude": 41.431413,
     "name": "FREMONT 0.6 S, NE US",
     "datacoverage": 1,
-    "id": "GHCND:US1NEDD0003",
+    "id": "US1NEDD0003",
     "elevationUnit": "METERS",
     "longitude": -96.492083
   },
@@ -5630,7 +5638,7 @@ noaa.stations = [
     "latitude": 40.8823,
     "name": "LINCOLN 4.6 N, NE US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1NELA0054",
+    "id": "US1NELA0054",
     "elevationUnit": "METERS",
     "longitude": -96.6943
   },
@@ -5641,7 +5649,7 @@ noaa.stations = [
     "latitude": 43.5949,
     "name": "BRISTOL 0.4 SSE, NH US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1NHGR0001",
+    "id": "US1NHGR0001",
     "elevationUnit": "METERS",
     "longitude": -71.7414
   },
@@ -5652,7 +5660,7 @@ noaa.stations = [
     "latitude": 43.52,
     "name": "DANBURY 2.2 ESE, NH US",
     "datacoverage": 1,
-    "id": "GHCND:US1NHMR0006",
+    "id": "US1NHMR0006",
     "elevationUnit": "METERS",
     "longitude": -71.819
   },
@@ -5663,7 +5671,7 @@ noaa.stations = [
     "latitude": 43.2115,
     "name": "CHICHESTER 2.7 SSW, NH US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NHMR0025",
+    "id": "US1NHMR0025",
     "elevationUnit": "METERS",
     "longitude": -71.4143
   },
@@ -5674,7 +5682,7 @@ noaa.stations = [
     "latitude": 39.593611,
     "name": "FRANKLIN TWP 2.7 W, NJ US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1NJGL0006",
+    "id": "US1NJGL0006",
     "elevationUnit": "METERS",
     "longitude": -75.069191
   },
@@ -5685,7 +5693,7 @@ noaa.stations = [
     "latitude": 40.26001,
     "name": "EWING TWP 0.8 ESE, NJ US",
     "datacoverage": 1,
-    "id": "GHCND:US1NJMC0017",
+    "id": "US1NJMC0017",
     "elevationUnit": "METERS",
     "longitude": -74.78659
   },
@@ -5696,7 +5704,7 @@ noaa.stations = [
     "latitude": 40.3083,
     "name": "PENNINGTON 1.7 SE, NJ US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1NJMC0049",
+    "id": "US1NJMC0049",
     "elevationUnit": "METERS",
     "longitude": -74.7693
   },
@@ -5707,7 +5715,7 @@ noaa.stations = [
     "latitude": 40.5554,
     "name": "WOODBRIDGE TWP 1.1 ESE, NJ US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1NJMD0043",
+    "id": "US1NJMD0043",
     "elevationUnit": "METERS",
     "longitude": -74.274
   },
@@ -5718,7 +5726,7 @@ noaa.stations = [
     "latitude": 40.45623,
     "name": "OLD BRIDGE TWP 5.1 NE, NJ US",
     "datacoverage": 1,
-    "id": "GHCND:US1NJMD0062",
+    "id": "US1NJMD0062",
     "elevationUnit": "METERS",
     "longitude": -74.241325
   },
@@ -5729,7 +5737,7 @@ noaa.stations = [
     "latitude": 40.90789,
     "name": "MOUNT ARLINGTON 0.8 S, NJ US",
     "datacoverage": 1,
-    "id": "GHCND:US1NJMS0087",
+    "id": "US1NJMS0087",
     "elevationUnit": "METERS",
     "longitude": -74.64077
   },
@@ -5740,7 +5748,7 @@ noaa.stations = [
     "latitude": 40.964044,
     "name": "JEFFERSON TWP 4.4 SW, NJ US",
     "datacoverage": 1,
-    "id": "GHCND:US1NJMS0094",
+    "id": "US1NJMS0094",
     "elevationUnit": "METERS",
     "longitude": -74.621629
   },
@@ -5751,7 +5759,7 @@ noaa.stations = [
     "latitude": 39.8626,
     "name": "LACEY TWP 6.3 E, NJ US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1NJOC0017",
+    "id": "US1NJOC0017",
     "elevationUnit": "METERS",
     "longitude": -74.141
   },
@@ -5762,7 +5770,7 @@ noaa.stations = [
     "latitude": 39.884693,
     "name": "BERKELEY TWP 2.7 SSE, NJ US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1NJOC0056",
+    "id": "US1NJOC0056",
     "elevationUnit": "METERS",
     "longitude": -74.174119
   },
@@ -5773,7 +5781,7 @@ noaa.stations = [
     "latitude": 40.467727,
     "name": "HILLSBOROUGH TWP 3.5 SE, NJ US",
     "datacoverage": 1,
-    "id": "GHCND:US1NJSM0065",
+    "id": "US1NJSM0065",
     "elevationUnit": "METERS",
     "longitude": -74.621788
   },
@@ -5784,7 +5792,7 @@ noaa.stations = [
     "latitude": 40.54261,
     "name": "MANVILLE 0.6 W, NJ US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1NJSM0068",
+    "id": "US1NJSM0068",
     "elevationUnit": "METERS",
     "longitude": -74.60065
   },
@@ -5795,7 +5803,7 @@ noaa.stations = [
     "latitude": 41.089027,
     "name": "HARDYSTON TWP 3.2 SE, NJ US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1NJSS0007",
+    "id": "US1NJSS0007",
     "elevationUnit": "METERS",
     "longitude": -74.539946
   },
@@ -5806,7 +5814,7 @@ noaa.stations = [
     "latitude": 40.6554433962532,
     "name": "GREENWICH TWP 1.6 S, NJ US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1NJWR0001",
+    "id": "US1NJWR0001",
     "elevationUnit": "METERS",
     "longitude": -75.1167011260986
   },
@@ -5817,7 +5825,7 @@ noaa.stations = [
     "latitude": 35.127832,
     "name": "ALBUQUERQUE 4.6 E, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0034",
+    "id": "US1NMBR0034",
     "elevationUnit": "METERS",
     "longitude": -106.543702
   },
@@ -5828,7 +5836,7 @@ noaa.stations = [
     "latitude": 35.165437,
     "name": "ALBUQUERQUE 3.5 NNE, NM US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1NMBR0139",
+    "id": "US1NMBR0139",
     "elevationUnit": "METERS",
     "longitude": -106.606399
   },
@@ -5839,7 +5847,7 @@ noaa.stations = [
     "latitude": 35.094383,
     "name": "ALBUQUERQUE 1.7 SSE, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0148",
+    "id": "US1NMBR0148",
     "elevationUnit": "METERS",
     "longitude": -106.612276
   },
@@ -5850,7 +5858,7 @@ noaa.stations = [
     "latitude": 35.122353,
     "name": "ALBUQUERQUE 5.0 E, NM US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1NMBR0168",
+    "id": "US1NMBR0168",
     "elevationUnit": "METERS",
     "longitude": -106.535507
   },
@@ -5861,7 +5869,7 @@ noaa.stations = [
     "latitude": 34.98709,
     "name": "TIJERAS 7.2 SSE, NM US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1NMBR0193",
+    "id": "US1NMBR0193",
     "elevationUnit": "METERS",
     "longitude": -106.341843
   },
@@ -5872,7 +5880,7 @@ noaa.stations = [
     "latitude": 35.0834,
     "name": "ALBUQUERQUE 5.0 ESE, NM US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1NMBR0239",
+    "id": "US1NMBR0239",
     "elevationUnit": "METERS",
     "longitude": -106.5466
   },
@@ -5883,7 +5891,7 @@ noaa.stations = [
     "latitude": 35.185024,
     "name": "NORTH VALLEY 1.0 NNW, NM US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1NMBR0242",
+    "id": "US1NMBR0242",
     "elevationUnit": "METERS",
     "longitude": -106.631813
   },
@@ -5894,7 +5902,7 @@ noaa.stations = [
     "latitude": 34.9508,
     "name": "TIJERAS 10.1 SSE, NM US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1NMBR0270",
+    "id": "US1NMBR0270",
     "elevationUnit": "METERS",
     "longitude": -106.313
   },
@@ -5905,7 +5913,7 @@ noaa.stations = [
     "latitude": 35.11486,
     "name": "CEDAR CREST 0.5 NNW, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0273",
+    "id": "US1NMBR0273",
     "elevationUnit": "METERS",
     "longitude": -106.37583
   },
@@ -5916,7 +5924,7 @@ noaa.stations = [
     "latitude": 35.064709,
     "name": "ALBUQUERQUE 4.3 SSW, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0284",
+    "id": "US1NMBR0284",
     "elevationUnit": "METERS",
     "longitude": -106.665306
   },
@@ -5927,7 +5935,7 @@ noaa.stations = [
     "latitude": 35.03779,
     "name": "ALBUQUERQUE 5.5 S, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0292",
+    "id": "US1NMBR0292",
     "elevationUnit": "METERS",
     "longitude": -106.622573
   },
@@ -5938,7 +5946,7 @@ noaa.stations = [
     "latitude": 34.95209,
     "name": "EDGEWOOD 9.9 SSW, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMBR0299",
+    "id": "US1NMBR0299",
     "elevationUnit": "METERS",
     "longitude": -106.24252
   },
@@ -5949,7 +5957,7 @@ noaa.stations = [
     "latitude": 33.758513,
     "name": "ROSWELL 28.5 NNE, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMCH0037",
+    "id": "US1NMCH0037",
     "elevationUnit": "METERS",
     "longitude": -104.362368
   },
@@ -5960,7 +5968,7 @@ noaa.stations = [
     "latitude": 36.900361,
     "name": "RATON 1.0 N, NM US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1NMCL0014",
+    "id": "US1NMCL0014",
     "elevationUnit": "METERS",
     "longitude": -104.443299
   },
@@ -5971,7 +5979,7 @@ noaa.stations = [
     "latitude": 36.8554232,
     "name": "RATON 2.2 SSW, NM US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1NMCL0016",
+    "id": "US1NMCL0016",
     "elevationUnit": "METERS",
     "longitude": -104.4559268
   },
@@ -5982,7 +5990,7 @@ noaa.stations = [
     "latitude": 32.271781,
     "name": "MESILLA 2.3 E, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMDA0116",
+    "id": "US1NMDA0116",
     "elevationUnit": "METERS",
     "longitude": -106.766816
   },
@@ -5993,7 +6001,7 @@ noaa.stations = [
     "latitude": 32.2786,
     "name": "LAS CRUCES 4.3 SSE, NM US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1NMDA0117",
+    "id": "US1NMDA0117",
     "elevationUnit": "METERS",
     "longitude": -106.727
   },
@@ -6004,7 +6012,7 @@ noaa.stations = [
     "latitude": 31.849959,
     "name": "SANTA TERESA 0.5 SSE, NM US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1NMDA0259",
+    "id": "US1NMDA0259",
     "elevationUnit": "METERS",
     "longitude": -106.635117
   },
@@ -6015,7 +6023,7 @@ noaa.stations = [
     "latitude": 32.397644,
     "name": "LAS CRUCES 5.7 NE, NM US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1NMDA0264",
+    "id": "US1NMDA0264",
     "elevationUnit": "METERS",
     "longitude": -106.689589
   },
@@ -6026,7 +6034,7 @@ noaa.stations = [
     "latitude": 32.467292,
     "name": "LAS CRUCES 12.4 NW, NM US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1NMDA0321",
+    "id": "US1NMDA0321",
     "elevationUnit": "METERS",
     "longitude": -106.901
   },
@@ -6037,7 +6045,7 @@ noaa.stations = [
     "latitude": 32.338,
     "name": "LAS CRUCES 1.7 NNE, NM US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1NMDA0347",
+    "id": "US1NMDA0347",
     "elevationUnit": "METERS",
     "longitude": -106.771
   },
@@ -6048,7 +6056,7 @@ noaa.stations = [
     "latitude": 32.36492,
     "name": "LAS CRUCES 2.1 NNE, NM US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NMDA0350",
+    "id": "US1NMDA0350",
     "elevationUnit": "METERS",
     "longitude": -106.727423
   },
@@ -6059,7 +6067,7 @@ noaa.stations = [
     "latitude": 32.3751,
     "name": "WHITE SANDS 1.3 ESE, NM US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1NMDA0352",
+    "id": "US1NMDA0352",
     "elevationUnit": "METERS",
     "longitude": -106.4726
   },
@@ -6070,7 +6078,7 @@ noaa.stations = [
     "latitude": 32.430939,
     "name": "CARLSBAD 2.1 NNW, NM US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1NMED0023",
+    "id": "US1NMED0023",
     "elevationUnit": "METERS",
     "longitude": -104.25395
   },
@@ -6081,7 +6089,7 @@ noaa.stations = [
     "latitude": 33.023,
     "name": "CLIFF 5.7 NE, NM US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1NMGR0027",
+    "id": "US1NMGR0027",
     "elevationUnit": "METERS",
     "longitude": -108.5441
   },
@@ -6092,7 +6100,7 @@ noaa.stations = [
     "latitude": 32.22965278,
     "name": "DEMING 4.0 SE, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMLU0051",
+    "id": "US1NMLU0051",
     "elevationUnit": "METERS",
     "longitude": -107.6938611
   },
@@ -6103,7 +6111,7 @@ noaa.stations = [
     "latitude": 32.094537,
     "name": "DEMING 11.6 S, NM US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1NMLU0073",
+    "id": "US1NMLU0073",
     "elevationUnit": "METERS",
     "longitude": -107.768891
   },
@@ -6114,7 +6122,7 @@ noaa.stations = [
     "latitude": 32.9335,
     "name": "ALAMOGORDO 3.4 N, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMOT0081",
+    "id": "US1NMOT0081",
     "elevationUnit": "METERS",
     "longitude": -105.951111
   },
@@ -6125,7 +6133,7 @@ noaa.stations = [
     "latitude": 35.172333,
     "name": "TUCUMCARI 8.7 E, NM US",
     "datacoverage": 1,
-    "id": "GHCND:US1NMQY0031",
+    "id": "US1NMQY0031",
     "elevationUnit": "METERS",
     "longitude": -103.573329
   },
@@ -6136,7 +6144,7 @@ noaa.stations = [
     "latitude": 33.731379,
     "name": "CAUSEY 13.4 SW, NM US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1NMRV0026",
+    "id": "US1NMRV0026",
     "elevationUnit": "METERS",
     "longitude": -103.284854
   },
@@ -6147,7 +6155,7 @@ noaa.stations = [
     "latitude": 35.7368,
     "name": "SANTA FE 7.7 WNW, NM US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1NMSF0001",
+    "id": "US1NMSF0001",
     "elevationUnit": "METERS",
     "longitude": -106.0718
   },
@@ -6158,7 +6166,7 @@ noaa.stations = [
     "latitude": 35.6248,
     "name": "AGUA FRIA 2.0 SW, NM US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1NMSF0044",
+    "id": "US1NMSF0044",
     "elevationUnit": "METERS",
     "longitude": -106.0437
   },
@@ -6169,7 +6177,7 @@ noaa.stations = [
     "latitude": 35.090167,
     "name": "EDGEWOOD 2.1 WNW, NM US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NMSF0052",
+    "id": "US1NMSF0052",
     "elevationUnit": "METERS",
     "longitude": -106.211958
   },
@@ -6180,7 +6188,7 @@ noaa.stations = [
     "latitude": 36.740768,
     "name": "FARMINGTON 3.4 WSW, NM US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1NMSJ0019",
+    "id": "US1NMSJ0019",
     "elevationUnit": "METERS",
     "longitude": -108.244481
   },
@@ -6191,7 +6199,7 @@ noaa.stations = [
     "latitude": 35.42681,
     "name": "ILFELD 0.7 NE, NM US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1NMSM0025",
+    "id": "US1NMSM0025",
     "elevationUnit": "METERS",
     "longitude": -105.549466
   },
@@ -6202,7 +6210,7 @@ noaa.stations = [
     "latitude": 35.33444444,
     "name": "PLACITAS 3.8 ENE, NM US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1NMSN0045",
+    "id": "US1NMSN0045",
     "elevationUnit": "METERS",
     "longitude": -106.4013889
   },
@@ -6213,7 +6221,7 @@ noaa.stations = [
     "latitude": 32.9162940979004,
     "name": "KINGSTON, NM US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1NMSR0047",
+    "id": "US1NMSR0047",
     "elevationUnit": "METERS",
     "longitude": -107.708656311035
   },
@@ -6224,7 +6232,7 @@ noaa.stations = [
     "latitude": 34.731476,
     "name": "ESTANCIA 6.4 WSW, NM US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1NMTR0016",
+    "id": "US1NMTR0016",
     "elevationUnit": "METERS",
     "longitude": -106.166981
   },
@@ -6235,7 +6243,7 @@ noaa.stations = [
     "latitude": 34.72972,
     "name": "ESTANCIA 6.4 WSW 2, NM US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1NMTR0018",
+    "id": "US1NMTR0018",
     "elevationUnit": "METERS",
     "longitude": -106.167438
   },
@@ -6246,7 +6254,7 @@ noaa.stations = [
     "latitude": 36.6482,
     "name": "CLAYTON 13.7 N, NM US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1NMUN0010",
+    "id": "US1NMUN0010",
     "elevationUnit": "METERS",
     "longitude": -103.1825
   },
@@ -6257,7 +6265,7 @@ noaa.stations = [
     "latitude": 36.12465,
     "name": "CLAYTON 32.9 SW, NM US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1NMUN0018",
+    "id": "US1NMUN0018",
     "elevationUnit": "METERS",
     "longitude": -103.60654
   },
@@ -6268,7 +6276,7 @@ noaa.stations = [
     "latitude": 39.166281,
     "name": "CARSON CITY 2.1 NW, NV US",
     "datacoverage": 1,
-    "id": "GHCND:US1NVCC0021",
+    "id": "US1NVCC0021",
     "elevationUnit": "METERS",
     "longitude": -119.774429
   },
@@ -6279,7 +6287,7 @@ noaa.stations = [
     "latitude": 39.038562,
     "name": "MINDEN 6.0 NNE, NV US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1NVDG0002",
+    "id": "US1NVDG0002",
     "elevationUnit": "METERS",
     "longitude": -119.721279
   },
@@ -6290,7 +6298,7 @@ noaa.stations = [
     "latitude": 39.557312,
     "name": "RENO 1.4 NNE, NV US",
     "datacoverage": 1,
-    "id": "GHCND:US1NVWH0002",
+    "id": "US1NVWH0002",
     "elevationUnit": "METERS",
     "longitude": -119.81439
   },
@@ -6301,7 +6309,7 @@ noaa.stations = [
     "latitude": 39.508411,
     "name": "RENO 2.4 SSW, NV US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1NVWH0011",
+    "id": "US1NVWH0011",
     "elevationUnit": "METERS",
     "longitude": -119.844181
   },
@@ -6312,7 +6320,7 @@ noaa.stations = [
     "latitude": 42.53356,
     "name": "NORWICH 5.4 W, NY US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1NYCN0009",
+    "id": "US1NYCN0009",
     "elevationUnit": "METERS",
     "longitude": -75.6306
   },
@@ -6323,7 +6331,7 @@ noaa.stations = [
     "latitude": 41.647,
     "name": "POUGHKEEPSIE 3.9 SSE, NY US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1NYDT0010",
+    "id": "US1NYDT0010",
     "elevationUnit": "METERS",
     "longitude": -73.897
   },
@@ -6334,7 +6342,7 @@ noaa.stations = [
     "latitude": 42.963156,
     "name": "KENMORE 0.3 ESE, NY US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1NYER0059",
+    "id": "US1NYER0059",
     "elevationUnit": "METERS",
     "longitude": -78.866894
   },
@@ -6345,7 +6353,7 @@ noaa.stations = [
     "latitude": 42.941192,
     "name": "CHEEKTOWAGA 2.7 NE, NY US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1NYER0102",
+    "id": "US1NYER0102",
     "elevationUnit": "METERS",
     "longitude": -78.719333
   },
@@ -6356,7 +6364,7 @@ noaa.stations = [
     "latitude": 44.495048,
     "name": "KEESEVILLE 0.8 SE, NY US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1NYES0007",
+    "id": "US1NYES0007",
     "elevationUnit": "METERS",
     "longitude": -73.471093
   },
@@ -6367,7 +6375,7 @@ noaa.stations = [
     "latitude": 42.929985,
     "name": "FORT PLAIN 0.2 SE, NY US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1NYMG0001",
+    "id": "US1NYMG0001",
     "elevationUnit": "METERS",
     "longitude": -74.62643
   },
@@ -6378,7 +6386,7 @@ noaa.stations = [
     "latitude": 43.05725,
     "name": "NORTH TONAWANDA 1.0 NNE, NY US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1NYNG0002",
+    "id": "US1NYNG0002",
     "elevationUnit": "METERS",
     "longitude": -78.86175
   },
@@ -6389,7 +6397,7 @@ noaa.stations = [
     "latitude": 43.15207,
     "name": "LOCKPORT 2.5 ESE, NY US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1NYNG0030",
+    "id": "US1NYNG0030",
     "elevationUnit": "METERS",
     "longitude": -78.65338
   },
@@ -6400,7 +6408,7 @@ noaa.stations = [
     "latitude": 40.89581,
     "name": "RIDGE 1.8 SE, NY US",
     "datacoverage": 1,
-    "id": "GHCND:US1NYSF0103",
+    "id": "US1NYSF0103",
     "elevationUnit": "METERS",
     "longitude": -72.853872
   },
@@ -6411,7 +6419,7 @@ noaa.stations = [
     "latitude": 41.26305556,
     "name": "FISHERS ISLAND 0.5 NE, NY US",
     "datacoverage": 1,
-    "id": "GHCND:US1NYSF0114",
+    "id": "US1NYSF0114",
     "elevationUnit": "METERS",
     "longitude": -72.01638889
   },
@@ -6422,7 +6430,7 @@ noaa.stations = [
     "latitude": 44.611539,
     "name": "HANNAWA FALLS 0.1 SW, NY US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1NYSL0006",
+    "id": "US1NYSL0006",
     "elevationUnit": "METERS",
     "longitude": -74.971905
   },
@@ -6433,7 +6441,7 @@ noaa.stations = [
     "latitude": 41.12996,
     "name": "ARMONK 0.3 SE, NY US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1NYWC0018",
+    "id": "US1NYWC0018",
     "elevationUnit": "METERS",
     "longitude": -73.708161
   },
@@ -6444,7 +6452,7 @@ noaa.stations = [
     "latitude": 41.284795,
     "name": "SOUTH SALEM 0.8 N, NY US",
     "datacoverage": 1,
-    "id": "GHCND:US1NYWC0022",
+    "id": "US1NYWC0022",
     "elevationUnit": "METERS",
     "longitude": -73.552794
   },
@@ -6455,7 +6463,7 @@ noaa.stations = [
     "latitude": 40.567807,
     "name": "WAPAKONETA 0.9 E, OH US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1OHAZ0018",
+    "id": "US1OHAZ0018",
     "elevationUnit": "METERS",
     "longitude": -84.175446
   },
@@ -6466,7 +6474,7 @@ noaa.stations = [
     "latitude": 39.185024,
     "name": "FAYETTEVILLE 0.5 W, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHBR0008",
+    "id": "US1OHBR0008",
     "elevationUnit": "METERS",
     "longitude": -83.942033
   },
@@ -6477,7 +6485,7 @@ noaa.stations = [
     "latitude": 40.756964,
     "name": "HANOVERTON 0.4 ENE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHCB0008",
+    "id": "US1OHCB0008",
     "elevationUnit": "METERS",
     "longitude": -80.929192
   },
@@ -6488,7 +6496,7 @@ noaa.stations = [
     "latitude": 40.22007,
     "name": "COSHOCTON 5.5 WSW, OH US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1OHCC0001",
+    "id": "US1OHCC0001",
     "elevationUnit": "METERS",
     "longitude": -81.93651
   },
@@ -6499,7 +6507,7 @@ noaa.stations = [
     "latitude": 39.102171,
     "name": "MOUNT CARMEL 0.5 NW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHCM0016",
+    "id": "US1OHCM0016",
     "elevationUnit": "METERS",
     "longitude": -84.305234
   },
@@ -6510,7 +6518,7 @@ noaa.stations = [
     "latitude": 41.367664,
     "name": "PARMA 1.8 SE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHCY0016",
+    "id": "US1OHCY0016",
     "elevationUnit": "METERS",
     "longitude": -81.701823
   },
@@ -6521,7 +6529,7 @@ noaa.stations = [
     "latitude": 41.408813,
     "name": "PARMA 1.9 NNW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHCY0024",
+    "id": "US1OHCY0024",
     "elevationUnit": "METERS",
     "longitude": -81.744789
   },
@@ -6532,7 +6540,7 @@ noaa.stations = [
     "latitude": 40.200143,
     "name": "SUNBURY 5.7 ESE, OH US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1OHDL0010",
+    "id": "US1OHDL0010",
     "elevationUnit": "METERS",
     "longitude": -82.773205
   },
@@ -6543,7 +6551,7 @@ noaa.stations = [
     "latitude": 40.15262,
     "name": "BRADFORD 2.3 NW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHDR0001",
+    "id": "US1OHDR0001",
     "elevationUnit": "METERS",
     "longitude": -84.46127
   },
@@ -6554,7 +6562,7 @@ noaa.stations = [
     "latitude": 39.980958,
     "name": "GRANDVIEW HEIGHTS 0.1 N, OH US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1OHFR0003",
+    "id": "US1OHFR0003",
     "elevationUnit": "METERS",
     "longitude": -83.040056
   },
@@ -6565,7 +6573,7 @@ noaa.stations = [
     "latitude": 40.04029,
     "name": "NEW ALBANY 2.8 SSE, OH US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1OHFR0008",
+    "id": "US1OHFR0008",
     "elevationUnit": "METERS",
     "longitude": -82.798033
   },
@@ -6576,7 +6584,7 @@ noaa.stations = [
     "latitude": 41.5903,
     "name": "MONTVILLE 1.2 SSE, OH US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1OHGG0004",
+    "id": "US1OHGG0004",
     "elevationUnit": "METERS",
     "longitude": -81.048
   },
@@ -6587,7 +6595,7 @@ noaa.stations = [
     "latitude": 39.6595,
     "name": "XENIA 2.8 SW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHGR0026",
+    "id": "US1OHGR0026",
     "elevationUnit": "METERS",
     "longitude": -83.9805
   },
@@ -6598,7 +6606,7 @@ noaa.stations = [
     "latitude": 39.08405,
     "name": "CHERRY GROVE 0.4 NW, OH US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1OHHM0037",
+    "id": "US1OHHM0037",
     "elevationUnit": "METERS",
     "longitude": -84.32803
   },
@@ -6609,7 +6617,7 @@ noaa.stations = [
     "latitude": 41.328221,
     "name": "MCCLURE 3.4 SSE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHHY0005",
+    "id": "US1OHHY0005",
     "elevationUnit": "METERS",
     "longitude": -83.908776
   },
@@ -6620,7 +6628,7 @@ noaa.stations = [
     "latitude": 41.4570251852274,
     "name": "NAPOLEON 4.5 NNW, OH US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1OHHY0009",
+    "id": "US1OHHY0009",
     "elevationUnit": "METERS",
     "longitude": -84.1496173292398
   },
@@ -6631,7 +6639,7 @@ noaa.stations = [
     "latitude": 41.61506,
     "name": "WILLOUGHBY 2.9 SW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHLK0009",
+    "id": "US1OHLK0009",
     "elevationUnit": "METERS",
     "longitude": -81.44592
   },
@@ -6642,7 +6650,7 @@ noaa.stations = [
     "latitude": 41.2498,
     "name": "BRUNSWICK 0.5 NE, OH US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1OHMD0002",
+    "id": "US1OHMD0002",
     "elevationUnit": "METERS",
     "longitude": -81.8133
   },
@@ -6653,7 +6661,7 @@ noaa.stations = [
     "latitude": 41.1412,
     "name": "MEDINA 0.8 ENE, OH US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1OHMD0010",
+    "id": "US1OHMD0010",
     "elevationUnit": "METERS",
     "longitude": -81.8534
   },
@@ -6664,7 +6672,7 @@ noaa.stations = [
     "latitude": 40.953167,
     "name": "SALEM 4.5 NE, OH US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1OHMH0010",
+    "id": "US1OHMH0010",
     "elevationUnit": "METERS",
     "longitude": -80.799213
   },
@@ -6675,7 +6683,7 @@ noaa.stations = [
     "latitude": 41.036440399,
     "name": "CANFIELD 0.5 N, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHMH0011",
+    "id": "US1OHMH0011",
     "elevationUnit": "METERS",
     "longitude": -80.7658596
   },
@@ -6686,7 +6694,7 @@ noaa.stations = [
     "latitude": 39.737281,
     "name": "NEW LEBANON 0.6 SSE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHMY0017",
+    "id": "US1OHMY0017",
     "elevationUnit": "METERS",
     "longitude": -84.395528
   },
@@ -6697,7 +6705,7 @@ noaa.stations = [
     "latitude": 39.897945,
     "name": "UNION 1.0 WSW, OH US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1OHMY0034",
+    "id": "US1OHMY0034",
     "elevationUnit": "METERS",
     "longitude": -84.3284
   },
@@ -6708,7 +6716,7 @@ noaa.stations = [
     "latitude": 41.2097634,
     "name": "STREETSBORO 2.1 SSW, OH US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1OHPT0008",
+    "id": "US1OHPT0008",
     "elevationUnit": "METERS",
     "longitude": -81.3548141
   },
@@ -6719,7 +6727,7 @@ noaa.stations = [
     "latitude": 41.008488,
     "name": "MOGADORE 4.7 SE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHPT0012",
+    "id": "US1OHPT0012",
     "elevationUnit": "METERS",
     "longitude": -81.329049
   },
@@ -6730,7 +6738,7 @@ noaa.stations = [
     "latitude": 41.14718,
     "name": "KENT 1.5 W, OH US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1OHPT0017",
+    "id": "US1OHPT0017",
     "elevationUnit": "METERS",
     "longitude": -81.390797
   },
@@ -6741,7 +6749,7 @@ noaa.stations = [
     "latitude": 40.35694444,
     "name": "FORT LORAMIE 0.8 NNW, OH US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1OHSH0015",
+    "id": "US1OHSH0015",
     "elevationUnit": "METERS",
     "longitude": -84.37361111
   },
@@ -6752,7 +6760,7 @@ noaa.stations = [
     "latitude": 40.237079,
     "name": "SIDNEY 5.4 SW, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHSH0020",
+    "id": "US1OHSH0020",
     "elevationUnit": "METERS",
     "longitude": -84.24076
   },
@@ -6763,7 +6771,7 @@ noaa.stations = [
     "latitude": 41.16227722,
     "name": "CUYAHOGA FALLS 1.1 ESE, OH US",
     "datacoverage": 1,
-    "id": "GHCND:US1OHSM0005",
+    "id": "US1OHSM0005",
     "elevationUnit": "METERS",
     "longitude": -81.50374603
   },
@@ -6774,7 +6782,7 @@ noaa.stations = [
     "latitude": 41.197735,
     "name": "NEWTON FALLS 0.6 N, OH US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1OHTR0004",
+    "id": "US1OHTR0004",
     "elevationUnit": "METERS",
     "longitude": -80.972115
   },
@@ -6785,7 +6793,7 @@ noaa.stations = [
     "latitude": 39.251218,
     "name": "ALBANY 4.5 WNW, OH US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1OHVN0003",
+    "id": "US1OHVN0003",
     "elevationUnit": "METERS",
     "longitude": -82.274717
   },
@@ -6796,7 +6804,7 @@ noaa.stations = [
     "latitude": 41.54114,
     "name": "PERRYSBURG 1.6 WSW, OH US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1OHWD0014",
+    "id": "US1OHWD0014",
     "elevationUnit": "METERS",
     "longitude": -83.64973
   },
@@ -6807,7 +6815,7 @@ noaa.stations = [
     "latitude": 41.6654,
     "name": "ALVORDTON 0.5 E, OH US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1OHWL0005",
+    "id": "US1OHWL0005",
     "elevationUnit": "METERS",
     "longitude": -84.4244
   },
@@ -6818,7 +6826,7 @@ noaa.stations = [
     "latitude": 35.99016,
     "name": "WESTVILLE 0.2 ENE, OK US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1OKAD0003",
+    "id": "US1OKAD0003",
     "elevationUnit": "METERS",
     "longitude": -94.571557
   },
@@ -6829,7 +6837,7 @@ noaa.stations = [
     "latitude": 36.991,
     "name": "FORGAN 10.4 NW, OK US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1OKBV0005",
+    "id": "US1OKBV0005",
     "elevationUnit": "METERS",
     "longitude": -100.6931667
   },
@@ -6840,7 +6848,7 @@ noaa.stations = [
     "latitude": 35.4706202,
     "name": "CALUMET 9.6 SSW, OK US",
     "datacoverage": 0.9951,
-    "id": "GHCND:US1OKCN0034",
+    "id": "US1OKCN0034",
     "elevationUnit": "METERS",
     "longitude": -98.1821128
   },
@@ -6851,7 +6859,7 @@ noaa.stations = [
     "latitude": 35.2392,
     "name": "NORMAN 3.1 WNW, OK US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1OKCV0012",
+    "id": "US1OKCV0012",
     "elevationUnit": "METERS",
     "longitude": -97.4904
   },
@@ -6862,7 +6870,7 @@ noaa.stations = [
     "latitude": 35.19795,
     "name": "NORMAN 2.1 SE, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKCV0032",
+    "id": "US1OKCV0032",
     "elevationUnit": "METERS",
     "longitude": -97.41815
   },
@@ -6873,7 +6881,7 @@ noaa.stations = [
     "latitude": 35.2146,
     "name": "HALL PARK 2.0 SSE, OK US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1OKCV0092",
+    "id": "US1OKCV0092",
     "elevationUnit": "METERS",
     "longitude": -97.3886
   },
@@ -6884,7 +6892,7 @@ noaa.stations = [
     "latitude": 35.214748,
     "name": "NORMAN 2.2 WSW, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKCV0142",
+    "id": "US1OKCV0142",
     "elevationUnit": "METERS",
     "longitude": -97.476067
   },
@@ -6895,7 +6903,7 @@ noaa.stations = [
     "latitude": 35.2575429,
     "name": "NORMAN 2.4 N, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKCV0144",
+    "id": "US1OKCV0144",
     "elevationUnit": "METERS",
     "longitude": -97.438448
   },
@@ -6906,7 +6914,7 @@ noaa.stations = [
     "latitude": 34.024007,
     "name": "HUGO 1.9 ENE, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKCW0003",
+    "id": "US1OKCW0003",
     "elevationUnit": "METERS",
     "longitude": -95.485908
   },
@@ -6917,7 +6925,7 @@ noaa.stations = [
     "latitude": 36.43258,
     "name": "GARBER 0.5 WSW, OK US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1OKGD0015",
+    "id": "US1OKGD0015",
     "elevationUnit": "METERS",
     "longitude": -97.588969
   },
@@ -6928,7 +6936,7 @@ noaa.stations = [
     "latitude": 35.298094,
     "name": "NEWCASTLE 3.9 NNW, OK US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1OKMC0013",
+    "id": "US1OKMC0013",
     "elevationUnit": "METERS",
     "longitude": -97.631392
   },
@@ -6939,7 +6947,7 @@ noaa.stations = [
     "latitude": 33.879029,
     "name": "IDABEL 2.3 SE, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKMN0005",
+    "id": "US1OKMN0005",
     "elevationUnit": "METERS",
     "longitude": -94.790065
   },
@@ -6950,7 +6958,7 @@ noaa.stations = [
     "latitude": 36.4753,
     "name": "BILLINGS 4.1 SSE, OK US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1OKNB0001",
+    "id": "US1OKNB0001",
     "elevationUnit": "METERS",
     "longitude": -97.421866
   },
@@ -6961,7 +6969,7 @@ noaa.stations = [
     "latitude": 35.63116,
     "name": "EDMOND 3.7 SW, OK US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1OKOK0098",
+    "id": "US1OKOK0098",
     "elevationUnit": "METERS",
     "longitude": -97.45466
   },
@@ -6972,7 +6980,7 @@ noaa.stations = [
     "latitude": 34.71793,
     "name": "ADA 4.1 S, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKPN0013",
+    "id": "US1OKPN0013",
     "elevationUnit": "METERS",
     "longitude": -96.66444
   },
@@ -6983,7 +6991,7 @@ noaa.stations = [
     "latitude": 36.2207,
     "name": "GLENCOE 3.0 W, OK US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1OKPY0009",
+    "id": "US1OKPY0009",
     "elevationUnit": "METERS",
     "longitude": -96.981
   },
@@ -6994,7 +7002,7 @@ noaa.stations = [
     "latitude": 36.0256,
     "name": "BROKEN ARROW 1.5 WSW, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKTL0030",
+    "id": "US1OKTL0030",
     "elevationUnit": "METERS",
     "longitude": -95.8107
   },
@@ -7005,7 +7013,7 @@ noaa.stations = [
     "latitude": 34.3921508789063,
     "name": "CHATTANOOGA 2.9 SW, OK US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1OKTN0005",
+    "id": "US1OKTN0005",
     "elevationUnit": "METERS",
     "longitude": -98.6890029907227
   },
@@ -7016,7 +7024,7 @@ noaa.stations = [
     "latitude": 36.681702,
     "name": "OCHELATA 5.6 N, OK US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1OKWS0004",
+    "id": "US1OKWS0004",
     "elevationUnit": "METERS",
     "longitude": -95.989106
   },
@@ -7027,7 +7035,7 @@ noaa.stations = [
     "latitude": 36.4124,
     "name": "WOODWARD 5.2 W, OK US",
     "datacoverage": 1,
-    "id": "GHCND:US1OKWW0007",
+    "id": "US1OKWW0007",
     "elevationUnit": "METERS",
     "longitude": -99.4964
   },
@@ -7038,7 +7046,7 @@ noaa.stations = [
     "latitude": 44.53262,
     "name": "CORVALLIS 2.7 SSE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ORBN0085",
+    "id": "US1ORBN0085",
     "elevationUnit": "METERS",
     "longitude": -123.26175
   },
@@ -7049,7 +7057,7 @@ noaa.stations = [
     "latitude": 44.1214,
     "name": "PAULINA 6.0 ESE, OR US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1ORCK0001",
+    "id": "US1ORCK0001",
     "elevationUnit": "METERS",
     "longitude": -119.848
   },
@@ -7060,7 +7068,7 @@ noaa.stations = [
     "latitude": 43.214167,
     "name": "BANDON 7.1 NNE, OR US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1ORCS0011",
+    "id": "US1ORCS0011",
     "elevationUnit": "METERS",
     "longitude": -124.37111
   },
@@ -7071,7 +7079,7 @@ noaa.stations = [
     "latitude": 43.4248,
     "name": "OAKLAND 0.1 NNE, OR US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1ORDG0027",
+    "id": "US1ORDG0027",
     "elevationUnit": "METERS",
     "longitude": -123.2942
   },
@@ -7082,7 +7090,7 @@ noaa.stations = [
     "latitude": 44.30611111,
     "name": "SISTERS 2.0 WNW, OR US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1ORDS0035",
+    "id": "US1ORDS0035",
     "elevationUnit": "METERS",
     "longitude": -121.5825
   },
@@ -7093,7 +7101,7 @@ noaa.stations = [
     "latitude": 44.0878219604492,
     "name": "BEND 2.5 NW, OR US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1ORDS0047",
+    "id": "US1ORDS0047",
     "elevationUnit": "METERS",
     "longitude": -121.350799560547
   },
@@ -7104,7 +7112,7 @@ noaa.stations = [
     "latitude": 44.311561,
     "name": "SISTERS 2.6 WNW, OR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ORDS0048",
+    "id": "US1ORDS0048",
     "elevationUnit": "METERS",
     "longitude": -121.592007
   },
@@ -7115,7 +7123,7 @@ noaa.stations = [
     "latitude": 42.0525,
     "name": "O BRIEN 2 SW, OR US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1ORJS0001",
+    "id": "US1ORJS0001",
     "elevationUnit": "METERS",
     "longitude": -123.7136
   },
@@ -7126,7 +7134,7 @@ noaa.stations = [
     "latitude": 42.35725,
     "name": "GRANTS PASS 6.1 SSE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ORJS0010",
+    "id": "US1ORJS0010",
     "elevationUnit": "METERS",
     "longitude": -123.2899667
   },
@@ -7137,7 +7145,7 @@ noaa.stations = [
     "latitude": 43.9499,
     "name": "PLEASANT HILL 3 SE, OR US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1ORLA0024",
+    "id": "US1ORLA0024",
     "elevationUnit": "METERS",
     "longitude": -122.8852
   },
@@ -7148,7 +7156,7 @@ noaa.stations = [
     "latitude": 44.132372,
     "name": "JUNCTION CITY 8.6 SW, OR US",
     "datacoverage": 1,
-    "id": "GHCND:US1ORLA0191",
+    "id": "US1ORLA0191",
     "elevationUnit": "METERS",
     "longitude": -123.328529
   },
@@ -7159,7 +7167,7 @@ noaa.stations = [
     "latitude": 44.396808,
     "name": "SWEET HOME 1.0 ESE, OR US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1ORLN0006",
+    "id": "US1ORLN0006",
     "elevationUnit": "METERS",
     "longitude": -122.683994
   },
@@ -7170,7 +7178,7 @@ noaa.stations = [
     "latitude": 44.481496,
     "name": "LEBANON 6.0 SE, OR US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1ORLN0054",
+    "id": "US1ORLN0054",
     "elevationUnit": "METERS",
     "longitude": -122.808504
   },
@@ -7181,7 +7189,7 @@ noaa.stations = [
     "latitude": 45.541609,
     "name": "PORTLAND 0.8 ENE, OR US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1ORMT0033",
+    "id": "US1ORMT0033",
     "elevationUnit": "METERS",
     "longitude": -122.64009
   },
@@ -7192,7 +7200,7 @@ noaa.stations = [
     "latitude": 45.462,
     "name": "LOSTINE 2.5 SE, OR US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1ORWL0009",
+    "id": "US1ORWL0009",
     "elevationUnit": "METERS",
     "longitude": -117.391
   },
@@ -7203,7 +7211,7 @@ noaa.stations = [
     "latitude": 39.81341667,
     "name": "FAIRFIELD 1.8 NNW, PA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1PAAD0043",
+    "id": "US1PAAD0043",
     "elevationUnit": "METERS",
     "longitude": -77.37638889
   },
@@ -7214,7 +7222,7 @@ noaa.stations = [
     "latitude": 39.9209,
     "name": "ORRTANNA 5.7 NNW, PA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1PAAD0054",
+    "id": "US1PAAD0054",
     "elevationUnit": "METERS",
     "longitude": -77.4031
   },
@@ -7225,7 +7233,7 @@ noaa.stations = [
     "latitude": 39.800656,
     "name": "HANOVER 1.2 SW, PA US",
     "datacoverage": 1,
-    "id": "GHCND:US1PAAD0063",
+    "id": "US1PAAD0063",
     "elevationUnit": "METERS",
     "longitude": -77.000833
   },
@@ -7236,7 +7244,7 @@ noaa.stations = [
     "latitude": 40.0221,
     "name": "EVERETT 3.9 W, PA US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1PABD0011",
+    "id": "US1PABD0011",
     "elevationUnit": "METERS",
     "longitude": -78.4381
   },
@@ -7247,7 +7255,7 @@ noaa.stations = [
     "latitude": 40.316251,
     "name": "READING 3.5 SW, PA US",
     "datacoverage": 1,
-    "id": "GHCND:US1PABR0002",
+    "id": "US1PABR0002",
     "elevationUnit": "METERS",
     "longitude": -75.988661
   },
@@ -7258,7 +7266,7 @@ noaa.stations = [
     "latitude": 40.566455,
     "name": "HAMBURG 0.7 NNW, PA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1PABR0025",
+    "id": "US1PABR0025",
     "elevationUnit": "METERS",
     "longitude": -75.986174
   },
@@ -7269,7 +7277,7 @@ noaa.stations = [
     "latitude": 40.3112,
     "name": "READING 4.7 WSW, PA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1PABR0029",
+    "id": "US1PABR0029",
     "elevationUnit": "METERS",
     "longitude": -76.0098
   },
@@ -7280,7 +7288,7 @@ noaa.stations = [
     "latitude": 40.723849,
     "name": "FOX RUN 1.6 NNE, PA US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1PABT0015",
+    "id": "US1PABT0015",
     "elevationUnit": "METERS",
     "longitude": -80.070564
   },
@@ -7291,7 +7299,7 @@ noaa.stations = [
     "latitude": 40.7687,
     "name": "CABOT 0.3 N, PA US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1PABT0024",
+    "id": "US1PABT0024",
     "elevationUnit": "METERS",
     "longitude": -79.7669
   },
@@ -7302,7 +7310,7 @@ noaa.stations = [
     "latitude": 40.83902,
     "name": "PALMERTON 5.8 ENE, PA US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1PACB0004",
+    "id": "US1PACB0004",
     "elevationUnit": "METERS",
     "longitude": -75.51846
   },
@@ -7313,7 +7321,7 @@ noaa.stations = [
     "latitude": 39.7424221,
     "name": "NOTTINGHAM 1.5 SW, PA US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1PACH0014",
+    "id": "US1PACH0014",
     "elevationUnit": "METERS",
     "longitude": -76.0454442
   },
@@ -7324,7 +7332,7 @@ noaa.stations = [
     "latitude": 40.79117,
     "name": "PORT MATILDA 2.2 ESE, PA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1PACN0018",
+    "id": "US1PACN0018",
     "elevationUnit": "METERS",
     "longitude": -78.01184
   },
@@ -7335,7 +7343,7 @@ noaa.stations = [
     "latitude": 41.410693,
     "name": "ST. MARYS 1.7 SE, PA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1PAEL0001",
+    "id": "US1PAEL0001",
     "elevationUnit": "METERS",
     "longitude": -78.534767
   },
@@ -7346,7 +7354,7 @@ noaa.stations = [
     "latitude": 40.329716,
     "name": "LEBANON 1.3 SW, PA US",
     "datacoverage": 1,
-    "id": "GHCND:US1PALB0017",
+    "id": "US1PALB0017",
     "elevationUnit": "METERS",
     "longitude": -76.441597
   },
@@ -7357,7 +7365,7 @@ noaa.stations = [
     "latitude": 41.294913,
     "name": "FORTY FORT 0.4 NNE, PA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:US1PALZ0024",
+    "id": "US1PALZ0024",
     "elevationUnit": "METERS",
     "longitude": -75.868213
   },
@@ -7368,7 +7376,7 @@ noaa.stations = [
     "latitude": 41.420186,
     "name": "MILFORD 8.7 NW, PA US",
     "datacoverage": 1,
-    "id": "GHCND:US1PAPK0022",
+    "id": "US1PAPK0022",
     "elevationUnit": "METERS",
     "longitude": -74.90953
   },
@@ -7379,7 +7387,7 @@ noaa.stations = [
     "latitude": 41.604779,
     "name": "DYBERRY 19, PA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1PAWN0012",
+    "id": "US1PAWN0012",
     "elevationUnit": "METERS",
     "longitude": -75.283316
   },
@@ -7390,7 +7398,7 @@ noaa.stations = [
     "latitude": 41.5901832580566,
     "name": "CANAAN 11, PA US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1PAWN0026",
+    "id": "US1PAWN0026",
     "elevationUnit": "METERS",
     "longitude": -75.3590393066406
   },
@@ -7401,7 +7409,7 @@ noaa.stations = [
     "latitude": 39.9964609,
     "name": "YORK 2.5 NNW, PA US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1PAYR0017",
+    "id": "US1PAYR0017",
     "elevationUnit": "METERS",
     "longitude": -76.753305
   },
@@ -7412,7 +7420,7 @@ noaa.stations = [
     "latitude": 40.048814,
     "name": "MOUNT WOLF 1.0 SE, PA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1PAYR0020",
+    "id": "US1PAYR0020",
     "elevationUnit": "METERS",
     "longitude": -76.694775
   },
@@ -7423,7 +7431,7 @@ noaa.stations = [
     "latitude": 41.711403,
     "name": "COVENTRY 1.9 NE, RI US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1RIKN0021",
+    "id": "US1RIKN0021",
     "elevationUnit": "METERS",
     "longitude": -71.547798
   },
@@ -7434,7 +7442,7 @@ noaa.stations = [
     "latitude": 41.64079,
     "name": "TIVERTON 1.0 SSW, RI US",
     "datacoverage": 0.9969,
-    "id": "GHCND:US1RINW0020",
+    "id": "US1RINW0020",
     "elevationUnit": "METERS",
     "longitude": -71.2065
   },
@@ -7445,7 +7453,7 @@ noaa.stations = [
     "latitude": 41.8889,
     "name": "GREENVILLE 0.7 NNW, RI US",
     "datacoverage": 1,
-    "id": "GHCND:US1RIPR0033",
+    "id": "US1RIPR0033",
     "elevationUnit": "METERS",
     "longitude": -71.5603
   },
@@ -7456,7 +7464,7 @@ noaa.stations = [
     "latitude": 33.6337585449219,
     "name": "SALLEY 4.9 NNE, SC US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1SCAK0073",
+    "id": "US1SCAK0073",
     "elevationUnit": "METERS",
     "longitude": -81.279182434082
   },
@@ -7467,7 +7475,7 @@ noaa.stations = [
     "latitude": 34.5621,
     "name": "ANDERSON 3.7 NW, SC US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1SCAN0023",
+    "id": "US1SCAN0023",
     "elevationUnit": "METERS",
     "longitude": -82.6846
   },
@@ -7478,7 +7486,7 @@ noaa.stations = [
     "latitude": 32.189669,
     "name": "HILTON HEAD ISLAND 2.7 E, SC US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1SCBF0052",
+    "id": "US1SCBF0052",
     "elevationUnit": "METERS",
     "longitude": -80.70069
   },
@@ -7489,7 +7497,7 @@ noaa.stations = [
     "latitude": 33.756497,
     "name": "SWANSEA 3.9 ENE, SC US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1SCCA0017",
+    "id": "US1SCCA0017",
     "elevationUnit": "METERS",
     "longitude": -81.042784
   },
@@ -7500,7 +7508,7 @@ noaa.stations = [
     "latitude": 32.55544,
     "name": "EDISTO BEACH 5.4 NNW, SC US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1SCCR0155",
+    "id": "US1SCCR0155",
     "elevationUnit": "METERS",
     "longitude": -80.368166
   },
@@ -7511,7 +7519,7 @@ noaa.stations = [
     "latitude": 32.865482,
     "name": "HAMPTON 0.3 WSW, SC US",
     "datacoverage": 0.9984,
-    "id": "GHCND:US1SCHM0018",
+    "id": "US1SCHM0018",
     "elevationUnit": "METERS",
     "longitude": -81.114218
   },
@@ -7522,7 +7530,7 @@ noaa.stations = [
     "latitude": 33.82948,
     "name": "CONWAY 6.2 E, SC US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1SCHR0061",
+    "id": "US1SCHR0061",
     "elevationUnit": "METERS",
     "longitude": -78.95277
   },
@@ -7533,7 +7541,7 @@ noaa.stations = [
     "latitude": 33.76386,
     "name": "MYRTLE BEACH 4.8 NNW, SC US",
     "datacoverage": 1,
-    "id": "GHCND:US1SCHR0106",
+    "id": "US1SCHR0106",
     "elevationUnit": "METERS",
     "longitude": -78.91961
   },
@@ -7544,7 +7552,7 @@ noaa.stations = [
     "latitude": 33.985744,
     "name": "LEXINGTON 4.3 E, SC US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1SCLX0162",
+    "id": "US1SCLX0162",
     "elevationUnit": "METERS",
     "longitude": -81.153923
   },
@@ -7555,7 +7563,7 @@ noaa.stations = [
     "latitude": 33.515338,
     "name": "ELLOREE 2.2 WSW, SC US",
     "datacoverage": 1,
-    "id": "GHCND:US1SCOR0041",
+    "id": "US1SCOR0041",
     "elevationUnit": "METERS",
     "longitude": -80.606282
   },
@@ -7566,7 +7574,7 @@ noaa.stations = [
     "latitude": 34.146914,
     "name": "COLUMBIA 7.4 N, SC US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1SCRC0062",
+    "id": "US1SCRC0062",
     "elevationUnit": "METERS",
     "longitude": -80.88642
   },
@@ -7577,7 +7585,7 @@ noaa.stations = [
     "latitude": 34.131159,
     "name": "CHAPIN 5.0 ESE, SC US",
     "datacoverage": 0.9963,
-    "id": "GHCND:US1SCRC0093",
+    "id": "US1SCRC0093",
     "elevationUnit": "METERS",
     "longitude": -81.270463
   },
@@ -7588,7 +7596,7 @@ noaa.stations = [
     "latitude": 34.00942,
     "name": "SALUDA 0.6 NNE, SC US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1SCSL0009",
+    "id": "US1SCSL0009",
     "elevationUnit": "METERS",
     "longitude": -81.76829
   },
@@ -7599,7 +7607,7 @@ noaa.stations = [
     "latitude": 34.9891222,
     "name": "LYMAN 5.3 WNW, SC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1SCSP0023",
+    "id": "US1SCSP0023",
     "elevationUnit": "METERS",
     "longitude": -82.2055501
   },
@@ -7610,7 +7618,7 @@ noaa.stations = [
     "latitude": 35.168154,
     "name": "CHESNEE 4.5 WNW, SC US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1SCSP0053",
+    "id": "US1SCSP0053",
     "elevationUnit": "METERS",
     "longitude": -81.93896
   },
@@ -7621,7 +7629,7 @@ noaa.stations = [
     "latitude": 33.739449,
     "name": "KINGSTREE 7.9 NW, SC US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1SCWL0002",
+    "id": "US1SCWL0002",
     "elevationUnit": "METERS",
     "longitude": -79.933232
   },
@@ -7632,7 +7640,7 @@ noaa.stations = [
     "latitude": 44.4566774,
     "name": "HURON 6.8 NNE, SD US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1SDBD0007",
+    "id": "US1SDBD0007",
     "elevationUnit": "METERS",
     "longitude": -98.1740423
   },
@@ -7643,7 +7651,7 @@ noaa.stations = [
     "latitude": 44.303888,
     "name": "BROOKINGS 0.2 SSW, SD US",
     "datacoverage": 0.997,
-    "id": "GHCND:US1SDBK0007",
+    "id": "US1SDBK0007",
     "elevationUnit": "METERS",
     "longitude": -96.787839
   },
@@ -7654,7 +7662,7 @@ noaa.stations = [
     "latitude": 44.291801,
     "name": "BROOKINGS 1.0 S, SD US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1SDBK0043",
+    "id": "US1SDBK0043",
     "elevationUnit": "METERS",
     "longitude": -96.7855
   },
@@ -7665,7 +7673,7 @@ noaa.stations = [
     "latitude": 43.113169,
     "name": "DALLAS 8.8 S, SD US",
     "datacoverage": 0.9974,
-    "id": "GHCND:US1SDGY0001",
+    "id": "US1SDGY0001",
     "elevationUnit": "METERS",
     "longitude": -99.496356
   },
@@ -7676,7 +7684,7 @@ noaa.stations = [
     "latitude": 43.5267,
     "name": "SIOUX FALLS 3.4 ESE, SD US",
     "datacoverage": 1,
-    "id": "GHCND:US1SDMH0020",
+    "id": "US1SDMH0020",
     "elevationUnit": "METERS",
     "longitude": -96.6658
   },
@@ -7687,7 +7695,7 @@ noaa.stations = [
     "latitude": 43.6501,
     "name": "BELVIDERE 14.9 SSE, SD US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1SDML0011",
+    "id": "US1SDML0011",
     "elevationUnit": "METERS",
     "longitude": -101.1101
   },
@@ -7698,7 +7706,7 @@ noaa.stations = [
     "latitude": 43.862385,
     "name": "FULTON 9.4 N, SD US",
     "datacoverage": 1,
-    "id": "GHCND:US1SDMN0001",
+    "id": "US1SDMN0001",
     "elevationUnit": "METERS",
     "longitude": -97.79072
   },
@@ -7709,7 +7717,7 @@ noaa.stations = [
     "latitude": 44.004956,
     "name": "HOWARD 5.3 W, SD US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1SDMN0011",
+    "id": "US1SDMN0011",
     "elevationUnit": "METERS",
     "longitude": -97.629411
   },
@@ -7720,7 +7728,7 @@ noaa.stations = [
     "latitude": 44.0886,
     "name": "RAPID CITY 3.4 WNW, SD US",
     "datacoverage": 1,
-    "id": "GHCND:US1SDPN0002",
+    "id": "US1SDPN0002",
     "elevationUnit": "METERS",
     "longitude": -103.2997
   },
@@ -7731,7 +7739,7 @@ noaa.stations = [
     "latitude": 43.5868,
     "name": "HAMILL 1.7 SW, SD US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1SDTP0007",
+    "id": "US1SDTP0007",
     "elevationUnit": "METERS",
     "longitude": -99.711432
   },
@@ -7742,7 +7750,7 @@ noaa.stations = [
     "latitude": 35.419254,
     "name": "SHELBYVILLE 8.9 WSW, TN US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1TNBF0017",
+    "id": "US1TNBF0017",
     "elevationUnit": "METERS",
     "longitude": -86.579692
   },
@@ -7753,7 +7761,7 @@ noaa.stations = [
     "latitude": 35.930226,
     "name": "SMITHVILLE 4.9 WSW, TN US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1TNDK0001",
+    "id": "US1TNDK0001",
     "elevationUnit": "METERS",
     "longitude": -85.902491
   },
@@ -7764,7 +7772,7 @@ noaa.stations = [
     "latitude": 36.119601,
     "name": "MOUNT JULIET 6.1 SSW, TN US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TNDV0076",
+    "id": "US1TNDV0076",
     "elevationUnit": "METERS",
     "longitude": -86.546118
   },
@@ -7775,7 +7783,7 @@ noaa.stations = [
     "latitude": 36.25487,
     "name": "MADISON 1.2 WSW, TN US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1TNDV0111",
+    "id": "US1TNDV0111",
     "elevationUnit": "METERS",
     "longitude": -86.73067
   },
@@ -7786,7 +7794,7 @@ noaa.stations = [
     "latitude": 36.088039,
     "name": "NASHVILLE 5.2 S, TN US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1TNDV0163",
+    "id": "US1TNDV0163",
     "elevationUnit": "METERS",
     "longitude": -86.768238
   },
@@ -7797,7 +7805,7 @@ noaa.stations = [
     "latitude": 36.245307,
     "name": "JAMESTOWN 12.9 S, TN US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1TNFN0005",
+    "id": "US1TNFN0005",
     "elevationUnit": "METERS",
     "longitude": -84.934206
   },
@@ -7808,7 +7816,7 @@ noaa.stations = [
     "latitude": 35.584085,
     "name": "BROWNSVILLE 1.0 SE, TN US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TNHW0001",
+    "id": "US1TNHW0001",
     "elevationUnit": "METERS",
     "longitude": -89.242296
   },
@@ -7819,7 +7827,7 @@ noaa.stations = [
     "latitude": 35.71081,
     "name": "GADSDEN 4.9 SSE, TN US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1TNMD0010",
+    "id": "US1TNMD0010",
     "elevationUnit": "METERS",
     "longitude": -88.959046
   },
@@ -7830,7 +7838,7 @@ noaa.stations = [
     "latitude": 35.514328,
     "name": "MEDON 4.3 NNE, TN US",
     "datacoverage": 1,
-    "id": "GHCND:US1TNMD0032",
+    "id": "US1TNMD0032",
     "elevationUnit": "METERS",
     "longitude": -88.830552
   },
@@ -7841,7 +7849,7 @@ noaa.stations = [
     "latitude": 36.0589,
     "name": "OLIVER SPRINGS 9.0 W, TN US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1TNMG0010",
+    "id": "US1TNMG0010",
     "elevationUnit": "METERS",
     "longitude": -84.48797
   },
@@ -7852,7 +7860,7 @@ noaa.stations = [
     "latitude": 35.3231,
     "name": "CORNERSVILLE 3.6 SE, TN US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1TNML0010",
+    "id": "US1TNML0010",
     "elevationUnit": "METERS",
     "longitude": -86.7936
   },
@@ -7863,7 +7871,7 @@ noaa.stations = [
     "latitude": 35.68447,
     "name": "TEN MILE 2.2 NW, TN US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1TNMS0001",
+    "id": "US1TNMS0001",
     "elevationUnit": "METERS",
     "longitude": -84.70573
   },
@@ -7874,7 +7882,7 @@ noaa.stations = [
     "latitude": 35.607219,
     "name": "COLUMBIA 1.2 SSW, TN US",
     "datacoverage": 1,
-    "id": "GHCND:US1TNMY0008",
+    "id": "US1TNMY0008",
     "elevationUnit": "METERS",
     "longitude": -87.05921
   },
@@ -7885,7 +7893,7 @@ noaa.stations = [
     "latitude": 35.92469,
     "name": "MURFREESBORO 5.5 NNW, TN US",
     "datacoverage": 1,
-    "id": "GHCND:US1TNRD0001",
+    "id": "US1TNRD0001",
     "elevationUnit": "METERS",
     "longitude": -86.43666
   },
@@ -7896,7 +7904,7 @@ noaa.stations = [
     "latitude": 35.000971,
     "name": "MEMPHIS 12.0 SE, TN US",
     "datacoverage": 1,
-    "id": "GHCND:US1TNSH0020",
+    "id": "US1TNSH0020",
     "elevationUnit": "METERS",
     "longitude": -89.838347
   },
@@ -7907,7 +7915,7 @@ noaa.stations = [
     "latitude": 35.254584,
     "name": "BARTLETT 3.1 NNE, TN US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1TNSH0032",
+    "id": "US1TNSH0032",
     "elevationUnit": "METERS",
     "longitude": -89.806825
   },
@@ -7918,7 +7926,7 @@ noaa.stations = [
     "latitude": 36.276,
     "name": "GREEN HILL 3.1 NNE, TN US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1TNWN0019",
+    "id": "US1TNWN0019",
     "elevationUnit": "METERS",
     "longitude": -86.547
   },
@@ -7929,7 +7937,7 @@ noaa.stations = [
     "latitude": 36.149759,
     "name": "LEBANON 2.7 SSE, TN US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1TNWN0036",
+    "id": "US1TNWN0036",
     "elevationUnit": "METERS",
     "longitude": -86.30603
   },
@@ -7940,7 +7948,7 @@ noaa.stations = [
     "latitude": 36.299309,
     "name": "GALLATIN 5.7 SSE, TN US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TNWN0093",
+    "id": "US1TNWN0093",
     "elevationUnit": "METERS",
     "longitude": -86.42379
   },
@@ -7951,7 +7959,7 @@ noaa.stations = [
     "latitude": 31.3034,
     "name": "LUFKIN 3.0 SW, TX US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TXAG0003",
+    "id": "US1TXAG0003",
     "elevationUnit": "METERS",
     "longitude": -94.7627
   },
@@ -7962,7 +7970,7 @@ noaa.stations = [
     "latitude": 29.8028926276908,
     "name": "SAN FELIPE 1.0 WNW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXAS0006",
+    "id": "US1TXAS0006",
     "elevationUnit": "METERS",
     "longitude": -96.121105402708
   },
@@ -7973,7 +7981,7 @@ noaa.stations = [
     "latitude": 29.043001,
     "name": "LAKE JACKSON 1.6 E, TX US",
     "datacoverage": 0.9976,
-    "id": "GHCND:US1TXBRZ032",
+    "id": "US1TXBRZ032",
     "elevationUnit": "METERS",
     "longitude": -95.420226
   },
@@ -7984,7 +7992,7 @@ noaa.stations = [
     "latitude": 30.2211971282959,
     "name": "BASTROP 7.6 N, TX US",
     "datacoverage": 0.9954,
-    "id": "GHCND:US1TXBST061",
+    "id": "US1TXBST061",
     "elevationUnit": "METERS",
     "longitude": -97.3242416381836
   },
@@ -7995,7 +8003,7 @@ noaa.stations = [
     "latitude": 30.178806,
     "name": "PAIGE 3.2 SW, TX US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1TXBST110",
+    "id": "US1TXBST110",
     "elevationUnit": "METERS",
     "longitude": -97.149731
   },
@@ -8006,7 +8014,7 @@ noaa.stations = [
     "latitude": 33.5058,
     "name": "DE KALB 0.1 SSW, TX US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1TXBWE001",
+    "id": "US1TXBWE001",
     "elevationUnit": "METERS",
     "longitude": -94.6173
   },
@@ -8017,7 +8025,7 @@ noaa.stations = [
     "latitude": 29.562764,
     "name": "UNIVERSAL CITY 0.8 NNE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXBXR404",
+    "id": "US1TXBXR404",
     "elevationUnit": "METERS",
     "longitude": -98.301767
   },
@@ -8028,7 +8036,7 @@ noaa.stations = [
     "latitude": 30.5647,
     "name": "COLLEGE STATION 3.2 SE, TX US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1TXBZS107",
+    "id": "US1TXBZS107",
     "elevationUnit": "METERS",
     "longitude": -96.2791
   },
@@ -8039,7 +8047,7 @@ noaa.stations = [
     "latitude": 29.7427,
     "name": "NEW BRAUNFELS 2.8 NNE, TX US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1TXCML041",
+    "id": "US1TXCML041",
     "elevationUnit": "METERS",
     "longitude": -98.1009
   },
@@ -8050,7 +8058,7 @@ noaa.stations = [
     "latitude": 29.697746,
     "name": "NEW BRAUNFELS 10.0 W, TX US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1TXCML128",
+    "id": "US1TXCML128",
     "elevationUnit": "METERS",
     "longitude": -98.283194
   },
@@ -8061,7 +8069,7 @@ noaa.stations = [
     "latitude": 29.863989,
     "name": "CANYON LAKE 2.3 ESE, TX US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1TXCML176",
+    "id": "US1TXCML176",
     "elevationUnit": "METERS",
     "longitude": -98.225265
   },
@@ -8072,7 +8080,7 @@ noaa.stations = [
     "latitude": 29.8368,
     "name": "CANYON LAKE 2.9 SSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXCML189",
+    "id": "US1TXCML189",
     "elevationUnit": "METERS",
     "longitude": -98.2824
   },
@@ -8083,7 +8091,7 @@ noaa.stations = [
     "latitude": 29.760797,
     "name": "BULVERDE 1.3 NNE, TX US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1TXCML198",
+    "id": "US1TXCML198",
     "elevationUnit": "METERS",
     "longitude": -98.442394
   },
@@ -8094,7 +8102,7 @@ noaa.stations = [
     "latitude": 26.163527,
     "name": "HARLINGEN 6.2 WSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXCMR100",
+    "id": "US1TXCMR100",
     "elevationUnit": "METERS",
     "longitude": -97.780598
   },
@@ -8105,7 +8113,7 @@ noaa.stations = [
     "latitude": 26.1243521,
     "name": "SAN BENITO 0.9 SSE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXCMR101",
+    "id": "US1TXCMR101",
     "elevationUnit": "METERS",
     "longitude": -97.63061
   },
@@ -8116,7 +8124,7 @@ noaa.stations = [
     "latitude": 26.20491,
     "name": "HARLINGEN 4.2 W, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXCMR121",
+    "id": "US1TXCMR121",
     "elevationUnit": "METERS",
     "longitude": -97.75243
   },
@@ -8127,7 +8135,7 @@ noaa.stations = [
     "latitude": 31.091592,
     "name": "KEMPNER 6.7 ENE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXCRL003",
+    "id": "US1TXCRL003",
     "elevationUnit": "METERS",
     "longitude": -97.889957
   },
@@ -8138,7 +8146,7 @@ noaa.stations = [
     "latitude": 32.613008,
     "name": "DESOTO 2.2 ENE, TX US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1TXDA0063",
+    "id": "US1TXDA0063",
     "elevationUnit": "METERS",
     "longitude": -96.827942
   },
@@ -8149,7 +8157,7 @@ noaa.stations = [
     "latitude": 33.1872168928385,
     "name": "LITTLE ELM 2.5 NE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXDN0039",
+    "id": "US1TXDN0039",
     "elevationUnit": "METERS",
     "longitude": -96.8961719423532
   },
@@ -8160,7 +8168,7 @@ noaa.stations = [
     "latitude": 34.83859,
     "name": "HEREFORD 1.1 N, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXDS0005",
+    "id": "US1TXDS0005",
     "elevationUnit": "METERS",
     "longitude": -102.40139
   },
@@ -8171,7 +8179,7 @@ noaa.stations = [
     "latitude": 28.9155,
     "name": "NORDHEIM 1.0 WSW, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1TXDW0021",
+    "id": "US1TXDW0021",
     "elevationUnit": "METERS",
     "longitude": -97.6273
   },
@@ -8182,7 +8190,7 @@ noaa.stations = [
     "latitude": 32.404621,
     "name": "MIDLOTHIAN 6.2 S, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXEL0037",
+    "id": "US1TXEL0037",
     "elevationUnit": "METERS",
     "longitude": -97.012957
   },
@@ -8193,7 +8201,7 @@ noaa.stations = [
     "latitude": 31.895909,
     "name": "EL PASO 3.3 NNE, TX US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TXEP0017",
+    "id": "US1TXEP0017",
     "elevationUnit": "METERS",
     "longitude": -106.422171
   },
@@ -8204,7 +8212,7 @@ noaa.stations = [
     "latitude": 31.876959,
     "name": "EL PASO 6.9 WNW, TX US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1TXEP0111",
+    "id": "US1TXEP0111",
     "elevationUnit": "METERS",
     "longitude": -106.55033
   },
@@ -8215,7 +8223,7 @@ noaa.stations = [
     "latitude": 29.05,
     "name": "PEARSALL 21.1 WNW, TX US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1TXFR0010",
+    "id": "US1TXFR0010",
     "elevationUnit": "METERS",
     "longitude": -99.389
   },
@@ -8226,7 +8234,7 @@ noaa.stations = [
     "latitude": 29.86353,
     "name": "LA GRANGE 4.5 SW, TX US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1TXFY0036",
+    "id": "US1TXFY0036",
     "elevationUnit": "METERS",
     "longitude": -96.932442
   },
@@ -8237,7 +8245,7 @@ noaa.stations = [
     "latitude": 33.780271,
     "name": "POTTSBORO 0.8 NW, TX US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1TXGA0016",
+    "id": "US1TXGA0016",
     "elevationUnit": "METERS",
     "longitude": -96.681729
   },
@@ -8248,7 +8256,7 @@ noaa.stations = [
     "latitude": 30.41029,
     "name": "WILLOW CITY 4.3 W, TX US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1TXGS0025",
+    "id": "US1TXGS0025",
     "elevationUnit": "METERS",
     "longitude": -98.77303
   },
@@ -8259,7 +8267,7 @@ noaa.stations = [
     "latitude": 29.4372,
     "name": "DICKINSON 4.4 WSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXGV0082",
+    "id": "US1TXGV0082",
     "elevationUnit": "METERS",
     "longitude": -95.1375
   },
@@ -8270,7 +8278,7 @@ noaa.stations = [
     "latitude": 33.055328,
     "name": "CUMBY 5.6 SSE, TX US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1TXHPK001",
+    "id": "US1TXHPK001",
     "elevationUnit": "METERS",
     "longitude": -95.811596
   },
@@ -8281,7 +8289,7 @@ noaa.stations = [
     "latitude": 29.684861,
     "name": "PASADENA 4.4 WNW, TX US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1TXHRR093",
+    "id": "US1TXHRR093",
     "elevationUnit": "METERS",
     "longitude": -95.219703
   },
@@ -8292,7 +8300,7 @@ noaa.stations = [
     "latitude": 30.166634,
     "name": "DRIPPING SPRINGS 8.4 W, TX US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1TXHYS017",
+    "id": "US1TXHYS017",
     "elevationUnit": "METERS",
     "longitude": -98.226313
   },
@@ -8303,7 +8311,7 @@ noaa.stations = [
     "latitude": 30.1368,
     "name": "MANCHACA 2.1 ENE, TX US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1TXHYS028",
+    "id": "US1TXHYS028",
     "elevationUnit": "METERS",
     "longitude": -97.86819
   },
@@ -8314,7 +8322,7 @@ noaa.stations = [
     "latitude": 29.901528,
     "name": "SAN MARCOS 8.1 W, TX US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1TXHYS061",
+    "id": "US1TXHYS061",
     "elevationUnit": "METERS",
     "longitude": -98.062052
   },
@@ -8325,7 +8333,7 @@ noaa.stations = [
     "latitude": 29.933295,
     "name": "SAN MARCOS 3.7 N, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXHYS188",
+    "id": "US1TXHYS188",
     "elevationUnit": "METERS",
     "longitude": -97.924692
   },
@@ -8336,7 +8344,7 @@ noaa.stations = [
     "latitude": 30.32639,
     "name": "DRIPPING SPRINGS 9.9 NNW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXHYS204",
+    "id": "US1TXHYS204",
     "elevationUnit": "METERS",
     "longitude": -98.13222
   },
@@ -8347,7 +8355,7 @@ noaa.stations = [
     "latitude": 31.060993,
     "name": "KENT 4.6 E, TX US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1TXJD0009",
+    "id": "US1TXJD0009",
     "elevationUnit": "METERS",
     "longitude": -104.140699
   },
@@ -8358,7 +8366,7 @@ noaa.stations = [
     "latitude": 29.04321,
     "name": "GANADO 1.5 W, TX US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1TXJK0005",
+    "id": "US1TXJK0005",
     "elevationUnit": "METERS",
     "longitude": -96.53674
   },
@@ -8369,7 +8377,7 @@ noaa.stations = [
     "latitude": 32.5111,
     "name": "BURLESON 4.9 ESE, TX US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1TXJN0030",
+    "id": "US1TXJN0030",
     "elevationUnit": "METERS",
     "longitude": -97.24852
   },
@@ -8380,7 +8388,7 @@ noaa.stations = [
     "latitude": 29.798384,
     "name": "BOERNE 1.6 E, TX US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1TXKN0118",
+    "id": "US1TXKN0118",
     "elevationUnit": "METERS",
     "longitude": -98.704845
   },
@@ -8391,7 +8399,7 @@ noaa.stations = [
     "latitude": 30.166111,
     "name": "INGRAM 10.2 NW, TX US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1TXKR0030",
+    "id": "US1TXKR0030",
     "elevationUnit": "METERS",
     "longitude": -99.374722
   },
@@ -8402,7 +8410,7 @@ noaa.stations = [
     "latitude": 33.517194,
     "name": "LUBBOCK 6.7 SW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXLK0007",
+    "id": "US1TXLK0007",
     "elevationUnit": "METERS",
     "longitude": -101.968072
   },
@@ -8413,7 +8421,7 @@ noaa.stations = [
     "latitude": 30.701109,
     "name": "CASTELL 0.1 E, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXLL0059",
+    "id": "US1TXLL0059",
     "elevationUnit": "METERS",
     "longitude": -98.956077
   },
@@ -8424,7 +8432,7 @@ noaa.stations = [
     "latitude": 29.3695,
     "name": "YOAKUM 6.2 NNE, TX US",
     "datacoverage": 0.9972,
-    "id": "GHCND:US1TXLV0020",
+    "id": "US1TXLV0020",
     "elevationUnit": "METERS",
     "longitude": -97.0942
   },
@@ -8435,7 +8443,7 @@ noaa.stations = [
     "latitude": 31.461934,
     "name": "LORENA 5.6 N, TX US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1TXMCL053",
+    "id": "US1TXMCL053",
     "elevationUnit": "METERS",
     "longitude": -97.226426
   },
@@ -8446,7 +8454,7 @@ noaa.stations = [
     "latitude": 32.00634,
     "name": "MIDLAND 3.0 WSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXMDL006",
+    "id": "US1TXMDL006",
     "elevationUnit": "METERS",
     "longitude": -102.14626
   },
@@ -8457,7 +8465,7 @@ noaa.stations = [
     "latitude": 29.1190719604492,
     "name": "NATALIA 5.4 SSE, TX US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1TXMDN044",
+    "id": "US1TXMDN044",
     "elevationUnit": "METERS",
     "longitude": -98.817512512207
   },
@@ -8468,7 +8476,7 @@ noaa.stations = [
     "latitude": 29.330977,
     "name": "CASTROVILLE 1.3 SSW, TX US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1TXMDN067",
+    "id": "US1TXMDN067",
     "elevationUnit": "METERS",
     "longitude": -98.882437
   },
@@ -8479,7 +8487,7 @@ noaa.stations = [
     "latitude": 30.39761667,
     "name": "MONTGOMERY 0.4 N, TX US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1TXMNG021",
+    "id": "US1TXMNG021",
     "elevationUnit": "METERS",
     "longitude": -95.69545
   },
@@ -8490,7 +8498,7 @@ noaa.stations = [
     "latitude": 31.69850731,
     "name": "NACOGDOCHES 9.5 NE, TX US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1TXNC0005",
+    "id": "US1TXNC0005",
     "elevationUnit": "METERS",
     "longitude": -94.52358246
   },
@@ -8501,7 +8509,7 @@ noaa.stations = [
     "latitude": 27.590507,
     "name": "CORPUS CHRISTI 9.0 SSE, TX US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1TXNU0007",
+    "id": "US1TXNU0007",
     "elevationUnit": "METERS",
     "longitude": -97.224739
   },
@@ -8512,7 +8520,7 @@ noaa.stations = [
     "latitude": 32.280435,
     "name": "TYLER 3.4 SSE, TX US",
     "datacoverage": 0.9961,
-    "id": "GHCND:US1TXSM0026",
+    "id": "US1TXSM0026",
     "elevationUnit": "METERS",
     "longitude": -95.291975
   },
@@ -8523,7 +8531,7 @@ noaa.stations = [
     "latitude": 31.4762,
     "name": "SAN ANGELO 2.5 NW, TX US",
     "datacoverage": 0.996,
-    "id": "GHCND:US1TXTG0061",
+    "id": "US1TXTG0061",
     "elevationUnit": "METERS",
     "longitude": -100.4769
   },
@@ -8534,7 +8542,7 @@ noaa.stations = [
     "latitude": 32.9259643554688,
     "name": "HASLET 2.2 S, TX US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1TXTN0106",
+    "id": "US1TXTN0106",
     "elevationUnit": "METERS",
     "longitude": -97.3398818969727
   },
@@ -8545,7 +8553,7 @@ noaa.stations = [
     "latitude": 32.85503,
     "name": "WATAUGA 1.2 SSE, TX US",
     "datacoverage": 0.9967,
-    "id": "GHCND:US1TXTN0140",
+    "id": "US1TXTN0140",
     "elevationUnit": "METERS",
     "longitude": -97.242028
   },
@@ -8556,7 +8564,7 @@ noaa.stations = [
     "latitude": 32.61989,
     "name": "ARLINGTON 5.7 SSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXTN0174",
+    "id": "US1TXTN0174",
     "elevationUnit": "METERS",
     "longitude": -97.17067
   },
@@ -8567,7 +8575,7 @@ noaa.stations = [
     "latitude": 31.00456111,
     "name": "TRINITY 5.1 NW, TX US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1TXTT0003",
+    "id": "US1TXTT0003",
     "elevationUnit": "METERS",
     "longitude": -95.423525
   },
@@ -8578,7 +8586,7 @@ noaa.stations = [
     "latitude": 30.453919,
     "name": "PFLUGERVILLE 2.2 ENE, TX US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1TXTV0267",
+    "id": "US1TXTV0267",
     "elevationUnit": "METERS",
     "longitude": -97.58589
   },
@@ -8589,7 +8597,7 @@ noaa.stations = [
     "latitude": 30.4536,
     "name": "PFLUGERVILLE 3.1 ENE, TX US",
     "datacoverage": 0.9968,
-    "id": "GHCND:US1TXTV0271",
+    "id": "US1TXTV0271",
     "elevationUnit": "METERS",
     "longitude": -97.5703
   },
@@ -8600,7 +8608,7 @@ noaa.stations = [
     "latitude": 32.409633,
     "name": "MERKEL 5.8 SW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXTY0005",
+    "id": "US1TXTY0005",
     "elevationUnit": "METERS",
     "longitude": -100.08463
   },
@@ -8611,7 +8619,7 @@ noaa.stations = [
     "latitude": 32.41801,
     "name": "ABILENE 3.3 SW, TX US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1TXTY0007",
+    "id": "US1TXTY0007",
     "elevationUnit": "METERS",
     "longitude": -99.775791
   },
@@ -8622,7 +8630,7 @@ noaa.stations = [
     "latitude": 29.39133,
     "name": "DEL RIO 1.9 WNW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXVV0034",
+    "id": "US1TXVV0034",
     "elevationUnit": "METERS",
     "longitude": -100.92295
   },
@@ -8633,7 +8641,7 @@ noaa.stations = [
     "latitude": 32.48625,
     "name": "CANTON 4.6 SSW, TX US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1TXVZ0002",
+    "id": "US1TXVZ0002",
     "elevationUnit": "METERS",
     "longitude": -95.89277
   },
@@ -8644,7 +8652,7 @@ noaa.stations = [
     "latitude": 30.1572,
     "name": "BRENHAM 8.0 E, TX US",
     "datacoverage": 0.9957,
-    "id": "GHCND:US1TXWA0006",
+    "id": "US1TXWA0006",
     "elevationUnit": "METERS",
     "longitude": -96.2626
   },
@@ -8655,7 +8663,7 @@ noaa.stations = [
     "latitude": 30.15644,
     "name": "CHAPPELL HILL 1.0 NW, TX US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1TXWA0009",
+    "id": "US1TXWA0009",
     "elevationUnit": "METERS",
     "longitude": -96.26298
   },
@@ -8666,7 +8674,7 @@ noaa.stations = [
     "latitude": 30.702,
     "name": "HUNTSVILLE 2.8 WSW, TX US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1TXWK0005",
+    "id": "US1TXWK0005",
     "elevationUnit": "METERS",
     "longitude": -95.596
   },
@@ -8677,7 +8685,7 @@ noaa.stations = [
     "latitude": 30.5907,
     "name": "GEORGETOWN 4.5 SSE, TX US",
     "datacoverage": 0.9975,
-    "id": "GHCND:US1TXWM0068",
+    "id": "US1TXWM0068",
     "elevationUnit": "METERS",
     "longitude": -97.6509
   },
@@ -8688,7 +8696,7 @@ noaa.stations = [
     "latitude": 30.508275,
     "name": "ROUND ROCK 1.6 WSW, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1TXWM0195",
+    "id": "US1TXWM0195",
     "elevationUnit": "METERS",
     "longitude": -97.697191
   },
@@ -8699,7 +8707,7 @@ noaa.stations = [
     "latitude": 30.534639,
     "name": "HUTTO 2.0 WSW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXWM0265",
+    "id": "US1TXWM0265",
     "elevationUnit": "METERS",
     "longitude": -97.573244
   },
@@ -8710,7 +8718,7 @@ noaa.stations = [
     "latitude": 29.282869,
     "name": "ELMENDORF 5.6 ENE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXWO0010",
+    "id": "US1TXWO0010",
     "elevationUnit": "METERS",
     "longitude": -98.245602
   },
@@ -8721,7 +8729,7 @@ noaa.stations = [
     "latitude": 28.95385,
     "name": "FALLS CITY 8.3 WSW, TX US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1TXWO0053",
+    "id": "US1TXWO0053",
     "elevationUnit": "METERS",
     "longitude": -98.15503
   },
@@ -8732,7 +8740,7 @@ noaa.stations = [
     "latitude": 29.1797,
     "name": "FLORESVILLE 5.7 WNW, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXWO0055",
+    "id": "US1TXWO0055",
     "elevationUnit": "METERS",
     "longitude": -98.2366
   },
@@ -8743,7 +8751,7 @@ noaa.stations = [
     "latitude": 33.888782,
     "name": "WICHITA FALLS 2.8 ESE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:US1TXWT0023",
+    "id": "US1TXWT0023",
     "elevationUnit": "METERS",
     "longitude": -98.467849
   },
@@ -8754,7 +8762,7 @@ noaa.stations = [
     "latitude": 40.9874,
     "name": "FARMINGTON 1.8 W, UT US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1UTDV0001",
+    "id": "US1UTDV0001",
     "elevationUnit": "METERS",
     "longitude": -111.9286
   },
@@ -8765,7 +8773,7 @@ noaa.stations = [
     "latitude": 38.5864,
     "name": "MOAB 1.3 NW, UT US",
     "datacoverage": 0.9978,
-    "id": "GHCND:US1UTGR0005",
+    "id": "US1UTGR0005",
     "elevationUnit": "METERS",
     "longitude": -109.5629
   },
@@ -8776,7 +8784,7 @@ noaa.stations = [
     "latitude": 39.37229,
     "name": "OAK CITY 0.3 SSE, UT US",
     "datacoverage": 1,
-    "id": "GHCND:US1UTML0001",
+    "id": "US1UTML0001",
     "elevationUnit": "METERS",
     "longitude": -112.33387
   },
@@ -8787,7 +8795,7 @@ noaa.stations = [
     "latitude": 40.665693,
     "name": "HOLLADAY 0.5 ESE, UT US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1UTSL0035",
+    "id": "US1UTSL0035",
     "elevationUnit": "METERS",
     "longitude": -111.811475
   },
@@ -8798,7 +8806,7 @@ noaa.stations = [
     "latitude": 40.694503,
     "name": "MAGNA 1.0 SW, UT US",
     "datacoverage": 1,
-    "id": "GHCND:US1UTSL0118",
+    "id": "US1UTSL0118",
     "elevationUnit": "METERS",
     "longitude": -112.100059
   },
@@ -8809,7 +8817,7 @@ noaa.stations = [
     "latitude": 38.0130771,
     "name": "GREENBACKVILLE 0.4 WNW, VA US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1VAAC0008",
+    "id": "US1VAAC0008",
     "elevationUnit": "METERS",
     "longitude": -75.3977562
   },
@@ -8820,7 +8828,7 @@ noaa.stations = [
     "latitude": 39.160666,
     "name": "BERRYVILLE 0.9 NNW, VA US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1VACK0002",
+    "id": "US1VACK0002",
     "elevationUnit": "METERS",
     "longitude": -77.988475
   },
@@ -8831,7 +8839,7 @@ noaa.stations = [
     "latitude": 37.360922,
     "name": "CHESTER 6.6 E, VA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1VACS0045",
+    "id": "US1VACS0045",
     "elevationUnit": "METERS",
     "longitude": -77.315462
   },
@@ -8842,7 +8850,7 @@ noaa.stations = [
     "latitude": 39.2741,
     "name": "WINCHESTER 9.4 NW, VA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1VAFD0003",
+    "id": "US1VAFD0003",
     "elevationUnit": "METERS",
     "longitude": -78.29633
   },
@@ -8853,7 +8861,7 @@ noaa.stations = [
     "latitude": 36.958101,
     "name": "FLOYD 5.2 NW, VA US",
     "datacoverage": 1,
-    "id": "GHCND:US1VAFL0009",
+    "id": "US1VAFL0009",
     "elevationUnit": "METERS",
     "longitude": -80.393169
   },
@@ -8864,7 +8872,7 @@ noaa.stations = [
     "latitude": 38.7462,
     "name": "FRANCONIA 1.3 SSE, VA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1VAFX0033",
+    "id": "US1VAFX0033",
     "elevationUnit": "METERS",
     "longitude": -77.1386
   },
@@ -8875,7 +8883,7 @@ noaa.stations = [
     "latitude": 38.8875,
     "name": "FALLS CHURCH 1.6 W, VA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1VAFX0064",
+    "id": "US1VAFX0064",
     "elevationUnit": "METERS",
     "longitude": -77.2041
   },
@@ -8886,7 +8894,7 @@ noaa.stations = [
     "latitude": 38.91178,
     "name": "OAK HILL 0.3 WSW, VA US",
     "datacoverage": 1,
-    "id": "GHCND:US1VAFX0072",
+    "id": "US1VAFX0072",
     "elevationUnit": "METERS",
     "longitude": -77.41407
   },
@@ -8897,7 +8905,7 @@ noaa.stations = [
     "latitude": 36.69514,
     "name": "FRIES 6.9 WSW, VA US",
     "datacoverage": 1,
-    "id": "GHCND:US1VAGR0004",
+    "id": "US1VAGR0004",
     "elevationUnit": "METERS",
     "longitude": -81.09711
   },
@@ -8908,7 +8916,7 @@ noaa.stations = [
     "latitude": 36.5664417,
     "name": "EMPORIA 11.0 SW, VA US",
     "datacoverage": 0.9956,
-    "id": "GHCND:US1VAGV0002",
+    "id": "US1VAGV0002",
     "elevationUnit": "METERS",
     "longitude": -77.6552994
   },
@@ -8919,7 +8927,7 @@ noaa.stations = [
     "latitude": 37.65537,
     "name": "GLEN ALLEN 4.6 W, VA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:US1VAHR0006",
+    "id": "US1VAHR0006",
     "elevationUnit": "METERS",
     "longitude": -77.56873
   },
@@ -8930,7 +8938,7 @@ noaa.stations = [
     "latitude": 39.122277,
     "name": "ROUND HILL 2.7 WSW, VA US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1VALD0013",
+    "id": "US1VALD0013",
     "elevationUnit": "METERS",
     "longitude": -77.818714
   },
@@ -8941,7 +8949,7 @@ noaa.stations = [
     "latitude": 37.075651,
     "name": "NEWPORT NEWS 3.3 E, VA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1VANNC004",
+    "id": "US1VANNC004",
     "elevationUnit": "METERS",
     "longitude": -76.453977
   },
@@ -8952,7 +8960,7 @@ noaa.stations = [
     "latitude": 36.801,
     "name": "PORTSMOUTH 4.1 SSE, VA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1VAPRC002",
+    "id": "US1VAPRC002",
     "elevationUnit": "METERS",
     "longitude": -76.327
   },
@@ -8963,7 +8971,7 @@ noaa.stations = [
     "latitude": 38.68443298,
     "name": "MANASSAS 5.3 SE, VA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1VAPW0013",
+    "id": "US1VAPW0013",
     "elevationUnit": "METERS",
     "longitude": -77.42987061
   },
@@ -8974,7 +8982,7 @@ noaa.stations = [
     "latitude": 38.6804,
     "name": "MANASSAS 5.8 SE, VA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1VAPW0014",
+    "id": "US1VAPW0014",
     "elevationUnit": "METERS",
     "longitude": -77.4206
   },
@@ -8985,7 +8993,7 @@ noaa.stations = [
     "latitude": 38.2567,
     "name": "FREDERICKSBURG 7.6 ESE, VA US",
     "datacoverage": 1,
-    "id": "GHCND:US1VASF0005",
+    "id": "US1VASF0005",
     "elevationUnit": "METERS",
     "longitude": -77.3574
   },
@@ -8996,7 +9004,7 @@ noaa.stations = [
     "latitude": 39.04222,
     "name": "STRASBURG 3.7 N, VA US",
     "datacoverage": 0.999,
-    "id": "GHCND:US1VASH0002",
+    "id": "US1VASH0002",
     "elevationUnit": "METERS",
     "longitude": -78.3506
   },
@@ -9007,7 +9015,7 @@ noaa.stations = [
     "latitude": 38.07705,
     "name": "MONTROSS 5.2 ESE, VA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1VAWM0001",
+    "id": "US1VAWM0001",
     "elevationUnit": "METERS",
     "longitude": -76.73025
   },
@@ -9018,7 +9026,7 @@ noaa.stations = [
     "latitude": 46.287,
     "name": "RICHLAND 0.8 SW, WA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:US1WABT0013",
+    "id": "US1WABT0013",
     "elevationUnit": "METERS",
     "longitude": -119.305
   },
@@ -9029,7 +9037,7 @@ noaa.stations = [
     "latitude": 46.250598,
     "name": "RICHLAND 3.4 SSW, WA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:US1WABT0015",
+    "id": "US1WABT0015",
     "elevationUnit": "METERS",
     "longitude": -119.324279
   },
@@ -9040,7 +9048,7 @@ noaa.stations = [
     "latitude": 45.584519,
     "name": "CAMAS 2.4 E, WA US",
     "datacoverage": 0.998,
-    "id": "GHCND:US1WACK0029",
+    "id": "US1WACK0029",
     "elevationUnit": "METERS",
     "longitude": -122.373998
   },
@@ -9051,7 +9059,7 @@ noaa.stations = [
     "latitude": 48.081996,
     "name": "PORT ANGELES 2.5 SSW, WA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:US1WACM0009",
+    "id": "US1WACM0009",
     "elevationUnit": "METERS",
     "longitude": -123.467266
   },
@@ -9062,7 +9070,7 @@ noaa.stations = [
     "latitude": 48.098,
     "name": "PORT ANGELES 6.7 SSE, WA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:US1WACM0026",
+    "id": "US1WACM0026",
     "elevationUnit": "METERS",
     "longitude": -123.42
   },
@@ -9073,7 +9081,7 @@ noaa.stations = [
     "latitude": 47.3963,
     "name": "EAST WENATCHEE 1.5 SSE, WA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WADG0020",
+    "id": "US1WADG0020",
     "elevationUnit": "METERS",
     "longitude": -120.28
   },
@@ -9084,7 +9092,7 @@ noaa.stations = [
     "latitude": 48.292615,
     "name": "OAK HARBOR 4.7 E, WA US",
     "datacoverage": 1,
-    "id": "GHCND:US1WAIS0045",
+    "id": "US1WAIS0045",
     "elevationUnit": "METERS",
     "longitude": -122.520825
   },
@@ -9095,7 +9103,7 @@ noaa.stations = [
     "latitude": 47.4669,
     "name": "NORTH BEND 5.4 ESE, WA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:US1WAKG0143",
+    "id": "US1WAKG0143",
     "elevationUnit": "METERS",
     "longitude": -121.6806
   },
@@ -9106,7 +9114,7 @@ noaa.stations = [
     "latitude": 47.30963,
     "name": "FEDERAL WAY 0.9 W, WA US",
     "datacoverage": 0.9977,
-    "id": "GHCND:US1WAKG0237",
+    "id": "US1WAKG0237",
     "elevationUnit": "METERS",
     "longitude": -122.36051
   },
@@ -9117,7 +9125,7 @@ noaa.stations = [
     "latitude": 47.28895,
     "name": "FEDERAL WAY 2.5 SE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:US1WAKG0248",
+    "id": "US1WAKG0248",
     "elevationUnit": "METERS",
     "longitude": -122.298461
   },
@@ -9128,7 +9136,7 @@ noaa.stations = [
     "latitude": 46.526454,
     "name": "OCEAN PARK 2.2 N, WA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:US1WAPC0006",
+    "id": "US1WAPC0006",
     "elevationUnit": "METERS",
     "longitude": -124.050999
   },
@@ -9139,7 +9147,7 @@ noaa.stations = [
     "latitude": 48.857602,
     "name": "METALINE FALLS 0.4 SSW, WA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1WAPO0010",
+    "id": "US1WAPO0010",
     "elevationUnit": "METERS",
     "longitude": -117.37381
   },
@@ -9150,7 +9158,7 @@ noaa.stations = [
     "latitude": 48.4277,
     "name": "MOUNT VERNON 3.4 W, WA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:US1WASG0023",
+    "id": "US1WASG0023",
     "elevationUnit": "METERS",
     "longitude": -122.3886
   },
@@ -9161,7 +9169,7 @@ noaa.stations = [
     "latitude": 48.6079,
     "name": "ORCAS 0.7 NNW, WA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1WASJ0003",
+    "id": "US1WASJ0003",
     "elevationUnit": "METERS",
     "longitude": -122.9466
   },
@@ -9172,7 +9180,7 @@ noaa.stations = [
     "latitude": 47.0235,
     "name": "OLYMPIA 1.3 S, WA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WATH0001",
+    "id": "US1WATH0001",
     "elevationUnit": "METERS",
     "longitude": -122.8918
   },
@@ -9183,7 +9191,7 @@ noaa.stations = [
     "latitude": 47.048104,
     "name": "LACEY 1.9 ENE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:US1WATH0053",
+    "id": "US1WATH0053",
     "elevationUnit": "METERS",
     "longitude": -122.771435
   },
@@ -9194,7 +9202,7 @@ noaa.stations = [
     "latitude": 48.8009,
     "name": "FERNDALE 6.5 WSW, WA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:US1WAWC0013",
+    "id": "US1WAWC0013",
     "elevationUnit": "METERS",
     "longitude": -122.7075
   },
@@ -9205,7 +9213,7 @@ noaa.stations = [
     "latitude": 48.889721,
     "name": "GLACIER 0.1 SW, WA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:US1WAWC0070",
+    "id": "US1WAWC0070",
     "elevationUnit": "METERS",
     "longitude": -121.947638
   },
@@ -9216,7 +9224,7 @@ noaa.stations = [
     "latitude": 44.467725,
     "name": "GREEN BAY 3.8 SSE, WI US",
     "datacoverage": 0.9996,
-    "id": "GHCND:US1WIBN0014",
+    "id": "US1WIBN0014",
     "elevationUnit": "METERS",
     "longitude": -87.973523
   },
@@ -9227,7 +9235,7 @@ noaa.stations = [
     "latitude": 46.938553,
     "name": "BAYFIELD 8.8 N, WI US",
     "datacoverage": 0.9979,
-    "id": "GHCND:US1WIBY0001",
+    "id": "US1WIBY0001",
     "elevationUnit": "METERS",
     "longitude": -90.834888
   },
@@ -9238,7 +9246,7 @@ noaa.stations = [
     "latitude": 43.35742,
     "name": "COLUMBUS 4.8 ENE, WI US",
     "datacoverage": 1,
-    "id": "GHCND:US1WIDD0015",
+    "id": "US1WIDD0015",
     "elevationUnit": "METERS",
     "longitude": -88.938192
   },
@@ -9249,7 +9257,7 @@ noaa.stations = [
     "latitude": 42.559699,
     "name": "KENOSHA 1.7 S, WI US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1WIKN0006",
+    "id": "US1WIKN0006",
     "elevationUnit": "METERS",
     "longitude": -87.856616
   },
@@ -9260,7 +9268,7 @@ noaa.stations = [
     "latitude": 45.177458,
     "name": "MERRILL 7.0 W, WI US",
     "datacoverage": 0.9959,
-    "id": "GHCND:US1WILN0002",
+    "id": "US1WILN0002",
     "elevationUnit": "METERS",
     "longitude": -89.848184
   },
@@ -9271,7 +9279,7 @@ noaa.stations = [
     "latitude": 44.17616666,
     "name": "TWO RIVERS 1.4 N, WI US",
     "datacoverage": 1,
-    "id": "GHCND:US1WIMC0004",
+    "id": "US1WIMC0004",
     "elevationUnit": "METERS",
     "longitude": -87.58333333
   },
@@ -9282,7 +9290,7 @@ noaa.stations = [
     "latitude": 44.147,
     "name": "TWO RIVERS 0.9 SE, WI US",
     "datacoverage": 0.9966,
-    "id": "GHCND:US1WIMC0012",
+    "id": "US1WIMC0012",
     "elevationUnit": "METERS",
     "longitude": -87.5697
   },
@@ -9293,7 +9301,7 @@ noaa.stations = [
     "latitude": 43.0978,
     "name": "SHOREWOOD 0.6 NW, WI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:US1WIMW0001",
+    "id": "US1WIMW0001",
     "elevationUnit": "METERS",
     "longitude": -87.893
   },
@@ -9304,7 +9312,7 @@ noaa.stations = [
     "latitude": 43.7847,
     "name": "SHEBOYGAN 3.2 NW, WI US",
     "datacoverage": 0.9995,
-    "id": "GHCND:US1WISB0012",
+    "id": "US1WISB0012",
     "elevationUnit": "METERS",
     "longitude": -87.7664
   },
@@ -9315,7 +9323,7 @@ noaa.stations = [
     "latitude": 43.7356,
     "name": "SHEBOYGAN 0.7 SSW, WI US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WISB0019",
+    "id": "US1WISB0019",
     "elevationUnit": "METERS",
     "longitude": -87.7349
   },
@@ -9326,7 +9334,7 @@ noaa.stations = [
     "latitude": 43.146211,
     "name": "OCONOMOWOC 4.6 NE, WI US",
     "datacoverage": 0.9983,
-    "id": "GHCND:US1WIWK0029",
+    "id": "US1WIWK0029",
     "elevationUnit": "METERS",
     "longitude": -88.428611
   },
@@ -9337,7 +9345,7 @@ noaa.stations = [
     "latitude": 44.02074,
     "name": "OMRO 2.3 WSW, WI US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WIWN0007",
+    "id": "US1WIWN0007",
     "elevationUnit": "METERS",
     "longitude": -88.779745
   },
@@ -9348,7 +9356,7 @@ noaa.stations = [
     "latitude": 44.1737,
     "name": "NEENAH 1.1 ENE, WI US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1WIWN0009",
+    "id": "US1WIWN0009",
     "elevationUnit": "METERS",
     "longitude": -88.4513
   },
@@ -9359,7 +9367,7 @@ noaa.stations = [
     "latitude": 44.01097,
     "name": "OSHKOSH 1.6 ESE, WI US",
     "datacoverage": 1,
-    "id": "GHCND:US1WIWN0019",
+    "id": "US1WIWN0019",
     "elevationUnit": "METERS",
     "longitude": -88.52354
   },
@@ -9370,7 +9378,7 @@ noaa.stations = [
     "latitude": 43.528799,
     "name": "KEWASKUM 1.8 WNW, WI US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1WIWS0004",
+    "id": "US1WIWS0004",
     "elevationUnit": "METERS",
     "longitude": -88.265722
   },
@@ -9381,7 +9389,7 @@ noaa.stations = [
     "latitude": 42.591688,
     "name": "LAKE GENEVA 0.6 ENE, WI US",
     "datacoverage": 0.9993,
-    "id": "GHCND:US1WIWW0002",
+    "id": "US1WIWW0002",
     "elevationUnit": "METERS",
     "longitude": -88.417731
   },
@@ -9392,7 +9400,7 @@ noaa.stations = [
     "latitude": 42.647603,
     "name": "LYONS 0.4 SE, WI US",
     "datacoverage": 0.9987,
-    "id": "GHCND:US1WIWW0022",
+    "id": "US1WIWW0022",
     "elevationUnit": "METERS",
     "longitude": -88.352208
   },
@@ -9403,7 +9411,7 @@ noaa.stations = [
     "latitude": 39.5875,
     "name": "FALLING WATERS 2.4 NW, WV US",
     "datacoverage": 0.9997,
-    "id": "GHCND:US1WVBY0002",
+    "id": "US1WVBY0002",
     "elevationUnit": "METERS",
     "longitude": -77.9181
   },
@@ -9414,7 +9422,7 @@ noaa.stations = [
     "latitude": 38.336981,
     "name": "CRAIGSVILLE 0.6 NE, WV US",
     "datacoverage": 0.9952,
-    "id": "GHCND:US1WVNC0004",
+    "id": "US1WVNC0004",
     "elevationUnit": "METERS",
     "longitude": -80.64522
   },
@@ -9425,7 +9433,7 @@ noaa.stations = [
     "latitude": 39.64898,
     "name": "NEW MARTINSVILLE 6.5 E, WV US",
     "datacoverage": 0.9965,
-    "id": "GHCND:US1WVWT0001",
+    "id": "US1WVWT0001",
     "elevationUnit": "METERS",
     "longitude": -80.73822
   },
@@ -9436,7 +9444,7 @@ noaa.stations = [
     "latitude": 41.292494,
     "name": "LARAMIE 2.5 ESE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:US1WYAB0171",
+    "id": "US1WYAB0171",
     "elevationUnit": "METERS",
     "longitude": -105.542337
   },
@@ -9447,7 +9455,7 @@ noaa.stations = [
     "latitude": 42.8612,
     "name": "GLENROCK 0.6 WNW, WY US",
     "datacoverage": 0.9962,
-    "id": "GHCND:US1WYCV0027",
+    "id": "US1WYCV0027",
     "elevationUnit": "METERS",
     "longitude": -105.86739
   },
@@ -9458,7 +9466,7 @@ noaa.stations = [
     "latitude": 41.94425,
     "name": "TORRINGTON 9.6 SSE, WY US",
     "datacoverage": 0.9971,
-    "id": "GHCND:US1WYGS0020",
+    "id": "US1WYGS0020",
     "elevationUnit": "METERS",
     "longitude": -104.0961972
   },
@@ -9469,7 +9477,7 @@ noaa.stations = [
     "latitude": 41.149329,
     "name": "CHEYENNE 1.4 W, WY US",
     "datacoverage": 1,
-    "id": "GHCND:US1WYLM0190",
+    "id": "US1WYLM0190",
     "elevationUnit": "METERS",
     "longitude": -104.819469
   },
@@ -9480,7 +9488,7 @@ noaa.stations = [
     "latitude": 41.16605,
     "name": "CHEYENNE 2.1 NW, WY US",
     "datacoverage": 1,
-    "id": "GHCND:US1WYLM0209",
+    "id": "US1WYLM0209",
     "elevationUnit": "METERS",
     "longitude": -104.821811
   },
@@ -9491,7 +9499,7 @@ noaa.stations = [
     "latitude": 42.76697,
     "name": "CASPER 9.7 WSW, WY US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WYNT0035",
+    "id": "US1WYNT0035",
     "elevationUnit": "METERS",
     "longitude": -106.49888
   },
@@ -9502,7 +9510,7 @@ noaa.stations = [
     "latitude": 44.565399,
     "name": "STORY 2.1 WSW, WY US",
     "datacoverage": 0.9986,
-    "id": "GHCND:US1WYSH0033",
+    "id": "US1WYSH0033",
     "elevationUnit": "METERS",
     "longitude": -106.928105
   },
@@ -9513,7 +9521,7 @@ noaa.stations = [
     "latitude": 44.10219,
     "name": "TEN SLEEP 4.8 NNW, WY US",
     "datacoverage": 0.9991,
-    "id": "GHCND:US1WYWH0001",
+    "id": "US1WYWH0001",
     "elevationUnit": "METERS",
     "longitude": -107.47344
   },
@@ -9524,7 +9532,7 @@ noaa.stations = [
     "latitude": 43.933371,
     "name": "UPTON 18.8 SW, WY US",
     "datacoverage": 0.9988,
-    "id": "GHCND:US1WYWS0016",
+    "id": "US1WYWS0016",
     "elevationUnit": "METERS",
     "longitude": -104.922066
   },
@@ -9535,7 +9543,7 @@ noaa.stations = [
     "latitude": 33.3952,
     "name": "BESSEMER 3 WSW, AL US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USC00010764",
+    "id": "USC00010764",
     "elevationUnit": "METERS",
     "longitude": -87.0077
   },
@@ -9546,7 +9554,7 @@ noaa.stations = [
     "latitude": 34.0966,
     "name": "HAMILTON 3 S, AL US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00013645",
+    "id": "USC00013645",
     "elevationUnit": "METERS",
     "longitude": -87.9913
   },
@@ -9557,7 +9565,7 @@ noaa.stations = [
     "latitude": 34.5528,
     "name": "OWENS CROSS ROADS 3 S, AL US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USC00016196",
+    "id": "USC00016196",
     "elevationUnit": "METERS",
     "longitude": -86.445
   },
@@ -9568,7 +9576,7 @@ noaa.stations = [
     "latitude": 35.2302,
     "name": "BELLEMONT WEATHER FORECAST OFFICE, AZ US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00020678",
+    "id": "USC00020678",
     "elevationUnit": "METERS",
     "longitude": -111.8221
   },
@@ -9579,7 +9587,7 @@ noaa.stations = [
     "latitude": 32.8118,
     "name": "ROBSON RANCH, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USC00027187",
+    "id": "USC00027187",
     "elevationUnit": "METERS",
     "longitude": -111.6313
   },
@@ -9590,7 +9598,7 @@ noaa.stations = [
     "latitude": 35.33534,
     "name": "CENTER RIDGE 3 S, AR US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00031310",
+    "id": "USC00031310",
     "elevationUnit": "METERS",
     "longitude": -92.56539
   },
@@ -9601,7 +9609,7 @@ noaa.stations = [
     "latitude": 34.253,
     "name": "DEGRAY LAKE STATE PARK, AR US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00031910",
+    "id": "USC00031910",
     "elevationUnit": "METERS",
     "longitude": -93.1486
   },
@@ -9612,7 +9620,7 @@ noaa.stations = [
     "latitude": 35.5128,
     "name": "HEBER SPRINGS 2 NE, AR US",
     "datacoverage": 1,
-    "id": "GHCND:USC00033229",
+    "id": "USC00033229",
     "elevationUnit": "METERS",
     "longitude": -91.9955
   },
@@ -9623,7 +9631,7 @@ noaa.stations = [
     "latitude": 34.6033,
     "name": "KEO, AR US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00033862",
+    "id": "USC00033862",
     "elevationUnit": "METERS",
     "longitude": -91.9927
   },
@@ -9634,7 +9642,7 @@ noaa.stations = [
     "latitude": 33.3613,
     "name": "LEWISVILLE, AR US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USC00034185",
+    "id": "USC00034185",
     "elevationUnit": "METERS",
     "longitude": -93.5674
   },
@@ -9645,7 +9653,7 @@ noaa.stations = [
     "latitude": 34.8808,
     "name": "MARCHE, AR US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00034625",
+    "id": "USC00034625",
     "elevationUnit": "METERS",
     "longitude": -92.3486
   },
@@ -9656,7 +9664,7 @@ noaa.stations = [
     "latitude": 33.6617,
     "name": "CHIRIACO SUMMIT, CA US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00041738",
+    "id": "USC00041738",
     "elevationUnit": "METERS",
     "longitude": -115.7206
   },
@@ -9667,7 +9675,7 @@ noaa.stations = [
     "latitude": 36.4622,
     "name": "DEATH VALLEY, CA US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00042319",
+    "id": "USC00042319",
     "elevationUnit": "METERS",
     "longitude": -116.8669
   },
@@ -9678,7 +9686,7 @@ noaa.stations = [
     "latitude": 34.0864,
     "name": "MORONGO VALLEY NORTH, CA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00045860",
+    "id": "USC00045860",
     "elevationUnit": "METERS",
     "longitude": -116.5622
   },
@@ -9689,7 +9697,7 @@ noaa.stations = [
     "latitude": 39.06,
     "name": "TAHOMA, CA US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00048760",
+    "id": "USC00048760",
     "elevationUnit": "METERS",
     "longitude": -120.1292
   },
@@ -9700,7 +9708,7 @@ noaa.stations = [
     "latitude": 33.22157,
     "name": "VALLEY CENTER 1 N, CA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00049226",
+    "id": "USC00049226",
     "elevationUnit": "METERS",
     "longitude": -117.03817
   },
@@ -9711,7 +9719,7 @@ noaa.stations = [
     "latitude": 34.1819,
     "name": "WOODLAND HILLS PIERCE COLLEGE, CA US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00049785",
+    "id": "USC00049785",
     "elevationUnit": "METERS",
     "longitude": -118.5744
   },
@@ -9722,7 +9730,7 @@ noaa.stations = [
     "latitude": 34.1294,
     "name": "YUCCA VALLEY, CA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00049888",
+    "id": "USC00049888",
     "elevationUnit": "METERS",
     "longitude": -116.3879
   },
@@ -9733,7 +9741,7 @@ noaa.stations = [
     "latitude": 39.4992,
     "name": "ALTENBERN, CO US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00050214",
+    "id": "USC00050214",
     "elevationUnit": "METERS",
     "longitude": -108.3809
   },
@@ -9744,7 +9752,7 @@ noaa.stations = [
     "latitude": 39.0294,
     "name": "BLACK FOREST 6 WNW, CO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00050756",
+    "id": "USC00050756",
     "elevationUnit": "METERS",
     "longitude": -104.8018
   },
@@ -9755,7 +9763,7 @@ noaa.stations = [
     "latitude": 39.2366,
     "name": "COLLBRAN 1 WSW, CO US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00051743",
+    "id": "USC00051743",
     "elevationUnit": "METERS",
     "longitude": -107.9797
   },
@@ -9766,7 +9774,7 @@ noaa.stations = [
     "latitude": 38.95,
     "name": "CUMBRE VISTA COLORADO SPRINGS 10 NE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USC00051786",
+    "id": "USC00051786",
     "elevationUnit": "METERS",
     "longitude": -104.71
   },
@@ -9777,7 +9785,7 @@ noaa.stations = [
     "latitude": 37.9806,
     "name": "CRESTONE 2 SE, CO US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00051964",
+    "id": "USC00051964",
     "elevationUnit": "METERS",
     "longitude": -105.6897
   },
@@ -9788,7 +9796,7 @@ noaa.stations = [
     "latitude": 40.86,
     "name": "CROOK, CO US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USC00051996",
+    "id": "USC00051996",
     "elevationUnit": "METERS",
     "longitude": -102.803
   },
@@ -9799,7 +9807,7 @@ noaa.stations = [
     "latitude": 38.9608,
     "name": "DIVIDE 4 NW, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USC00052294",
+    "id": "USC00052294",
     "elevationUnit": "METERS",
     "longitude": -105.2158
   },
@@ -9810,7 +9818,7 @@ noaa.stations = [
     "latitude": 38.7402,
     "name": "ELLICOTT 7 S, CO US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00052668",
+    "id": "USC00052668",
     "elevationUnit": "METERS",
     "longitude": -104.3994
   },
@@ -9821,7 +9829,7 @@ noaa.stations = [
     "latitude": 40.5756,
     "name": "FORT COLLINS 4 E, CO US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00053006",
+    "id": "USC00053006",
     "elevationUnit": "METERS",
     "longitude": -105.0236
   },
@@ -9832,7 +9840,7 @@ noaa.stations = [
     "latitude": 38.9538,
     "name": "GLADE PARK 17 W, CO US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00053307",
+    "id": "USC00053307",
     "elevationUnit": "METERS",
     "longitude": -109.0527
   },
@@ -9843,7 +9851,7 @@ noaa.stations = [
     "latitude": 39.1198,
     "name": "GRAND JUNCTION WEATHER FORECAST OFFICE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USC00053486",
+    "id": "USC00053486",
     "elevationUnit": "METERS",
     "longitude": -108.5247
   },
@@ -9854,7 +9862,7 @@ noaa.stations = [
     "latitude": 40.4022,
     "name": "GREELEY UNC, CO US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00053553",
+    "id": "USC00053553",
     "elevationUnit": "METERS",
     "longitude": -104.6991
   },
@@ -9865,7 +9873,7 @@ noaa.stations = [
     "latitude": 38.6866,
     "name": "GUFFEY 9 SE, CO US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USC00053652",
+    "id": "USC00053652",
     "elevationUnit": "METERS",
     "longitude": -105.3925
   },
@@ -9876,7 +9884,7 @@ noaa.stations = [
     "latitude": 37.0855,
     "name": "IGNACIO 6 ESE, CO US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00054254",
+    "id": "USC00054254",
     "elevationUnit": "METERS",
     "longitude": -107.5333
   },
@@ -9887,7 +9895,7 @@ noaa.stations = [
     "latitude": 37.115,
     "name": "KIM 10 SSE, CO US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00054546",
+    "id": "USC00054546",
     "elevationUnit": "METERS",
     "longitude": -103.2986
   },
@@ -9898,7 +9906,7 @@ noaa.stations = [
     "latitude": 38.0523,
     "name": "LAKE CITY 1 NNE, CO US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USC00054736",
+    "id": "USC00054736",
     "elevationUnit": "METERS",
     "longitude": -107.3037
   },
@@ -9909,7 +9917,7 @@ noaa.stations = [
     "latitude": 38.0491,
     "name": "BEULAH MPEC, CO US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00055795",
+    "id": "USC00055795",
     "elevationUnit": "METERS",
     "longitude": -104.996
   },
@@ -9920,7 +9928,7 @@ noaa.stations = [
     "latitude": 38.3897,
     "name": "PARADOX 2 N, CO US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00056320",
+    "id": "USC00056320",
     "elevationUnit": "METERS",
     "longitude": -108.9494
   },
@@ -9931,7 +9939,7 @@ noaa.stations = [
     "latitude": 39.5572,
     "name": "RIFLE 3 ENE, CO US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00057033",
+    "id": "USC00057033",
     "elevationUnit": "METERS",
     "longitude": -107.7261
   },
@@ -9942,7 +9950,7 @@ noaa.stations = [
     "latitude": 37.9137,
     "name": "RYE 1 SW, CO US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USC00057317",
+    "id": "USC00057317",
     "elevationUnit": "METERS",
     "longitude": -104.9484
   },
@@ -9953,7 +9961,7 @@ noaa.stations = [
     "latitude": 40.9656,
     "name": "VIRGINIA DALE 7 ENE, CO US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00058690",
+    "id": "USC00058690",
     "elevationUnit": "METERS",
     "longitude": -105.2186
   },
@@ -9964,7 +9972,7 @@ noaa.stations = [
     "latitude": 37.4297,
     "name": "WAVERLY 1 W, CO US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00058860",
+    "id": "USC00058860",
     "elevationUnit": "METERS",
     "longitude": -106.0317
   },
@@ -9975,7 +9983,7 @@ noaa.stations = [
     "latitude": 40.075,
     "name": "WOODROW 6 NNE, CO US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00059213",
+    "id": "USC00059213",
     "elevationUnit": "METERS",
     "longitude": -103.5677
   },
@@ -9986,7 +9994,7 @@ noaa.stations = [
     "latitude": 41.9984,
     "name": "STAFFORDVILLE, CT US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00067958",
+    "id": "USC00067958",
     "elevationUnit": "METERS",
     "longitude": -72.2606
   },
@@ -9997,7 +10005,7 @@ noaa.stations = [
     "latitude": 27.1819,
     "name": "ARCHBOLD BIO STATION, FL US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00080236",
+    "id": "USC00080236",
     "elevationUnit": "METERS",
     "longitude": -81.3508
   },
@@ -10008,7 +10016,7 @@ noaa.stations = [
     "latitude": 29.7652,
     "name": "HASTINGS 4 NE, FL US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00083874",
+    "id": "USC00083874",
     "elevationUnit": "METERS",
     "longitude": -81.4697
   },
@@ -10019,7 +10027,7 @@ noaa.stations = [
     "latitude": 26.0281,
     "name": "HOLLYWOOD, FL US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USC00084050",
+    "id": "USC00084050",
     "elevationUnit": "METERS",
     "longitude": -80.1341
   },
@@ -10030,7 +10038,7 @@ noaa.stations = [
     "latitude": 26.86,
     "name": "JUNO BEACH, FL US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00084461",
+    "id": "USC00084461",
     "elevationUnit": "METERS",
     "longitude": -80.0552
   },
@@ -10041,7 +10049,7 @@ noaa.stations = [
     "latitude": 24.55338,
     "name": "KEY WEST WEATHER FORECAST OFFICE, FL US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00084571",
+    "id": "USC00084571",
     "elevationUnit": "METERS",
     "longitude": -81.78807
   },
@@ -10052,7 +10060,7 @@ noaa.stations = [
     "latitude": 28.8728,
     "name": "LISBON, FL US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00085076",
+    "id": "USC00085076",
     "elevationUnit": "METERS",
     "longitude": -81.7844
   },
@@ -10063,7 +10071,7 @@ noaa.stations = [
     "latitude": 25.9491,
     "name": "MARCO ISLAND, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USC00085359",
+    "id": "USC00085359",
     "elevationUnit": "METERS",
     "longitude": -81.7138
   },
@@ -10074,7 +10082,7 @@ noaa.stations = [
     "latitude": 34.6646,
     "name": "SAUTEE 3 W, GA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00097827",
+    "id": "USC00097827",
     "elevationUnit": "METERS",
     "longitude": -83.7342
   },
@@ -10085,7 +10093,7 @@ noaa.stations = [
     "latitude": 34.71276,
     "name": "TUGALO DAM, GA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00098842",
+    "id": "USC00098842",
     "elevationUnit": "METERS",
     "longitude": -83.35198
   },
@@ -10096,7 +10104,7 @@ noaa.stations = [
     "latitude": 33.9664,
     "name": "WINTERVILLE, GA US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00099486",
+    "id": "USC00099486",
     "elevationUnit": "METERS",
     "longitude": -83.2911
   },
@@ -10107,7 +10115,7 @@ noaa.stations = [
     "latitude": 42.3352,
     "name": "BERN, ID US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00100803",
+    "id": "USC00100803",
     "elevationUnit": "METERS",
     "longitude": -111.385
   },
@@ -10118,7 +10126,7 @@ noaa.stations = [
     "latitude": 43.7383,
     "name": "BOISE 7 N, ID US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00101017",
+    "id": "USC00101017",
     "elevationUnit": "METERS",
     "longitude": -116.2022
   },
@@ -10129,7 +10137,7 @@ noaa.stations = [
     "latitude": 42.123,
     "name": "LIFTON PUMPING STATION, ID US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00105275",
+    "id": "USC00105275",
     "elevationUnit": "METERS",
     "longitude": -111.3133
   },
@@ -10140,7 +10148,7 @@ noaa.stations = [
     "latitude": 41.1758,
     "name": "BOURBONNAIS 3 NW, IL US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00110803",
+    "id": "USC00110803",
     "elevationUnit": "METERS",
     "longitude": -87.9353
   },
@@ -10151,7 +10159,7 @@ noaa.stations = [
     "latitude": 39.1065,
     "name": "EFFINGHAM SE, IL US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00112685",
+    "id": "USC00112685",
     "elevationUnit": "METERS",
     "longitude": -88.5312
   },
@@ -10162,7 +10170,7 @@ noaa.stations = [
     "latitude": 42.2972,
     "name": "FREEPORT WWP, IL US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USC00113262",
+    "id": "USC00113262",
     "elevationUnit": "METERS",
     "longitude": -89.6038
   },
@@ -10173,7 +10181,7 @@ noaa.stations = [
     "latitude": 41.2541,
     "name": "HENNEPIN, IL US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00114012",
+    "id": "USC00114012",
     "elevationUnit": "METERS",
     "longitude": -89.3379
   },
@@ -10184,7 +10192,7 @@ noaa.stations = [
     "latitude": 39.7346,
     "name": "JACKSONVILLE 2 E, IL US",
     "datacoverage": 0.999,
-    "id": "GHCND:USC00114442",
+    "id": "USC00114442",
     "elevationUnit": "METERS",
     "longitude": -90.1979
   },
@@ -10195,7 +10203,7 @@ noaa.stations = [
     "latitude": 40.9026,
     "name": "KNOXVILLE, IL US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00114780",
+    "id": "USC00114780",
     "elevationUnit": "METERS",
     "longitude": -90.2897
   },
@@ -10206,7 +10214,7 @@ noaa.stations = [
     "latitude": 40.5838,
     "name": "LA HARPE, IL US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00114823",
+    "id": "USC00114823",
     "elevationUnit": "METERS",
     "longitude": -90.9686
   },
@@ -10217,7 +10225,7 @@ noaa.stations = [
     "latitude": 41.3286,
     "name": "MARSEILLES LOCK, IL US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00115372",
+    "id": "USC00115372",
     "elevationUnit": "METERS",
     "longitude": -88.7533
   },
@@ -10228,7 +10236,7 @@ noaa.stations = [
     "latitude": 41.5294,
     "name": "MENDOTA 2 SE, IL US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USC00115562",
+    "id": "USC00115562",
     "elevationUnit": "METERS",
     "longitude": -89.1266
   },
@@ -10239,7 +10247,7 @@ noaa.stations = [
     "latitude": 42.25515,
     "name": "MUNDELEIN 4 WSW, IL US",
     "datacoverage": 1,
-    "id": "GHCND:USC00115961",
+    "id": "USC00115961",
     "elevationUnit": "METERS",
     "longitude": -88.07758
   },
@@ -10250,7 +10258,7 @@ noaa.stations = [
     "latitude": 40.1101,
     "name": "OGDEN, IL US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00116344",
+    "id": "USC00116344",
     "elevationUnit": "METERS",
     "longitude": -87.9567
   },
@@ -10261,7 +10269,7 @@ noaa.stations = [
     "latitude": 40.7493,
     "name": "PEORIA 5 NW, IL US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00116710",
+    "id": "USC00116710",
     "elevationUnit": "METERS",
     "longitude": -89.6202
   },
@@ -10272,7 +10280,7 @@ noaa.stations = [
     "latitude": 41.366,
     "name": "PRINCETON, IL US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00116998",
+    "id": "USC00116998",
     "elevationUnit": "METERS",
     "longitude": -89.452
   },
@@ -10283,7 +10291,7 @@ noaa.stations = [
     "latitude": 41.60413,
     "name": "ROMEOVILLE WEATHER FORECAST OFFICE, IL US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00117457",
+    "id": "USC00117457",
     "elevationUnit": "METERS",
     "longitude": -88.08497
   },
@@ -10294,7 +10302,7 @@ noaa.stations = [
     "latitude": 41.0227,
     "name": "ST ANNE, IL US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00118194",
+    "id": "USC00118194",
     "elevationUnit": "METERS",
     "longitude": -87.7175
   },
@@ -10305,7 +10313,7 @@ noaa.stations = [
     "latitude": 41.81094,
     "name": "STEWARD 3 S, IL US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00118254",
+    "id": "USC00118254",
     "elevationUnit": "METERS",
     "longitude": -89.02375
   },
@@ -10316,7 +10324,7 @@ noaa.stations = [
     "latitude": 40.084,
     "name": "CHAMPAIGN 3 S, IL US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00118740",
+    "id": "USC00118740",
     "elevationUnit": "METERS",
     "longitude": -88.2404
   },
@@ -10327,7 +10335,7 @@ noaa.stations = [
     "latitude": 40.6653,
     "name": "CHALMERS 5 W, IN US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00121417",
+    "id": "USC00121417",
     "elevationUnit": "METERS",
     "longitude": -86.955
   },
@@ -10338,7 +10346,7 @@ noaa.stations = [
     "latitude": 39.2425,
     "name": "FARMERSBURG TV 2, IN US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00122814",
+    "id": "USC00122814",
     "elevationUnit": "METERS",
     "longitude": -87.3905
   },
@@ -10349,7 +10357,7 @@ noaa.stations = [
     "latitude": 41.3415,
     "name": "GARRETT, IN US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00123206",
+    "id": "USC00123206",
     "elevationUnit": "METERS",
     "longitude": -85.1292
   },
@@ -10360,7 +10368,7 @@ noaa.stations = [
     "latitude": 40.0738,
     "name": "PERRYSVILLE 4 WNW, IN US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00126830",
+    "id": "USC00126830",
     "elevationUnit": "METERS",
     "longitude": -87.5066
   },
@@ -10371,7 +10379,7 @@ noaa.stations = [
     "latitude": 41.7202,
     "name": "SOUTH BEND WWTP, IN US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00128212",
+    "id": "USC00128212",
     "elevationUnit": "METERS",
     "longitude": -86.2691
   },
@@ -10382,7 +10390,7 @@ noaa.stations = [
     "latitude": 42.0208,
     "name": "AMES 8 WSW, IA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00130200",
+    "id": "USC00130200",
     "elevationUnit": "METERS",
     "longitude": -93.7741
   },
@@ -10393,7 +10401,7 @@ noaa.stations = [
     "latitude": 41.9519,
     "name": "AMES 5 SE, IA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00130203",
+    "id": "USC00130203",
     "elevationUnit": "METERS",
     "longitude": -93.5655
   },
@@ -10404,7 +10412,7 @@ noaa.stations = [
     "latitude": 42.0773,
     "name": "ANAMOSA 3 SSW, IA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00130214",
+    "id": "USC00130214",
     "elevationUnit": "METERS",
     "longitude": -91.3027
   },
@@ -10415,7 +10423,7 @@ noaa.stations = [
     "latitude": 41.7947,
     "name": "CLINTON NUMBER 1, IA US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00131635",
+    "id": "USC00131635",
     "elevationUnit": "METERS",
     "longitude": -90.2639
   },
@@ -10426,7 +10434,7 @@ noaa.stations = [
     "latitude": 41.7366,
     "name": "DES MOINES WSFO JOHNSTON, IA US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00132209",
+    "id": "USC00132209",
     "elevationUnit": "METERS",
     "longitude": -93.7236
   },
@@ -10437,7 +10445,7 @@ noaa.stations = [
     "latitude": 41.0772,
     "name": "HASTINGS 4 NE, IA US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00133675",
+    "id": "USC00133675",
     "elevationUnit": "METERS",
     "longitude": -95.48
   },
@@ -10448,7 +10456,7 @@ noaa.stations = [
     "latitude": 42.4897,
     "name": "HOLSTEIN, IA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00133909",
+    "id": "USC00133909",
     "elevationUnit": "METERS",
     "longitude": -95.5488
   },
@@ -10459,7 +10467,7 @@ noaa.stations = [
     "latitude": 41.8263,
     "name": "LITTLE SIOUX 2 NW, IA US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USC00134874",
+    "id": "USC00134874",
     "elevationUnit": "METERS",
     "longitude": -96.0505
   },
@@ -10470,7 +10478,7 @@ noaa.stations = [
     "latitude": 41.86044,
     "name": "LOWDEN, IA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00134963",
+    "id": "USC00134963",
     "elevationUnit": "METERS",
     "longitude": -90.9222
   },
@@ -10481,7 +10489,7 @@ noaa.stations = [
     "latitude": 42.4732,
     "name": "MANCHESTER NUMBER 2, IA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USC00135086",
+    "id": "USC00135086",
     "elevationUnit": "METERS",
     "longitude": -91.4516
   },
@@ -10492,7 +10500,7 @@ noaa.stations = [
     "latitude": 42.81028,
     "name": "REMSEN NUMBER 2, IA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00136976",
+    "id": "USC00136976",
     "elevationUnit": "METERS",
     "longitude": -95.975
   },
@@ -10503,7 +10511,7 @@ noaa.stations = [
     "latitude": 42.3963,
     "name": "SIOUX CITY ANG, IA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00137702",
+    "id": "USC00137702",
     "elevationUnit": "METERS",
     "longitude": -96.3777
   },
@@ -10514,7 +10522,7 @@ noaa.stations = [
     "latitude": 41.3894,
     "name": "UNDERWOOD, IA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00138410",
+    "id": "USC00138410",
     "elevationUnit": "METERS",
     "longitude": -95.6811
   },
@@ -10525,7 +10533,7 @@ noaa.stations = [
     "latitude": 37.1941,
     "name": "ASHLAND, KS US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00140365",
+    "id": "USC00140365",
     "elevationUnit": "METERS",
     "longitude": -99.7632
   },
@@ -10536,7 +10544,7 @@ noaa.stations = [
     "latitude": 39.8311,
     "name": "BAILEYVILLE, KS US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00140482",
+    "id": "USC00140482",
     "elevationUnit": "METERS",
     "longitude": -96.1833
   },
@@ -10547,7 +10555,7 @@ noaa.stations = [
     "latitude": 38.1937,
     "name": "CENTERVILLE 4 SW, KS US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USC00141404",
+    "id": "USC00141404",
     "elevationUnit": "METERS",
     "longitude": -95.0724
   },
@@ -10558,7 +10566,7 @@ noaa.stations = [
     "latitude": 39.5592,
     "name": "CONCORDIA 1 W, KS US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00141761",
+    "id": "USC00141761",
     "elevationUnit": "METERS",
     "longitude": -97.6696
   },
@@ -10569,7 +10577,7 @@ noaa.stations = [
     "latitude": 39.1118,
     "name": "GRAINFIELD, KS US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00143185",
+    "id": "USC00143185",
     "elevationUnit": "METERS",
     "longitude": -100.4622
   },
@@ -10580,7 +10588,7 @@ noaa.stations = [
     "latitude": 38.6002,
     "name": "HEALY, KS US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00143554",
+    "id": "USC00143554",
     "elevationUnit": "METERS",
     "longitude": -100.6196
   },
@@ -10591,7 +10599,7 @@ noaa.stations = [
     "latitude": 37.9311,
     "name": "HUTCHINSON 10 SW, KS US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00143930",
+    "id": "USC00143930",
     "elevationUnit": "METERS",
     "longitude": -98.0296
   },
@@ -10602,7 +10610,7 @@ noaa.stations = [
     "latitude": 37.2363,
     "name": "INDEPENDENCE, KS US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00143954",
+    "id": "USC00143954",
     "elevationUnit": "METERS",
     "longitude": -95.7002
   },
@@ -10613,7 +10621,7 @@ noaa.stations = [
     "latitude": 37.9233,
     "name": "IOLA 1 W, KS US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00143984",
+    "id": "USC00143984",
     "elevationUnit": "METERS",
     "longitude": -95.4241
   },
@@ -10624,7 +10632,7 @@ noaa.stations = [
     "latitude": 37.5669,
     "name": "JOHNSON, KS US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00144114",
+    "id": "USC00144114",
     "elevationUnit": "METERS",
     "longitude": -101.75057
   },
@@ -10635,7 +10643,7 @@ noaa.stations = [
     "latitude": 37.5922,
     "name": "MONTEZUMA, KS US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00145421",
+    "id": "USC00145421",
     "elevationUnit": "METERS",
     "longitude": -100.439
   },
@@ -10646,7 +10654,7 @@ noaa.stations = [
     "latitude": 37.1873,
     "name": "MOUND VALLEY 3 WSW, KS US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00145536",
+    "id": "USC00145536",
     "elevationUnit": "METERS",
     "longitude": -95.4508
   },
@@ -10657,7 +10665,7 @@ noaa.stations = [
     "latitude": 37.36767,
     "name": "PARSONS 2 NW, KS US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00146242",
+    "id": "USC00146242",
     "elevationUnit": "METERS",
     "longitude": -95.2881
   },
@@ -10668,7 +10676,7 @@ noaa.stations = [
     "latitude": 38.96176,
     "name": "RUSSELL SPRINGS 3 N, KS US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00147050",
+    "id": "USC00147050",
     "elevationUnit": "METERS",
     "longitude": -101.16648
   },
@@ -10679,7 +10687,7 @@ noaa.stations = [
     "latitude": 38.8346,
     "name": "SALINA WX, KS US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00147159",
+    "id": "USC00147159",
     "elevationUnit": "METERS",
     "longitude": -97.5927
   },
@@ -10690,7 +10698,7 @@ noaa.stations = [
     "latitude": 37.6552,
     "name": "WICHITA WX, KS US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00148847",
+    "id": "USC00148847",
     "elevationUnit": "METERS",
     "longitude": -97.443
   },
@@ -10701,7 +10709,7 @@ noaa.stations = [
     "latitude": 38.2936,
     "name": "WINDOM 7 S, KS US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00148950",
+    "id": "USC00148950",
     "elevationUnit": "METERS",
     "longitude": -97.9113
   },
@@ -10712,7 +10720,7 @@ noaa.stations = [
     "latitude": 37.79278,
     "name": "CORNERS, KY US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USC00151810",
+    "id": "USC00151810",
     "elevationUnit": "METERS",
     "longitude": -86.2325
   },
@@ -10723,7 +10731,7 @@ noaa.stations = [
     "latitude": 37.8299,
     "name": "CRESSY, KY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00151895",
+    "id": "USC00151895",
     "elevationUnit": "METERS",
     "longitude": -84.0347
   },
@@ -10734,7 +10742,7 @@ noaa.stations = [
     "latitude": 37.6527,
     "name": "DANVILLE, KY US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00152040",
+    "id": "USC00152040",
     "elevationUnit": "METERS",
     "longitude": -84.7708
   },
@@ -10745,7 +10753,7 @@ noaa.stations = [
     "latitude": 38.2196,
     "name": "FRANKFORT 3 NE, KY US",
     "datacoverage": 1,
-    "id": "GHCND:USC00153025",
+    "id": "USC00153025",
     "elevationUnit": "METERS",
     "longitude": -84.8336
   },
@@ -10756,7 +10764,7 @@ noaa.stations = [
     "latitude": 38.1151,
     "name": "LOUISVILLE WEATHER FORECAST OFFICE, KY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00154958",
+    "id": "USC00154958",
     "elevationUnit": "METERS",
     "longitude": -85.6445
   },
@@ -10767,7 +10775,7 @@ noaa.stations = [
     "latitude": 37.4335,
     "name": "MILLERTOWN 4 E, KY US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00155444",
+    "id": "USC00155444",
     "elevationUnit": "METERS",
     "longitude": -86.0089
   },
@@ -10778,7 +10786,7 @@ noaa.stations = [
     "latitude": 37.0876,
     "name": "SKYLINE 1 SE, KY US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00157431",
+    "id": "USC00157431",
     "elevationUnit": "METERS",
     "longitude": -82.9925
   },
@@ -10789,7 +10797,7 @@ noaa.stations = [
     "latitude": 38.0013,
     "name": "TAYLORSVILLE LAKE, KY US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00157950",
+    "id": "USC00157950",
     "elevationUnit": "METERS",
     "longitude": -85.3088
   },
@@ -10800,7 +10808,7 @@ noaa.stations = [
     "latitude": 37.0683,
     "name": "WEST PADUCAH 2 W, KY US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00158555",
+    "id": "USC00158555",
     "elevationUnit": "METERS",
     "longitude": -88.7724
   },
@@ -10811,7 +10819,7 @@ noaa.stations = [
     "latitude": 37.1026,
     "name": "WHITESBURG 2 SE, KY US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00158635",
+    "id": "USC00158635",
     "elevationUnit": "METERS",
     "longitude": -82.8046
   },
@@ -10822,7 +10830,7 @@ noaa.stations = [
     "latitude": 30.4494,
     "name": "BATON ROUGE SHERWOOD, LA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00160558",
+    "id": "USC00160558",
     "elevationUnit": "METERS",
     "longitude": -91.0477
   },
@@ -10833,7 +10841,7 @@ noaa.stations = [
     "latitude": 32.1673,
     "name": "COLUMBIA LOCK, LA US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00161979",
+    "id": "USC00161979",
     "elevationUnit": "METERS",
     "longitude": -92.10769
   },
@@ -10844,7 +10852,7 @@ noaa.stations = [
     "latitude": 30.2508,
     "name": "DUTCHTOWN NUMBER 2, LA US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00162688",
+    "id": "USC00162688",
     "elevationUnit": "METERS",
     "longitude": -90.9872
   },
@@ -10855,7 +10863,7 @@ noaa.stations = [
     "latitude": 30.2033,
     "name": "GONZALES, LA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USC00163695",
+    "id": "USC00163695",
     "elevationUnit": "METERS",
     "longitude": -90.9225
   },
@@ -10866,7 +10874,7 @@ noaa.stations = [
     "latitude": 30.2544,
     "name": "LAKE CHARLES 2 N, LA US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00165074",
+    "id": "USC00165074",
     "elevationUnit": "METERS",
     "longitude": -93.2186
   },
@@ -10877,7 +10885,7 @@ noaa.stations = [
     "latitude": 30.3393,
     "name": "MOSS BLUFF 2 NNW, LA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00166434",
+    "id": "USC00166434",
     "elevationUnit": "METERS",
     "longitude": -93.2151
   },
@@ -10888,7 +10896,7 @@ noaa.stations = [
     "latitude": 31.8142,
     "name": "NATCHITOCHES NUMBER 2, LA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00166584",
+    "id": "USC00166584",
     "elevationUnit": "METERS",
     "longitude": -93.0856
   },
@@ -10899,7 +10907,7 @@ noaa.stations = [
     "latitude": 32.4513,
     "name": "SHREVEPORT WEATHER FORECAST OFFICE, LA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00168448",
+    "id": "USC00168448",
     "elevationUnit": "METERS",
     "longitude": -93.8416
   },
@@ -10910,7 +10918,7 @@ noaa.stations = [
     "latitude": 43.9316,
     "name": "BATH, ME US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00170409",
+    "id": "USC00170409",
     "elevationUnit": "METERS",
     "longitude": -69.8564
   },
@@ -10921,7 +10929,7 @@ noaa.stations = [
     "latitude": 45.6602,
     "name": "BRASSUA DAM, ME US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00170814",
+    "id": "USC00170814",
     "elevationUnit": "METERS",
     "longitude": -69.8119
   },
@@ -10932,7 +10940,7 @@ noaa.stations = [
     "latitude": 43.22411,
     "name": "CAPE NEDDICK, ME US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00171131",
+    "id": "USC00171131",
     "elevationUnit": "METERS",
     "longitude": -70.63882
   },
@@ -10943,7 +10951,7 @@ noaa.stations = [
     "latitude": 44.4934,
     "name": "EAST SURRY, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USC00172443",
+    "id": "USC00172443",
     "elevationUnit": "METERS",
     "longitude": -68.4582
   },
@@ -10954,7 +10962,7 @@ noaa.stations = [
     "latitude": 43.8925,
     "name": "GRAY, ME US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00173295",
+    "id": "USC00173295",
     "elevationUnit": "METERS",
     "longitude": -70.2544
   },
@@ -10965,7 +10973,7 @@ noaa.stations = [
     "latitude": 44.9466,
     "name": "HARMONY, ME US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00173567",
+    "id": "USC00173567",
     "elevationUnit": "METERS",
     "longitude": -69.5456
   },
@@ -10976,7 +10984,7 @@ noaa.stations = [
     "latitude": 44.3744,
     "name": "HARTFORD, ME US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00173570",
+    "id": "USC00173570",
     "elevationUnit": "METERS",
     "longitude": -70.3163
   },
@@ -10987,7 +10995,7 @@ noaa.stations = [
     "latitude": 43.64759,
     "name": "HOLLIS, ME US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USC00173862",
+    "id": "USC00173862",
     "elevationUnit": "METERS",
     "longitude": -70.67498
   },
@@ -10998,7 +11006,7 @@ noaa.stations = [
     "latitude": 43.3605,
     "name": "KENNEBUNKPORT, ME US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00174193",
+    "id": "USC00174193",
     "elevationUnit": "METERS",
     "longitude": -70.4697
   },
@@ -11009,7 +11017,7 @@ noaa.stations = [
     "latitude": 44.4716,
     "name": "LIVERMORE FALLS 1 E, ME US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USC00174745",
+    "id": "USC00174745",
     "elevationUnit": "METERS",
     "longitude": -70.1594
   },
@@ -11020,7 +11028,7 @@ noaa.stations = [
     "latitude": 45.6404,
     "name": "MILLINOCKET WASTEWATER, ME US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00175305",
+    "id": "USC00175305",
     "elevationUnit": "METERS",
     "longitude": -68.6747
   },
@@ -11031,7 +11039,7 @@ noaa.stations = [
     "latitude": 44.6352,
     "name": "NEW SHARON, ME US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00175736",
+    "id": "USC00175736",
     "elevationUnit": "METERS",
     "longitude": -70.0002
   },
@@ -11042,7 +11050,7 @@ noaa.stations = [
     "latitude": 44.81877,
     "name": "PHILLIPS 3, ME US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USC00176706",
+    "id": "USC00176706",
     "elevationUnit": "METERS",
     "longitude": -70.38664
   },
@@ -11053,7 +11061,7 @@ noaa.stations = [
     "latitude": 45.8909,
     "name": "PITTSTON FARMS NEPP, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USC00176722",
+    "id": "USC00176722",
     "elevationUnit": "METERS",
     "longitude": -69.9646
   },
@@ -11064,7 +11072,7 @@ noaa.stations = [
     "latitude": 44.00706,
     "name": "POLAND, ME US",
     "datacoverage": 0.999,
-    "id": "GHCND:USC00176856",
+    "id": "USC00176856",
     "elevationUnit": "METERS",
     "longitude": -70.36149
   },
@@ -11075,7 +11083,7 @@ noaa.stations = [
     "latitude": 44.9894,
     "name": "RANGELEY 2 NW, ME US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00177039",
+    "id": "USC00177039",
     "elevationUnit": "METERS",
     "longitude": -70.6722
   },
@@ -11086,7 +11094,7 @@ noaa.stations = [
     "latitude": 45.08533,
     "name": "ROBBINSTON, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USC00177238",
+    "id": "USC00177238",
     "elevationUnit": "METERS",
     "longitude": -67.1205
   },
@@ -11097,7 +11105,7 @@ noaa.stations = [
     "latitude": 45.4353,
     "name": "TOPSFIELD 2, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USC00178792",
+    "id": "USC00178792",
     "elevationUnit": "METERS",
     "longitude": -67.7213
   },
@@ -11108,7 +11116,7 @@ noaa.stations = [
     "latitude": 44.2822,
     "name": "TURNER, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USC00178817",
+    "id": "USC00178817",
     "elevationUnit": "METERS",
     "longitude": -70.2561
   },
@@ -11119,7 +11127,7 @@ noaa.stations = [
     "latitude": 39.65971,
     "name": "FROSTBURG 2, MD US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00183415",
+    "id": "USC00183415",
     "elevationUnit": "METERS",
     "longitude": -78.93601
   },
@@ -11130,7 +11138,7 @@ noaa.stations = [
     "latitude": 39.7194,
     "name": "MILLERS 4 NE, MD US",
     "datacoverage": 1,
-    "id": "GHCND:USC00185934",
+    "id": "USC00185934",
     "elevationUnit": "METERS",
     "longitude": -76.8027
   },
@@ -11141,7 +11149,7 @@ noaa.stations = [
     "latitude": 42.2123,
     "name": "BLUE HILL COOP, MA US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00190736",
+    "id": "USC00190736",
     "elevationUnit": "METERS",
     "longitude": -71.1137
   },
@@ -11152,7 +11160,7 @@ noaa.stations = [
     "latitude": 41.3854,
     "name": "EDGARTOWN, MA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00192501",
+    "id": "USC00192501",
     "elevationUnit": "METERS",
     "longitude": -70.518
   },
@@ -11163,7 +11171,7 @@ noaa.stations = [
     "latitude": 42.7467,
     "name": "GROVELAND, MA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00193276",
+    "id": "USC00193276",
     "elevationUnit": "METERS",
     "longitude": -71.0426
   },
@@ -11174,7 +11182,7 @@ noaa.stations = [
     "latitude": 42.2269,
     "name": "HINGHAM, MA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00193624",
+    "id": "USC00193624",
     "elevationUnit": "METERS",
     "longitude": -70.9125
   },
@@ -11185,7 +11193,7 @@ noaa.stations = [
     "latitude": 42.5934,
     "name": "MIDDLETON, MA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00194744",
+    "id": "USC00194744",
     "elevationUnit": "METERS",
     "longitude": -71.0187
   },
@@ -11196,7 +11204,7 @@ noaa.stations = [
     "latitude": 42.735,
     "name": "ROWE 3 NE, MA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00196989",
+    "id": "USC00196989",
     "elevationUnit": "METERS",
     "longitude": -72.8692
   },
@@ -11207,7 +11215,7 @@ noaa.stations = [
     "latitude": 42.4448,
     "name": "SUNDERLAND, MA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00198278",
+    "id": "USC00198278",
     "elevationUnit": "METERS",
     "longitude": -72.5529
   },
@@ -11218,7 +11226,7 @@ noaa.stations = [
     "latitude": 41.9561,
     "name": "NWS BOSTON NORTON, MA US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00198368",
+    "id": "USC00198368",
     "elevationUnit": "METERS",
     "longitude": -71.1395
   },
@@ -11229,7 +11237,7 @@ noaa.stations = [
     "latitude": 42.1609,
     "name": "WALPOLE 2, MA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00198757",
+    "id": "USC00198757",
     "elevationUnit": "METERS",
     "longitude": -71.2461
   },
@@ -11240,7 +11248,7 @@ noaa.stations = [
     "latitude": 42.0931,
     "name": "WESTFIELD 3 SW, MA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00199193",
+    "id": "USC00199193",
     "elevationUnit": "METERS",
     "longitude": -72.8035
   },
@@ -11251,7 +11259,7 @@ noaa.stations = [
     "latitude": 42.2416,
     "name": "ANN ARBOR SE, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USC00200228",
+    "id": "USC00200228",
     "elevationUnit": "METERS",
     "longitude": -83.6933
   },
@@ -11262,7 +11270,7 @@ noaa.stations = [
     "latitude": 45.00471,
     "name": "ATLANTA, MI US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00200342",
+    "id": "USC00200342",
     "elevationUnit": "METERS",
     "longitude": -84.14043
   },
@@ -11273,7 +11281,7 @@ noaa.stations = [
     "latitude": 44.5316,
     "name": "BEULAH 7 SSW, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USC00200758",
+    "id": "USC00200758",
     "elevationUnit": "METERS",
     "longitude": -86.1311
   },
@@ -11284,7 +11292,7 @@ noaa.stations = [
     "latitude": 45.1672,
     "name": "BOYNE FALLS, MI US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00200925",
+    "id": "USC00200925",
     "elevationUnit": "METERS",
     "longitude": -84.9138
   },
@@ -11295,7 +11303,7 @@ noaa.stations = [
     "latitude": 46.3414,
     "name": "CHATHAM EXPERIMENT FARM 2, MI US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00201486",
+    "id": "USC00201486",
     "elevationUnit": "METERS",
     "longitude": -86.9242
   },
@@ -11306,7 +11314,7 @@ noaa.stations = [
     "latitude": 46.5588,
     "name": "COVINGTON 1 NNW, MI US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00201845",
+    "id": "USC00201845",
     "elevationUnit": "METERS",
     "longitude": -88.5419
   },
@@ -11317,7 +11325,7 @@ noaa.stations = [
     "latitude": 45.1863,
     "name": "EAST JORDAN 2 NW, MI US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00202382",
+    "id": "USC00202382",
     "elevationUnit": "METERS",
     "longitude": -85.1477
   },
@@ -11328,7 +11336,7 @@ noaa.stations = [
     "latitude": 43.4458,
     "name": "FREMONT 4 WSW, MI US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00203025",
+    "id": "USC00203025",
     "elevationUnit": "METERS",
     "longitude": -86.0265
   },
@@ -11339,7 +11347,7 @@ noaa.stations = [
     "latitude": 45.8983,
     "name": "GARDEN CORNERS, MI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00203078",
+    "id": "USC00203078",
     "elevationUnit": "METERS",
     "longitude": -86.5485
   },
@@ -11350,7 +11358,7 @@ noaa.stations = [
     "latitude": 44.9072,
     "name": "GAYLORD 9 SSW, MI US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00203099",
+    "id": "USC00203099",
     "elevationUnit": "METERS",
     "longitude": -84.7188
   },
@@ -11361,7 +11369,7 @@ noaa.stations = [
     "latitude": 47.0083,
     "name": "JACOBSVILLE, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USC00204161",
+    "id": "USC00204161",
     "elevationUnit": "METERS",
     "longitude": -88.4318
   },
@@ -11372,7 +11380,7 @@ noaa.stations = [
     "latitude": 44.5897,
     "name": "KALKASKA 11 SE, MI US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00204258",
+    "id": "USC00204258",
     "elevationUnit": "METERS",
     "longitude": -85.0486
   },
@@ -11383,7 +11391,7 @@ noaa.stations = [
     "latitude": 46.3341,
     "name": "K.I. SAWYER WWTP, MI US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00204425",
+    "id": "USC00204425",
     "elevationUnit": "METERS",
     "longitude": -87.3779
   },
@@ -11394,7 +11402,7 @@ noaa.stations = [
     "latitude": 46.5453,
     "name": "MICHIGAMME 3 WNW, MI US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00205406",
+    "id": "USC00205406",
     "elevationUnit": "METERS",
     "longitude": -88.18
   },
@@ -11405,7 +11413,7 @@ noaa.stations = [
     "latitude": 44.6466,
     "name": "MIO WWTP, MI US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00205533",
+    "id": "USC00205533",
     "elevationUnit": "METERS",
     "longitude": -84.1158
   },
@@ -11416,7 +11424,7 @@ noaa.stations = [
     "latitude": 45.9902,
     "name": "MORAN, MI US",
     "datacoverage": 0.999,
-    "id": "GHCND:USC00205591",
+    "id": "USC00205591",
     "elevationUnit": "METERS",
     "longitude": -84.8361
   },
@@ -11427,7 +11435,7 @@ noaa.stations = [
     "latitude": 41.8405,
     "name": "NILES, MI US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00205892",
+    "id": "USC00205892",
     "elevationUnit": "METERS",
     "longitude": -86.2658
   },
@@ -11438,7 +11446,7 @@ noaa.stations = [
     "latitude": 44.883,
     "name": "NW MICHIGAN RES FARM, MI US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00206012",
+    "id": "USC00206012",
     "elevationUnit": "METERS",
     "longitude": -85.6752
   },
@@ -11449,7 +11457,7 @@ noaa.stations = [
     "latitude": 45.3613,
     "name": "PETOSKEY NCMC, MI US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USC00206510",
+    "id": "USC00206510",
     "elevationUnit": "METERS",
     "longitude": -84.9512
   },
@@ -11460,7 +11468,7 @@ noaa.stations = [
     "latitude": 46.4866,
     "name": "SAULT STE MARIE, MI US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00207364",
+    "id": "USC00207364",
     "elevationUnit": "METERS",
     "longitude": -84.4089
   },
@@ -11471,7 +11479,7 @@ noaa.stations = [
     "latitude": 44.7607,
     "name": "TRAVERSE CITY MUNSON, MI US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00208249",
+    "id": "USC00208249",
     "elevationUnit": "METERS",
     "longitude": -85.6443
   },
@@ -11482,7 +11490,7 @@ noaa.stations = [
     "latitude": 42.20852,
     "name": "WYANDOTTE, MI US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USC00209110",
+    "id": "USC00209110",
     "elevationUnit": "METERS",
     "longitude": -83.16269
   },
@@ -11493,7 +11501,7 @@ noaa.stations = [
     "latitude": 44.8496,
     "name": "CHANHASSEN WSFO, MN US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00211448",
+    "id": "USC00211448",
     "elevationUnit": "METERS",
     "longitude": -93.5644
   },
@@ -11504,7 +11512,7 @@ noaa.stations = [
     "latitude": 47.2436,
     "name": "GRAND RAPIDS FRS LAB, MN US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00213303",
+    "id": "USC00213303",
     "elevationUnit": "METERS",
     "longitude": -93.4975
   },
@@ -11515,7 +11523,7 @@ noaa.stations = [
     "latitude": 45.3533,
     "name": "KIMBALL 3 N, MN US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00214373",
+    "id": "USC00214373",
     "elevationUnit": "METERS",
     "longitude": -94.3056
   },
@@ -11526,7 +11534,7 @@ noaa.stations = [
     "latitude": 44.2395,
     "name": "LAMBERTON SOUTHWEST RESEARCH AND OUTREACH CENTER, MN US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00214546",
+    "id": "USC00214546",
     "elevationUnit": "METERS",
     "longitude": -95.3152
   },
@@ -11537,7 +11545,7 @@ noaa.stations = [
     "latitude": 43.52433,
     "name": "MABEL, MN US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USC00214990",
+    "id": "USC00214990",
     "elevationUnit": "METERS",
     "longitude": -91.76141
   },
@@ -11548,7 +11556,7 @@ noaa.stations = [
     "latitude": 45.1219,
     "name": "MILAN 1 NW, MN US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00215400",
+    "id": "USC00215400",
     "elevationUnit": "METERS",
     "longitude": -95.9269
   },
@@ -11559,7 +11567,7 @@ noaa.stations = [
     "latitude": 44.29451,
     "name": "NEW ULM 3 SE, MN US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00215888",
+    "id": "USC00215888",
     "elevationUnit": "METERS",
     "longitude": -94.40842
   },
@@ -11570,7 +11578,7 @@ noaa.stations = [
     "latitude": 44.0976,
     "name": "OWATONNA, MN US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00216287",
+    "id": "USC00216287",
     "elevationUnit": "METERS",
     "longitude": -93.2318
   },
@@ -11581,7 +11589,7 @@ noaa.stations = [
     "latitude": 43.9336,
     "name": "ROCHESTER AIRPORT 2 NE, MN US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00217011",
+    "id": "USC00217011",
     "elevationUnit": "METERS",
     "longitude": -92.4729
   },
@@ -11592,7 +11600,7 @@ noaa.stations = [
     "latitude": 44.9902,
     "name": "UNIVERSITY OF MN ST. PAUL, MN US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USC00218450",
+    "id": "USC00218450",
     "elevationUnit": "METERS",
     "longitude": -93.17995
   },
@@ -11603,7 +11611,7 @@ noaa.stations = [
     "latitude": 31.3069,
     "name": "HATTIESBURG 3 SW, MS US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00223888",
+    "id": "USC00223888",
     "elevationUnit": "METERS",
     "longitude": -89.3274
   },
@@ -11614,7 +11622,7 @@ noaa.stations = [
     "latitude": 34.6988,
     "name": "INDEPENDENCE 1 W, MS US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00224377",
+    "id": "USC00224377",
     "elevationUnit": "METERS",
     "longitude": -89.8213
   },
@@ -11625,7 +11633,7 @@ noaa.stations = [
     "latitude": 34.2355,
     "name": "TUPELO 3, MS US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USC00229006",
+    "id": "USC00229006",
     "elevationUnit": "METERS",
     "longitude": -88.6952
   },
@@ -11636,7 +11644,7 @@ noaa.stations = [
     "latitude": 38.94243,
     "name": "COLUMBIA U OF M, MO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00231801",
+    "id": "USC00231801",
     "elevationUnit": "METERS",
     "longitude": -92.32044
   },
@@ -11647,7 +11655,7 @@ noaa.stations = [
     "latitude": 39.7232,
     "name": "HANNIBAL WATER WORKS, MO US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00233601",
+    "id": "USC00233601",
     "elevationUnit": "METERS",
     "longitude": -91.3748
   },
@@ -11658,7 +11666,7 @@ noaa.stations = [
     "latitude": 39.0733,
     "name": "HIGGINSVILLE, MO US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00233838",
+    "id": "USC00233838",
     "elevationUnit": "METERS",
     "longitude": -93.7075
   },
@@ -11669,7 +11677,7 @@ noaa.stations = [
     "latitude": 38.8099,
     "name": "PLEASANT HILL WEATHER FORECAST OFFICE, MO US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00236745",
+    "id": "USC00236745",
     "elevationUnit": "METERS",
     "longitude": -94.2647
   },
@@ -11680,7 +11688,7 @@ noaa.stations = [
     "latitude": 38.9744,
     "name": "RAYTOWN NUMBER 2, MO US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00237064",
+    "id": "USC00237064",
     "elevationUnit": "METERS",
     "longitude": -94.4817
   },
@@ -11691,7 +11699,7 @@ noaa.stations = [
     "latitude": 39.2103,
     "name": "WAVERLY 3 W, MO US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USC00238770",
+    "id": "USC00238770",
     "elevationUnit": "METERS",
     "longitude": -93.5297
   },
@@ -11702,7 +11710,7 @@ noaa.stations = [
     "latitude": 38.5331,
     "name": "WINDSOR, MO US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00239034",
+    "id": "USC00239034",
     "elevationUnit": "METERS",
     "longitude": -93.5316
   },
@@ -11713,7 +11721,7 @@ noaa.stations = [
     "latitude": 46.2721,
     "name": "FORSYTH, MT US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00243098",
+    "id": "USC00243098",
     "elevationUnit": "METERS",
     "longitude": -106.6755
   },
@@ -11724,7 +11732,7 @@ noaa.stations = [
     "latitude": 46.5786,
     "name": "HARLOWTON 11 NW, MT US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00243947",
+    "id": "USC00243947",
     "elevationUnit": "METERS",
     "longitude": -109.9477
   },
@@ -11735,7 +11743,7 @@ noaa.stations = [
     "latitude": 46.1047,
     "name": "MELVILLE 4 W, MT US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USC00245603",
+    "id": "USC00245603",
     "elevationUnit": "METERS",
     "longitude": -110.05
   },
@@ -11746,7 +11754,7 @@ noaa.stations = [
     "latitude": 46.3254,
     "name": "ROUNDUP 15 SW, MT US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00247220",
+    "id": "USC00247220",
     "elevationUnit": "METERS",
     "longitude": -108.7402
   },
@@ -11757,7 +11765,7 @@ noaa.stations = [
     "latitude": 41.0232,
     "name": "BRADY, NE US",
     "datacoverage": 1,
-    "id": "GHCND:USC00251082",
+    "id": "USC00251082",
     "elevationUnit": "METERS",
     "longitude": -100.367
   },
@@ -11768,7 +11776,7 @@ noaa.stations = [
     "latitude": 41.2522,
     "name": "CALLAWAY 8 WSW, NE US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00251408",
+    "id": "USC00251408",
     "elevationUnit": "METERS",
     "longitude": -100.075
   },
@@ -11779,7 +11787,7 @@ noaa.stations = [
     "latitude": 42.7363,
     "name": "CROFTON, NE US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USC00252037",
+    "id": "USC00252037",
     "elevationUnit": "METERS",
     "longitude": -97.4969
   },
@@ -11790,7 +11798,7 @@ noaa.stations = [
     "latitude": 41.1586,
     "name": "GRETNA 4 NE, NE US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00253467",
+    "id": "USC00253467",
     "elevationUnit": "METERS",
     "longitude": -96.1922
   },
@@ -11801,7 +11809,7 @@ noaa.stations = [
     "latitude": 41.2663,
     "name": "LODGEPOLE 8 N, NE US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USC00254903",
+    "id": "USC00254903",
     "elevationUnit": "METERS",
     "longitude": -102.6585
   },
@@ -11812,7 +11820,7 @@ noaa.stations = [
     "latitude": 40.0225,
     "name": "SALEM 5 SW, NE US",
     "datacoverage": 1,
-    "id": "GHCND:USC00257545",
+    "id": "USC00257545",
     "elevationUnit": "METERS",
     "longitude": -95.7883
   },
@@ -11823,7 +11831,7 @@ noaa.stations = [
     "latitude": 40.2038,
     "name": "SHUBERT 2 SW, NE US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00257800",
+    "id": "USC00257800",
     "elevationUnit": "METERS",
     "longitude": -95.7063
   },
@@ -11834,7 +11842,7 @@ noaa.stations = [
     "latitude": 41.45805,
     "name": "STAPLETON 5 W, NE US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00258133",
+    "id": "USC00258133",
     "elevationUnit": "METERS",
     "longitude": -100.59848
   },
@@ -11845,7 +11853,7 @@ noaa.stations = [
     "latitude": 40.9152,
     "name": "YORK 3 N, NE US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00259513",
+    "id": "USC00259513",
     "elevationUnit": "METERS",
     "longitude": -97.5997
   },
@@ -11856,7 +11864,7 @@ noaa.stations = [
     "latitude": 40.8602,
     "name": "ELKO NWS OFFICE, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USC00262570",
+    "id": "USC00262570",
     "elevationUnit": "METERS",
     "longitude": -115.7426
   },
@@ -11867,7 +11875,7 @@ noaa.stations = [
     "latitude": 40.98482,
     "name": "WENDOVER 16 NW, NV US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00269005",
+    "id": "USC00269005",
     "elevationUnit": "METERS",
     "longitude": -114.16961
   },
@@ -11878,7 +11886,7 @@ noaa.stations = [
     "latitude": 40.9386,
     "name": "WINNEMUCCA 3 SSW, NV US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USC00269168",
+    "id": "USC00269168",
     "elevationUnit": "METERS",
     "longitude": -117.7513
   },
@@ -11889,7 +11897,7 @@ noaa.stations = [
     "latitude": 42.8266,
     "name": "EAST MILFORD, NH US",
     "datacoverage": 1,
-    "id": "GHCND:USC00272302",
+    "id": "USC00272302",
     "elevationUnit": "METERS",
     "longitude": -71.626
   },
@@ -11900,7 +11908,7 @@ noaa.stations = [
     "latitude": 42.8088,
     "name": "JAFFREY SILVER RANCH AIRPARK, NH US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00274304",
+    "id": "USC00274304",
     "elevationUnit": "METERS",
     "longitude": -72.0053
   },
@@ -11911,7 +11919,7 @@ noaa.stations = [
     "latitude": 44.0425,
     "name": "LINCOLN NEPP, NH US",
     "datacoverage": 1,
-    "id": "GHCND:USC00274734",
+    "id": "USC00274734",
     "elevationUnit": "METERS",
     "longitude": -71.6727
   },
@@ -11922,7 +11930,7 @@ noaa.stations = [
     "latitude": 42.7346,
     "name": "NASHUA CWSU, NH US",
     "datacoverage": 1,
-    "id": "GHCND:USC00275703",
+    "id": "USC00275703",
     "elevationUnit": "METERS",
     "longitude": -71.4802
   },
@@ -11933,7 +11941,7 @@ noaa.stations = [
     "latitude": 43.86434,
     "name": "TAMWORTH 4, NH US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00278614",
+    "id": "USC00278614",
     "elevationUnit": "METERS",
     "longitude": -71.26628
   },
@@ -11944,7 +11952,7 @@ noaa.stations = [
     "latitude": 42.91083,
     "name": "WEST HAMPSTEAD, NH US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00279278",
+    "id": "USC00279278",
     "elevationUnit": "METERS",
     "longitude": -71.20205
   },
@@ -11955,7 +11963,7 @@ noaa.stations = [
     "latitude": 40.7481,
     "name": "HARRISON, NJ US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00283704",
+    "id": "USC00283704",
     "elevationUnit": "METERS",
     "longitude": -74.152
   },
@@ -11966,7 +11974,7 @@ noaa.stations = [
     "latitude": 39.3377,
     "name": "MARGATE, NJ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00285243",
+    "id": "USC00285243",
     "elevationUnit": "METERS",
     "longitude": -74.5036
   },
@@ -11977,7 +11985,7 @@ noaa.stations = [
     "latitude": 40.47282,
     "name": "NEW BRUNSWICK 3 SE, NJ US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00286055",
+    "id": "USC00286055",
     "elevationUnit": "METERS",
     "longitude": -74.42259
   },
@@ -11988,7 +11996,7 @@ noaa.stations = [
     "latitude": 40.01369,
     "name": "PHILADELPHIA MT. HOLLY WEATHER FORECAST OFFICE, NJ US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00286964",
+    "id": "USC00286964",
     "elevationUnit": "METERS",
     "longitude": -74.81753
   },
@@ -11999,7 +12007,7 @@ noaa.stations = [
     "latitude": 35.0216,
     "name": "ALBUQUERQUE VALLEY, NM US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00290231",
+    "id": "USC00290231",
     "elevationUnit": "METERS",
     "longitude": -106.6938
   },
@@ -12010,7 +12018,7 @@ noaa.stations = [
     "latitude": 31.8727,
     "name": "SANTA TERESA AIRPORT, NM US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00298127",
+    "id": "USC00298127",
     "elevationUnit": "METERS",
     "longitude": -106.698
   },
@@ -12021,7 +12029,7 @@ noaa.stations = [
     "latitude": 32.2823,
     "name": "STATE UNIVERSITY, NM US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00298535",
+    "id": "USC00298535",
     "elevationUnit": "METERS",
     "longitude": -106.7598
   },
@@ -12032,7 +12040,7 @@ noaa.stations = [
     "latitude": 42.9361,
     "name": "BUSKIRK, NY US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00301068",
+    "id": "USC00301068",
     "elevationUnit": "METERS",
     "longitude": -73.43257
   },
@@ -12043,7 +12051,7 @@ noaa.stations = [
     "latitude": 43.75923,
     "name": "CHASES LAKE, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USC00301388",
+    "id": "USC00301388",
     "elevationUnit": "METERS",
     "longitude": -75.29982
   },
@@ -12054,7 +12062,7 @@ noaa.stations = [
     "latitude": 42.8766,
     "name": "GENEVA RESEARCH FARM, NY US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00303184",
+    "id": "USC00303184",
     "elevationUnit": "METERS",
     "longitude": -77.0307
   },
@@ -12065,7 +12073,7 @@ noaa.stations = [
     "latitude": 42.9736,
     "name": "LE ROY 1 E, NY US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00304684",
+    "id": "USC00304684",
     "elevationUnit": "METERS",
     "longitude": -77.96719
   },
@@ -12076,7 +12084,7 @@ noaa.stations = [
     "latitude": 44.8418,
     "name": "MALONE, NY US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00304996",
+    "id": "USC00304996",
     "elevationUnit": "METERS",
     "longitude": -74.306
   },
@@ -12087,7 +12095,7 @@ noaa.stations = [
     "latitude": 42.4422,
     "name": "MECKLENBURG 4 SW, NY US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USC00305233",
+    "id": "USC00305233",
     "elevationUnit": "METERS",
     "longitude": -76.7586
   },
@@ -12098,7 +12106,7 @@ noaa.stations = [
     "latitude": 43.2093,
     "name": "MEDINA, NY US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00305236",
+    "id": "USC00305236",
     "elevationUnit": "METERS",
     "longitude": -78.3894
   },
@@ -12109,7 +12117,7 @@ noaa.stations = [
     "latitude": 43.29011,
     "name": "NEWFANE 1 W, NY US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USC00305715",
+    "id": "USC00305715",
     "elevationUnit": "METERS",
     "longitude": -78.72282
   },
@@ -12120,7 +12128,7 @@ noaa.stations = [
     "latitude": 43.05734,
     "name": "NORTH TONAWANDA, NY US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00306047",
+    "id": "USC00306047",
     "elevationUnit": "METERS",
     "longitude": -78.86171
   },
@@ -12131,7 +12139,7 @@ noaa.stations = [
     "latitude": 43.4991,
     "name": "OSCEOLA, NY US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00306300",
+    "id": "USC00306300",
     "elevationUnit": "METERS",
     "longitude": -75.7122
   },
@@ -12142,7 +12150,7 @@ noaa.stations = [
     "latitude": 42.87347,
     "name": "PAVILION 2, NY US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00306465",
+    "id": "USC00306465",
     "elevationUnit": "METERS",
     "longitude": -77.99243
   },
@@ -12153,7 +12161,7 @@ noaa.stations = [
     "latitude": 43.10105,
     "name": "PENDLETON 1 NE, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USC00306480",
+    "id": "USC00306480",
     "elevationUnit": "METERS",
     "longitude": -78.71387
   },
@@ -12164,7 +12172,7 @@ noaa.stations = [
     "latitude": 42.4647,
     "name": "PERRYSBURG, NY US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00306525",
+    "id": "USC00306525",
     "elevationUnit": "METERS",
     "longitude": -79.003
   },
@@ -12175,7 +12183,7 @@ noaa.stations = [
     "latitude": 43.64134,
     "name": "REDFIELD 8 N, NY US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00306988",
+    "id": "USC00306988",
     "elevationUnit": "METERS",
     "longitude": -75.88401
   },
@@ -12186,7 +12194,7 @@ noaa.stations = [
     "latitude": 42.7058,
     "name": "SILVER SPRINGS 3 N, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USC00307749",
+    "id": "USC00307749",
     "elevationUnit": "METERS",
     "longitude": -78.0937
   },
@@ -12197,7 +12205,7 @@ noaa.stations = [
     "latitude": 40.8656,
     "name": "UPTON COOP NWSFO NEW YORK, NY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00308721",
+    "id": "USC00308721",
     "elevationUnit": "METERS",
     "longitude": -72.8643
   },
@@ -12208,7 +12216,7 @@ noaa.stations = [
     "latitude": 42.05983,
     "name": "WHITESVILLE 1 N, NY US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00309425",
+    "id": "USC00309425",
     "elevationUnit": "METERS",
     "longitude": -77.75539
   },
@@ -12219,7 +12227,7 @@ noaa.stations = [
     "latitude": 42.8206,
     "name": "WYOMING 3 W, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USC00309593",
+    "id": "USC00309593",
     "elevationUnit": "METERS",
     "longitude": -78.1481
   },
@@ -12230,7 +12238,7 @@ noaa.stations = [
     "latitude": 36.18738,
     "name": "BEECH MOUNTAIN, NC US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00310645",
+    "id": "USC00310645",
     "elevationUnit": "METERS",
     "longitude": -81.87409
   },
@@ -12241,7 +12249,7 @@ noaa.stations = [
     "latitude": 35.92503,
     "name": "BURNSVILLE AG, NC US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00311248",
+    "id": "USC00311248",
     "elevationUnit": "METERS",
     "longitude": -82.27161
   },
@@ -12252,7 +12260,7 @@ noaa.stations = [
     "latitude": 35.5453,
     "name": "CANDLER 1 W, NC US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00311420",
+    "id": "USC00311420",
     "elevationUnit": "METERS",
     "longitude": -82.6987
   },
@@ -12263,7 +12271,7 @@ noaa.stations = [
     "latitude": 35.9495,
     "name": "CANE CREEK RESERVOIR, NC US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USC00311429",
+    "id": "USC00311429",
     "elevationUnit": "METERS",
     "longitude": -79.2386
   },
@@ -12274,7 +12282,7 @@ noaa.stations = [
     "latitude": 36.25251,
     "name": "FLAT SPRINGS 1 E, NC US",
     "datacoverage": 1,
-    "id": "GHCND:USC00313072",
+    "id": "USC00313072",
     "elevationUnit": "METERS",
     "longitude": -81.91352
   },
@@ -12285,7 +12293,7 @@ noaa.stations = [
     "latitude": 35.3125,
     "name": "FOREST CITY 8 W, NC US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00313152",
+    "id": "USC00313152",
     "elevationUnit": "METERS",
     "longitude": -81.9891
   },
@@ -12296,7 +12304,7 @@ noaa.stations = [
     "latitude": 34.7508,
     "name": "LAURINBURG, NC US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00314860",
+    "id": "USC00314860",
     "elevationUnit": "METERS",
     "longitude": -79.4664
   },
@@ -12307,7 +12315,7 @@ noaa.stations = [
     "latitude": 34.7763,
     "name": "NEWPORT MOREHEAD CITY WEATHER FORECAST OFFICE, NC US",
     "datacoverage": 1,
-    "id": "GHCND:USC00316096",
+    "id": "USC00316096",
     "elevationUnit": "METERS",
     "longitude": -76.877
   },
@@ -12318,7 +12326,7 @@ noaa.stations = [
     "latitude": 35.8723,
     "name": "PLYMOUTH 5 E, NC US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00316853",
+    "id": "USC00316853",
     "elevationUnit": "METERS",
     "longitude": -76.6592
   },
@@ -12329,7 +12337,7 @@ noaa.stations = [
     "latitude": 36.3796,
     "name": "REIDSVILLE 2 NW, NC US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00317202",
+    "id": "USC00317202",
     "elevationUnit": "METERS",
     "longitude": -79.6944
   },
@@ -12340,7 +12348,7 @@ noaa.stations = [
     "latitude": 35.52364,
     "name": "VALE AG 2 SW, NC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00318906",
+    "id": "USC00318906",
     "elevationUnit": "METERS",
     "longitude": -81.44435
   },
@@ -12351,7 +12359,7 @@ noaa.stations = [
     "latitude": 35.77449,
     "name": "WATERVILLE 2, NC US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00319123",
+    "id": "USC00319123",
     "elevationUnit": "METERS",
     "longitude": -83.09985
   },
@@ -12362,7 +12370,7 @@ noaa.stations = [
     "latitude": 34.1425,
     "name": "WILMINGTON 7 SE, NC US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00319461",
+    "id": "USC00319461",
     "elevationUnit": "METERS",
     "longitude": -77.8788
   },
@@ -12373,7 +12381,7 @@ noaa.stations = [
     "latitude": 36.1308,
     "name": "W. KERR SCOTT RESV., NC US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00319555",
+    "id": "USC00319555",
     "elevationUnit": "METERS",
     "longitude": -81.2275
   },
@@ -12384,7 +12392,7 @@ noaa.stations = [
     "latitude": 46.7716,
     "name": "BISMARCK WEATHER FORECAST OFFICE, ND US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00320818",
+    "id": "USC00320818",
     "elevationUnit": "METERS",
     "longitude": -100.7591
   },
@@ -12395,7 +12403,7 @@ noaa.stations = [
     "latitude": 41.58333,
     "name": "CHARDON, OH US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00331458",
+    "id": "USC00331458",
     "elevationUnit": "METERS",
     "longitude": -81.18333
   },
@@ -12406,7 +12414,7 @@ noaa.stations = [
     "latitude": 41.48333,
     "name": "ELMORE 5 E, OH US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00332585",
+    "id": "USC00332585",
     "elevationUnit": "METERS",
     "longitude": -83.21667
   },
@@ -12417,7 +12425,7 @@ noaa.stations = [
     "latitude": 41.0461,
     "name": "FINDLAY WPCC, OH US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USC00332791",
+    "id": "USC00332791",
     "elevationUnit": "METERS",
     "longitude": -83.6622
   },
@@ -12428,7 +12436,7 @@ noaa.stations = [
     "latitude": 39.73315,
     "name": "NEW LEXINGTON 2 NW, OH US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00335857",
+    "id": "USC00335857",
     "elevationUnit": "METERS",
     "longitude": -82.21559
   },
@@ -12439,7 +12447,7 @@ noaa.stations = [
     "latitude": 35.0259,
     "name": "HOBART, OK US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00344202",
+    "id": "USC00344202",
     "elevationUnit": "METERS",
     "longitude": -99.1058
   },
@@ -12450,7 +12458,7 @@ noaa.stations = [
     "latitude": 36.6228,
     "name": "LAVERNE 6 S, OK US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00345047",
+    "id": "USC00345047",
     "elevationUnit": "METERS",
     "longitude": -99.8954
   },
@@ -12461,7 +12469,7 @@ noaa.stations = [
     "latitude": 34.6368,
     "name": "MARLOW 1 WSW, OK US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00345581",
+    "id": "USC00345581",
     "elevationUnit": "METERS",
     "longitude": -97.9786
   },
@@ -12472,7 +12480,7 @@ noaa.stations = [
     "latitude": 35.3554,
     "name": "SHAWNEE, OK US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00348110",
+    "id": "USC00348110",
     "elevationUnit": "METERS",
     "longitude": -96.9202
   },
@@ -12483,7 +12491,7 @@ noaa.stations = [
     "latitude": 45.6354,
     "name": "BONNEVILLE DAM, OR US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USC00350897",
+    "id": "USC00350897",
     "elevationUnit": "METERS",
     "longitude": -121.9523
   },
@@ -12494,7 +12502,7 @@ noaa.stations = [
     "latitude": 43.1872,
     "name": "COQUILLE CITY, OR US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00351836",
+    "id": "USC00351836",
     "elevationUnit": "METERS",
     "longitude": -124.2025
   },
@@ -12505,7 +12513,7 @@ noaa.stations = [
     "latitude": 44.4139,
     "name": "FOSTER DAM, OR US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00353047",
+    "id": "USC00353047",
     "elevationUnit": "METERS",
     "longitude": -122.6728
   },
@@ -12516,7 +12524,7 @@ noaa.stations = [
     "latitude": 44.1013,
     "name": "LEABURG 1 SW, OR US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00354811",
+    "id": "USC00354811",
     "elevationUnit": "METERS",
     "longitude": -122.6886
   },
@@ -12527,7 +12535,7 @@ noaa.stations = [
     "latitude": 43.9139,
     "name": "LOOKOUT POINT DAM, OR US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00355050",
+    "id": "USC00355050",
     "elevationUnit": "METERS",
     "longitude": -122.76
   },
@@ -12538,7 +12546,7 @@ noaa.stations = [
     "latitude": 45.1783,
     "name": "MOLALLA 7 NE, OR US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00355681",
+    "id": "USC00355681",
     "elevationUnit": "METERS",
     "longitude": -122.5063
   },
@@ -12549,7 +12557,7 @@ noaa.stations = [
     "latitude": 42.7386,
     "name": "PORT ORFORD 5 E, OR US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00356795",
+    "id": "USC00356795",
     "elevationUnit": "METERS",
     "longitude": -124.4033
   },
@@ -12560,7 +12568,7 @@ noaa.stations = [
     "latitude": 42.9592,
     "name": "SUMMER LAKE 1 S, OR US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00358173",
+    "id": "USC00358173",
     "elevationUnit": "METERS",
     "longitude": -120.7897
   },
@@ -12571,7 +12579,7 @@ noaa.stations = [
     "latitude": 43.275,
     "name": "TOKETEE FALLS, OR US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00358536",
+    "id": "USC00358536",
     "elevationUnit": "METERS",
     "longitude": -122.4497
   },
@@ -12582,7 +12590,7 @@ noaa.stations = [
     "latitude": 44.33,
     "name": "YACHATS, OR US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00359588",
+    "id": "USC00359588",
     "elevationUnit": "METERS",
     "longitude": -124.0981
   },
@@ -12593,7 +12601,7 @@ noaa.stations = [
     "latitude": 39.93468,
     "name": "BIGLERVILLE, PA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00360656",
+    "id": "USC00360656",
     "elevationUnit": "METERS",
     "longitude": -77.25459
   },
@@ -12604,7 +12612,7 @@ noaa.stations = [
     "latitude": 41.1898,
     "name": "CANADENSIS EAST, PA US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00361207",
+    "id": "USC00361207",
     "elevationUnit": "METERS",
     "longitude": -75.2383
   },
@@ -12615,7 +12623,7 @@ noaa.stations = [
     "latitude": 41.9301,
     "name": "CHANDLERS VALLEY 1 SE, PA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USC00361362",
+    "id": "USC00361362",
     "elevationUnit": "METERS",
     "longitude": -79.297
   },
@@ -12626,7 +12634,7 @@ noaa.stations = [
     "latitude": 39.7994,
     "name": "CONFLUENCE 1 SW DAM, PA US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USC00361705",
+    "id": "USC00361705",
     "elevationUnit": "METERS",
     "longitude": -79.3665
   },
@@ -12637,7 +12645,7 @@ noaa.stations = [
     "latitude": 41.7391,
     "name": "COUDERSPORT 7 SE, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00361810",
+    "id": "USC00361810",
     "elevationUnit": "METERS",
     "longitude": -77.971
   },
@@ -12648,7 +12656,7 @@ noaa.stations = [
     "latitude": 41.7375,
     "name": "COVINGTON 2 WSW, PA US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00361833",
+    "id": "USC00361833",
     "elevationUnit": "METERS",
     "longitude": -77.1158
   },
@@ -12659,7 +12667,7 @@ noaa.stations = [
     "latitude": 39.8815,
     "name": "CASHTOWN 1 S, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00363226",
+    "id": "USC00363226",
     "elevationUnit": "METERS",
     "longitude": -77.3506
   },
@@ -12670,7 +12678,7 @@ noaa.stations = [
     "latitude": 40.9666,
     "name": "GRAMPIAN 1 E, PA US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00363417",
+    "id": "USC00363417",
     "elevationUnit": "METERS",
     "longitude": -78.5871
   },
@@ -12681,7 +12689,7 @@ noaa.stations = [
     "latitude": 40.04204,
     "name": "HIDDEN VALLEY, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00363928",
+    "id": "USC00363928",
     "elevationUnit": "METERS",
     "longitude": -79.25661
   },
@@ -12692,7 +12700,7 @@ noaa.stations = [
     "latitude": 40.5972,
     "name": "INDIANA 3 SE, PA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00364214",
+    "id": "USC00364214",
     "elevationUnit": "METERS",
     "longitude": -79.1186
   },
@@ -12703,7 +12711,7 @@ noaa.stations = [
     "latitude": 40.5319,
     "name": "MOON TOWNSHIP, PA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USC00365918",
+    "id": "USC00365918",
     "elevationUnit": "METERS",
     "longitude": -80.2172
   },
@@ -12714,7 +12722,7 @@ noaa.stations = [
     "latitude": 40.075,
     "name": "NEW HOLLAND 2 SE, PA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00366238",
+    "id": "USC00366238",
     "elevationUnit": "METERS",
     "longitude": -76.0717
   },
@@ -12725,7 +12733,7 @@ noaa.stations = [
     "latitude": 41.8162,
     "name": "SPRINGBORO 3 WNW, PA US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00368361",
+    "id": "USC00368361",
     "elevationUnit": "METERS",
     "longitude": -80.4249
   },
@@ -12736,7 +12744,7 @@ noaa.stations = [
     "latitude": 35.1108,
     "name": "CHESNEE 7 WSW, SC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00381625",
+    "id": "USC00381625",
     "elevationUnit": "METERS",
     "longitude": -81.9675
   },
@@ -12747,7 +12755,7 @@ noaa.stations = [
     "latitude": 34.11714,
     "name": "ELLIOTT 0.8 NW, SC US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00382802",
+    "id": "USC00382802",
     "elevationUnit": "METERS",
     "longitude": -80.16928
   },
@@ -12758,7 +12766,7 @@ noaa.stations = [
     "latitude": 34.6746,
     "name": "FOUNTAIN INN 2 SW, SC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00383145",
+    "id": "USC00383145",
     "elevationUnit": "METERS",
     "longitude": -82.2268
   },
@@ -12769,7 +12777,7 @@ noaa.stations = [
     "latitude": 34.2525,
     "name": "GREENWOOD 8 NE, SC US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00383758",
+    "id": "USC00383758",
     "elevationUnit": "METERS",
     "longitude": -82.03486
   },
@@ -12780,7 +12788,7 @@ noaa.stations = [
     "latitude": 34.3949,
     "name": "HARTSVILLE, SC US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00383990",
+    "id": "USC00383990",
     "elevationUnit": "METERS",
     "longitude": -80.0486
   },
@@ -12791,7 +12799,7 @@ noaa.stations = [
     "latitude": 34.16875,
     "name": "LAKE GREENWOOD, SC US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00384896",
+    "id": "USC00384896",
     "elevationUnit": "METERS",
     "longitude": -81.9029
   },
@@ -12802,7 +12810,7 @@ noaa.stations = [
     "latitude": 34.6111,
     "name": "SANDY SPRINGS 2 NE, SC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00387687",
+    "id": "USC00387687",
     "elevationUnit": "METERS",
     "longitude": -82.727
   },
@@ -12813,7 +12821,7 @@ noaa.stations = [
     "latitude": 34.9077,
     "name": "SPARTANBURG 3 SSE, SC US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00388188",
+    "id": "USC00388188",
     "elevationUnit": "METERS",
     "longitude": -81.9138
   },
@@ -12824,7 +12832,7 @@ noaa.stations = [
     "latitude": 35.02016,
     "name": "TABLE ROCK, SC US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00388472",
+    "id": "USC00388472",
     "elevationUnit": "METERS",
     "longitude": -82.69282
   },
@@ -12835,7 +12843,7 @@ noaa.stations = [
     "latitude": 44.07994,
     "name": "GANN VALLEY 3 NNE, SD US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00393211",
+    "id": "USC00393211",
     "elevationUnit": "METERS",
     "longitude": -98.97307
   },
@@ -12846,7 +12854,7 @@ noaa.stations = [
     "latitude": 45.22668,
     "name": "MILBANK, SD US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00395531",
+    "id": "USC00395531",
     "elevationUnit": "METERS",
     "longitude": -96.62339
   },
@@ -12857,7 +12865,7 @@ noaa.stations = [
     "latitude": 44.0727,
     "name": "RAPID CITY WEATHER FORECAST OFFICE, SD US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00396948",
+    "id": "USC00396948",
     "elevationUnit": "METERS",
     "longitude": -103.2108
   },
@@ -12868,7 +12876,7 @@ noaa.stations = [
     "latitude": 35.3684,
     "name": "COALMONT, TN US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00401887",
+    "id": "USC00401887",
     "elevationUnit": "METERS",
     "longitude": -85.7014
   },
@@ -12879,7 +12887,7 @@ noaa.stations = [
     "latitude": 35.5952,
     "name": "DECATURVILLE, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USC00402390",
+    "id": "USC00402390",
     "elevationUnit": "METERS",
     "longitude": -88.1175
   },
@@ -12890,7 +12898,7 @@ noaa.stations = [
     "latitude": 36.1682,
     "name": "MORRISTOWN WEATHER FORECAST OFFICE, TN US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00406272",
+    "id": "USC00406272",
     "elevationUnit": "METERS",
     "longitude": -83.4027
   },
@@ -12901,7 +12909,7 @@ noaa.stations = [
     "latitude": 35.8375,
     "name": "WOODBURY 1 WNW, TN US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00409866",
+    "id": "USC00409866",
     "elevationUnit": "METERS",
     "longitude": -86.0894
   },
@@ -12912,7 +12920,7 @@ noaa.stations = [
     "latitude": 30.3703,
     "name": "ALPINE 7 NW, TX US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00410176",
+    "id": "USC00410176",
     "elevationUnit": "METERS",
     "longitude": -103.7808
   },
@@ -12923,7 +12931,7 @@ noaa.stations = [
     "latitude": 34.43861,
     "name": "CHILDRESS 2, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USC00411694",
+    "id": "USC00411694",
     "elevationUnit": "METERS",
     "longitude": -100.21833
   },
@@ -12934,7 +12942,7 @@ noaa.stations = [
     "latitude": 28.71556,
     "name": "COLETO CREEK RESERVOIR, TX US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USC00411880",
+    "id": "USC00411880",
     "elevationUnit": "METERS",
     "longitude": -97.17417
   },
@@ -12945,7 +12953,7 @@ noaa.stations = [
     "latitude": 27.7793,
     "name": "CORPUS CHRISTI NWS, TX US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00412011",
+    "id": "USC00412011",
     "elevationUnit": "METERS",
     "longitude": -97.5055
   },
@@ -12956,7 +12964,7 @@ noaa.stations = [
     "latitude": 32.7056,
     "name": "DIANA 2 W, TX US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USC00412446",
+    "id": "USC00412446",
     "elevationUnit": "METERS",
     "longitude": -94.7888
   },
@@ -12967,7 +12975,7 @@ noaa.stations = [
     "latitude": 30.2195,
     "name": "DRIPPING SPRINGS 6 E, TX US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00412585",
+    "id": "USC00412585",
     "elevationUnit": "METERS",
     "longitude": -97.9879
   },
@@ -12978,7 +12986,7 @@ noaa.stations = [
     "latitude": 33.1924,
     "name": "FRISCO, TX US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00413370",
+    "id": "USC00413370",
     "elevationUnit": "METERS",
     "longitude": -96.793
   },
@@ -12989,7 +12997,7 @@ noaa.stations = [
     "latitude": 32.5111,
     "name": "HALLSVILLE 1 W, TX US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00413877",
+    "id": "USC00413877",
     "elevationUnit": "METERS",
     "longitude": -94.5889
   },
@@ -13000,7 +13008,7 @@ noaa.stations = [
     "latitude": 30.074,
     "name": "KERRVILLE 3 NNE, TX US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USC00414782",
+    "id": "USC00414782",
     "elevationUnit": "METERS",
     "longitude": -99.1095
   },
@@ -13011,7 +13019,7 @@ noaa.stations = [
     "latitude": 33.06417,
     "name": "LAKE ALAN HENRY, TX US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00414967",
+    "id": "USC00414967",
     "elevationUnit": "METERS",
     "longitude": -101.04889
   },
@@ -13022,7 +13030,7 @@ noaa.stations = [
     "latitude": 33.52806,
     "name": "LUBBOCK WEATHER FORECAST OFFICE, TX US",
     "datacoverage": 1,
-    "id": "GHCND:USC00415409",
+    "id": "USC00415409",
     "elevationUnit": "METERS",
     "longitude": -101.87611
   },
@@ -13033,7 +13041,7 @@ noaa.stations = [
     "latitude": 30.2502,
     "name": "LUMBERTON, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USC00415435",
+    "id": "USC00415435",
     "elevationUnit": "METERS",
     "longitude": -94.1786
   },
@@ -13044,7 +13052,7 @@ noaa.stations = [
     "latitude": 33.45,
     "name": "MUNDAY 1 W, TX US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00416147",
+    "id": "USC00416147",
     "elevationUnit": "METERS",
     "longitude": -99.63639
   },
@@ -13055,7 +13063,7 @@ noaa.stations = [
     "latitude": 29.7047,
     "name": "NEW BRAUNFELS WEATHER FORECAST OFFICE, TX US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00416273",
+    "id": "USC00416273",
     "elevationUnit": "METERS",
     "longitude": -98.0288
   },
@@ -13066,7 +13074,7 @@ noaa.stations = [
     "latitude": 35.5544,
     "name": "PAMPA NUMBER 2, TX US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00416776",
+    "id": "USC00416776",
     "elevationUnit": "METERS",
     "longitude": -100.9736
   },
@@ -13077,7 +13085,7 @@ noaa.stations = [
     "latitude": 34.1981,
     "name": "PLAINVIEW WATER PRODUCTION, TX US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00417081",
+    "id": "USC00417081",
     "elevationUnit": "METERS",
     "longitude": -101.746
   },
@@ -13088,7 +13096,7 @@ noaa.stations = [
     "latitude": 32.36644,
     "name": "PUTNAM, TX US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00417327",
+    "id": "USC00417327",
     "elevationUnit": "METERS",
     "longitude": -99.19245
   },
@@ -13099,7 +13107,7 @@ noaa.stations = [
     "latitude": 35.7048,
     "name": "SANFORD DAM, TX US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00418040",
+    "id": "USC00418040",
     "elevationUnit": "METERS",
     "longitude": -101.5492
   },
@@ -13110,7 +13118,7 @@ noaa.stations = [
     "latitude": 29.552,
     "name": "SEGUIN 1 SSW, TX US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00418187",
+    "id": "USC00418187",
     "elevationUnit": "METERS",
     "longitude": -97.9704
   },
@@ -13121,7 +13129,7 @@ noaa.stations = [
     "latitude": 30.5844,
     "name": "TAYLOR 1 NW, TX US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USC00418862",
+    "id": "USC00418862",
     "elevationUnit": "METERS",
     "longitude": -97.4156
   },
@@ -13132,7 +13140,7 @@ noaa.stations = [
     "latitude": 33.4368,
     "name": "TEXARKANA, TX US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USC00418942",
+    "id": "USC00418942",
     "elevationUnit": "METERS",
     "longitude": -94.0773
   },
@@ -13143,7 +13151,7 @@ noaa.stations = [
     "latitude": 32.3066,
     "name": "TYLER, TX US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00419207",
+    "id": "USC00419207",
     "elevationUnit": "METERS",
     "longitude": -95.2969
   },
@@ -13154,7 +13162,7 @@ noaa.stations = [
     "latitude": 34.6521,
     "name": "VIGO PARK, TX US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USC00419380",
+    "id": "USC00419380",
     "elevationUnit": "METERS",
     "longitude": -101.497
   },
@@ -13165,7 +13173,7 @@ noaa.stations = [
     "latitude": 33.45611,
     "name": "WHITE RIVER RESERVOIR, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USC00419711",
+    "id": "USC00419711",
     "elevationUnit": "METERS",
     "longitude": -101.0925
   },
@@ -13176,7 +13184,7 @@ noaa.stations = [
     "latitude": 40.891,
     "name": "BOUNTIFUL BENCH, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USC00420819",
+    "id": "USC00420819",
     "elevationUnit": "METERS",
     "longitude": -111.8504
   },
@@ -13187,7 +13195,7 @@ noaa.stations = [
     "latitude": 39.27287,
     "name": "MANTI RADIO KMTI, UT US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USC00425406",
+    "id": "USC00425406",
     "elevationUnit": "METERS",
     "longitude": -111.65815
   },
@@ -13198,7 +13206,7 @@ noaa.stations = [
     "latitude": 37.8676,
     "name": "MONTICELLO NUMBER 2, UT US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00425807",
+    "id": "USC00425807",
     "elevationUnit": "METERS",
     "longitude": -109.3513
   },
@@ -13209,7 +13217,7 @@ noaa.stations = [
     "latitude": 41.2459,
     "name": "OGDEN NE BENCH, UT US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00426405",
+    "id": "USC00426405",
     "elevationUnit": "METERS",
     "longitude": -111.9371
   },
@@ -13220,7 +13228,7 @@ noaa.stations = [
     "latitude": 43.6027,
     "name": "NORTH HARTLAND LAKE, VT US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USC00435768",
+    "id": "USC00435768",
     "elevationUnit": "METERS",
     "longitude": -72.3621
   },
@@ -13231,7 +13239,7 @@ noaa.stations = [
     "latitude": 44.6122,
     "name": "SUTTON, VT US",
     "datacoverage": 0.996,
-    "id": "GHCND:USC00438169",
+    "id": "USC00438169",
     "elevationUnit": "METERS",
     "longitude": -72.0481
   },
@@ -13242,7 +13250,7 @@ noaa.stations = [
     "latitude": 36.94,
     "name": "ALBERTA 5 N, VA US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00440079",
+    "id": "USC00440079",
     "elevationUnit": "METERS",
     "longitude": -77.8981
   },
@@ -13253,7 +13261,7 @@ noaa.stations = [
     "latitude": 37.1278,
     "name": "CHRISTIANSBURG, VA US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USC00441692",
+    "id": "USC00441692",
     "elevationUnit": "METERS",
     "longitude": -80.4033
   },
@@ -13264,7 +13272,7 @@ noaa.stations = [
     "latitude": 37.14556,
     "name": "CLINTWOOD 1 W, VA US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USC00441825",
+    "id": "USC00441825",
     "elevationUnit": "METERS",
     "longitude": -82.49078
   },
@@ -13275,7 +13283,7 @@ noaa.stations = [
     "latitude": 36.67212,
     "name": "ELK CREEK 4 SSW, VA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00442730",
+    "id": "USC00442730",
     "elevationUnit": "METERS",
     "longitude": -81.19455
   },
@@ -13286,7 +13294,7 @@ noaa.stations = [
     "latitude": 37.9458,
     "name": "GATHRIGHT DAM, VA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00443310",
+    "id": "USC00443310",
     "elevationUnit": "METERS",
     "longitude": -79.9542
   },
@@ -13297,7 +13305,7 @@ noaa.stations = [
     "latitude": 37.61838,
     "name": "GLASGOW 1 SE, VA US",
     "datacoverage": 1,
-    "id": "GHCND:USC00443375",
+    "id": "USC00443375",
     "elevationUnit": "METERS",
     "longitude": -79.43575
   },
@@ -13308,7 +13316,7 @@ noaa.stations = [
     "latitude": 37.12587,
     "name": "HUDDLESTON 4 SW, VA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00444148",
+    "id": "USC00444148",
     "elevationUnit": "METERS",
     "longitude": -79.5251
   },
@@ -13319,7 +13327,7 @@ noaa.stations = [
     "latitude": 36.9028,
     "name": "LEBANON, VA US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00444777",
+    "id": "USC00444777",
     "elevationUnit": "METERS",
     "longitude": -82.0384
   },
@@ -13330,7 +13338,7 @@ noaa.stations = [
     "latitude": 37.01529,
     "name": "NORA 4 SSE, VA US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USC00446125",
+    "id": "USC00446125",
     "elevationUnit": "METERS",
     "longitude": -82.31981
   },
@@ -13341,7 +13349,7 @@ noaa.stations = [
     "latitude": 38.2323,
     "name": "PIEDMONT RESEARCH STATION, VA US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00446712",
+    "id": "USC00446712",
     "elevationUnit": "METERS",
     "longitude": -78.1202
   },
@@ -13352,7 +13360,7 @@ noaa.stations = [
     "latitude": 37.5658,
     "name": "WEST POINT 2 NW, VA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00449025",
+    "id": "USC00449025",
     "elevationUnit": "METERS",
     "longitude": -76.8
   },
@@ -13363,7 +13371,7 @@ noaa.stations = [
     "latitude": 47.3705,
     "name": "CUSHMAN POWERHOUSE NUMBER 2, WA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00451939",
+    "id": "USC00451939",
     "elevationUnit": "METERS",
     "longitude": -123.16
   },
@@ -13374,7 +13382,7 @@ noaa.stations = [
     "latitude": 47.1455,
     "name": "MATLOCK 8 S, WA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USC00455086",
+    "id": "USC00455086",
     "elevationUnit": "METERS",
     "longitude": -123.4005
   },
@@ -13385,7 +13393,7 @@ noaa.stations = [
     "latitude": 47.6812,
     "name": "SPOKANE WEATHER FORECAST OFFICE, WA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00457941",
+    "id": "USC00457941",
     "elevationUnit": "METERS",
     "longitude": -117.6267
   },
@@ -13396,7 +13404,7 @@ noaa.stations = [
     "latitude": 37.64128,
     "name": "BLUESTONE LAKE, WV US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USC00460939",
+    "id": "USC00460939",
     "elevationUnit": "METERS",
     "longitude": -80.88331
   },
@@ -13407,7 +13415,7 @@ noaa.stations = [
     "latitude": 39.098,
     "name": "DAVIS 3 SE, WV US",
     "datacoverage": 1,
-    "id": "GHCND:USC00462211",
+    "id": "USC00462211",
     "elevationUnit": "METERS",
     "longitude": -79.4322
   },
@@ -13418,7 +13426,7 @@ noaa.stations = [
     "latitude": 37.53756,
     "name": "GREENVILLE 1 SE, WV US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00463671",
+    "id": "USC00463671",
     "elevationUnit": "METERS",
     "longitude": -80.66331
   },
@@ -13429,7 +13437,7 @@ noaa.stations = [
     "latitude": 39.42127,
     "name": "KEYSER 2 SSW, WV US",
     "datacoverage": 1,
-    "id": "GHCND:USC00464840",
+    "id": "USC00464840",
     "elevationUnit": "METERS",
     "longitude": -79.00513
   },
@@ -13440,7 +13448,7 @@ noaa.stations = [
     "latitude": 40.1478,
     "name": "PIKE ISLAND LOCK AND DAM, WV US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00467018",
+    "id": "USC00467018",
     "elevationUnit": "METERS",
     "longitude": -80.7014
   },
@@ -13451,7 +13459,7 @@ noaa.stations = [
     "latitude": 38.98173,
     "name": "SANDYVILLE 9 NE, WV US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00467918",
+    "id": "USC00467918",
     "elevationUnit": "METERS",
     "longitude": -81.56597
   },
@@ -13462,7 +13470,7 @@ noaa.stations = [
     "latitude": 43.42278,
     "name": "ALLENTON, WI US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USC00470080",
+    "id": "USC00470080",
     "elevationUnit": "METERS",
     "longitude": -88.35194
   },
@@ -13473,7 +13481,7 @@ noaa.stations = [
     "latitude": 43.786,
     "name": "CASHTON 3 NNW, WI US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USC00471287",
+    "id": "USC00471287",
     "elevationUnit": "METERS",
     "longitude": -90.7952
   },
@@ -13484,7 +13492,7 @@ noaa.stations = [
     "latitude": 46.16944,
     "name": "CLAM LAKE 4 W, WI US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USC00471604",
+    "id": "USC00471604",
     "elevationUnit": "METERS",
     "longitude": -90.98083
   },
@@ -13495,7 +13503,7 @@ noaa.stations = [
     "latitude": 43.7186,
     "name": "CITY OF SHEBOYGAN WWTP, WI US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USC00471605",
+    "id": "USC00471605",
     "elevationUnit": "METERS",
     "longitude": -87.7088
   },
@@ -13506,7 +13514,7 @@ noaa.stations = [
     "latitude": 42.6344,
     "name": "WALWORTH CO METRO SEWERAGE DIST, WI US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USC00472051",
+    "id": "USC00472051",
     "elevationUnit": "METERS",
     "longitude": -88.6628
   },
@@ -13517,7 +13525,7 @@ noaa.stations = [
     "latitude": 44.3514,
     "name": "DENMARK WWTP, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USC00472055",
+    "id": "USC00472055",
     "elevationUnit": "METERS",
     "longitude": -87.812
   },
@@ -13528,7 +13536,7 @@ noaa.stations = [
     "latitude": 44.7878,
     "name": "EAU CLAIRE 3 SW, WI US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00472425",
+    "id": "USC00472425",
     "elevationUnit": "METERS",
     "longitude": -91.5165
   },
@@ -13539,7 +13547,7 @@ noaa.stations = [
     "latitude": 45.17079,
     "name": "EPHRAIM 1NE WWTP, WI US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USC00472626",
+    "id": "USC00472626",
     "elevationUnit": "METERS",
     "longitude": -87.15377
   },
@@ -13550,7 +13558,7 @@ noaa.stations = [
     "latitude": 45.93364,
     "name": "FLORENCE, WI US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USC00472826",
+    "id": "USC00472826",
     "elevationUnit": "METERS",
     "longitude": -88.25828
   },
@@ -13561,7 +13569,7 @@ noaa.stations = [
     "latitude": 44.6998,
     "name": "FORESTVILLE 4E, WI US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USC00472851",
+    "id": "USC00472851",
     "elevationUnit": "METERS",
     "longitude": -87.39693
   },
@@ -13572,7 +13580,7 @@ noaa.stations = [
     "latitude": 43.2388,
     "name": "GERMANTOWN, WI US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USC00473058",
+    "id": "USC00473058",
     "elevationUnit": "METERS",
     "longitude": -88.1222
   },
@@ -13583,7 +13591,7 @@ noaa.stations = [
     "latitude": 43.308,
     "name": "GRAFTON WWTP, WI US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USC00473198",
+    "id": "USC00473198",
     "elevationUnit": "METERS",
     "longitude": -87.9552
   },
@@ -13594,7 +13602,7 @@ noaa.stations = [
     "latitude": 43.6341,
     "name": "HILLSBORO 2 SW, WI US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USC00473650",
+    "id": "USC00473650",
     "elevationUnit": "METERS",
     "longitude": -90.3792
   },
@@ -13605,7 +13613,7 @@ noaa.stations = [
     "latitude": 43.4406,
     "name": "HORICON, WI US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00473756",
+    "id": "USC00473756",
     "elevationUnit": "METERS",
     "longitude": -88.6325
   },
@@ -13616,7 +13624,7 @@ noaa.stations = [
     "latitude": 43.3194,
     "name": "JACKSON, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USC00473930",
+    "id": "USC00473930",
     "elevationUnit": "METERS",
     "longitude": -88.168
   },
@@ -13627,7 +13635,7 @@ noaa.stations = [
     "latitude": 45.08272,
     "name": "JIM FALLS 3 NW, WI US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USC00474027",
+    "id": "USC00474027",
     "elevationUnit": "METERS",
     "longitude": -91.33133
   },
@@ -13638,7 +13646,7 @@ noaa.stations = [
     "latitude": 42.9944,
     "name": "JEFFERSON WWTP, WI US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USC00474108",
+    "id": "USC00474108",
     "elevationUnit": "METERS",
     "longitude": -88.8041
   },
@@ -13649,7 +13657,7 @@ noaa.stations = [
     "latitude": 43.867,
     "name": "LA CROSSE 4 NNW, WI US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USC00474366",
+    "id": "USC00474366",
     "elevationUnit": "METERS",
     "longitude": -91.2725
   },
@@ -13660,7 +13668,7 @@ noaa.stations = [
     "latitude": 43.3216,
     "name": "LODI, WI US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00474790",
+    "id": "USC00474790",
     "elevationUnit": "METERS",
     "longitude": -89.5311
   },
@@ -13671,7 +13679,7 @@ noaa.stations = [
     "latitude": 45.5733,
     "name": "LUCK, WI US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USC00474894",
+    "id": "USC00474894",
     "elevationUnit": "METERS",
     "longitude": -92.4852
   },
@@ -13682,7 +13690,7 @@ noaa.stations = [
     "latitude": 43.7028,
     "name": "MARKESAN, WI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00475096",
+    "id": "USC00475096",
     "elevationUnit": "METERS",
     "longitude": -88.9989
   },
@@ -13693,7 +13701,7 @@ noaa.stations = [
     "latitude": 44.64113,
     "name": "MARSHFIELD EXPERIMENTAL FARM, WI US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USC00475120",
+    "id": "USC00475120",
     "elevationUnit": "METERS",
     "longitude": -90.13332
   },
@@ -13704,7 +13712,7 @@ noaa.stations = [
     "latitude": 42.7797,
     "name": "MILTON, WI US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USC00475473",
+    "id": "USC00475473",
     "elevationUnit": "METERS",
     "longitude": -88.9441
   },
@@ -13715,7 +13723,7 @@ noaa.stations = [
     "latitude": 45.8865,
     "name": "MINOCQUA, WI US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USC00475516",
+    "id": "USC00475516",
     "elevationUnit": "METERS",
     "longitude": -89.7322
   },
@@ -13726,7 +13734,7 @@ noaa.stations = [
     "latitude": 42.988,
     "name": "MOUNT HOREB, WI US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00475674",
+    "id": "USC00475674",
     "elevationUnit": "METERS",
     "longitude": -89.7419
   },
@@ -13737,7 +13745,7 @@ noaa.stations = [
     "latitude": 42.53194,
     "name": "PELL LAKE, WI US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00476420",
+    "id": "USC00476420",
     "elevationUnit": "METERS",
     "longitude": -88.3325
   },
@@ -13748,7 +13756,7 @@ noaa.stations = [
     "latitude": 44.6774,
     "name": "PULASKI WWTP, WI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00476874",
+    "id": "USC00476874",
     "elevationUnit": "METERS",
     "longitude": -88.2275
   },
@@ -13759,7 +13767,7 @@ noaa.stations = [
     "latitude": 45.6222,
     "name": "RHINELANDER WJFW TV 12, WI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USC00477118",
+    "id": "USC00477118",
     "elevationUnit": "METERS",
     "longitude": -89.41
   },
@@ -13770,7 +13778,7 @@ noaa.stations = [
     "latitude": 44.9707,
     "name": "ROBERTS WWTP, WI US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USC00477230",
+    "id": "USC00477230",
     "elevationUnit": "METERS",
     "longitude": -92.562
   },
@@ -13781,7 +13789,7 @@ noaa.stations = [
     "latitude": 42.7269,
     "name": "ROCHESTER WWTP, WI US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USC00477314",
+    "id": "USC00477314",
     "elevationUnit": "METERS",
     "longitude": -88.2258
   },
@@ -13792,7 +13800,7 @@ noaa.stations = [
     "latitude": 45.4117,
     "name": "ST. CROIX FALLS, WI US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USC00477464",
+    "id": "USC00477464",
     "elevationUnit": "METERS",
     "longitude": -92.6466
   },
@@ -13803,7 +13811,7 @@ noaa.stations = [
     "latitude": 43.375,
     "name": "SAUKVILLE WWTP, WI US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00477581",
+    "id": "USC00477581",
     "elevationUnit": "METERS",
     "longitude": -87.94028
   },
@@ -13814,7 +13822,7 @@ noaa.stations = [
     "latitude": 43.33389,
     "name": "SLINGER WWTP, WI US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00477796",
+    "id": "USC00477796",
     "elevationUnit": "METERS",
     "longitude": -88.29778
   },
@@ -13825,7 +13833,7 @@ noaa.stations = [
     "latitude": 42.9011,
     "name": "SOUTH MILWAUKEE WWTP, WI US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00477964",
+    "id": "USC00477964",
     "elevationUnit": "METERS",
     "longitude": -87.8494
   },
@@ -13836,7 +13844,7 @@ noaa.stations = [
     "latitude": 44.8799,
     "name": "STURGEON BAY EXPERIMENTAL FARM, WI US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00478267",
+    "id": "USC00478267",
     "elevationUnit": "METERS",
     "longitude": -87.33578
   },
@@ -13847,7 +13855,7 @@ noaa.stations = [
     "latitude": 44.9958,
     "name": "SURING, WI US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00478376",
+    "id": "USC00478376",
     "elevationUnit": "METERS",
     "longitude": -88.3786
   },
@@ -13858,7 +13866,7 @@ noaa.stations = [
     "latitude": 43.4719,
     "name": "TOWN OF WESTFORD, WI US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USC00478540",
+    "id": "USC00478540",
     "elevationUnit": "METERS",
     "longitude": -88.8824
   },
@@ -13869,7 +13877,7 @@ noaa.stations = [
     "latitude": 43.1877,
     "name": "WATERLOO, WI US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USC00478910",
+    "id": "USC00478910",
     "elevationUnit": "METERS",
     "longitude": -88.9844
   },
@@ -13880,7 +13888,7 @@ noaa.stations = [
     "latitude": 44.0411,
     "name": "WAUTOMA SILVER LAKE SAN DIST, WI US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USC00478987",
+    "id": "USC00478987",
     "elevationUnit": "METERS",
     "longitude": -89.2433
   },
@@ -13891,7 +13899,7 @@ noaa.stations = [
     "latitude": 42.71554,
     "name": "BOULDER REARING STATION, WY US",
     "datacoverage": 0.998,
-    "id": "GHCND:USC00480951",
+    "id": "USC00480951",
     "elevationUnit": "METERS",
     "longitude": -109.68956
   },
@@ -13902,7 +13910,7 @@ noaa.stations = [
     "latitude": 42.92815,
     "name": "DANIEL FISH HATCHERY, WY US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USC00482242",
+    "id": "USC00482242",
     "elevationUnit": "METERS",
     "longitude": -110.12729
   },
@@ -13913,7 +13921,7 @@ noaa.stations = [
     "latitude": 41.2847,
     "name": "LARAMIE 4 SE, WY US",
     "datacoverage": 0.997,
-    "id": "GHCND:USC00485417",
+    "id": "USC00485417",
     "elevationUnit": "METERS",
     "longitude": -105.5319
   },
@@ -13924,7 +13932,7 @@ noaa.stations = [
     "latitude": 70.3463,
     "name": "ALPINE, AK US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USC00500235",
+    "id": "USC00500235",
     "elevationUnit": "METERS",
     "longitude": -150.9282
   },
@@ -13935,7 +13943,7 @@ noaa.stations = [
     "latitude": 61.1561,
     "name": "ANCHORAGE FORECAST OFFICE, AK US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USC00500275",
+    "id": "USC00500275",
     "elevationUnit": "METERS",
     "longitude": -149.9847
   },
@@ -13946,7 +13954,7 @@ noaa.stations = [
     "latitude": 64.1539,
     "name": "WHITESTONE FARMS, AK US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USC00509793",
+    "id": "USC00509793",
     "elevationUnit": "METERS",
     "longitude": -145.8894
   },
@@ -13957,7 +13965,7 @@ noaa.stations = [
     "latitude": 33.8417,
     "name": "ALPINE ARIZONA, AZ US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USR0000AALP",
+    "id": "USR0000AALP",
     "elevationUnit": "METERS",
     "longitude": -109.1222
   },
@@ -13968,7 +13976,7 @@ noaa.stations = [
     "latitude": 36.9306,
     "name": "BUCKSKIN MOUNTAIN ARIZONA, AZ US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000ABUC",
+    "id": "USR0000ABUC",
     "elevationUnit": "METERS",
     "longitude": -112.1997
   },
@@ -13979,7 +13987,7 @@ noaa.stations = [
     "latitude": 62.1242,
     "name": "CHICKEN CREEK ALASKA, AK US",
     "datacoverage": 0.998,
-    "id": "GHCND:USR0000ACHC",
+    "id": "USR0000ACHC",
     "elevationUnit": "METERS",
     "longitude": -141.8453
   },
@@ -13990,7 +13998,7 @@ noaa.stations = [
     "latitude": 65.3139,
     "name": "COAL CREEK ALASKA, AK US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USR0000ACOA",
+    "id": "USR0000ACOA",
     "elevationUnit": "METERS",
     "longitude": -143.1322
   },
@@ -14001,7 +14009,7 @@ noaa.stations = [
     "latitude": 63.2675,
     "name": "DUNKLE HILLS ALASKA, AK US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USR0000ADUN",
+    "id": "USR0000ADUN",
     "elevationUnit": "METERS",
     "longitude": -149.5392
   },
@@ -14012,7 +14020,7 @@ noaa.stations = [
     "latitude": 36.7939,
     "name": "FOUR SPRINGS ARIZONA, AZ US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000AFOU",
+    "id": "USR0000AFOU",
     "elevationUnit": "METERS",
     "longitude": -112.0422
   },
@@ -14023,7 +14031,7 @@ noaa.stations = [
     "latitude": 36.7044,
     "name": "GUNSIGHT ARIZONA, AZ US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USR0000AGUN",
+    "id": "USR0000AGUN",
     "elevationUnit": "METERS",
     "longitude": -112.5833
   },
@@ -14034,7 +14042,7 @@ noaa.stations = [
     "latitude": 32.8819,
     "name": "GUTHRIE ARIZONA, AZ US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USR0000AGUT",
+    "id": "USR0000AGUT",
     "elevationUnit": "METERS",
     "longitude": -109.3092
   },
@@ -14045,7 +14053,7 @@ noaa.stations = [
     "latitude": 34.7872,
     "name": "HAVASU ARIZONA, AZ US",
     "datacoverage": 0.998,
-    "id": "GHCND:USR0000AHAV",
+    "id": "USR0000AHAV",
     "elevationUnit": "METERS",
     "longitude": -114.5617
   },
@@ -14056,7 +14064,7 @@ noaa.stations = [
     "latitude": 36.6992,
     "name": "HURRICANE ARIZONA, AZ US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000AHUR",
+    "id": "USR0000AHUR",
     "elevationUnit": "METERS",
     "longitude": -113.2072
   },
@@ -14067,7 +14075,7 @@ noaa.stations = [
     "latitude": 32.4,
     "name": "MULESHOE RANCH ARIZONA, AZ US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USR0000AMUL",
+    "id": "USR0000AMUL",
     "elevationUnit": "METERS",
     "longitude": -110.2708
   },
@@ -14078,7 +14086,7 @@ noaa.stations = [
     "latitude": 35.6147,
     "name": "MUSIC MOUNTAIN ARIZONA, AZ US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USR0000AMUS",
+    "id": "USR0000AMUS",
     "elevationUnit": "METERS",
     "longitude": -113.7939
   },
@@ -14089,7 +14097,7 @@ noaa.stations = [
     "latitude": 36.7278,
     "name": "PARIA POINT ARIZONA, AZ US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000APAR",
+    "id": "USR0000APAR",
     "elevationUnit": "METERS",
     "longitude": -111.8219
   },
@@ -14100,7 +14108,7 @@ noaa.stations = [
     "latitude": 40.5983,
     "name": "ARAGONITE UTAH, UT US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000ARAG",
+    "id": "USR0000ARAG",
     "elevationUnit": "METERS",
     "longitude": -113.0217
   },
@@ -14111,7 +14119,7 @@ noaa.stations = [
     "latitude": 60.4967,
     "name": "SOLDOTNA AKKKS ALASKA, AK US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000ASAK",
+    "id": "USR0000ASAK",
     "elevationUnit": "METERS",
     "longitude": -151.0142
   },
@@ -14122,7 +14130,7 @@ noaa.stations = [
     "latitude": 31.6908,
     "name": "SASABE ARIZONA, AZ US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000ASAS",
+    "id": "USR0000ASAS",
     "elevationUnit": "METERS",
     "longitude": -111.45
   },
@@ -14133,7 +14141,7 @@ noaa.stations = [
     "latitude": 33.6472,
     "name": "SHOAL CREEK ALABAMA, AL US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000ASHK",
+    "id": "USR0000ASHK",
     "elevationUnit": "METERS",
     "longitude": -85.6344
   },
@@ -14144,7 +14152,7 @@ noaa.stations = [
     "latitude": 34.1158,
     "name": "SMITH PEAK ARIZONA, AZ US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000ASMI",
+    "id": "USR0000ASMI",
     "elevationUnit": "METERS",
     "longitude": -113.3472
   },
@@ -14155,7 +14163,7 @@ noaa.stations = [
     "latitude": 34.1667,
     "name": "STANTON ARIZONA, AZ US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USR0000ASTA",
+    "id": "USR0000ASTA",
     "elevationUnit": "METERS",
     "longitude": -112.7333
   },
@@ -14166,7 +14174,7 @@ noaa.stations = [
     "latitude": 34.1953,
     "name": "SUNSET POINT ARIZONA, AZ US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000ASUN",
+    "id": "USR0000ASUN",
     "elevationUnit": "METERS",
     "longitude": -112.1417
   },
@@ -14177,7 +14185,7 @@ noaa.stations = [
     "latitude": 34.5539,
     "name": "VERDE ARIZONA, AZ US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000AVER",
+    "id": "USR0000AVER",
     "elevationUnit": "METERS",
     "longitude": -111.8492
   },
@@ -14188,7 +14196,7 @@ noaa.stations = [
     "latitude": 38.2244,
     "name": "BIG INDIAN VALLEY LASAL 6 S U, UT US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000BIGI",
+    "id": "USR0000BIGI",
     "elevationUnit": "METERS",
     "longitude": -109.2783
   },
@@ -14199,7 +14207,7 @@ noaa.stations = [
     "latitude": 38.3083,
     "name": "BRIMSTONE RES. MILFORD 20 WSW, UT US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000BRIM",
+    "id": "USR0000BRIM",
     "elevationUnit": "METERS",
     "longitude": -113.3847
   },
@@ -14210,7 +14218,7 @@ noaa.stations = [
     "latitude": 34.4458,
     "name": "ACTON CALIFORNIA, CA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000CACT",
+    "id": "USR0000CACT",
     "elevationUnit": "METERS",
     "longitude": -118.2
   },
@@ -14221,7 +14229,7 @@ noaa.stations = [
     "latitude": 32.8336,
     "name": "ALPINE CALIFORNIA, CA US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USR0000CALP",
+    "id": "USR0000CALP",
     "elevationUnit": "METERS",
     "longitude": -116.7392
   },
@@ -14232,7 +14240,7 @@ noaa.stations = [
     "latitude": 33.555,
     "name": "ANZA CALIFORNIA, CA US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USR0000CANZ",
+    "id": "USR0000CANZ",
     "elevationUnit": "METERS",
     "longitude": -116.673
   },
@@ -14243,7 +14251,7 @@ noaa.stations = [
     "latitude": 37.2319,
     "name": "BATTERSON CALIFORNIA, CA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USR0000CBAT",
+    "id": "USR0000CBAT",
     "elevationUnit": "METERS",
     "longitude": -119.5083
   },
@@ -14254,7 +14262,7 @@ noaa.stations = [
     "latitude": 35.8644,
     "name": "BRADLEY CALIFORNIA, CA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USR0000CBDY",
+    "id": "USR0000CBDY",
     "elevationUnit": "METERS",
     "longitude": -120.8031
   },
@@ -14265,7 +14273,7 @@ noaa.stations = [
     "latitude": 37.8431,
     "name": "BENTON CALIFORNIA, CA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000CBEN",
+    "id": "USR0000CBEN",
     "elevationUnit": "METERS",
     "longitude": -118.4778
   },
@@ -14276,7 +14284,7 @@ noaa.stations = [
     "latitude": 34.3789,
     "name": "BIG PINES CALIFORNIA, CA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USR0000CBIP",
+    "id": "USR0000CBIP",
     "elevationUnit": "METERS",
     "longitude": -117.6919
   },
@@ -14287,7 +14295,7 @@ noaa.stations = [
     "latitude": 38.5428,
     "name": "BLACK CANYON COLORADO, CO US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USR0000CBLA",
+    "id": "USR0000CBLA",
     "elevationUnit": "METERS",
     "longitude": -107.6869
   },
@@ -14298,7 +14306,7 @@ noaa.stations = [
     "latitude": 37.8617,
     "name": "BLACK MOUNTAIN COLORADO, CO US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USR0000CBLK",
+    "id": "USR0000CBLK",
     "elevationUnit": "METERS",
     "longitude": -105.2842
   },
@@ -14309,7 +14317,7 @@ noaa.stations = [
     "latitude": 37.7978,
     "name": "BLUE PARK COLORADO, CO US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USR0000CBLU",
+    "id": "USR0000CBLU",
     "elevationUnit": "METERS",
     "longitude": -106.7792
   },
@@ -14320,7 +14328,7 @@ noaa.stations = [
     "latitude": 40.4808,
     "name": "BULL FLAT CALIFORNIA, CA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USR0000CBUL",
+    "id": "USR0000CBUL",
     "elevationUnit": "METERS",
     "longitude": -120.1139
   },
@@ -14331,7 +14339,7 @@ noaa.stations = [
     "latitude": 35.0964,
     "name": "CARRIZO CALIFORNIA, CA US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000CCAR",
+    "id": "USR0000CCAR",
     "elevationUnit": "METERS",
     "longitude": -119.7728
   },
@@ -14342,7 +14350,7 @@ noaa.stations = [
     "latitude": 37.9478,
     "name": "COLORADO CITY COLORADO, CO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000CCCI",
+    "id": "USR0000CCCI",
     "elevationUnit": "METERS",
     "longitude": -104.8692
   },
@@ -14353,7 +14361,7 @@ noaa.stations = [
     "latitude": 34.2711,
     "name": "CLEAR CREEK CALIFORNIA, CA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USR0000CCLE",
+    "id": "USR0000CCLE",
     "elevationUnit": "METERS",
     "longitude": -118.1525
   },
@@ -14364,7 +14372,7 @@ noaa.stations = [
     "latitude": 39.64,
     "name": "CORRAL CREEK COLORADO, CO US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000CCOC",
+    "id": "USR0000CCOC",
     "elevationUnit": "METERS",
     "longitude": -105.4647
   },
@@ -14375,7 +14383,7 @@ noaa.stations = [
     "latitude": 38.3139,
     "name": "COPPER GULCH COLORADO, CO US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USR0000CCOP",
+    "id": "USR0000CCOP",
     "elevationUnit": "METERS",
     "longitude": -105.4844
   },
@@ -14386,7 +14394,7 @@ noaa.stations = [
     "latitude": 37.745,
     "name": "CRESTVIEW CALIFORNIA, CA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USR0000CCRE",
+    "id": "USR0000CCRE",
     "elevationUnit": "METERS",
     "longitude": -118.9833
   },
@@ -14397,7 +14405,7 @@ noaa.stations = [
     "latitude": 40.0686,
     "name": "CARPENTER RIDGE CALIFORNIA, CA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000CCRR",
+    "id": "USR0000CCRR",
     "elevationUnit": "METERS",
     "longitude": -121.5825
   },
@@ -14408,7 +14416,7 @@ noaa.stations = [
     "latitude": 40.0017,
     "name": "CASHMAN CALIFORNIA, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USR0000CCSH",
+    "id": "USR0000CCSH",
     "elevationUnit": "METERS",
     "longitude": -120.915
   },
@@ -14419,7 +14427,7 @@ noaa.stations = [
     "latitude": 37.0969,
     "name": "CUCHARA COLORADO, CO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USR0000CCUC",
+    "id": "USR0000CCUC",
     "elevationUnit": "METERS",
     "longitude": -104.9214
   },
@@ -14430,7 +14438,7 @@ noaa.stations = [
     "latitude": 39.46,
     "name": "DEMAREE COLORADO, CO US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000CDEM",
+    "id": "USR0000CDEM",
     "elevationUnit": "METERS",
     "longitude": -108.88
   },
@@ -14441,7 +14449,7 @@ noaa.stations = [
     "latitude": 41.53,
     "name": "DEVILS GARDEN CALIFORNIA, CA US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000CDGR",
+    "id": "USR0000CDGR",
     "elevationUnit": "METERS",
     "longitude": -120.6714
   },
@@ -14452,7 +14460,7 @@ noaa.stations = [
     "latitude": 37.3292,
     "name": "DIABLO GRANDE CALIFORNIA, CA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USR0000CDIA",
+    "id": "USR0000CDIA",
     "elevationUnit": "METERS",
     "longitude": -121.2939
   },
@@ -14463,7 +14471,7 @@ noaa.stations = [
     "latitude": 40.5086,
     "name": "DINOSAUR N.M. COLORADO, CO US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USR0000CDIN",
+    "id": "USR0000CDIN",
     "elevationUnit": "METERS",
     "longitude": -108.9106
   },
@@ -14474,7 +14482,7 @@ noaa.stations = [
     "latitude": 37.0664,
     "name": "DINKEY CALIFORNIA, CA US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USR0000CDNK",
+    "id": "USR0000CDNK",
     "elevationUnit": "METERS",
     "longitude": -119.0394
   },
@@ -14485,7 +14493,7 @@ noaa.stations = [
     "latitude": 39.9153,
     "name": "DRAGON ROAD COLORADO, CO US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USR0000CDRA",
+    "id": "USR0000CDRA",
     "elevationUnit": "METERS",
     "longitude": -108.8875
   },
@@ -14496,7 +14504,7 @@ noaa.stations = [
     "latitude": 34.4311,
     "name": "DEL VALLE CALIFORNIA, CA US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USR0000CDVA",
+    "id": "USR0000CDVA",
     "elevationUnit": "METERS",
     "longitude": -118.6828
   },
@@ -14507,7 +14515,7 @@ noaa.stations = [
     "latitude": 33.6472,
     "name": "EL CARISO CALIFORNIA, CA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000CELC",
+    "id": "USR0000CELC",
     "elevationUnit": "METERS",
     "longitude": -117.4111
   },
@@ -14518,7 +14526,7 @@ noaa.stations = [
     "latitude": 38.0631,
     "name": "MOUNT ELIZABETH CALIFORNIA, CA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000CELI",
+    "id": "USR0000CELI",
     "elevationUnit": "METERS",
     "longitude": -120.2469
   },
@@ -14529,7 +14537,7 @@ noaa.stations = [
     "latitude": 40.3667,
     "name": "ESTES PARK COLORADO, CO US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000CEST",
+    "id": "USR0000CEST",
     "elevationUnit": "METERS",
     "longitude": -105.55
   },
@@ -14540,7 +14548,7 @@ noaa.stations = [
     "latitude": 34.7331,
     "name": "FIGUEROA CALIFORNIA, CA US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USR0000CFIG",
+    "id": "USR0000CFIG",
     "elevationUnit": "METERS",
     "longitude": -120.0067
   },
@@ -14551,7 +14559,7 @@ noaa.stations = [
     "latitude": 39.0914,
     "name": "FORESTHILL CALIFORNIA, CA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USR0000CFOR",
+    "id": "USR0000CFOR",
     "elevationUnit": "METERS",
     "longitude": -120.7317
   },
@@ -14562,7 +14570,7 @@ noaa.stations = [
     "latitude": 40.7578,
     "name": "GREAT DIVIDE COLORADO, CO US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000CGRE",
+    "id": "USR0000CGRE",
     "elevationUnit": "METERS",
     "longitude": -107.8533
   },
@@ -14573,7 +14581,7 @@ noaa.stations = [
     "latitude": 37.3147,
     "name": "HIGH SIERRA CALIFORNIA, CA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000CHIG",
+    "id": "USR0000CHIG",
     "elevationUnit": "METERS",
     "longitude": -119.0383
   },
@@ -14584,7 +14592,7 @@ noaa.stations = [
     "latitude": 36.8422,
     "name": "HOLLISTER CALIFORNIA, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USR0000CHLR",
+    "id": "USR0000CHLR",
     "elevationUnit": "METERS",
     "longitude": -121.3622
   },
@@ -14595,7 +14603,7 @@ noaa.stations = [
     "latitude": 39.7358,
     "name": "JARBO GAP CALIFORNIA, CA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000CJAR",
+    "id": "USR0000CJAR",
     "elevationUnit": "METERS",
     "longitude": -121.4889
   },
@@ -14606,7 +14614,7 @@ noaa.stations = [
     "latitude": 33.0758,
     "name": "JULIAN CALIFORNIA, CA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USR0000CJUL",
+    "id": "USR0000CJUL",
     "elevationUnit": "METERS",
     "longitude": -116.5908
   },
@@ -14617,7 +14625,7 @@ noaa.stations = [
     "latitude": 41.3322,
     "name": "JUNIPER CREEK CALIFORNIA, CA US",
     "datacoverage": 0.998,
-    "id": "GHCND:USR0000CJUN",
+    "id": "USR0000CJUN",
     "elevationUnit": "METERS",
     "longitude": -120.4725
   },
@@ -14628,7 +14636,7 @@ noaa.stations = [
     "latitude": 36.0333,
     "name": "KETTLEMAN HILLS CALIFORNIA, CA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USR0000CKET",
+    "id": "USR0000CKET",
     "elevationUnit": "METERS",
     "longitude": -120.0569
   },
@@ -14639,7 +14647,7 @@ noaa.stations = [
     "latitude": 38.9772,
     "name": "LAKE GEORGE COLORADO, CO US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000CLGE",
+    "id": "USR0000CLGE",
     "elevationUnit": "METERS",
     "longitude": -105.3553
   },
@@ -14650,7 +14658,7 @@ noaa.stations = [
     "latitude": 38.8825,
     "name": "LINCOLN CALIFORNIA, CA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USR0000CLIN",
+    "id": "USR0000CLIN",
     "elevationUnit": "METERS",
     "longitude": -121.2683
   },
@@ -14661,7 +14669,7 @@ noaa.stations = [
     "latitude": 41.9992,
     "name": "LOWER KLAMATH CALIFORNIA, CA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000CLKL",
+    "id": "USR0000CLKL",
     "elevationUnit": "METERS",
     "longitude": -121.7003
   },
@@ -14672,7 +14680,7 @@ noaa.stations = [
     "latitude": 34.2936,
     "name": "LITTLE TUJUNGA CALIFORNIA, CA US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USR0000CLTU",
+    "id": "USR0000CLTU",
     "elevationUnit": "METERS",
     "longitude": -118.3608
   },
@@ -14683,7 +14691,7 @@ noaa.stations = [
     "latitude": 37.0544,
     "name": "MOUNTAIN REST CALIFORNIA, CA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000CMOU",
+    "id": "USR0000CMOU",
     "elevationUnit": "METERS",
     "longitude": -119.3711
   },
@@ -14694,7 +14702,7 @@ noaa.stations = [
     "latitude": 37.3006,
     "name": "MOREFIELD COLORADO, CO US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000CMRF",
+    "id": "USR0000CMRF",
     "elevationUnit": "METERS",
     "longitude": -108.4133
   },
@@ -14705,7 +14713,7 @@ noaa.stations = [
     "latitude": 38.6833,
     "name": "MARKLEEVILLE CALIFORNIA, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USR0000CMRK",
+    "id": "USR0000CMRK",
     "elevationUnit": "METERS",
     "longitude": -119.7667
   },
@@ -14716,7 +14724,7 @@ noaa.stations = [
     "latitude": 41.3156,
     "name": "MOUNT SHASTA CALIFORNIA, CA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000CMS2",
+    "id": "USR0000CMS2",
     "elevationUnit": "METERS",
     "longitude": -122.3156
   },
@@ -14727,7 +14735,7 @@ noaa.stations = [
     "latitude": 38.2297,
     "name": "NUCLA COLORADO, CO US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000CNUC",
+    "id": "USR0000CNUC",
     "elevationUnit": "METERS",
     "longitude": -108.5583
   },
@@ -14738,7 +14746,7 @@ noaa.stations = [
     "latitude": 33.3933,
     "name": "OAK GROVE CALIFORNIA, CA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USR0000COKG",
+    "id": "USR0000COKG",
     "elevationUnit": "METERS",
     "longitude": -116.795
   },
@@ -14749,7 +14757,7 @@ noaa.stations = [
     "latitude": 37.9056,
     "name": "PINION CANYON COLORADO, CO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000CPCY",
+    "id": "USR0000CPCY",
     "elevationUnit": "METERS",
     "longitude": -104.0556
   },
@@ -14760,7 +14768,7 @@ noaa.stations = [
     "latitude": 38.8325,
     "name": "PILOT HILL CALIFORNIA, CA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USR0000CPIL",
+    "id": "USR0000CPIL",
     "elevationUnit": "METERS",
     "longitude": -121.0086
   },
@@ -14771,7 +14779,7 @@ noaa.stations = [
     "latitude": 40.0097,
     "name": "PINTO COLORADO, CO US",
     "datacoverage": 0.998,
-    "id": "GHCND:USR0000CPIN",
+    "id": "USR0000CPIN",
     "elevationUnit": "METERS",
     "longitude": -108.4597
   },
@@ -14782,7 +14790,7 @@ noaa.stations = [
     "latitude": 36.4708,
     "name": "PINNACLES CALIFORNIA, CA US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USR0000CPNN",
+    "id": "USR0000CPNN",
     "elevationUnit": "METERS",
     "longitude": -121.1472
   },
@@ -14793,7 +14801,7 @@ noaa.stations = [
     "latitude": 40.7308,
     "name": "RAVENDALE CALIFORNIA, CA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USR0000CRAV",
+    "id": "USR0000CRAV",
     "elevationUnit": "METERS",
     "longitude": -120.3164
   },
@@ -14804,7 +14812,7 @@ noaa.stations = [
     "latitude": 39.3036,
     "name": "READER RANCH CALIFORNIA, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USR0000CRDR",
+    "id": "USR0000CRDR",
     "elevationUnit": "METERS",
     "longitude": -121.1172
   },
@@ -14815,7 +14823,7 @@ noaa.stations = [
     "latitude": 34.0608,
     "name": "RICE VALLEY CALIFORNIA, CA US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USR0000CRIC",
+    "id": "USR0000CRIC",
     "elevationUnit": "METERS",
     "longitude": -114.7322
   },
@@ -14826,7 +14834,7 @@ noaa.stations = [
     "latitude": 40.2506,
     "name": "RUTH CALIFORNIA, CA US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USR0000CRUT",
+    "id": "USR0000CRUT",
     "elevationUnit": "METERS",
     "longitude": -123.3158
   },
@@ -14837,7 +14845,7 @@ noaa.stations = [
     "latitude": 39.4172,
     "name": "SACRAMENTO NWR CALIFORNIA, CA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000CSAC",
+    "id": "USR0000CSAC",
     "elevationUnit": "METERS",
     "longitude": -122.1825
   },
@@ -14848,7 +14856,7 @@ noaa.stations = [
     "latitude": 34.2069,
     "name": "TANBARK CALIFORNIA, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USR0000CTAN",
+    "id": "USR0000CTAN",
     "elevationUnit": "METERS",
     "longitude": -117.7606
   },
@@ -14859,7 +14867,7 @@ noaa.stations = [
     "latitude": 36.9111,
     "name": "TRIMMER CALIFORNIA, CA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000CTRM",
+    "id": "USR0000CTRM",
     "elevationUnit": "METERS",
     "longitude": -119.305
   },
@@ -14870,7 +14878,7 @@ noaa.stations = [
     "latitude": 34.4456,
     "name": "VALYERMO CALIFORNIA, CA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USR0000CVAY",
+    "id": "USR0000CVAY",
     "elevationUnit": "METERS",
     "longitude": -117.8511
   },
@@ -14881,7 +14889,7 @@ noaa.stations = [
     "latitude": 38.5653,
     "name": "WALKER CALIFORNIA, CA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000CWAK",
+    "id": "USR0000CWAK",
     "elevationUnit": "METERS",
     "longitude": -119.4592
   },
@@ -14892,7 +14900,7 @@ noaa.stations = [
     "latitude": 35.6647,
     "name": "WALKER PASS CALIFORNIA, CA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000CWAL",
+    "id": "USR0000CWAL",
     "elevationUnit": "METERS",
     "longitude": -118.0569
   },
@@ -14903,7 +14911,7 @@ noaa.stations = [
     "latitude": 35.7217,
     "name": "WOFFORD HEIGHTS CALIFORNIA, CA US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000CWOF",
+    "id": "USR0000CWOF",
     "elevationUnit": "METERS",
     "longitude": -118.4989
   },
@@ -14914,7 +14922,7 @@ noaa.stations = [
     "latitude": 34.5686,
     "name": "WHITAKER PEAK CALIFORNIA, CA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USR0000CWPK",
+    "id": "USR0000CWPK",
     "elevationUnit": "METERS",
     "longitude": -118.7403
   },
@@ -14925,7 +14933,7 @@ noaa.stations = [
     "latitude": 38.0039,
     "name": "WILLIS CREEK COLORADO, CO US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USR0000CWSC",
+    "id": "USR0000CWSC",
     "elevationUnit": "METERS",
     "longitude": -105.0564
   },
@@ -14936,7 +14944,7 @@ noaa.stations = [
     "latitude": 39.8811,
     "name": "FIVE MILE DUCHESNE 18 SSE UTA, UT US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USR0000FIVE",
+    "id": "USR0000FIVE",
     "elevationUnit": "METERS",
     "longitude": -110.2658
   },
@@ -14947,7 +14955,7 @@ noaa.stations = [
     "latitude": 30.1333,
     "name": "ST. MARKS EAST FLORIDA, FL US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USR0000FSTM",
+    "id": "USR0000FSTM",
     "elevationUnit": "METERS",
     "longitude": -84.1333
   },
@@ -14958,7 +14966,7 @@ noaa.stations = [
     "latitude": 39.3375,
     "name": "FLATTOP MOUNTAIN CLEVELAND 1, UT US",
     "datacoverage": 0.998,
-    "id": "GHCND:USR0000FTOP",
+    "id": "USR0000FTOP",
     "elevationUnit": "METERS",
     "longitude": -110.6
   },
@@ -14969,7 +14977,7 @@ noaa.stations = [
     "latitude": 33.0097,
     "name": "BRENDER GEORGIA, GA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000GBRE",
+    "id": "USR0000GBRE",
     "elevationUnit": "METERS",
     "longitude": -83.7397
   },
@@ -14980,7 +14988,7 @@ noaa.stations = [
     "latitude": 31.1097,
     "name": "ADEL GEORGIA, GA US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000GCOO",
+    "id": "USR0000GCOO",
     "elevationUnit": "METERS",
     "longitude": -83.4269
   },
@@ -14991,7 +14999,7 @@ noaa.stations = [
     "latitude": 32.0097,
     "name": "MCRAE GEORGIA, GA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000GMCR",
+    "id": "USR0000GMCR",
     "elevationUnit": "METERS",
     "longitude": -82.9
   },
@@ -15002,7 +15010,7 @@ noaa.stations = [
     "latitude": 32.3911,
     "name": "METTER GEORGIA, GA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000GMET",
+    "id": "USR0000GMET",
     "elevationUnit": "METERS",
     "longitude": -82.0372
   },
@@ -15013,7 +15021,7 @@ noaa.stations = [
     "latitude": 31.2569,
     "name": "STERLING GEORGIA, GA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000GSTE",
+    "id": "USR0000GSTE",
     "elevationUnit": "METERS",
     "longitude": -81.6106
   },
@@ -15024,7 +15032,7 @@ noaa.stations = [
     "latitude": 38.6667,
     "name": "HORSE HOLLOW COVE FORT 5 W UT, UT US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000HORS",
+    "id": "USR0000HORS",
     "elevationUnit": "METERS",
     "longitude": -112.6508
   },
@@ -15035,7 +15043,7 @@ noaa.stations = [
     "latitude": 19.3175,
     "name": "PALI 2 HAWAII, HI US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USR0000HPAL",
+    "id": "USR0000HPAL",
     "elevationUnit": "METERS",
     "longitude": -155.2922
   },
@@ -15046,7 +15054,7 @@ noaa.stations = [
     "latitude": 19.6669,
     "name": "PTA KIPUKA ALALA HAWAII, HI US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USR0000HPTK",
+    "id": "USR0000HPTK",
     "elevationUnit": "METERS",
     "longitude": -155.7078
   },
@@ -15057,7 +15065,7 @@ noaa.stations = [
     "latitude": 43.6231,
     "name": "ARCO IDAHO, ID US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USR0000IARC",
+    "id": "USR0000IARC",
     "elevationUnit": "METERS",
     "longitude": -113.3872
   },
@@ -15068,7 +15076,7 @@ noaa.stations = [
     "latitude": 42.3497,
     "name": "BRACE FLAT IDAHO, ID US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000IBRA",
+    "id": "USR0000IBRA",
     "elevationUnit": "METERS",
     "longitude": -116.69
   },
@@ -15079,7 +15087,7 @@ noaa.stations = [
     "latitude": 44.3256,
     "name": "DEAD INDIAN RIDGE IDAHO, ID US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USR0000IDEA",
+    "id": "USR0000IDEA",
     "elevationUnit": "METERS",
     "longitude": -117.1678
   },
@@ -15090,7 +15098,7 @@ noaa.stations = [
     "latitude": 42.3653,
     "name": "BULL CANYON IDAHO, ID US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000IDEP",
+    "id": "USR0000IDEP",
     "elevationUnit": "METERS",
     "longitude": -112.7056
   },
@@ -15101,7 +15109,7 @@ noaa.stations = [
     "latitude": 42.095,
     "name": "GOOSE CREEK IDAHO, ID US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000IGOO",
+    "id": "USR0000IGOO",
     "elevationUnit": "METERS",
     "longitude": -113.8958
   },
@@ -15112,7 +15120,7 @@ noaa.stations = [
     "latitude": 43.0497,
     "name": "DALE BITNER IDAHO, ID US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USR0000IGRL",
+    "id": "USR0000IGRL",
     "elevationUnit": "METERS",
     "longitude": -111.3794
   },
@@ -15123,7 +15131,7 @@ noaa.stations = [
     "latitude": 45.3556,
     "name": "KRILEY CREEK IDAHO, ID US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000IKRI",
+    "id": "USR0000IKRI",
     "elevationUnit": "METERS",
     "longitude": -113.8933
   },
@@ -15134,7 +15142,7 @@ noaa.stations = [
     "latitude": 44.7,
     "name": "LEADORE CREEK IDAHO, ID US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000ILEA",
+    "id": "USR0000ILEA",
     "elevationUnit": "METERS",
     "longitude": -113.35
   },
@@ -15145,7 +15153,7 @@ noaa.stations = [
     "latitude": 41.5667,
     "name": "NEAL SMITH IOWA, IA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000INEA",
+    "id": "USR0000INEA",
     "elevationUnit": "METERS",
     "longitude": -93.2583
   },
@@ -15156,7 +15164,7 @@ noaa.stations = [
     "latitude": 43.6008,
     "name": "OHIO GULCH IDAHO, ID US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USR0000IOHI",
+    "id": "USR0000IOHI",
     "elevationUnit": "METERS",
     "longitude": -114.3158
   },
@@ -15167,7 +15175,7 @@ noaa.stations = [
     "latitude": 42.9717,
     "name": "ROCK LAKE IDAHO, ID US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USR0000IROC",
+    "id": "USR0000IROC",
     "elevationUnit": "METERS",
     "longitude": -114.0631
   },
@@ -15178,7 +15186,7 @@ noaa.stations = [
     "latitude": 44.1692,
     "name": "STANLEY IDAHO, ID US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USR0000ISTN",
+    "id": "USR0000ISTN",
     "elevationUnit": "METERS",
     "longitude": -114.9258
   },
@@ -15189,7 +15197,7 @@ noaa.stations = [
     "latitude": 42.8286,
     "name": "TRIANGLE IDAHO, ID US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000ITRI",
+    "id": "USR0000ITRI",
     "elevationUnit": "METERS",
     "longitude": -116.5886
   },
@@ -15200,7 +15208,7 @@ noaa.stations = [
     "latitude": 39.5,
     "name": "EB FORSYTHE NEW JERSEY, NJ US",
     "datacoverage": 0.997,
-    "id": "GHCND:USR0000JEBF",
+    "id": "USR0000JEBF",
     "elevationUnit": "METERS",
     "longitude": -74.5
   },
@@ -15211,7 +15219,7 @@ noaa.stations = [
     "latitude": 37.5264,
     "name": "KANE GULCH BLANDING 23 WSW, UT US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000KANE",
+    "id": "USR0000KANE",
     "elevationUnit": "METERS",
     "longitude": -109.8936
   },
@@ -15222,7 +15230,7 @@ noaa.stations = [
     "latitude": 37.75,
     "name": "BIG SANDY KENTUCKY, KY US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000KBSN",
+    "id": "USR0000KBSN",
     "elevationUnit": "METERS",
     "longitude": -82.6333
   },
@@ -15233,7 +15241,7 @@ noaa.stations = [
     "latitude": 40.8606,
     "name": "KINGS POINT DUTCH JOHN 16 ESE, UT US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USR0000KING",
+    "id": "USR0000KING",
     "elevationUnit": "METERS",
     "longitude": -109.1022
   },
@@ -15244,7 +15252,7 @@ noaa.stations = [
     "latitude": 36.7764,
     "name": "KYLBL KENTUCKY, KY US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USR0000KKYL",
+    "id": "USR0000KKYL",
     "elevationUnit": "METERS",
     "longitude": -88.0631
   },
@@ -15255,7 +15263,7 @@ noaa.stations = [
     "latitude": 31.5022,
     "name": "CATAHOULA FTS LOUISIANA, LA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000LCAT",
+    "id": "USR0000LCAT",
     "elevationUnit": "METERS",
     "longitude": -92.4617
   },
@@ -15266,7 +15274,7 @@ noaa.stations = [
     "latitude": 38.7708,
     "name": "LOST CREEK SALINA 12 S UTAH, UT US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000LOST",
+    "id": "USR0000LOST",
     "elevationUnit": "METERS",
     "longitude": -111.8625
   },
@@ -15277,7 +15285,7 @@ noaa.stations = [
     "latitude": 48.5,
     "name": "AGASSIZ MINNESOTA, MN US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USR0000MAGA",
+    "id": "USR0000MAGA",
     "elevationUnit": "METERS",
     "longitude": -95.87
   },
@@ -15288,7 +15296,7 @@ noaa.stations = [
     "latitude": 47.5867,
     "name": "ARMELLS CREEK MONTANA, MT US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000MARM",
+    "id": "USR0000MARM",
     "elevationUnit": "METERS",
     "longitude": -108.8694
   },
@@ -15299,7 +15307,7 @@ noaa.stations = [
     "latitude": 32.355,
     "name": "BIENVILLE MISSISSIPPI, MS US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000MBIE",
+    "id": "USR0000MBIE",
     "elevationUnit": "METERS",
     "longitude": -89.4692
   },
@@ -15310,7 +15318,7 @@ noaa.stations = [
     "latitude": 38.4167,
     "name": "BLACKWATER MARYLAND, MD US",
     "datacoverage": 0.996,
-    "id": "GHCND:USR0000MBLA",
+    "id": "USR0000MBLA",
     "elevationUnit": "METERS",
     "longitude": -76
   },
@@ -15321,7 +15329,7 @@ noaa.stations = [
     "latitude": 45.0553,
     "name": "BRADSHAW CREEK MONTANA, MT US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USR0000MBRA",
+    "id": "USR0000MBRA",
     "elevationUnit": "METERS",
     "longitude": -105.9483
   },
@@ -15332,7 +15340,7 @@ noaa.stations = [
     "latitude": 46.4006,
     "name": "BRAINERD MINNESOTA, MN US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000MBRN",
+    "id": "USR0000MBRN",
     "elevationUnit": "METERS",
     "longitude": -94.1272
   },
@@ -15343,7 +15351,7 @@ noaa.stations = [
     "latitude": 39.7683,
     "name": "CHILLICOTHE MISSOURI, MO US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000MCHI",
+    "id": "USR0000MCHI",
     "elevationUnit": "METERS",
     "longitude": -93.485
   },
@@ -15354,7 +15362,7 @@ noaa.stations = [
     "latitude": 38.3483,
     "name": "MDC CLINTON HQTRS MISSOURI, MO US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000MCLI",
+    "id": "USR0000MCLI",
     "elevationUnit": "METERS",
     "longitude": -93.7747
   },
@@ -15365,7 +15373,7 @@ noaa.stations = [
     "latitude": 45.2969,
     "name": "FORT HOWES MONTANA, MT US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000MFOH",
+    "id": "USR0000MFOH",
     "elevationUnit": "METERS",
     "longitude": -106.1614
   },
@@ -15376,7 +15384,7 @@ noaa.stations = [
     "latitude": 47.6156,
     "name": "HOT SPRINGS MONTANA, MT US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USR0000MHOT",
+    "id": "USR0000MHOT",
     "elevationUnit": "METERS",
     "longitude": -114.6694
   },
@@ -15387,7 +15395,7 @@ noaa.stations = [
     "latitude": 47.24,
     "name": "ITASCA MINNESOTA, MN US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USR0000MITA",
+    "id": "USR0000MITA",
     "elevationUnit": "METERS",
     "longitude": -95.19
   },
@@ -15398,7 +15406,7 @@ noaa.stations = [
     "latitude": 45.9514,
     "name": "LITTLE FALLS MINNESOTA, MN US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000MLTF",
+    "id": "USR0000MLTF",
     "elevationUnit": "METERS",
     "longitude": -94.3444
   },
@@ -15409,7 +15417,7 @@ noaa.stations = [
     "latitude": 47.7028,
     "name": "MANNING CORRAL DOGTOWN MONTANA, MT US",
     "datacoverage": 0.999,
-    "id": "GHCND:USR0000MMAC",
+    "id": "USR0000MMAC",
     "elevationUnit": "METERS",
     "longitude": -108.4786
   },
@@ -15420,7 +15428,7 @@ noaa.stations = [
     "latitude": 31.2114,
     "name": "MARION MISSISSIPPI, MS US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000MMAR",
+    "id": "USR0000MMAR",
     "elevationUnit": "METERS",
     "longitude": -89.9225
   },
@@ -15431,7 +15439,7 @@ noaa.stations = [
     "latitude": 47.0708,
     "name": "NINE MILE MONTANA, MT US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USR0000MNIN",
+    "id": "USR0000MNIN",
     "elevationUnit": "METERS",
     "longitude": -114.4022
   },
@@ -15442,7 +15450,7 @@ noaa.stations = [
     "latitude": 46.7769,
     "name": "PINE HILL MONTANA, MT US",
     "datacoverage": 0.999,
-    "id": "GHCND:USR0000MPIN",
+    "id": "USR0000MPIN",
     "elevationUnit": "METERS",
     "longitude": -104.5797
   },
@@ -15453,7 +15461,7 @@ noaa.stations = [
     "latitude": 48.1269,
     "name": "POPLAR MONTANA, MT US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USR0000MPOP",
+    "id": "USR0000MPOP",
     "elevationUnit": "METERS",
     "longitude": -105.0731
   },
@@ -15464,7 +15472,7 @@ noaa.stations = [
     "latitude": 30.4528,
     "name": "SANDHILL CRANE MISSISSIPPI, MS US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000MSAN",
+    "id": "USR0000MSAN",
     "elevationUnit": "METERS",
     "longitude": -88.6617
   },
@@ -15475,7 +15483,7 @@ noaa.stations = [
     "latitude": 48.4667,
     "name": "TROY MONTANA, MT US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000MTRY",
+    "id": "USR0000MTRY",
     "elevationUnit": "METERS",
     "longitude": -115.9167
   },
@@ -15486,7 +15494,7 @@ noaa.stations = [
     "latitude": 39.7986,
     "name": "MUD SPRING EUREKA 13 SW UTAH, UT US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000MUDS",
+    "id": "USR0000MUDS",
     "elevationUnit": "METERS",
     "longitude": -112.2722
   },
@@ -15497,7 +15505,7 @@ noaa.stations = [
     "latitude": 34.6203,
     "name": "WINBORN MISSISSIPPI, MS US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000MWIN",
+    "id": "USR0000MWIN",
     "elevationUnit": "METERS",
     "longitude": -89.3142
   },
@@ -15508,7 +15516,7 @@ noaa.stations = [
     "latitude": 45.3131,
     "name": "WOLF MOUNTAIN MONTANA, MT US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USR0000MWOL",
+    "id": "USR0000MWOL",
     "elevationUnit": "METERS",
     "longitude": -107.1719
   },
@@ -15519,7 +15527,7 @@ noaa.stations = [
     "latitude": 41.6847,
     "name": "ANTELOPE LAKE NEVADA, NV US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000NANT",
+    "id": "USR0000NANT",
     "elevationUnit": "METERS",
     "longitude": -116.7644
   },
@@ -15530,7 +15538,7 @@ noaa.stations = [
     "latitude": 39.5031,
     "name": "AUSTIN NEVADA, NV US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000NAUS",
+    "id": "USR0000NAUS",
     "elevationUnit": "METERS",
     "longitude": -117.0814
   },
@@ -15541,7 +15549,7 @@ noaa.stations = [
     "latitude": 41.9111,
     "name": "BARREL SPRINGS NEVADA, NV US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USR0000NBAR",
+    "id": "USR0000NBAR",
     "elevationUnit": "METERS",
     "longitude": -119.9389
   },
@@ -15552,7 +15560,7 @@ noaa.stations = [
     "latitude": 40.5583,
     "name": "BEACON LIGHT NEVADA, NV US",
     "datacoverage": 0.997,
-    "id": "GHCND:USR0000NBEA",
+    "id": "USR0000NBEA",
     "elevationUnit": "METERS",
     "longitude": -116.7583
   },
@@ -15563,7 +15571,7 @@ noaa.stations = [
     "latitude": 40.5017,
     "name": "BLUEWING MOUNTAIN NEVADA, NV US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USR0000NBLU",
+    "id": "USR0000NBLU",
     "elevationUnit": "METERS",
     "longitude": -119.1217
   },
@@ -15574,7 +15582,7 @@ noaa.stations = [
     "latitude": 40.5819,
     "name": "BUFFALO CREEK NEVADA, NV US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000NBUF",
+    "id": "USR0000NBUF",
     "elevationUnit": "METERS",
     "longitude": -119.79
   },
@@ -15585,7 +15593,7 @@ noaa.stations = [
     "latitude": 35.7694,
     "name": "BUSICK NORTH CAROLINA, NC US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USR0000NBUS",
+    "id": "USR0000NBUS",
     "elevationUnit": "METERS",
     "longitude": -82.1917
   },
@@ -15596,7 +15604,7 @@ noaa.stations = [
     "latitude": 41.92,
     "name": "CATNIP MOUNTAIN NEVADA, NV US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USR0000NCAT",
+    "id": "USR0000NCAT",
     "elevationUnit": "METERS",
     "longitude": -119.495
   },
@@ -15607,7 +15615,7 @@ noaa.stations = [
     "latitude": 38.9036,
     "name": "CATTLE CAMP NEVADA, NV US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000NCCP",
+    "id": "USR0000NCCP",
     "elevationUnit": "METERS",
     "longitude": -114.8142
   },
@@ -15618,7 +15626,7 @@ noaa.stations = [
     "latitude": 39.7569,
     "name": "CEDAR PASS NEVADA, NV US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000NCED",
+    "id": "USR0000NCED",
     "elevationUnit": "METERS",
     "longitude": -114.1658
   },
@@ -15629,7 +15637,7 @@ noaa.stations = [
     "latitude": 39.3814,
     "name": "COMBS CANYON NEVADA, NV US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USR0000NCOM",
+    "id": "USR0000NCOM",
     "elevationUnit": "METERS",
     "longitude": -116.175
   },
@@ -15640,7 +15648,7 @@ noaa.stations = [
     "latitude": 40.4597,
     "name": "CRANE SPRINGS NEVADA, NV US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USR0000NCRA",
+    "id": "USR0000NCRA",
     "elevationUnit": "METERS",
     "longitude": -115.85
   },
@@ -15651,7 +15659,7 @@ noaa.stations = [
     "latitude": 38.7586,
     "name": "CURRANT CREEK NEVADA, NV US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000NCUR",
+    "id": "USR0000NCUR",
     "elevationUnit": "METERS",
     "longitude": -115.4128
   },
@@ -15662,7 +15670,7 @@ noaa.stations = [
     "latitude": 38.2833,
     "name": "COYOTE WASH NEVADA, NV US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000NCYW",
+    "id": "USR0000NCYW",
     "elevationUnit": "METERS",
     "longitude": -114.7583
   },
@@ -15673,7 +15681,7 @@ noaa.stations = [
     "latitude": 39.3011,
     "name": "DESATOYA MOUNTAIN NEVADA, NV US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000NDES",
+    "id": "USR0000NDES",
     "elevationUnit": "METERS",
     "longitude": -117.5844
   },
@@ -15684,7 +15692,7 @@ noaa.stations = [
     "latitude": 47.9853,
     "name": "DEVILS LAKE NORTH DAKOTA, ND US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USR0000NDEV",
+    "id": "USR0000NDEV",
     "elevationUnit": "METERS",
     "longitude": -98.9075
   },
@@ -15695,7 +15703,7 @@ noaa.stations = [
     "latitude": 35.9667,
     "name": "DUKE FOREST NORTH CAROLINA, NC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000NDUK",
+    "id": "USR0000NDUK",
     "elevationUnit": "METERS",
     "longitude": -79.0917
   },
@@ -15706,7 +15714,7 @@ noaa.stations = [
     "latitude": 39.3817,
     "name": "GALENA NEVADA, NV US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000NGAL",
+    "id": "USR0000NGAL",
     "elevationUnit": "METERS",
     "longitude": -119.815
   },
@@ -15717,7 +15725,7 @@ noaa.stations = [
     "latitude": 35.7564,
     "name": "GRANDFATHER NORTH CAROLINA, NC US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USR0000NGRF",
+    "id": "USR0000NGRF",
     "elevationUnit": "METERS",
     "longitude": -82.0439
   },
@@ -15728,7 +15736,7 @@ noaa.stations = [
     "latitude": 37.9214,
     "name": "IMMIGRATION WASH NEVADA, NV US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000NIMM",
+    "id": "USR0000NIMM",
     "elevationUnit": "METERS",
     "longitude": -114.1597
   },
@@ -15739,7 +15747,7 @@ noaa.stations = [
     "latitude": 48.37,
     "name": "J. CLARK SALYER NORTH DAKOTA, ND US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USR0000NJCL",
+    "id": "USR0000NJCL",
     "elevationUnit": "METERS",
     "longitude": -100.43
   },
@@ -15750,7 +15758,7 @@ noaa.stations = [
     "latitude": 41.4558,
     "name": "MOREY CREEK NEVADA, NV US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USR0000NMOR",
+    "id": "USR0000NMOR",
     "elevationUnit": "METERS",
     "longitude": -117.6333
   },
@@ -15761,7 +15769,7 @@ noaa.stations = [
     "latitude": 41.6431,
     "name": "ROCK SPRING CREEK NEVADA, NV US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000NROC",
+    "id": "USR0000NROC",
     "elevationUnit": "METERS",
     "longitude": -114.4375
   },
@@ -15772,7 +15780,7 @@ noaa.stations = [
     "latitude": 40.3944,
     "name": "SIARD NEVADA, NV US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USR0000NSIA",
+    "id": "USR0000NSIA",
     "elevationUnit": "METERS",
     "longitude": -117.625
   },
@@ -15783,7 +15791,7 @@ noaa.stations = [
     "latitude": 40.5931,
     "name": "SPRING GULCH NEVADA, NV US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000NSPG",
+    "id": "USR0000NSPG",
     "elevationUnit": "METERS",
     "longitude": -114.2028
   },
@@ -15794,7 +15802,7 @@ noaa.stations = [
     "latitude": 41.5178,
     "name": "STAG MOUNTAIN NEVADA, NV US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USR0000NSTA",
+    "id": "USR0000NSTA",
     "elevationUnit": "METERS",
     "longitude": -115.3928
   },
@@ -15805,7 +15813,7 @@ noaa.stations = [
     "latitude": 41.8017,
     "name": "TEXAS SPRINGS NEVADA, NV US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000NTEX",
+    "id": "USR0000NTEX",
     "elevationUnit": "METERS",
     "longitude": -118.4508
   },
@@ -15816,7 +15824,7 @@ noaa.stations = [
     "latitude": 43.5556,
     "name": "BALD MOUNTAIN OREGON, OR US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USR0000OBAL",
+    "id": "USR0000OBAL",
     "elevationUnit": "METERS",
     "longitude": -118.4042
   },
@@ -15827,7 +15835,7 @@ noaa.stations = [
     "latitude": 42.1197,
     "name": "BUCKHORN SPRINGS OREGON, OR US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USR0000OBUS",
+    "id": "USR0000OBUS",
     "elevationUnit": "METERS",
     "longitude": -122.5633
   },
@@ -15838,7 +15846,7 @@ noaa.stations = [
     "latitude": 42.9736,
     "name": "FOSTER FLAT OREGON, OR US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USR0000OFOS",
+    "id": "USR0000OFOS",
     "elevationUnit": "METERS",
     "longitude": -119.2461
   },
@@ -15849,7 +15857,7 @@ noaa.stations = [
     "latitude": 42.7081,
     "name": "LITTLE MCCOY CREEK OREGON, OR US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000OLMC",
+    "id": "USR0000OLMC",
     "elevationUnit": "METERS",
     "longitude": -118.51
   },
@@ -15860,7 +15868,7 @@ noaa.stations = [
     "latitude": 42.8597,
     "name": "MOON HILL OREGON, OR US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000OMOO",
+    "id": "USR0000OMOO",
     "elevationUnit": "METERS",
     "longitude": -118.6706
   },
@@ -15871,7 +15879,7 @@ noaa.stations = [
     "latitude": 45.03,
     "name": "MOUNT WILSON OREGON, OR US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000OMTW",
+    "id": "USR0000OMTW",
     "elevationUnit": "METERS",
     "longitude": -121.6278
   },
@@ -15882,7 +15890,7 @@ noaa.stations = [
     "latitude": 44.9258,
     "name": "MUTTON MOUNTAIN OREGON, OR US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000OMUT",
+    "id": "USR0000OMUT",
     "elevationUnit": "METERS",
     "longitude": -121.1944
   },
@@ -15893,7 +15901,7 @@ noaa.stations = [
     "latitude": 43.5361,
     "name": "RED BUTTE OREGON, OR US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000ORED",
+    "id": "USR0000ORED",
     "elevationUnit": "METERS",
     "longitude": -117.8347
   },
@@ -15904,7 +15912,7 @@ noaa.stations = [
     "latitude": 42.1233,
     "name": "RED MOUND OREGON, OR US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000OREM",
+    "id": "USR0000OREM",
     "elevationUnit": "METERS",
     "longitude": -124.3006
   },
@@ -15915,7 +15923,7 @@ noaa.stations = [
     "latitude": 43.5097,
     "name": "SAGE HEN OREGON, OR US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USR0000OSAG",
+    "id": "USR0000OSAG",
     "elevationUnit": "METERS",
     "longitude": -119.2925
   },
@@ -15926,7 +15934,7 @@ noaa.stations = [
     "latitude": 41.7533,
     "name": "OTTER CREEK UTAH, UT US",
     "datacoverage": 0.999,
-    "id": "GHCND:USR0000OTTE",
+    "id": "USR0000OTTE",
     "elevationUnit": "METERS",
     "longitude": -111.2806
   },
@@ -15937,7 +15945,7 @@ noaa.stations = [
     "latitude": 45.9167,
     "name": "UMATILLA NWR OREGON, OR US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000OUMA",
+    "id": "USR0000OUMA",
     "elevationUnit": "METERS",
     "longitude": -119.5667
   },
@@ -15948,7 +15956,7 @@ noaa.stations = [
     "latitude": 41.6097,
     "name": "ROSEBUD UTAH, UT US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000ROSE",
+    "id": "USR0000ROSE",
     "elevationUnit": "METERS",
     "longitude": -113.5906
   },
@@ -15959,7 +15967,7 @@ noaa.stations = [
     "latitude": 43.9792,
     "name": "BAKER PARK SOUTH DAKOTA, SD US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USR0000SBAK",
+    "id": "USR0000SBAK",
     "elevationUnit": "METERS",
     "longitude": -103.425
   },
@@ -15970,7 +15978,7 @@ noaa.stations = [
     "latitude": 45.0572,
     "name": "BEAR CREEK SOUTH DAKOTA, SD US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USR0000SBEA",
+    "id": "USR0000SBEA",
     "elevationUnit": "METERS",
     "longitude": -101.4767
   },
@@ -15981,7 +15989,7 @@ noaa.stations = [
     "latitude": 34.6619,
     "name": "CAROLINA SANDHILLS S. CAROLINA, SC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USR0000SCAR",
+    "id": "USR0000SCAR",
     "elevationUnit": "METERS",
     "longitude": -80.2742
   },
@@ -15992,7 +16000,7 @@ noaa.stations = [
     "latitude": 43.3181,
     "name": "MAGPIE CREEK SOUTH DAKOTA, SD US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USR0000SMAG",
+    "id": "USR0000SMAG",
     "elevationUnit": "METERS",
     "longitude": -101.1444
   },
@@ -16003,7 +16011,7 @@ noaa.stations = [
     "latitude": 30.2625,
     "name": "BIRD TEXAS, TX US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USR0000TBIR",
+    "id": "USR0000TBIR",
     "elevationUnit": "METERS",
     "longitude": -98.6289
   },
@@ -16014,7 +16022,7 @@ noaa.stations = [
     "latitude": 35.6667,
     "name": "CEDAR TEXAS, TX US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USR0000TCED",
+    "id": "USR0000TCED",
     "elevationUnit": "METERS",
     "longitude": -101.5667
   },
@@ -16025,7 +16033,7 @@ noaa.stations = [
     "latitude": 36.3689,
     "name": "CHUCK SWAN SF TENNESSEE, TN US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000TCHU",
+    "id": "USR0000TCHU",
     "elevationUnit": "METERS",
     "longitude": -83.8986
   },
@@ -16036,7 +16044,7 @@ noaa.stations = [
     "latitude": 32.7017,
     "name": "GILMER TEXAS, TX US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USR0000TGIL",
+    "id": "USR0000TGIL",
     "elevationUnit": "METERS",
     "longitude": -94.9447
   },
@@ -16047,7 +16055,7 @@ noaa.stations = [
     "latitude": 33.0353,
     "name": "GREENVILLE TEXAS, TX US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USR0000TGRE",
+    "id": "USR0000TGRE",
     "elevationUnit": "METERS",
     "longitude": -96.1639
   },
@@ -16058,7 +16066,7 @@ noaa.stations = [
     "latitude": 30.45,
     "name": "HUNTSVILLE TEXAS, TX US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USR0000THUN",
+    "id": "USR0000THUN",
     "elevationUnit": "METERS",
     "longitude": -95.4
   },
@@ -16069,7 +16077,7 @@ noaa.stations = [
     "latitude": 26.535,
     "name": "LINN SAN MANUEL TEXAS, TX US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000TLIN",
+    "id": "USR0000TLIN",
     "elevationUnit": "METERS",
     "longitude": -98.0858
   },
@@ -16080,7 +16088,7 @@ noaa.stations = [
     "latitude": 33,
     "name": "LINDEN TEXAS, TX US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USR0000TLND",
+    "id": "USR0000TLND",
     "elevationUnit": "METERS",
     "longitude": -94.8
   },
@@ -16091,7 +16099,7 @@ noaa.stations = [
     "latitude": 34.1333,
     "name": "MATADOR W.M.A. TEXAS, TX US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USR0000TMAA",
+    "id": "USR0000TMAA",
     "elevationUnit": "METERS",
     "longitude": -100.4167
   },
@@ -16102,7 +16110,7 @@ noaa.stations = [
     "latitude": 30.7358,
     "name": "MASON TEXAS, TX US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USR0000TMAS",
+    "id": "USR0000TMAS",
     "elevationUnit": "METERS",
     "longitude": -99.1861
   },
@@ -16113,7 +16121,7 @@ noaa.stations = [
     "latitude": 32,
     "name": "MIDLAND TEXAS, TX US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USR0000TMID",
+    "id": "USR0000TMID",
     "elevationUnit": "METERS",
     "longitude": -102
   },
@@ -16124,7 +16132,7 @@ noaa.stations = [
     "latitude": 33.4136,
     "name": "MILLER CREEK TEXAS, TX US",
     "datacoverage": 0.997,
-    "id": "GHCND:USR0000TMIL",
+    "id": "USR0000TMIL",
     "elevationUnit": "METERS",
     "longitude": -99.4006
   },
@@ -16135,7 +16143,7 @@ noaa.stations = [
     "latitude": 37.8167,
     "name": "TOM BEST SPRING UTAH, UT US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000TOMB",
+    "id": "USR0000TOMB",
     "elevationUnit": "METERS",
     "longitude": -112.1167
   },
@@ -16146,7 +16154,7 @@ noaa.stations = [
     "latitude": 29.3167,
     "name": "PANTHER JUNCTION TEXAS, TX US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000TPAN",
+    "id": "USR0000TPAN",
     "elevationUnit": "METERS",
     "longitude": -103.2
   },
@@ -16157,7 +16165,7 @@ noaa.stations = [
     "latitude": 35.1303,
     "name": "PRENTICE COOPER SF TENNESSEE, TN US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USR0000TPRE",
+    "id": "USR0000TPRE",
     "elevationUnit": "METERS",
     "longitude": -85.4278
   },
@@ -16168,7 +16176,7 @@ noaa.stations = [
     "latitude": 33.3739,
     "name": "TEXARKANA TEXAS, TX US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USR0000TTEX",
+    "id": "USR0000TTEX",
     "elevationUnit": "METERS",
     "longitude": -94.0456
   },
@@ -16179,7 +16187,7 @@ noaa.stations = [
     "latitude": 42.4372,
     "name": "ANDERSON RIDGE WYOMING, WY US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USR0000WAND",
+    "id": "USR0000WAND",
     "elevationUnit": "METERS",
     "longitude": -108.9408
   },
@@ -16190,7 +16198,7 @@ noaa.stations = [
     "latitude": 47.4136,
     "name": "BLACK KNOB WASHINGTON, WA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USR0000WBLA",
+    "id": "USR0000WBLA",
     "elevationUnit": "METERS",
     "longitude": -124.1031
   },
@@ -16201,7 +16209,7 @@ noaa.stations = [
     "latitude": 41.2708,
     "name": "COW CREEK WYOMING, WY US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USR0000WCOW",
+    "id": "USR0000WCOW",
     "elevationUnit": "METERS",
     "longitude": -107.5819
   },
@@ -16212,7 +16220,7 @@ noaa.stations = [
     "latitude": 41.9675,
     "name": "DODGE CREEK WYOMING, WY US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USR0000WDOD",
+    "id": "USR0000WDOD",
     "elevationUnit": "METERS",
     "longitude": -105.5194
   },
@@ -16223,7 +16231,7 @@ noaa.stations = [
     "latitude": 44.11,
     "name": "BLIND PARK, SD US",
     "datacoverage": 1,
-    "id": "GHCND:USS0003E03S",
+    "id": "USS0003E03S",
     "elevationUnit": "METERS",
     "longitude": -103.98
   },
@@ -16234,7 +16242,7 @@ noaa.stations = [
     "latitude": 44.21,
     "name": "NORTH RAPID CREEK, SD US",
     "datacoverage": 1,
-    "id": "GHCND:USS0003E05S",
+    "id": "USS0003E05S",
     "elevationUnit": "METERS",
     "longitude": -103.79
   },
@@ -16245,7 +16253,7 @@ noaa.stations = [
     "latitude": 44.49,
     "name": "COLE CANYON, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0004E07S",
+    "id": "USS0004E07S",
     "elevationUnit": "METERS",
     "longitude": -104.41
   },
@@ -16256,7 +16264,7 @@ noaa.stations = [
     "latitude": 40.81,
     "name": "DEADMAN HILL, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J06S",
+    "id": "USS0005J06S",
     "elevationUnit": "METERS",
     "longitude": -105.77
   },
@@ -16267,7 +16275,7 @@ noaa.stations = [
     "latitude": 40.41,
     "name": "LAKE IRENE, CO US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USS0005J10S",
+    "id": "USS0005J10S",
     "elevationUnit": "METERS",
     "longitude": -105.82
   },
@@ -16278,7 +16286,7 @@ noaa.stations = [
     "latitude": 40.58,
     "name": "HOURGLASS LAKE, CO US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0005J11S",
+    "id": "USS0005J11S",
     "elevationUnit": "METERS",
     "longitude": -105.63
   },
@@ -16289,7 +16297,7 @@ noaa.stations = [
     "latitude": 40.23,
     "name": "STILLWATER CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J12S",
+    "id": "USS0005J12S",
     "elevationUnit": "METERS",
     "longitude": -105.92
   },
@@ -16300,7 +16308,7 @@ noaa.stations = [
     "latitude": 40.51,
     "name": "LONG DRAW RESV, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J27S",
+    "id": "USS0005J27S",
     "elevationUnit": "METERS",
     "longitude": -105.77
   },
@@ -16311,7 +16319,7 @@ noaa.stations = [
     "latitude": 40.89,
     "name": "BLACK MOUNTAIN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J28S",
+    "id": "USS0005J28S",
     "elevationUnit": "METERS",
     "longitude": -105.66
   },
@@ -16322,7 +16330,7 @@ noaa.stations = [
     "latitude": 40.53,
     "name": "JOE WRIGHT, CO US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0005J37S",
+    "id": "USS0005J37S",
     "elevationUnit": "METERS",
     "longitude": -105.89
   },
@@ -16333,7 +16341,7 @@ noaa.stations = [
     "latitude": 40.43,
     "name": "WILLOW PARK, CO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0005J40S",
+    "id": "USS0005J40S",
     "elevationUnit": "METERS",
     "longitude": -105.73
   },
@@ -16344,7 +16352,7 @@ noaa.stations = [
     "latitude": 39.94,
     "name": "LAKE ELDORA, CO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0005J41S",
+    "id": "USS0005J41S",
     "elevationUnit": "METERS",
     "longitude": -105.59
   },
@@ -16355,7 +16363,7 @@ noaa.stations = [
     "latitude": 40.14,
     "name": "SAWTOOTH, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J45S",
+    "id": "USS0005J45S",
     "elevationUnit": "METERS",
     "longitude": -105.59
   },
@@ -16366,7 +16374,7 @@ noaa.stations = [
     "latitude": 40.04,
     "name": "HIGH LONESOME, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005J46S",
+    "id": "USS0005J46S",
     "elevationUnit": "METERS",
     "longitude": -105.75
   },
@@ -16377,7 +16385,7 @@ noaa.stations = [
     "latitude": 39.67,
     "name": "LOVELAND BASIN, CO US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USS0005K05S",
+    "id": "USS0005K05S",
     "elevationUnit": "METERS",
     "longitude": -105.9
   },
@@ -16388,7 +16396,7 @@ noaa.stations = [
     "latitude": 39.65,
     "name": "GRIZZLY PEAK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005K09S",
+    "id": "USS0005K09S",
     "elevationUnit": "METERS",
     "longitude": -105.87
   },
@@ -16399,7 +16407,7 @@ noaa.stations = [
     "latitude": 39.8,
     "name": "BERTHOUD SUMMIT, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005K14S",
+    "id": "USS0005K14S",
     "elevationUnit": "METERS",
     "longitude": -105.78
   },
@@ -16410,7 +16418,7 @@ noaa.stations = [
     "latitude": 39.76,
     "name": "JONES PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005K21S",
+    "id": "USS0005K21S",
     "elevationUnit": "METERS",
     "longitude": -105.91
   },
@@ -16421,7 +16429,7 @@ noaa.stations = [
     "latitude": 39.57,
     "name": "JACKWHACKER GULCH, CO US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USS0005K26S",
+    "id": "USS0005K26S",
     "elevationUnit": "METERS",
     "longitude": -105.8
   },
@@ -16432,7 +16440,7 @@ noaa.stations = [
     "latitude": 39.66,
     "name": "ECHO LAKE, CO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USS0005K27S",
+    "id": "USS0005K27S",
     "elevationUnit": "METERS",
     "longitude": -105.59
   },
@@ -16443,7 +16451,7 @@ noaa.stations = [
     "latitude": 39.87,
     "name": "FOOL CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005K30S",
+    "id": "USS0005K30S",
     "elevationUnit": "METERS",
     "longitude": -105.87
   },
@@ -16454,7 +16462,7 @@ noaa.stations = [
     "latitude": 38.29,
     "name": "HAYDEN PASS, CO US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USS0005L12S",
+    "id": "USS0005L12S",
     "elevationUnit": "METERS",
     "longitude": -105.85
   },
@@ -16465,7 +16473,7 @@ noaa.stations = [
     "latitude": 37.33,
     "name": "APISHAPA, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005M07S",
+    "id": "USS0005M07S",
     "elevationUnit": "METERS",
     "longitude": -105.07
   },
@@ -16476,7 +16484,7 @@ noaa.stations = [
     "latitude": 37.35,
     "name": "TRINCHERA, CO US",
     "datacoverage": 0.999,
-    "id": "GHCND:USS0005M08S",
+    "id": "USS0005M08S",
     "elevationUnit": "METERS",
     "longitude": -105.23
   },
@@ -16487,7 +16495,7 @@ noaa.stations = [
     "latitude": 37.97,
     "name": "SOUTH COLONY, CO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0005M13S",
+    "id": "USS0005M13S",
     "elevationUnit": "METERS",
     "longitude": -105.54
   },
@@ -16498,7 +16506,7 @@ noaa.stations = [
     "latitude": 37.85,
     "name": "MEDANO PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005M16S",
+    "id": "USS0005M16S",
     "elevationUnit": "METERS",
     "longitude": -105.44
   },
@@ -16509,7 +16517,7 @@ noaa.stations = [
     "latitude": 36.13,
     "name": "TRES RITOS, NM US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USS0005N04S",
+    "id": "USS0005N04S",
     "elevationUnit": "METERS",
     "longitude": -105.53
   },
@@ -16520,7 +16528,7 @@ noaa.stations = [
     "latitude": 36.41,
     "name": "PALO, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005N13S",
+    "id": "USS0005N13S",
     "elevationUnit": "METERS",
     "longitude": -105.33
   },
@@ -16531,7 +16539,7 @@ noaa.stations = [
     "latitude": 36.58,
     "name": "TAOS POWDERHORN, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005N14S",
+    "id": "USS0005N14S",
     "elevationUnit": "METERS",
     "longitude": -105.46
   },
@@ -16542,7 +16550,7 @@ noaa.stations = [
     "latitude": 36.19,
     "name": "GALLEGOS PEAK, NM US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0005N18S",
+    "id": "USS0005N18S",
     "elevationUnit": "METERS",
     "longitude": -105.56
   },
@@ -16553,7 +16561,7 @@ noaa.stations = [
     "latitude": 36.47,
     "name": "TOLBY, NM US",
     "datacoverage": 0.999,
-    "id": "GHCND:USS0005N19S",
+    "id": "USS0005N19S",
     "elevationUnit": "METERS",
     "longitude": -105.19
   },
@@ -16564,7 +16572,7 @@ noaa.stations = [
     "latitude": 36.79,
     "name": "SHUREE, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005N23S",
+    "id": "USS0005N23S",
     "elevationUnit": "METERS",
     "longitude": -105.24
   },
@@ -16575,7 +16583,7 @@ noaa.stations = [
     "latitude": 36.07,
     "name": "RIO SANTA BARBARA, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005N24S",
+    "id": "USS0005N24S",
     "elevationUnit": "METERS",
     "longitude": -105.63
   },
@@ -16586,7 +16594,7 @@ noaa.stations = [
     "latitude": 35.7,
     "name": "ELK CABIN, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005P04S",
+    "id": "USS0005P04S",
     "elevationUnit": "METERS",
     "longitude": -105.81
   },
@@ -16597,7 +16605,7 @@ noaa.stations = [
     "latitude": 35.78,
     "name": "WESNER SPRINGS, NM US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0005P08S",
+    "id": "USS0005P08S",
     "elevationUnit": "METERS",
     "longitude": -105.54
   },
@@ -16608,7 +16616,7 @@ noaa.stations = [
     "latitude": 35.77,
     "name": "SANTA FE, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0005P09S",
+    "id": "USS0005P09S",
     "elevationUnit": "METERS",
     "longitude": -105.78
   },
@@ -16619,7 +16627,7 @@ noaa.stations = [
     "latitude": 33.4,
     "name": "SIERRA BLANCA, NM US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0005R01S",
+    "id": "USS0005R01S",
     "elevationUnit": "METERS",
     "longitude": -105.79
   },
@@ -16630,7 +16638,7 @@ noaa.stations = [
     "latitude": 44.26,
     "name": "HANSEN SAWMILL, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0006E03S",
+    "id": "USS0006E03S",
     "elevationUnit": "METERS",
     "longitude": -106.98
   },
@@ -16641,7 +16649,7 @@ noaa.stations = [
     "latitude": 41.36,
     "name": "BROOKLYN LAKE, WY US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USS0006H13S",
+    "id": "USS0006H13S",
     "elevationUnit": "METERS",
     "longitude": -106.23
   },
@@ -16652,7 +16660,7 @@ noaa.stations = [
     "latitude": 41.33,
     "name": "NORTH FRENCH CREEK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006H20S",
+    "id": "USS0006H20S",
     "elevationUnit": "METERS",
     "longitude": -106.38
   },
@@ -16663,7 +16671,7 @@ noaa.stations = [
     "latitude": 41,
     "name": "WHISKEY PARK, CO US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USS0006H22S",
+    "id": "USS0006H22S",
     "elevationUnit": "METERS",
     "longitude": -106.91
   },
@@ -16674,7 +16682,7 @@ noaa.stations = [
     "latitude": 41.06,
     "name": "BLACKHALL MOUNTAIN, WY US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USS0006H26S",
+    "id": "USS0006H26S",
     "elevationUnit": "METERS",
     "longitude": -106.71
   },
@@ -16685,7 +16693,7 @@ noaa.stations = [
     "latitude": 41.38,
     "name": "MED BOW, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006H27S",
+    "id": "USS0006H27S",
     "elevationUnit": "METERS",
     "longitude": -106.35
   },
@@ -16696,7 +16704,7 @@ noaa.stations = [
     "latitude": 40.35,
     "name": "WILLOW CREEK PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006J05S",
+    "id": "USS0006J05S",
     "elevationUnit": "METERS",
     "longitude": -106.09
   },
@@ -16707,7 +16715,7 @@ noaa.stations = [
     "latitude": 40.37,
     "name": "RABBIT EARS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006J09S",
+    "id": "USS0006J09S",
     "elevationUnit": "METERS",
     "longitude": -106.74
   },
@@ -16718,7 +16726,7 @@ noaa.stations = [
     "latitude": 40.85,
     "name": "ELK RIVER, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006J15S",
+    "id": "USS0006J15S",
     "elevationUnit": "METERS",
     "longitude": -106.97
   },
@@ -16729,7 +16737,7 @@ noaa.stations = [
     "latitude": 40.23,
     "name": "BUFFALO PARK, CO US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USS0006J18S",
+    "id": "USS0006J18S",
     "elevationUnit": "METERS",
     "longitude": -106.6
   },
@@ -16740,7 +16748,7 @@ noaa.stations = [
     "latitude": 40.71,
     "name": "RAWAH, CO US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USS0006J20S",
+    "id": "USS0006J20S",
     "elevationUnit": "METERS",
     "longitude": -106.01
   },
@@ -16751,7 +16759,7 @@ noaa.stations = [
     "latitude": 40.4,
     "name": "NEVER SUMMER, CO US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USS0006J27S",
+    "id": "USS0006J27S",
     "elevationUnit": "METERS",
     "longitude": -105.96
   },
@@ -16762,7 +16770,7 @@ noaa.stations = [
     "latitude": 39.36,
     "name": "HOOSIER PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K01S",
+    "id": "USS0006K01S",
     "elevationUnit": "METERS",
     "longitude": -106.06
   },
@@ -16773,7 +16781,7 @@ noaa.stations = [
     "latitude": 39.3,
     "name": "NAST LAKE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K06S",
+    "id": "USS0006K06S",
     "elevationUnit": "METERS",
     "longitude": -106.61
   },
@@ -16784,7 +16792,7 @@ noaa.stations = [
     "latitude": 39.38,
     "name": "FREMONT PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K08S",
+    "id": "USS0006K08S",
     "elevationUnit": "METERS",
     "longitude": -106.2
   },
@@ -16795,7 +16803,7 @@ noaa.stations = [
     "latitude": 39.29,
     "name": "IVANHOE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K10S",
+    "id": "USS0006K10S",
     "elevationUnit": "METERS",
     "longitude": -106.55
   },
@@ -16806,7 +16814,7 @@ noaa.stations = [
     "latitude": 39.8,
     "name": "MIDDLE FORK CAMP, CO US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0006K12S",
+    "id": "USS0006K12S",
     "elevationUnit": "METERS",
     "longitude": -106.03
   },
@@ -16817,7 +16825,7 @@ noaa.stations = [
     "latitude": 39.72,
     "name": "SUMMIT RANCH, CO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0006K14S",
+    "id": "USS0006K14S",
     "elevationUnit": "METERS",
     "longitude": -106.16
   },
@@ -16828,7 +16836,7 @@ noaa.stations = [
     "latitude": 39.49,
     "name": "COPPER MOUNTAIN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K24S",
+    "id": "USS0006K24S",
     "elevationUnit": "METERS",
     "longitude": -106.17
   },
@@ -16839,7 +16847,7 @@ noaa.stations = [
     "latitude": 39.86,
     "name": "ELLIOT RIDGE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K29S",
+    "id": "USS0006K29S",
     "elevationUnit": "METERS",
     "longitude": -106.42
   },
@@ -16850,7 +16858,7 @@ noaa.stations = [
     "latitude": 39.32,
     "name": "KILN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K30S",
+    "id": "USS0006K30S",
     "elevationUnit": "METERS",
     "longitude": -106.61
   },
@@ -16861,7 +16869,7 @@ noaa.stations = [
     "latitude": 39.62,
     "name": "VAIL MOUNTAIN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K39S",
+    "id": "USS0006K39S",
     "elevationUnit": "METERS",
     "longitude": -106.38
   },
@@ -16872,7 +16880,7 @@ noaa.stations = [
     "latitude": 39.09,
     "name": "BRUMLEY, CO US",
     "datacoverage": 0.996,
-    "id": "GHCND:USS0006K40S",
+    "id": "USS0006K40S",
     "elevationUnit": "METERS",
     "longitude": -106.54
   },
@@ -16883,7 +16891,7 @@ noaa.stations = [
     "latitude": 39.03,
     "name": "ROUGH AND TUMBLE, CO US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0006K43S",
+    "id": "USS0006K43S",
     "elevationUnit": "METERS",
     "longitude": -106.08
   },
@@ -16894,7 +16902,7 @@ noaa.stations = [
     "latitude": 39.6,
     "name": "MCCOY PARK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006K44S",
+    "id": "USS0006K44S",
     "elevationUnit": "METERS",
     "longitude": -106.54
   },
@@ -16905,7 +16913,7 @@ noaa.stations = [
     "latitude": 39.26,
     "name": "CHAPMAN TUNNEL, CO US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0006K46S",
+    "id": "USS0006K46S",
     "elevationUnit": "METERS",
     "longitude": -106.63
   },
@@ -16916,7 +16924,7 @@ noaa.stations = [
     "latitude": 38.82,
     "name": "PARK CONE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006L02S",
+    "id": "USS0006L02S",
     "elevationUnit": "METERS",
     "longitude": -106.59
   },
@@ -16927,7 +16935,7 @@ noaa.stations = [
     "latitude": 38.49,
     "name": "PORPHYRY CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006L03S",
+    "id": "USS0006L03S",
     "elevationUnit": "METERS",
     "longitude": -106.34
   },
@@ -16938,7 +16946,7 @@ noaa.stations = [
     "latitude": 38.7,
     "name": "SAINT ELMO, CO US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USS0006L05S",
+    "id": "USS0006L05S",
     "elevationUnit": "METERS",
     "longitude": -106.37
   },
@@ -16949,7 +16957,7 @@ noaa.stations = [
     "latitude": 38.16,
     "name": "COCHETOPA PASS, CO US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USS0006L06S",
+    "id": "USS0006L06S",
     "elevationUnit": "METERS",
     "longitude": -106.6
   },
@@ -16960,7 +16968,7 @@ noaa.stations = [
     "latitude": 38.89,
     "name": "BUTTE, CO US",
     "datacoverage": 0.996,
-    "id": "GHCND:USS0006L11S",
+    "id": "USS0006L11S",
     "elevationUnit": "METERS",
     "longitude": -106.95
   },
@@ -16971,7 +16979,7 @@ noaa.stations = [
     "latitude": 38.29,
     "name": "SARGENTS MESA, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006L13S",
+    "id": "USS0006L13S",
     "elevationUnit": "METERS",
     "longitude": -106.37
   },
@@ -16982,7 +16990,7 @@ noaa.stations = [
     "latitude": 38.99,
     "name": "UPPER TAYLOR, CO US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USS0006L14S",
+    "id": "USS0006L14S",
     "elevationUnit": "METERS",
     "longitude": -106.75
   },
@@ -16993,7 +17001,7 @@ noaa.stations = [
     "latitude": 37.49,
     "name": "UPPER SAN JUAN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006M03S",
+    "id": "USS0006M03S",
     "elevationUnit": "METERS",
     "longitude": -106.84
   },
@@ -17004,7 +17012,7 @@ noaa.stations = [
     "latitude": 37.48,
     "name": "WOLF CREEK SUMMIT, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006M17S",
+    "id": "USS0006M17S",
     "elevationUnit": "METERS",
     "longitude": -106.8
   },
@@ -17015,7 +17023,7 @@ noaa.stations = [
     "latitude": 37.47,
     "name": "GRAYBACK, CO US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USS0006M21S",
+    "id": "USS0006M21S",
     "elevationUnit": "METERS",
     "longitude": -106.54
   },
@@ -17026,7 +17034,7 @@ noaa.stations = [
     "latitude": 37.02,
     "name": "CUMBRES TRESTLE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006M22S",
+    "id": "USS0006M22S",
     "elevationUnit": "METERS",
     "longitude": -106.45
   },
@@ -17037,7 +17045,7 @@ noaa.stations = [
     "latitude": 37.38,
     "name": "LILY POND, CO US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0006M23S",
+    "id": "USS0006M23S",
     "elevationUnit": "METERS",
     "longitude": -106.55
   },
@@ -17048,7 +17056,7 @@ noaa.stations = [
     "latitude": 37.97,
     "name": "MOON PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006M26S",
+    "id": "USS0006M26S",
     "elevationUnit": "METERS",
     "longitude": -106.56
   },
@@ -17059,7 +17067,7 @@ noaa.stations = [
     "latitude": 36.86,
     "name": "SAN ANTONIO SINK, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006N15S",
+    "id": "USS0006N15S",
     "elevationUnit": "METERS",
     "longitude": -106.23
   },
@@ -17070,7 +17078,7 @@ noaa.stations = [
     "latitude": 36.03,
     "name": "VACAS LOCAS, NM US",
     "datacoverage": 1,
-    "id": "GHCND:USS0006N16S",
+    "id": "USS0006N16S",
     "elevationUnit": "METERS",
     "longitude": -106.81
   },
@@ -17081,7 +17089,7 @@ noaa.stations = [
     "latitude": 35.92,
     "name": "QUEMAZON, NM US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0006P01S",
+    "id": "USS0006P01S",
     "elevationUnit": "METERS",
     "longitude": -106.39
   },
@@ -17092,7 +17100,7 @@ noaa.stations = [
     "latitude": 44.35,
     "name": "SOLDIER PARK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E05S",
+    "id": "USS0007E05S",
     "elevationUnit": "METERS",
     "longitude": -107.01
   },
@@ -17103,7 +17111,7 @@ noaa.stations = [
     "latitude": 44.16,
     "name": "POWDER RIVER PASS, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E06S",
+    "id": "USS0007E06S",
     "elevationUnit": "METERS",
     "longitude": -107.13
   },
@@ -17114,7 +17122,7 @@ noaa.stations = [
     "latitude": 44.72,
     "name": "SUCKER CREEK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E12S",
+    "id": "USS0007E12S",
     "elevationUnit": "METERS",
     "longitude": -107.4
   },
@@ -17125,7 +17133,7 @@ noaa.stations = [
     "latitude": 44.68,
     "name": "BONE SPRINGS DIV, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0007E18S",
+    "id": "USS0007E18S",
     "elevationUnit": "METERS",
     "longitude": -107.58
   },
@@ -17136,7 +17144,7 @@ noaa.stations = [
     "latitude": 44.8,
     "name": "BALD MOUNTAIN, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E21S",
+    "id": "USS0007E21S",
     "elevationUnit": "METERS",
     "longitude": -107.84
   },
@@ -17147,7 +17155,7 @@ noaa.stations = [
     "latitude": 44.58,
     "name": "BIG GOOSE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E32S",
+    "id": "USS0007E32S",
     "elevationUnit": "METERS",
     "longitude": -107.2
   },
@@ -17158,7 +17166,7 @@ noaa.stations = [
     "latitude": 44.79,
     "name": "BURGESS JUNCTION, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0007E33S",
+    "id": "USS0007E33S",
     "elevationUnit": "METERS",
     "longitude": -107.53
   },
@@ -17169,7 +17177,7 @@ noaa.stations = [
     "latitude": 44.57,
     "name": "DOME LAKE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E34S",
+    "id": "USS0007E34S",
     "elevationUnit": "METERS",
     "longitude": -107.3
   },
@@ -17180,7 +17188,7 @@ noaa.stations = [
     "latitude": 44.4,
     "name": "CLOUD PEAK RESERVOIR, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E36S",
+    "id": "USS0007E36S",
     "elevationUnit": "METERS",
     "longitude": -107.06
   },
@@ -17191,7 +17199,7 @@ noaa.stations = [
     "latitude": 44.81,
     "name": "TIE CREEK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E39S",
+    "id": "USS0007E39S",
     "elevationUnit": "METERS",
     "longitude": -107.41
   },
@@ -17202,7 +17210,7 @@ noaa.stations = [
     "latitude": 44.54,
     "name": "LITTLE GOOSE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007E40S",
+    "id": "USS0007E40S",
     "elevationUnit": "METERS",
     "longitude": -107.18
   },
@@ -17213,7 +17221,7 @@ noaa.stations = [
     "latitude": 43.89,
     "name": "BEAR TRAP MEADOW, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007F01S",
+    "id": "USS0007F01S",
     "elevationUnit": "METERS",
     "longitude": -107.06
   },
@@ -17224,7 +17232,7 @@ noaa.stations = [
     "latitude": 43.63,
     "name": "MIDDLE POWDER, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007F02S",
+    "id": "USS0007F02S",
     "elevationUnit": "METERS",
     "longitude": -107.18
   },
@@ -17235,7 +17243,7 @@ noaa.stations = [
     "latitude": 43.47,
     "name": "GRAVE SPRINGS, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007F06S",
+    "id": "USS0007F06S",
     "elevationUnit": "METERS",
     "longitude": -107.24
   },
@@ -17246,7 +17254,7 @@ noaa.stations = [
     "latitude": 41.11,
     "name": "SANDSTONE RANGER STATION, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007H03S",
+    "id": "USS0007H03S",
     "elevationUnit": "METERS",
     "longitude": -107.17
   },
@@ -17257,7 +17265,7 @@ noaa.stations = [
     "latitude": 41.05,
     "name": "BATTLE MOUNTAIN, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007H04S",
+    "id": "USS0007H04S",
     "elevationUnit": "METERS",
     "longitude": -107.27
   },
@@ -17268,7 +17276,7 @@ noaa.stations = [
     "latitude": 41.3,
     "name": "DIVIDE PEAK, WY US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USS0007H05S",
+    "id": "USS0007H05S",
     "elevationUnit": "METERS",
     "longitude": -107.15
   },
@@ -17279,7 +17287,7 @@ noaa.stations = [
     "latitude": 41.4,
     "name": "SAGE CREEK BASIN, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007H06S",
+    "id": "USS0007H06S",
     "elevationUnit": "METERS",
     "longitude": -107.26
   },
@@ -17290,7 +17298,7 @@ noaa.stations = [
     "latitude": 40.06,
     "name": "BEAR RIVER, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007J03S",
+    "id": "USS0007J03S",
     "elevationUnit": "METERS",
     "longitude": -107.01
   },
@@ -17301,7 +17309,7 @@ noaa.stations = [
     "latitude": 40.17,
     "name": "CROSHO, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007J04S",
+    "id": "USS0007J04S",
     "elevationUnit": "METERS",
     "longitude": -107.06
   },
@@ -17312,7 +17320,7 @@ noaa.stations = [
     "latitude": 40.11,
     "name": "RIPPLE CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007J05S",
+    "id": "USS0007J05S",
     "elevationUnit": "METERS",
     "longitude": -107.29
   },
@@ -17323,7 +17331,7 @@ noaa.stations = [
     "latitude": 39.08,
     "name": "NORTH LOST TRAIL, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007K01S",
+    "id": "USS0007K01S",
     "elevationUnit": "METERS",
     "longitude": -107.14
   },
@@ -17334,7 +17342,7 @@ noaa.stations = [
     "latitude": 39.05,
     "name": "PARK RESERVOIR, CO US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USS0007K06S",
+    "id": "USS0007K06S",
     "elevationUnit": "METERS",
     "longitude": -107.87
   },
@@ -17345,7 +17353,7 @@ noaa.stations = [
     "latitude": 39.13,
     "name": "MC CLURE PASS, CO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0007K09S",
+    "id": "USS0007K09S",
     "elevationUnit": "METERS",
     "longitude": -107.29
   },
@@ -17356,7 +17364,7 @@ noaa.stations = [
     "latitude": 39.02,
     "name": "SCHOFIELD PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007K11S",
+    "id": "USS0007K11S",
     "elevationUnit": "METERS",
     "longitude": -107.05
   },
@@ -17367,7 +17375,7 @@ noaa.stations = [
     "latitude": 39.76,
     "name": "BISON LAKE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007K12S",
+    "id": "USS0007K12S",
     "elevationUnit": "METERS",
     "longitude": -107.36
   },
@@ -17378,7 +17386,7 @@ noaa.stations = [
     "latitude": 40,
     "name": "TRAPPER LAKE, CO US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0007K13S",
+    "id": "USS0007K13S",
     "elevationUnit": "METERS",
     "longitude": -107.24
   },
@@ -17389,7 +17397,7 @@ noaa.stations = [
     "latitude": 37.65,
     "name": "CASCADE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M05S",
+    "id": "USS0007M05S",
     "elevationUnit": "METERS",
     "longitude": -107.81
   },
@@ -17400,7 +17408,7 @@ noaa.stations = [
     "latitude": 37.7,
     "name": "SPUD MOUNTAIN, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M11S",
+    "id": "USS0007M11S",
     "elevationUnit": "METERS",
     "longitude": -107.78
   },
@@ -17411,7 +17419,7 @@ noaa.stations = [
     "latitude": 37.75,
     "name": "MOLAS LAKE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M12S",
+    "id": "USS0007M12S",
     "elevationUnit": "METERS",
     "longitude": -107.69
   },
@@ -17422,7 +17430,7 @@ noaa.stations = [
     "latitude": 37.85,
     "name": "MINERAL CREEK, CO US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USS0007M14S",
+    "id": "USS0007M14S",
     "elevationUnit": "METERS",
     "longitude": -107.73
   },
@@ -17433,7 +17441,7 @@ noaa.stations = [
     "latitude": 37.72,
     "name": "UPPER RIO GRANDE, CO US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USS0007M16S",
+    "id": "USS0007M16S",
     "elevationUnit": "METERS",
     "longitude": -107.26
   },
@@ -17444,7 +17452,7 @@ noaa.stations = [
     "latitude": 37.62,
     "name": "MIDDLE CREEK, CO US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USS0007M21S",
+    "id": "USS0007M21S",
     "elevationUnit": "METERS",
     "longitude": -107.03
   },
@@ -17455,7 +17463,7 @@ noaa.stations = [
     "latitude": 37.93,
     "name": "IDARADO, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M27S",
+    "id": "USS0007M27S",
     "elevationUnit": "METERS",
     "longitude": -107.68
   },
@@ -17466,7 +17474,7 @@ noaa.stations = [
     "latitude": 37.8,
     "name": "LIZARD HEAD PASS, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M29S",
+    "id": "USS0007M29S",
     "elevationUnit": "METERS",
     "longitude": -107.92
   },
@@ -17477,7 +17485,7 @@ noaa.stations = [
     "latitude": 37.99,
     "name": "SLUMGULLION, CO US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USS0007M30S",
+    "id": "USS0007M30S",
     "elevationUnit": "METERS",
     "longitude": -107.2
   },
@@ -17488,7 +17496,7 @@ noaa.stations = [
     "latitude": 37.49,
     "name": "VALLECITO, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M31S",
+    "id": "USS0007M31S",
     "elevationUnit": "METERS",
     "longitude": -107.51
   },
@@ -17499,7 +17507,7 @@ noaa.stations = [
     "latitude": 37.48,
     "name": "STUMP LAKES, CO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0007M34S",
+    "id": "USS0007M34S",
     "elevationUnit": "METERS",
     "longitude": -107.63
   },
@@ -17510,7 +17518,7 @@ noaa.stations = [
     "latitude": 37.66,
     "name": "CASCADE NUMBER 2, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M35S",
+    "id": "USS0007M35S",
     "elevationUnit": "METERS",
     "longitude": -107.8
   },
@@ -17521,7 +17529,7 @@ noaa.stations = [
     "latitude": 37.52,
     "name": "WEMINUCHE CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M36S",
+    "id": "USS0007M36S",
     "elevationUnit": "METERS",
     "longitude": -107.32
   },
@@ -17532,7 +17540,7 @@ noaa.stations = [
     "latitude": 37.88,
     "name": "WAGER GULCH, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0007M37S",
+    "id": "USS0007M37S",
     "elevationUnit": "METERS",
     "longitude": -107.36
   },
@@ -17543,7 +17551,7 @@ noaa.stations = [
     "latitude": 33.01,
     "name": "MCKNIGHT CABIN, NM US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USS0007S03S",
+    "id": "USS0007S03S",
     "elevationUnit": "METERS",
     "longitude": -107.87
   },
@@ -17554,7 +17562,7 @@ noaa.stations = [
     "latitude": 43.66,
     "name": "OWL CREEK, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0008F01S",
+    "id": "USS0008F01S",
     "elevationUnit": "METERS",
     "longitude": -109.01
   },
@@ -17565,7 +17573,7 @@ noaa.stations = [
     "latitude": 42.57,
     "name": "SOUTH PASS, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008G03S",
+    "id": "USS0008G03S",
     "elevationUnit": "METERS",
     "longitude": -108.84
   },
@@ -17576,7 +17584,7 @@ noaa.stations = [
     "latitude": 42.7,
     "name": "TOWNSEND CREEK, WY US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USS0008G07S",
+    "id": "USS0008G07S",
     "elevationUnit": "METERS",
     "longitude": -108.9
   },
@@ -17587,7 +17595,7 @@ noaa.stations = [
     "latitude": 42.59,
     "name": "DEER PARK, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0008G10S",
+    "id": "USS0008G10S",
     "elevationUnit": "METERS",
     "longitude": -108.9
   },
@@ -17598,7 +17606,7 @@ noaa.stations = [
     "latitude": 39.06,
     "name": "MESA LAKES, CO US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USS0008K04S",
+    "id": "USS0008K04S",
     "elevationUnit": "METERS",
     "longitude": -108.06
   },
@@ -17609,7 +17617,7 @@ noaa.stations = [
     "latitude": 38.42,
     "name": "COLUMBINE PASS, CO US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USS0008L02S",
+    "id": "USS0008L02S",
     "elevationUnit": "METERS",
     "longitude": -108.38
   },
@@ -17620,7 +17628,7 @@ noaa.stations = [
     "latitude": 37.43,
     "name": "MANCOS, CO US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0008M02S",
+    "id": "USS0008M02S",
     "elevationUnit": "METERS",
     "longitude": -108.17
   },
@@ -17631,7 +17639,7 @@ noaa.stations = [
     "latitude": 37.5,
     "name": "SHARKSTOOTH, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008M04S",
+    "id": "USS0008M04S",
     "elevationUnit": "METERS",
     "longitude": -108.11
   },
@@ -17642,7 +17650,7 @@ noaa.stations = [
     "latitude": 37.79,
     "name": "EL DIENTE PEAK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008M06S",
+    "id": "USS0008M06S",
     "elevationUnit": "METERS",
     "longitude": -108.02
   },
@@ -17653,7 +17661,7 @@ noaa.stations = [
     "latitude": 37.89,
     "name": "LONE CONE, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008M07S",
+    "id": "USS0008M07S",
     "elevationUnit": "METERS",
     "longitude": -108.2
   },
@@ -17664,7 +17672,7 @@ noaa.stations = [
     "latitude": 37.65,
     "name": "SCOTCH CREEK, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008M08S",
+    "id": "USS0008M08S",
     "elevationUnit": "METERS",
     "longitude": -108.01
   },
@@ -17675,7 +17683,7 @@ noaa.stations = [
     "latitude": 37.44,
     "name": "COLUMBUS BASIN, CO US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0008M10S",
+    "id": "USS0008M10S",
     "elevationUnit": "METERS",
     "longitude": -108.02
   },
@@ -17686,7 +17694,7 @@ noaa.stations = [
     "latitude": 37.79,
     "name": "BLACK MESA, CO US",
     "datacoverage": 1,
-    "id": "GHCND:USS0008M12S",
+    "id": "USS0008M12S",
     "elevationUnit": "METERS",
     "longitude": -108.18
   },
@@ -17697,7 +17705,7 @@ noaa.stations = [
     "latitude": 36.18,
     "name": "NAVAJO WHISKEY CK, NM US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USS0008N03S",
+    "id": "USS0008N03S",
     "elevationUnit": "METERS",
     "longitude": -108.95
   },
@@ -17708,7 +17716,7 @@ noaa.stations = [
     "latitude": 35.23,
     "name": "RICE PARK, NM US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0008P03S",
+    "id": "USS0008P03S",
     "elevationUnit": "METERS",
     "longitude": -108.27
   },
@@ -17719,7 +17727,7 @@ noaa.stations = [
     "latitude": 48.17,
     "name": "ROCKY BOY, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009A01S",
+    "id": "USS0009A01S",
     "elevationUnit": "METERS",
     "longitude": -109.65
   },
@@ -17730,7 +17738,7 @@ noaa.stations = [
     "latitude": 46.79,
     "name": "CRYSTAL LAKE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009C01S",
+    "id": "USS0009C01S",
     "elevationUnit": "METERS",
     "longitude": -109.51
   },
@@ -17741,7 +17749,7 @@ noaa.stations = [
     "latitude": 45.06,
     "name": "FISHER CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009D06S",
+    "id": "USS0009D06S",
     "elevationUnit": "METERS",
     "longitude": -109.94
   },
@@ -17752,7 +17760,7 @@ noaa.stations = [
     "latitude": 45.05,
     "name": "WHITE MILL, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009D08S",
+    "id": "USS0009D08S",
     "elevationUnit": "METERS",
     "longitude": -109.91
   },
@@ -17763,7 +17771,7 @@ noaa.stations = [
     "latitude": 45.24,
     "name": "BURNT MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009D21S",
+    "id": "USS0009D21S",
     "elevationUnit": "METERS",
     "longitude": -109.46
   },
@@ -17774,7 +17782,7 @@ noaa.stations = [
     "latitude": 44.03,
     "name": "TIMBER CREEK, WY US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USS0009E03S",
+    "id": "USS0009E03S",
     "elevationUnit": "METERS",
     "longitude": -109.18
   },
@@ -17785,7 +17793,7 @@ noaa.stations = [
     "latitude": 44.73,
     "name": "PARKER PEAK, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0009E07S",
+    "id": "USS0009E07S",
     "elevationUnit": "METERS",
     "longitude": -109.91
   },
@@ -17796,7 +17804,7 @@ noaa.stations = [
     "latitude": 44.8,
     "name": "WOLVERINE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009E08S",
+    "id": "USS0009E08S",
     "elevationUnit": "METERS",
     "longitude": -109.66
   },
@@ -17807,7 +17815,7 @@ noaa.stations = [
     "latitude": 44.94,
     "name": "BEARTOOTH LAKE, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0009E10S",
+    "id": "USS0009E10S",
     "elevationUnit": "METERS",
     "longitude": -109.57
   },
@@ -17818,7 +17826,7 @@ noaa.stations = [
     "latitude": 44.65,
     "name": "EVENING STAR, WY US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USS0009E11S",
+    "id": "USS0009E11S",
     "elevationUnit": "METERS",
     "longitude": -109.78
   },
@@ -17829,7 +17837,7 @@ noaa.stations = [
     "latitude": 43.5,
     "name": "LITTLE WARM, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009F08S",
+    "id": "USS0009F08S",
     "elevationUnit": "METERS",
     "longitude": -109.75
   },
@@ -17840,7 +17848,7 @@ noaa.stations = [
     "latitude": 43.67,
     "name": "CASTLE CREEK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009F20S",
+    "id": "USS0009F20S",
     "elevationUnit": "METERS",
     "longitude": -109.38
   },
@@ -17851,7 +17859,7 @@ noaa.stations = [
     "latitude": 43.11,
     "name": "NEW FORK LAKE, WY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USS0009F21S",
+    "id": "USS0009F21S",
     "elevationUnit": "METERS",
     "longitude": -109.95
   },
@@ -17862,7 +17870,7 @@ noaa.stations = [
     "latitude": 43.01,
     "name": "ELKHART PARK G.S., WY US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USS0009F23S",
+    "id": "USS0009F23S",
     "elevationUnit": "METERS",
     "longitude": -109.76
   },
@@ -17873,7 +17881,7 @@ noaa.stations = [
     "latitude": 43.86,
     "name": "KIRWIN, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009F24S",
+    "id": "USS0009F24S",
     "elevationUnit": "METERS",
     "longitude": -109.32
   },
@@ -17884,7 +17892,7 @@ noaa.stations = [
     "latitude": 43.28,
     "name": "COLD SPRINGS, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009F25S",
+    "id": "USS0009F25S",
     "elevationUnit": "METERS",
     "longitude": -109.45
   },
@@ -17895,7 +17903,7 @@ noaa.stations = [
     "latitude": 43.03,
     "name": "ST. LAWRENCE ALT, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009F27S",
+    "id": "USS0009F27S",
     "elevationUnit": "METERS",
     "longitude": -109.17
   },
@@ -17906,7 +17914,7 @@ noaa.stations = [
     "latitude": 43.38,
     "name": "GUNSIGHT PASS, WY US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0009F28S",
+    "id": "USS0009F28S",
     "elevationUnit": "METERS",
     "longitude": -109.88
   },
@@ -17917,7 +17925,7 @@ noaa.stations = [
     "latitude": 42.87,
     "name": "HOBBS PARK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009G03S",
+    "id": "USS0009G03S",
     "elevationUnit": "METERS",
     "longitude": -109.09
   },
@@ -17928,7 +17936,7 @@ noaa.stations = [
     "latitude": 42.58,
     "name": "LARSEN CREEK, WY US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USS0009G06S",
+    "id": "USS0009G06S",
     "elevationUnit": "METERS",
     "longitude": -109.09
   },
@@ -17939,7 +17947,7 @@ noaa.stations = [
     "latitude": 38.48,
     "name": "LASAL MOUNTAIN LOWER, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009L01S",
+    "id": "USS0009L01S",
     "elevationUnit": "METERS",
     "longitude": -109.29
   },
@@ -17950,7 +17958,7 @@ noaa.stations = [
     "latitude": 37.87,
     "name": "BUCKBOARD FLAT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009M01S",
+    "id": "USS0009M01S",
     "elevationUnit": "METERS",
     "longitude": -109.45
   },
@@ -17961,7 +17969,7 @@ noaa.stations = [
     "latitude": 36.33,
     "name": "BEAVER SPRING, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009N05S",
+    "id": "USS0009N05S",
     "elevationUnit": "METERS",
     "longitude": -109.06
   },
@@ -17972,7 +17980,7 @@ noaa.stations = [
     "latitude": 33.9,
     "name": "NUTRIOSO, AZ US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0009S04S",
+    "id": "USS0009S04S",
     "elevationUnit": "METERS",
     "longitude": -109.16
   },
@@ -17983,7 +17991,7 @@ noaa.stations = [
     "latitude": 33.69,
     "name": "BEAVER HEAD, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009S06S",
+    "id": "USS0009S06S",
     "elevationUnit": "METERS",
     "longitude": -109.22
   },
@@ -17994,7 +18002,7 @@ noaa.stations = [
     "latitude": 33.76,
     "name": "WILDCAT, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USS0009S18S",
+    "id": "USS0009S18S",
     "elevationUnit": "METERS",
     "longitude": -109.48
   },
@@ -18005,7 +18013,7 @@ noaa.stations = [
     "latitude": 46.11,
     "name": "PORCUPINE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010C03S",
+    "id": "USS0010C03S",
     "elevationUnit": "METERS",
     "longitude": -110.47
   },
@@ -18016,7 +18024,7 @@ noaa.stations = [
     "latitude": 46.78,
     "name": "SPUR PARK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010C06S",
+    "id": "USS0010C06S",
     "elevationUnit": "METERS",
     "longitude": -110.62
   },
@@ -18027,7 +18035,7 @@ noaa.stations = [
     "latitude": 46.09,
     "name": "S FORK SHIELDS, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010C08S",
+    "id": "USS0010C08S",
     "elevationUnit": "METERS",
     "longitude": -110.43
   },
@@ -18038,7 +18046,7 @@ noaa.stations = [
     "latitude": 46.79,
     "name": "DEADMAN CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010C09S",
+    "id": "USS0010C09S",
     "elevationUnit": "METERS",
     "longitude": -110.68
   },
@@ -18049,7 +18057,7 @@ noaa.stations = [
     "latitude": 46.91,
     "name": "ONION PARK, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010C22S",
+    "id": "USS0010C22S",
     "elevationUnit": "METERS",
     "longitude": -110.85
   },
@@ -18060,7 +18068,7 @@ noaa.stations = [
     "latitude": 46.93,
     "name": "STRINGER CREEK, MT US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0010C23S",
+    "id": "USS0010C23S",
     "elevationUnit": "METERS",
     "longitude": -110.9
   },
@@ -18071,7 +18079,7 @@ noaa.stations = [
     "latitude": 46.48,
     "name": "ELK PEAK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010C27S",
+    "id": "USS0010C27S",
     "elevationUnit": "METERS",
     "longitude": -110.71
   },
@@ -18082,7 +18090,7 @@ noaa.stations = [
     "latitude": 45.01,
     "name": "NORTHEAST ENTRANCE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D07S",
+    "id": "USS0010D07S",
     "elevationUnit": "METERS",
     "longitude": -110.01
   },
@@ -18093,7 +18101,7 @@ noaa.stations = [
     "latitude": 45.87,
     "name": "SACAJAWEA, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D10S",
+    "id": "USS0010D10S",
     "elevationUnit": "METERS",
     "longitude": -110.93
   },
@@ -18104,7 +18112,7 @@ noaa.stations = [
     "latitude": 45.22,
     "name": "MONUMENT PEAK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D12S",
+    "id": "USS0010D12S",
     "elevationUnit": "METERS",
     "longitude": -110.24
   },
@@ -18115,7 +18123,7 @@ noaa.stations = [
     "latitude": 45.5,
     "name": "LICK CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D13S",
+    "id": "USS0010D13S",
     "elevationUnit": "METERS",
     "longitude": -110.97
   },
@@ -18126,7 +18134,7 @@ noaa.stations = [
     "latitude": 45.4,
     "name": "SHOWER FALLS, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010D16S",
+    "id": "USS0010D16S",
     "elevationUnit": "METERS",
     "longitude": -110.96
   },
@@ -18137,7 +18145,7 @@ noaa.stations = [
     "latitude": 45.42,
     "name": "PLACER BASIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D24S",
+    "id": "USS0010D24S",
     "elevationUnit": "METERS",
     "longitude": -110.09
   },
@@ -18148,7 +18156,7 @@ noaa.stations = [
     "latitude": 45.27,
     "name": "BOX CANYON, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010D31S",
+    "id": "USS0010D31S",
     "elevationUnit": "METERS",
     "longitude": -110.25
   },
@@ -18159,7 +18167,7 @@ noaa.stations = [
     "latitude": 45.89,
     "name": "BRACKETT CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D35S",
+    "id": "USS0010D35S",
     "elevationUnit": "METERS",
     "longitude": -110.94
   },
@@ -18170,7 +18178,7 @@ noaa.stations = [
     "latitude": 45.5,
     "name": "EAST BOULDER MINE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010D39S",
+    "id": "USS0010D39S",
     "elevationUnit": "METERS",
     "longitude": -110.08
   },
@@ -18181,7 +18189,7 @@ noaa.stations = [
     "latitude": 44.48,
     "name": "SYLVAN LAKE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010E06S",
+    "id": "USS0010E06S",
     "elevationUnit": "METERS",
     "longitude": -110.16
   },
@@ -18192,7 +18200,7 @@ noaa.stations = [
     "latitude": 44.37,
     "name": "THUMB DIVIDE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010E07S",
+    "id": "USS0010E07S",
     "elevationUnit": "METERS",
     "longitude": -110.58
   },
@@ -18203,7 +18211,7 @@ noaa.stations = [
     "latitude": 44.13,
     "name": "SNAKE RIVER STATION, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010E12S",
+    "id": "USS0010E12S",
     "elevationUnit": "METERS",
     "longitude": -110.67
   },
@@ -18214,7 +18222,7 @@ noaa.stations = [
     "latitude": 44.46,
     "name": "SYLVAN ROAD, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010E20S",
+    "id": "USS0010E20S",
     "elevationUnit": "METERS",
     "longitude": -110.14
   },
@@ -18225,7 +18233,7 @@ noaa.stations = [
     "latitude": 43.75,
     "name": "TOGWOTEE PASS, WY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USS0010F09S",
+    "id": "USS0010F09S",
     "elevationUnit": "METERS",
     "longitude": -110.06
   },
@@ -18236,7 +18244,7 @@ noaa.stations = [
     "latitude": 43.25,
     "name": "KENDALL RANGER STATION, WY US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USS0010F15S",
+    "id": "USS0010F15S",
     "elevationUnit": "METERS",
     "longitude": -110.02
   },
@@ -18247,7 +18255,7 @@ noaa.stations = [
     "latitude": 43.17,
     "name": "LOOMIS PARK, WY US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USS0010F16S",
+    "id": "USS0010F16S",
     "elevationUnit": "METERS",
     "longitude": -110.14
   },
@@ -18258,7 +18266,7 @@ noaa.stations = [
     "latitude": 43.13,
     "name": "EAST RIM DIVIDE, WY US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USS0010F17S",
+    "id": "USS0010F17S",
     "elevationUnit": "METERS",
     "longitude": -110.2
   },
@@ -18269,7 +18277,7 @@ noaa.stations = [
     "latitude": 43.34,
     "name": "GRANITE CREEK, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010F29S",
+    "id": "USS0010F29S",
     "elevationUnit": "METERS",
     "longitude": -110.43
   },
@@ -18280,7 +18288,7 @@ noaa.stations = [
     "latitude": 43.78,
     "name": "GRAND TARGHEE, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010F30S",
+    "id": "USS0010F30S",
     "elevationUnit": "METERS",
     "longitude": -110.93
   },
@@ -18291,7 +18299,7 @@ noaa.stations = [
     "latitude": 42.49,
     "name": "SNIDER BASIN, WY US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USS0010G13S",
+    "id": "USS0010G13S",
     "elevationUnit": "METERS",
     "longitude": -110.53
   },
@@ -18302,7 +18310,7 @@ noaa.stations = [
     "latitude": 42.76,
     "name": "TRIPLE PEAK, WY US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USS0010G15S",
+    "id": "USS0010G15S",
     "elevationUnit": "METERS",
     "longitude": -110.59
   },
@@ -18313,7 +18321,7 @@ noaa.stations = [
     "latitude": 42.15,
     "name": "HAMS FORK, WY US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USS0010G24S",
+    "id": "USS0010G24S",
     "elevationUnit": "METERS",
     "longitude": -110.68
   },
@@ -18324,7 +18332,7 @@ noaa.stations = [
     "latitude": 40.98,
     "name": "BURTS MILLER RANCH, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J06S",
+    "id": "USS0010J06S",
     "elevationUnit": "METERS",
     "longitude": -110.85
   },
@@ -18335,7 +18343,7 @@ noaa.stations = [
     "latitude": 40.55,
     "name": "LAKEFORK NUMBER 3, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J12S",
+    "id": "USS0010J12S",
     "elevationUnit": "METERS",
     "longitude": -110.35
   },
@@ -18346,7 +18354,7 @@ noaa.stations = [
     "latitude": 40.89,
     "name": "BEAR RIVER RANGER STATION, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J17S",
+    "id": "USS0010J17S",
     "elevationUnit": "METERS",
     "longitude": -110.83
   },
@@ -18357,7 +18365,7 @@ noaa.stations = [
     "latitude": 40.88,
     "name": "EF BLACKS FORK GS, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J21S",
+    "id": "USS0010J21S",
     "elevationUnit": "METERS",
     "longitude": -110.54
   },
@@ -18368,7 +18376,7 @@ noaa.stations = [
     "latitude": 40.96,
     "name": "BLACKS FORK JCT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J22S",
+    "id": "USS0010J22S",
     "elevationUnit": "METERS",
     "longitude": -110.58
   },
@@ -18379,7 +18387,7 @@ noaa.stations = [
     "latitude": 40.84,
     "name": "BUCK PASTURE, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J23S",
+    "id": "USS0010J23S",
     "elevationUnit": "METERS",
     "longitude": -110.66
   },
@@ -18390,7 +18398,7 @@ noaa.stations = [
     "latitude": 40.58,
     "name": "BROWN DUCK, UT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010J30S",
+    "id": "USS0010J30S",
     "elevationUnit": "METERS",
     "longitude": -110.59
   },
@@ -18401,7 +18409,7 @@ noaa.stations = [
     "latitude": 40.68,
     "name": "TRIAL LAKE, UT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0010J52S",
+    "id": "USS0010J52S",
     "elevationUnit": "METERS",
     "longitude": -110.95
   },
@@ -18412,7 +18420,7 @@ noaa.stations = [
     "latitude": 40.84,
     "name": "SPIRIT LK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010J55S",
+    "id": "USS0010J55S",
     "elevationUnit": "METERS",
     "longitude": -110.01
   },
@@ -18423,7 +18431,7 @@ noaa.stations = [
     "latitude": 39.68,
     "name": "TIMBERLINE, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010K06S",
+    "id": "USS0010K06S",
     "elevationUnit": "METERS",
     "longitude": -110.43
   },
@@ -18434,7 +18442,7 @@ noaa.stations = [
     "latitude": 38.08,
     "name": "LONESOME BEAVER, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0010M01S",
+    "id": "USS0010M01S",
     "elevationUnit": "METERS",
     "longitude": -110.77
   },
@@ -18445,7 +18453,7 @@ noaa.stations = [
     "latitude": 46.56,
     "name": "BOULDER MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011C01S",
+    "id": "USS0011C01S",
     "elevationUnit": "METERS",
     "longitude": -111.29
   },
@@ -18456,7 +18464,7 @@ noaa.stations = [
     "latitude": 46.58,
     "name": "PICKFOOT CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011C02S",
+    "id": "USS0011C02S",
     "elevationUnit": "METERS",
     "longitude": -111.27
   },
@@ -18467,7 +18475,7 @@ noaa.stations = [
     "latitude": 46.35,
     "name": "TIZER BASIN, MT US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USS0011C04S",
+    "id": "USS0011C04S",
     "elevationUnit": "METERS",
     "longitude": -111.85
   },
@@ -18478,7 +18486,7 @@ noaa.stations = [
     "latitude": 45.02,
     "name": "CLOVER MEADOW, MT US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USS0011D08S",
+    "id": "USS0011D08S",
     "elevationUnit": "METERS",
     "longitude": -111.85
   },
@@ -18489,7 +18497,7 @@ noaa.stations = [
     "latitude": 45.51,
     "name": "LOWER TWIN, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0011D11S",
+    "id": "USS0011D11S",
     "elevationUnit": "METERS",
     "longitude": -111.92
   },
@@ -18500,7 +18508,7 @@ noaa.stations = [
     "latitude": 45.27,
     "name": "LONE MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011D19S",
+    "id": "USS0011D19S",
     "elevationUnit": "METERS",
     "longitude": -111.43
   },
@@ -18511,7 +18519,7 @@ noaa.stations = [
     "latitude": 45.6,
     "name": "ALBRO LAKE, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0011D28S",
+    "id": "USS0011D28S",
     "elevationUnit": "METERS",
     "longitude": -111.96
   },
@@ -18522,7 +18530,7 @@ noaa.stations = [
     "latitude": 44.59,
     "name": "LAKEVIEW RIDGE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E03S",
+    "id": "USS0011E03S",
     "elevationUnit": "METERS",
     "longitude": -111.82
   },
@@ -18533,7 +18541,7 @@ noaa.stations = [
     "latitude": 44.66,
     "name": "WEST YELLOWSTONE, MT US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USS0011E07S",
+    "id": "USS0011E07S",
     "elevationUnit": "METERS",
     "longitude": -111.09
   },
@@ -18544,7 +18552,7 @@ noaa.stations = [
     "latitude": 44.79,
     "name": "TEPEE CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E24S",
+    "id": "USS0011E24S",
     "elevationUnit": "METERS",
     "longitude": -111.71
   },
@@ -18555,7 +18563,7 @@ noaa.stations = [
     "latitude": 44.96,
     "name": "CARROT BASIN, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0011E29S",
+    "id": "USS0011E29S",
     "elevationUnit": "METERS",
     "longitude": -111.29
   },
@@ -18566,7 +18574,7 @@ noaa.stations = [
     "latitude": 44.61,
     "name": "WHISKEY CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E30S",
+    "id": "USS0011E30S",
     "elevationUnit": "METERS",
     "longitude": -111.15
   },
@@ -18577,7 +18585,7 @@ noaa.stations = [
     "latitude": 44.59,
     "name": "MADISON PLATEAU, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E31S",
+    "id": "USS0011E31S",
     "elevationUnit": "METERS",
     "longitude": -111.12
   },
@@ -18588,7 +18596,7 @@ noaa.stations = [
     "latitude": 44.51,
     "name": "BLACK BEAR, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E35S",
+    "id": "USS0011E35S",
     "elevationUnit": "METERS",
     "longitude": -111.13
   },
@@ -18599,7 +18607,7 @@ noaa.stations = [
     "latitude": 44.95,
     "name": "BEAVER CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011E38S",
+    "id": "USS0011E38S",
     "elevationUnit": "METERS",
     "longitude": -111.36
   },
@@ -18610,7 +18618,7 @@ noaa.stations = [
     "latitude": 44.98,
     "name": "SHORT CREEK, MT US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0011E39S",
+    "id": "USS0011E39S",
     "elevationUnit": "METERS",
     "longitude": -111.95
   },
@@ -18621,7 +18629,7 @@ noaa.stations = [
     "latitude": 42.36,
     "name": "EMIGRANT SUMMIT, ID US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USS0011G06S",
+    "id": "USS0011G06S",
     "elevationUnit": "METERS",
     "longitude": -111.56
   },
@@ -18632,7 +18640,7 @@ noaa.stations = [
     "latitude": 42.52,
     "name": "SEDGWICK PEAK, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011G30S",
+    "id": "USS0011G30S",
     "elevationUnit": "METERS",
     "longitude": -111.96
   },
@@ -18643,7 +18651,7 @@ noaa.stations = [
     "latitude": 41.97,
     "name": "KLONDIKE NARROWS, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H01S",
+    "id": "USS0011H01S",
     "elevationUnit": "METERS",
     "longitude": -111.6
   },
@@ -18654,7 +18662,7 @@ noaa.stations = [
     "latitude": 41.89,
     "name": "TONY GROVE RANGER STATION, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H03S",
+    "id": "USS0011H03S",
     "elevationUnit": "METERS",
     "longitude": -111.57
   },
@@ -18665,7 +18673,7 @@ noaa.stations = [
     "latitude": 41.92,
     "name": "GARDEN CITY SUMMIT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H07S",
+    "id": "USS0011H07S",
     "elevationUnit": "METERS",
     "longitude": -111.47
   },
@@ -18676,7 +18684,7 @@ noaa.stations = [
     "latitude": 41.38,
     "name": "BEN LOMOND PEAK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H08S",
+    "id": "USS0011H08S",
     "elevationUnit": "METERS",
     "longitude": -111.94
   },
@@ -18687,7 +18695,7 @@ noaa.stations = [
     "latitude": 41.25,
     "name": "KILFOIL CREEK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H31S",
+    "id": "USS0011H31S",
     "elevationUnit": "METERS",
     "longitude": -111.41
   },
@@ -18698,7 +18706,7 @@ noaa.stations = [
     "latitude": 41.22,
     "name": "LOST CREEK RESV, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H32S",
+    "id": "USS0011H32S",
     "elevationUnit": "METERS",
     "longitude": -111.36
   },
@@ -18709,7 +18717,7 @@ noaa.stations = [
     "latitude": 41.68,
     "name": "BUG LAKE, UT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0011H37S",
+    "id": "USS0011H37S",
     "elevationUnit": "METERS",
     "longitude": -111.42
   },
@@ -18720,7 +18728,7 @@ noaa.stations = [
     "latitude": 41.41,
     "name": "DRY BREAD POND, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H55S",
+    "id": "USS0011H55S",
     "elevationUnit": "METERS",
     "longitude": -111.54
   },
@@ -18731,7 +18739,7 @@ noaa.stations = [
     "latitude": 41.36,
     "name": "LIGHTNING RIDGE, UT US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0011H59S",
+    "id": "USS0011H59S",
     "elevationUnit": "METERS",
     "longitude": -111.49
   },
@@ -18742,7 +18750,7 @@ noaa.stations = [
     "latitude": 41.86,
     "name": "USU DOC DANIEL, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011H60S",
+    "id": "USS0011H60S",
     "elevationUnit": "METERS",
     "longitude": -111.51
   },
@@ -18753,7 +18761,7 @@ noaa.stations = [
     "latitude": 40.67,
     "name": "REDDEN MINE LWR, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011J06S",
+    "id": "USS0011J06S",
     "elevationUnit": "METERS",
     "longitude": -111.22
   },
@@ -18764,7 +18772,7 @@ noaa.stations = [
     "latitude": 40.97,
     "name": "FARMINGTON LOWER, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011J12S",
+    "id": "USS0011J12S",
     "elevationUnit": "METERS",
     "longitude": -111.81
   },
@@ -18775,7 +18783,7 @@ noaa.stations = [
     "latitude": 40.19,
     "name": "HOBBLE CREEK, UT US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USS0011J22S",
+    "id": "USS0011J22S",
     "elevationUnit": "METERS",
     "longitude": -111.36
   },
@@ -18786,7 +18794,7 @@ noaa.stations = [
     "latitude": 40.61,
     "name": "BEAVER DIVIDE, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011J46S",
+    "id": "USS0011J46S",
     "elevationUnit": "METERS",
     "longitude": -111.1
   },
@@ -18797,7 +18805,7 @@ noaa.stations = [
     "latitude": 40.93,
     "name": "PARRISH CREEK, UT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0011J68S",
+    "id": "USS0011J68S",
     "elevationUnit": "METERS",
     "longitude": -111.81
   },
@@ -18808,7 +18816,7 @@ noaa.stations = [
     "latitude": 40.83,
     "name": "LOUIS MEADOW, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011J69S",
+    "id": "USS0011J69S",
     "elevationUnit": "METERS",
     "longitude": -111.76
   },
@@ -18819,7 +18827,7 @@ noaa.stations = [
     "latitude": 40.28,
     "name": "CASCADE MOUNTAIN, UT US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0011J70S",
+    "id": "USS0011J70S",
     "elevationUnit": "METERS",
     "longitude": -111.61
   },
@@ -18830,7 +18838,7 @@ noaa.stations = [
     "latitude": 39.61,
     "name": "HUNTINGTON HORSE, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K05S",
+    "id": "USS0011K05S",
     "elevationUnit": "METERS",
     "longitude": -111.3
   },
@@ -18841,7 +18849,7 @@ noaa.stations = [
     "latitude": 39.3,
     "name": "GBRC MEADOWS, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K10S",
+    "id": "USS0011K10S",
     "elevationUnit": "METERS",
     "longitude": -111.45
   },
@@ -18852,7 +18860,7 @@ noaa.stations = [
     "latitude": 39.32,
     "name": "GBRC HQ, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K11S",
+    "id": "USS0011K11S",
     "elevationUnit": "METERS",
     "longitude": -111.49
   },
@@ -18863,7 +18871,7 @@ noaa.stations = [
     "latitude": 39.14,
     "name": "MOUNT BALDY, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K12S",
+    "id": "USS0011K12S",
     "elevationUnit": "METERS",
     "longitude": -111.51
   },
@@ -18874,7 +18882,7 @@ noaa.stations = [
     "latitude": 39.42,
     "name": "UPPER JOES VALLEY, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K29S",
+    "id": "USS0011K29S",
     "elevationUnit": "METERS",
     "longitude": -111.25
   },
@@ -18885,7 +18893,7 @@ noaa.stations = [
     "latitude": 39.13,
     "name": "BUCK FLAT, UT US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0011K31S",
+    "id": "USS0011K31S",
     "elevationUnit": "METERS",
     "longitude": -111.44
   },
@@ -18896,7 +18904,7 @@ noaa.stations = [
     "latitude": 39.13,
     "name": "WRIGLEY CREEK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K32S",
+    "id": "USS0011K32S",
     "elevationUnit": "METERS",
     "longitude": -111.35
   },
@@ -18907,7 +18915,7 @@ noaa.stations = [
     "latitude": 39.24,
     "name": "THISTLE FLAT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K35S",
+    "id": "USS0011K35S",
     "elevationUnit": "METERS",
     "longitude": -111.52
   },
@@ -18918,7 +18926,7 @@ noaa.stations = [
     "latitude": 39.5,
     "name": "REES FLAT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011K36S",
+    "id": "USS0011K36S",
     "elevationUnit": "METERS",
     "longitude": -111.73
   },
@@ -18929,7 +18937,7 @@ noaa.stations = [
     "latitude": 38.79,
     "name": "GOOSEBERRY RANGER STATION UP, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011L02S",
+    "id": "USS0011L02S",
     "elevationUnit": "METERS",
     "longitude": -111.69
   },
@@ -18940,7 +18948,7 @@ noaa.stations = [
     "latitude": 38.5,
     "name": "FISH LAKE UTAH, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011L03S",
+    "id": "USS0011L03S",
     "elevationUnit": "METERS",
     "longitude": -111.77
   },
@@ -18951,7 +18959,7 @@ noaa.stations = [
     "latitude": 38.05,
     "name": "SUNFLOWER FLAT, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011M01S",
+    "id": "USS0011M01S",
     "elevationUnit": "METERS",
     "longitude": -111.34
   },
@@ -18962,7 +18970,7 @@ noaa.stations = [
     "latitude": 35.34,
     "name": "SNOWSLIDE CANYON, AZ US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USS0011P08S",
+    "id": "USS0011P08S",
     "elevationUnit": "METERS",
     "longitude": -111.65
   },
@@ -18973,7 +18981,7 @@ noaa.stations = [
     "latitude": 34.86,
     "name": "BAR M, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USS0011R13S",
+    "id": "USS0011R13S",
     "elevationUnit": "METERS",
     "longitude": -111.61
   },
@@ -18984,7 +18992,7 @@ noaa.stations = [
     "latitude": 48.06,
     "name": "DUPUYER CREEK, MT US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0012A02S",
+    "id": "USS0012A02S",
     "elevationUnit": "METERS",
     "longitude": -112.76
   },
@@ -18995,7 +19003,7 @@ noaa.stations = [
     "latitude": 47.92,
     "name": "MOUNT LOCKHART, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012B12S",
+    "id": "USS0012B12S",
     "elevationUnit": "METERS",
     "longitude": -112.82
   },
@@ -19006,7 +19014,7 @@ noaa.stations = [
     "latitude": 47.92,
     "name": "WALDRON, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012B13S",
+    "id": "USS0012B13S",
     "elevationUnit": "METERS",
     "longitude": -112.79
   },
@@ -19017,7 +19025,7 @@ noaa.stations = [
     "latitude": 47.08,
     "name": "COPPER CAMP, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012B14S",
+    "id": "USS0012B14S",
     "elevationUnit": "METERS",
     "longitude": -112.73
   },
@@ -19028,7 +19036,7 @@ noaa.stations = [
     "latitude": 47.06,
     "name": "COPPER BOTTOM, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012B16S",
+    "id": "USS0012B16S",
     "elevationUnit": "METERS",
     "longitude": -112.6
   },
@@ -19039,7 +19047,7 @@ noaa.stations = [
     "latitude": 47.45,
     "name": "WOOD CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012B17S",
+    "id": "USS0012B17S",
     "elevationUnit": "METERS",
     "longitude": -112.81
   },
@@ -19050,7 +19058,7 @@ noaa.stations = [
     "latitude": 46.36,
     "name": "ROCKER PEAK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012C11S",
+    "id": "USS0012C11S",
     "elevationUnit": "METERS",
     "longitude": -112.26
   },
@@ -19061,7 +19069,7 @@ noaa.stations = [
     "latitude": 46.44,
     "name": "FROHNER MEADOW, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012C13S",
+    "id": "USS0012C13S",
     "elevationUnit": "METERS",
     "longitude": -112.19
   },
@@ -19072,7 +19080,7 @@ noaa.stations = [
     "latitude": 46.84,
     "name": "NEVADA RIDGE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012C22S",
+    "id": "USS0012C22S",
     "elevationUnit": "METERS",
     "longitude": -112.51
   },
@@ -19083,7 +19091,7 @@ noaa.stations = [
     "latitude": 45.8,
     "name": "BASIN CREEK, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0012D09S",
+    "id": "USS0012D09S",
     "elevationUnit": "METERS",
     "longitude": -112.52
   },
@@ -19094,7 +19102,7 @@ noaa.stations = [
     "latitude": 45.41,
     "name": "MULE CREEK, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0012D11S",
+    "id": "USS0012D11S",
     "elevationUnit": "METERS",
     "longitude": -112.96
   },
@@ -19105,7 +19113,7 @@ noaa.stations = [
     "latitude": 44.47,
     "name": "BEAGLE SPRINGS, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012E08S",
+    "id": "USS0012E08S",
     "elevationUnit": "METERS",
     "longitude": -112.98
   },
@@ -19116,7 +19124,7 @@ noaa.stations = [
     "latitude": 40.46,
     "name": "BEVANS CABIN, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012J02S",
+    "id": "USS0012J02S",
     "elevationUnit": "METERS",
     "longitude": -112.25
   },
@@ -19127,7 +19135,7 @@ noaa.stations = [
     "latitude": 39.35,
     "name": "OAK CREEK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012K02S",
+    "id": "USS0012K02S",
     "elevationUnit": "METERS",
     "longitude": -112.33
   },
@@ -19138,7 +19146,7 @@ noaa.stations = [
     "latitude": 38.5,
     "name": "SQUAW SPRINGS, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012L05S",
+    "id": "USS0012L05S",
     "elevationUnit": "METERS",
     "longitude": -112.01
   },
@@ -19149,7 +19157,7 @@ noaa.stations = [
     "latitude": 38.07,
     "name": "JONES CORRAL, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012L20S",
+    "id": "USS0012L20S",
     "elevationUnit": "METERS",
     "longitude": -112.17
   },
@@ -19160,7 +19168,7 @@ noaa.stations = [
     "latitude": 37.7,
     "name": "PANGUITCH LAKE RANGER STATION, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012M07S",
+    "id": "USS0012M07S",
     "elevationUnit": "METERS",
     "longitude": -112.65
   },
@@ -19171,7 +19179,7 @@ noaa.stations = [
     "latitude": 37.75,
     "name": "YANKEE RESERVOIR, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012M11S",
+    "id": "USS0012M11S",
     "elevationUnit": "METERS",
     "longitude": -112.78
   },
@@ -19182,7 +19190,7 @@ noaa.stations = [
     "latitude": 37.68,
     "name": "BRIAN HEAD, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012M14S",
+    "id": "USS0012M14S",
     "elevationUnit": "METERS",
     "longitude": -112.86
   },
@@ -19193,7 +19201,7 @@ noaa.stations = [
     "latitude": 37.6,
     "name": "SUU RANCH, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012M17S",
+    "id": "USS0012M17S",
     "elevationUnit": "METERS",
     "longitude": -112.92
   },
@@ -19204,7 +19212,7 @@ noaa.stations = [
     "latitude": 35.26,
     "name": "CHALENDER, AZ US",
     "datacoverage": 1,
-    "id": "GHCND:USS0012P01S",
+    "id": "USS0012P01S",
     "elevationUnit": "METERS",
     "longitude": -112.06
   },
@@ -19215,7 +19223,7 @@ noaa.stations = [
     "latitude": 48.8,
     "name": "FLATTOP MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013A19S",
+    "id": "USS0013A19S",
     "elevationUnit": "METERS",
     "longitude": -113.86
   },
@@ -19226,7 +19234,7 @@ noaa.stations = [
     "latitude": 48.43,
     "name": "EMERY CREEK, MT US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0013A24S",
+    "id": "USS0013A24S",
     "elevationUnit": "METERS",
     "longitude": -113.94
   },
@@ -19237,7 +19245,7 @@ noaa.stations = [
     "latitude": 48.16,
     "name": "NOISY BASIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013A25S",
+    "id": "USS0013A25S",
     "elevationUnit": "METERS",
     "longitude": -113.95
   },
@@ -19248,7 +19256,7 @@ noaa.stations = [
     "latitude": 48.3,
     "name": "PIKE CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013A26S",
+    "id": "USS0013A26S",
     "elevationUnit": "METERS",
     "longitude": -113.33
   },
@@ -19259,7 +19267,7 @@ noaa.stations = [
     "latitude": 48.8,
     "name": "MANY GLACIER, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013A27S",
+    "id": "USS0013A27S",
     "elevationUnit": "METERS",
     "longitude": -113.67
   },
@@ -19270,7 +19278,7 @@ noaa.stations = [
     "latitude": 47.27,
     "name": "NORTH FORK JOCKO, MT US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0013B07S",
+    "id": "USS0013B07S",
     "elevationUnit": "METERS",
     "longitude": -113.76
   },
@@ -19281,7 +19289,7 @@ noaa.stations = [
     "latitude": 47.43,
     "name": "KRAFT CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013B22S",
+    "id": "USS0013B22S",
     "elevationUnit": "METERS",
     "longitude": -113.78
   },
@@ -19292,7 +19300,7 @@ noaa.stations = [
     "latitude": 47.68,
     "name": "MOSS PEAK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013B24S",
+    "id": "USS0013B24S",
     "elevationUnit": "METERS",
     "longitude": -113.96
   },
@@ -19303,7 +19311,7 @@ noaa.stations = [
     "latitude": 47.68,
     "name": "BISSON CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013B25S",
+    "id": "USS0013B25S",
     "elevationUnit": "METERS",
     "longitude": -114
   },
@@ -19314,7 +19322,7 @@ noaa.stations = [
     "latitude": 47,
     "name": "STUART MOUNTAIN, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0013C01S",
+    "id": "USS0013C01S",
     "elevationUnit": "METERS",
     "longitude": -113.93
   },
@@ -19325,7 +19333,7 @@ noaa.stations = [
     "latitude": 46.24,
     "name": "SKALKAHO SUMMIT, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C03S",
+    "id": "USS0013C03S",
     "elevationUnit": "METERS",
     "longitude": -113.77
   },
@@ -19336,7 +19344,7 @@ noaa.stations = [
     "latitude": 46.41,
     "name": "BLACK PINE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C13S",
+    "id": "USS0013C13S",
     "elevationUnit": "METERS",
     "longitude": -113.43
   },
@@ -19347,7 +19355,7 @@ noaa.stations = [
     "latitude": 46.87,
     "name": "N FK ELK CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C31S",
+    "id": "USS0013C31S",
     "elevationUnit": "METERS",
     "longitude": -113.28
   },
@@ -19358,7 +19366,7 @@ noaa.stations = [
     "latitude": 46.47,
     "name": "COMBINATION, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C33S",
+    "id": "USS0013C33S",
     "elevationUnit": "METERS",
     "longitude": -113.39
   },
@@ -19369,7 +19377,7 @@ noaa.stations = [
     "latitude": 46.13,
     "name": "PETERSON MEADOWS, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C36S",
+    "id": "USS0013C36S",
     "elevationUnit": "METERS",
     "longitude": -113.31
   },
@@ -19380,7 +19388,7 @@ noaa.stations = [
     "latitude": 46.88,
     "name": "LUBRECHT FLUME, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C38S",
+    "id": "USS0013C38S",
     "elevationUnit": "METERS",
     "longitude": -113.32
   },
@@ -19391,7 +19399,7 @@ noaa.stations = [
     "latitude": 46.18,
     "name": "DALY CREEK, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0013C39S",
+    "id": "USS0013C39S",
     "elevationUnit": "METERS",
     "longitude": -113.85
   },
@@ -19402,7 +19410,7 @@ noaa.stations = [
     "latitude": 46.27,
     "name": "WARM SPRINGS, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C43S",
+    "id": "USS0013C43S",
     "elevationUnit": "METERS",
     "longitude": -113.16
   },
@@ -19413,7 +19421,7 @@ noaa.stations = [
     "latitude": 46.1,
     "name": "BARKER LAKES, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013C44S",
+    "id": "USS0013C44S",
     "elevationUnit": "METERS",
     "longitude": -113.13
   },
@@ -19424,7 +19432,7 @@ noaa.stations = [
     "latitude": 45.17,
     "name": "BLOODY DICK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013D10S",
+    "id": "USS0013D10S",
     "elevationUnit": "METERS",
     "longitude": -113.5
   },
@@ -19435,7 +19443,7 @@ noaa.stations = [
     "latitude": 45.17,
     "name": "DARKHORSE LAKE, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0013D19S",
+    "id": "USS0013D19S",
     "elevationUnit": "METERS",
     "longitude": -113.58
   },
@@ -19446,7 +19454,7 @@ noaa.stations = [
     "latitude": 45.69,
     "name": "SADDLE MOUNTAIN, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013D22S",
+    "id": "USS0013D22S",
     "elevationUnit": "METERS",
     "longitude": -113.97
   },
@@ -19457,7 +19465,7 @@ noaa.stations = [
     "latitude": 44.85,
     "name": "SCHWARTZ LAKE, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013E16S",
+    "id": "USS0013E16S",
     "elevationUnit": "METERS",
     "longitude": -113.84
   },
@@ -19468,7 +19476,7 @@ noaa.stations = [
     "latitude": 43.61,
     "name": "GARFIELD RANGER STATION, ID US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USS0013F04S",
+    "id": "USS0013F04S",
     "elevationUnit": "METERS",
     "longitude": -113.93
   },
@@ -19479,7 +19487,7 @@ noaa.stations = [
     "latitude": 43.73,
     "name": "SMILEY MOUNTAIN, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013F13S",
+    "id": "USS0013F13S",
     "elevationUnit": "METERS",
     "longitude": -113.83
   },
@@ -19490,7 +19498,7 @@ noaa.stations = [
     "latitude": 41.92,
     "name": "GEORGE CREEK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013H05S",
+    "id": "USS0013H05S",
     "elevationUnit": "METERS",
     "longitude": -113.41
   },
@@ -19501,7 +19509,7 @@ noaa.stations = [
     "latitude": 37.5,
     "name": "GUTZ PEAK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013M06S",
+    "id": "USS0013M06S",
     "elevationUnit": "METERS",
     "longitude": -113.94
   },
@@ -19512,7 +19520,7 @@ noaa.stations = [
     "latitude": 37.4,
     "name": "GARDNER PEAK, UT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0013M07S",
+    "id": "USS0013M07S",
     "elevationUnit": "METERS",
     "longitude": -113.46
   },
@@ -19523,7 +19531,7 @@ noaa.stations = [
     "latitude": 48.91,
     "name": "GRAVE CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014A11S",
+    "id": "USS0014A11S",
     "elevationUnit": "METERS",
     "longitude": -114.77
   },
@@ -19534,7 +19542,7 @@ noaa.stations = [
     "latitude": 48.91,
     "name": "STAHL PEAK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014A12S",
+    "id": "USS0014A12S",
     "elevationUnit": "METERS",
     "longitude": -114.86
   },
@@ -19545,7 +19553,7 @@ noaa.stations = [
     "latitude": 48.31,
     "name": "HAND CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014A14S",
+    "id": "USS0014A14S",
     "elevationUnit": "METERS",
     "longitude": -114.84
   },
@@ -19556,7 +19564,7 @@ noaa.stations = [
     "latitude": 47.98,
     "name": "BLACKTAIL MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014B04S",
+    "id": "USS0014B04S",
     "elevationUnit": "METERS",
     "longitude": -114.35
   },
@@ -19567,7 +19575,7 @@ noaa.stations = [
     "latitude": 47.18,
     "name": "SLEEPING WOMAN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014B05S",
+    "id": "USS0014B05S",
     "elevationUnit": "METERS",
     "longitude": -114.33
   },
@@ -19578,7 +19586,7 @@ noaa.stations = [
     "latitude": 46.47,
     "name": "SAVAGE PASS, ID US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USS0014C04S",
+    "id": "USS0014C04S",
     "elevationUnit": "METERS",
     "longitude": -114.63
   },
@@ -19589,7 +19597,7 @@ noaa.stations = [
     "latitude": 46.63,
     "name": "LOLO PASS, ID US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USS0014C05S",
+    "id": "USS0014C05S",
     "elevationUnit": "METERS",
     "longitude": -114.58
   },
@@ -19600,7 +19608,7 @@ noaa.stations = [
     "latitude": 46.14,
     "name": "TWIN LAKES, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014C12S",
+    "id": "USS0014C12S",
     "elevationUnit": "METERS",
     "longitude": -114.51
   },
@@ -19611,7 +19619,7 @@ noaa.stations = [
     "latitude": 46.14,
     "name": "TWELVEMILE CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014C13S",
+    "id": "USS0014C13S",
     "elevationUnit": "METERS",
     "longitude": -114.45
   },
@@ -19622,7 +19630,7 @@ noaa.stations = [
     "latitude": 45.73,
     "name": "NEZ PERCE CAMP, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014D02S",
+    "id": "USS0014D02S",
     "elevationUnit": "METERS",
     "longitude": -114.48
   },
@@ -19633,7 +19641,7 @@ noaa.stations = [
     "latitude": 43.86,
     "name": "STICKNEY MILL, ID US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0014F02S",
+    "id": "USS0014F02S",
     "elevationUnit": "METERS",
     "longitude": -114.21
   },
@@ -19644,7 +19652,7 @@ noaa.stations = [
     "latitude": 43.48,
     "name": "SOLDIER RANGER STATION, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014F11S",
+    "id": "USS0014F11S",
     "elevationUnit": "METERS",
     "longitude": -114.83
   },
@@ -19655,7 +19663,7 @@ noaa.stations = [
     "latitude": 43.71,
     "name": "HYNDMAN, ID US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USS0014F16S",
+    "id": "USS0014F16S",
     "elevationUnit": "METERS",
     "longitude": -114.16
   },
@@ -19666,7 +19674,7 @@ noaa.stations = [
     "latitude": 43.77,
     "name": "CHOCOLATE GULCH, ID US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USS0014F19S",
+    "id": "USS0014F19S",
     "elevationUnit": "METERS",
     "longitude": -114.42
   },
@@ -19677,7 +19685,7 @@ noaa.stations = [
     "latitude": 42.18,
     "name": "MAGIC MOUNTAIN, ID US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USS0014G02S",
+    "id": "USS0014G02S",
     "elevationUnit": "METERS",
     "longitude": -114.29
   },
@@ -19688,7 +19696,7 @@ noaa.stations = [
     "latitude": 41.57,
     "name": "JAKES CREEK, NV US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USS0014H04S",
+    "id": "USS0014H04S",
     "elevationUnit": "METERS",
     "longitude": -115.03
   },
@@ -19699,7 +19707,7 @@ noaa.stations = [
     "latitude": 39.46,
     "name": "BIRD CREEK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014K01S",
+    "id": "USS0014K01S",
     "elevationUnit": "METERS",
     "longitude": -114.65
   },
@@ -19710,7 +19718,7 @@ noaa.stations = [
     "latitude": 39.32,
     "name": "BERRY CREEK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014K02S",
+    "id": "USS0014K02S",
     "elevationUnit": "METERS",
     "longitude": -114.62
   },
@@ -19721,7 +19729,7 @@ noaa.stations = [
     "latitude": 39.13,
     "name": "WARD MOUNTAIN, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014K05S",
+    "id": "USS0014K05S",
     "elevationUnit": "METERS",
     "longitude": -114.96
   },
@@ -19732,7 +19740,7 @@ noaa.stations = [
     "latitude": 39.16,
     "name": "CAVE MOUNTAIN, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014K08S",
+    "id": "USS0014K08S",
     "elevationUnit": "METERS",
     "longitude": -114.61
   },
@@ -19743,7 +19751,7 @@ noaa.stations = [
     "latitude": 39.09,
     "name": "DEFIANCE MINES, NV US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USS0014K09S",
+    "id": "USS0014K09S",
     "elevationUnit": "METERS",
     "longitude": -114.9
   },
@@ -19754,7 +19762,7 @@ noaa.stations = [
     "latitude": 39.56,
     "name": "KALAMAZOO, NV US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USS0014K10S",
+    "id": "USS0014K10S",
     "elevationUnit": "METERS",
     "longitude": -114.63
   },
@@ -19765,7 +19773,7 @@ noaa.stations = [
     "latitude": 39.01,
     "name": "WHEELER PEAK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0014L04S",
+    "id": "USS0014L04S",
     "elevationUnit": "METERS",
     "longitude": -114.31
   },
@@ -19776,7 +19784,7 @@ noaa.stations = [
     "latitude": 48.97,
     "name": "HAWKINS LAKE, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015A03S",
+    "id": "USS0015A03S",
     "elevationUnit": "METERS",
     "longitude": -115.95
   },
@@ -19787,7 +19795,7 @@ noaa.stations = [
     "latitude": 48.98,
     "name": "GARVER CREEK, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015A05S",
+    "id": "USS0015A05S",
     "elevationUnit": "METERS",
     "longitude": -115.82
   },
@@ -19798,7 +19806,7 @@ noaa.stations = [
     "latitude": 48.57,
     "name": "BANFIELD MOUNTAIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015A08S",
+    "id": "USS0015A08S",
     "elevationUnit": "METERS",
     "longitude": -115.45
   },
@@ -19809,7 +19817,7 @@ noaa.stations = [
     "latitude": 46.49,
     "name": "PIERCE RANGER STATION, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015C05S",
+    "id": "USS0015C05S",
     "elevationUnit": "METERS",
     "longitude": -115.8
   },
@@ -19820,7 +19828,7 @@ noaa.stations = [
     "latitude": 46.48,
     "name": "HEMLOCK BUTTE, ID US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USS0015C06S",
+    "id": "USS0015C06S",
     "elevationUnit": "METERS",
     "longitude": -115.63
   },
@@ -19831,7 +19839,7 @@ noaa.stations = [
     "latitude": 46.56,
     "name": "CRATER MEADOWS, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015C09S",
+    "id": "USS0015C09S",
     "elevationUnit": "METERS",
     "longitude": -115.29
   },
@@ -19842,7 +19850,7 @@ noaa.stations = [
     "latitude": 46.98,
     "name": "HOODOO BASIN, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015C10S",
+    "id": "USS0015C10S",
     "elevationUnit": "METERS",
     "longitude": -115.03
   },
@@ -19853,7 +19861,7 @@ noaa.stations = [
     "latitude": 45.7,
     "name": "MOUNTAIN MEADOWS, ID US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USS0015D06S",
+    "id": "USS0015D06S",
     "elevationUnit": "METERS",
     "longitude": -115.23
   },
@@ -19864,7 +19872,7 @@ noaa.stations = [
     "latitude": 43.27,
     "name": "CAMAS CREEK DIVIDE, ID US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0015F09S",
+    "id": "USS0015F09S",
     "elevationUnit": "METERS",
     "longitude": -115.35
   },
@@ -19875,7 +19883,7 @@ noaa.stations = [
     "latitude": 42.01,
     "name": "WILSON CREEK, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015G02S",
+    "id": "USS0015G02S",
     "elevationUnit": "METERS",
     "longitude": -115
   },
@@ -19886,7 +19894,7 @@ noaa.stations = [
     "latitude": 41.83,
     "name": "BEAR CREEK, NV US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USS0015H01S",
+    "id": "USS0015H01S",
     "elevationUnit": "METERS",
     "longitude": -115.45
   },
@@ -19897,7 +19905,7 @@ noaa.stations = [
     "latitude": 41.74,
     "name": "SEVENTYSIX CREEK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015H03S",
+    "id": "USS0015H03S",
     "elevationUnit": "METERS",
     "longitude": -115.47
   },
@@ -19908,7 +19916,7 @@ noaa.stations = [
     "latitude": 41.76,
     "name": "BIG BEND, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015H04S",
+    "id": "USS0015H04S",
     "elevationUnit": "METERS",
     "longitude": -115.69
   },
@@ -19919,7 +19927,7 @@ noaa.stations = [
     "latitude": 41.23,
     "name": "TAYLOR CANYON, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015H09S",
+    "id": "USS0015H09S",
     "elevationUnit": "METERS",
     "longitude": -116.03
   },
@@ -19930,7 +19938,7 @@ noaa.stations = [
     "latitude": 41.87,
     "name": "POLE CREEK RANGER STATION, NV US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USS0015H14S",
+    "id": "USS0015H14S",
     "elevationUnit": "METERS",
     "longitude": -115.25
   },
@@ -19941,7 +19949,7 @@ noaa.stations = [
     "latitude": 41.41,
     "name": "STAG MOUNTAIN, NV US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USS0015H19S",
+    "id": "USS0015H19S",
     "elevationUnit": "METERS",
     "longitude": -115.45
   },
@@ -19952,7 +19960,7 @@ noaa.stations = [
     "latitude": 41.89,
     "name": "MERRITT MOUNTAIN, NV US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USS0015H20S",
+    "id": "USS0015H20S",
     "elevationUnit": "METERS",
     "longitude": -115.86
   },
@@ -19963,7 +19971,7 @@ noaa.stations = [
     "latitude": 41.66,
     "name": "DRAW CREEK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015H24S",
+    "id": "USS0015H24S",
     "elevationUnit": "METERS",
     "longitude": -115.32
   },
@@ -19974,7 +19982,7 @@ noaa.stations = [
     "latitude": 40.89,
     "name": "DORSEY BASIN, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0015J01S",
+    "id": "USS0015J01S",
     "elevationUnit": "METERS",
     "longitude": -115.2
   },
@@ -19985,7 +19993,7 @@ noaa.stations = [
     "latitude": 40.65,
     "name": "LAMOILLE NUMBER 3, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015J06S",
+    "id": "USS0015J06S",
     "elevationUnit": "METERS",
     "longitude": -115.38
   },
@@ -19996,7 +20004,7 @@ noaa.stations = [
     "latitude": 40.38,
     "name": "GREEN MOUNTAIN, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015J09S",
+    "id": "USS0015J09S",
     "elevationUnit": "METERS",
     "longitude": -115.53
   },
@@ -20007,7 +20015,7 @@ noaa.stations = [
     "latitude": 40.28,
     "name": "CORRAL CANYON, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015J12S",
+    "id": "USS0015J12S",
     "elevationUnit": "METERS",
     "longitude": -115.53
   },
@@ -20018,7 +20026,7 @@ noaa.stations = [
     "latitude": 39.56,
     "name": "DIAMOND PEAK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015K03S",
+    "id": "USS0015K03S",
     "elevationUnit": "METERS",
     "longitude": -115.84
   },
@@ -20029,7 +20037,7 @@ noaa.stations = [
     "latitude": 39.45,
     "name": "VACARRO SPRING, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015K04S",
+    "id": "USS0015K04S",
     "elevationUnit": "METERS",
     "longitude": -115.98
   },
@@ -20040,7 +20048,7 @@ noaa.stations = [
     "latitude": 38.95,
     "name": "WHITE RIVER NV, NV US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USS0015L01S",
+    "id": "USS0015L01S",
     "elevationUnit": "METERS",
     "longitude": -115.38
   },
@@ -20051,7 +20059,7 @@ noaa.stations = [
     "latitude": 39,
     "name": "CORDUROY FLAT, NV US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USS0015L02S",
+    "id": "USS0015L02S",
     "elevationUnit": "METERS",
     "longitude": -115.42
   },
@@ -20062,7 +20070,7 @@ noaa.stations = [
     "latitude": 36.32,
     "name": "BRISTLECONE TRAIL, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015N09S",
+    "id": "USS0015N09S",
     "elevationUnit": "METERS",
     "longitude": -115.7
   },
@@ -20073,7 +20081,7 @@ noaa.stations = [
     "latitude": 36.31,
     "name": "LEE CANYON, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015N10S",
+    "id": "USS0015N10S",
     "elevationUnit": "METERS",
     "longitude": -115.68
   },
@@ -20084,7 +20092,7 @@ noaa.stations = [
     "latitude": 36.25,
     "name": "RAINBOW CANYON, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0015N11S",
+    "id": "USS0015N11S",
     "elevationUnit": "METERS",
     "longitude": -115.63
   },
@@ -20095,7 +20103,7 @@ noaa.stations = [
     "latitude": 48.72,
     "name": "MYRTLE CREEK, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016A14S",
+    "id": "USS0016A14S",
     "elevationUnit": "METERS",
     "longitude": -116.46
   },
@@ -20106,7 +20114,7 @@ noaa.stations = [
     "latitude": 47.15,
     "name": "MICA CREEK, ID US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USS0016B14S",
+    "id": "USS0016B14S",
     "elevationUnit": "METERS",
     "longitude": -116.27
   },
@@ -20117,7 +20125,7 @@ noaa.stations = [
     "latitude": 46.81,
     "name": "MOSCOW MOUNTAIN, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016C02S",
+    "id": "USS0016C02S",
     "elevationUnit": "METERS",
     "longitude": -116.85
   },
@@ -20128,7 +20136,7 @@ noaa.stations = [
     "latitude": 45.04,
     "name": "BRUNDAGE RESERVOIR, ID US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USS0016D09S",
+    "id": "USS0016D09S",
     "elevationUnit": "METERS",
     "longitude": -116.13
   },
@@ -20139,7 +20147,7 @@ noaa.stations = [
     "latitude": 44.79,
     "name": "LONG VALLEY, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016E18S",
+    "id": "USS0016E18S",
     "elevationUnit": "METERS",
     "longitude": -116.09
   },
@@ -20150,7 +20158,7 @@ noaa.stations = [
     "latitude": 43.76,
     "name": "BOGUS BASIN, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016F02S",
+    "id": "USS0016F02S",
     "elevationUnit": "METERS",
     "longitude": -116.1
   },
@@ -20161,7 +20169,7 @@ noaa.stations = [
     "latitude": 43.29,
     "name": "REYNOLDS CREEK, ID US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USS0016F08S",
+    "id": "USS0016F08S",
     "elevationUnit": "METERS",
     "longitude": -116.85
   },
@@ -20172,7 +20180,7 @@ noaa.stations = [
     "latitude": 41.55,
     "name": "JACK CREEK UPPER, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016H02S",
+    "id": "USS0016H02S",
     "elevationUnit": "METERS",
     "longitude": -116.01
   },
@@ -20183,7 +20191,7 @@ noaa.stations = [
     "latitude": 41.27,
     "name": "MIDAS, NV US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USS0016H03S",
+    "id": "USS0016H03S",
     "elevationUnit": "METERS",
     "longitude": -116.8
   },
@@ -20194,7 +20202,7 @@ noaa.stations = [
     "latitude": 41.53,
     "name": "JACKS PEAK, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0016H04S",
+    "id": "USS0016H04S",
     "elevationUnit": "METERS",
     "longitude": -116.01
   },
@@ -20205,7 +20213,7 @@ noaa.stations = [
     "latitude": 41.78,
     "name": "LAUREL DRAW, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0016H05S",
+    "id": "USS0016H05S",
     "elevationUnit": "METERS",
     "longitude": -116.03
   },
@@ -20216,7 +20224,7 @@ noaa.stations = [
     "latitude": 41.67,
     "name": "COLUMBIA BASIN, NV US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USS0016H06S",
+    "id": "USS0016H06S",
     "elevationUnit": "METERS",
     "longitude": -116.07
   },
@@ -20227,7 +20235,7 @@ noaa.stations = [
     "latitude": 41.32,
     "name": "TOE JAM, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016H07S",
+    "id": "USS0016H07S",
     "elevationUnit": "METERS",
     "longitude": -116.34
   },
@@ -20238,7 +20246,7 @@ noaa.stations = [
     "latitude": 41.82,
     "name": "FAWN CREEK, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0016H08S",
+    "id": "USS0016H08S",
     "elevationUnit": "METERS",
     "longitude": -116.1
   },
@@ -20249,7 +20257,7 @@ noaa.stations = [
     "latitude": 41.34,
     "name": "SNOWSTORM MOUNTAIN, NV US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USS0016H11S",
+    "id": "USS0016H11S",
     "elevationUnit": "METERS",
     "longitude": -116.98
   },
@@ -20260,7 +20268,7 @@ noaa.stations = [
     "latitude": 40.36,
     "name": "LEWIS PEAK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0016J01S",
+    "id": "USS0016J01S",
     "elevationUnit": "METERS",
     "longitude": -116.86
   },
@@ -20271,7 +20279,7 @@ noaa.stations = [
     "latitude": 47.86,
     "name": "RAGGED MOUNTAIN, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017B06S",
+    "id": "USS0017B06S",
     "elevationUnit": "METERS",
     "longitude": -117.04
   },
@@ -20282,7 +20290,7 @@ noaa.stations = [
     "latitude": 46.18,
     "name": "SPRUCE SPRINGS, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017C04S",
+    "id": "USS0017C04S",
     "elevationUnit": "METERS",
     "longitude": -117.54
   },
@@ -20293,7 +20301,7 @@ noaa.stations = [
     "latitude": 46.24,
     "name": "SOURDOUGH GULCH, WA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USS0017C06S",
+    "id": "USS0017C06S",
     "elevationUnit": "METERS",
     "longitude": -117.39
   },
@@ -20304,7 +20312,7 @@ noaa.stations = [
     "latitude": 45.21,
     "name": "ANEROID LAKE NUMBER 2, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017D02S",
+    "id": "USS0017D02S",
     "elevationUnit": "METERS",
     "longitude": -117.19
   },
@@ -20315,7 +20323,7 @@ noaa.stations = [
     "latitude": 45,
     "name": "SCHNEIDER MEADOWS, OR US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0017D08S",
+    "id": "USS0017D08S",
     "elevationUnit": "METERS",
     "longitude": -117.17
   },
@@ -20326,7 +20334,7 @@ noaa.stations = [
     "latitude": 45.98,
     "name": "MILK SHAKES, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017D20S",
+    "id": "USS0017D20S",
     "elevationUnit": "METERS",
     "longitude": -117.95
   },
@@ -20337,7 +20345,7 @@ noaa.stations = [
     "latitude": 41.75,
     "name": "BUCKSKIN LOWER, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017H02S",
+    "id": "USS0017H02S",
     "elevationUnit": "METERS",
     "longitude": -117.53
   },
@@ -20348,7 +20356,7 @@ noaa.stations = [
     "latitude": 41.52,
     "name": "LAMANCE CREEK, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0017H07S",
+    "id": "USS0017H07S",
     "elevationUnit": "METERS",
     "longitude": -117.63
   },
@@ -20359,7 +20367,7 @@ noaa.stations = [
     "latitude": 41.67,
     "name": "GRANITE PEAK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017H08S",
+    "id": "USS0017H08S",
     "elevationUnit": "METERS",
     "longitude": -117.57
   },
@@ -20370,7 +20378,7 @@ noaa.stations = [
     "latitude": 40.88,
     "name": "GOLCONDA, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0017J02S",
+    "id": "USS0017J02S",
     "elevationUnit": "METERS",
     "longitude": -117.59
   },
@@ -20381,7 +20389,7 @@ noaa.stations = [
     "latitude": 39.29,
     "name": "BIG CREEK SUM, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0017K04S",
+    "id": "USS0017K04S",
     "elevationUnit": "METERS",
     "longitude": -117.11
   },
@@ -20392,7 +20400,7 @@ noaa.stations = [
     "latitude": 48.19,
     "name": "GOLD MOUNTAIN, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018A19S",
+    "id": "USS0018A19S",
     "elevationUnit": "METERS",
     "longitude": -118.46
   },
@@ -20403,7 +20411,7 @@ noaa.stations = [
     "latitude": 48.86,
     "name": "SENTINEL BUTTE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018A21S",
+    "id": "USS0018A21S",
     "elevationUnit": "METERS",
     "longitude": -118.4
   },
@@ -20414,7 +20422,7 @@ noaa.stations = [
     "latitude": 48.95,
     "name": "GOLD AXE CAMP, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018A26S",
+    "id": "USS0018A26S",
     "elevationUnit": "METERS",
     "longitude": -118.99
   },
@@ -20425,7 +20433,7 @@ noaa.stations = [
     "latitude": 45.27,
     "name": "LUCKY STRIKE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018D06S",
+    "id": "USS0018D06S",
     "elevationUnit": "METERS",
     "longitude": -118.85
   },
@@ -20436,7 +20444,7 @@ noaa.stations = [
     "latitude": 45.7,
     "name": "HIGH RIDGE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018D19S",
+    "id": "USS0018D19S",
     "elevationUnit": "METERS",
     "longitude": -118.11
   },
@@ -20447,7 +20455,7 @@ noaa.stations = [
     "latitude": 45.36,
     "name": "BOWMAN SPRINGS, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018D20S",
+    "id": "USS0018D20S",
     "elevationUnit": "METERS",
     "longitude": -118.47
   },
@@ -20458,7 +20466,7 @@ noaa.stations = [
     "latitude": 45.07,
     "name": "WOLF CREEK, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018D21S",
+    "id": "USS0018D21S",
     "elevationUnit": "METERS",
     "longitude": -118.15
   },
@@ -20469,7 +20477,7 @@ noaa.stations = [
     "latitude": 44.83,
     "name": "BOURNE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018E05S",
+    "id": "USS0018E05S",
     "elevationUnit": "METERS",
     "longitude": -118.19
   },
@@ -20480,7 +20488,7 @@ noaa.stations = [
     "latitude": 44.25,
     "name": "BLUE MOUNTAIN SPRING, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018E16S",
+    "id": "USS0018E16S",
     "elevationUnit": "METERS",
     "longitude": -118.52
   },
@@ -20491,7 +20499,7 @@ noaa.stations = [
     "latitude": 44.21,
     "name": "LAKE CREEK RANGER STATION, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018E18S",
+    "id": "USS0018E18S",
     "elevationUnit": "METERS",
     "longitude": -118.64
   },
@@ -20502,7 +20510,7 @@ noaa.stations = [
     "latitude": 41.97,
     "name": "DISASTER PEAK, NV US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0018H01S",
+    "id": "USS0018H01S",
     "elevationUnit": "METERS",
     "longitude": -118.19
   },
@@ -20513,7 +20521,7 @@ noaa.stations = [
     "latitude": 41.49,
     "name": "SUMMIT LK, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0018H02S",
+    "id": "USS0018H02S",
     "elevationUnit": "METERS",
     "longitude": -119
   },
@@ -20524,7 +20532,7 @@ noaa.stations = [
     "latitude": 48.59,
     "name": "MUCKAMUCK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019A09S",
+    "id": "USS0019A09S",
     "elevationUnit": "METERS",
     "longitude": -119.87
   },
@@ -20535,7 +20543,7 @@ noaa.stations = [
     "latitude": 48.36,
     "name": "MOSES MOUNTAIN, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019A13S",
+    "id": "USS0019A13S",
     "elevationUnit": "METERS",
     "longitude": -119.08
   },
@@ -20546,7 +20554,7 @@ noaa.stations = [
     "latitude": 45.19,
     "name": "ARBUCKLE MOUNTAIN, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019D02S",
+    "id": "USS0019D02S",
     "elevationUnit": "METERS",
     "longitude": -119.25
   },
@@ -20557,7 +20565,7 @@ noaa.stations = [
     "latitude": 43.95,
     "name": "SNOW MOUNTAIN, OR US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USS0019F01S",
+    "id": "USS0019F01S",
     "elevationUnit": "METERS",
     "longitude": -119.54
   },
@@ -20568,7 +20576,7 @@ noaa.stations = [
     "latitude": 39.16,
     "name": "MARLETTE LAKE, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019K04S",
+    "id": "USS0019K04S",
     "elevationUnit": "METERS",
     "longitude": -119.9
   },
@@ -20579,7 +20587,7 @@ noaa.stations = [
     "latitude": 39.32,
     "name": "MOUNT ROSE SKI AREA, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019K07S",
+    "id": "USS0019K07S",
     "elevationUnit": "METERS",
     "longitude": -119.89
   },
@@ -20590,7 +20598,7 @@ noaa.stations = [
     "latitude": 39.46,
     "name": "BIG MEADOW, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019K08S",
+    "id": "USS0019K08S",
     "elevationUnit": "METERS",
     "longitude": -119.94
   },
@@ -20601,7 +20609,7 @@ noaa.stations = [
     "latitude": 38.85,
     "name": "HAGAN S MEADOW, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L03S",
+    "id": "USS0019L03S",
     "elevationUnit": "METERS",
     "longitude": -119.94
   },
@@ -20612,7 +20620,7 @@ noaa.stations = [
     "latitude": 38.61,
     "name": "BLUE LAKES, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L05S",
+    "id": "USS0019L05S",
     "elevationUnit": "METERS",
     "longitude": -119.92
   },
@@ -20623,7 +20631,7 @@ noaa.stations = [
     "latitude": 38.51,
     "name": "POISON FLAT, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L06S",
+    "id": "USS0019L06S",
     "elevationUnit": "METERS",
     "longitude": -119.63
   },
@@ -20634,7 +20642,7 @@ noaa.stations = [
     "latitude": 38.31,
     "name": "SONORA PASS, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0019L07S",
+    "id": "USS0019L07S",
     "elevationUnit": "METERS",
     "longitude": -119.6
   },
@@ -20645,7 +20653,7 @@ noaa.stations = [
     "latitude": 38.3,
     "name": "LEAVITT MEADOWS, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L08S",
+    "id": "USS0019L08S",
     "elevationUnit": "METERS",
     "longitude": -119.55
   },
@@ -20656,7 +20664,7 @@ noaa.stations = [
     "latitude": 38.07,
     "name": "VIRGINIA LAKES RIDGE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L13S",
+    "id": "USS0019L13S",
     "elevationUnit": "METERS",
     "longitude": -119.23
   },
@@ -20667,7 +20675,7 @@ noaa.stations = [
     "latitude": 38.44,
     "name": "LOBDELL LAKE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L17S",
+    "id": "USS0019L17S",
     "elevationUnit": "METERS",
     "longitude": -119.37
   },
@@ -20678,7 +20686,7 @@ noaa.stations = [
     "latitude": 38.55,
     "name": "EBBETTS PASS, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L19S",
+    "id": "USS0019L19S",
     "elevationUnit": "METERS",
     "longitude": -119.8
   },
@@ -20689,7 +20697,7 @@ noaa.stations = [
     "latitude": 38.92,
     "name": "HEAVENLY VALLEY, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L24S",
+    "id": "USS0019L24S",
     "elevationUnit": "METERS",
     "longitude": -119.92
   },
@@ -20700,7 +20708,7 @@ noaa.stations = [
     "latitude": 38.28,
     "name": "LEAVITT LAKE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L38S",
+    "id": "USS0019L38S",
     "elevationUnit": "METERS",
     "longitude": -119.61
   },
@@ -20711,7 +20719,7 @@ noaa.stations = [
     "latitude": 38.67,
     "name": "SPRATT CREEK, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L39S",
+    "id": "USS0019L39S",
     "elevationUnit": "METERS",
     "longitude": -119.82
   },
@@ -20722,7 +20730,7 @@ noaa.stations = [
     "latitude": 38.67,
     "name": "MONITOR PASS, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L40S",
+    "id": "USS0019L40S",
     "elevationUnit": "METERS",
     "longitude": -119.61
   },
@@ -20733,7 +20741,7 @@ noaa.stations = [
     "latitude": 38.72,
     "name": "BURNSIDE LAKE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L41S",
+    "id": "USS0019L41S",
     "elevationUnit": "METERS",
     "longitude": -119.89
   },
@@ -20744,7 +20752,7 @@ noaa.stations = [
     "latitude": 38.4,
     "name": "SUMMIT MEADOW, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L42S",
+    "id": "USS0019L42S",
     "elevationUnit": "METERS",
     "longitude": -119.54
   },
@@ -20755,7 +20763,7 @@ noaa.stations = [
     "latitude": 38.68,
     "name": "FORESTDALE CREEK, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L43S",
+    "id": "USS0019L43S",
     "elevationUnit": "METERS",
     "longitude": -119.96
   },
@@ -20766,7 +20774,7 @@ noaa.stations = [
     "latitude": 38.84,
     "name": "HORSE MEADOW, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L44S",
+    "id": "USS0019L44S",
     "elevationUnit": "METERS",
     "longitude": -119.89
   },
@@ -20777,7 +20785,7 @@ noaa.stations = [
     "latitude": 38.69,
     "name": "CARSON PASS, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0019L45S",
+    "id": "USS0019L45S",
     "elevationUnit": "METERS",
     "longitude": -119.99
   },
@@ -20788,7 +20796,7 @@ noaa.stations = [
     "latitude": 48.44,
     "name": "PARK CREEK RIDGE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020A12S",
+    "id": "USS0020A12S",
     "elevationUnit": "METERS",
     "longitude": -120.92
   },
@@ -20799,7 +20807,7 @@ noaa.stations = [
     "latitude": 48.57,
     "name": "SWAMP CREEK, WA US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0020A41S",
+    "id": "USS0020A41S",
     "elevationUnit": "METERS",
     "longitude": -120.78
   },
@@ -20810,7 +20818,7 @@ noaa.stations = [
     "latitude": 48.07,
     "name": "TRINITY, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020A46S",
+    "id": "USS0020A46S",
     "elevationUnit": "METERS",
     "longitude": -120.85
   },
@@ -20821,7 +20829,7 @@ noaa.stations = [
     "latitude": 47.23,
     "name": "TROUGH, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020B25S",
+    "id": "USS0020B25S",
     "elevationUnit": "METERS",
     "longitude": -120.29
   },
@@ -20832,7 +20840,7 @@ noaa.stations = [
     "latitude": 45.99,
     "name": "SATUS PASS, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020D01S",
+    "id": "USS0020D01S",
     "elevationUnit": "METERS",
     "longitude": -120.68
   },
@@ -20843,7 +20851,7 @@ noaa.stations = [
     "latitude": 45.99,
     "name": "INDIAN ROCK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020D02S",
+    "id": "USS0020D02S",
     "elevationUnit": "METERS",
     "longitude": -120.81
   },
@@ -20854,7 +20862,7 @@ noaa.stations = [
     "latitude": 42.7,
     "name": "SUMMER RIM, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020G02S",
+    "id": "USS0020G02S",
     "elevationUnit": "METERS",
     "longitude": -120.8
   },
@@ -20865,7 +20873,7 @@ noaa.stations = [
     "latitude": 42.64,
     "name": "CRAZYMAN FLAT, OR US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0020G12S",
+    "id": "USS0020G12S",
     "elevationUnit": "METERS",
     "longitude": -120.95
   },
@@ -20876,7 +20884,7 @@ noaa.stations = [
     "latitude": 41.99,
     "name": "STATE LINE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020H01S",
+    "id": "USS0020H01S",
     "elevationUnit": "METERS",
     "longitude": -120.72
   },
@@ -20887,7 +20895,7 @@ noaa.stations = [
     "latitude": 41.89,
     "name": "CROWDER FLAT, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020H02S",
+    "id": "USS0020H02S",
     "elevationUnit": "METERS",
     "longitude": -120.75
   },
@@ -20898,7 +20906,7 @@ noaa.stations = [
     "latitude": 41.58,
     "name": "CEDAR PASS, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020H06S",
+    "id": "USS0020H06S",
     "elevationUnit": "METERS",
     "longitude": -120.3
   },
@@ -20909,7 +20917,7 @@ noaa.stations = [
     "latitude": 41.99,
     "name": "DISMAL SWAMP, CA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USS0020H12S",
+    "id": "USS0020H12S",
     "elevationUnit": "METERS",
     "longitude": -120.18
   },
@@ -20920,7 +20928,7 @@ noaa.stations = [
     "latitude": 41.24,
     "name": "ADIN MOUNTAIN, CA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0020H13S",
+    "id": "USS0020H13S",
     "elevationUnit": "METERS",
     "longitude": -120.79
   },
@@ -20931,7 +20939,7 @@ noaa.stations = [
     "latitude": 39.49,
     "name": "INDEPENDENCE CREEK, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020K03S",
+    "id": "USS0020K03S",
     "elevationUnit": "METERS",
     "longitude": -120.28
   },
@@ -20942,7 +20950,7 @@ noaa.stations = [
     "latitude": 39.45,
     "name": "INDEPENDENCE CAMP, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020K04S",
+    "id": "USS0020K04S",
     "elevationUnit": "METERS",
     "longitude": -120.29
   },
@@ -20953,7 +20961,7 @@ noaa.stations = [
     "latitude": 39.43,
     "name": "INDEPENDENCE LAKE, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020K05S",
+    "id": "USS0020K05S",
     "elevationUnit": "METERS",
     "longitude": -120.31
   },
@@ -20964,7 +20972,7 @@ noaa.stations = [
     "latitude": 39.3,
     "name": "TRUCKEE NUMBER 2, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020K13S",
+    "id": "USS0020K13S",
     "elevationUnit": "METERS",
     "longitude": -120.18
   },
@@ -20975,7 +20983,7 @@ noaa.stations = [
     "latitude": 39.14,
     "name": "WARD CREEK NUMBER 3, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0020K25S",
+    "id": "USS0020K25S",
     "elevationUnit": "METERS",
     "longitude": -120.22
   },
@@ -20986,7 +20994,7 @@ noaa.stations = [
     "latitude": 39.17,
     "name": "TAHOE CITY CROSS, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0020K27S",
+    "id": "USS0020K27S",
     "elevationUnit": "METERS",
     "longitude": -120.15
   },
@@ -20997,7 +21005,7 @@ noaa.stations = [
     "latitude": 39.19,
     "name": "SQUAW VALLEY G.C., CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USS0020K30S",
+    "id": "USS0020K30S",
     "elevationUnit": "METERS",
     "longitude": -120.26
   },
@@ -21008,7 +21016,7 @@ noaa.stations = [
     "latitude": 39,
     "name": "RUBICON NUMBER 2, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020L02S",
+    "id": "USS0020L02S",
     "elevationUnit": "METERS",
     "longitude": -120.13
   },
@@ -21019,7 +21027,7 @@ noaa.stations = [
     "latitude": 38.85,
     "name": "ECHO PEAK, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0020L06S",
+    "id": "USS0020L06S",
     "elevationUnit": "METERS",
     "longitude": -120.08
   },
@@ -21030,7 +21038,7 @@ noaa.stations = [
     "latitude": 38.93,
     "name": "FALLEN LEAF, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0020L10S",
+    "id": "USS0020L10S",
     "elevationUnit": "METERS",
     "longitude": -120.05
   },
@@ -21041,7 +21049,7 @@ noaa.stations = [
     "latitude": 48.88,
     "name": "BEAVER PASS, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021A01S",
+    "id": "USS0021A01S",
     "elevationUnit": "METERS",
     "longitude": -121.26
   },
@@ -21052,7 +21060,7 @@ noaa.stations = [
     "latitude": 48.76,
     "name": "MARTEN RIDGE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021A09S",
+    "id": "USS0021A09S",
     "elevationUnit": "METERS",
     "longitude": -121.7
   },
@@ -21063,7 +21071,7 @@ noaa.stations = [
     "latitude": 48.93,
     "name": "BROWN TOP, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021A28S",
+    "id": "USS0021A28S",
     "elevationUnit": "METERS",
     "longitude": -121.2
   },
@@ -21074,7 +21082,7 @@ noaa.stations = [
     "latitude": 48.69,
     "name": "ELBOW LAKE, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0021A32S",
+    "id": "USS0021A32S",
     "elevationUnit": "METERS",
     "longitude": -121.91
   },
@@ -21085,7 +21093,7 @@ noaa.stations = [
     "latitude": 48.98,
     "name": "HOZOMEEN CAMP, WA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0021A35S",
+    "id": "USS0021A35S",
     "elevationUnit": "METERS",
     "longitude": -121.08
   },
@@ -21096,7 +21104,7 @@ noaa.stations = [
     "latitude": 48.82,
     "name": "MF NOOKSACK, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0021A36S",
+    "id": "USS0021A36S",
     "elevationUnit": "METERS",
     "longitude": -121.93
   },
@@ -21107,7 +21115,7 @@ noaa.stations = [
     "latitude": 47.75,
     "name": "STEVENS PASS, WA US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USS0021B01S",
+    "id": "USS0021B01S",
     "elevationUnit": "METERS",
     "longitude": -121.09
   },
@@ -21118,7 +21126,7 @@ noaa.stations = [
     "latitude": 47.33,
     "name": "TINKHAM CREEK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B20S",
+    "id": "USS0021B20S",
     "elevationUnit": "METERS",
     "longitude": -121.47
   },
@@ -21129,7 +21137,7 @@ noaa.stations = [
     "latitude": 47.36,
     "name": "MOUNT GARDNER, WA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USS0021B21S",
+    "id": "USS0021B21S",
     "elevationUnit": "METERS",
     "longitude": -121.57
   },
@@ -21140,7 +21148,7 @@ noaa.stations = [
     "latitude": 47.16,
     "name": "SAWMILL RIDGE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B31S",
+    "id": "USS0021B31S",
     "elevationUnit": "METERS",
     "longitude": -121.42
   },
@@ -21151,7 +21159,7 @@ noaa.stations = [
     "latitude": 47.78,
     "name": "ALPINE MEADOWS, WA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USS0021B48S",
+    "id": "USS0021B48S",
     "elevationUnit": "METERS",
     "longitude": -121.7
   },
@@ -21162,7 +21170,7 @@ noaa.stations = [
     "latitude": 47.2,
     "name": "LYNN LAKE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B50S",
+    "id": "USS0021B50S",
     "elevationUnit": "METERS",
     "longitude": -121.78
   },
@@ -21173,7 +21181,7 @@ noaa.stations = [
     "latitude": 47.38,
     "name": "SASSE RIDGE, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0021B51S",
+    "id": "USS0021B51S",
     "elevationUnit": "METERS",
     "longitude": -121.06
   },
@@ -21184,7 +21192,7 @@ noaa.stations = [
     "latitude": 47.28,
     "name": "MEADOWS PASS, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B59S",
+    "id": "USS0021B59S",
     "elevationUnit": "METERS",
     "longitude": -121.47
   },
@@ -21195,7 +21203,7 @@ noaa.stations = [
     "latitude": 47.07,
     "name": "HUCKLEBERRY CREEK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B62S",
+    "id": "USS0021B62S",
     "elevationUnit": "METERS",
     "longitude": -121.59
   },
@@ -21206,7 +21214,7 @@ noaa.stations = [
     "latitude": 47.04,
     "name": "BURNT MOUNTAIN, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021B63S",
+    "id": "USS0021B63S",
     "elevationUnit": "METERS",
     "longitude": -121.94
   },
@@ -21217,7 +21225,7 @@ noaa.stations = [
     "latitude": 46.55,
     "name": "GREEN LAKE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C10S",
+    "id": "USS0021C10S",
     "elevationUnit": "METERS",
     "longitude": -121.17
   },
@@ -21228,7 +21236,7 @@ noaa.stations = [
     "latitude": 46.64,
     "name": "WHITE PASS E.S., WA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USS0021C28S",
+    "id": "USS0021C28S",
     "elevationUnit": "METERS",
     "longitude": -121.38
   },
@@ -21239,7 +21247,7 @@ noaa.stations = [
     "latitude": 46.93,
     "name": "MOWICH, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C40S",
+    "id": "USS0021C40S",
     "elevationUnit": "METERS",
     "longitude": -121.95
   },
@@ -21250,7 +21258,7 @@ noaa.stations = [
     "latitude": 46.87,
     "name": "CAYUSE PASS, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C41S",
+    "id": "USS0021C41S",
     "elevationUnit": "METERS",
     "longitude": -121.53
   },
@@ -21261,7 +21269,7 @@ noaa.stations = [
     "latitude": 46.1,
     "name": "PEPPER CREEK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C42S",
+    "id": "USS0021C42S",
     "elevationUnit": "METERS",
     "longitude": -121.96
   },
@@ -21272,7 +21280,7 @@ noaa.stations = [
     "latitude": 46.64,
     "name": "SKATE CREEK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C43S",
+    "id": "USS0021C43S",
     "elevationUnit": "METERS",
     "longitude": -121.83
   },
@@ -21283,7 +21291,7 @@ noaa.stations = [
     "latitude": 46.32,
     "name": "PINTO ROCK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021C44S",
+    "id": "USS0021C44S",
     "elevationUnit": "METERS",
     "longitude": -121.94
   },
@@ -21294,7 +21302,7 @@ noaa.stations = [
     "latitude": 45.46,
     "name": "RED HILL, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021D04S",
+    "id": "USS0021D04S",
     "elevationUnit": "METERS",
     "longitude": -121.7
   },
@@ -21305,7 +21313,7 @@ noaa.stations = [
     "latitude": 45.25,
     "name": "MUD RIDGE, OR US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0021D35S",
+    "id": "USS0021D35S",
     "elevationUnit": "METERS",
     "longitude": -121.74
   },
@@ -21316,7 +21324,7 @@ noaa.stations = [
     "latitude": 44.44,
     "name": "SANTIAM JCT., OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021E05S",
+    "id": "USS0021E05S",
     "elevationUnit": "METERS",
     "longitude": -121.95
   },
@@ -21327,7 +21335,7 @@ noaa.stations = [
     "latitude": 43.8,
     "name": "IRISH TAYLOR, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021F21S",
+    "id": "USS0021F21S",
     "elevationUnit": "METERS",
     "longitude": -121.95
   },
@@ -21338,7 +21346,7 @@ noaa.stations = [
     "latitude": 42.69,
     "name": "TAYLOR BUTTE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021G03S",
+    "id": "USS0021G03S",
     "elevationUnit": "METERS",
     "longitude": -121.43
   },
@@ -21349,7 +21357,7 @@ noaa.stations = [
     "latitude": 42.21,
     "name": "GERBER RESERVOIR, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021G04S",
+    "id": "USS0021G04S",
     "elevationUnit": "METERS",
     "longitude": -121.13
   },
@@ -21360,7 +21368,7 @@ noaa.stations = [
     "latitude": 42.79,
     "name": "SUN PASS, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0021G17S",
+    "id": "USS0021G17S",
     "elevationUnit": "METERS",
     "longitude": -121.98
   },
@@ -21371,7 +21379,7 @@ noaa.stations = [
     "latitude": 46.26,
     "name": "SPIRIT LAKE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022C12S",
+    "id": "USS0022C12S",
     "elevationUnit": "METERS",
     "longitude": -122.18
   },
@@ -21382,7 +21390,7 @@ noaa.stations = [
     "latitude": 46.16,
     "name": "SWIFT CREEK, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022C13S",
+    "id": "USS0022C13S",
     "elevationUnit": "METERS",
     "longitude": -122.18
   },
@@ -21393,7 +21401,7 @@ noaa.stations = [
     "latitude": 45.9,
     "name": "CALAMITY, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022D01S",
+    "id": "USS0022D01S",
     "elevationUnit": "METERS",
     "longitude": -122.22
   },
@@ -21404,7 +21412,7 @@ noaa.stations = [
     "latitude": 45.55,
     "name": "NORTH FORK, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022D02S",
+    "id": "USS0022D02S",
     "elevationUnit": "METERS",
     "longitude": -122
   },
@@ -21415,7 +21423,7 @@ noaa.stations = [
     "latitude": 45.45,
     "name": "SOUTH FORK BULL RUN, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022D03S",
+    "id": "USS0022D03S",
     "elevationUnit": "METERS",
     "longitude": -122.03
   },
@@ -21426,7 +21434,7 @@ noaa.stations = [
     "latitude": 44.39,
     "name": "JUMP OFF JOE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022E07S",
+    "id": "USS0022E07S",
     "elevationUnit": "METERS",
     "longitude": -122.17
   },
@@ -21437,7 +21445,7 @@ noaa.stations = [
     "latitude": 44.33,
     "name": "BEAR GRASS, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022E10S",
+    "id": "USS0022E10S",
     "elevationUnit": "METERS",
     "longitude": -122.09
   },
@@ -21448,7 +21456,7 @@ noaa.stations = [
     "latitude": 44.3,
     "name": "SMITH RIDGE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022E11S",
+    "id": "USS0022E11S",
     "elevationUnit": "METERS",
     "longitude": -122.04
   },
@@ -21459,7 +21467,7 @@ noaa.stations = [
     "latitude": 43.23,
     "name": "TOKETEE AIRSTRIP, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022F45S",
+    "id": "USS0022F45S",
     "elevationUnit": "METERS",
     "longitude": -122.43
   },
@@ -21470,7 +21478,7 @@ noaa.stations = [
     "latitude": 42.87,
     "name": "ANNIE SPRINGS, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022G06S",
+    "id": "USS0022G06S",
     "elevationUnit": "METERS",
     "longitude": -122.17
   },
@@ -21481,7 +21489,7 @@ noaa.stations = [
     "latitude": 42.44,
     "name": "FOURMILE LAKE, OR US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0022G12S",
+    "id": "USS0022G12S",
     "elevationUnit": "METERS",
     "longitude": -122.23
   },
@@ -21492,7 +21500,7 @@ noaa.stations = [
     "latitude": 42.41,
     "name": "BILLIE CREEK DIVIDE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022G13S",
+    "id": "USS0022G13S",
     "elevationUnit": "METERS",
     "longitude": -122.27
   },
@@ -21503,7 +21511,7 @@ noaa.stations = [
     "latitude": 42.22,
     "name": "HOWARD PRAIRIE, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0022G26S",
+    "id": "USS0022G26S",
     "elevationUnit": "METERS",
     "longitude": -122.37
   },
@@ -21514,7 +21522,7 @@ noaa.stations = [
     "latitude": 47.76,
     "name": "MOUNT CRAG, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0023B06S",
+    "id": "USS0023B06S",
     "elevationUnit": "METERS",
     "longitude": -123.03
   },
@@ -21525,7 +21533,7 @@ noaa.stations = [
     "latitude": 47.87,
     "name": "DUNGENESS, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0023B16S",
+    "id": "USS0023B16S",
     "elevationUnit": "METERS",
     "longitude": -123.08
   },
@@ -21536,7 +21544,7 @@ noaa.stations = [
     "latitude": 47.94,
     "name": "WATERHOLE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0023B17S",
+    "id": "USS0023B17S",
     "elevationUnit": "METERS",
     "longitude": -123.43
   },
@@ -21547,7 +21555,7 @@ noaa.stations = [
     "latitude": 47.71,
     "name": "BUCKINGHORSE, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USS0023B18S",
+    "id": "USS0023B18S",
     "elevationUnit": "METERS",
     "longitude": -123.46
   },
@@ -21558,7 +21566,7 @@ noaa.stations = [
     "latitude": 45.25,
     "name": "MILLER WOODS, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USS0023D03S",
+    "id": "USS0023D03S",
     "elevationUnit": "METERS",
     "longitude": -123.28
   },
@@ -21569,7 +21577,7 @@ noaa.stations = [
     "latitude": 63.94,
     "name": "GRANITE CRK, AK US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USS0045O04S",
+    "id": "USS0045O04S",
     "elevationUnit": "METERS",
     "longitude": -145.4
   },
@@ -21580,7 +21588,7 @@ noaa.stations = [
     "latitude": 64.95,
     "name": "TEUCHET CREEK, AK US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USS0045P03S",
+    "id": "USS0045P03S",
     "elevationUnit": "METERS",
     "longitude": -145.52
   },
@@ -21591,7 +21599,7 @@ noaa.stations = [
     "latitude": 65.08,
     "name": "MONUMENT CREEK, AK US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USS0045Q02S",
+    "id": "USS0045Q02S",
     "elevationUnit": "METERS",
     "longitude": -145.87
   },
@@ -21602,7 +21610,7 @@ noaa.stations = [
     "latitude": 64.85,
     "name": "MUNSON RIDGE, AK US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USS0046P01S",
+    "id": "USS0046P01S",
     "elevationUnit": "METERS",
     "longitude": -146.21
   },
@@ -21613,7 +21621,7 @@ noaa.stations = [
     "latitude": 60.61,
     "name": "GRANDVIEW, AK US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USS0049L09S",
+    "id": "USS0049L09S",
     "elevationUnit": "METERS",
     "longitude": -149.06
   },
@@ -21624,7 +21632,7 @@ noaa.stations = [
     "latitude": 60.39,
     "name": "COOPER LAKE, AK US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USS0049L10S",
+    "id": "USS0049L10S",
     "elevationUnit": "METERS",
     "longitude": -149.69
   },
@@ -21635,7 +21643,7 @@ noaa.stations = [
     "latitude": 60.62,
     "name": "SUMMIT CREEK, AK US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USS0049L19S",
+    "id": "USS0049L19S",
     "elevationUnit": "METERS",
     "longitude": -149.53
   },
@@ -21646,7 +21654,7 @@ noaa.stations = [
     "latitude": 60.73,
     "name": "KENAI MOOSE PENS, AK US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USS0050L02S",
+    "id": "USS0050L02S",
     "elevationUnit": "METERS",
     "longitude": -150.48
   },
@@ -21657,7 +21665,7 @@ noaa.stations = [
     "latitude": 62.13,
     "name": "SUSITNA VALLEY HIGH, AK US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USS0050N07S",
+    "id": "USS0050N07S",
     "elevationUnit": "METERS",
     "longitude": -150.04
   },
@@ -21668,7 +21676,7 @@ noaa.stations = [
     "latitude": 66.92,
     "name": "BETTLES FIELD, AK US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USS0051R01S",
+    "id": "USS0051R01S",
     "elevationUnit": "METERS",
     "longitude": -151.53
   },
@@ -21679,7 +21687,7 @@ noaa.stations = [
     "latitude": 39.24472,
     "name": "BURLINGTON CARSON AIRPORT, CO US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USW00003026",
+    "id": "USW00003026",
     "elevationUnit": "METERS",
     "longitude": -102.28417
   },
@@ -21690,7 +21698,7 @@ noaa.stations = [
     "latitude": 37.28333,
     "name": "SPRINGFIELD COMANCHE NATIONAL GRASSLAND, CO US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00003028",
+    "id": "USW00003028",
     "elevationUnit": "METERS",
     "longitude": -102.61389
   },
@@ -21701,7 +21709,7 @@ noaa.stations = [
     "latitude": 36.68167,
     "name": "GUYMON MUNICIPAL AIRPORT, OK US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USW00003030",
+    "id": "USW00003030",
     "elevationUnit": "METERS",
     "longitude": -101.50528
   },
@@ -21712,7 +21720,7 @@ noaa.stations = [
     "latitude": 31.92056,
     "name": "ODESSA SCHLEMEYER FIELD, TX US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00003031",
+    "id": "USW00003031",
     "elevationUnit": "METERS",
     "longitude": -102.38667
   },
@@ -21723,7 +21731,7 @@ noaa.stations = [
     "latitude": 31.6219,
     "name": "MONAHANS 6 ENE, TX US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00003047",
+    "id": "USW00003047",
     "elevationUnit": "METERS",
     "longitude": -102.8071
   },
@@ -21734,7 +21742,7 @@ noaa.stations = [
     "latitude": 34.3557,
     "name": "SOCORRO 20 N, NM US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00003048",
+    "id": "USW00003048",
     "elevationUnit": "METERS",
     "longitude": -106.8859
   },
@@ -21745,7 +21753,7 @@ noaa.stations = [
     "latitude": 38.544,
     "name": "MONTROSE 11 ENE, CO US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USW00003060",
+    "id": "USW00003060",
     "elevationUnit": "METERS",
     "longitude": -107.6928
   },
@@ -21756,7 +21764,7 @@ noaa.stations = [
     "latitude": 37.2553,
     "name": "CORTEZ 8 SE, CO US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00003061",
+    "id": "USW00003061",
     "elevationUnit": "METERS",
     "longitude": -108.5035
   },
@@ -21767,7 +21775,7 @@ noaa.stations = [
     "latitude": 35.8584,
     "name": "LOS ALAMOS 13 W, NM US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USW00003062",
+    "id": "USW00003062",
     "elevationUnit": "METERS",
     "longitude": -106.5214
   },
@@ -21778,7 +21786,7 @@ noaa.stations = [
     "latitude": 37.8639,
     "name": "LA JUNTA 17 WSW, CO US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USW00003063",
+    "id": "USW00003063",
     "elevationUnit": "METERS",
     "longitude": -103.8224
   },
@@ -21789,7 +21797,7 @@ noaa.stations = [
     "latitude": 38.8701,
     "name": "OAKLEY 19 SSW, KS US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00003067",
+    "id": "USW00003067",
     "elevationUnit": "METERS",
     "longitude": -100.9627
   },
@@ -21800,7 +21808,7 @@ noaa.stations = [
     "latitude": 32.6137,
     "name": "LAS CRUCES 20 N, NM US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00003074",
+    "id": "USW00003074",
     "elevationUnit": "METERS",
     "longitude": -106.7414
   },
@@ -21811,7 +21819,7 @@ noaa.stations = [
     "latitude": 34.05611,
     "name": "ONTARIO INTERNATIONAL AIRPORT, CA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00003102",
+    "id": "USW00003102",
     "elevationUnit": "METERS",
     "longitude": -117.60028
   },
@@ -21822,7 +21830,7 @@ noaa.stations = [
     "latitude": 32.81583,
     "name": "SAN DIEGO MONTGOMERY FIELD, CA US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00003131",
+    "id": "USW00003131",
     "elevationUnit": "METERS",
     "longitude": -117.13944
   },
@@ -21833,7 +21841,7 @@ noaa.stations = [
     "latitude": 36.6206,
     "name": "MERCURY DESERT ROCK AIRPORT, NV US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USW00003160",
+    "id": "USW00003160",
     "elevationUnit": "METERS",
     "longitude": -116.0278
   },
@@ -21844,7 +21852,7 @@ noaa.stations = [
     "latitude": 36.92611,
     "name": "PAGE MUNICIPAL AIRPORT, AZ US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00003162",
+    "id": "USW00003162",
     "elevationUnit": "METERS",
     "longitude": -111.44778
   },
@@ -21855,7 +21863,7 @@ noaa.stations = [
     "latitude": 39.6013,
     "name": "EUREKA AIRPORT, NV US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00003170",
+    "id": "USW00003170",
     "elevationUnit": "METERS",
     "longitude": -116.0055
   },
@@ -21866,7 +21874,7 @@ noaa.stations = [
     "latitude": 33.12806,
     "name": "CARLSBAD MCCLELLAN PALOMAR AIRPORT, CA US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00003177",
+    "id": "USW00003177",
     "elevationUnit": "METERS",
     "longitude": -117.27944
   },
@@ -21877,7 +21885,7 @@ noaa.stations = [
     "latitude": 32.57222,
     "name": "SAN DIEGO BROWN FIELD, CA US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USW00003178",
+    "id": "USW00003178",
     "elevationUnit": "METERS",
     "longitude": -116.97944
   },
@@ -21888,7 +21896,7 @@ noaa.stations = [
     "latitude": 33.97528,
     "name": "CHINO AIRPORT, CA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00003179",
+    "id": "USW00003179",
     "elevationUnit": "METERS",
     "longitude": -117.63611
   },
@@ -21899,7 +21907,7 @@ noaa.stations = [
     "latitude": 33.68833,
     "name": "PHOENIX DEER VALLEY MUNICIPAL AIRPORT, AZ US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00003184",
+    "id": "USW00003184",
     "elevationUnit": "METERS",
     "longitude": -112.08167
   },
@@ -21910,7 +21918,7 @@ noaa.stations = [
     "latitude": 33.62278,
     "name": "SCOTTSDALE MUNICIPAL AIRPORT, AZ US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USW00003192",
+    "id": "USW00003192",
     "elevationUnit": "METERS",
     "longitude": -111.91056
   },
@@ -21921,7 +21929,7 @@ noaa.stations = [
     "latitude": 31.42083,
     "name": "NOGALES INTERNATIONAL AIRPORT, AZ US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00003196",
+    "id": "USW00003196",
     "elevationUnit": "METERS",
     "longitude": -110.84583
   },
@@ -21932,7 +21940,7 @@ noaa.stations = [
     "latitude": 35.9705,
     "name": "DURHAM 11 W, NC US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00003758",
+    "id": "USW00003758",
     "elevationUnit": "METERS",
     "longitude": -79.0931
   },
@@ -21943,7 +21951,7 @@ noaa.stations = [
     "latitude": 37.9975,
     "name": "CHARLOTTESVILLE 2 SSE, VA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00003759",
+    "id": "USW00003759",
     "elevationUnit": "METERS",
     "longitude": -78.4656
   },
@@ -21954,7 +21962,7 @@ noaa.stations = [
     "latitude": 37.0563,
     "name": "PADUCAH BARKLEY REGIONAL AIRPORT, KY US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USW00003816",
+    "id": "USW00003816",
     "elevationUnit": "METERS",
     "longitude": -88.7744
   },
@@ -21965,7 +21973,7 @@ noaa.stations = [
     "latitude": 32.13133,
     "name": "SAVANNAH INTERNATIONAL AIRPORT, GA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003822",
+    "id": "USW00003822",
     "elevationUnit": "METERS",
     "longitude": -81.20237
   },
@@ -21976,7 +21984,7 @@ noaa.stations = [
     "latitude": 35.9509,
     "name": "CROSSVILLE MEMORIAL AIRPORT, TN US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00003847",
+    "id": "USW00003847",
     "elevationUnit": "METERS",
     "longitude": -85.0813
   },
@@ -21987,7 +21995,7 @@ noaa.stations = [
     "latitude": 34.64389,
     "name": "HUNTSVILLE INTERNATIONAL AIRPORT JONES FIELD, AL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003856",
+    "id": "USW00003856",
     "elevationUnit": "METERS",
     "longitude": -86.78611
   },
@@ -21998,7 +22006,7 @@ noaa.stations = [
     "latitude": 37.2978,
     "name": "BLUEFIELD MERCER CO AIRPORT, WV US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USW00003859",
+    "id": "USW00003859",
     "elevationUnit": "METERS",
     "longitude": -81.20366
   },
@@ -22009,7 +22017,7 @@ noaa.stations = [
     "latitude": 38.36532,
     "name": "HUNTINGTON TRI STATE AIRPORT, WV US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003860",
+    "id": "USW00003860",
     "elevationUnit": "METERS",
     "longitude": -82.55485
   },
@@ -22020,7 +22028,7 @@ noaa.stations = [
     "latitude": 34.90611,
     "name": "GRNVL SPART INTERNATIONAL AIRPORT, SC US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003870",
+    "id": "USW00003870",
     "elevationUnit": "METERS",
     "longitude": -82.21255
   },
@@ -22031,7 +22039,7 @@ noaa.stations = [
     "latitude": 37.7836,
     "name": "BECKLEY RALEIGH CO AIRPORT, WV US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003872",
+    "id": "USW00003872",
     "elevationUnit": "METERS",
     "longitude": -81.123
   },
@@ -22042,7 +22050,7 @@ noaa.stations = [
     "latitude": 39.83444,
     "name": "DECATUR AIRPORT, IL US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00003887",
+    "id": "USW00003887",
     "elevationUnit": "METERS",
     "longitude": -88.86556
   },
@@ -22053,7 +22061,7 @@ noaa.stations = [
     "latitude": 33.77917,
     "name": "ATLANTA FULTON CO AIRPORT, GA US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00003888",
+    "id": "USW00003888",
     "elevationUnit": "METERS",
     "longitude": -84.52139
   },
@@ -22064,7 +22072,7 @@ noaa.stations = [
     "latitude": 37.59139,
     "name": "JACKSON JULIAN CARROLL AIRPORT, KY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00003889",
+    "id": "USW00003889",
     "elevationUnit": "METERS",
     "longitude": -83.31444
   },
@@ -22075,7 +22083,7 @@ noaa.stations = [
     "latitude": 30.58917,
     "name": "COLLEGE STATION EASTERWOOD FIELD, TX US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00003904",
+    "id": "USW00003904",
     "elevationUnit": "METERS",
     "longitude": -96.36472
   },
@@ -22086,7 +22094,7 @@ noaa.stations = [
     "latitude": 32.8978,
     "name": "DAL FTW WSCMO AIRPORT, TX US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003927",
+    "id": "USW00003927",
     "elevationUnit": "METERS",
     "longitude": -97.0189
   },
@@ -22097,7 +22105,7 @@ noaa.stations = [
     "latitude": 37.6475,
     "name": "WICHITA DWIGHT D. EISENHOWER NATIONAL AIRPORT, KS US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003928",
+    "id": "USW00003928",
     "elevationUnit": "METERS",
     "longitude": -97.43
   },
@@ -22108,7 +22116,7 @@ noaa.stations = [
     "latitude": 39.2972,
     "name": "KANSAS CITY INTERNATIONAL AIRPORT, MO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00003947",
+    "id": "USW00003947",
     "elevationUnit": "METERS",
     "longitude": -94.7306
   },
@@ -22119,7 +22127,7 @@ noaa.stations = [
     "latitude": 34.8353,
     "name": "NORTH LITTLE ROCK AIRPORT, AR US",
     "datacoverage": 1,
-    "id": "GHCND:USW00003952",
+    "id": "USW00003952",
     "elevationUnit": "METERS",
     "longitude": -92.2596
   },
@@ -22130,7 +22138,7 @@ noaa.stations = [
     "latitude": 35.83111,
     "name": "JONESBORO MUNICIPAL AIRPORT, AR US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00003953",
+    "id": "USW00003953",
     "elevationUnit": "METERS",
     "longitude": -90.64639
   },
@@ -22141,7 +22149,7 @@ noaa.stations = [
     "latitude": 34.29,
     "name": "HOT SPRINGS ASOS, AR US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USW00003962",
+    "id": "USW00003962",
     "elevationUnit": "METERS",
     "longitude": -93.06
   },
@@ -22152,7 +22160,7 @@ noaa.stations = [
     "latitude": 38.85,
     "name": "OLATHE JOHNSON CO EXECUTIVE AIRPORT, KS US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00003967",
+    "id": "USW00003967",
     "elevationUnit": "METERS",
     "longitude": -94.73917
   },
@@ -22163,7 +22171,7 @@ noaa.stations = [
     "latitude": 32.68083,
     "name": "DALLAS REDBIRD AIRPORT, TX US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USW00003971",
+    "id": "USW00003971",
     "elevationUnit": "METERS",
     "longitude": -96.86806
   },
@@ -22174,7 +22182,7 @@ noaa.stations = [
     "latitude": 32.35,
     "name": "TALLULAH VICKSBURG REGIONAL AIRPORT, LA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00003996",
+    "id": "USW00003996",
     "elevationUnit": "METERS",
     "longitude": -91.02778
   },
@@ -22185,7 +22193,7 @@ noaa.stations = [
     "latitude": 41.27306,
     "name": "EVANSTON UINTA CO BURNS FIELD, WY US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00004111",
+    "id": "USW00004111",
     "elevationUnit": "METERS",
     "longitude": -111.03056
   },
@@ -22196,7 +22204,7 @@ noaa.stations = [
     "latitude": 45.82583,
     "name": "HERMISTON MUNICIPAL AIRPORT, OR US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USW00004113",
+    "id": "USW00004113",
     "elevationUnit": "METERS",
     "longitude": -119.26111
   },
@@ -22207,7 +22215,7 @@ noaa.stations = [
     "latitude": 44.5228,
     "name": "CHALLIS AIRPORT, ID US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00004114",
+    "id": "USW00004114",
     "elevationUnit": "METERS",
     "longitude": -114.215
   },
@@ -22218,7 +22226,7 @@ noaa.stations = [
     "latitude": 43.4621,
     "name": "ARCO 17 SW, ID US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00004126",
+    "id": "USW00004126",
     "elevationUnit": "METERS",
     "longitude": -113.556
   },
@@ -22229,7 +22237,7 @@ noaa.stations = [
     "latitude": 43.2044,
     "name": "MURPHY 10 W, ID US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USW00004127",
+    "id": "USW00004127",
     "elevationUnit": "METERS",
     "longitude": -116.7505
   },
@@ -22240,7 +22248,7 @@ noaa.stations = [
     "latitude": 43.4711,
     "name": "RILEY 10 WSW, OR US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00004128",
+    "id": "USW00004128",
     "elevationUnit": "METERS",
     "longitude": -119.6917
   },
@@ -22251,7 +22259,7 @@ noaa.stations = [
     "latitude": 47.4174,
     "name": "SPOKANE 17 SSW, WA US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00004136",
+    "id": "USW00004136",
     "elevationUnit": "METERS",
     "longitude": -117.5264
   },
@@ -22262,7 +22270,7 @@ noaa.stations = [
     "latitude": 45.158,
     "name": "DILLON 18 WSW, MT US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USW00004137",
+    "id": "USW00004137",
     "elevationUnit": "METERS",
     "longitude": -113.0057
   },
@@ -22273,7 +22281,7 @@ noaa.stations = [
     "latitude": 41.6163,
     "name": "BRIGHAM CITY 28 WNW, UT US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00004138",
+    "id": "USW00004138",
     "elevationUnit": "METERS",
     "longitude": -112.5437
   },
@@ -22284,7 +22292,7 @@ noaa.stations = [
     "latitude": 41.8484,
     "name": "DENIO 52 WSW, NV US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USW00004139",
+    "id": "USW00004139",
     "elevationUnit": "METERS",
     "longitude": -119.6357
   },
@@ -22295,7 +22303,7 @@ noaa.stations = [
     "latitude": 43.2718,
     "name": "COOS BAY 8 SW, OR US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00004141",
+    "id": "USW00004141",
     "elevationUnit": "METERS",
     "longitude": -124.3186
   },
@@ -22306,7 +22314,7 @@ noaa.stations = [
     "latitude": 48.5405,
     "name": "DARRINGTON 21 NNE, WA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00004223",
+    "id": "USW00004223",
     "elevationUnit": "METERS",
     "longitude": -121.446
   },
@@ -22317,7 +22325,7 @@ noaa.stations = [
     "latitude": 44.4185,
     "name": "CORVALLIS 10 SSW, OR US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00004236",
+    "id": "USW00004236",
     "elevationUnit": "METERS",
     "longitude": -123.3257
   },
@@ -22328,7 +22336,7 @@ noaa.stations = [
     "latitude": 42.2068,
     "name": "BINGHAMTON GREATER AP, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00004725",
+    "id": "USW00004725",
     "elevationUnit": "METERS",
     "longitude": -75.98
   },
@@ -22339,7 +22347,7 @@ noaa.stations = [
     "latitude": 40.31611,
     "name": "JOHNSTOWN CAMBRIA CO AIRPORT, PA US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00004726",
+    "id": "USW00004726",
     "elevationUnit": "METERS",
     "longitude": -78.83389
   },
@@ -22350,7 +22358,7 @@ noaa.stations = [
     "latitude": 40.79388,
     "name": "ISLIP LI MACARTHUR AIRPORT, NY US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00004781",
+    "id": "USW00004781",
     "elevationUnit": "METERS",
     "longitude": -73.10189
   },
@@ -22361,7 +22369,7 @@ noaa.stations = [
     "latitude": 45.6314,
     "name": "RHINELANDER ONEIDA CO AIRPORT, WI US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00004803",
+    "id": "USW00004803",
     "elevationUnit": "METERS",
     "longitude": -89.4823
   },
@@ -22372,7 +22380,7 @@ noaa.stations = [
     "latitude": 40.07806,
     "name": "COLUMBUS OHIO STATE UNIVERSITY AIRPORT, OH US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USW00004804",
+    "id": "USW00004804",
     "elevationUnit": "METERS",
     "longitude": -83.07806
   },
@@ -22383,7 +22391,7 @@ noaa.stations = [
     "latitude": 41.77,
     "name": "CHICAGO AURORA MUNICIPAL AIRPORT, IL US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USW00004808",
+    "id": "USW00004808",
     "elevationUnit": "METERS",
     "longitude": -88.48139
   },
@@ -22394,7 +22402,7 @@ noaa.stations = [
     "latitude": 42.595,
     "name": "KENOSHA REGIONAL AIRPORT, WI US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USW00004845",
+    "id": "USW00004845",
     "elevationUnit": "METERS",
     "longitude": -87.93806
   },
@@ -22405,7 +22413,7 @@ noaa.stations = [
     "latitude": 45.01333,
     "name": "GAYLORD OTSEGO CO AIRPORT, MI US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00004854",
+    "id": "USW00004854",
     "elevationUnit": "METERS",
     "longitude": -84.70139
   },
@@ -22416,7 +22424,7 @@ noaa.stations = [
     "latitude": 41.77806,
     "name": "ASHTABULA CO AIRPORT, OH US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00004857",
+    "id": "USW00004857",
     "elevationUnit": "METERS",
     "longitude": -80.69583
   },
@@ -22427,7 +22435,7 @@ noaa.stations = [
     "latitude": 40.02278,
     "name": "NEWARK HEATH AIRPORT, OH US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00004858",
+    "id": "USW00004858",
     "elevationUnit": "METERS",
     "longitude": -82.4625
   },
@@ -22438,7 +22446,7 @@ noaa.stations = [
     "latitude": 29.1828,
     "name": "DAYTONA BEACH INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00012834",
+    "id": "USW00012834",
     "elevationUnit": "METERS",
     "longitude": -81.0483
   },
@@ -22449,7 +22457,7 @@ noaa.stations = [
     "latitude": 28.1011,
     "name": "MELBOURNE INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00012838",
+    "id": "USW00012838",
     "elevationUnit": "METERS",
     "longitude": -80.6439
   },
@@ -22460,7 +22468,7 @@ noaa.stations = [
     "latitude": 25.7881,
     "name": "MIAMI INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00012839",
+    "id": "USW00012839",
     "elevationUnit": "METERS",
     "longitude": -80.3169
   },
@@ -22471,7 +22479,7 @@ noaa.stations = [
     "latitude": 27.96194,
     "name": "TAMPA INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00012842",
+    "id": "USW00012842",
     "elevationUnit": "METERS",
     "longitude": -82.5403
   },
@@ -22482,7 +22490,7 @@ noaa.stations = [
     "latitude": 27.40139,
     "name": "SARASOTA BRADENTON AIRPORT, FL US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00012871",
+    "id": "USW00012871",
     "elevationUnit": "METERS",
     "longitude": -82.55861
   },
@@ -22493,7 +22501,7 @@ noaa.stations = [
     "latitude": 25.90694,
     "name": "MIAMI OPA LOCKA AIRPORT, FL US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USW00012882",
+    "id": "USW00012882",
     "elevationUnit": "METERS",
     "longitude": -80.28028
   },
@@ -22504,7 +22512,7 @@ noaa.stations = [
     "latitude": 26.19694,
     "name": "FORT LAUDERDALE EXECUTIVE AIRPORT, FL US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00012885",
+    "id": "USW00012885",
     "elevationUnit": "METERS",
     "longitude": -80.17083
   },
@@ -22515,7 +22523,7 @@ noaa.stations = [
     "latitude": 25.6475,
     "name": "MIAMI KENDALL TAMIAMI EXEC AIRPORT, FL US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00012888",
+    "id": "USW00012888",
     "elevationUnit": "METERS",
     "longitude": -80.43306
   },
@@ -22526,7 +22534,7 @@ noaa.stations = [
     "latitude": 26.53611,
     "name": "FORT MYERS SW FLORIDA REGIONAL AIRPORT, FL US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USW00012894",
+    "id": "USW00012894",
     "elevationUnit": "METERS",
     "longitude": -81.755
   },
@@ -22537,7 +22545,7 @@ noaa.stations = [
     "latitude": 27.49806,
     "name": "FORT PIERCE ST LUCIE CO INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USW00012895",
+    "id": "USW00012895",
     "elevationUnit": "METERS",
     "longitude": -80.37667
   },
@@ -22548,7 +22556,7 @@ noaa.stations = [
     "latitude": 26.155,
     "name": "NAPLES MUNICIPAL AIRPORT, FL US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USW00012897",
+    "id": "USW00012897",
     "elevationUnit": "METERS",
     "longitude": -81.7752
   },
@@ -22559,7 +22567,7 @@ noaa.stations = [
     "latitude": 29.95056,
     "name": "PORT ARTHUR SE TX REGIONAL AIRPORT, TX US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00012917",
+    "id": "USW00012917",
     "elevationUnit": "METERS",
     "longitude": -94.02056
   },
@@ -22570,7 +22578,7 @@ noaa.stations = [
     "latitude": 29.5443,
     "name": "SAN ANTONIO INTERNATIONAL AIRPORT, TX US",
     "datacoverage": 0.9993,
-    "id": "GHCND:USW00012921",
+    "id": "USW00012921",
     "elevationUnit": "METERS",
     "longitude": -98.4839
   },
@@ -22581,7 +22589,7 @@ noaa.stations = [
     "latitude": 28.72472,
     "name": "PALACIOS MUNICIPAL AIRPORT, TX US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00012935",
+    "id": "USW00012935",
     "elevationUnit": "METERS",
     "longitude": -96.25361
   },
@@ -22592,7 +22600,7 @@ noaa.stations = [
     "latitude": 26.18389,
     "name": "MCALLEN MILLER INTERNATIONAL AIRPORT, TX US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00012959",
+    "id": "USW00012959",
     "elevationUnit": "METERS",
     "longitude": -98.25389
   },
@@ -22603,7 +22611,7 @@ noaa.stations = [
     "latitude": 29.98,
     "name": "HOUSTON INTERCONTINENTAL AIRPORT, TX US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00012960",
+    "id": "USW00012960",
     "elevationUnit": "METERS",
     "longitude": -95.36
   },
@@ -22614,7 +22622,7 @@ noaa.stations = [
     "latitude": 29.3389,
     "name": "SAN ANTONIO STINSON MUNICIPAL AIRPORT, TX US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USW00012970",
+    "id": "USW00012970",
     "elevationUnit": "METERS",
     "longitude": -98.472
   },
@@ -22625,7 +22633,7 @@ noaa.stations = [
     "latitude": 29.10972,
     "name": "ANGLETON LAKE JACKSON BRAZORIA CO AIRPORT, TX US",
     "datacoverage": 0.996,
-    "id": "GHCND:USW00012976",
+    "id": "USW00012976",
     "elevationUnit": "METERS",
     "longitude": -95.46194
   },
@@ -22636,7 +22644,7 @@ noaa.stations = [
     "latitude": 29.62194,
     "name": "HOUSTON SUGARLAND MEM, TX US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USW00012977",
+    "id": "USW00012977",
     "elevationUnit": "METERS",
     "longitude": -95.65667
   },
@@ -22647,7 +22655,7 @@ noaa.stations = [
     "latitude": 26.5258,
     "name": "EDINBURG 17 NNE, TX US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USW00012987",
+    "id": "USW00012987",
     "elevationUnit": "METERS",
     "longitude": -98.0633
   },
@@ -22658,7 +22666,7 @@ noaa.stations = [
     "latitude": 39.8668,
     "name": "CHILLICOTHE 22 ENE, MO US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00013301",
+    "id": "USW00013301",
     "elevationUnit": "METERS",
     "longitude": -93.147
   },
@@ -22669,7 +22677,7 @@ noaa.stations = [
     "latitude": 35.8923,
     "name": "RALEIGH AIRPORT, NC US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013722",
+    "id": "USW00013722",
     "elevationUnit": "METERS",
     "longitude": -78.7819
   },
@@ -22680,7 +22688,7 @@ noaa.stations = [
     "latitude": 36.0969,
     "name": "GREENSBORO AIRPORT, NC US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013723",
+    "id": "USW00013723",
     "elevationUnit": "METERS",
     "longitude": -79.9432
   },
@@ -22691,7 +22699,7 @@ noaa.stations = [
     "latitude": 37.3208,
     "name": "LYNCHBURG INTERNATIONAL AIRPORT, VA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013733",
+    "id": "USW00013733",
     "elevationUnit": "METERS",
     "longitude": -79.2067
   },
@@ -22702,7 +22710,7 @@ noaa.stations = [
     "latitude": 39.4038,
     "name": "MARTINSBURG EASTERN WEST VIRGINIA REGIONAL AIRPORT, WV US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00013734",
+    "id": "USW00013734",
     "elevationUnit": "METERS",
     "longitude": -77.945
   },
@@ -22713,7 +22721,7 @@ noaa.stations = [
     "latitude": 36.9033,
     "name": "NORFOLK INTERNATIONAL AIRPORT, VA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013737",
+    "id": "USW00013737",
     "elevationUnit": "METERS",
     "longitude": -76.1922
   },
@@ -22724,7 +22732,7 @@ noaa.stations = [
     "latitude": 39.87327,
     "name": "PHILADELPHIA INTERNATIONAL AIRPORT, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013739",
+    "id": "USW00013739",
     "elevationUnit": "METERS",
     "longitude": -75.22678
   },
@@ -22735,7 +22743,7 @@ noaa.stations = [
     "latitude": 37.3169,
     "name": "ROANOKE INTERNATIONAL AIRPORT, VA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013741",
+    "id": "USW00013741",
     "elevationUnit": "METERS",
     "longitude": -79.9741
   },
@@ -22746,7 +22754,7 @@ noaa.stations = [
     "latitude": 34.18772,
     "name": "FLORENCE REGIONAL AIRPORT, SC US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00013744",
+    "id": "USW00013744",
     "elevationUnit": "METERS",
     "longitude": -79.73085
   },
@@ -22757,7 +22765,7 @@ noaa.stations = [
     "latitude": 34.2675,
     "name": "WILMINGTON INTERNATIONAL AIRPORT, NC US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00013748",
+    "id": "USW00013748",
     "elevationUnit": "METERS",
     "longitude": -77.8997
   },
@@ -22768,7 +22776,7 @@ noaa.stations = [
     "latitude": 39.6744,
     "name": "WILMINGTON NEW CASTLE CO AIRPORT, DE US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013781",
+    "id": "USW00013781",
     "elevationUnit": "METERS",
     "longitude": -75.60567
   },
@@ -22779,7 +22787,7 @@ noaa.stations = [
     "latitude": 31.28194,
     "name": "HATTIESBURG CHAIN MUNICIPAL AIRPORT, MS US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USW00013833",
+    "id": "USW00013833",
     "elevationUnit": "METERS",
     "longitude": -89.25306
   },
@@ -22790,7 +22798,7 @@ noaa.stations = [
     "latitude": 31.3167,
     "name": "DOTHAN REGIONAL AIRPORT, AL US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00013839",
+    "id": "USW00013839",
     "elevationUnit": "METERS",
     "longitude": -85.45
   },
@@ -22801,7 +22809,7 @@ noaa.stations = [
     "latitude": 38.3794,
     "name": "CHARLESTON YEAGER AIRPORT, WV US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013866",
+    "id": "USW00013866",
     "elevationUnit": "METERS",
     "longitude": -81.59
   },
@@ -22812,7 +22820,7 @@ noaa.stations = [
     "latitude": 39.28115,
     "name": "PARKERSBURG, WV US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00013867",
+    "id": "USW00013867",
     "elevationUnit": "METERS",
     "longitude": -81.55694
   },
@@ -22823,7 +22831,7 @@ noaa.stations = [
     "latitude": 31.5358,
     "name": "ALMA BACON CO AIRPORT, GA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013870",
+    "id": "USW00013870",
     "elevationUnit": "METERS",
     "longitude": -82.5067
   },
@@ -22834,7 +22842,7 @@ noaa.stations = [
     "latitude": 33.948,
     "name": "ATHENS BEN EPPS AIRPORT, GA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00013873",
+    "id": "USW00013873",
     "elevationUnit": "METERS",
     "longitude": -83.3275
   },
@@ -22845,7 +22853,7 @@ noaa.stations = [
     "latitude": 33.6301,
     "name": "ATLANTA HARTSFIELD INTERNATIONAL AIRPORT, GA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013874",
+    "id": "USW00013874",
     "elevationUnit": "METERS",
     "longitude": -84.4418
   },
@@ -22856,7 +22864,7 @@ noaa.stations = [
     "latitude": 33.56556,
     "name": "BIRMINGHAM AIRPORT, AL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013876",
+    "id": "USW00013876",
     "elevationUnit": "METERS",
     "longitude": -86.745
   },
@@ -22867,7 +22875,7 @@ noaa.stations = [
     "latitude": 36.47967,
     "name": "BRISTOL AIRPORT, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013877",
+    "id": "USW00013877",
     "elevationUnit": "METERS",
     "longitude": -82.39898
   },
@@ -22878,7 +22886,7 @@ noaa.stations = [
     "latitude": 31.1522,
     "name": "BRUNSWICK MALCOLM MCKINNON AIRPORT, GA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00013878",
+    "id": "USW00013878",
     "elevationUnit": "METERS",
     "longitude": -81.3908
   },
@@ -22889,7 +22897,7 @@ noaa.stations = [
     "latitude": 32.89943,
     "name": "CHARLESTON INTL. AIRPORT, SC US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013880",
+    "id": "USW00013880",
     "elevationUnit": "METERS",
     "longitude": -80.04075
   },
@@ -22900,7 +22908,7 @@ noaa.stations = [
     "latitude": 35.03362,
     "name": "CHATTANOOGA AIRPORT, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013882",
+    "id": "USW00013882",
     "elevationUnit": "METERS",
     "longitude": -85.20044
   },
@@ -22911,7 +22919,7 @@ noaa.stations = [
     "latitude": 34.84611,
     "name": "GREENVILLE DOWNTOWN AIRPORT, SC US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00013886",
+    "id": "USW00013886",
     "elevationUnit": "METERS",
     "longitude": -82.34611
   },
@@ -22922,7 +22930,7 @@ noaa.stations = [
     "latitude": 30.495,
     "name": "JACKSONVILLE INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00013889",
+    "id": "USW00013889",
     "elevationUnit": "METERS",
     "longitude": -81.6936
   },
@@ -22933,7 +22941,7 @@ noaa.stations = [
     "latitude": 35.8181,
     "name": "KNOXVILLE AIRPORT, TN US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00013891",
+    "id": "USW00013891",
     "elevationUnit": "METERS",
     "longitude": -83.9858
   },
@@ -22944,7 +22952,7 @@ noaa.stations = [
     "latitude": 35.0564,
     "name": "MEMPHIS INTERNATIONAL AIRPORT, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013893",
+    "id": "USW00013893",
     "elevationUnit": "METERS",
     "longitude": -89.9865
   },
@@ -22955,7 +22963,7 @@ noaa.stations = [
     "latitude": 30.68833,
     "name": "MOBILE REGIONAL AIRPORT, AL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013894",
+    "id": "USW00013894",
     "elevationUnit": "METERS",
     "longitude": -88.24556
   },
@@ -22966,7 +22974,7 @@ noaa.stations = [
     "latitude": 32.2997,
     "name": "MONTGOMERY AIRPORT, AL US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00013895",
+    "id": "USW00013895",
     "elevationUnit": "METERS",
     "longitude": -86.4075
   },
@@ -22977,7 +22985,7 @@ noaa.stations = [
     "latitude": 36.11889,
     "name": "NASHVILLE INTERNATIONAL AIRPORT, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013897",
+    "id": "USW00013897",
     "elevationUnit": "METERS",
     "longitude": -86.68917
   },
@@ -22988,7 +22996,7 @@ noaa.stations = [
     "latitude": 30.47806,
     "name": "PENSACOLA REGIONAL AIRPORT, FL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013899",
+    "id": "USW00013899",
     "elevationUnit": "METERS",
     "longitude": -87.18694
   },
@@ -22999,7 +23007,7 @@ noaa.stations = [
     "latitude": 32.33667,
     "name": "JACKSON HAWKINS FIELD, MS US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00013927",
+    "id": "USW00013927",
     "elevationUnit": "METERS",
     "longitude": -90.22139
   },
@@ -23010,7 +23018,7 @@ noaa.stations = [
     "latitude": 32.4472,
     "name": "SHREVEPORT REGIONAL AIRPORT, LA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013957",
+    "id": "USW00013957",
     "elevationUnit": "METERS",
     "longitude": -93.8244
   },
@@ -23021,7 +23029,7 @@ noaa.stations = [
     "latitude": 30.3208,
     "name": "AUSTIN CAMP MABRY, TX US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013958",
+    "id": "USW00013958",
     "elevationUnit": "METERS",
     "longitude": -97.7604
   },
@@ -23032,7 +23040,7 @@ noaa.stations = [
     "latitude": 31.61889,
     "name": "WACO REGIONAL AIRPORT, TX US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013959",
+    "id": "USW00013959",
     "elevationUnit": "METERS",
     "longitude": -97.22833
   },
@@ -23043,7 +23051,7 @@ noaa.stations = [
     "latitude": 32.8519,
     "name": "DALLAS FAA AIRPORT, TX US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00013960",
+    "id": "USW00013960",
     "elevationUnit": "METERS",
     "longitude": -96.8555
   },
@@ -23054,7 +23062,7 @@ noaa.stations = [
     "latitude": 34.7273,
     "name": "LITTLE ROCK AIRPORT ADAMS FIELD, AR US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00013963",
+    "id": "USW00013963",
     "elevationUnit": "METERS",
     "longitude": -92.2389
   },
@@ -23065,7 +23073,7 @@ noaa.stations = [
     "latitude": 35.333,
     "name": "FORT SMITH REGIONAL AIRPORT, AR US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013964",
+    "id": "USW00013964",
     "elevationUnit": "METERS",
     "longitude": -94.3625
   },
@@ -23076,7 +23084,7 @@ noaa.stations = [
     "latitude": 36.73667,
     "name": "PONCA CITY MUNICIPAL AIRPORT, OK US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00013969",
+    "id": "USW00013969",
     "elevationUnit": "METERS",
     "longitude": -97.10194
   },
@@ -23087,7 +23095,7 @@ noaa.stations = [
     "latitude": 30.5372,
     "name": "BATON ROUGE METRO AIRPORT, LA US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USW00013970",
+    "id": "USW00013970",
     "elevationUnit": "METERS",
     "longitude": -91.1469
   },
@@ -23098,7 +23106,7 @@ noaa.stations = [
     "latitude": 30.205,
     "name": "LAFAYETTE REGIONAL AIRPORT, LA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00013976",
+    "id": "USW00013976",
     "elevationUnit": "METERS",
     "longitude": -91.9875
   },
@@ -23109,7 +23117,7 @@ noaa.stations = [
     "latitude": 37.15221,
     "name": "JOPLIN REGIONAL AIRPORT, MO US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00013987",
+    "id": "USW00013987",
     "elevationUnit": "METERS",
     "longitude": -94.49527
   },
@@ -23120,7 +23128,7 @@ noaa.stations = [
     "latitude": 38.7525,
     "name": "ST LOUIS LAMBERT INTERNATIONAL AIRPORT, MO US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00013994",
+    "id": "USW00013994",
     "elevationUnit": "METERS",
     "longitude": -90.3736
   },
@@ -23131,7 +23139,7 @@ noaa.stations = [
     "latitude": 37.23985,
     "name": "SPRINGFIELD WEATHER SERVICE OFFICE AIRPORT, MO US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013995",
+    "id": "USW00013995",
     "elevationUnit": "METERS",
     "longitude": -93.39007
   },
@@ -23142,7 +23150,7 @@ noaa.stations = [
     "latitude": 39.0725,
     "name": "TOPEKA ASOS, KS US",
     "datacoverage": 1,
-    "id": "GHCND:USW00013996",
+    "id": "USW00013996",
     "elevationUnit": "METERS",
     "longitude": -95.6261
   },
@@ -23153,7 +23161,7 @@ noaa.stations = [
     "latitude": 44.3155,
     "name": "AUGUSTA STATE AIRPORT, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014605",
+    "id": "USW00014605",
     "elevationUnit": "METERS",
     "longitude": -69.7972
   },
@@ -23164,7 +23172,7 @@ noaa.stations = [
     "latitude": 44.7978,
     "name": "BANGOR INTERNATIONAL AIRPORT, ME US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00014606",
+    "id": "USW00014606",
     "elevationUnit": "METERS",
     "longitude": -68.8185
   },
@@ -23175,7 +23183,7 @@ noaa.stations = [
     "latitude": 46.8705,
     "name": "CARIBOU WEATHER FORECAST OFFICE, ME US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USW00014607",
+    "id": "USW00014607",
     "elevationUnit": "METERS",
     "longitude": -68.0173
   },
@@ -23186,7 +23194,7 @@ noaa.stations = [
     "latitude": 41.3275,
     "name": "GROTON NEW LONDON AIRPORT, CT US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USW00014707",
+    "id": "USW00014707",
     "elevationUnit": "METERS",
     "longitude": -72.04944
   },
@@ -23197,7 +23205,7 @@ noaa.stations = [
     "latitude": 40.77944,
     "name": "LAGUARDIA AIRPORT, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014732",
+    "id": "USW00014732",
     "elevationUnit": "METERS",
     "longitude": -73.88035
   },
@@ -23208,7 +23216,7 @@ noaa.stations = [
     "latitude": 42.9408,
     "name": "BUFFALO NIAGARA INTERNATIONAL, NY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00014733",
+    "id": "USW00014733",
     "elevationUnit": "METERS",
     "longitude": -78.7358
   },
@@ -23219,7 +23227,7 @@ noaa.stations = [
     "latitude": 42.74722,
     "name": "ALBANY INTERNATIONAL AIRPORT, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014735",
+    "id": "USW00014735",
     "elevationUnit": "METERS",
     "longitude": -73.79912
   },
@@ -23230,7 +23238,7 @@ noaa.stations = [
     "latitude": 40.64985,
     "name": "ALLENTOWN LEHIGH VALLEY INTERNATIONAL AIRPORT, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014737",
+    "id": "USW00014737",
     "elevationUnit": "METERS",
     "longitude": -75.44771
   },
@@ -23241,7 +23249,7 @@ noaa.stations = [
     "latitude": 42.3606,
     "name": "BOSTON, MA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014739",
+    "id": "USW00014739",
     "elevationUnit": "METERS",
     "longitude": -71.0097
   },
@@ -23252,7 +23260,7 @@ noaa.stations = [
     "latitude": 44.4683,
     "name": "BURLINGTON INTERNATIONAL AIRPORT, VT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00014742",
+    "id": "USW00014742",
     "elevationUnit": "METERS",
     "longitude": -73.1499
   },
@@ -23263,7 +23271,7 @@ noaa.stations = [
     "latitude": 43.2049,
     "name": "CONCORD ASOS, NH US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00014745",
+    "id": "USW00014745",
     "elevationUnit": "METERS",
     "longitude": -71.50274
   },
@@ -23274,7 +23282,7 @@ noaa.stations = [
     "latitude": 44.27018,
     "name": "MOUNT WASHINGTON, NH US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00014755",
+    "id": "USW00014755",
     "elevationUnit": "METERS",
     "longitude": -71.30336
   },
@@ -23285,7 +23293,7 @@ noaa.stations = [
     "latitude": 43.64222,
     "name": "PORTLAND JETPORT, ME US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014764",
+    "id": "USW00014764",
     "elevationUnit": "METERS",
     "longitude": -70.30444
   },
@@ -23296,7 +23304,7 @@ noaa.stations = [
     "latitude": 43.1167,
     "name": "ROCHESTER GREATER INTERNATIONAL, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014768",
+    "id": "USW00014768",
     "elevationUnit": "METERS",
     "longitude": -77.6767
   },
@@ -23307,7 +23315,7 @@ noaa.stations = [
     "latitude": 43.1111,
     "name": "SYRACUSE HANCOCK INTERNATIONAL AIRPORT, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014771",
+    "id": "USW00014771",
     "elevationUnit": "METERS",
     "longitude": -76.1038
   },
@@ -23318,7 +23326,7 @@ noaa.stations = [
     "latitude": 41.78611,
     "name": "CHICAGO MIDWAY AIRPORT, IL US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USW00014819",
+    "id": "USW00014819",
     "elevationUnit": "METERS",
     "longitude": -87.75222
   },
@@ -23329,7 +23337,7 @@ noaa.stations = [
     "latitude": 41.4057,
     "name": "CLEVELAND HOPKINS INTERNATIONAL AIRPORT, OH US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014820",
+    "id": "USW00014820",
     "elevationUnit": "METERS",
     "longitude": -81.852
   },
@@ -23340,7 +23348,7 @@ noaa.stations = [
     "latitude": 41.01361,
     "name": "FINDLAY AIRPORT, OH US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00014825",
+    "id": "USW00014825",
     "elevationUnit": "METERS",
     "longitude": -83.66861
   },
@@ -23351,7 +23359,7 @@ noaa.stations = [
     "latitude": 42.9666,
     "name": "FLINT FCWOS, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014826",
+    "id": "USW00014826",
     "elevationUnit": "METERS",
     "longitude": -83.7494
   },
@@ -23362,7 +23370,7 @@ noaa.stations = [
     "latitude": 40.9705,
     "name": "FORT WAYNE INTERNATIONAL AIRPORT, IN US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USW00014827",
+    "id": "USW00014827",
     "elevationUnit": "METERS",
     "longitude": -85.2063
   },
@@ -23373,7 +23381,7 @@ noaa.stations = [
     "latitude": 42.2667,
     "name": "JACKSON REYNOLDS FIELD, MI US",
     "datacoverage": 0.9991,
-    "id": "GHCND:USW00014833",
+    "id": "USW00014833",
     "elevationUnit": "METERS",
     "longitude": -84.4667
   },
@@ -23384,7 +23392,7 @@ noaa.stations = [
     "latitude": 43.1405,
     "name": "MADISON DANE CO REGIONAL AIRPORT, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014837",
+    "id": "USW00014837",
     "elevationUnit": "METERS",
     "longitude": -89.3452
   },
@@ -23395,7 +23403,7 @@ noaa.stations = [
     "latitude": 42.955,
     "name": "MILWAUKEE MITCHELL INTERNATIONAL AIRPORT, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014839",
+    "id": "USW00014839",
     "elevationUnit": "METERS",
     "longitude": -87.9044
   },
@@ -23406,7 +23414,7 @@ noaa.stations = [
     "latitude": 43.17111,
     "name": "MUSKEGON CO AIRPORT, MI US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00014840",
+    "id": "USW00014840",
     "elevationUnit": "METERS",
     "longitude": -86.23667
   },
@@ -23417,7 +23425,7 @@ noaa.stations = [
     "latitude": 45.5644,
     "name": "PELLSTON REGIONAL AIRPORT, MI US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00014841",
+    "id": "USW00014841",
     "elevationUnit": "METERS",
     "longitude": -84.7927
   },
@@ -23428,7 +23436,7 @@ noaa.stations = [
     "latitude": 40.6675,
     "name": "PEORIA INTERNATIONAL AIRPORT, IL US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00014842",
+    "id": "USW00014842",
     "elevationUnit": "METERS",
     "longitude": -89.6839
   },
@@ -23439,7 +23447,7 @@ noaa.stations = [
     "latitude": 43.53306,
     "name": "SAGINAW MBS INTERNATIONAL AIRPORT, MI US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00014845",
+    "id": "USW00014845",
     "elevationUnit": "METERS",
     "longitude": -84.07972
   },
@@ -23450,7 +23458,7 @@ noaa.stations = [
     "latitude": 46.4794,
     "name": "SAULT STE MARIE SANDERSON FIELD, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014847",
+    "id": "USW00014847",
     "elevationUnit": "METERS",
     "longitude": -84.3572
   },
@@ -23461,7 +23469,7 @@ noaa.stations = [
     "latitude": 44.74083,
     "name": "TRAVERSE CITY CHERRY CAPITAL AIRPORT, MI US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USW00014850",
+    "id": "USW00014850",
     "elevationUnit": "METERS",
     "longitude": -85.5825
   },
@@ -23472,7 +23480,7 @@ noaa.stations = [
     "latitude": 42.0803,
     "name": "ERIE INTERNATIONAL AIRPORT, PA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014860",
+    "id": "USW00014860",
     "elevationUnit": "METERS",
     "longitude": -80.1824
   },
@@ -23483,7 +23491,7 @@ noaa.stations = [
     "latitude": 42.41667,
     "name": "CHICAGO WAUKEGAN REGIONAL AIRPORT, IL US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USW00014880",
+    "id": "USW00014880",
     "elevationUnit": "METERS",
     "longitude": -87.86667
   },
@@ -23494,7 +23502,7 @@ noaa.stations = [
     "latitude": 40.9181,
     "name": "AKRON CANTON AIRPORT, OH US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014895",
+    "id": "USW00014895",
     "elevationUnit": "METERS",
     "longitude": -81.4435
   },
@@ -23505,7 +23513,7 @@ noaa.stations = [
     "latitude": 44.4794,
     "name": "GREEN BAY A S INTERNATIONAL AIRPORT, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014898",
+    "id": "USW00014898",
     "elevationUnit": "METERS",
     "longitude": -88.1366
   },
@@ -23516,7 +23524,7 @@ noaa.stations = [
     "latitude": 46.8369,
     "name": "DULUTH INTERNATIONAL AIRPORT, MN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014913",
+    "id": "USW00014913",
     "elevationUnit": "METERS",
     "longitude": -92.1833
   },
@@ -23527,7 +23535,7 @@ noaa.stations = [
     "latitude": 47.9428,
     "name": "GRAND FORKS INTERNATIONAL AIRPORT, ND US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00014916",
+    "id": "USW00014916",
     "elevationUnit": "METERS",
     "longitude": -97.1839
   },
@@ -23538,7 +23546,7 @@ noaa.stations = [
     "latitude": 46.9258,
     "name": "JAMESTOWN MUNICIPAL AIRPORT, ND US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00014919",
+    "id": "USW00014919",
     "elevationUnit": "METERS",
     "longitude": -98.6691
   },
@@ -23549,7 +23557,7 @@ noaa.stations = [
     "latitude": 43.8788,
     "name": "LA CROSSE MUNICIPAL AIRPORT, WI US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00014920",
+    "id": "USW00014920",
     "elevationUnit": "METERS",
     "longitude": -91.2527
   },
@@ -23560,7 +23568,7 @@ noaa.stations = [
     "latitude": 44.8831,
     "name": "MINNEAPOLIS ST. PAUL INTERNATIONAL AIRPORT, MN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014922",
+    "id": "USW00014922",
     "elevationUnit": "METERS",
     "longitude": -93.2289
   },
@@ -23571,7 +23579,7 @@ noaa.stations = [
     "latitude": 41.46528,
     "name": "MOLINE QUAD CITY INTERNATIONAL AIRPORT, IL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014923",
+    "id": "USW00014923",
     "elevationUnit": "METERS",
     "longitude": -90.52333
   },
@@ -23582,7 +23590,7 @@ noaa.stations = [
     "latitude": 41.5338,
     "name": "DES MOINES INTERNATIONAL AIRPORT, IA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00014933",
+    "id": "USW00014933",
     "elevationUnit": "METERS",
     "longitude": -93.653
   },
@@ -23593,7 +23601,7 @@ noaa.stations = [
     "latitude": 40.9611,
     "name": "GRAND ISLAND CENTRAL NE REGIONAL AIRPORT, NE US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014935",
+    "id": "USW00014935",
     "elevationUnit": "METERS",
     "longitude": -98.3136
   },
@@ -23604,7 +23612,7 @@ noaa.stations = [
     "latitude": 44.3981,
     "name": "HURON REGIONAL AIRPORT, SD US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00014936",
+    "id": "USW00014936",
     "elevationUnit": "METERS",
     "longitude": -98.2231
   },
@@ -23615,7 +23623,7 @@ noaa.stations = [
     "latitude": 43.1544,
     "name": "MASON CITY MUNICIPAL AIRPORT, IA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00014940",
+    "id": "USW00014940",
     "elevationUnit": "METERS",
     "longitude": -93.3269
   },
@@ -23626,7 +23634,7 @@ noaa.stations = [
     "latitude": 41.9855,
     "name": "NORFOLK KARL STEFAN MEMORIAL AIRPORT, NE US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014941",
+    "id": "USW00014941",
     "elevationUnit": "METERS",
     "longitude": -97.4352
   },
@@ -23637,7 +23645,7 @@ noaa.stations = [
     "latitude": 41.3102,
     "name": "OMAHA EPPLEY AIRFIELD, NE US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USW00014942",
+    "id": "USW00014942",
     "elevationUnit": "METERS",
     "longitude": -95.8991
   },
@@ -23648,7 +23656,7 @@ noaa.stations = [
     "latitude": 43.5778,
     "name": "SIOUX FALLS FOSS FIELD, SD US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00014944",
+    "id": "USW00014944",
     "elevationUnit": "METERS",
     "longitude": -96.7539
   },
@@ -23659,7 +23667,7 @@ noaa.stations = [
     "latitude": 41.1077,
     "name": "OTTUMWA INDUSTRIAL AIRPORT, IA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00014950",
+    "id": "USW00014950",
     "elevationUnit": "METERS",
     "longitude": -92.4466
   },
@@ -23670,7 +23678,7 @@ noaa.stations = [
     "latitude": 41.8833,
     "name": "CEDAR RAPIDS MUNICIPAL AIRPORT, IA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00014990",
+    "id": "USW00014990",
     "elevationUnit": "METERS",
     "longitude": -91.7166
   },
@@ -23681,7 +23689,7 @@ noaa.stations = [
     "latitude": 44.8665,
     "name": "CHIPPEWA VALLEY REGIONAL AIRPORT, WI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00014991",
+    "id": "USW00014991",
     "elevationUnit": "METERS",
     "longitude": -91.4879
   },
@@ -23692,7 +23700,7 @@ noaa.stations = [
     "latitude": 19.7191,
     "name": "HILO INTERNATIONAL AIRPORT 87, HI US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00021504",
+    "id": "USW00021504",
     "elevationUnit": "METERS",
     "longitude": -155.053
   },
@@ -23703,7 +23711,7 @@ noaa.stations = [
     "latitude": 19.5354,
     "name": "MAUNA LOA 5 NNE, HI US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00021514",
+    "id": "USW00021514",
     "elevationUnit": "METERS",
     "longitude": -155.576
   },
@@ -23714,7 +23722,7 @@ noaa.stations = [
     "latitude": 29.3483,
     "name": "PANTHER JUNCTION 2 N, TX US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USW00022016",
+    "id": "USW00022016",
     "elevationUnit": "METERS",
     "longitude": -103.2093
   },
@@ -23725,7 +23733,7 @@ noaa.stations = [
     "latitude": 21.98389,
     "name": "LIHUE WEATHER SERVICE OFFICE AIRPORT 1020.1, HI US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00022536",
+    "id": "USW00022536",
     "elevationUnit": "METERS",
     "longitude": -159.34056
   },
@@ -23736,7 +23744,7 @@ noaa.stations = [
     "latitude": 34.4272,
     "name": "CHILDRESS MUNICIPAL AIRPORT, TX US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00023007",
+    "id": "USW00023007",
     "elevationUnit": "METERS",
     "longitude": -100.2831
   },
@@ -23747,7 +23755,7 @@ noaa.stations = [
     "latitude": 31.9475,
     "name": "MIDLAND INTERNATIONAL AIRPORT, TX US",
     "datacoverage": 1,
-    "id": "GHCND:USW00023023",
+    "id": "USW00023023",
     "elevationUnit": "METERS",
     "longitude": -102.2086
   },
@@ -23758,7 +23766,7 @@ noaa.stations = [
     "latitude": 31.81111,
     "name": "EL PASO INTERNATIONAL AIRPORT, TX US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00023044",
+    "id": "USW00023044",
     "elevationUnit": "METERS",
     "longitude": -106.37583
   },
@@ -23769,7 +23777,7 @@ noaa.stations = [
     "latitude": 35.0419,
     "name": "ALBUQUERQUE INTERNATIONAL AIRPORT, NM US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00023050",
+    "id": "USW00023050",
     "elevationUnit": "METERS",
     "longitude": -106.6155
   },
@@ -23780,7 +23788,7 @@ noaa.stations = [
     "latitude": 35.65417,
     "name": "LAS VEGAS MUNICIPAL AIRPORT, NM US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USW00023054",
+    "id": "USW00023054",
     "elevationUnit": "METERS",
     "longitude": -105.14194
   },
@@ -23791,7 +23799,7 @@ noaa.stations = [
     "latitude": 39.1342,
     "name": "GRAND JUNCTION WALKER FIELD, CO US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00023066",
+    "id": "USW00023066",
     "elevationUnit": "METERS",
     "longitude": -108.54
   },
@@ -23802,7 +23810,7 @@ noaa.stations = [
     "latitude": 37.26222,
     "name": "TRINIDAD PERRY STOKES AIRPORT, CO US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00023070",
+    "id": "USW00023070",
     "elevationUnit": "METERS",
     "longitude": -104.33778
   },
@@ -23813,7 +23821,7 @@ noaa.stations = [
     "latitude": 35.5144,
     "name": "GALLUP MUNICIPAL AIRPORT, NM US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00023081",
+    "id": "USW00023081",
     "elevationUnit": "METERS",
     "longitude": -108.794
   },
@@ -23824,7 +23832,7 @@ noaa.stations = [
     "latitude": 34.20056,
     "name": "BURBANK GLENDALE PASADENA AIRPORT, CA US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00023152",
+    "id": "USW00023152",
     "elevationUnit": "METERS",
     "longitude": -118.3575
   },
@@ -23835,7 +23843,7 @@ noaa.stations = [
     "latitude": 38.0511,
     "name": "TONOPAH AIRPORT, NV US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00023153",
+    "id": "USW00023153",
     "elevationUnit": "METERS",
     "longitude": -117.0902
   },
@@ -23846,7 +23854,7 @@ noaa.stations = [
     "latitude": 35.4344,
     "name": "BAKERSFIELD AIRPORT, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00023155",
+    "id": "USW00023155",
     "elevationUnit": "METERS",
     "longitude": -119.0542
   },
@@ -23857,7 +23865,7 @@ noaa.stations = [
     "latitude": 34.8536,
     "name": "BARSTOW DAGGETT AIRPORT, CA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00023161",
+    "id": "USW00023161",
     "elevationUnit": "METERS",
     "longitude": -116.7858
   },
@@ -23868,7 +23876,7 @@ noaa.stations = [
     "latitude": 36.0719,
     "name": "MCCARRAN INTERNATIONAL AIRPORT, NV US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00023169",
+    "id": "USW00023169",
     "elevationUnit": "METERS",
     "longitude": -115.1634
   },
@@ -23879,7 +23887,7 @@ noaa.stations = [
     "latitude": 34.65167,
     "name": "PRESCOTT LOVE FIELD, AZ US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00023184",
+    "id": "USW00023184",
     "elevationUnit": "METERS",
     "longitude": -112.42083
   },
@@ -23890,7 +23898,7 @@ noaa.stations = [
     "latitude": 39.4838,
     "name": "RENO AIRPORT, NV US",
     "datacoverage": 1,
-    "id": "GHCND:USW00023185",
+    "id": "USW00023185",
     "elevationUnit": "METERS",
     "longitude": -119.7711
   },
@@ -23901,7 +23909,7 @@ noaa.stations = [
     "latitude": 32.7336,
     "name": "SAN DIEGO INTERNATIONAL AIRPORT, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00023188",
+    "id": "USW00023188",
     "elevationUnit": "METERS",
     "longitude": -117.1831
   },
@@ -23912,7 +23920,7 @@ noaa.stations = [
     "latitude": 38.5038,
     "name": "SANTA ROSA SONOMA CO AIRPORT, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USW00023213",
+    "id": "USW00023213",
     "elevationUnit": "METERS",
     "longitude": -122.8102
   },
@@ -23923,7 +23931,7 @@ noaa.stations = [
     "latitude": 37.6197,
     "name": "SAN FRANCISCO INTERNATIONAL AIRPORT, CA US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USW00023234",
+    "id": "USW00023234",
     "elevationUnit": "METERS",
     "longitude": -122.3647
   },
@@ -23934,7 +23942,7 @@ noaa.stations = [
     "latitude": 37.9917,
     "name": "CONCORD BUCHANAN FIELD, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00023254",
+    "id": "USW00023254",
     "elevationUnit": "METERS",
     "longitude": -122.055
   },
@@ -23945,7 +23953,7 @@ noaa.stations = [
     "latitude": 37.28472,
     "name": "MERCED MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00023257",
+    "id": "USW00023257",
     "elevationUnit": "METERS",
     "longitude": -120.51278
   },
@@ -23956,7 +23964,7 @@ noaa.stations = [
     "latitude": 38.5552,
     "name": "SACRAMENTO 5 ESE, CA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USW00023271",
+    "id": "USW00023271",
     "elevationUnit": "METERS",
     "longitude": -121.4183
   },
@@ -23967,7 +23975,7 @@ noaa.stations = [
     "latitude": 37.7705,
     "name": "SAN FRANCISCO DOWNTOWN, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00023272",
+    "id": "USW00023272",
     "elevationUnit": "METERS",
     "longitude": -122.4269
   },
@@ -23978,7 +23986,7 @@ noaa.stations = [
     "latitude": 34.8994,
     "name": "SANTA MARIA PUBLIC AIRPORT, CA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00023273",
+    "id": "USW00023273",
     "elevationUnit": "METERS",
     "longitude": -120.4486
   },
@@ -23989,7 +23997,7 @@ noaa.stations = [
     "latitude": 37.6927,
     "name": "LIVERMORE MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00023285",
+    "id": "USW00023285",
     "elevationUnit": "METERS",
     "longitude": -121.8144
   },
@@ -24000,7 +24008,7 @@ noaa.stations = [
     "latitude": 37.3591,
     "name": "SAN JOSE, CA US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00023293",
+    "id": "USW00023293",
     "elevationUnit": "METERS",
     "longitude": -121.924
   },
@@ -24011,7 +24019,7 @@ noaa.stations = [
     "latitude": 34.8223,
     "name": "HOLLY SPRINGS 4 N, MS US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00023803",
+    "id": "USW00023803",
     "elevationUnit": "METERS",
     "longitude": -89.4348
   },
@@ -24022,7 +24030,7 @@ noaa.stations = [
     "latitude": 35.8201,
     "name": "BATESVILLE 8 WNW, AR US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USW00023904",
+    "id": "USW00023904",
     "elevationUnit": "METERS",
     "longitude": -91.7812
   },
@@ -24033,7 +24041,7 @@ noaa.stations = [
     "latitude": 30.6222,
     "name": "AUSTIN 33 NW, TX US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USW00023907",
+    "id": "USW00023907",
     "elevationUnit": "METERS",
     "longitude": -98.0846
   },
@@ -24044,7 +24052,7 @@ noaa.stations = [
     "latitude": 41.15778,
     "name": "CHEYENNE WSFO AIRPORT, WY US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024018",
+    "id": "USW00024018",
     "elevationUnit": "METERS",
     "longitude": -104.80694
   },
@@ -24055,7 +24063,7 @@ noaa.stations = [
     "latitude": 41.3167,
     "name": "LARAMIE AIRPORT, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024022",
+    "id": "USW00024022",
     "elevationUnit": "METERS",
     "longitude": -105.6833
   },
@@ -24066,7 +24074,7 @@ noaa.stations = [
     "latitude": 41.1213,
     "name": "NORTH PLATTE REGIONAL AIRPORT, NE US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024023",
+    "id": "USW00024023",
     "elevationUnit": "METERS",
     "longitude": -100.6694
   },
@@ -24077,7 +24085,7 @@ noaa.stations = [
     "latitude": 44.7694,
     "name": "SHERIDAN AIRPORT, WY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024029",
+    "id": "USW00024029",
     "elevationUnit": "METERS",
     "longitude": -106.9688
   },
@@ -24088,7 +24096,7 @@ noaa.stations = [
     "latitude": 46.4266,
     "name": "MILES CITY AIRPORT, MT US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00024037",
+    "id": "USW00024037",
     "elevationUnit": "METERS",
     "longitude": -105.8825
   },
@@ -24099,7 +24107,7 @@ noaa.stations = [
     "latitude": 43.96583,
     "name": "WORLAND MUNICIPAL AIRPORT, WY US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00024062",
+    "id": "USW00024062",
     "elevationUnit": "METERS",
     "longitude": -107.95083
   },
@@ -24110,7 +24118,7 @@ noaa.stations = [
     "latitude": 44.0433,
     "name": "RAPID CITY REGIONAL AIRPORT, SD US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024090",
+    "id": "USW00024090",
     "elevationUnit": "METERS",
     "longitude": -103.0536
   },
@@ -24121,7 +24129,7 @@ noaa.stations = [
     "latitude": 44.8428,
     "name": "BAKER CITY AIRPORT, OR US",
     "datacoverage": 0.9988,
-    "id": "GHCND:USW00024130",
+    "id": "USW00024130",
     "elevationUnit": "METERS",
     "longitude": -117.8086
   },
@@ -24132,7 +24140,7 @@ noaa.stations = [
     "latitude": 42.5416,
     "name": "BURLEY MUNICIPAL AIRPORT, ID US",
     "datacoverage": 0.9985,
-    "id": "GHCND:USW00024133",
+    "id": "USW00024133",
     "elevationUnit": "METERS",
     "longitude": -113.7661
   },
@@ -24143,7 +24151,7 @@ noaa.stations = [
     "latitude": 47.3078,
     "name": "EPHRATA AIRPORT, WA US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USW00024141",
+    "id": "USW00024141",
     "elevationUnit": "METERS",
     "longitude": -119.5154
   },
@@ -24154,7 +24162,7 @@ noaa.stations = [
     "latitude": 47.4733,
     "name": "GREAT FALLS AIRPORT, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024143",
+    "id": "USW00024143",
     "elevationUnit": "METERS",
     "longitude": -111.3822
   },
@@ -24165,7 +24173,7 @@ noaa.stations = [
     "latitude": 46.3747,
     "name": "LEWISTON NEZ PERCE CO AIRPORT, ID US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00024149",
+    "id": "USW00024149",
     "elevationUnit": "METERS",
     "longitude": -117.0156
   },
@@ -24176,7 +24184,7 @@ noaa.stations = [
     "latitude": 46.9208,
     "name": "MISSOULA INTERNATIONAL AIRPORT, MT US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024153",
+    "id": "USW00024153",
     "elevationUnit": "METERS",
     "longitude": -114.0925
   },
@@ -24187,7 +24195,7 @@ noaa.stations = [
     "latitude": 45.6983,
     "name": "PENDLETON E OR REGIONAL AIRPORT, OR US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024155",
+    "id": "USW00024155",
     "elevationUnit": "METERS",
     "longitude": -118.8547
   },
@@ -24198,7 +24206,7 @@ noaa.stations = [
     "latitude": 42.9202,
     "name": "POCATELLO REGIONAL AIRPORT, ID US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024156",
+    "id": "USW00024156",
     "elevationUnit": "METERS",
     "longitude": -112.5711
   },
@@ -24209,7 +24217,7 @@ noaa.stations = [
     "latitude": 47.6216,
     "name": "SPOKANE INTERNATIONAL AIRPORT, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00024157",
+    "id": "USW00024157",
     "elevationUnit": "METERS",
     "longitude": -117.528
   },
@@ -24220,7 +24228,7 @@ noaa.stations = [
     "latitude": 40.8097,
     "name": "EUREKA WEATHER FORECAST OFFICE WOODLEY ISLAND, CA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024213",
+    "id": "USW00024213",
     "elevationUnit": "METERS",
     "longitude": -124.1602
   },
@@ -24231,7 +24239,7 @@ noaa.stations = [
     "latitude": 41.3325,
     "name": "MOUNT SHASTA, CA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USW00024215",
+    "id": "USW00024215",
     "elevationUnit": "METERS",
     "longitude": -122.33278
   },
@@ -24242,7 +24250,7 @@ noaa.stations = [
     "latitude": 45.6194,
     "name": "DALLESPORT AIRPORT, WA US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00024219",
+    "id": "USW00024219",
     "elevationUnit": "METERS",
     "longitude": -121.1661
   },
@@ -24253,7 +24261,7 @@ noaa.stations = [
     "latitude": 42.3811,
     "name": "MEDFORD ROGUE VALLEY INTERNATIONAL AIRPORT, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024225",
+    "id": "USW00024225",
     "elevationUnit": "METERS",
     "longitude": -122.8722
   },
@@ -24264,7 +24272,7 @@ noaa.stations = [
     "latitude": 46.9733,
     "name": "OLYMPIA AIRPORT, WA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024227",
+    "id": "USW00024227",
     "elevationUnit": "METERS",
     "longitude": -122.9033
   },
@@ -24275,7 +24283,7 @@ noaa.stations = [
     "latitude": 47.4444,
     "name": "SEATTLE TACOMA INTERNATIONAL AIRPORT, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024233",
+    "id": "USW00024233",
     "elevationUnit": "METERS",
     "longitude": -122.3138
   },
@@ -24286,7 +24294,7 @@ noaa.stations = [
     "latitude": 45.55111,
     "name": "PORTLAND TROUTDALE AIRPORT, OR US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00024242",
+    "id": "USW00024242",
     "elevationUnit": "METERS",
     "longitude": -122.40889
   },
@@ -24297,7 +24305,7 @@ noaa.stations = [
     "latitude": 46.5683,
     "name": "YAKIMA AIRPORT, WA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00024243",
+    "id": "USW00024243",
     "elevationUnit": "METERS",
     "longitude": -120.5428
   },
@@ -24308,7 +24316,7 @@ noaa.stations = [
     "latitude": 40.5175,
     "name": "REDDING MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00024257",
+    "id": "USW00024257",
     "elevationUnit": "METERS",
     "longitude": -122.2986
   },
@@ -24319,7 +24327,7 @@ noaa.stations = [
     "latitude": 40.97806,
     "name": "ARCATA EUREKA AIRPORT, CA US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00024283",
+    "id": "USW00024283",
     "elevationUnit": "METERS",
     "longitude": -124.10861
   },
@@ -24330,7 +24338,7 @@ noaa.stations = [
     "latitude": 61.5961,
     "name": "PALMER AIRPORT, AK US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00025331",
+    "id": "USW00025331",
     "elevationUnit": "METERS",
     "longitude": -149.0916
   },
@@ -24341,7 +24349,7 @@ noaa.stations = [
     "latitude": 57.0574,
     "name": "SITKA 1 NE, AK US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USW00025379",
+    "id": "USW00025379",
     "elevationUnit": "METERS",
     "longitude": -135.3266
   },
@@ -24352,7 +24360,7 @@ noaa.stations = [
     "latitude": 55.0455,
     "name": "METLAKATLA 6 S, AK US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00025381",
+    "id": "USW00025381",
     "elevationUnit": "METERS",
     "longitude": -131.5877
   },
@@ -24363,7 +24371,7 @@ noaa.stations = [
     "latitude": 59.5087,
     "name": "YAKUTAT 3 SSE, AK US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USW00025382",
+    "id": "USW00025382",
     "elevationUnit": "METERS",
     "longitude": -139.685
   },
@@ -24374,7 +24382,7 @@ noaa.stations = [
     "latitude": 55.3473,
     "name": "SAND POINT 1 ENE, AK US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USW00025630",
+    "id": "USW00025630",
     "elevationUnit": "METERS",
     "longitude": -160.466
   },
@@ -24385,7 +24393,7 @@ noaa.stations = [
     "latitude": 64.8039,
     "name": "FAIRBANKS INTERNATIONAL AIRPORT, AK US",
     "datacoverage": 1,
-    "id": "GHCND:USW00026411",
+    "id": "USW00026411",
     "elevationUnit": "METERS",
     "longitude": -147.8761
   },
@@ -24396,7 +24404,7 @@ noaa.stations = [
     "latitude": 61.169,
     "name": "ANCHORAGE TED STEVENS INTERNATIONAL AIRPORT, AK US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00026451",
+    "id": "USW00026451",
     "elevationUnit": "METERS",
     "longitude": -150.0278
   },
@@ -24407,7 +24415,7 @@ noaa.stations = [
     "latitude": 62.9574,
     "name": "MCGRATH AIRPORT, AK US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00026510",
+    "id": "USW00026510",
     "elevationUnit": "METERS",
     "longitude": -155.6103
   },
@@ -24418,7 +24426,7 @@ noaa.stations = [
     "latitude": 60.785,
     "name": "BETHEL AIRPORT, AK US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00026615",
+    "id": "USW00026615",
     "elevationUnit": "METERS",
     "longitude": -161.8293
   },
@@ -24429,7 +24437,7 @@ noaa.stations = [
     "latitude": 70.1917,
     "name": "DEADHORSE, AK US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00027406",
+    "id": "USW00027406",
     "elevationUnit": "METERS",
     "longitude": -148.4772
   },
@@ -24440,7 +24448,7 @@ noaa.stations = [
     "latitude": 33.21944,
     "name": "OCEANSIDE MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00053121",
+    "id": "USW00053121",
     "elevationUnit": "METERS",
     "longitude": -117.34944
   },
@@ -24451,7 +24459,7 @@ noaa.stations = [
     "latitude": 36.21167,
     "name": "LAS VEGAS AIR TERMINAL, NV US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00053123",
+    "id": "USW00053123",
     "elevationUnit": "METERS",
     "longitude": -115.19583
   },
@@ -24462,7 +24470,7 @@ noaa.stations = [
     "latitude": 31.5907,
     "name": "ELGIN 5 S, AZ US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USW00053132",
+    "id": "USW00053132",
     "elevationUnit": "METERS",
     "longitude": -110.5087
   },
@@ -24473,7 +24481,7 @@ noaa.stations = [
     "latitude": 36.624,
     "name": "MERCURY 3 SSW, NV US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00053136",
+    "id": "USW00053136",
     "elevationUnit": "METERS",
     "longitude": -116.0225
   },
@@ -24484,7 +24492,7 @@ noaa.stations = [
     "latitude": 38.3028,
     "name": "TORREY 7 E, UT US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00053149",
+    "id": "USW00053149",
     "elevationUnit": "METERS",
     "longitude": -111.2935
   },
@@ -24495,7 +24503,7 @@ noaa.stations = [
     "latitude": 33.4392,
     "name": "FALLBROOK 5 NE, CA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00053151",
+    "id": "USW00053151",
     "elevationUnit": "METERS",
     "longitude": -117.1904
   },
@@ -24506,7 +24514,7 @@ noaa.stations = [
     "latitude": 34.4141,
     "name": "SANTA BARBARA 11 W, CA US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USW00053152",
+    "id": "USW00053152",
     "elevationUnit": "METERS",
     "longitude": -119.8796
   },
@@ -24517,7 +24525,7 @@ noaa.stations = [
     "latitude": 32.835,
     "name": "YUMA 27 ENE, AZ US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00053154",
+    "id": "USW00053154",
     "elevationUnit": "METERS",
     "longitude": -114.1884
   },
@@ -24528,7 +24536,7 @@ noaa.stations = [
     "latitude": 35.7552,
     "name": "WILLIAMS 35 NNW, AZ US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USW00053155",
+    "id": "USW00053155",
     "elevationUnit": "METERS",
     "longitude": -112.3374
   },
@@ -24539,7 +24547,7 @@ noaa.stations = [
     "latitude": 36.5682,
     "name": "GOODWELL 2 SE, OK US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00053182",
+    "id": "USW00053182",
     "elevationUnit": "METERS",
     "longitude": -101.6097
   },
@@ -24550,7 +24558,7 @@ noaa.stations = [
     "latitude": 30.3361,
     "name": "JACKSONVILLE CRAIG MUNICIPAL AIRPORT, FL US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00053860",
+    "id": "USW00053860",
     "elevationUnit": "METERS",
     "longitude": -81.5147
   },
@@ -24561,7 +24569,7 @@ noaa.stations = [
     "latitude": 33.875,
     "name": "ATLANTA DEKALB PEACHTREE AIRPORT, GA US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00053863",
+    "id": "USW00053863",
     "elevationUnit": "METERS",
     "longitude": -84.30222
   },
@@ -24572,7 +24580,7 @@ noaa.stations = [
     "latitude": 33.17833,
     "name": "ALABASTER SHELBY CO AIRPORT, AL US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00053864",
+    "id": "USW00053864",
     "elevationUnit": "METERS",
     "longitude": -86.78167
   },
@@ -24583,7 +24591,7 @@ noaa.stations = [
     "latitude": 30.34333,
     "name": "SLIDELL AIRPORT, LA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00053865",
+    "id": "USW00053865",
     "elevationUnit": "METERS",
     "longitude": -89.82222
   },
@@ -24594,7 +24602,7 @@ noaa.stations = [
     "latitude": 36.023,
     "name": "OAK RIDGE ASOS, TN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00053868",
+    "id": "USW00053868",
     "elevationUnit": "METERS",
     "longitude": -84.2337
   },
@@ -24605,7 +24613,7 @@ noaa.stations = [
     "latitude": 35.19667,
     "name": "GASTONIA MUNICIPAL AIRPORT, NC US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00053870",
+    "id": "USW00053870",
     "elevationUnit": "METERS",
     "longitude": -81.15583
   },
@@ -24616,7 +24624,7 @@ noaa.stations = [
     "latitude": 34.98694,
     "name": "ROCK HILL YORK CO AIRPORT, SC US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USW00053871",
+    "id": "USW00053871",
     "elevationUnit": "METERS",
     "longitude": -81.0575
   },
@@ -24627,7 +24635,7 @@ noaa.stations = [
     "latitude": 35.01694,
     "name": "MONROE AIRPORT, NC US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00053872",
+    "id": "USW00053872",
     "elevationUnit": "METERS",
     "longitude": -80.62056
   },
@@ -24638,7 +24646,7 @@ noaa.stations = [
     "latitude": 34.12306,
     "name": "CARTERSVILLE AIRPORT, GA US",
     "datacoverage": 0.9992,
-    "id": "GHCND:USW00053873",
+    "id": "USW00053873",
     "elevationUnit": "METERS",
     "longitude": -84.84861
   },
@@ -24649,7 +24657,7 @@ noaa.stations = [
     "latitude": 34.24861,
     "name": "GREENWOOD CO AIRPORT, SC US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00053874",
+    "id": "USW00053874",
     "elevationUnit": "METERS",
     "longitude": -82.15917
   },
@@ -24660,7 +24668,7 @@ noaa.stations = [
     "latitude": 38.95972,
     "name": "LEES SUMMIT MUNICIPAL AIRPORT, MO US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00053879",
+    "id": "USW00053879",
     "elevationUnit": "METERS",
     "longitude": -94.37139
   },
@@ -24671,7 +24679,7 @@ noaa.stations = [
     "latitude": 30.74389,
     "name": "HUNTSVILLE MUNICIPAL AIRPORT, TX US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00053903",
+    "id": "USW00053903",
     "elevationUnit": "METERS",
     "longitude": -95.58611
   },
@@ -24682,7 +24690,7 @@ noaa.stations = [
     "latitude": 32.54278,
     "name": "SHREVEPORT DOWNTOWN AIRPORT, LA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00053905",
+    "id": "USW00053905",
     "elevationUnit": "METERS",
     "longitude": -93.745
   },
@@ -24693,7 +24701,7 @@ noaa.stations = [
     "latitude": 32.97333,
     "name": "FORT WORTH ALLIANCE AIRPORT, TX US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00053909",
+    "id": "USW00053909",
     "elevationUnit": "METERS",
     "longitude": -97.31806
   },
@@ -24704,7 +24712,7 @@ noaa.stations = [
     "latitude": 33.19028,
     "name": "MCKINNEY MUNICIPAL AIRPORT, TX US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00053914",
+    "id": "USW00053914",
     "elevationUnit": "METERS",
     "longitude": -96.59139
   },
@@ -24715,7 +24723,7 @@ noaa.stations = [
     "latitude": 39.82333,
     "name": "CHILLICOTHE AGRI SCIENCE CENTER, MO US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00053916",
+    "id": "USW00053916",
     "elevationUnit": "METERS",
     "longitude": -93.57917
   },
@@ -24726,7 +24734,7 @@ noaa.stations = [
     "latitude": 35.25778,
     "name": "RUSSELLVILLE MUNICIPAL AIRPORT, AR US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USW00053920",
+    "id": "USW00053920",
     "elevationUnit": "METERS",
     "longitude": -93.09472
   },
@@ -24737,7 +24745,7 @@ noaa.stations = [
     "latitude": 36.28333,
     "name": "FAYETTEVILLE SPRINGDALE NW AR REGL AIRPORT, AR US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00053922",
+    "id": "USW00053922",
     "elevationUnit": "METERS",
     "longitude": -94.3
   },
@@ -24748,7 +24756,7 @@ noaa.stations = [
     "latitude": 34.05,
     "name": "DE QUEEN SEVIER CO AIRPORT, AR US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00053925",
+    "id": "USW00053925",
     "elevationUnit": "METERS",
     "longitude": -94.40083
   },
@@ -24759,7 +24767,7 @@ noaa.stations = [
     "latitude": 36.1181,
     "name": "STILLWATER 2 W, OK US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00053926",
+    "id": "USW00053926",
     "elevationUnit": "METERS",
     "longitude": -97.0914
   },
@@ -24770,7 +24778,7 @@ noaa.stations = [
     "latitude": 36.1346,
     "name": "STILLWATER 5 WNW, OK US",
     "datacoverage": 0.9956,
-    "id": "GHCND:USW00053927",
+    "id": "USW00053927",
     "elevationUnit": "METERS",
     "longitude": -97.1082
   },
@@ -24781,7 +24789,7 @@ noaa.stations = [
     "latitude": 35.135,
     "name": "WEST MEMPHIS MUNICIPAL AIRPORT, AR US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USW00053959",
+    "id": "USW00053959",
     "elevationUnit": "METERS",
     "longitude": -90.23444
   },
@@ -24792,7 +24800,7 @@ noaa.stations = [
     "latitude": 30.0918,
     "name": "LAFAYETTE 13 SE, LA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00053960",
+    "id": "USW00053960",
     "elevationUnit": "METERS",
     "longitude": -91.8731
   },
@@ -24803,7 +24811,7 @@ noaa.stations = [
     "latitude": 44.3675,
     "name": "WHITEFIELD MOUNT WASHINGTON REGIONAL AIRPORT, NH US",
     "datacoverage": 0.9964,
-    "id": "GHCND:USW00054728",
+    "id": "USW00054728",
     "elevationUnit": "METERS",
     "longitude": -71.545
   },
@@ -24814,7 +24822,7 @@ noaa.stations = [
     "latitude": 42.58417,
     "name": "BEVERLY MUNICIPAL AIRPORT, MA US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00054733",
+    "id": "USW00054733",
     "elevationUnit": "METERS",
     "longitude": -70.9175
   },
@@ -24825,7 +24833,7 @@ noaa.stations = [
     "latitude": 41.37139,
     "name": "DANBURY MUNICIPAL AIRPORT, CT US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00054734",
+    "id": "USW00054734",
     "elevationUnit": "METERS",
     "longitude": -73.48278
   },
@@ -24836,7 +24844,7 @@ noaa.stations = [
     "latitude": 40.12028,
     "name": "LANCASTER AIRPORT, PA US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00054737",
+    "id": "USW00054737",
     "elevationUnit": "METERS",
     "longitude": -76.29444
   },
@@ -24847,7 +24855,7 @@ noaa.stations = [
     "latitude": 40.87639,
     "name": "CALDWELL ESSEX CO AIRPORT, NJ US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USW00054743",
+    "id": "USW00054743",
     "elevationUnit": "METERS",
     "longitude": -74.28306
   },
@@ -24858,7 +24866,7 @@ noaa.stations = [
     "latitude": 42.10944,
     "name": "WELLSVILLE MUNICIPAL AIRPORT, NY US",
     "datacoverage": 0.9962,
-    "id": "GHCND:USW00054757",
+    "id": "USW00054757",
     "elevationUnit": "METERS",
     "longitude": -77.99194
   },
@@ -24869,7 +24877,7 @@ noaa.stations = [
     "latitude": 42.89351,
     "name": "BENNINGTON MORSE STATE AIRPORT, VT US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USW00054781",
+    "id": "USW00054781",
     "elevationUnit": "METERS",
     "longitude": -73.24876
   },
@@ -24880,7 +24888,7 @@ noaa.stations = [
     "latitude": 40.23802,
     "name": "HERITAGE FIELD AIRPORT, PA US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00054782",
+    "id": "USW00054782",
     "elevationUnit": "METERS",
     "longitude": -75.55493
   },
@@ -24891,7 +24899,7 @@ noaa.stations = [
     "latitude": 40.73417,
     "name": "FARMINGDALE REPUBLIC AIRPORT, NY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00054787",
+    "id": "USW00054787",
     "elevationUnit": "METERS",
     "longitude": -73.41694
   },
@@ -24902,7 +24910,7 @@ noaa.stations = [
     "latitude": 41.50972,
     "name": "MERIDEN MARKHAM MUNICIPAL AIRPORT, CT US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00054788",
+    "id": "USW00054788",
     "elevationUnit": "METERS",
     "longitude": -72.82778
   },
@@ -24913,7 +24921,7 @@ noaa.stations = [
     "latitude": 40.82167,
     "name": "SHIRLEY BROOKHAVEN AIRPORT, NY US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00054790",
+    "id": "USW00054790",
     "elevationUnit": "METERS",
     "longitude": -72.86889
   },
@@ -24924,7 +24932,7 @@ noaa.stations = [
     "latitude": 43.27806,
     "name": "ROCHESTER SKYHAVEN AIRPORT, NH US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00054791",
+    "id": "USW00054791",
     "elevationUnit": "METERS",
     "longitude": -70.92222
   },
@@ -24935,7 +24943,7 @@ noaa.stations = [
     "latitude": 41.04667,
     "name": "CLEARFIELD LAWRENCE AIRPORT, PA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00054792",
+    "id": "USW00054792",
     "elevationUnit": "METERS",
     "longitude": -78.41167
   },
@@ -24946,7 +24954,7 @@ noaa.stations = [
     "latitude": 46.3345,
     "name": "CHATHAM 1 SE, MI US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USW00054810",
+    "id": "USW00054810",
     "elevationUnit": "METERS",
     "longitude": -86.92
   },
@@ -24957,7 +24965,7 @@ noaa.stations = [
     "latitude": 41.843,
     "name": "SHABBONA 5 NNE, IL US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00054811",
+    "id": "USW00054811",
     "elevationUnit": "METERS",
     "longitude": -88.8513
   },
@@ -24968,7 +24976,7 @@ noaa.stations = [
     "latitude": 44.908,
     "name": "GAYLORD 9 SSW, MI US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00054854",
+    "id": "USW00054854",
     "elevationUnit": "METERS",
     "longitude": -84.7203
   },
@@ -24979,7 +24987,7 @@ noaa.stations = [
     "latitude": 40.7641,
     "name": "WOOSTER 3 SSE, OH US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00054856",
+    "id": "USW00054856",
     "elevationUnit": "METERS",
     "longitude": -81.9104
   },
@@ -24990,7 +24998,7 @@ noaa.stations = [
     "latitude": 44.0604,
     "name": "NECEDAH 5 WNW, WI US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00054903",
+    "id": "USW00054903",
     "elevationUnit": "METERS",
     "longitude": -90.1737
   },
@@ -25001,7 +25009,7 @@ noaa.stations = [
     "latitude": 46.1135,
     "name": "SANDSTONE 6 W, MN US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00054932",
+    "id": "USW00054932",
     "elevationUnit": "METERS",
     "longitude": -92.9936
   },
@@ -25012,7 +25020,7 @@ noaa.stations = [
     "latitude": 37.2504,
     "name": "BOWLING GREEN 21 NNE, KY US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00063849",
+    "id": "USW00063849",
     "elevationUnit": "METERS",
     "longitude": -86.2325
   },
@@ -25023,7 +25031,7 @@ noaa.stations = [
     "latitude": 33.7837,
     "name": "WATKINSVILLE 5 SSE, GA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USW00063850",
+    "id": "USW00063850",
     "elevationUnit": "METERS",
     "longitude": -83.3896
   },
@@ -25034,7 +25042,7 @@ noaa.stations = [
     "latitude": 36.0138,
     "name": "CROSSVILLE 7 NW, TN US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00063855",
+    "id": "USW00063855",
     "elevationUnit": "METERS",
     "longitude": -85.1345
   },
@@ -25045,7 +25053,7 @@ noaa.stations = [
     "latitude": 34.2851,
     "name": "GADSDEN 19 N, AL US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00063857",
+    "id": "USW00063857",
     "elevationUnit": "METERS",
     "longitude": -85.9621
   },
@@ -25056,7 +25064,7 @@ noaa.stations = [
     "latitude": 34.6602,
     "name": "COURTLAND 2 WSW, AL US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00063868",
+    "id": "USW00063868",
     "elevationUnit": "METERS",
     "longitude": -87.3462
   },
@@ -25067,7 +25075,7 @@ noaa.stations = [
     "latitude": 34.6941,
     "name": "SCOTTSBORO 2 NE, AL US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00063896",
+    "id": "USW00063896",
     "elevationUnit": "METERS",
     "longitude": -85.9998
   },
@@ -25078,7 +25086,7 @@ noaa.stations = [
     "latitude": 32.3349,
     "name": "SELMA 6 SSE, AL US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00063897",
+    "id": "USW00063897",
     "elevationUnit": "METERS",
     "longitude": -86.9787
   },
@@ -25089,7 +25097,7 @@ noaa.stations = [
     "latitude": 38.8882,
     "name": "BEDFORD 5 WNW, IN US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00063898",
+    "id": "USW00063898",
     "elevationUnit": "METERS",
     "longitude": -86.5707
   },
@@ -25100,7 +25108,7 @@ noaa.stations = [
     "latitude": 43.23389,
     "name": "ROME GRIFFISS AIRFIELD, NY US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00064775",
+    "id": "USW00064775",
     "elevationUnit": "METERS",
     "longitude": -75.41167
   },
@@ -25111,7 +25119,7 @@ noaa.stations = [
     "latitude": 44.65,
     "name": "PLATTSBURGH INTERNATIONAL AIRPORT, NY US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00064776",
+    "id": "USW00064776",
     "elevationUnit": "METERS",
     "longitude": -73.46667
   },
@@ -25122,7 +25130,7 @@ noaa.stations = [
     "latitude": 33.2125,
     "name": "NORTHPORT 2 S, AL US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00073801",
+    "id": "USW00073801",
     "elevationUnit": "METERS",
     "longitude": -87.5914
   },
@@ -25133,7 +25141,7 @@ noaa.stations = [
     "latitude": 31.9155,
     "name": "HIGHLAND HOME 2 S, AL US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00073802",
+    "id": "USW00073802",
     "elevationUnit": "METERS",
     "longitude": -86.3115
   },
@@ -25144,7 +25152,7 @@ noaa.stations = [
     "latitude": 33.5721,
     "name": "TALLADEGA 10 NNE, AL US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00073803",
+    "id": "USW00073803",
     "elevationUnit": "METERS",
     "longitude": -86.0573
   },
@@ -25155,7 +25163,7 @@ noaa.stations = [
     "latitude": 30.349,
     "name": "NORTHWEST FLORIDA BEACHES INTERNATIONAL AIRPORT, FL US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00073805",
+    "id": "USW00073805",
     "elevationUnit": "METERS",
     "longitude": -85.788
   },
@@ -25166,7 +25174,7 @@ noaa.stations = [
     "latitude": 26.25,
     "name": "POMPANO BEACH AIRPARK, FL US",
     "datacoverage": 0.9959,
-    "id": "GHCND:USW00092805",
+    "id": "USW00092805",
     "elevationUnit": "METERS",
     "longitude": -80.10833
   },
@@ -25177,7 +25185,7 @@ noaa.stations = [
     "latitude": 27.76472,
     "name": "ST PETERSBURG ALBERT WHITTED AIRPORT, FL US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00092806",
+    "id": "USW00092806",
     "elevationUnit": "METERS",
     "longitude": -82.6275
   },
@@ -25188,7 +25196,7 @@ noaa.stations = [
     "latitude": 25.99889,
     "name": "HOLLYWOOD NORTH PERRY AIRPORT, FL US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00092809",
+    "id": "USW00092809",
     "elevationUnit": "METERS",
     "longitude": -80.24111
   },
@@ -25199,7 +25207,7 @@ noaa.stations = [
     "latitude": 25.8996,
     "name": "EVERGLADES CITY 5 NE, FL US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00092826",
+    "id": "USW00092826",
     "elevationUnit": "METERS",
     "longitude": -81.3183
   },
@@ -25210,7 +25218,7 @@ noaa.stations = [
     "latitude": 38.50583,
     "name": "MONTROSE REGIONAL AIRPORT, CO US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00093013",
+    "id": "USW00093013",
     "elevationUnit": "METERS",
     "longitude": -107.89889
   },
@@ -25221,7 +25229,7 @@ noaa.stations = [
     "latitude": 31.4583,
     "name": "DOUGLAS BISBEE INTERNATIONAL AIRPORT, AZ US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00093026",
+    "id": "USW00093026",
     "elevationUnit": "METERS",
     "longitude": -109.6061
   },
@@ -25232,7 +25240,7 @@ noaa.stations = [
     "latitude": 34.51833,
     "name": "ST JOHNS INDUSTRIAL AIR PARK, AZ US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USW00093027",
+    "id": "USW00093027",
     "elevationUnit": "METERS",
     "longitude": -109.37917
   },
@@ -25243,7 +25251,7 @@ noaa.stations = [
     "latitude": 36.0167,
     "name": "DALHART FAA AIRPORT, TX US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00093042",
+    "id": "USW00093042",
     "elevationUnit": "METERS",
     "longitude": -102.55
   },
@@ -25254,7 +25262,7 @@ noaa.stations = [
     "latitude": 39.57028,
     "name": "DENVER CENTENNIAL AIRPORT, CO US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00093067",
+    "id": "USW00093067",
     "elevationUnit": "METERS",
     "longitude": -104.84889
   },
@@ -25265,7 +25273,7 @@ noaa.stations = [
     "latitude": 37.30694,
     "name": "CORTEZ MONTEZUMA CO AIRPORT, CO US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00093069",
+    "id": "USW00093069",
     "elevationUnit": "METERS",
     "longitude": -108.62639
   },
@@ -25276,7 +25284,7 @@ noaa.stations = [
     "latitude": 39.23,
     "name": "ASPEN PITKIN CO AIRPORT SARDY FIELD, CO US",
     "datacoverage": 0.9975,
-    "id": "GHCND:USW00093073",
+    "id": "USW00093073",
     "elevationUnit": "METERS",
     "longitude": -106.87056
   },
@@ -25287,7 +25295,7 @@ noaa.stations = [
     "latitude": 38.75,
     "name": "MOAB CANYONLAND AIRPORT, UT US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00093075",
+    "id": "USW00093075",
     "elevationUnit": "METERS",
     "longitude": -109.76278
   },
@@ -25298,7 +25306,7 @@ noaa.stations = [
     "latitude": 37.7086,
     "name": "CEDAR CITY AIRPORT, UT US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00093129",
+    "id": "USW00093129",
     "elevationUnit": "METERS",
     "longitude": -113.0944
   },
@@ -25309,7 +25317,7 @@ noaa.stations = [
     "latitude": 39.60917,
     "name": "PRICE CARBON CO AIRPORT, UT US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00093141",
+    "id": "USW00093141",
     "elevationUnit": "METERS",
     "longitude": -110.75472
   },
@@ -25320,7 +25328,7 @@ noaa.stations = [
     "latitude": 33.68,
     "name": "SANTA ANA JOHN WAYNE AIRPORT, CA US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00093184",
+    "id": "USW00093184",
     "elevationUnit": "METERS",
     "longitude": -117.86639
   },
@@ -25331,7 +25339,7 @@ noaa.stations = [
     "latitude": 39.1019,
     "name": "MARYSVILLE YUBA CO AIRPORT, CA US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00093205",
+    "id": "USW00093205",
     "elevationUnit": "METERS",
     "longitude": -121.5677
   },
@@ -25342,7 +25350,7 @@ noaa.stations = [
     "latitude": 35.23722,
     "name": "SAN LUIS OBISPO MCCHESNEY FIELD, CA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00093206",
+    "id": "USW00093206",
     "elevationUnit": "METERS",
     "longitude": -120.64139
   },
@@ -25353,7 +25361,7 @@ noaa.stations = [
     "latitude": 35.6697,
     "name": "PASO ROBLES MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00093209",
+    "id": "USW00093209",
     "elevationUnit": "METERS",
     "longitude": -120.6283
   },
@@ -25364,7 +25372,7 @@ noaa.stations = [
     "latitude": 38.69556,
     "name": "SACRAMENTO METROPOLITAN AIRPORT, CA US",
     "datacoverage": 0.9984,
-    "id": "GHCND:USW00093225",
+    "id": "USW00093225",
     "elevationUnit": "METERS",
     "longitude": -121.58972
   },
@@ -25375,7 +25383,7 @@ noaa.stations = [
     "latitude": 38.2102,
     "name": "NAPA CO AIRPORT, CA US",
     "datacoverage": 0.9995,
-    "id": "GHCND:USW00093227",
+    "id": "USW00093227",
     "elevationUnit": "METERS",
     "longitude": -122.2847
   },
@@ -25386,7 +25394,7 @@ noaa.stations = [
     "latitude": 37.6542,
     "name": "HAYWARD AIR TERMINAL, CA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00093228",
+    "id": "USW00093228",
     "elevationUnit": "METERS",
     "longitude": -122.115
   },
@@ -25397,7 +25405,7 @@ noaa.stations = [
     "latitude": 36.98778,
     "name": "MADERA MUNICIPAL AIRPORT, CA US",
     "datacoverage": 0.9955,
-    "id": "GHCND:USW00093242",
+    "id": "USW00093242",
     "elevationUnit": "METERS",
     "longitude": -120.11056
   },
@@ -25408,7 +25416,7 @@ noaa.stations = [
     "latitude": 37.2381,
     "name": "MERCED 23 WSW, CA US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00093243",
+    "id": "USW00093243",
     "elevationUnit": "METERS",
     "longitude": -120.8825
   },
@@ -25419,7 +25427,7 @@ noaa.stations = [
     "latitude": 39.7062,
     "name": "HAGERSTOWN WASHINGTON CO REGIONAL AIRPORT, MD US",
     "datacoverage": 0.9969,
-    "id": "GHCND:USW00093706",
+    "id": "USW00093706",
     "elevationUnit": "METERS",
     "longitude": -77.7304
   },
@@ -25430,7 +25438,7 @@ noaa.stations = [
     "latitude": 38.34083,
     "name": "SALISBURY WICOMICO REGIONAL AIRPORT, MD US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00093720",
+    "id": "USW00093720",
     "elevationUnit": "METERS",
     "longitude": -75.51325
   },
@@ -25441,7 +25449,7 @@ noaa.stations = [
     "latitude": 39.1733,
     "name": "BALTIMORE WASHINGTON INTERNATIONAL AIRPORT, MD US",
     "datacoverage": 1,
-    "id": "GHCND:USW00093721",
+    "id": "USW00093721",
     "elevationUnit": "METERS",
     "longitude": -76.684
   },
@@ -25452,7 +25460,7 @@ noaa.stations = [
     "latitude": 35.2326,
     "name": "CAPE HATTERAS BILLY MITCHELL FIELD, NC US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00093729",
+    "id": "USW00093729",
     "elevationUnit": "METERS",
     "longitude": -75.6219
   },
@@ -25463,7 +25471,7 @@ noaa.stations = [
     "latitude": 37.93718,
     "name": "WALLOPS ISLAND NASA TEST FACILITY, VA US",
     "datacoverage": 0.9996,
-    "id": "GHCND:USW00093739",
+    "id": "USW00093739",
     "elevationUnit": "METERS",
     "longitude": -75.46629
   },
@@ -25474,7 +25482,7 @@ noaa.stations = [
     "latitude": 34.99139,
     "name": "FAYETTEVILLE REGIONAL AIRPORT GRANNIS FIELD, NC US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00093740",
+    "id": "USW00093740",
     "elevationUnit": "METERS",
     "longitude": -78.88028
   },
@@ -25485,7 +25493,7 @@ noaa.stations = [
     "latitude": 37.13194,
     "name": "NEWPORT NEWS INTERNATIONAL AIRPORT, VA US",
     "datacoverage": 0.9967,
-    "id": "GHCND:USW00093741",
+    "id": "USW00093741",
     "elevationUnit": "METERS",
     "longitude": -76.49306
   },
@@ -25496,7 +25504,7 @@ noaa.stations = [
     "latitude": 34.73258,
     "name": "BEAUFORT MICHAEL J SMITH FIELD, NC US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00093765",
+    "id": "USW00093765",
     "elevationUnit": "METERS",
     "longitude": -76.65659
   },
@@ -25507,7 +25515,7 @@ noaa.stations = [
     "latitude": 36.04667,
     "name": "BURLINGTON ALAMANCE REGIONAL AIRPORT, NC US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00093783",
+    "id": "USW00093783",
     "elevationUnit": "METERS",
     "longitude": -79.47694
   },
@@ -25518,7 +25526,7 @@ noaa.stations = [
     "latitude": 30.39306,
     "name": "TALLAHASSEE REGIONAL AIRPORT, FL US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00093805",
+    "id": "USW00093805",
     "elevationUnit": "METERS",
     "longitude": -84.35333
   },
@@ -25529,7 +25537,7 @@ noaa.stations = [
     "latitude": 37.77972,
     "name": "CARBONDALE SOUTHERN ILLINOIS AIRPORT, IL US",
     "datacoverage": 0.9973,
-    "id": "GHCND:USW00093810",
+    "id": "USW00093810",
     "elevationUnit": "METERS",
     "longitude": -89.24972
   },
@@ -25540,7 +25548,7 @@ noaa.stations = [
     "latitude": 39.0444,
     "name": "CINCINNATI NORTHERN KENTUCKY INTERNATIONAL AIRPORT, KY US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00093814",
+    "id": "USW00093814",
     "elevationUnit": "METERS",
     "longitude": -84.6724
   },
@@ -25551,7 +25559,7 @@ noaa.stations = [
     "latitude": 39.9064,
     "name": "DAYTON INTERNATIONAL AIRPORT, OH US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00093815",
+    "id": "USW00093815",
     "elevationUnit": "METERS",
     "longitude": -84.2185
   },
@@ -25562,7 +25570,7 @@ noaa.stations = [
     "latitude": 38.0441,
     "name": "EVANSVILLE REGIONAL AIRPORT, IN US",
     "datacoverage": 1,
-    "id": "GHCND:USW00093817",
+    "id": "USW00093817",
     "elevationUnit": "METERS",
     "longitude": -87.5205
   },
@@ -25573,7 +25581,7 @@ noaa.stations = [
     "latitude": 38.1811,
     "name": "LOUISVILLE INTERNATIONAL AIRPORT, KY US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00093821",
+    "id": "USW00093821",
     "elevationUnit": "METERS",
     "longitude": -85.7391
   },
@@ -25584,7 +25592,7 @@ noaa.stations = [
     "latitude": 39.8447,
     "name": "SPRINGFIELD ABRAHAM LINCOLN CAPITAL AIRPORT, IL US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00093822",
+    "id": "USW00093822",
     "elevationUnit": "METERS",
     "longitude": -89.6839
   },
@@ -25595,7 +25603,7 @@ noaa.stations = [
     "latitude": 32.5161,
     "name": "COLUMBUS METROPOLITAN AIRPORT, GA US",
     "datacoverage": 1,
-    "id": "GHCND:USW00093842",
+    "id": "USW00093842",
     "elevationUnit": "METERS",
     "longitude": -84.9422
   },
@@ -25606,7 +25614,7 @@ noaa.stations = [
     "latitude": 34.4977,
     "name": "ANDERSON FAA AIRPORT, SC US",
     "datacoverage": 0.9951,
-    "id": "GHCND:USW00093846",
+    "id": "USW00093846",
     "elevationUnit": "METERS",
     "longitude": -82.7097
   },
@@ -25617,7 +25625,7 @@ noaa.stations = [
     "latitude": 30.4119,
     "name": "GULFPORT BILOXI AIRPORT, MS US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00093874",
+    "id": "USW00093874",
     "elevationUnit": "METERS",
     "longitude": -89.0808
   },
@@ -25628,7 +25636,7 @@ noaa.stations = [
     "latitude": 31.1827,
     "name": "MCCOMB AIRPORT, MS US",
     "datacoverage": 0.9997,
-    "id": "GHCND:USW00093919",
+    "id": "USW00093919",
     "elevationUnit": "METERS",
     "longitude": -90.4708
   },
@@ -25639,7 +25647,7 @@ noaa.stations = [
     "latitude": 39.9369,
     "name": "QUINCY REGIONAL AIRPORT, IL US",
     "datacoverage": 0.9994,
-    "id": "GHCND:USW00093989",
+    "id": "USW00093989",
     "elevationUnit": "METERS",
     "longitude": -91.1919
   },
@@ -25650,7 +25658,7 @@ noaa.stations = [
     "latitude": 48.5428,
     "name": "HAVRE AIRPORT ASOS, MT US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00094012",
+    "id": "USW00094012",
     "elevationUnit": "METERS",
     "longitude": -109.7633
   },
@@ -25661,7 +25669,7 @@ noaa.stations = [
     "latitude": 48.09444,
     "name": "WOLF POINT INTERNATIONAL AIRPORT, MT US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00094017",
+    "id": "USW00094017",
     "elevationUnit": "METERS",
     "longitude": -105.57444
   },
@@ -25672,7 +25680,7 @@ noaa.stations = [
     "latitude": 44.33944,
     "name": "GILLETTE CAMPBELL CO AIRPORT, WY US",
     "datacoverage": 0.9981,
-    "id": "GHCND:USW00094023",
+    "id": "USW00094023",
     "elevationUnit": "METERS",
     "longitude": -105.54194
   },
@@ -25683,7 +25691,7 @@ noaa.stations = [
     "latitude": 40.44278,
     "name": "VERNAL MUNICIPAL AIRPORT, UT US",
     "datacoverage": 0.996,
-    "id": "GHCND:USW00094030",
+    "id": "USW00094030",
     "elevationUnit": "METERS",
     "longitude": -109.51278
   },
@@ -25694,7 +25702,7 @@ noaa.stations = [
     "latitude": 45.60444,
     "name": "BUFFALO ASOS, SD US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00094037",
+    "id": "USW00094037",
     "elevationUnit": "METERS",
     "longitude": -103.54639
   },
@@ -25705,7 +25713,7 @@ noaa.stations = [
     "latitude": 46.01389,
     "name": "HETTINGER MUNICIPAL AIRPORT, ND US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00094038",
+    "id": "USW00094038",
     "elevationUnit": "METERS",
     "longitude": -102.65472
   },
@@ -25716,7 +25724,7 @@ noaa.stations = [
     "latitude": 40.20639,
     "name": "MCCOOK MUNICIPAL AIRPORT, NE US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USW00094040",
+    "id": "USW00094040",
     "elevationUnit": "METERS",
     "longitude": -100.59139
   },
@@ -25727,7 +25735,7 @@ noaa.stations = [
     "latitude": 47.64583,
     "name": "GARRISON, ND US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00094041",
+    "id": "USW00094041",
     "elevationUnit": "METERS",
     "longitude": -101.43944
   },
@@ -25738,7 +25746,7 @@ noaa.stations = [
     "latitude": 40.04417,
     "name": "MEEKER AIRPORT, CO US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USW00094050",
+    "id": "USW00094050",
     "elevationUnit": "METERS",
     "longitude": -107.88861
   },
@@ -25749,7 +25757,7 @@ noaa.stations = [
     "latitude": 45.54639,
     "name": "MOBRIDGE MUNICIPAL AIRPORT, SD US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00094052",
+    "id": "USW00094052",
     "elevationUnit": "METERS",
     "longitude": -100.40778
   },
@@ -25760,7 +25768,7 @@ noaa.stations = [
     "latitude": 44.38139,
     "name": "BUFFALO JOHNSON CO AIRPORT, WY US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00094054",
+    "id": "USW00094054",
     "elevationUnit": "METERS",
     "longitude": -106.72111
   },
@@ -25771,7 +25779,7 @@ noaa.stations = [
     "latitude": 42.79611,
     "name": "CONVERSE CO AIRPORT ASOS, WY US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00094057",
+    "id": "USW00094057",
     "elevationUnit": "METERS",
     "longitude": -105.38028
   },
@@ -25782,7 +25790,7 @@ noaa.stations = [
     "latitude": 40.8066,
     "name": "NUNN 7 NNE, CO US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00094074",
+    "id": "USW00094074",
     "elevationUnit": "METERS",
     "longitude": -104.7552
   },
@@ -25793,7 +25801,7 @@ noaa.stations = [
     "latitude": 42.4247,
     "name": "HARRISON 20 SSE, NE US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00094077",
+    "id": "USW00094077",
     "elevationUnit": "METERS",
     "longitude": -103.7363
   },
@@ -25804,7 +25812,7 @@ noaa.stations = [
     "latitude": 42.068,
     "name": "WHITMAN 5 ENE, NE US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USW00094079",
+    "id": "USW00094079",
     "elevationUnit": "METERS",
     "longitude": -101.445
   },
@@ -25815,7 +25823,7 @@ noaa.stations = [
     "latitude": 46.8946,
     "name": "MEDORA 7 E, ND US",
     "datacoverage": 0.9961,
-    "id": "GHCND:USW00094080",
+    "id": "USW00094080",
     "elevationUnit": "METERS",
     "longitude": -103.3769
   },
@@ -25826,7 +25834,7 @@ noaa.stations = [
     "latitude": 40.2446,
     "name": "DINOSAUR 2 E, CO US",
     "datacoverage": 0.997,
-    "id": "GHCND:USW00094082",
+    "id": "USW00094082",
     "elevationUnit": "METERS",
     "longitude": -108.9677
   },
@@ -25837,7 +25845,7 @@ noaa.stations = [
     "latitude": 48.9676,
     "name": "NORTHGATE 5 ESE, ND US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00094084",
+    "id": "USW00094084",
     "elevationUnit": "METERS",
     "longitude": -102.1702
   },
@@ -25848,7 +25856,7 @@ noaa.stations = [
     "latitude": 44.5169,
     "name": "SUNDANCE 8 NNW, WY US",
     "datacoverage": 0.9954,
-    "id": "GHCND:USW00094088",
+    "id": "USW00094088",
     "elevationUnit": "METERS",
     "longitude": -104.4363
   },
@@ -25859,7 +25867,7 @@ noaa.stations = [
     "latitude": 47.9742,
     "name": "DEER PARK AIRPORT, WA US",
     "datacoverage": 0.996,
-    "id": "GHCND:USW00094119",
+    "id": "USW00094119",
     "elevationUnit": "METERS",
     "longitude": -117.4292
   },
@@ -25870,7 +25878,7 @@ noaa.stations = [
     "latitude": 41.78722,
     "name": "LOGAN CACHE AIRPORT, UT US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00094128",
+    "id": "USW00094128",
     "elevationUnit": "METERS",
     "longitude": -111.85333
   },
@@ -25881,7 +25889,7 @@ noaa.stations = [
     "latitude": 46.74389,
     "name": "PULLMAN MOSCOW REGIONAL AIRPORT, WA US",
     "datacoverage": 0.9977,
-    "id": "GHCND:USW00094129",
+    "id": "USW00094129",
     "elevationUnit": "METERS",
     "longitude": -117.10861
   },
@@ -25892,7 +25900,7 @@ noaa.stations = [
     "latitude": 47.68306,
     "name": "SPOKANE FELTS FIELD, WA US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00094176",
+    "id": "USW00094176",
     "elevationUnit": "METERS",
     "longitude": -117.32139
   },
@@ -25903,7 +25911,7 @@ noaa.stations = [
     "latitude": 46.1569,
     "name": "ASTORIA AIRPORT PORT OF, OR US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094224",
+    "id": "USW00094224",
     "elevationUnit": "METERS",
     "longitude": -123.8825
   },
@@ -25914,7 +25922,7 @@ noaa.stations = [
     "latitude": 47.238,
     "name": "SHELTON SANDERSON FIELD, WA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00094227",
+    "id": "USW00094227",
     "elevationUnit": "METERS",
     "longitude": -123.1408
   },
@@ -25925,7 +25933,7 @@ noaa.stations = [
     "latitude": 47.3977,
     "name": "WENATCHEE PANGBORN MEMORIAL AIRPORT, WA US",
     "datacoverage": 0.9999,
-    "id": "GHCND:USW00094239",
+    "id": "USW00094239",
     "elevationUnit": "METERS",
     "longitude": -120.2013
   },
@@ -25936,7 +25944,7 @@ noaa.stations = [
     "latitude": 47.9375,
     "name": "QUILLAYUTE STATE AIRPORT, WA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00094240",
+    "id": "USW00094240",
     "elevationUnit": "METERS",
     "longitude": -124.555
   },
@@ -25947,7 +25955,7 @@ noaa.stations = [
     "latitude": 47.49333,
     "name": "RENTON MUNICIPAL AIRPORT, WA US",
     "datacoverage": 0.999,
-    "id": "GHCND:USW00094248",
+    "id": "USW00094248",
     "elevationUnit": "METERS",
     "longitude": -122.21444
   },
@@ -25958,7 +25966,7 @@ noaa.stations = [
     "latitude": 45.54056,
     "name": "PORTLAND HILLSBORO AIRPORT, OR US",
     "datacoverage": 0.998,
-    "id": "GHCND:USW00094261",
+    "id": "USW00094261",
     "elevationUnit": "METERS",
     "longitude": -122.94861
   },
@@ -25969,7 +25977,7 @@ noaa.stations = [
     "latitude": 48.12028,
     "name": "PORT ANGELES FAIRCHILD INTERNATIONAL AIRPORT, WA US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USW00094266",
+    "id": "USW00094266",
     "elevationUnit": "METERS",
     "longitude": -123.49833
   },
@@ -25980,7 +25988,7 @@ noaa.stations = [
     "latitude": 47.2675,
     "name": "TACOMA NARROWS AIRPORT, WA US",
     "datacoverage": 0.9979,
-    "id": "GHCND:USW00094274",
+    "id": "USW00094274",
     "elevationUnit": "METERS",
     "longitude": -122.57611
   },
@@ -25991,7 +25999,7 @@ noaa.stations = [
     "latitude": 44.9281,
     "name": "OLD TOWN 2 W, ME US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00094644",
+    "id": "USW00094644",
     "elevationUnit": "METERS",
     "longitude": -68.7006
   },
@@ -26002,7 +26010,7 @@ noaa.stations = [
     "latitude": 46.9601,
     "name": "LIMESTONE 4 NNW, ME US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00094645",
+    "id": "USW00094645",
     "elevationUnit": "METERS",
     "longitude": -67.8833
   },
@@ -26013,7 +26021,7 @@ noaa.stations = [
     "latitude": 44.2035,
     "name": "BARRE MONTPELIER KNAPP STATE AIRPORT, VT US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USW00094705",
+    "id": "USW00094705",
     "elevationUnit": "METERS",
     "longitude": -72.5623
   },
@@ -26024,7 +26032,7 @@ noaa.stations = [
     "latitude": 41.66861,
     "name": "HYANNIS BARNSTABLE MUNICIPAL AIRPORT, MA US",
     "datacoverage": 0.9952,
-    "id": "GHCND:USW00094720",
+    "id": "USW00094720",
     "elevationUnit": "METERS",
     "longitude": -70.28
   },
@@ -26035,7 +26043,7 @@ noaa.stations = [
     "latitude": 44.93583,
     "name": "MASSENA INTERNATIONAL AIRPORT, NY US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00094725",
+    "id": "USW00094725",
     "elevationUnit": "METERS",
     "longitude": -74.84583
   },
@@ -26046,7 +26054,7 @@ noaa.stations = [
     "latitude": 40.77898,
     "name": "NY CITY CENTRAL PARK, NY US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094728",
+    "id": "USW00094728",
     "elevationUnit": "METERS",
     "longitude": -73.96925
   },
@@ -26057,7 +26065,7 @@ noaa.stations = [
     "latitude": 44.38528,
     "name": "SARANAC LAKE ADIRONDACK REGIONAL AIRPORT, NY US",
     "datacoverage": 0.9966,
-    "id": "GHCND:USW00094740",
+    "id": "USW00094740",
     "elevationUnit": "METERS",
     "longitude": -74.20667
   },
@@ -26068,7 +26076,7 @@ noaa.stations = [
     "latitude": 42.2706,
     "name": "WORCESTER, MA US",
     "datacoverage": 0.9998,
-    "id": "GHCND:USW00094746",
+    "id": "USW00094746",
     "elevationUnit": "METERS",
     "longitude": -71.8731
   },
@@ -26079,7 +26087,7 @@ noaa.stations = [
     "latitude": 43.98867,
     "name": "WATERTOWN AIRPORT, NY US",
     "datacoverage": 0.9963,
-    "id": "GHCND:USW00094790",
+    "id": "USW00094790",
     "elevationUnit": "METERS",
     "longitude": -76.02623
   },
@@ -26090,7 +26098,7 @@ noaa.stations = [
     "latitude": 44.3591,
     "name": "HOUGHTON LAKE ROSCOMMON CO AIRPORT, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094814",
+    "id": "USW00094814",
     "elevationUnit": "METERS",
     "longitude": -84.6738
   },
@@ -26101,7 +26109,7 @@ noaa.stations = [
     "latitude": 42.23472,
     "name": "KALAMAZOO BATTLE CREEK INTERNATIONAL AIRPORT, MI US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USW00094815",
+    "id": "USW00094815",
     "elevationUnit": "METERS",
     "longitude": -85.55194
   },
@@ -26112,7 +26120,7 @@ noaa.stations = [
     "latitude": 42.665,
     "name": "PONTIAC OAKLAND CO INTERNATIONAL AIRPORT, MI US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USW00094817",
+    "id": "USW00094817",
     "elevationUnit": "METERS",
     "longitude": -83.41806
   },
@@ -26123,7 +26131,7 @@ noaa.stations = [
     "latitude": 42.76111,
     "name": "RACINE BATTEN AIRPORT, WI US",
     "datacoverage": 0.9976,
-    "id": "GHCND:USW00094818",
+    "id": "USW00094818",
     "elevationUnit": "METERS",
     "longitude": -87.81361
   },
@@ -26134,7 +26142,7 @@ noaa.stations = [
     "latitude": 42.1927,
     "name": "ROCKFORD GREATER ROCKFORD AIRPORT, IL US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094822",
+    "id": "USW00094822",
     "elevationUnit": "METERS",
     "longitude": -89.093
   },
@@ -26145,7 +26153,7 @@ noaa.stations = [
     "latitude": 41.5871,
     "name": "TOLEDO EXPRESS AIRPORT, OH US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094830",
+    "id": "USW00094830",
     "elevationUnit": "METERS",
     "longitude": -83.8055
   },
@@ -26156,7 +26164,7 @@ noaa.stations = [
     "latitude": 43.98444,
     "name": "OSHKOSH WITTMAN REGIONAL AIRPORT, WI US",
     "datacoverage": 0.9978,
-    "id": "GHCND:USW00094855",
+    "id": "USW00094855",
     "elevationUnit": "METERS",
     "longitude": -88.55694
   },
@@ -26167,7 +26175,7 @@ noaa.stations = [
     "latitude": 42.8825,
     "name": "GRAND RAPIDS GERALD R FORD INTERNATIONAL AIRPORT, MI US",
     "datacoverage": 1,
-    "id": "GHCND:USW00094860",
+    "id": "USW00094860",
     "elevationUnit": "METERS",
     "longitude": -85.52389
   },
@@ -26178,7 +26186,7 @@ noaa.stations = [
     "latitude": 40.03972,
     "name": "CHAMPAIGN URBANA WILLARD AIRPORT, IL US",
     "datacoverage": 0.9958,
-    "id": "GHCND:USW00094870",
+    "id": "USW00094870",
     "elevationUnit": "METERS",
     "longitude": -88.27778
   },
@@ -26189,7 +26197,7 @@ noaa.stations = [
     "latitude": 42.22278,
     "name": "ANN ARBOR MUNICIPAL AIRPORT, MI US",
     "datacoverage": 0.9957,
-    "id": "GHCND:USW00094889",
+    "id": "USW00094889",
     "elevationUnit": "METERS",
     "longitude": -83.74444
   },
@@ -26200,7 +26208,7 @@ noaa.stations = [
     "latitude": 47.46667,
     "name": "COPPER HARBOR, MI US",
     "datacoverage": 0.9953,
-    "id": "GHCND:USW00094899",
+    "id": "USW00094899",
     "elevationUnit": "METERS",
     "longitude": -87.88333
   },
@@ -26211,7 +26219,7 @@ noaa.stations = [
     "latitude": 42.5544,
     "name": "WATERLOO MUNICIPAL AIRPORT, IA US",
     "datacoverage": 0.9983,
-    "id": "GHCND:USW00094910",
+    "id": "USW00094910",
     "elevationUnit": "METERS",
     "longitude": -92.4011
   },
@@ -26222,7 +26230,7 @@ noaa.stations = [
     "latitude": 46.54861,
     "name": "ASHLAND KENNEDY MEMORIAL AIRPORT, WI US",
     "datacoverage": 0.9987,
-    "id": "GHCND:USW00094929",
+    "id": "USW00094929",
     "elevationUnit": "METERS",
     "longitude": -90.91889
   },
@@ -26233,7 +26241,7 @@ noaa.stations = [
     "latitude": 47.38639,
     "name": "HIBBING CHISHOLM HIBBING AIRPORT, MN US",
     "datacoverage": 0.9989,
-    "id": "GHCND:USW00094931",
+    "id": "USW00094931",
     "elevationUnit": "METERS",
     "longitude": -92.83889
   },
@@ -26244,7 +26252,7 @@ noaa.stations = [
     "latitude": 41.43333,
     "name": "BROKEN BOW MUNICIPAL AIRPORT, NE US",
     "datacoverage": 0.9972,
-    "id": "GHCND:USW00094946",
+    "id": "USW00094946",
     "elevationUnit": "METERS",
     "longitude": -99.63333
   },
@@ -26255,7 +26263,7 @@ noaa.stations = [
     "latitude": 40.6005,
     "name": "HASTINGS MUNICIPAL AIRPORT, NE US",
     "datacoverage": 0.9974,
-    "id": "GHCND:USW00094949",
+    "id": "USW00094949",
     "elevationUnit": "METERS",
     "longitude": -98.4258
   },
@@ -26266,7 +26274,7 @@ noaa.stations = [
     "latitude": 43.77426,
     "name": "MITCHELL AIRPORT, SD US",
     "datacoverage": 0.9965,
-    "id": "GHCND:USW00094950",
+    "id": "USW00094950",
     "elevationUnit": "METERS",
     "longitude": -98.03838
   },
@@ -26277,7 +26285,7 @@ noaa.stations = [
     "latitude": 41.62333,
     "name": "ORD EVELYN SHARP FIELD, NE US",
     "datacoverage": 0.9986,
-    "id": "GHCND:USW00094958",
+    "id": "USW00094958",
     "elevationUnit": "METERS",
     "longitude": -98.94833
   },
@@ -26288,7 +26296,7 @@ noaa.stations = [
     "latitude": 48.71667,
     "name": "BAUDETTE INTERNATIONAL AIRPORT, MN US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00094961",
+    "id": "USW00094961",
     "elevationUnit": "METERS",
     "longitude": -94.6
   },
@@ -26299,7 +26307,7 @@ noaa.stations = [
     "latitude": 41.99056,
     "name": "AMES MUNICIPAL AIRPORT, IA US",
     "datacoverage": 0.9968,
-    "id": "GHCND:USW00094989",
+    "id": "USW00094989",
     "elevationUnit": "METERS",
     "longitude": -93.61889
   },
@@ -26310,7 +26318,7 @@ noaa.stations = [
     "latitude": 45.66889,
     "name": "SISSETON MUNICIPAL AIRPORT, SD US",
     "datacoverage": 0.9971,
-    "id": "GHCND:USW00094993",
+    "id": "USW00094993",
     "elevationUnit": "METERS",
     "longitude": -96.99139
   },
@@ -26321,9 +26329,10 @@ noaa.stations = [
     "latitude": 43.15611,
     "name": "BOSCOBEL AIRPORT, WI US",
     "datacoverage": 0.9982,
-    "id": "GHCND:USW00094994",
+    "id": "USW00094994",
     "elevationUnit": "METERS",
     "longitude": -90.6775
   }
 ];
 
+export {findStation, stations};

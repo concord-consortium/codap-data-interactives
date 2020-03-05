@@ -83,6 +83,10 @@ function findMatchingSource(datasetList, resourceName) {
 }
 
 function findDatasetMatchingAttributes(datasetList, attributeNames) {
+  let canonicalAttributeNames = attributeNames.map(function (name) {
+    let parts = codapHelper.analyzeRawName(name, true);
+    return parts.baseName;
+  });
   let foundDataset = datasetList && datasetList.find(function (dataset) {
     var existingDatasetAttributeNames = [];
     dataset.collections && dataset.collections.forEach(function (collection) {
@@ -90,7 +94,7 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
         existingDatasetAttributeNames.push(attr.name || attr.title);
       });
     });
-    let unmatchedAttributeName = attributeNames.find(function (name) {
+    let unmatchedAttributeName = canonicalAttributeNames.find(function (name) {
       return name && (existingDatasetAttributeNames.indexOf(name) < 0);
     });
     return (unmatchedAttributeName == null);
@@ -153,8 +157,12 @@ async function determineIfAutoImportApplies(dataSetList) {
   let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
   if (matchingDataset) {
     config.matchingDataset = matchingDataset;
+    let matchingMetadata = matchingDataset.metadata || {};
+    let uploadTimeSentence = matchingMetadata.importDate
+        ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
+        : '';
     uiControl.displayMessage('There already exists a dataset like this one,' +
-        `"${matchingDataset.title}". It was uploaded ${relTime(matchingDataset.metadata.importDate)}.`,
+        ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
         '#target-message');
     uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
     uiControl.showSection('target-options', true);
@@ -260,7 +268,7 @@ async function retrieveData(retrievalProperties) {
   if (!contentType) {
     contentType = inferContentType(retrievalProperties.file, retrievalProperties.url);
   }
-  if (contentType === 'text/csv') {
+  if (contentType === 'text/csv' || contentType === 'text/plain') {
     dataset = await csvImporter.retrieveData(retrievalProperties);
   }
   else if (contentType === 'text/html') {
