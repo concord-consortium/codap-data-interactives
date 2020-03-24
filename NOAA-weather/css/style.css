@@ -234,6 +234,7 @@ body {
 .wx-pop-up-body {
     background-color: white;
     height: 349px;
+    padding: 0 12px;
 }
 
 /*
