@@ -40,7 +40,8 @@ let constants = {
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
-    'global-hourly': 'hourly'
+    'global-hourly': 'hourly',
+    'global-summary-of-the-day': 'daily'
   }
 }
 

@@ -8,7 +8,7 @@ DIRNAME=`dirname $0`
 HOMEDIR="$DIRNAME/.."
 
 # make sure we are in the root directory of the plugin folder
-cd "$HOMEDIR"
+cd "$HOMEDIR" || exit
 
 # Set env
 TARGET="$PWD/target" # Where to put zip.
@@ -17,7 +17,7 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather"
 HIDDEN_DIRS="Common"
 BUILT_PLUGIN_DIRS="onboarding"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
@@ -30,7 +30,7 @@ JSON_PARSER=jq
 
 function makeIndexJSON() {
   tmp=
-  for t in $*; do
+  for t in "$@"; do
     [ "$tmp" != "" ] && tmp="$tmp,"
     tmp="$tmp\"/$t\""
   done
@@ -39,20 +39,20 @@ function makeIndexJSON() {
 
 function echoPlugins() {
   echo "Plugins:"
-  for plugin in $*; do
+  for plugin in "$@"; do
     echo "  $plugin";
   done
 }
 
 function buildPlugins() {
-  for plugin in $*; do
+  for plugin in "$@"; do
     echo Building $plugin
     ( cd $plugin && npm run clean && npm run build && cp -r target "$BUILD_DIR/$plugin" )
   done
 }
 
 function copyStaticPlugins() {
-  cp -r $* "$BUILD_DIR"
+  cp -r "$@" "$BUILD_DIR"
 }
 
 function usage() {
@@ -60,7 +60,7 @@ function usage() {
 }
 
 function error() {
-  echo ${PROGNAME}: error - $* 1>&2
+  echo ${PROGNAME}: error - "$@" 1>&2
   exit 1
 }
 
