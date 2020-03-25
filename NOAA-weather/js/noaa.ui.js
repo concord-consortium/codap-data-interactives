@@ -197,7 +197,7 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     let endDateEl = document.querySelector('#wx-drs-end-date');
     let durationEl = document.querySelector('#wx-drs-duration');
     durationTimeUnitEl.innerHTML = durationUnit;
-    endDateEl.valueAsDate = endDate/*.toLocaleDateString()*/;
+    endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
     durationEl.value = duration;
 }
 
