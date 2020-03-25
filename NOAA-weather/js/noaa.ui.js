@@ -27,7 +27,7 @@ limitations under the License.
 */
 
 /*global flatpickr */
-import {dataTypes} from "./noaaDataTypes";
+import {dataTypes} from "./noaaDataTypes.js";
 // import * as flatpickr from "./flatpickr.js";
 
 let eventHandlers = null
