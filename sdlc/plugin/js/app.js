@@ -71,6 +71,8 @@ let app = {
     $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
     app.ui.updateWholeUI();
 
+    app.ui.init();
+
     // track alt key so we can display hidden information on alt-hover.
     $('body').on('keydown keyup', function (ev) {
       let isAlt = ev.originalEvent.getModifierState('Alt');

@@ -215,7 +215,7 @@ app.CODAPconnect = {
     version: app.constants.version,
     name: 'sdlc',
     title: 'USS Data Portal',
-    dimensions: {width: 480, height: 555},
+    dimensions: {width: 360, height: 520},
     preventDataContextReorg: false,
     cannotClose: true
   }

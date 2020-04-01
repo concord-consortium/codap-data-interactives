@@ -18,6 +18,65 @@
 /* global app */
 
 app.ui = {
+  init: function () {
+    function setEventHandler (selector, event, handler) {
+      const elements = document.querySelectorAll(selector);
+      if (!elements) { return; }
+      elements.forEach(function (el) {
+        el.addEventListener(event, handler);
+      });
+    }
+
+    function findAncestorElementWithClass(el, myClass) {
+      while (el !== null && el.parentElement !== el) {
+        if (el.classList.contains(myClass)) {
+          return el;
+        }
+        el = el.parentElement;
+      }
+    }
+
+    function togglePopUp(el) {
+      let isOpen = el.classList.contains('wx-open');
+      if (isOpen) {
+        el.classList.remove('wx-open');
+      } else {
+        el.classList.add('wx-open');
+      }
+    }
+
+    function togglePopOver(el) {
+      let isOpen = el.classList.contains('wx-open');
+      if (isOpen) {
+        el.classList.remove('wx-open');
+      } else {
+        el.classList.add('wx-open');
+      }
+    }
+
+    setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+      let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
+      let isClosed = sectionEl.classList.contains('wx-up');
+      if (isClosed) {
+        sectionEl.classList.remove('wx-up');
+        sectionEl.classList.add('wx-down');
+      } else {
+        sectionEl.classList.remove('wx-down');
+        sectionEl.classList.add('wx-up');
+      }
+    });
+
+    setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (ev) {
+      let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
+      togglePopUp(parentEl);
+    });
+
+    setEventHandler('.wx-pop-over-anchor', 'click', function (ev) {
+      let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
+      togglePopOver(parentEl);
+    });
+
+  },
 
   updateWholeUI: function () {
     console.log('updating ui');
@@ -38,6 +97,7 @@ app.ui = {
     let table = $('<table>').append(tableRows);
     tabContentNode.empty().append(table);
   },
+
   refreshText: function () {
     $('#sampleSizeInput').val(app.state.requestedSampleSize || 1000);
     $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;

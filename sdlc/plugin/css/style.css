@@ -15,14 +15,64 @@
  * ==========================================================================
  *
  */
+/* colors and constants */
+:root {
+  --text: #222222;
+  --teal-dark: #177991;
+  --teal-light: #72bfca;
+  --teal-dark-75: rgba(23, 121, 145, 0.75);
+  --teal-light-25: rgba(114, 191, 202, 0.25);
+  --teal-light-12: rgba(114, 191, 202, 0.12);
+}
 
-body, #summary, #atts, #states, #sampleYears, #about, #log {
+/* fonts */
+@font-face {
+  font-family: Montserrat;
+  src: url("../assets/webfonts/Montserrat-Bold.otf");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: Montserrat;
+  src: url("../assets/webfonts/Montserrat-SemiBold.otf");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: Montserrat;
+  src: url("../assets/webfonts/Montserrat-Regular.otf");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.plugin-content {
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  background-color: white;
+  padding: 8px 12px;
+  position: relative;
+
+  /*min-height: 100vh;*/
+  /*max-width: 360px;*/
+  /*width: 360px;*/
+  height: 100vh;
+
+}
+
+#summary, #atts, #states, #sampleYears, #about, #log {
   margin : 0;
   /*height : 320px;*/
-  font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
-  font-weight: 300;
-  color : #555;
-  background: linear-gradient(#eef, #cce );
+  /*font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;*/
+  /*font-weight: 300;*/
+  /*color : #555;*/
+  /*background: linear-gradient(#eef, #cce );*/
   position: relative;
   /* max-width: 400px; */
   overflow-y: hidden;
@@ -97,9 +147,9 @@ h1 {
   visibility: visible;
 }
 
-.plugin-content {
-  min-width: 480px;
-}
+/*.plugin-content {*/
+/*  min-width: 480px;*/
+/*}*/
 
 body .ui-tabs .ui-tabs-panel {
   padding: 0;
@@ -133,4 +183,181 @@ body .ui-tabs .ui-tabs-panel {
 }
 #log tr:nth-child(even) {
   background-color: rgba(255,255,255,.66);
+}
+
+.wx-hide {
+  display: none;
+}
+
+.wx-section-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.wx-section-title {
+  min-width: 102px;
+  font-weight: 600;
+}
+
+.wx-dropdown .wx-dropdown-body {
+  padding: 0 12px;
+  overflow-y: hidden;
+  transition-property: max-height;
+  transition-duration: .5s;
+  transition-timing-function: ease-in;
+}
+
+.wx-dropdown.wx-down .wx-dropdown-body {
+  max-height: 400px;
+}
+
+.wx-dropdown.wx-up .wx-dropdown-body {
+  max-height: 0;
+}
+
+.wx-dropdown-indicator {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('../assets/images/arrow-drop-down.png');
+}
+
+.wx-dropdown.wx-down .wx-dropdown-indicator {
+  transform: rotate(180deg);
+}
+
+/*
+ * pop-up: these elements display above a grayed out main page and are modal
+ */
+.wx-pop-up .wx-pop-up-content {
+  position: absolute;
+  max-height: 0;
+  left: 12px;
+  right: 12px;
+  top: 35px;
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  background-color: white;
+
+  border: 0 solid var(--teal-dark);
+  border-radius: 6px;
+
+  transition-property: max-height, border-width;
+  transition-duration: .5s;
+  transition-timing-function: ease-in;
+}
+
+.wx-pop-up-header {
+  flex-basis: 25px;
+}
+
+.wx-pop-up-footer {
+  flex-basis: 50px;
+}
+
+.wx-pop-up.wx-open .wx-pop-up-content {
+  max-height: 400px;
+  border-width: 1px;
+}
+
+.wx-pop-up .wx-cover {
+  position: absolute;
+  background-color: rgba(0,0,0,0.32);
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  visibility: hidden;
+}
+
+.wx-pop-up.wx-open .wx-cover{
+  visibility: visible;
+}
+
+.wx-pop-up-header {
+  background-color: var(--teal-dark);
+  height: 25px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  line-height: 25px;
+}
+
+.wx-pop-up-body {
+  background-color: white;
+  height: 349px;
+  padding: 0 12px;
+}
+
+/*
+    pop-overs: these elements pop out, but remain attached to their header and
+   are non-modal.
+*/
+.wx-pop-over-placeholder {
+  height: 32px;
+  /*width: 362px;*/
+}
+.wx-pop-over {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  max-height: 32px;
+  border: thin solid var(--teal-dark);
+  border-radius: 6px;
+  background-color: white;
+  overflow-y: scroll;
+
+  transition-property: max-height;
+  transition-duration: .5s;
+  transition-timing-function: ease-in;
+}
+
+.wx-pop-over .wx-pop-over-anchor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  transition: background-color .5s ease-in;
+}
+
+.wx-pop-over .wx-pop-over-body {
+  border-radius: 6px;
+}
+
+.wx-pop-over.wx-open {
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.25);
+  max-height: 200px;
+}
+
+.wx-pop-over.wx-open .wx-pop-over-anchor{
+  background-color: var(--teal-light-25);
+  border-bottom: thin solid var(--teal-dark-75);
+}
+
+.wx-pop-over.wx-open .wx-pop-over-body {
+  max-height: 300px;
+}
+
+/* buttons */
+.wx-info-button {
+  display: inline-block;
+  min-width: 20px;
+  height: 20px;
+  background-image: url('../assets/images/info.png');
+}
+
+.wx-button {
+  margin: 6px;
+  padding: 6px;
+  /*width: 82px;*/
+  /*height: 32px;*/
+  border-radius: 3px;
+  border: solid 1px var(--teal-light);
+  background-color: white;
 }
