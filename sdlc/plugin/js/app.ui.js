@@ -166,18 +166,36 @@ app.ui = {
       app.ui.updateWholeUI();
   },
 
-  displayStatus: function (message) {
+  /**
+   *
+   * @param status {'inactive', 'retrieving', 'transferring', 'success', 'failure'}
+   * @param message
+   */
+  displayStatus: function (status, message) {
+    let el = document.querySelector('.wx-summary');
+    let statusClass = {
+          inactive: '',
+          retrieving: 'wx-transfer-in-progress',
+          transferring: 'wx-transfer-in-progress',
+          success: 'wx-transfer-success',
+          failure: 'wx-transfer-failure'
+        }[status]||'';
+    el.classList.remove(
+        'wx-transfer-in-progress',
+        'wx-transfer-success',
+        'wx-transfer-failure');
+    el.classList.add(statusClass);
     $('#status').text(message);
   },
 
   makeStateListHTML: function () {
-    let out = '<div><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</div>';
+    let out = '<div><label><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</label></div>';
     let stateAttribute = app.allAttributes.State;
     if (app.states) {
       app.states.forEach(function (state) {
         let id = 'state-' + state.state_code;
         let name = stateAttribute.categories[state.state_code];
-        out += '<div><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</div>';
+        out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</label></div>';
       });
     }
     return out;
@@ -197,8 +215,8 @@ app.ui = {
     if (app.years) {
       app.years.forEach(function (year) {
         let id = 'year-' + year.year;
-        out += '<div><input type="checkbox" id="' + id + '" class="select-item"'
-            + checked + '/>' + year.year + availablePresetsHTML(year.year) + '</div>';
+        out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"'
+            + checked + '/>' + year.year + '</label>' + availablePresetsHTML(year.year) + '</div>';
         checked = '';
       });
     }

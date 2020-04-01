@@ -28,19 +28,23 @@
 /* fonts */
 @font-face {
   font-family: Montserrat;
-  src: url("../assets/webfonts/Montserrat-Bold.otf");
+  src: url("../assets/webfonts/Montserrat-Bold.otf") format("opentype"),
+      url("../assets/webfonts/Montserrat-Bold.ttf") format("truetype"),
+      url("../assets/webfonts/Montserrat-Bold.svg") format("svg");
   font-weight: bold;
   font-style: normal;
 }
 @font-face {
   font-family: Montserrat;
-  src: url("../assets/webfonts/Montserrat-SemiBold.otf");
+  src: url("../assets/webfonts/Montserrat-SemiBold.otf") format("opentype");
   font-weight: bold;
   font-style: normal;
 }
 @font-face {
   font-family: Montserrat;
-  src: url("../assets/webfonts/Montserrat-Regular.otf");
+  src: url("../assets/webfonts/Montserrat-Regular.otf") format("opentype"),
+      url("../assets/webfonts/Montserrat-Regular.ttf") format("truetype"),
+      url("../assets/webfonts/Montserrat-Regular.svg") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -58,11 +62,11 @@ body {
   background-color: white;
   padding: 8px 12px;
   position: relative;
-
-  /*min-height: 100vh;*/
-  /*max-width: 360px;*/
-  /*width: 360px;*/
-  height: 100vh;
+  /*height: 100vh;*/
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: stretch;
 
 }
 
@@ -78,16 +82,16 @@ body {
   overflow-y: hidden;
 }
 
-.ui-tabs-anchor {
-  font-family: 'Rokkitt',sans-serif;font-size: 18px;
-  font-weight: 300;
-}
+/*.ui-tabs-anchor {*/
+/*  font-family: 'Rokkitt',sans-serif;font-size: 18px;*/
+/*  font-weight: 300;*/
+/*}*/
 
-h1 {
-  font-family: 'Rokkitt',sans-serif;font-size: 22px;
-  font-weight: 700;
-  color : #44a;
-}
+/*h1 {*/
+/*  font-family: 'Rokkitt',sans-serif;font-size: 22px;*/
+/*  font-weight: 700;*/
+/*  color : #44a;*/
+/*}*/
 
 #pluginHeader {
     padding-left: 1.4em;
@@ -99,15 +103,15 @@ h1 {
     /*width : 100%;*/
 /*}*/
 
-#sampleSizeInput {
-  font-family: 'Rokkitt',sans-serif;font-size: 16px;
-  font-weight: 700;
-  width: 3.5em;
-  align-content: right;
-}
-#sampleSizeInput:invalid {
-  color: red;
-}
+/*#sampleSizeInput {*/
+/*  font-family: 'Rokkitt',sans-serif;font-size: 16px;*/
+/*  font-weight: 700;*/
+/*  width: 3.5em;*/
+/*  align-content: right;*/
+/*}*/
+/*#sampleSizeInput:invalid {*/
+/*  color: red;*/
+/*}*/
 #getCasesButton {
   font-family: 'Rokkitt',sans-serif;font-size: 16px;
   font-weight: 300;
@@ -361,3 +365,114 @@ body .ui-tabs .ui-tabs-panel {
   border: solid 1px var(--teal-light);
   background-color: white;
 }
+
+label {
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+input[type=number] {
+  border-radius: 3px;
+  border: solid 1px var(--teal-dark-75);
+}
+
+.wx-scroll-area {
+  /*border-top: thin solid var(--teal-light);*/
+  border-bottom: thin solid var(--teal-light);
+  flex-basis: 300px;
+  overflow-y: scroll;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+#wx-summary-section {
+  flex-basis: 56px;
+}
+
+#intro-section {
+  flex-basis: 47px;
+  border-bottom: thin solid var(--text);
+}
+
+#fixed-height-section {
+  flex-basis: 32px;
+}
+
+.wx-summary.wx-transfer-in-progress button {
+  background-color: var(--teal-light-25);
+}
+
+.wx-summary .wx-message-area {
+  color: var(--text);
+}
+
+.wx-summary.wx-transfer-success .wx-message-area,
+.wx-summary.wx-transfer-failure .wx-message-area {
+  color: var(--teal-dark);
+}
+
+
+.wx-summary button:hover {
+  background-color: var(--teal-light-12);
+}
+
+button {
+  margin: 6px;
+  padding: 6px;
+  /*width: 82px;*/
+  /*height: 32px;*/
+  border-radius: 3px;
+  border: solid 1px var(--teal-light);
+  background-color: white;
+}
+
+a {
+  color: var(--teal-dark);
+}
+
+input[type=radio] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  background-image: url('../assets/images/radio-button-unchecked.png');
+}
+
+input[type=radio]:checked {
+  background-image: url('../assets/images/radio-button-checked.png');
+}
+input[type=checkbox] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background-image: url('../assets/images/check-box-outline-blank.png');
+}
+
+input[type=checkbox]:checked {
+  background-image: url('../assets/images/check-box.png');
+}
+
+.wx-status-graphic {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+
+.wx-summary.wx-transfer-in-progress  .wx-status-graphic {
+  background-image: url('../assets/images/progress-indicator.png');
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
+}
+.wx-summary.wx-transfer-success .wx-status-graphic {
+  background-image: url('../assets/images/done.png');
+}
+.wx-summary.wx-transfer-failure .wx-status-graphic {
+  background-image: url('../assets/images/warning.png');
+}
+

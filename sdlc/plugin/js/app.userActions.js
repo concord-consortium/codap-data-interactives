@@ -22,21 +22,21 @@ app.userActions = {
     try {
       console.log("get cases!");
       let oData = [];
-      app.ui.displayStatus('Fetching data...');
+      app.ui.displayStatus('retrieving', 'Fetching data...');
       let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
         app.state.selectedStates, app.state.selectedYears);
 
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.
       if (!tData) {
-        app.ui.displayStatus('Error...');
+        app.ui.displayStatus('failure', 'Error...');
         app.ui.updateWholeUI();
         return;
       }
 
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
-      app.ui.displayStatus('Formatting data...');
+      app.ui.displayStatus('transferring', 'Formatting data...');
 
       tData.forEach( c => {
           //  c is a case object
@@ -52,22 +52,22 @@ app.userActions = {
 
       //     make sure the case table is showing
 
-      app.ui.displayStatus('Opening case table...');
-      let id = await app.CODAPconnect.makeCaseTableAppear();
+      app.ui.displayStatus('transferring', 'Opening case table...');
+      await app.CODAPconnect.makeCaseTableAppear();
       setTimeout(function () {app.CODAPconnect.autoscaleComponent(id);}, 2000);
 
       // console.log("the cases: " + JSON.stringify(oData));
 
-      app.ui.displayStatus('Sending data to codap...');
+      app.ui.displayStatus('transferring', 'Sending data to codap...');
       if (!app.state.keepExistingData) {
         await app.CODAPconnect.deleteAllCases();
       }
       await app.CODAPconnect.saveCasesToCODAP( oData );
-      app.ui.displayStatus('');
+      app.ui.displayStatus('success', '');
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);
-      app.ui.displayStatus('Error...');
+      app.ui.displayStatus('failure', 'Error...');
     }
     app.ui.updateWholeUI();
   },

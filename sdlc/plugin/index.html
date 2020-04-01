@@ -24,39 +24,33 @@
   * app.js, change <whence> to "eeps."
 
   -->
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8">
-  <title>SDLC Tool</title>
+  <title>Microdata Portal</title>
 
-
-  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
-  <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
-
-  <link rel="stylesheet" href="./css/jquery-ui.css" language="javascript">
+  <link rel="stylesheet" href="./css/jquery-ui.css">
 
   <link rel='stylesheet' type='text/css' href='./css/style.css'/>
 
-  <script src="./js/iframe-phone.js" language="javascript"></script>
-  <script src="./js/codapInterface.js" language="javascript"></script>
-  <script src="./js/pluginHelper.js" language="javascript"></script>
-  <script src="./js/TEEUtils.js" language="javascript"></script>
-  <script src="./js/jquery.js" language="javascript"></script>
-  <script src="./js/jquery-ui.js" language="javascript"></script>
+  <script src="./js/iframe-phone.js" type="text/javascript"></script>
+  <script src="./js/codapInterface.js" type="text/javascript"></script>
+  <script src="./js/pluginHelper.js" type="text/javascript"></script>
+  <script src="./js/TEEUtils.js" type="text/javascript"></script>
+  <script src="./js/jquery.js" type="text/javascript"></script>
+  <script src="./js/jquery-ui.js" type="text/javascript"></script>
 
-  <script src="js/Attribute.js" language="javascript"></script>
-  <script src="js/app.js" language="javascript"></script>
-  <script src="js/app.constants.js" language="javascript"></script>
-  <script src="js/app.ui.js" language="javascript"></script>
-  <script src="js/app.userActions.js" language="javascript"></script>
-  <script src="js/app.CODAPconnect.js" language="javascript"></script>
-  <script src="js/app.DBconnect.js" language="javascript"></script>
-  <script src="js/xml-js.js" language="javascript"></script>
-  <script src="js/config.js" language="javascript"></script>
+  <script src="js/Attribute.js" type="text/javascript"></script>
+  <script src="js/app.js" type="text/javascript"></script>
+  <script src="js/app.constants.js" type="text/javascript"></script>
+  <script src="js/app.ui.js" type="text/javascript"></script>
+  <script src="js/app.userActions.js" type="text/javascript"></script>
+  <script src="js/app.CODAPconnect.js" type="text/javascript"></script>
+  <script src="js/app.DBconnect.js" type="text/javascript"></script>
+  <script src="js/xml-js.js" type="text/javascript"></script>
+  <script src="js/config.js" type="text/javascript"></script>
 
   <script>
     $(function () {
@@ -67,51 +61,110 @@
   </script>
 
 </head>
+
 <body>
 <div class="plugin-content">
 
-<div id="pluginHeader">
-  <h1>USS Data Portal</h1>
-  <div>
-    <label for="sampleSizeInput">How many people? </label>
-    <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000" onchange="app.userActions.updateRequestedSampleSize('Sample size change.')">
-    <input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
-    <label for="keepExistingDataCheckbox">Keep existing data</label>
-  </div>
-  <div>
-    <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
-  </div>
-  <div><span id="status"></span>&nbsp;</div>
-</div>
+  <div id="intro-section" class="wx-pop-up">
+    <div class="wx-section-header-line">
+      <span>
+        Retrieve random sample data from
+        <a href="https://www.census.gov/history/www/programs/demographic/decennial_census.html">decennial census</a>
+        data and the
+        <a href="https://www.census.gov/programs-surveys/acs">American Community Survey</a>.
+      </span>
+      <span class="wx-info-button wx-pop-up-anchor"></span>
+    </div>
+    <div class="wx-cover"></div>
+    <div class="wx-pop-up-container">
+      <div class="wx-pop-up-content" >
+        <div class="wx-pop-up-body wx-scroll-area">
+          <div id="wx-info-section" class="wx-dropdown wx-down">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">Resources</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+              <p>See the resources below to learn more about the American Community
+                Survey (ACS) and decennial census data and using the data portal.</p>
+              <blockquote>
+                <dl>
+                  <dt><a href="https://drive.google.com/file/d/1zk-3utubXQDbwfOyEdz6DzybPA6SLIc8/view?usp=sharing" target="_blank">ACS Questionnaire (English)</a></dt>
+                  <dd>Survey questions from the 2017 ACS.</dd>
+                  <dt><a href="https://drive.google.com/file/d/1toVTmsngFxQhPFxDhfkhkoZYoqSs--DM/view?usp=sharing" target="_blank">ACS Questionnaire (Spanish)</a></dt>
+                  <dd>Survey questions from the 2017 ACS.</dd>
+                  <dt><a href="https://docs.google.com/document/d/14kxWQWXR-fkg4Ycuy9bfP4jYMZyEpXN_x30exEKLuU4/edit?usp=sharing" target="_blank">USS-DATA Codebook</a></dt>
+                  <dd>Details about variables (or attributes) and their codes from the ACS and the decennial census.</dd>
+                  <dt><a href="https://docs.google.com/document/d/1VxaLJzo_NW1jzyVwsaX2FqgYAKI7BZAByBINHcP20hA/edit?usp=sharing" target="_blank">CODAP Reference Guide</a></dt>
+                  <dd>Guidance on getting started with the data portal and CODAP.</dd>
+                </dl>
+              </blockquote>
+            </div>
+          </div>
+          <div id="about" class="wx-dropdown wx-up">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">About</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+              <p>
+                Brought to you by the Strengthening Data Literacy
+                Across the Curriculum (SDLC) Project, a collaboration between EDC,
+                the California Polytechnic State University, and the CODAP project at the
+                Concord Consortium.
+              </p>
 
-<div id="tabs">
+              <p>
+                Data are provided by IPUMS-USA, University of Minnesota, www.ipums.org.
+              </p>
+
+              <p>
+                This material is based on work supported by the National Science
+                Foundation under Grant No. DRL-1813956. Any opinions, findings, and
+                conclusions or recommendations expressed in this material are those of
+                the authors and do not necessarily reflect the views of the NSF.
+              </p>
+            </div>
+          </div>
+          <div id="log" class="wx-dropdown wx-up">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">Log</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+            </div>
+          </div>
+        </div>
+        <div id="wx-info-close-section" class="wx-pop-up-footer">
+          <div class="wx-section-header-line wx-control-row">
+            <span><button id="wx-info-close-button" class="wx-button">Close</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="wx-fixed-section-divider"/>
+
+  <div id="fixed-height-section">
+    <label for="sampleSizeInput">Number of people: </label>
+    <input id="sampleSizeInput" type="number" value="1000" min="1" max="3000"
+         onchange="app.userActions.updateRequestedSampleSize('Sample size change.')">
+  </div>
+
+  <div id="wx-main-scroll-area" class="wx-scroll-area">
+    <div id="tabs">
   <ul>
     <li><a href="#summary">summary</a></li>
     <li><a href="#atts">attributes</a></li>
     <li><a href="#states">states</a></li>
     <li><a href="#sampleYears">years</a></li>
-    <li><a href="#about">about</a></li>
-    <li><a href="#log">log</a></li>
   </ul>
 
 
   <div id="summary">
     <div class="tab-content">
       <div id="sampleSummaryDiv"></div>
-      <p>See the resources below to learn more about the American Community
-        Survey (ACS) and decennial census data and using the data portal.</p>
-      <blockquote>
-      <dl>
-        <dt><a href="https://drive.google.com/file/d/1zk-3utubXQDbwfOyEdz6DzybPA6SLIc8/view?usp=sharing" target="_blank">ACS Questionnaire (English)</a></dt>
-        <dd>Survey questions from the 2017 ACS.</dd>
-        <dt><a href="https://drive.google.com/file/d/1toVTmsngFxQhPFxDhfkhkoZYoqSs--DM/view?usp=sharing" target="_blank">ACS Questionnaire (Spanish)</a></dt>
-        <dd>Survey questions from the 2017 ACS.</dd>
-        <dt><a href="https://docs.google.com/document/d/14kxWQWXR-fkg4Ycuy9bfP4jYMZyEpXN_x30exEKLuU4/edit?usp=sharing" target="_blank">USS-DATA Codebook</a></dt>
-        <dd>Details about variables (or attributes) and their codes from the ACS and the decennial census.</dd>
-        <dt><a href="https://docs.google.com/document/d/1VxaLJzo_NW1jzyVwsaX2FqgYAKI7BZAByBINHcP20hA/edit?usp=sharing" target="_blank">CODAP Reference Guide</a></dt>
-        <dd>Guidance on getting started with the data portal and CODAP.</dd>
-      </dl>
-      </blockquote>
     </div>
   </div>
 
@@ -155,36 +208,21 @@
     </div>
   </div>
 
-  <div id="about">
-    <div class="tab-content">
-      <p>
-        Brought to you by the Strengthening Data Literacy
-        Across the Curriculum (SDLC) Project, a collaboration between EDC,
-        the California Polytechnic State University, and the CODAP project at the
-        Concord Consortium.
-      </p>
-
-      <p>
-        Data are provided by IPUMS-USA, University of Minnesota, www.ipums.org.
-      </p>
-
-      <p>
-        This material is based on work supported by the National Science
-        Foundation under Grant No. DRL-1813956. Any opinions, findings, and
-        conclusions or recommendations expressed in this material are those of
-        the authors and do not necessarily reflect the views of the NSF.
-      </p>
-    </div>
-  </div>
-
-  <div id="log">
-    <div class="tab-content">
-    </div>
-  </div>
 
 </div>
+  </div>
 
-
+  <div id="wx-summary-section">
+    <div class="wx-section-header-line wx-summary">
+      <span class="wx-status-graphic"></span>
+      <span id="status" class="wx-message-area"></span>
+      <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">get people</button>
+    </div>
+    <div>
+      <label><input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
+      Keep existing data</label>
+    </div>
+  </div>
 </div>
 </body>
 </html>

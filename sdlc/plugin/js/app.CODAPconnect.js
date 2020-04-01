@@ -214,7 +214,7 @@ app.CODAPconnect = {
   iFrameDescriptor: {
     version: app.constants.version,
     name: 'sdlc',
-    title: 'USS Data Portal',
+    title: 'Microdata Portal',
     dimensions: {width: 360, height: 520},
     preventDataContextReorg: false,
     cannotClose: true
