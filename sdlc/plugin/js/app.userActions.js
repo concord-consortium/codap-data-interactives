@@ -34,10 +34,10 @@ app.userActions = {
         return;
       }
 
+      let counter = 0;
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
       app.ui.displayStatus('transferring', 'Formatting data...');
-
       tData.forEach( c => {
           //  c is a case object
         let sampleData = c.sample_data;
@@ -48,22 +48,20 @@ app.userActions = {
           o[attr.title] = attr.decodeValue(sampleData);
         });
         oData.push(o);
+        counter ++;
       });
 
       //     make sure the case table is showing
-
       app.ui.displayStatus('transferring', 'Opening case table...');
       await app.CODAPconnect.makeCaseTableAppear();
       setTimeout(function () {app.CODAPconnect.autoscaleComponent(id);}, 2000);
-
-      // console.log("the cases: " + JSON.stringify(oData));
 
       app.ui.displayStatus('transferring', 'Sending data to codap...');
       if (!app.state.keepExistingData) {
         await app.CODAPconnect.deleteAllCases();
       }
       await app.CODAPconnect.saveCasesToCODAP( oData );
-      app.ui.displayStatus('success', '');
+      app.ui.displayStatus('success', `Selected a random sample of ${counter} people`);
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);

@@ -37,7 +37,6 @@
 @font-face {
   font-family: Montserrat;
   src: url("../assets/webfonts/Montserrat-SemiBold.otf") format("opentype");
-  font-weight: bold;
   font-style: normal;
 }
 @font-face {
@@ -57,7 +56,7 @@ body {
 .plugin-content {
   font-family: Montserrat, sans-serif;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: normal;
   color: var(--text);
   background-color: white;
   padding: 8px 12px;
@@ -115,16 +114,49 @@ body {
 #getCasesButton {
   font-family: 'Rokkitt',sans-serif;font-size: 16px;
   font-weight: 300;
+  flex-shrink: 0;
+}
+
+#chooseAttributeDiv .wx-dropdown-body {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .attributeCheckboxes {
-  padding-left: 1.5em;
+  /*padding-left: 1.5em;*/
   padding-bottom: 0.5em;
+  width: 100%;
+  border-collapse: collapse;
+}
+.attributeCheckboxes td {
+  vertical-align: top;
+  max-height: 24px;
+}
+.attributeCheckboxes input[type=checkbox] {
+  margin: 0;
+  padding: 0;
+}
+.attributeCheckboxes th {
+  font-weight: normal;
+  text-align: left;
+  padding: 0 3px;
+}
+
+.attributeCheckboxes thead {
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+.attributeCheckboxes td .attr-description {
+  display: none;
+}
+
+.attributeCheckboxes.show-descriptions td .attr-description {
+  display: inline;
 }
 
 .attNameBold {
-  font-weight: 700;
-  color : #004;
+  font-weight: bold;
+  /*color : #004;*/
 }
 
 .oneAttCheckboxPlusLabel {
@@ -138,9 +170,11 @@ body {
   flex-wrap: wrap;
 }
 
-#chooseStatesDiv div, #chooseSampleYearsDiv div {
+#chooseStatesDiv div {
   flex-basis: 120px;
-  flex-grow: 3;
+}
+#chooseSampleYearsDiv div {
+  flex-basis: 90px;
 }
 
 .presets-count {
@@ -195,7 +229,7 @@ body .ui-tabs .ui-tabs-panel {
 
 .wx-section-header-line {
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: space-between;
   margin: 6px 0;
 }
@@ -213,8 +247,8 @@ body .ui-tabs .ui-tabs-panel {
   transition-timing-function: ease-in;
 }
 
-.wx-dropdown.wx-down .wx-dropdown-body {
-  max-height: 400px;
+.wx-dropdown .wx-dropdown-body {
+  max-height: 1000px;
 }
 
 .wx-dropdown.wx-up .wx-dropdown-body {
@@ -262,6 +296,11 @@ body .ui-tabs .ui-tabs-panel {
 
 .wx-pop-up-footer {
   flex-basis: 50px;
+}
+
+.wx-pop-up-footer .wx-control-row {
+  display: block;
+  text-align: right;
 }
 
 .wx-pop-up.wx-open .wx-pop-up-content {
@@ -367,9 +406,11 @@ body .ui-tabs .ui-tabs-panel {
 }
 
 label {
-  font-weight: 600;
   display: inline-flex;
   align-items: center;
+}
+label.property-label {
+  font-weight: 600;
 }
 
 input[type=number] {
@@ -390,6 +431,10 @@ input[type=number] {
   flex-basis: 56px;
 }
 
+#wx-summary-section .summary-options{
+  text-align: right;
+}
+
 #intro-section {
   flex-basis: 47px;
   border-bottom: thin solid var(--text);
@@ -397,6 +442,7 @@ input[type=number] {
 
 #fixed-height-section {
   flex-basis: 32px;
+  border-bottom: thin solid var(--teal-light);
 }
 
 .wx-summary.wx-transfer-in-progress button {
@@ -460,6 +506,26 @@ input[type=checkbox]:checked {
   display: inline-block;
   width: 18px;
   height: 18px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin: 6px;
+}
+
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 
 .wx-summary.wx-transfer-in-progress  .wx-status-graphic {
@@ -476,3 +542,16 @@ input[type=checkbox]:checked {
   background-image: url('../assets/images/warning.png');
 }
 
+.wx-selection-count {
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  background-color: var(--teal-light-25);
+}
+
+.wx-user-selection {
+  font-family: Montserrat, sans-serif;
+  font-size: 12px;
+  color: var(--teal-dark);
+  max-width: 164px;
+  flex-grow: 10;
+}

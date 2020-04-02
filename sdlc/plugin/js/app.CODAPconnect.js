@@ -215,7 +215,7 @@ app.CODAPconnect = {
     version: app.constants.version,
     name: 'sdlc',
     title: 'Microdata Portal',
-    dimensions: {width: 360, height: 520},
+    dimensions: {width: 380, height: 520},
     preventDataContextReorg: false,
     cannotClose: true
   }

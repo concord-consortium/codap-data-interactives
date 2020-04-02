@@ -36,33 +36,41 @@ app.ui = {
       }
     }
 
-    function togglePopUp(el) {
-      let isOpen = el.classList.contains('wx-open');
+    function toggleClass(el, myClass) {
+      let isOpen = el.classList.contains(myClass);
       if (isOpen) {
-        el.classList.remove('wx-open');
+        el.classList.remove(myClass);
       } else {
-        el.classList.add('wx-open');
+        el.classList.add(myClass);
       }
+    }
+
+    function togglePopUp(el) {
+      toggleClass(el, 'wx-open');
     }
 
     function togglePopOver(el) {
-      let isOpen = el.classList.contains('wx-open');
-      if (isOpen) {
-        el.classList.remove('wx-open');
-      } else {
-        el.classList.add('wx-open');
-      }
+      toggleClass(el, 'wx-open');
     }
 
+    function toggleDescriptions(el) {
+      toggleClass(el, 'show-descriptions');
+    };
+
     setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+      let dropdownGroup = findAncestorElementWithClass(this, 'wx-dropdown-group');
       let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
       let isClosed = sectionEl.classList.contains('wx-up');
+      let dropDowns = (dropdownGroup||document).querySelectorAll('.wx-dropdown.wx-down');
+      if (dropDowns) {
+        dropDowns.forEach(function (el) {
+          el.classList.remove('wx-down');
+          el.classList.add('wx-up');
+        })
+      }
       if (isClosed) {
         sectionEl.classList.remove('wx-up');
         sectionEl.classList.add('wx-down');
-      } else {
-        sectionEl.classList.remove('wx-down');
-        sectionEl.classList.add('wx-up');
       }
     });
 
@@ -74,6 +82,11 @@ app.ui = {
     setEventHandler('.wx-pop-over-anchor', 'click', function (ev) {
       let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
       togglePopOver(parentEl);
+    });
+
+    setEventHandler('.show-attr-description-checkbox', 'click', function (ev) {
+      let parentEl = findAncestorElementWithClass(this, 'attributeCheckboxes');
+      toggleDescriptions(parentEl);
     });
 
   },
@@ -90,7 +103,7 @@ app.ui = {
 
   refreshLog: function () {
     let activityLog = app.state.activityLog;
-    let tabContentNode = $('#log .tab-content');
+    let tabContentNode = $('#log .wx-dropdown-body');
     let tableRows = activityLog && activityLog.map(function (logEntry) {
       return $('<tr>').append($('<td>').text(logEntry.time)).append($('<td>').text(logEntry.message));
     });
@@ -203,7 +216,7 @@ app.ui = {
 
   makeYearListHTML: function () {
     function availablePresetsHTML(year) {
-      let avail = app.presetStates && app.presetStates.find(function (st) {return st.yr == year;});
+      let avail = app.presetStates && app.presetStates.find(function (st) {return st.yr === Number(year);});
       if (avail) {
         return '<span class="presets-count">(' + avail.avail + ')</span>';
       } else {
@@ -211,12 +224,12 @@ app.ui = {
       }
     }
     let out = '';
-    let checked = ' checked="checked"';
+    let checked = '';
     if (app.years) {
       app.years.forEach(function (year) {
         let id = 'year-' + year.year;
         out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"'
-            + checked + '/>' + year.year + '</label>' + availablePresetsHTML(year.year) + '</div>';
+            + checked + '/>' + year.year + '</label>' /*+ availablePresetsHTML(year.year) */+ '</div>';
         checked = '';
       });
     }
@@ -227,14 +240,17 @@ app.ui = {
     let out = "";
 
     app.config.attributeGroups.forEach( (g)=>{
-      out += "<details>";
-      //if (g.open) {
-          //  out += "<div>";
-
-          out += this.makeOneGroupOfCheckboxesHTML(g);
-          //  out += "</div>";
-      //}
-      out += "</details>";
+      out += '    <div class="wx-dropdown wx-up">\n';
+      out += '      <div class="wx-section-header-line wx-dropdown-header">';
+      out += `        <span class="wx-section-title">${g.title}</span>`;
+      out += '        <span class="wx-selection-count"></span>';
+      out += '        <span class="wx-user-selection"></span>';
+      out += '        <span class="wx-dropdown-indicator"></span>';
+      out += '      </div>';
+      out += '      <div class="wx-dropdown-body">';
+      out += this.makeOneGroupOfCheckboxesHTML(g);
+      out += '      </div>';
+      out += '    </div>';
     });
 
     return out;
@@ -242,62 +258,101 @@ app.ui = {
 
   makeOneGroupOfCheckboxesHTML: function (iGroupObject) {
     let out = "";
-    out += "<summary>" + iGroupObject.title + "</summary>";
 
-    out += "<div class='attributeCheckboxes'>";
+    out += '<table class="attributeCheckboxes">\n';
+    out += '<thead><tr><th>&nbsp;</th><th>Attribute</th>' +
+        '<th><label><input type="checkbox" class="show-attr-description-checkbox" />Show descriptions</label></th></tr></thead>';
     for (let attName in app.allAttributes) {
-
       if (app.allAttributes.hasOwnProperty(attName)) {
         const tAtt = app.allAttributes[attName];    //  the attribute
+        // noinspection EqualityComparisonWithCoercionJS
         if (tAtt.groupNumber == iGroupObject.number) {     //  not === because one may be a string
           if (tAtt.displayMe) {
             tAtt.hasCheckbox = true;        //  redundant
-            out += "<div class='oneAttCheckboxPlusLabel'>";
-            out += "<input class='select-item' type ='checkbox' id = '" + tAtt.checkboxID + "' >\n";
-            out += "<label for='" + tAtt.checkboxID + "'><span class='attNameBold'>"
-                + tAtt.title + "</span> " + tAtt.description + "</label>";
-            out += "</div>\n";
+            out += '<tr>';
+            out += '<td><input class="select-item" type ="checkbox" id = "' +
+                tAtt.checkboxID + '" ></td>\n';
+            out += '<td colspan="2"><span class="attNameBold">'
+                + tAtt.title + ' </span>';
+            out += '<span class="attr-description">' + tAtt.description + '</span></div>\n';
+            out += "</tr>\n";
           }
         }
       }
     }
-    out += "</div>";
+    out += "</table>\n";
     return out;
   },
 
 
   refreshSampleSummary: function () {
-    const tSampleSize = app.userActions.getSelectedSampleSize();
-    const tNumPartitions = app.getPartitionCount();
-    const tSurveys = app.state.selectedYears
-        .map(function (year) {return (year % 10)?'acs':'census';})
-        .reduce(function (acc, survey) { acc[survey] = true; return acc; }, {});
-    const surveyMap = {
-      acs: ' from the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
-      census: ' from decennial census data.',
-      'acs,census': ' from decennial census data and the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
-      'none': '.'
-    };
+    function makeList(array) {
+      let rtn = '';
+      if (array && array.length > 0) {
+        let length = array.length;
+        if (length === 1) {
+          rtn = array[0];
+        } else if (length === 2) {
+          rtn = `${array[0]} and ${array[1]}`;
+        } else {
+          rtn = array.join(', ');
+        }
+      }
+      return rtn;
+    }
+    // const tSampleSize = app.userActions.getSelectedSampleSize();
+    // const tNumPartitions = app.getPartitionCount();
+    // const tSurveys = app.state.selectedYears
+    //     .map(function (year) {return (year % 10)?'acs':'census';})
+    //     .reduce(function (acc, survey) { acc[survey] = true; return acc; }, {});
+    // const surveyMap = {
+    //   acs: ' from the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
+    //   census: ' from decennial census data.',
+    //   'acs,census': ' from decennial census data and the <a href=\'https://www.census.gov/programs-surveys/acs\' target=\'_blank\'>American Community Survey</a>.',
+    //   'none': '.'
+    // };
 
 
-    let out = "";
+    // let out = "";
     const stateAttr = app.allAttributes.State;
     let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]; });
-    const peepsPhrase = (tSampleSize == 1) ? "<b>one</b> random person" : "a random sample of <b>" + tSampleSize + "</b> people";
-    const partitionPhrase = (tNumPartitions != 1) ? ' in <b>' + tNumPartitions + '</b> partitions': '';
-    const surveyPhrase = surveyMap[Object.keys(tSurveys).sort().join()||'none'];
 
-    if (states.length === 0) {states = ['all'];}
+    let statesLength = states.length || '&nbsp;';
+    if (states.length === 0) {
+      states = ['all'];
+    }
 
+    let years = app.state.selectedYears;
+    let attrs = app.state.selectedAttributes;
 
-    out = "<p>When you press the button, you will get "
-        + peepsPhrase + partitionPhrase + surveyPhrase
-        + "<p>They will be drawn from the following states: <b>" + states.join('</b>, <b>') +
-        "</b>, and the following years: <b>" + app.state.selectedYears.join('</b>, <b>')
-        + "</b>.</p>"
-        + "<p>The variables you will get are: "
-        + "<b>" + app.state.selectedAttributes.join("</b>, <b>") + "</b>.</p>";
+    let attrCountEl = document.querySelector('#attribute-section .wx-selection-count');
+    let attrListEl = document.querySelector('#attribute-section .wx-user-selection');
+    let statesCountEl = document.querySelector('#states-section .wx-selection-count');
+    let statesListEl = document.querySelector('#states-section .wx-user-selection');
+    let yearsCountEl = document.querySelector('#years-section .wx-selection-count');
+    let yearsListEl = document.querySelector('#years-section .wx-user-selection');
 
-    document.getElementById("sampleSummaryDiv").innerHTML = out;
+    if (attrCountEl && attrs) attrCountEl.innerHTML = attrs.length;
+    if (attrListEl && attrs) attrListEl.innerHTML = makeList(attrs);
+    if (statesCountEl && states) statesCountEl.innerHTML = statesLength;
+    if (statesListEl && states) statesListEl.innerHTML = makeList(states);
+    if (yearsCountEl && years) yearsCountEl.innerHTML = years.length;
+    if (yearsListEl && years) yearsListEl.innerHTML = makeList(years);
+    let subsectionCountEls = document.querySelectorAll(
+        '#chooseAttributeDiv .wx-selection-count');
+    function findAncestorElementWithClass(el, myClass) {
+      while (el !== null && el.parentElement !== el) {
+        if (el.classList.contains(myClass)) {
+          return el;
+        }
+        el = el.parentElement;
+      }
+    }
+
+    subsectionCountEls.forEach(function (el) {
+      let parentEl = findAncestorElementWithClass(el, 'wx-dropdown');
+      let checkedEls = parentEl.querySelectorAll('.select-item:checked');
+      el.innerHTML = checkedEls.length;
+    });
   }
 };
