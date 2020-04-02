@@ -69,7 +69,7 @@ arbor.newCases = {
                     tCompoundRequest.push(tOneRequest);
                 });
 
-                console.log('Issuing compound request to get ' + tCompoundRequest.length + ' cases by ID');
+                console.log('Issuing compound request to get ' + tCompoundRequest.length + ' cases by case ID');
                 return codapInterface.sendRequest(tCompoundRequest);
             };
 
@@ -147,7 +147,7 @@ arbor.newCases = {
 
                 if (tCompoundRequest.length > 0) {
                     console.log("Sending a compound request to update " + tCompoundRequest.length + " cases");
-                    return codapInterface.sendRequest(tCompoundRequest);
+                    return codapInterface.sendRequest(tCompoundRequest); // todo: await??
                 } else {
                     console.log("Not sending any requests to update these cases.");
                 }

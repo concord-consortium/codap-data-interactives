@@ -31,7 +31,6 @@ limitations under the License.
 <!--
 Global: IMPORT THIS:
 https://codap.xyz/baum/baum.html
-https://www.eeps.com/codap/arbor/arbor.html
 
 Local MAMP/concord version: http://localhost:8888/codap-data-interactives/data-science-worlds/arbor/arbor.html
 
@@ -81,29 +80,29 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
     <!--
         Models and Controllers
     -->
-    <script src="arbor.js" ></script>
-    <script src="arbor-ui.js" ></script>
-    <script src="arborCODAPConnector.js" ></script>
-    <script src="arbor.selectionManager.js" ></script>
-    <script src="focusSplitMgr.js" ></script>
-    <script src="arbor.newCases.js" ></script>
-    <script src="AttInTree.js" ></script>
-    <script src="Analysis.js" ></script>
-    <script src="ArborTree.js" ></script>
-    <script src="ArborNode.js" ></script>
-    <script src="AttributeSplit.js" ></script>
+    <script src="arbor.js"></script>
+    <script src="arbor-ui.js"></script>
+    <script src="arborCODAPConnector.js"></script>
+    <script src="arbor.selectionManager.js"></script>
+    <script src="focusSplitMgr.js"></script>
+    <script src="arbor.newCases.js"></script>
+    <script src="AttInTree.js"></script>
+    <script src="Analysis.js"></script>
+    <script src="ArborTree.js"></script>
+    <script src="ArborNode.js"></script>
+    <script src="AttributeSplit.js"></script>
 
     <!--
         Views
     -->
-    <script src="views/Stripe.js" ></script>
-    <script src="views/Leaf.js" ></script>
-    <script src="views/CorralView.js" ></script>
-    <script src="views/TreePanelView.js" ></script>
-    <script src="views/NodeZoneView.js" ></script>
-    <script src="views/NodeBoxView.js" ></script>
-    <script src="views/CorralAttView.js" ></script>
-    <script src="views/DiagnosisView.js" ></script>
+    <script src="views/Stripe.js"></script>
+    <script src="views/Leaf.js"></script>
+    <script src="views/CorralView.js"></script>
+    <script src="views/TreePanelView.js"></script>
+    <script src="views/NodeZoneView.js"></script>
+    <script src="views/NodeBoxView.js"></script>
+    <script src="views/CorralAttView.js"></script>
+    <script src="views/DiagnosisView.js"></script>
 
     <!--
         Set up JQUERY-UI stuff
@@ -142,7 +141,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             <div id="PU" class="no-pred">44</div>
             <div id="NU" class="no-pred">66</div>
         </div>
-        <div class="hBox" style = "padding-top : 2em;">
+        <div class="hBox" style="padding-top : 2em;">
             <div>
                 <button onclick="arbor.refreshBaum('all')">refresh everything</button>
                 <button onclick="arbor.refreshBaum('data')">refresh data</button>
@@ -190,7 +189,8 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
             <div class="attributeConfigurationHead">
                 Configure "<span id="splitVariableName"></span>"
-                <button class="attributeConfigurationDoneButton" onclick="focusSplitMgr.showHideAttributeConfigurationSection()">
+                <button class="attributeConfigurationDoneButton"
+                        onclick="focusSplitMgr.showHideAttributeConfigurationSection()">
                     Done!
                 </button>
 
@@ -252,7 +252,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
                 </select>
                 &nbsp;&nbsp;
                 <label for="swapImage">Swap left and right: </label>
-                <img id="swapImage" onclick="focusSplitMgr.swapFocusSplit()" src="art/left-right.png" width="18" />
+                <img id="swapImage" onclick="focusSplitMgr.swapFocusSplit()" src="art/left-right.png" width="18"/>
             </div>
 
         </div>
@@ -261,14 +261,14 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
 
     <div id="settings">
-         <div class="baumControlGroup">
-           <!-- <p>Laura Martignon probably doesn't want you to use this. But Frieda Reichsman does.</p> -->
+        <div class="baumControlGroup">
+            <!-- <p>Laura Martignon probably doesn't want you to use this. But Frieda Reichsman does.</p> -->
             <input id="usePercentOption" type="checkbox" checked>
             <label for="usePercentOption">use percentages in node boxes</label>
 
         </div>
         <div class="baumControlGroup">
-           <!-- <p>If you are Joachim Engel, you might want to change this to "regression."</p> -->
+            <!-- <p>If you are Joachim Engel, you might want to change this to "regression."</p> -->
             <label for="treeTypeMenu">Tree type</label>
             <select id="treeTypeMenu" onchange="arbor.changeTreeTypeUsingMenu();">
                 <option value="classification" selected>classification</option>
@@ -280,19 +280,19 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
             <label for="dataContextMenu">Dataset: </label>
             <select id="dataContextMenu" onchange="arbor.changeDataContext();"></select>
-<!--
-            <label for="collectionMenu">Collection: </label>
-            <select id="collectionMenu" onchange="arbor.changeCollection();"></select>
--->
+            <!--
+                        <label for="collectionMenu">Collection: </label>
+                        <select id="collectionMenu" onchange="arbor.changeCollection();"></select>
+            -->
         </div>
         <div class="baumControlGroup">
             Credits! Gear icon made by <a href="https://www.flaticon.com/authors/tutsplus" title="TutsPlus">TutsPlus</a>
             from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
             is licensed (<a href="http://creativecommons.org/licenses/by/3.0/"
-                              title="Creative Commons BY 3.0" target="_blank">CC 3.0</a>) by eeps media
+                            title="Creative Commons BY 3.0" target="_blank">CC 3.0</a>) by eeps media
             <br><br>
             Thanks to many people, including Joachim Engel, Laura Martignon, Bill Finzer, Joan Heller, Frieda Reichsman,
-            Suzanne Podworny, Thomas Wassong, and
+            Suzanne Podworny, Thomas Wassong, Rob Gould, Iddo Gal, and
             Michael Schlichtig.
         </div>
     </div>
@@ -303,7 +303,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         <p>This CODAP plug-in lets you make decision or prediction trees based on the data in the document. Here are the
             basics:</p>
         <ul>
-            <li>Drag a variable from the bottom "variable palette" to a node to make a branch. YOU WILL NOT SEE IT DRAG.
+            <li>Drag a variable from the bottom "variable palette" to a node to make a branch. YOU MAY NOT SEE IT DRAG.
                 That's OK.
             </li>
             <li>Click the <b>Show prediction leaves</b> box to assign predictions to your tree.</li>
@@ -314,6 +314,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
                 <i>children</i> of a node.
             </li>
             <li>Double-click a variable in the bottom palette to make it the "dependent variable."</li>
+            <li>Click the <b>table</b> tab to show the traditional 2x2 classification matrix.</li>
         </ul>
         <h2>More details:</h2>
 
@@ -335,7 +336,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         <p>
             After any question, we can decide to stop and choose a prediction (or <i>diagnosis</i>).
             We will say that our diagnosis is positive (that we think you have Fbola) or negative.
-            The positive and negative diagnoses have black and green blocks.
+            The positive and negative diagnoses have brown and green blocks.
         </p>
         <p>
             Of course, we will not be right every time. There are four possibilities:
@@ -364,7 +365,8 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         </p>
         <p>
             As you will see, every node is either a "branching" node (where you ask a question) or
-            a "terminal" node (where you give a diagnosis or prediction). You can think of the terminal nodes as leaves on the tree.
+            a "terminal" node (where you give a diagnosis or prediction). You can think of the terminal nodes as leaves
+            on the tree.
             They are labeled + or –. (At the beginning, they start out labeled (?).)
         </p>
         <p>
@@ -388,7 +390,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
 
         <h3>Positive and Negative Outcomes</h3>
         <p>Whenever you add an attribute (a variable) to the tree, you make two branches.
-            One will have a "leaf" labeled "plus," the other will be "minus."
+            If you are showing the leaves, they are labeled + or – (or ?).
             The "+"s represent a "positive" choice, even if it's a negative occurrence.
             For example, a positive test for a disease may not be what you want,
             but it leads you to suspect that you actually have the disease.
@@ -407,6 +409,7 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             Click the <img height="14" width="14" src="art/configure.png"> button in a branching node
             to make its variable's configuration appear.
         </p>
+        <p>To configure the dependent variable, click on it in the "corral" below the tree.</p>
         <p>
             Each variable has a "left" and a "right" value.
             In general, try to put the more
@@ -426,11 +429,11 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
                 click the buttons to move them from left to right or vice versa.
             </li>
         </ul>
-       <!-- <p>
-            Don't forget that you can also configure your dependent variable!
-            To configure the dependent variable, click one of the "terminal" nodes ---
-            they do not have variables assigned.
-        </p> -->
+        <!-- <p>
+             Don't forget that you can also configure your dependent variable!
+             To configure the dependent variable, click one of the "terminal" nodes ---
+             they do not have variables assigned.
+         </p> -->
         <h3>Two Tree Types</h3>
         <p>
             In the <b>settings</b> tab, you will find a menu that lets you select between
@@ -456,6 +459,9 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
             Clicking on a node selects all of the corresponding cases in CODAP.
         </p>
         <p>
+            Clicking on a single case in the CODAP data table highlights the "path" to its terminal node.
+        </p>
+        <p>
             Pressing <strong>emit data</strong> sends information on the current tree
             to a separate dataset, called either <strong>Classification Tree Records</strong>
             or <strong>Regression Tree Records</strong>, depending on the type of tree you're making.
@@ -464,9 +470,6 @@ https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS use
         <p>
             Clicking on one of the records in one of those tables restores the table
             to what it was when you created that record.
-        </p>
-        <p>
-            Clicking on a single case in the CODAP data table highlights the "path" to its terminal node.
         </p>
     </div>
 </div>

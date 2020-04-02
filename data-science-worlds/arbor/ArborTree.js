@@ -106,8 +106,9 @@ Tree.prototype.resultString = function () {
     var tRes = this.rootNode.getResultCounts();
     if (tRes.sampleSize > 0) {
         tClassificationSummary = "TP = " + tRes.TP + ", TN = " + tRes.TN + ", FP = " + tRes.FP + ", FN = " + tRes.FN;
-        if (tRes.undiagDenominator) {}
-            tClassificationSummary += " | no prediction: " + (tRes.PU + tRes.NU) ;
+        if (tRes.undiagDenominator) {
+            tClassificationSummary += " | no prediction: " + (tRes.PU + tRes.NU);
+        }
         tRegressionSummary = arbor.constants.kSigma + "(SSD) = " + tRes.sumOfSquaresOfDeviationsOfLeaves.toFixed(3);
     } else {
         tClassificationSummary = "no cases to process";

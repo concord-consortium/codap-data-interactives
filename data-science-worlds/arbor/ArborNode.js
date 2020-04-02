@@ -394,7 +394,8 @@ Node.prototype.getResultCounts = function () {
         })
     }
 
-    tOut.TP = tOut.plusNumerator;
+//  todo: check whether this is backwards!
+tOut.TP = tOut.plusNumerator;
     tOut.FP = tOut.plusDenominator - tOut.plusNumerator;
     tOut.FN = tOut.minusNumerator;
     tOut.TN = tOut.minusDenominator - tOut.minusNumerator;

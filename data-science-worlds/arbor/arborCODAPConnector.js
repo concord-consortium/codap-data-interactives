@@ -42,9 +42,7 @@ arbor.codapConnector = {
                 "dataContext": arbor.constants.kRegressTreeDataSetName
             }
         })
-
     }
-
 };
 
 

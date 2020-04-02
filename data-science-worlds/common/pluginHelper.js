@@ -74,7 +74,8 @@ var pluginHelper = {
      * Notes: (1) this refers only to the data context, not to any collections. Right? Has to.
      * (2) notice how the values array does not have a "values" key inside it as with createCases.
      *
-     * @param iValuesArray  the array (or not) of objects, each of which will be an item. The keys are attribute names.
+     * @param iValuesArray  the array (or not) of objects, each of which will be an item.
+     *                          The keys are attribute names.
      * @param iDataContextName  the name of the data set (or "data context").
      */
     createItems : function(iValuesArray, iDataContextName, iCallback) {
