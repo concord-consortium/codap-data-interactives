@@ -25,12 +25,18 @@
 
  */
 
+/**
+ * Connector singleton, to isolate connections with CODAP
+ *
+ * Two  -layer hierarchy
+ * GAME
+ * STARS one case per Star, //  subordinate to the bucket
+ *
+ * @type {{gameCaseID: number, bucketCaseID: number, gameNumber: number, bucketNumber: number, gameCollectionName: string, bucketCollectionName: string, stebberCollectionName: string, newGameCase: steb.connector.newGameCase, finishGameCase: steb.connector.finishGameCase, newBucketCase: steb.connector.newBucketCase, doStebberRecord: steb.connector.doStebberRecord, getInitSimObject: steb.connector.getInitSimObject}}
+ */
+
 /* global stella, alert, pluginHelper, console */
 
-/**
- * Singleton connector
- * @type {{starResultsCollectionName: string, starCaseID: number, kPluginConfiguration: {name: string, title: string, version: string, dimensions: {width: number, height: number}}, spectraDataSetName: string, spectraDataSetTitle: string, starResultsDataSetTitle: string, emitSpectrum: stella.connector.emitSpectrum, starResultsDataSetName: string, photometryDataSetTitle: string, catalogDataSetTitle: string, photometryTargetCollectionName: string, selectStarInCODAP: stella.connector.selectStarInCODAP, catalogDataSetName: string, spectrumChannelCollectionName: string, photometryDataSetName: string, getInitSpectraDataSetObject: (function(): {collections: *[], name: string, description: string, title: string}), emitStarResult: stella.connector.emitStarResult, getInitStarCatalogDataSetObject: (function(): {collections: {parent: null, name: string, labels: {singleCase: string, setOfCasesWithArticle: string, pluralCase: string}, attrs: *[]}[], name: string, description: string, title: string}), emitStarCatalogRecord: stella.connector.emitStarCatalogRecord, getStarResultsDataSetObject: (function(): {collections: {parent: null, name: string, labels: {singleCase: string, setOfCasesWithArticle: string, pluralCase: string}, attrs: *[]}[], name: string, description: string, title: string}), spectrumCaseID: number, catalogCollectionName: string, emitPhotometry: stella.connector.emitPhotometry, getPhotometryDataSetObject: (function(): {collections: *[], name: string, description: string, title: string}), spectraCollectionName: string, photometryChannelCollectionName: string}}
- */
 stella.connector = {
     starCaseID: 0,
     spectrumCaseID: 0,
@@ -165,6 +171,20 @@ stella.connector = {
             }
         );
 
+    },
+
+    getSelectionListFromCODAP : async function(iDataSetName) {
+        const tMessage = {
+            action : "get",
+            resource : `dataContext[${iDataSetName}].selectionList`,
+        };
+
+        const selectionResult = await codapInterface.sendRequest(tMessage);
+        if (selectionResult.success) {
+            return selectionResult.values;
+        } else {
+            return null;
+        }
     },
 
     /**
