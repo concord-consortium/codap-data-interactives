@@ -3,8 +3,8 @@
 # Creates a zip file, "codap-data-interactives-{build-num}.zip" in target
 # containing self-contained versions of each endorsed plugin.
 #
-PROGNAME=$(basename "$0")
-DIRNAME=$(dirname "$0")
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
 HOMEDIR="$DIRNAME/.."
 
 # make sure we are in the root directory of the plugin folder
@@ -13,7 +13,7 @@ cd "$HOMEDIR" || exit
 # Set env
 TARGET="$PWD/target" # Where to put zip.
 WORKING="$TARGET/build"
-BUILD_NUM=$(cat lib/build-num.txt)
+BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
@@ -34,9 +34,7 @@ function makeIndexJSON() {
     [ "$tmp" != "" ] && tmp="$tmp,"
     tmp="$tmp\"/$t\""
   done
-  # shellcheck disable=SC2002
-  # shellcheck disable=SC2016
-  cat "$PLUGIN_MAP_FILE" | $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
+  cat $PLUGIN_MAP_FILE | $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
 }
 
 function echoPlugins() {
@@ -48,8 +46,8 @@ function echoPlugins() {
 
 function buildPlugins() {
   for plugin in "$@"; do
-    echo Building "$plugin"
-    ( cd "$plugin" && npm run clean && npm run build && cp -r target "$BUILD_DIR/$plugin" )
+    echo Building $plugin
+    ( cd $plugin && npm run clean && npm run build && cp -r target "$BUILD_DIR/$plugin" )
   done
 }
 
@@ -58,29 +56,28 @@ function copyStaticPlugins() {
 }
 
 function usage() {
-  echo usage "$PROGNAME" 1>&2
+  echo usage $PROGNAME 1>&2
 }
 
 function error() {
-  echo "${PROGNAME}": error - "$@" 1>&2
+  echo ${PROGNAME}: error - "$@" 1>&2
   exit 1
 }
 
 # check for needed programs
-hash $JSON_PARSER || error "Please install $JSON_PARSER."
+which -s $JSON_PARSER || error "Please install $JSON_PARSER."
 
 mkdir -p "$TARGET"
 mkdir -p "$BUILD_DIR"
 rm -rf "$WORKING"
 mkdir -p "$WORKING/plugins"
 echo "Build: $BUILD_NUM"
-echoPlugins "$ALL_DIRS"
+echoPlugins $ALL_DIRS
 copyStaticPlugins $COPIED_DIRS
 buildPlugins $BUILT_PLUGIN_DIRS
-makeIndexJSON "$STATIC_PLUGIN_DIRS"
+makeIndexJSON $STATIC_PLUGIN_DIRS
 cp "$PUBLISHED_PLUGIN_MAP_FILE" "$BUILD_DIR"
 
- # shellcheck disable=SC2164
  ( cd "$WORKING" ; zip -rq "$TARGET/$ZIP_FILENAME" plugins )
 #rm $BUILD_DIR
 #rm $PUBLISHED_PLUGIN_MAP_FILE
