@@ -44,8 +44,9 @@ var noaaNCEIConnect = {
 
     doGetHandler: async function (ev) {
         function composeURL () {
-            const startDate = noaaNCEIConnect.state.startDate;
-            const endDate = noaaNCEIConnect.state.endDate;
+            const format = 'YYYY-MM-DD';
+            const startDate = new dayjs(noaaNCEIConnect.state.startDate).format(format);
+            const endDate = new dayjs(noaaNCEIConnect.state.endDate).format(format);
             if (new Date(startDate) <= new Date(endDate)) {
                 // const typeNames = noaaNCEIConnect.getSelectedDataTypes().map(function (dataType) {
                 //     return dataType.name;

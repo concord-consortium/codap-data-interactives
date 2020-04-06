@@ -44,8 +44,9 @@ var noaaCDOConnect = {
 
     doGetHandler: async function (ev) {
         function composeURL () {
-            const startDate = noaaCDOConnect.state.startDate;
-            const endDate = noaaCDOConnect.state.endDate;
+            const format = 'YYYY-MM-DD';
+            const startDate = new dayjs(noaaCDOConnect.state.startDate).format(format);
+            const endDate = new dayjs(noaaCDOConnect.state.endDate).format(format);
             if (new Date(startDate) <= new Date(endDate)) {
                 const typeNames = noaaCDOConnect.getSelectedDataTypes().map(function (dataType) {
                     return dataType.name;

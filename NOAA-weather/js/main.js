@@ -92,9 +92,9 @@ async function initialize() {
 
 function initializeState(state) {
   const today = dayjs();
-  const monthAgo = today.subtract(1, 'month');
-  state.startDate = state.startDate || monthAgo.format('YYYY-MM-DD');
-  state.endDate = state.endDate || today.format('YYYY-MM-DD');
+  const monthAgo = today.subtract(1, 'month').toDate();
+  state.startDate = state.startDate || monthAgo;
+  state.endDate = state.endDate || today.toDate();
   state.database = state.database || 'daily-summaries';
   state.sampleFrequency = constants.reportTypeMap[state.database];
 
@@ -197,22 +197,13 @@ function dataTypeSelectionHandler(ev) {
 }
 
 /**
- * Either values will have a {drsStartDate, drsEndDate} combination or
- * {drsEndDate, drsDuration} with duration interpreted as months. We create
- * state.startDate and state.endDate as strings in YYYY-MM-DD format.
- * @param values {{drsStartDate,drsEndDate,drsDuration}}
+ * Values will have a {startDate, endDate} combination. We create
+ * state.startDate and state.endDate and update the view.
+ * @param values {{startDate,endDate}}
  */
 function dateRangeSubmitHandler(values) {
-  function asString(d) {
-    return (typeof d === 'string')? d: new dayjs(d).format('YYYY-MM-DD');
-  }
-  if (values.drsDuration) {
-    state.endDate = asString(values.drsEndDate);
-    state.startDate = new dayjs(state.endDate).subtract(values.drsDuration, 'month').format('YYYY-MM-DD');
-  } else {
-    state.startDate = asString(values.drsStartDate);
-    state.endDate = asString(values.drsEndDate) || asString(values.drsStartDate);
-  }
+  state.startDate = values.startDate;
+  state.endDate = values.endDate || values.startDate;
   ui.updateView(state);
 }
 

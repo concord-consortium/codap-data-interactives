@@ -130,41 +130,24 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
         </span>
     </div>
     <div id="wx-day-or-month-selector" class="wx-pop-over-placeholder" >
-        <div class="wx-day-selector flatpickr">
-            <input type="text" placeholder="Select Date.." data-input>
-            <span class="wx-calendar-button"></span>
-        </div>
         <div id="wx-date-range-selection-dialog" class="wx-pop-over">
             <div class="wx-pop-over-anchor">
                 <div id="wx-date-range"></div>
                 <span class="wx-calendar-button"></span>
             </div>
             <div class="wx-pop-over-body">
-<!--                <div>-->
-<!--                    <label>-->
-<!--                        <input type="radio" name="date-range-mode" value="duration-dialog" checked />-->
-<!--                        Set range by duration-->
-<!--                    </label>-->
-<!--                </div>-->
-                <div id="wx-date-range-form">
+                <div class="wx-day-range-selector">
+                    <div id="wx-calendar-from" ></div>
+                    <div id="wx-calendar-to" ></div>
+                </div>
+                <div id="wx-month-range-selector">
                     <label>The
                     <input type="number" id="wx-drs-duration" min="1" />
                     <span id="wx-time-unit">days</span>
                     preceding
                     <input type="date" id="wx-drs-end-date" value=""/>
                     </label>
-    <!--                <select><option>days</option><option>months</option></select>-->
                 </div>
-<!--                <div>-->
-<!--                    <label>-->
-<!--                        <input type="radio" name="date-range-mode" value="dual-calendar-dialog" />-->
-<!--                        Set custom range-->
-<!--                    </label>-->
-
-<!--                </div>-->
-<!--                <div  id="wx-double-calendar">-->
-<!--                    double calendar (tbd)-->
-<!--                </div>-->
                 <div class="wx-control-row">
                     <button id="wx-cancel-date-range" class="wx-button">Cancel</button>
                     <button id="wx-set-date-range" class="wx-button">Apply</button>

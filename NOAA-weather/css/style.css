@@ -42,12 +42,14 @@ limitations under the License.
     font-weight: bold;
     font-style: normal;
 }
+
 @font-face {
     font-family: Montserrat;
     src: url("../assets/webfonts/Montserrat-SemiBold.otf");
     font-weight: bold;
     font-style: normal;
 }
+
 @font-face {
     font-family: Montserrat;
     src: url("../assets/webfonts/Montserrat-Regular.otf");
@@ -95,22 +97,23 @@ body {
 }
 
 .wx-hide {
-    display: none;
+    display: none!important;
 }
 
-.wx-day-selector {
-    position: absolute;
+.wx-day-range-selector {
+    /*position: absolute;*/
     display: flex;
     align-items: center;
     justify-content: space-between;
     left: 12px;
     right: 12px;
-    max-height: 32px;
+    /*max-height: 32px;*/
     border: thin solid var(--teal-dark);
     border-radius: 6px;
     background-color: white;
 }
-.wx-day-selector input {
+
+.wx-day-range-selector input {
     height: 32px;
     flex-grow: 10;
     padding: 0 6px;
@@ -118,7 +121,7 @@ body {
     border: none;
 }
 
-.wx-day-selector .wx-calendar-button {
+.wx-day-range-selector .wx-calendar-button {
     flex-grow: 0;
 }
 
@@ -274,7 +277,7 @@ body {
 
 .wx-pop-over.wx-open {
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.25);
-    max-height: 200px;
+    max-height: 400px;
 }
 
 .wx-pop-over.wx-open .wx-pop-over-anchor{
@@ -391,11 +394,11 @@ span#wx-dataset-form {
     flex-shrink: 10;
 }
 
-#wx-date-range-form {
+#wx-month-range-selector {
     padding: 6px;
 }
 
-#wx-date-range-form input[type=number] {
+#wx-month-range-selector input[type=number] {
     width:49px;
 }
 
@@ -436,6 +439,7 @@ span#wx-dataset-form {
 }
 
 .wx-summary.wx-transfer-success .wx-message-area,
+
 .wx-summary.wx-transfer-failure .wx-message-area {
     color: var(--teal-dark);
 }
@@ -481,10 +485,72 @@ span#wx-dataset-form {
     -o-animation: rotating 2s linear infinite;
     animation: rotating 2s linear infinite;
 }
+
 .wx-summary.wx-transfer-success .wx-status-graphic {
     background-image: url('../assets/images/done.png');
 }
+
 .wx-summary.wx-transfer-failure .wx-status-graphic {
     background-image: url('../assets/images/warning.png');
 }
 
+/* calendar */
+.container-calendar {
+    background: #ffffff;
+    padding: 15px;
+    max-width: 475px;
+    margin: 0 auto;
+    overflow: auto;
+    font-family: sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.container-calendar .table-calendar th, .container-calendar .table-calendar td {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+}
+
+
+.button-container-calendar button {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 1px 2px; /*5px 10px;*/
+}
+.table-calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-calendar td, .table-calendar th {
+    padding: 2px;
+    border: 1px solid /*#e2e2e2*/rgba(225,225,225,.25);
+    text-align: center;
+    vertical-align: top;
+}
+
+.date-picker.selected {
+    background-color: rgb(140, 170, 199);
+}
+
+.button-container-calendar {
+    position: relative;
+    margin-bottom: 1em;
+    overflow: hidden;
+    clear: both;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer-container-calendar select {
+    cursor: pointer;
+    display: inline-block;
+    zoom: 1;
+    background: #ffffff;
+    color: #585858;
+    border: 1px solid #bfc5c5;
+    border-radius: 3px;
+    padding: 5px 1em;
+}
