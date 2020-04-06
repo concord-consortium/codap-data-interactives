@@ -26,14 +26,11 @@ limitations under the License.
 
 */
 
-/*global flatpickr */
 import {dataTypes} from "./noaaDataTypes.js";
 import {Calendar} from "./calendar.js";
-// import * as flatpickr from "./flatpickr.js";
 
 let eventHandlers = null
 let calendars = {};
-// let flatpickrInstance = null;
 
 /**
  *
