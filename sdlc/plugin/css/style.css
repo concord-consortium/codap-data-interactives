@@ -234,7 +234,7 @@ body .ui-tabs .ui-tabs-panel {
 .wx-section-header-line {
   display: flex;
   align-items: end;
-  justify-content: stretch;
+  justify-content: flex-end;
   margin: 6px 0;
 }
 
@@ -572,6 +572,5 @@ input[type=checkbox]:checked {
   font-size: 12px;
   color: var(--teal-dark);
   flex-grow: 10;
-  text-align: right;
   padding: 0 6px;
 }
