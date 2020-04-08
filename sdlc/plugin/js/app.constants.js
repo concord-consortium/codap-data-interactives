@@ -18,7 +18,7 @@
 /* global app */
 
 app.constants = {
-  version: "v0003",
+  version: "v0004",
 
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
@@ -30,6 +30,6 @@ app.constants = {
     concord: "https://codap.concord.org/sdlc/service/acs.php"
   },
 
-  kMinCases: 1,
+  kMinCases: 0,
   kMaxCases: 1000
 };

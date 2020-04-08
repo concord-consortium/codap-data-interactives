@@ -31,21 +31,24 @@
   src: url("../assets/webfonts/Montserrat-Bold.otf") format("opentype"),
       url("../assets/webfonts/Montserrat-Bold.ttf") format("truetype"),
       url("../assets/webfonts/Montserrat-Bold.svg") format("svg");
-  font-weight: bold;
-  font-style: normal;
+  font-weight: 700;
 }
 @font-face {
   font-family: Montserrat;
   src: url("../assets/webfonts/Montserrat-SemiBold.otf") format("opentype");
-  font-style: normal;
+  font-weight: 600;
+}
+@font-face {
+  font-family: Montserrat;
+  src: url("../assets/webfonts/Montserrat-Medium.otf") format("opentype");
+  font-weight: 500;
 }
 @font-face {
   font-family: Montserrat;
   src: url("../assets/webfonts/Montserrat-Regular.otf") format("opentype"),
       url("../assets/webfonts/Montserrat-Regular.ttf") format("truetype"),
       url("../assets/webfonts/Montserrat-Regular.svg") format("svg");
-  font-weight: normal;
-  font-style: normal;
+  font-weight: 400;
 }
 
 body {
@@ -60,8 +63,8 @@ body {
   color: var(--text);
   background-color: white;
   padding: 8px 12px;
-  position: relative;
-  /*height: 100vh;*/
+  height: 98vh;
+  position: absolute;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -112,8 +115,9 @@ body {
 /*  color: red;*/
 /*}*/
 #getCasesButton {
-  font-family: 'Rokkitt',sans-serif;font-size: 16px;
-  font-weight: 300;
+  font-family: 'Montserrat',sans-serif;
+  font-size: 12px;
+  font-weight: 500;
   flex-shrink: 0;
 }
 
@@ -155,7 +159,7 @@ body {
 }
 
 .attNameBold {
-  font-weight: bold;
+  font-weight: 500;
   /*color : #004;*/
 }
 
@@ -230,13 +234,14 @@ body .ui-tabs .ui-tabs-panel {
 .wx-section-header-line {
   display: flex;
   align-items: end;
-  justify-content: space-between;
+  justify-content: stretch;
   margin: 6px 0;
 }
 
 .wx-section-title {
   min-width: 102px;
   font-weight: 600;
+  flex-basis: 150px;
 }
 
 .wx-dropdown .wx-dropdown-body {
@@ -260,6 +265,9 @@ body .ui-tabs .ui-tabs-panel {
   width: 20px;
   height: 20px;
   background-image: url('../assets/images/arrow-drop-down.png');
+  flex-basis: 20px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .wx-dropdown.wx-down .wx-dropdown-indicator {
@@ -416,19 +424,23 @@ label.property-label {
 input[type=number] {
   border-radius: 3px;
   border: solid 1px var(--teal-dark-75);
+  padding: 3px 3px 3px 6px;
 }
 
 .wx-scroll-area {
   /*border-top: thin solid var(--teal-light);*/
   border-bottom: thin solid var(--teal-light);
   flex-basis: 300px;
+  flex-grow: 10;
   overflow-y: scroll;
   margin-top: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 0;
 }
 
 #wx-summary-section {
   flex-basis: 56px;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 #wx-summary-section .summary-options{
@@ -437,11 +449,16 @@ input[type=number] {
 
 #intro-section {
   flex-basis: 47px;
+  flex-grow: 0;
+  flex-shrink: 10;
   border-bottom: thin solid var(--text);
 }
 
 #fixed-height-section {
-  flex-basis: 32px;
+  padding: 6px 0;
+  flex-basis: 24px;
+  flex-grow: 0;
+  flex-shrink: 1;
   border-bottom: thin solid var(--teal-light);
 }
 
@@ -546,12 +563,15 @@ input[type=checkbox]:checked {
   padding: 1.5px 5px;
   border-radius: 3px;
   background-color: var(--teal-light-25);
+  flex-basis: 16px;
+  flex-grow: 0;
 }
 
 .wx-user-selection {
   font-family: Montserrat, sans-serif;
   font-size: 12px;
   color: var(--teal-dark);
-  max-width: 164px;
   flex-grow: 10;
+  text-align: right;
+  padding: 0 6px;
 }

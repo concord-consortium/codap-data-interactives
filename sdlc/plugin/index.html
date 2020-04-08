@@ -139,12 +139,11 @@
     </div>
   </div>
 
-  <hr class="wx-fixed-section-divider"/>
+<!--  <hr class="wx-fixed-section-divider"/>-->
 
   <div id="fixed-height-section">
     <label class="property-label">Number of people:&nbsp;
-    <input id="sampleSizeInput" type="number" value="1000" min="0" max="1000"
-         onchange="app.userActions.updateRequestedSampleSize('Sample size change.')"
+    <input id="sampleSizeInput" type="number" value="100" min="0" max="1000"
            step="50">
     </label>
   </div>
@@ -216,10 +215,11 @@
     <div class="wx-section-header-line wx-summary">
       <span class="wx-status-graphic"></span>
       <span id="status" class="wx-message-area"></span>
-      <button id="getCasesButton" onclick="app.userActions.pressGetCasesButton()">Get People</button>
+      <button id="getCasesButton">Get People</button>
     </div>
     <div class="summary-options">
-      <label>Keep existing data <input id="keepExistingDataCheckbox" type="checkbox" onchange="app.userActions.getKeepExistingDataOption()" />
+      <label>
+        Keep existing data <input id="keepExistingDataCheckbox" type="checkbox" />
       </label>
     </div>
   </div>

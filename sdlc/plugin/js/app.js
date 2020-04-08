@@ -155,7 +155,7 @@ let app = {
       app.allAttributes[tA.title] = tA;
     });
 
-    $("#chooseAttributeDiv").html(app.ui.makeBasicCheckboxesHTML());
+    $("#chooseAttributeDiv").html(app.ui.makeAttributeListHTML());
   }
 
 };
