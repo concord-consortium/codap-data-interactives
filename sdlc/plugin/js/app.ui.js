@@ -28,6 +28,8 @@ app.ui = (function () {
   }
 
   return {
+    initialized: false,
+
     init: function () {
       function setEventHandler (selector, event, handler) {
         const elements = document.querySelectorAll(selector);
@@ -68,7 +70,7 @@ app.ui = (function () {
       setEventHandler('#keepExistingDataCheckbox', 'change',
           app.userActions.getKeepExistingDataOption);
 
-      setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+      setEventHandler('.wx-dropdown-header', 'click', function (ev) {
         let dropdownGroup = findAncestorElementWithClass(this, 'wx-dropdown-group');
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
@@ -100,6 +102,8 @@ app.ui = (function () {
         toggleDescriptions(parentEl);
       });
 
+      this.initialized = true;
+      this.updateWholeUI();
     },
 
     makeStateListHTML: function () {
@@ -186,6 +190,7 @@ app.ui = (function () {
     },
 
     updateWholeUI: function () {
+      if (!this.initialized) return;
       app.ui.refreshAttributeCheckboxes();
       app.ui.refreshStateCheckboxes();
       app.ui.refreshYearCheckboxes();

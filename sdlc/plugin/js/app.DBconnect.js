@@ -41,7 +41,7 @@ app.DBconnect = {
       } else {
         console.error("sendCommand bad result error: " + theResult.statusText);
         app.addLog('Error response: /status,text/ [' +
-            [theResult.status, theResult.statusText].join + ']');
+            [theResult.status, theResult.statusText].join() + ']');
       }
     } catch (msg) {
       console.log('fetch error in DBconnect.sendCommand(): ' + msg);

@@ -53,7 +53,7 @@ app.CODAPconnect = {
 
     const updateResult = await codapInterface.sendRequest(tMessage);
 
-    app.ui.updateWholeUI();
+    // app.ui.updateWholeUI();
   },
 
   logAction: function (iMessage) {

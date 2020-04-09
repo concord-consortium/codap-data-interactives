@@ -69,7 +69,6 @@ let app = {
     $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
     $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
     $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
-    app.ui.updateWholeUI();
 
     app.ui.init();
 
@@ -156,6 +155,7 @@ let app = {
     });
 
     $("#chooseAttributeDiv").html(app.ui.makeAttributeListHTML());
+    return app.allAttributes;
   }
 
 };

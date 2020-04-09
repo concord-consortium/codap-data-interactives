@@ -56,6 +56,13 @@ body {
   padding: 0;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
 .plugin-content {
   font-family: Montserrat, sans-serif;
   font-size: 12px;
@@ -74,46 +81,10 @@ body {
 
 #summary, #atts, #states, #sampleYears, #about, #log {
   margin : 0;
-  /*height : 320px;*/
-  /*font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;*/
-  /*font-weight: 300;*/
-  /*color : #555;*/
-  /*background: linear-gradient(#eef, #cce );*/
   position: relative;
-  /* max-width: 400px; */
   overflow-y: hidden;
 }
 
-/*.ui-tabs-anchor {*/
-/*  font-family: 'Rokkitt',sans-serif;font-size: 18px;*/
-/*  font-weight: 300;*/
-/*}*/
-
-/*h1 {*/
-/*  font-family: 'Rokkitt',sans-serif;font-size: 22px;*/
-/*  font-weight: 700;*/
-/*  color : #44a;*/
-/*}*/
-
-#pluginHeader {
-    padding-left: 1.4em;
-}
-
-/*#acsMap {*/
-    /*padding-top: 1em;*/
-    /*height : 300px;*/
-    /*width : 100%;*/
-/*}*/
-
-/*#sampleSizeInput {*/
-/*  font-family: 'Rokkitt',sans-serif;font-size: 16px;*/
-/*  font-weight: 700;*/
-/*  width: 3.5em;*/
-/*  align-content: right;*/
-/*}*/
-/*#sampleSizeInput:invalid {*/
-/*  color: red;*/
-/*}*/
 #getCasesButton {
   font-family: 'Montserrat',sans-serif;
   font-size: 12px;
@@ -127,7 +98,6 @@ body {
 }
 
 .attributeCheckboxes {
-  /*padding-left: 1.5em;*/
   padding-bottom: 0.5em;
   width: 100%;
   border-collapse: collapse;
@@ -160,7 +130,6 @@ body {
 
 .attNameBold {
   font-weight: 500;
-  /*color : #004;*/
 }
 
 .oneAttCheckboxPlusLabel {
@@ -188,10 +157,6 @@ body {
 .alt-pressed #chooseSampleYearsDiv:hover .presets-count {
   visibility: visible;
 }
-
-/*.plugin-content {*/
-/*  min-width: 480px;*/
-/*}*/
 
 body .ui-tabs .ui-tabs-panel {
   padding: 0;
@@ -234,7 +199,7 @@ body .ui-tabs .ui-tabs-panel {
 .wx-section-header-line {
   display: flex;
   align-items: end;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin: 6px 0;
 }
 
@@ -270,7 +235,11 @@ body .ui-tabs .ui-tabs-panel {
   flex-shrink: 0;
 }
 
-.wx-dropdown.wx-down .wx-dropdown-indicator {
+.wx-dropdown-header {
+  cursor: pointer;
+}
+
+.wx-dropdown.wx-down>.wx-dropdown-header>.wx-dropdown-indicator {
   transform: rotate(180deg);
 }
 
@@ -312,7 +281,7 @@ body .ui-tabs .ui-tabs-panel {
 }
 
 .wx-pop-up.wx-open .wx-pop-up-content {
-  max-height: 400px;
+  max-height: 1000px;
   border-width: 1px;
 }
 
@@ -352,8 +321,8 @@ body .ui-tabs .ui-tabs-panel {
 */
 .wx-pop-over-placeholder {
   height: 32px;
-  /*width: 362px;*/
 }
+
 .wx-pop-over {
   position: absolute;
   left: 12px;
@@ -406,8 +375,6 @@ body .ui-tabs .ui-tabs-panel {
 .wx-button {
   margin: 6px;
   padding: 6px;
-  /*width: 82px;*/
-  /*height: 32px;*/
   border-radius: 3px;
   border: solid 1px var(--teal-light);
   background-color: white;
@@ -428,7 +395,6 @@ input[type=number] {
 }
 
 .wx-scroll-area {
-  /*border-top: thin solid var(--teal-light);*/
   border-bottom: thin solid var(--teal-light);
   flex-basis: 300px;
   flex-grow: 10;
@@ -483,8 +449,6 @@ input[type=number] {
 button {
   margin: 6px;
   padding: 6px;
-  /*width: 82px;*/
-  /*height: 32px;*/
   border-radius: 3px;
   border: solid 1px var(--teal-light);
   background-color: white;
