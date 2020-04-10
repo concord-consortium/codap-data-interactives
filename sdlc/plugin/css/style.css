@@ -428,7 +428,8 @@ input[type=number] {
   border-bottom: thin solid var(--teal-light);
 }
 
-.wx-summary.wx-transfer-in-progress button {
+.wx-summary.wx-transfer-in-progress button,
+.wx-summary.wx-transfer-in-progress button:hover {
   background-color: var(--teal-light-25);
 }
 
