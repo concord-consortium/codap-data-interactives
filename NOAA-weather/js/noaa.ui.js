@@ -124,8 +124,8 @@ function findAncestorElementWithClass(el, myClass) {
 function renderCalendars(fromDate, toDate) {
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
-    calendars.from = new Calendar(lc, fromDate);
-    calendars.to = new Calendar(rc, toDate);
+    calendars.from = new Calendar(lc, fromDate, 'From Date');
+    calendars.to = new Calendar(rc, toDate, 'To Date');
 }
 
 function togglePopOver(el) {

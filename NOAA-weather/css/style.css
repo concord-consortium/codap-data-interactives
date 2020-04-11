@@ -107,9 +107,6 @@ body {
     justify-content: space-between;
     left: 12px;
     right: 12px;
-    /*max-height: 32px;*/
-    border: thin solid var(--teal-dark);
-    border-radius: 6px;
     background-color: white;
 }
 
@@ -282,6 +279,7 @@ body {
 .wx-pop-over.wx-open {
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.25);
     max-height: 400px;
+    z-index: 20;
 }
 
 .wx-pop-over.wx-open .wx-pop-over-anchor{
@@ -290,7 +288,7 @@ body {
 }
 
 .wx-pop-over.wx-open .wx-pop-over-body {
-    max-height: 300px;
+    max-height: 600px;
 }
 
 /* selected types */
@@ -514,7 +512,9 @@ span#wx-dataset-form {
     font-family: Montserrat, sans-serif;
     font-size: 12px;
 }
-
+.wx-calendar-title {
+    text-align: center;
+}
 
 .button-container-calendar button {
     cursor: pointer;

@@ -1,61 +1,77 @@
-/**
- * Utility to generate options for year selector
- * @param start
- * @param end
- * @return {string}
- */
-function generate_year_range(start, end) {
-  let years = "";
-  for (let year = start; year <= end; year++) {
-    years += "<option value='" + year + "'>" + year + "</option>";
-  }
-  return years;
-}
-
 function daysInMonth(iMonth, iYear) {
   return 32 - new Date(iYear, iMonth, 32).getDate();
 }
 
-function renderCalendarFrame(attactmentEl) {
-  attactmentEl.innerHTML = '<div class="button-container-calendar">\n' +
-      '<button class="previous-button">&#8249;</button>\n' +
-      '    <div class="footer-container-calendar">\n' +
-      '      <select class="month-select" >\n' +
-      '        <option value=0>Jan</option>\n' +
-      '        <option value=1>Feb</option>\n' +
-      '        <option value=2>Mar</option>\n' +
-      '        <option value=3>Apr</option>\n' +
-      '        <option value=4>May</option>\n' +
-      '        <option value=5>Jun</option>\n' +
-      '        <option value=6>Jul</option>\n' +
-      '        <option value=7>Aug</option>\n' +
-      '        <option value=8>Sep</option>\n' +
-      '        <option value=9>Oct</option>\n' +
-      '        <option value=10>Nov</option>\n' +
-      '        <option value=11>Dec</option>\n' +
-      '      </select>\n' +
-      '      <select class="year-select"></select>\n' +
-      '    </div>\n' +
-      '    <button class="next-button">&#8250;</button>\n' +
-      '  </div>\n' +
-      '  <table class="table-calendar" id="calendar" data-lang="en">\n' +
-      '    <thead class="thead-month"></thead>\n' +
-      '    <tbody class="calendar-body"></tbody>\n' +
-      '  </table>\n';
-  attactmentEl.classList.add('container-calendar');
-  let selectYear = attactmentEl.querySelector(".year-select");
-  selectYear.innerHTML = generate_year_range(1970, 2050);
-
-  const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-  let day;
-
-  let dayHeader = "<tr>";
-  for (day = 0; day < days.length; day++) {
-    dayHeader += "<th data-days='" + days[day] + "'>" + days[day] + "</th>";
+function createElement(tag, classList, content) {
+  let el = document.createElement(tag);
+  if (classList) {
+    if (typeof classList === 'string') classList = [classList];
+    classList.forEach( function (cl) {el.classList.add(cl);});
   }
-  dayHeader += "</tr>";
+  if (content) {
+    if (!Array.isArray(content)) { content = [content];}
+    content.forEach(function(c) {
+      if (c instanceof Attr) {
+        el.setAttributeNode(c);
+      } else {
+        el.append(c);
+      }
+    });
+  }
+  return el;
+}
 
-  attactmentEl.querySelector(".thead-month").innerHTML = dayHeader;
+function createAttribute(name, value) {
+  let attr = document.createAttribute(name);
+  attr.value = value;
+  return attr;
+}
+
+
+function renderCalendarFrame(attachmentEl, title) {
+  const monthShortNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+  let yearSelect = new Array(51).fill(0).map(function(x, ix) {
+    return (new Date().getFullYear() - 50 + ix);
+  }).map(function (yr) {
+    return createElement('option', [], String(yr));
+  });
+
+  title = title || 'Calendar';
+
+  let titleRow = createElement('div', ['wx-calendar-title'], title);
+  let buttonRow = createElement('div', 'button-container-calendar', [
+    createElement('button', 'previous-button', '\u2039'),
+    createElement('div', 'footer-container-calendar', [
+      createElement('select', 'month-select', monthShortNames.map(function (msn, ix) {
+        return createElement('option', [], [
+            createAttribute('value', String(ix)),
+            msn
+        ]);
+      })),
+      ' ',
+      createElement('select', 'year-select', yearSelect)
+    ]),
+    createElement('button', 'next-button', '\u203a')
+  ]);
+  let calendarTable = createElement('table', 'table-calendar', [
+      createAttribute('data-lang', 'en'),
+      createElement('thead', 'thead-month', [
+          createElement('tr', [], days.map(function (day, ix) {
+            return createElement('th', [], [
+                createAttribute('data-day', day),
+                String(day)
+            ]);
+          }))
+      ]),
+      createElement('tbody', 'calendar-body')
+  ]);
+  attachmentEl.classList.add('container-calendar');
+  attachmentEl.append(titleRow);
+  attachmentEl.append(buttonRow);
+  attachmentEl.append(calendarTable);
 }
 
 function setSelectedMonthYear(calendarEl, month, year) {
@@ -130,12 +146,12 @@ class Calendar {
     renderMonth(calendarEl, tbl, selectedDate, month, year);
   }
 
-  constructor (calendarEl, selectedDate) {
+  constructor (calendarEl, selectedDate, title) {
     this.calendarEl = calendarEl;
     this.selectedDate = selectedDate;
     let _this = this;
 
-    renderCalendarFrame(calendarEl);
+    renderCalendarFrame(calendarEl, title);
 
     let currentMonth = this.selectedDate.getMonth();
     let currentYear = this.selectedDate.getFullYear();
