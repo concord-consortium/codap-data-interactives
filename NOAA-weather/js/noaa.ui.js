@@ -87,8 +87,9 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('#wx-set-date-range', 'click', function (ev) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
         let dayRangeClause = el.querySelector('.wx-day-range-selector');
+        let isDailyRange = document.querySelector('#wx-daily:checked');
         let values = {};
-        if (dayRangeClause && !dayRangeClause.hidden) {
+        if (dayRangeClause && isDailyRange) {
             values.startDate = calendars.from.selectedDate;
             values.endDate = calendars.to.selectedDate;
             if (values.startDate > values.endDate) {
