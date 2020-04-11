@@ -57,7 +57,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
     setEventHandler('#wx-get-button', 'click', eventHandlers.getData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
-    setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+    setEventHandler('.wx-dropdown-header', 'click', function (ev) {
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
         if (isClosed) {

@@ -173,6 +173,10 @@ body {
     transform: rotate(180deg);
 }
 
+.wx-dropdown-header, .wx-pop-over-anchor {
+    cursor: pointer;
+}
+
 /*
  * pop-up: these elements display above a grayed out main page and are modal
  */
