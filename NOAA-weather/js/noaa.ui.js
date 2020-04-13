@@ -121,11 +121,23 @@ function findAncestorElementWithClass(el, myClass) {
     }
 }
 
+function updateShadedRange() {
+    let d1 = calendars.from.selectedDate;
+    let d2 = calendars.to.selectedDate;
+    let range = {
+        fromDate: Math.min(d1,d2),
+        toDate: Math.max(d1, d2)
+    }
+    calendars.from.shadedDateRange = range;
+    calendars.to.shadedDateRange = range;
+}
+
 function renderCalendars(fromDate, toDate) {
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
-    calendars.from = new Calendar(lc, fromDate, 'From Date');
-    calendars.to = new Calendar(rc, toDate, 'To Date');
+    calendars.from = new Calendar(lc, fromDate, 'From Date', updateShadedRange);
+    calendars.to = new Calendar(rc, toDate, 'To Date', updateShadedRange);
+    updateShadedRange();
 }
 
 function togglePopOver(el) {
@@ -187,6 +199,8 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     durationTimeUnitEl.innerHTML = durationUnit;
     endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
     durationEl.value = duration;
+    calendars.from.selectedDate = startDate;
+    calendars.to.selectedDate = endDate;
 }
 
 function updateDateSelectorView(sampleFrequency) {
