@@ -170,7 +170,7 @@ body {
     transform: rotate(180deg);
 }
 
-.wx-dropdown-header, .wx-pop-over-anchor {
+.wx-dropdown-header, .wx-pop-over-anchor, .wx-info-button, .wx-button {
     cursor: pointer;
 }
 
@@ -535,7 +535,7 @@ span#wx-dataset-form {
 }
 
 .date-picker.selected {
-    background-color: rgb(140, 170, 199);
+    background-color: var(--teal-dark-75);
 }
 
 .button-container-calendar {
@@ -557,4 +557,12 @@ span#wx-dataset-form {
     border: 1px solid #bfc5c5;
     border-radius: 3px;
     padding: 5px 1em;
+}
+
+.date-picker {
+    cursor: pointer;
+}
+
+.cal-shade {
+    background-color: var(--teal-light-25);
 }
