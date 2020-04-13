@@ -26,12 +26,11 @@ limitations under the License.
 
 */
 
-/*global flatpickr */
 import {dataTypes} from "./noaaDataTypes.js";
-// import * as flatpickr from "./flatpickr.js";
+import {Calendar} from "./calendar.js";
 
 let eventHandlers = null
-let flatpickrInstance = null;
+let calendars = {};
 
 /**
  *
@@ -50,6 +49,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     eventHandlers = iEventHandlers;
 
     renderDataTypes(dataTypes);
+    renderCalendars(state.startDate, state.endDate);
     updateView(state);
 
     // const newTypeInput = document.getElementById('newDataType');
@@ -57,7 +57,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
     setEventHandler('#wx-get-button', 'click', eventHandlers.getData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
-    setEventHandler('.wx-dropdown-indicator', 'click', function (ev) {
+    setEventHandler('.wx-dropdown-header', 'click', function (ev) {
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
         if (isClosed) {
@@ -86,42 +86,30 @@ function initialize(state, dataTypes, iEventHandlers) {
 
     setEventHandler('#wx-set-date-range', 'click', function (ev) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
-        let values = {
-            drsEndDate: el.querySelector('#wx-drs-end-date').value,
-            drsDuration: el.querySelector('#wx-drs-duration').value
-        };
+        let dayRangeClause = el.querySelector('.wx-day-range-selector');
+        let isDailyRange = document.querySelector('#wx-daily:checked');
+        let values = {};
+        if (dayRangeClause && isDailyRange) {
+            values.startDate = calendars.from.selectedDate;
+            values.endDate = calendars.to.selectedDate;
+            if (values.startDate > values.endDate) {
+                let t = values.startDate;
+                values.startDate = values.endDate;
+                values.endDate = t;
+            }
+        } else {
+            let endDate = el.querySelector('#wx-drs-end-date').value;
+            let months = parseInt(el.querySelector('#wx-drs-duration').value);
+            values = {
+                startDate: (new dayjs(endDate)).subtract(months, 'month'),
+                endDate: endDate
+            };
+        }
         if (eventHandlers.dateRangeSubmit) {
             eventHandlers.dateRangeSubmit(values);
         }
         togglePopOver(el);
     })
-    function logit(e, o1) {
-        console.log(e, o1);
-    }
-    flatpickrInstance = flatpickr('.wx-day-selector', {
-        maxDate: "today",
-        mode: "range",
-        wrap: true,
-        onChange: function (dates) {
-            let values = {
-                drsStartDate: dates[0],
-                drsEndDate: dates[1],
-            };
-            if (eventHandlers.dateRangeSubmit) {
-                eventHandlers.dateRangeSubmit(values);
-            }
-        },
-        onClose: function (o) { logit('onClose', o);},
-        onOpen: function (o) { logit('onOpen', o);},
-        onReady: function (o) { logit('onReady', o); },
-        onValueUpdate: function (o) { logit('onValueUpdate', o); },
-        onDayCreate: function (o) { logit('onDayCreate', o); },
-        onKeyDown: function (o) { logit('onKeyDown', o); },
-        onDestroy: function (o) { logit('onDestroy', o); },
-        onMonthChange: function (o) { logit('onMonthChange', o); },
-        onPreCalendarPosition: function (o) { logit('onPreCalendarPosition', o); }
-    });
-
 }
 
 function findAncestorElementWithClass(el, myClass) {
@@ -131,6 +119,25 @@ function findAncestorElementWithClass(el, myClass) {
         }
         el = el.parentElement;
     }
+}
+
+function updateShadedRange() {
+    let d1 = calendars.from.selectedDate;
+    let d2 = calendars.to.selectedDate;
+    let range = {
+        fromDate: Math.min(d1,d2),
+        toDate: Math.max(d1, d2)
+    }
+    calendars.from.shadedDateRange = range;
+    calendars.to.shadedDateRange = range;
+}
+
+function renderCalendars(fromDate, toDate) {
+    let lc = document.getElementById('wx-calendar-from');
+    let rc = document.getElementById('wx-calendar-to')
+    calendars.from = new Calendar(lc, fromDate, 'From Date', updateShadedRange);
+    calendars.to = new Calendar(rc, toDate, 'To Date', updateShadedRange);
+    updateShadedRange();
 }
 
 function togglePopOver(el) {
@@ -169,20 +176,13 @@ function updateView(state) {
  * @param sampleFrequency {'daily'|'monthly'}
  */
 function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
-    // let formatStr = (sampleFrequency === 'monthly')?'MMM YYYY':'MM/DD/YYYY';
-    let formatStr = 'MMM YYYY';
+    let formatStr = (sampleFrequency === 'monthly')?'MMM YYYY':'MM/DD/YYYY';
+    // let formatStr = 'MMM YYYY';
     let startStr = dayjs(startDate).format(formatStr);
     let endStr = dayjs(endDate).format(formatStr);
     let el = document.querySelector('#wx-date-range');
     if (el)  {
         el.innerText = `${startStr} to ${endStr}`;
-    }
-    formatStr = 'YYYY-MM-DD';
-    startStr = dayjs(startDate).format(formatStr);
-    endStr = dayjs(endDate).format(formatStr);
-    el = document.querySelector('.wx-day-selector input');
-    if (el)  {
-        el.value = `${startStr} to ${endStr}`;
     }
 }
 
@@ -199,11 +199,13 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     durationTimeUnitEl.innerHTML = durationUnit;
     endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
     durationEl.value = duration;
+    calendars.from.selectedDate = startDate;
+    calendars.to.selectedDate = endDate;
 }
 
 function updateDateSelectorView(sampleFrequency) {
-    let dayRangeSelector = document.querySelector('.wx-day-selector');
-    let monthRangeSelector = document.querySelector('#wx-date-range-selection-dialog');
+    let dayRangeSelector = document.querySelector('.wx-day-range-selector');
+    let monthRangeSelector = document.querySelector('#wx-month-range-selector');
     if (sampleFrequency === 'monthly') {
         monthRangeSelector.classList.remove('wx-hide');
         dayRangeSelector.classList.add('wx-hide');
