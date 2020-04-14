@@ -727,9 +727,10 @@
     {
       "title": "NOAA Weather",
       "description": "Get weather data from selected US weather stations",
-      "width": 400,
-      "height": 600,
-      "path": "/NOAA-weather",
+      "width": 380,
+      "height": 490,
+      "path": "/NOAA-weather/index.html",
+      "icon": "/NOAA-weather/assets/images/weather-x.svg",
       "visible": "true",
       "categories": [
         "Partners"
