@@ -57,10 +57,16 @@ limitations under the License.
     font-style: normal;
 }
 
+/* removes blue halo on Chrome around focussed input */
+*:focus {
+    outline: none;
+}
+
 /* basic */
 body {
     margin: 0;
     padding: 0;
+    overflow-y: hidden;
 }
 
 #content {
@@ -68,11 +74,7 @@ body {
     font-size: 12px;
     font-weight: 500;
     color: var(--text);
-    /*min-height: 100vh;*/
-    /*max-width: 360px;*/
-    /*width: 360px;*/
     height: 100vh;
-    /*border: thin grey solid;*/
     margin: 0;
     padding: 8px 12px;
     position: relative;
@@ -163,7 +165,7 @@ body {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/arrow-drop-down.png');
+    background-image: url('../assets/images/arrow-drop-down.svg');
 }
 
 .wx-dropdown.wx-down .wx-dropdown-indicator {
@@ -257,7 +259,7 @@ body {
     border: thin solid var(--teal-dark);
     border-radius: 6px;
     background-color: white;
-    overflow-y: scroll;
+    overflow-y: hidden;
 
     transition-property: max-height;
     transition-duration: .5s;
@@ -310,14 +312,14 @@ body {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/info.png');
+    background-image: url('../assets/images/info.svg');
 }
 
 .wx-calendar-button {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/date-range.png');
+    background-image: url('../assets/images/date-range.svg');
 }
 
 .wx-button {
@@ -337,7 +339,7 @@ body {
 
 /* inputs */
 input[type=date] {
-    /*width: 102px;*/
+    cursor: pointer;
 }
 
 input[type=radio] {
@@ -346,11 +348,12 @@ input[type=radio] {
     appearance: none;
     width: 17px;
     height: 17px;
-    background-image: url('../assets/images/radio-button-unchecked.png');
+    background-image: url('../assets/images/radio-button-unchecked.svg');
+    cursor: pointer;
 }
 
 input[type=radio]:checked {
-    background-image: url('../assets/images/radio-button-checked.png');
+    background-image: url('../assets/images/radio-button-checked.svg');
 }
 
 input[type=checkbox] {
@@ -359,11 +362,12 @@ input[type=checkbox] {
     appearance: none;
     width: 18px;
     height: 18px;
-    background-image: url('../assets/images/check-box-outline-blank.png');
+    background-image: url('../assets/images/check-box-outline-blank.svg');
+    cursor: pointer;
 }
 
 input[type=checkbox]:checked {
-    background-image: url('../assets/images/check-box.png');
+    background-image: url('../assets/images/check-box.svg');
 }
 
 span#wx-dataset-form {
@@ -481,7 +485,7 @@ span#wx-dataset-form {
 }
 
 .wx-summary.wx-transfer-in-progress  .wx-status-graphic {
-    background-image: url('../assets/images/progress-indicator.png');
+    background-image: url('../assets/images/progress-indicator.svg');
     -webkit-animation: rotating 2s linear infinite;
     -moz-animation: rotating 2s linear infinite;
     -o-animation: rotating 2s linear infinite;
@@ -489,11 +493,11 @@ span#wx-dataset-form {
 }
 
 .wx-summary.wx-transfer-success .wx-status-graphic {
-    background-image: url('../assets/images/done.png');
+    background-image: url('../assets/images/done.svg');
 }
 
 .wx-summary.wx-transfer-failure .wx-status-graphic {
-    background-image: url('../assets/images/warning.png');
+    background-image: url('../assets/images/warning.svg');
 }
 
 /* calendar */
