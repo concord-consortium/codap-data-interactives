@@ -182,7 +182,8 @@ function dataTypeSelectAllHandler(el, ev) {
       setDataType(key, isChecked);
     });
     setDataType('all-datatypes', isChecked);
-    ui.setTransferStatus('inactive', 'selected all attributes');
+    ui.setTransferStatus('inactive',
+        `${isChecked?'': 'un'}selected all attributes`);
   }
 }
 
@@ -191,7 +192,7 @@ function dataTypeSelectionHandler(ev) {
     dataTypeSelectAllHandler(this, ev);
   } else if (this.type === 'checkbox') {
     setDataType(this.id, this.checked);
-    ui.setTransferStatus('inactive', 'selected an attribute');
+    ui.setTransferStatus('inactive', `${this.checked?'': 'un'}selected ${dataTypes[this.id].name}`);
   }
   ui.updateView(state);
 }
