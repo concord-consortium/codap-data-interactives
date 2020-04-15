@@ -54,6 +54,7 @@
 body {
   margin: 0;
   padding: 0;
+  overflow-y: hidden;
 }
 
 input:focus,
@@ -229,7 +230,7 @@ body .ui-tabs .ui-tabs-panel {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-image: url('../assets/images/arrow-drop-down.png');
+  background-image: url('../assets/images/arrow-drop-down.svg');
   flex-basis: 20px;
   flex-grow: 0;
   flex-shrink: 0;
@@ -369,7 +370,7 @@ body .ui-tabs .ui-tabs-panel {
   display: inline-block;
   min-width: 20px;
   height: 20px;
-  background-image: url('../assets/images/info.png');
+  background-image: url('../assets/images/info.svg');
 }
 
 .wx-button {
@@ -411,6 +412,7 @@ input[type=number] {
 
 #wx-summary-section .summary-options{
   text-align: right;
+  padding-bottom: 8px;
 }
 
 #intro-section {
@@ -465,11 +467,11 @@ input[type=radio] {
   appearance: none;
   width: 17px;
   height: 17px;
-  background-image: url('../assets/images/radio-button-unchecked.png');
+  background-image: url('../assets/images/radio-button-unchecked.svg');
 }
 
 input[type=radio]:checked {
-  background-image: url('../assets/images/radio-button-checked.png');
+  background-image: url('../assets/images/radio-button-checked.svg');
 }
 input[type=checkbox] {
   -webkit-appearance: none;
@@ -477,11 +479,11 @@ input[type=checkbox] {
   appearance: none;
   width: 18px;
   height: 18px;
-  background-image: url('../assets/images/check-box-outline-blank.png');
+  background-image: url('../assets/images/check-box-outline-blank.svg');
 }
 
 input[type=checkbox]:checked {
-  background-image: url('../assets/images/check-box.png');
+  background-image: url('../assets/images/check-box.svg');
 }
 
 .wx-status-graphic {
@@ -511,17 +513,17 @@ input[type=checkbox]:checked {
 }
 
 .wx-summary.wx-transfer-in-progress  .wx-status-graphic {
-  background-image: url('../assets/images/progress-indicator.png');
+  background-image: url('../assets/images/progress-indicator.svg');
   -webkit-animation: rotating 2s linear infinite;
   -moz-animation: rotating 2s linear infinite;
   -o-animation: rotating 2s linear infinite;
   animation: rotating 2s linear infinite;
 }
 .wx-summary.wx-transfer-success .wx-status-graphic {
-  background-image: url('../assets/images/done.png');
+  background-image: url('../assets/images/done.svg');
 }
 .wx-summary.wx-transfer-failure .wx-status-graphic {
-  background-image: url('../assets/images/warning.png');
+  background-image: url('../assets/images/warning.svg');
 }
 
 .wx-selection-count {
