@@ -1,7 +1,28 @@
+/**
+ * Calendar.js
+ *
+ * Displays a simple monthly calendar with controls to select other months and
+ * years and a day within the current month. A span of days can be designated as
+ * shaded.
+ */
+
+/**
+ * A utility to return the number of days in a given month.
+ * @param iMonth {number}
+ * @param iYear  {number}
+ * @return {number}
+ */
 function daysInMonth(iMonth, iYear) {
   return 32 - new Date(iYear, iMonth, 32).getDate();
 }
 
+/**
+ * A utility to create a DOM element with classes and content.
+ * @param tag {string}
+ * @param classList {[string]}
+ * @param content {[Element|AttributeNode]}
+ * @return {Element}
+ */
 function createElement(tag, classList, content) {
   let el = document.createElement(tag);
   if (classList) {
@@ -21,12 +42,24 @@ function createElement(tag, classList, content) {
   return el;
 }
 
+/**
+ * A utility to create a DOM attribute node.
+ * @param name {string}
+ * @param value {*}
+ * @return {AttributeNode}
+ */
 function createAttribute(name, value) {
   let attr = document.createAttribute(name);
   attr.value = value;
   return attr;
 }
 
+/**
+ * A utility to find an ancestor element that has a given class.
+ * @param el {Element}
+ * @param myClass {string}
+ * @return {Element|undefined}
+ */
 function findAncestorElementWithClass(el, myClass) {
   while (el !== null && el.parentElement !== el) {
     if (el.classList.contains(myClass)) {
@@ -118,23 +151,19 @@ function renderMonth(calendarEl, tableEl, selectedDate, month, year, shadedDateR
         cell.className = "date-picker";
         cell.innerHTML = "<span>" + date + "</span>";
 
-        if ( date === selectedDate.getDate() &&
-            year === selectedDate.getFullYear() &&
-            month === selectedDate.getMonth() ) {
-          cell.className = "date-picker selected";
-        }
         row.appendChild(cell);
         date++;
       }
     }
     tableEl.appendChild(row);
     refreshRange(calendarEl, shadedDateRange);
+    refreshSelectedDate(calendarEl, selectedDate);
   }
 
 }
 
 function inShadedDateRange(date, range) {
-  return (date && date > range.fromDate && date < range.toDate);
+  return (date && date >= range.fromDate && date <= range.toDate);
 }
 
 function refreshRange(calendarEl, shadedDateRange) {
@@ -157,6 +186,21 @@ function refreshRange(calendarEl, shadedDateRange) {
   });
 }
 
+function refreshSelectedDate(calendarEl, selectedDate) {
+  if (!calendarEl || !selectedDate) { return; }
+  let selectedYear = String(selectedDate.getFullYear());
+  let selectedMonth = String(selectedDate.getMonth() + 1);
+  let selectedDay = String(selectedDate.getDate());
+  let tblEl = calendarEl.querySelector('.calendar-body');
+  if (!tblEl) { return; }
+  tblEl.querySelectorAll('.date-picker').forEach(function (el) {
+    el.classList.remove('selected');
+    if (el.getAttribute('data-year') !== selectedYear) { return; }
+    if (el.getAttribute('data-month') !== selectedMonth) { return; }
+    if (el.getAttribute('data-date') !== selectedDay) { return; }
+    el.classList.add('selected');
+  });
+}
 
 class Calendar {
 
@@ -172,6 +216,7 @@ class Calendar {
       date = new Date(date);
     }
     this._selectedDate = date;
+    refreshSelectedDate(this.calendarEl, this._selectedDate);
     return date;
   }
 
@@ -189,11 +234,13 @@ class Calendar {
     return range;
   }
 
+  /**
+   * Refreshes calendar view from model
+   */
   updateCalendar(month, year) {
-    setSelectedMonthYear(calendarEl, month, year);
-    let tbl = calendarEl.querySelector(".calendar-body");
-    renderMonth(calendarEl, tbl, selectedDate, month, year, this.shadedDateRange);
-    this.refreshRange();
+    setSelectedMonthYear(this.calendarEl, month, year);
+    let tbl = this.calendarEl.querySelector(".calendar-body");
+    renderMonth(this.calendarEl, tbl, this.selectedDate, month, year, this.shadedDateRange);
   }
 
   constructor (calendarEl, selectedDate, title, onDateChange) {
@@ -245,9 +292,7 @@ class Calendar {
     }
 
     function showCalendar(month, year) {
-      setSelectedMonthYear(calendarEl, month, year);
-      let tbl = calendarEl.querySelector(".calendar-body");
-      renderMonth(calendarEl, tbl, _this.selectedDate, month, year, _this.shadedDateRange);
+      _this.updateCalendar(month, year);
     }
 
     calendarEl.querySelector('.previous-button').onclick = previous;

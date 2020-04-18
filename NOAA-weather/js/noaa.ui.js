@@ -31,6 +31,7 @@ import {Calendar} from "./calendar.js";
 
 let eventHandlers = null
 let calendars = {};
+let lastState = null; // save state to be able to refresh view upon cancel
 
 /**
  *
@@ -82,6 +83,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('#wx-cancel-date-range', 'click', function (ev) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(el);
+        updateView(lastState);
     });
 
     setEventHandler('#wx-set-date-range', 'click', function (ev) {
@@ -121,23 +123,32 @@ function findAncestorElementWithClass(el, myClass) {
     }
 }
 
-function updateShadedRange() {
-    let d1 = calendars.from.selectedDate;
-    let d2 = calendars.to.selectedDate;
+function handleDateSelection(calendar, newDate) {
+    let fromDate = calendars.from.selectedDate;
+    let toDate = calendars.to.selectedDate;
+    if (calendar === calendars.from && fromDate > toDate) {
+        toDate = fromDate;
+        calendars.to.selectedDate = fromDate;
+    }
+    if (calendar === calendars.to && fromDate > toDate) {
+        fromDate = toDate;
+        calendars.from.selectedDate = toDate;
+    }
     let range = {
-        fromDate: Math.min(d1,d2),
-        toDate: Math.max(d1, d2)
+        fromDate: fromDate,
+        toDate: toDate
     }
     calendars.from.shadedDateRange = range;
     calendars.to.shadedDateRange = range;
 }
 
+
 function renderCalendars(fromDate, toDate) {
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
-    calendars.from = new Calendar(lc, fromDate, 'From Date', updateShadedRange);
-    calendars.to = new Calendar(rc, toDate, 'To Date', updateShadedRange);
-    updateShadedRange();
+    calendars.from = new Calendar(lc, fromDate, 'From Date', handleDateSelection);
+    calendars.to = new Calendar(rc, toDate, 'To Date', handleDateSelection);
+    handleDateSelection();
 }
 
 function togglePopOver(el) {
@@ -157,7 +168,10 @@ function togglePopUp(el) {
         el.classList.add('wx-open');
     }
 }
+
 function updateView(state) {
+    lastState = state;
+
     document.getElementById('wx-stationName').innerHTML = state.selectedStation.name;
 
     let startDate = new Date(state.startDate);
@@ -199,8 +213,16 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     durationTimeUnitEl.innerHTML = durationUnit;
     endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
     durationEl.value = duration;
+    let dateRange = {
+        fromDate: startDate,
+        toDate: endDate
+    };
+    calendars.from.shadedDateRange = dateRange;
+    calendars.to.shadedDateRange = dateRange;
     calendars.from.selectedDate = startDate;
     calendars.to.selectedDate = endDate;
+    calendars.from.updateCalendar(startDate.getMonth(), startDate.getFullYear());
+    calendars.to.updateCalendar(endDate.getMonth(), endDate.getFullYear());
 }
 
 function updateDateSelectorView(sampleFrequency) {
