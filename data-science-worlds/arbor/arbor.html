@@ -1,0 +1,458 @@
+<!--
+==========================================================================
+
+ * Created by tim on 9/26/16.
+ 
+ 
+ ==========================================================================
+ arbor.html in arbor.
+
+HTML wrapper for ....
+
+    Author:   Tim Erickson
+
+Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+-->
+
+<!--
+Global: IMPORT THIS:
+https://codap.xyz/baum/baum.html
+https://www.eeps.com/codap/arbor/arbor.html
+
+or locally as a plugin only: (for dragging into local CODAP, http://localhost/~tim/codap/
+
+MAMP version:       http://localhost:8888/plugins/arbor/arbor.html
+
+
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=25898  //  breast cancer, not local
+
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=24691  //  problem data set with cars
+
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=24624  //  small NHANES with missings, but LOCAL tree
+
+https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22505       //  local soccer
+https://localhost/~tim/codap/static/dg/en/cert/index.html#file=googleDrive:0B7REdgmgslRzS0RiOTdSREJwTGs   //     same data, original.
+
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=22505  //  has red card data
+
+https://localhost/~tim/codap/static/dg/en/cert/index.html#shared=22607   ACS used for developing save state
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbor</title>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.min.css">
+    <link rel='stylesheet' type='text/css' href='arbor.css'/>
+
+    <!-- These two scripts take care of the communication with CODAP  -->
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codap_helper_newAPI.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+
+    <!--    other common files          -->
+    <script src="../common/snap.svg-min.js" language="javascript"></script>
+    <script src="../common/events.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.min.js" language="javascript"></script>
+
+    <!--
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    -->
+
+    <!--
+        Models and Controllers
+    -->
+    <script src="arbor.js" language="javascript"></script>
+    <script src="arborCODAPConnector.js" language="javascript"></script>
+    <script src="arbor.selectionManager.js" language="javascript"></script>
+    <script src="focusSplitMgr.js" language="javascript"></script>
+    <script src="arbor.newCases.js" language="javascript"></script>
+    <script src="AttInTree.js" language="javascript"></script>
+    <script src="Analysis.js" language="javascript"></script>
+    <script src="ArborTree.js" language="javascript"></script>
+    <script src="ArborNode.js" language="javascript"></script>
+    <script src="AttributeSplit.js" language="javascript"></script>
+    <script src="Stripe.js" language="javascript"></script>
+    <script src="Leaf.js" language="javascript"></script>
+
+    <!--
+        Views
+    -->
+    <script src="TreePanelView.js" language="javascript"></script>
+    <script src="NodeZoneView.js" language="javascript"></script>
+    <script src="NodeBoxView.js" language="javascript"></script>
+    <script src="CorralAttView.js" language="javascript"></script>
+    <script src="DiagnosisView.js" language="javascript"></script>
+
+    <!--
+        Set up JQUERY-UI stuff
+    -->
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+        });
+    </script>
+</head>
+<body>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#tree">tree</a></li>
+        <li><a href="#settings">settings</a></li>
+        <li><a href="#help">help</a></li>
+    </ul>
+
+    <div id="tree">
+<!--
+        <div draggable="true" ondragstart="console.log('...drag start in html...')" )>Drag me!</div>
+        <svg draggable="true" ondragstart="console.log('...drag start in svg...')" width="100" height="20" )>
+            <rect x="0" y="0" width="100" height="20" fill="dodgerblue"></rect>
+        </svg>
+-->
+
+        <div>
+            <input id="showDiagnosisLeaves" type="checkbox" onchange="arbor.refreshBaum('views')">
+            <label for="showDiagnosisLeaves">show diagnosis "leaves"</label>
+        </div>
+
+        <svg id="treePaper" class="noselect" width="100%" height="500">
+        </svg>
+
+        <div class="vBox">
+            <div id="statusDiv">
+                <span id="resultsText">No results yet</span>
+            </div>
+            <div class="hBox">
+                <div align="left">
+                    <button id="refreshAllButton" onclick="arbor.refreshBaum('all')">refresh everything</button>
+                    <button id="refreshDataButton" onclick="arbor.refreshBaum('data')">refresh data</button>
+                </div>
+                &nbsp;&nbsp;&nbsp;
+                <div align="right">
+                    <button onclick="arbor.emitTreeData()">emit data</button>
+                </div>
+                <!-- To get this back, also un-comment arborr.js about line 506, where tButton's text gets set.
+                                <div>
+                                    <button id="configureButton" onclick="showHideAttributeConfigurationSection()">configure</button>
+                                </div>
+                -->
+            </div>
+        </div>
+
+
+        <!--        Attribute configuration section         -->
+
+        <div id="attributeConfigurationSection" visibility="hidden">
+
+            <div class="attributeConfigurationHead">
+                Configure "<span id="splitVariableName"></span>"
+                <button class="attributeConfigurationDoneButton" onclick="focusSplitMgr.showHideAttributeConfigurationSection()">
+                    Done!
+                </button>
+
+            </div>
+
+            <table>
+                <tr>
+                    <th class="leftSide" id="leftHeaderText">Left branch</th>
+                    <th class="rightSide" id="rightHeaderText">Right branch</th>
+                </tr>
+                <tr>
+                    <td class="leftSide">
+                        <label for="leftLabelText">Label:</label>
+                        <input id="leftLabelText" type="text" onchange="focusSplitMgr.changeAttributeConfiguration()">
+                    </td>
+                    <td class="rightSide">
+                        <label for="rightLabelText">Label:</label>
+                        <input id="rightLabelText" type="text" onchange="focusSplitMgr.changeAttributeConfiguration()">
+                    </td>
+                </tr>
+
+                <tr id="continuousAttributeConfiguration">
+                    <td class="leftSide">
+                        <span id="continuousAttributeName">Variable</span>
+                        <select id="operatorMenu" onchange="focusSplitMgr.changeAttributeConfiguration()">
+                            <option value="<"> <</option>
+                            <option value=">"> ></option>
+                            <option value=">="> >=</option>
+                            <option value="<="> <=</option>
+                            <option value="==="> ===</option>
+                        </select>
+                        <input id="cutpointText" type="number" onchange="focusSplitMgr.changeAttributeConfiguration()">
+                    </td>
+                    <td class="rightSide" width="300px">
+                        <span id="continuousAttributeReverseExpression">x ≤ 3</span>
+                    </td>
+                </tr>
+
+                <tr id="categoricalAttributeConfiguration">
+                    <td class="leftSide">
+                        <div id="leftCategoryButtons"></div>
+                    </td>
+                    <td class="rightSide">
+                        <div id="rightCategoryButtons"></div>
+                    </td>
+                </tr>
+
+            </table>
+            <!--
+                        <p>
+                            <span id="attributeSummary"></span>&emsp;
+                        </p>
+            -->
+            <div class="attributeConfigurationFooter">
+                <label for="currentSplitTypeMenu">Variable type:</label>
+                <select id="currentSplitTypeMenu" onchange="focusSplitMgr.changeCurrentSplitTypeUsingMenu()">
+                    <option value="continuous">Continuous</option>
+                    <option value="categorical">Categorical</option>
+                </select>
+                &nbsp;&nbsp;
+                <label for="swapImage">Swap left and right: </label>
+                <img id="swapImage" onclick="focusSplitMgr.swapFocusSplit()" src="art/left-right.png" width="18"></img>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="settings">
+        <div class="baumControlGroup">
+            <p>Laura Martignon probably doesn't want you to use this. But Frieda Reichsman does.</p>
+            <input id="usePercentOption" type="checkbox" checked>
+            <label for="usePercentOption">use percentages in node boxes</label>
+
+        </div>
+        <div class="baumControlGroup">
+            <p>If you are Joachim Engel, you might want to change this to "regression."</p>
+            <label for="treeTypeMenu">Tree type</label>
+            <select id="treeTypeMenu" onchange="arbor.changeTreeTypeUsingMenu();">
+                <option value="classification" selected>classification</option>
+                <option value="regression">regression</option>
+            </select>
+        </div>
+        <div class="baumControlGroup">
+            <p> Change these at your peril.</p>
+
+            <label for="dataContextMenu">Dataset: </label>
+            <select id="dataContextMenu" onchange="arbor.changeDataContext();"></select>
+            <label for="collectionMenu">Collection: </label>
+            <select id="collectionMenu" onchange="arbor.changeCollection();"></select>
+        </div>
+        <div class="baumControlGroup">
+            Credits! Gear icon made by <a href="https://www.flaticon.com/authors/tutsplus" title="TutsPlus">TutsPlus</a>
+            from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+            is licensed (<a href="http://creativecommons.org/licenses/by/3.0/"
+                              title="Creative Commons BY 3.0" target="_blank">CC 3.0</a>) by eeps media
+        </div>
+    </div>
+
+
+    <div id="help">
+        <h1>Instructions!</h1>
+        <p>This CODAP plug-in lets you make decision or prediction trees based on the data in the document. Here are the
+            basics:</p>
+        <ul>
+            <li>Drag a variable from the bottom "variable palette" to a node to make a branch. YOU WILL NOT SEE IT DRAG.
+                That's OK.
+            </li>
+            <li>Click the <b>Show diagnosis leaves</b> box to assign diagnoses to your tree.</li>
+            <li>Click a node to select it and all its cases (it turns yellow).</li>
+            <li>Click <img height="14" width="14" src="art/configure.png"> to configure the selected node.</li>
+            <li>Stats about your current tree appear below the tree.</li>
+            <li>Deleting: click the trash can <img height="14" width="14" src="art/trash.png"> to remove the
+                <i>children</i> of a node.
+            </li>
+            <li>Double-click a variable in the bottom palette to make it the "dependent variable."</li>
+        </ul>
+        <h2>More details:</h2>
+
+        <P>
+            As an example, suppose we want to determine whether you have a disease called Fbola.
+            We have a number of tests and indications to help us.
+        </P>
+
+        <p>
+            Having Fbola is the <i>dependent variable</i>.
+            We have test and disease data for a number of people who came
+            to the clinic.
+            Our tree represents a series of questions: Are you coughing?
+            Is your fever over 39 degrees Celsius?
+            Have you ever had the measles?
+            Your design of the tree represents a sequence of questions,
+            each depending on the answers to the previous ones.
+        </p>
+        <p>
+            After any question, we can decide to stop and choose a diagnosis (or <i>prediction</i>).
+            We will say that our diagnosis is positive (that we think you have Fbola) or negative.
+            The positive and negative diagnoses have black and green blocks.
+        </p>
+        <p>
+            Of course, we will not be right every time. There are four possibilities:
+        </p>
+        <ul>
+            <li>We gave a positive diagnosis and you have the disease (a true positive, TP)</li>
+            <li>We gave a positive diagnosis but you are uninfected (a false positive, FP)</li>
+            <li>We gave a negative diagnosis but you actually have the disease (a false negative, FN)</li>
+            <li>We gave a negative diagnosis and you are uninfected (a true negative, TN)</li>
+        </ul>
+        <p>
+            We want to arrange the tree to get the best outcome we can.
+        </p>
+        <h3>Variables (or Attributes) and Tree Nodes</h3>
+        <p>
+            The names of all the variables --- the column headings in your data table --- appear
+            in a row below the tree, at the bottom of the window.
+        </p>
+        <p>
+            To make the tree branch according to a variable
+            (which represents <i>asking a question</i> in our example),
+            drag the variable into the tree and drop it on the node you want to branch.
+            <i>At the moment, you cannot see the drag!</i> Don't worry, it's dragging nevertheless.
+        </p>
+        <p>
+            As you will see, every node is either a "branching" node (where you ask a question) or
+            a "terminal" node (where you give a diagnosis). You can think of the terminal nodes as leaves on the tree.
+            They are labeled + or –. (At the beginning, they start out labeled (?).)
+        </p>
+        <p>
+            Reverse the sense of a terminal node by clicking on it.
+        </p>
+        <h3>Dependent Variable</h3>
+        <p>
+            Your tree will always have one dependent (outcome) variable.
+            It's the thing you're trying to predict using the other variables.
+            For example, if you have data on people with their sex, income, race, and education,
+            and you want to study what affects income, make <b>income</b> the dependent variable.
+        </p>
+        <p>
+            To make a variable dependent, double-click it in the list above the tree.
+        </p>
+        <p>
+            The dependent variable also appears at the top of the tree,
+            in the first ("root") node.
+            That node also tells you what counts as "positive" in the tree.
+        </p>
+
+        <h3>Positive and Negative Outcomes</h3>
+        <p>Whenever you add an attribute (a variable) to the tree, you make two branches.
+            One will have a "leaf" labeled "plus," the other will be "minus."
+            The "+"s represent a "positive" choice, even if it's a negative occurrence.
+            For example, a positive test for a disease may not be what you want,
+            but it leads you to suspect that you actually have the disease.
+        </p>
+
+        <h3>Configuring Variables</h3>
+        <p>
+            All branchings in the tree are <i>binary</i>.
+            You are always choosing between two options.
+            Your variables may have more than two values, however.
+            The plugin makes default choices about how the values of your variable map
+            onto the two choices.
+            You will need to <i>configure</i> any variable you put in a node.
+        </p>
+        <p>
+            Click the <img height="14" width="14" src="art/configure.png"> button in a branching node
+            to make its variable's configuration appear.
+        </p>
+        <p>
+            Each variable has a "left" and a "right" value.
+            In general, try to put the more
+            "positive" values (with respect to your dependent variable) on the left.
+            You can decide what the two sides will be labeled using the text boxes.
+            For example, you might decide that <b>income > 50000</b> should be called <b>rich</b>,
+            and everything else is <b>poor</b>.
+        </p>
+        <ul>
+            <li>
+                For <b>numerical</b> variables, you can choose an operator and type in a value.
+                That specifies the "cut point" that separates the high from the low values.
+
+            </li>
+            <li>
+                For <b>categorical</b> variables, you will see buttons for the possible values;
+                click the buttons to move them from left to right or vice versa.
+            </li>
+        </ul>
+        <p>
+            (currently a lie:) Don't forget that you can also configure your dependent variable!
+            To configure the dependent variable, click one of the "terminal" nodes ---
+            they do not have variables assigned.
+        </p>
+        <h3>Two Tree Types</h3>
+        <p>
+            In the <b>settings</b> tab, you will find a menu that lets you select between
+            having this be a <em>Classification</em> tree and a <em>Regression</em> tree.
+        </p>
+        <p>
+            A Classification tree is the traditional decision tree,
+            where the result is a positive or negative prediction or diagnosis.
+            Each node shows the proportion of cases where the case you're trying to predict is true.
+        </p>
+        <p>
+            In a Regression tree, you are predicting the <em>value</em> of the dependent variable.
+            So it makes sense that the dependent variable should be numeric for a regression tree.
+            Nodes will show the mean of the variable for cases in that node,
+            and the bottom "stat" shows the sum of the squares of the deviations
+            from the mean, added up for all terminal nodes, and divided by the original sum of squares.
+            That is, it shows the proportion of variance still unexplained by the tree.
+        </p>
+        <h3>
+            Interactions with CODAP
+        </h3>
+        <p>
+            Clicking on a node selects all of the corresponding cases in CODAP.
+        </p>
+        <p>
+            Pressing <strong>emit data</strong> sends information on the current tree
+            to a separate dataset, called either <strong>Classification Tree Records</strong>
+            or <strong>Regression Tree Records</strong>, depending on the type of tree you're making.
+            Find those tables in the <strong>Tables</strong> menu in the toolbar.
+        </p>
+        <p>
+            Clicking on one of the records in one of those tables restores the table
+            to what it was when you created that record.
+        </p>
+        <p>
+            Clicking on a single case in the CODAP data table highlights the "path" to its terminal node.
+        </p>
+    </div>
+</div>
+<!--
+<div id="attributeDialog">
+    <div>
+        <p>Content you want the user to see goes here.</p>
+        Click here to [<a href='#' onclick='showHideAttributeDialog()'>close</a>]
+
+    </div>
+</div>
+-->
+
+</body>
+
+<script>
+    window.onload = function () {
+        arbor.initialize();
+    }
+</script>
+</html>
