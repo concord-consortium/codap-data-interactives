@@ -16,8 +16,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-/* global noaa */
-import * as stationDB from './noaaStations.js';
 import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
@@ -29,9 +27,22 @@ let constants = {
   defaultStart: '2020-01-01',
   defaultDateGranularity: 'day',
   defaultStationID: 'USW00014755',
+  defaultStation:   {
+    "elevation": 1911.7,
+    "mindate": "1948-01-01",
+    "maxdate": "2020-01-20",
+    "latitude": 44.27018,
+    "name": "MOUNT WASHINGTON, NH US",
+    "datacoverage": 0.9994,
+    "id": "USW00014755",
+    "elevationUnit": "METERS",
+    "longitude": -71.30336
+  },
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
+  StationDSName: 'US-Weather-Stations',
+  StationDSTitle: 'US Weather Stations',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/',
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
@@ -57,23 +68,32 @@ let state = {
 };
 
 async function initialize() {
-
+  let isConnected = false;
   try {
-    await codapConnect.initialize(constants);
+    isConnected = await codapConnect.initialize(constants);
     state = await codapConnect.getInteractiveState() || {};
   } catch (ex) {
     console.log('Connection to codap unsuccessful.')
   }
 
   try {
-
+    const stationDatasetName = constants.StationDSName;
+    const stationCollectionName = constants.StationDSTitle;
     initializeState(state);
 
-    codapConnect.createStationsDataset(stationDB.stations, stationSelectionHandler);
+    if (isConnected) {
+      let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
+      if (!hasStationDataset) {
+        let dataset = await fetchStationDataset('./assets/data/weather-stations.json');
+        codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
+      }
+      codapConnect.addNotificationHandler('notify',
+          `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
 
-    // Set up notification handler to respond to Weather Station selection
-    codapConnect.addNotificationHandler('notify',
-        `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+      // Set up notification handler to respond to Weather Station selection
+      codapConnect.addNotificationHandler('notify',
+          `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+    }
 
     ui.initialize(state, dataTypes, {
       dataTypeSelector: dataTypeSelectionHandler,
@@ -89,6 +109,21 @@ async function initialize() {
   }
 }
 
+async function fetchStationDataset(url) {
+  try {
+    let tResult = await fetch(url);
+    if (tResult.ok) {
+      const theJSON = await tResult.json();
+      return theJSON;
+    } else {
+      let msg = await tResult.text();
+      console.warn(`Failure fetching "${url}": ${msg}`);
+    }
+  } catch (ex) {
+    console.warn(`Exception fetching "${url}": ${ex}`);
+  }
+
+}
 
 function initializeState(state) {
   const today = dayjs();
@@ -98,7 +133,7 @@ function initializeState(state) {
   state.database = state.database || 'daily-summaries';
   state.sampleFrequency = constants.reportTypeMap[state.database];
 
-  state.selectedStation = state.selectedStation || stationDB.findStation(constants.defaultStationID);
+  state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
   state.customDataTypes && state.customDataTypes.forEach(function (name) {
     dataTypes[name] = {name:name};
@@ -134,10 +169,15 @@ async function noaaWeatherSelectionHandler(req) {
   }
 }
 
-function stationSelectionHandler(stationID) {
-  state.selectedStation = stationID? stationDB.findStation(stationID) : null;
-  ui.updateView(state);
-  ui.setTransferStatus('inactive', 'Selected new weather station');
+async function stationSelectionHandler(req) {
+  if (req.values.operation === 'selectCases') {
+    let result = req.values.result;
+    let myCase = result && result.cases && result.cases[0];
+    let station = myCase.values;
+    state.selectedStation = station;
+    ui.updateView(state);
+    ui.setTransferStatus('inactive', 'Selected new weather station');
+  }
 }
 
 /*

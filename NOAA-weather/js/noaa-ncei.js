@@ -29,7 +29,6 @@ limitations under the License.
 import * as codapConnect from './CODAPconnect.js';
 import * as ui from './noaa.ui.js';
 import {dataTypes} from './noaaDataTypes.js';
-import {findStation} from './noaaStations.js';
 
 var noaaNCEIConnect = {
 
@@ -170,7 +169,8 @@ var noaaNCEIConnect = {
                   break;
               case 'STATION':
                   dataTypeName = 'where';
-                  out.station = findStation(iRecord.STATION);
+                  value = this.state.selectedStation.name;
+                  out.station = this.state.selectedStation;
                   break;
               default:
                   dataTypeName = dataTypes[key] && dataTypes[key].name;
@@ -178,7 +178,7 @@ var noaaNCEIConnect = {
           if (dataTypeName) {
               out[dataTypeName] = noaaNCEIConnect.decodeData(key, value);
           }
-        });
+        }.bind(this));
         return out;
     },
 
@@ -199,9 +199,9 @@ var noaaNCEIConnect = {
         let result = null;
         switch (iField) {
             case "STATION":
-                const station = findStation(iValue);
-                result = station?station.name: null;
-                break;
+                // const station = findStation(iValue);
+                // result = station?station.name: null;
+                // break;
             case "AWND":
             case "TMAX":
             case "TMIN":

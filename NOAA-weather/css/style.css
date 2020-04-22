@@ -57,7 +57,7 @@ limitations under the License.
     font-style: normal;
 }
 
-/* removes blue halo on Chrome around focussed input */
+/* removes blue halo on Chrome around focused input */
 *:focus {
     outline: none;
 }
@@ -82,7 +82,7 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: stretch;
-
+    max-width: 600px;
 }
 
 #content #wx-intro-section {
