@@ -29,7 +29,7 @@ app.userActions = {
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.
       if (!tData) {
-        app.ui.displayStatus('failure', 'Error...');
+        app.ui.displayStatus('failure', 'Fetch Error. Please retry.');
         app.ui.updateWholeUI();
         return;
       }
@@ -65,7 +65,7 @@ app.userActions = {
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);
-      app.ui.displayStatus('failure', 'Error...');
+      app.ui.displayStatus('failure', 'Fetch Error. Please retry.');
     }
     app.ui.updateWholeUI();
   },
