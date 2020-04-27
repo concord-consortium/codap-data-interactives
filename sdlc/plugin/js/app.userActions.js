@@ -53,7 +53,7 @@ app.userActions = {
 
       //     make sure the case table is showing
       app.ui.displayStatus('transferring', 'Opening case table...');
-      await app.CODAPconnect.makeCaseTableAppear();
+      let id = await app.CODAPconnect.makeCaseTableAppear();
       setTimeout(function () {app.CODAPconnect.autoscaleComponent(id);}, 2000);
 
       app.ui.displayStatus('transferring', 'Sending data to codap...');

@@ -170,13 +170,14 @@ app.ui = (function () {
       for (let attName in app.allAttributes) {
         if (app.allAttributes.hasOwnProperty(attName)) {
           const tAtt = app.allAttributes[attName];    //  the attribute
+          let tReadonlyClause = tAtt.readonly? 'disabled="true" readonly="true"': '';
           // noinspection EqualityComparisonWithCoercionJS
           if (tAtt.groupNumber == iGroupObject.number) {     //  not === because one may be a string
             if (tAtt.displayMe) {
               tAtt.hasCheckbox = true;        //  redundant
               out += '<tr>';
               out += '<td><input class="select-item" type ="checkbox" id = "' +
-                  tAtt.checkboxID + '" ></td>\n';
+                  tAtt.checkboxID + '" ' + tReadonlyClause + '></td>\n';
               out += '<td colspan="2"><span class="attNameBold">'
                   + tAtt.title + ' </span>';
               out += '<span class="attr-description">' + tAtt.description + '</span></div>\n';

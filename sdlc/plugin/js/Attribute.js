@@ -44,6 +44,8 @@ class Attribute {
     this.description = iAttributeAssignment.description || iRecord.description;
     // no longer used
     this.chosen = iAttributeAssignment.defCheck;
+    // can't be changed
+    this.readonly = iAttributeAssignment.readonly;
 
     this.displayMe = iAttributeAssignment.displayMe; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;

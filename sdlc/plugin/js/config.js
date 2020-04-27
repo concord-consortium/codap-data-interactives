@@ -846,6 +846,8 @@ app.config = {
       group: 6,
       format: 'categorical',
       defCheck: true,
+      displayMe: true,
+      readonly: true,
       description: 'reports the four-digit year of the decennial census or ACS for each person\'s questionnaire responses. Note that you must select this attribute if you want to display year indicators in your case table or graphs.'
   }]
 };
