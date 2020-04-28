@@ -58,7 +58,7 @@ app.ui = (function () {
 
       function toggleDescriptions(el) {
         toggleClass(el, 'show-descriptions');
-      };
+      }
 
       setEventHandler('#sampleSizeInput', 'change', function (ev) {
         app.userActions.updateRequestedSampleSize('Sample size change.');
@@ -120,21 +120,13 @@ app.ui = (function () {
     },
 
     makeYearListHTML: function () {
-      function availablePresetsHTML(year) {
-        let avail = app.presetStates && app.presetStates.find(function (st) {return st.yr === Number(year);});
-        if (avail) {
-          return '<span class="presets-count">(' + avail.avail + ')</span>';
-        } else {
-          return '';
-        }
-      }
       let out = '';
       let checked = '';
       if (app.years) {
         app.years.forEach(function (year) {
           let id = 'year-' + year.year;
           out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"'
-              + checked + '/>' + year.year + '</label>' /*+ availablePresetsHTML(year.year) */+ '</div>';
+              + checked + '/>' + year.year + '</label>' + '</div>';
           checked = '';
         });
       }
@@ -178,9 +170,9 @@ app.ui = (function () {
               out += '<tr>';
               out += '<td><input class="select-item" type ="checkbox" id = "' +
                   tAtt.checkboxID + '" ' + tReadonlyClause + '></td>\n';
-              out += '<td colspan="2"><span class="attNameBold">'
-                  + tAtt.title + ' </span>';
-              out += '<span class="attr-description">' + tAtt.description + '</span></div>\n';
+              out += '<td colspan="2"><div class="attNameBold">'
+                  + tAtt.title + ' </div>';
+              out += '<div class="attr-description">' + tAtt.description + '</div></div>\n';
               out += "</tr>\n";
             }
           }
@@ -325,12 +317,13 @@ app.ui = (function () {
 
     /**
      *
-     * @param status {'inactive', 'retrieving', 'transferring', 'success', 'failure'}
+     * @param status {'initializing', 'inactive', 'retrieving', 'transferring', 'success', 'failure'}
      * @param message
      */
     displayStatus: function (status, message) {
       let el = document.querySelector('.wx-summary');
       let statusClass = {
+        initializing: 'wx-transfer-in-progress',
         inactive: '',
         retrieving: 'wx-transfer-in-progress',
         transferring: 'wx-transfer-in-progress',
@@ -341,7 +334,7 @@ app.ui = (function () {
           'wx-transfer-in-progress',
           'wx-transfer-success',
           'wx-transfer-failure');
-      el.classList.add(statusClass);
+      if (statusClass)  { el.classList.add(statusClass); }
       $('#status').text(message);
     },
 

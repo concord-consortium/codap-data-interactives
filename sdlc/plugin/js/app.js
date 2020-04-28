@@ -50,41 +50,40 @@ let app = {
   },
 
   initialize: async function () {
+    function handleError(message) {
+      console.warn("Initializing Microdata Portal: " + message);
+    }
+    app.ui.displayStatus('initializing', "Initializing");
     await app.CODAPconnect.initialize(null);
     app.logConnectionInfo();
-    app.years = await app.DBconnect.getDBInfo("getYears");
-    app.states = await app.DBconnect.getDBInfo('getStates');
-    app.presetStates = await app.DBconnect.getDBInfo('getPresetState');
-    await app.getAllAttributes();
+    let yearsPromise = app.DBconnect.getDBInfo("getYears").then(function (yearsList) {
+        app.years = yearsList;
+        $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
+        $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
+      },
+      handleError);
+    let statesPromise = app.DBconnect.getDBInfo('getStates').then( function (statesList) {
+        app.states = statesList;
+        $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
+        $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
+      },
+      handleError
+    );
+    // app.states = await app.DBconnect.getDBInfo('getStates');
+    // app.presetStates = await app.DBconnect.getDBInfo('getPresetState');
+    let attrPromise = app.getAllAttributes().then(function () {
+        $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
+      },
+      handleError
+    );
 
     //      Make sure the correct tab panel comes to the front when the text link is clicked
 
-    $('#linkToAttributePanel').click(
-      () => {
-          $('#tabs').tabs("option", "active", 1);     //  1 is the index of the attribute panel
-      });
-    $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
-    $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
+    Promise.allSettled([yearsPromise, statesPromise, attrPromise]).then(function () {
+      app.ui.init();
+      app.ui.displayStatus('inactive', "Ready");
+    });
 
-    $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
-    $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
-    $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
-
-    app.ui.init();
-
-    // track alt key so we can display hidden information on alt-hover.
-    $('body').on('keydown keyup', function (ev) {
-      let isAlt = ev.originalEvent.getModifierState('Alt');
-      if (isAlt !== app.isAltPressed) {
-        app.isAltPressed = isAlt;
-        if (isAlt) {
-          $('body').addClass('alt-pressed')
-        } else {
-          $('body').removeClass('alt-pressed')
-        }
-        // console.log('Alt: ' + (isAlt?'down':'up'));
-      }
-    })
   },
 
   updateStateFromDOM: function (logMessage) {

@@ -31,5 +31,6 @@ app.constants = {
   },
 
   kMinCases: 0,
-  kMaxCases: 1000
+  kMaxCases: 1000,
+  kDefaultSampleSize: 100
 };
