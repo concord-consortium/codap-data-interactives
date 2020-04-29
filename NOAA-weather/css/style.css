@@ -133,8 +133,8 @@ body {
 }
 
 .wx-section-title {
-    min-width: 102px;
     font-weight: 600;
+    flex: 125px 0 0;
 }
 
 .wx-subsection {
@@ -421,6 +421,8 @@ span#wx-dataset-form {
     display: inline-block;
     width: 18px;
     height: 18px;
+    flex: 18px 0 0;
+    margin-right: 6px;
 }
 
 #wx-double-calendar {
@@ -431,12 +433,11 @@ span#wx-dataset-form {
     border: solid 1px var(--teal-dark);
 }
 
-.wx-control-row {
-    display: flex;
-    justify-content: flex-end;
+.wx-control-area {
+    flex: 160px 0 0;
 }
 
-.wx-summary.wx-transfer-in-progress button {
+.wx-summary.wx-transfer-in-progress #wx-get-button {
     background-color: var(--teal-light-25);
 }
 

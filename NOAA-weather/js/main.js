@@ -1,5 +1,5 @@
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2020 by The Concord Consortium, Inc. All rights reserved.
@@ -16,12 +16,13 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes.js';
+import {dataTypeIDs, dataTypes, defaultDataTypes} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 // import {noaaCDOConnect} from './noaa-cdo';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
+// noinspection SpellCheckingInspection
 let constants = {
   defaultEnd: '2020-01-31',
   defaultStart: '2020-01-01',
@@ -85,13 +86,13 @@ async function initialize() {
       let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
       if (!hasStationDataset) {
         let dataset = await fetchStationDataset('./assets/data/weather-stations.json');
-        codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
+        await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
       }
-      codapConnect.addNotificationHandler('notify',
+      await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
 
       // Set up notification handler to respond to Weather Station selection
-      codapConnect.addNotificationHandler('notify',
+      await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
     }
 
@@ -99,6 +100,7 @@ async function initialize() {
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
       getData: noaaNCEIConnect.doGetHandler,
+      clearData: clearDataHandler,
       newDataType: newDataTypeHandler,
       dateRangeSubmit: dateRangeSubmitHandler
     });
@@ -113,8 +115,7 @@ async function fetchStationDataset(url) {
   try {
     let tResult = await fetch(url);
     if (tResult.ok) {
-      const theJSON = await tResult.json();
-      return theJSON;
+      return await tResult.json();
     } else {
       let msg = await tResult.text();
       console.warn(`Failure fetching "${url}": ${msg}`);
@@ -173,8 +174,7 @@ async function stationSelectionHandler(req) {
   if (req.values.operation === 'selectCases') {
     let result = req.values.result;
     let myCase = result && result.cases && result.cases[0];
-    let station = myCase.values;
-    state.selectedStation = station;
+    state.selectedStation = myCase.values;
     ui.updateView(state);
     ui.setTransferStatus('inactive', 'Selected new weather station');
   }
@@ -185,7 +185,7 @@ async function stationSelectionHandler(req) {
  */
 function newDataTypeHandler(ev) {
   // get value
-  var value = ev.target.value;
+  let value = ev.target.value;
   // verify that datatype exists
   if (value && (dataTypeIDs.indexOf(value) >= 0)) {
     // make new record
@@ -209,13 +209,22 @@ function newDataTypeHandler(ev) {
   ev.stopPropagation();
 }
 
+async function clearDataHandler() {
+  console.log('clear data!')
+  ui.setTransferStatus('clearing', 'Clearing data')
+  let result = await codapConnect.clearData(constants.DSName);
+  let status = result && result.success? 'success': 'failure';
+  let message = result && result.success? `Cleared the ${constants.DSName} dataset`: result.message;
+  ui.setTransferStatus(status, message);
+}
+
 function sourceDatasetSelectionHandler (event) {
   state.database = event.target.value;
   state.sampleFrequency = constants.reportTypeMap[state.database];
   ui.updateView(state);
 }
 
-function dataTypeSelectAllHandler(el, ev) {
+function dataTypeSelectAllHandler(el/*, ev*/) {
   let isChecked = el.checked;
   if (el.type === 'checkbox') {
     Object.keys(dataTypes).forEach(function (key) {
