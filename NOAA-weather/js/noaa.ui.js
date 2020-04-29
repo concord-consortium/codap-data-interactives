@@ -56,7 +56,12 @@ function initialize(state, dataTypes, iEventHandlers) {
     // const newTypeInput = document.getElementById('newDataType');
 
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
-    setEventHandler('#wx-get-button', 'click', eventHandlers.getData);
+    setEventHandler('#wx-get-button', 'click', function (ev) {
+        closeDateRangeSelector();
+        if (eventHandlers.getData) {
+            eventHandlers.getData(ev);
+        }
+    });
     setEventHandler('#wx-clear-button', 'click', eventHandlers.clearData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
     setEventHandler('.wx-dropdown-header', 'click', function (/*ev*/) {
@@ -76,44 +81,54 @@ function initialize(state, dataTypes, iEventHandlers) {
         togglePopUp(parentEl);
     });
 
+    setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);
+
     setEventHandler('.wx-pop-over-anchor', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(parentEl);
     });
 
-    setEventHandler('#wx-cancel-date-range', 'click', function (/*ev*/) {
+    setEventHandler('#wx-date-range-close', 'click', function (/*ev*/) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(el);
         updateView(lastState);
     });
 
-    setEventHandler('#wx-set-date-range', 'click', function (/*ev*/) {
-        let el = findAncestorElementWithClass(this, 'wx-pop-over');
-        let dayRangeClause = el.querySelector('.wx-day-range-selector');
-        let isDailyRange = document.querySelector('#wx-daily:checked');
-        let values = {};
-        if (dayRangeClause && isDailyRange) {
-            values.startDate = calendars.from.selectedDate;
-            values.endDate = calendars.to.selectedDate;
-            if (values.startDate > values.endDate) {
-                let t = values.startDate;
-                values.startDate = values.endDate;
-                values.endDate = t;
-            }
-        } else {
-            let endDate = el.querySelector('#wx-drs-end-date').value;
-            let months = parseInt(el.querySelector('#wx-drs-duration').value);
-            // noinspection JSPotentiallyInvalidConstructorUsage
-            values = {
-                startDate: (new dayjs(endDate)).subtract(months, 'month'),
-                endDate: endDate
-            };
+}
+
+function closeDateRangeSelector() {
+    let dateRangeSelectorEl = document.querySelector('#wx-date-range-selection-dialog');
+    if (dateRangeSelectorEl.classList.contains('wx-open')) {
+        togglePopOver(dateRangeSelectorEl);
+    }
+}
+
+function updateDateRange(/*ev*/) {
+    let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
+    let dayRangeClause = el.querySelector('.wx-day-range-selector');
+    let isDailyRange = document.querySelector('#wx-daily:checked');
+    let values = {};
+    if (dayRangeClause && isDailyRange) {
+        values.startDate = calendars.from.selectedDate;
+        values.endDate = calendars.to.selectedDate;
+        if (values.startDate > values.endDate) {
+            let t = values.startDate;
+            values.startDate = values.endDate;
+            values.endDate = t;
         }
-        if (eventHandlers.dateRangeSubmit) {
-            eventHandlers.dateRangeSubmit(values);
-        }
-        togglePopOver(el);
-    })
+    } else {
+        let endDate = el.querySelector('#wx-drs-end-date').value;
+        let months = parseInt(el.querySelector('#wx-drs-duration').value);
+        // noinspection JSPotentiallyInvalidConstructorUsage
+        values = {
+            startDate: (new dayjs(endDate)).subtract(months, 'month'),
+            endDate: endDate
+        };
+    }
+    if (eventHandlers.dateRangeSubmit) {
+        eventHandlers.dateRangeSubmit(values);
+    }
+    // togglePopOver(el);
 }
 
 function findAncestorElementWithClass(el, myClass) {
@@ -142,6 +157,7 @@ function handleDateSelection(calendar/*, newDate*/) {
     }
     calendars.from.shadedDateRange = range;
     calendars.to.shadedDateRange = range;
+    updateDateRange();
 }
 
 

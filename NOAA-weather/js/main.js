@@ -48,7 +48,7 @@ let constants = {
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
-  version: 'v0008',
+  version: 'v0009',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
