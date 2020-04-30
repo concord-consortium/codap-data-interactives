@@ -16,6 +16,7 @@ function daysInMonth(iMonth, iYear) {
   return 32 - new Date(iYear, iMonth, 32).getDate();
 }
 
+// noinspection JSValidateJSDoc
 /**
  * A utility to create a DOM element with classes and content.
  * @param tag {string}
@@ -42,6 +43,7 @@ function createElement(tag, classList, content) {
   return el;
 }
 
+// noinspection JSValidateJSDoc
 /**
  * A utility to create a DOM attribute node.
  * @param name {string}
@@ -100,7 +102,7 @@ function renderCalendarFrame(attachmentEl, title) {
   let calendarTable = createElement('table', 'table-calendar', [
       createAttribute('data-lang', 'en'),
       createElement('thead', 'thead-month', [
-          createElement('tr', [], days.map(function (day, ix) {
+          createElement('tr', [], days.map(function (day) {
             return createElement('th', [], [
                 createAttribute('data-day', day),
                 String(day)

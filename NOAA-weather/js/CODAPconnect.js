@@ -25,7 +25,7 @@ limitations under the License.
 ==========================================================================
 
 */
-var pluginProperties = null;
+let pluginProperties = null;
 
 async function initialize(iPluginProperties) {
     pluginProperties = iPluginProperties;
@@ -50,12 +50,14 @@ async function initialize(iPluginProperties) {
 }
 
 async function getInteractiveState() {
-    return await codapInterface.getInteractiveState();
+    return codapInterface.getInteractiveState();
 }
 
 /**
  * Creates an attribute
- * @param name
+ * @param datasetName
+ * @param collectionName
+ * @param dataType
  * @return Promise of result
  */
 function createAttribute(datasetName, collectionName, dataType) {
@@ -72,7 +74,7 @@ function createAttribute(datasetName, collectionName, dataType) {
 
 /**
  * Creates new attributes for any that do not already exist.
- * @param attrNames
+ * @param dataTypes
  * @return a Promise fulfilled when all attributes are created.
  */
 async function updateDataset(dataTypes) {
@@ -116,6 +118,10 @@ async function hasDataset(name) {
 
 /**
  * Creates the weather station dataset in CODAP.
+ * @param datasetName
+ * @param collectionName
+ * @param datasetName
+ * @param collectionName
  * @param stations a list of station descriptor objects
  * @param selectionHandler called when a station is selected in the created
  * dataset. The station id is passed or null.
@@ -173,6 +179,7 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
             }
         })
     }
+    return result;
 }
 
 function addNotificationHandler(action, resource, handler) {
@@ -181,7 +188,7 @@ function addNotificationHandler(action, resource, handler) {
 
 /**
  * Tell CODAP to make items.
- * @param pluginProperties object: must name DSName, name of weather dataset.
+ * @param props
  * @param iValues   An array of objects containing the keys and values
  * corresponding to attributes and values of the new cases.
  * @param dataTypes An array of datatypes to be reference for creating attributes
@@ -194,7 +201,7 @@ async function createNOAAItems (props, iValues, dataTypes) {
     await pluginHelper.createItems(iValues, props.DSName); // no callback.
 
     //  also make the case table show up
-    codapInterface.sendRequest({
+    await codapInterface.sendRequest({
         "action": "create",
         "resource": "component",
         "values": {
@@ -204,6 +211,7 @@ async function createNOAAItems (props, iValues, dataTypes) {
     });
 }
 
+// noinspection JSUnusedLocalSymbols
 async function findStationByID(stationID) {
     const dsName = 'US-Weather-Stations';
     const collectionName = 'US Weather Stations';
@@ -292,8 +300,24 @@ function getNoaaDataContextSetupObject(props) {
     };
 }
 
+async function clearData (datasetName) {
+    let result = await codapInterface.sendRequest({
+        action: 'get', resource: `dataContext[${datasetName}]`
+    });
+    if (result.success) {
+        let dc = result.values;
+        let lastCollection = dc.collections[dc.collections.length-1];
+        result = await codapInterface.sendRequest({
+            action: 'delete',
+            resource: `dataContext[${datasetName}].collection[${lastCollection.name}].allCases`
+        });
+        return result;
+    }
+}
+
 export {
     addNotificationHandler,
+    clearData,
     createAttribute,
     createNOAAItems,
     createStationsDataset,
