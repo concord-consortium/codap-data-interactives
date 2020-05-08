@@ -76,7 +76,7 @@ barty.meeting = {
 
         //  choose from the list if the menu is set to "surprise me."
 
-        if (this.where === -42) {
+        if (this.where === "-42") {
             const tStationAbbrs = Object.keys( this.possibleStations );
             this.where = TEEUtils.pickRandomItemFrom( tStationAbbrs );
         }
@@ -98,7 +98,8 @@ barty.meeting = {
     adjustCount : function(iFrom, iTo, iDay, iHour, iCount ) {
 
         let result = Number(iCount);
-        if (($.inArray( iFrom, this.origins) !== -1)
+        if ( this.origins.includes(iFrom)
+        //  if (($.inArray( iFrom, this.origins) !== -1)
             && iTo === this.where
             && iDay === this.day
             && iHour === this.hour) {
