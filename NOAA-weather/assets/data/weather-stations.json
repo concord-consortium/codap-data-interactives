@@ -1,42 +1,4 @@
-/*
-==========================================================================
-
- * Created by tim on 8/22/19.
- 
- 
- ==========================================================================
-noaaStations in noaa-cdo
-
-Author:   Tim Erickson
-
-Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-==========================================================================
-
-*/
-
-/*
-Find station IDs:
-https://www.ncdc.noaa.gov/cdo-web/search
-*/
-/*global noaa:true */
-function findStation (id) {
-  return stations.find(function (sta) {return id === sta.id; });
-}
-
-
-let stations = [
+[
   {
     "elevation": 228.6,
     "mindate": "2012-07-05",
@@ -411,67 +373,6 @@ let stations = [
     "elevationUnit": "METERS",
     "longitude": -71.17861
   },
-/*
-  {
-    "elevation": 77.4,
-    "mindate": "1957-03-01",
-    "maxdate": "2020-01-20",
-    "latitude": 13.48333,
-    "name": "GUAM INTERNATIONAL AIRPORT, US",
-    "datacoverage": 0.9999,
-    "id": "GQW00041415",
-    "elevationUnit": "METERS",
-    "longitude": 144.8
-  },
-
- */
-/*
-  {
-    "elevation": 30.2,
-    "mindate": "2017-03-27",
-    "maxdate": "2020-01-18",
-    "latitude": 18.0280797,
-    "name": "JUANA DIAZ 2.9 SW, US",
-    "datacoverage": 1,
-    "id": "RQ1PRJD0002",
-    "elevationUnit": "METERS",
-    "longitude": -66.5383357
-  },
-  {
-    "elevation": 117,
-    "mindate": "2015-01-26",
-    "maxdate": "2020-01-20",
-    "latitude": 18.21704,
-    "name": "MAYAGUEZ ARRIBA, US",
-    "datacoverage": 0.9984,
-    "id": "RQ1PRMY0005",
-    "elevationUnit": "METERS",
-    "longitude": -67.116726
-  },
-  {
-    "elevation": 196.6,
-    "mindate": "2014-07-01",
-    "maxdate": "2020-01-10",
-    "latitude": 18.2159,
-    "name": "HACIENDA CONSTANZA 2 W, US",
-    "datacoverage": 0.9985,
-    "id": "RQC00664331",
-    "elevationUnit": "METERS",
-    "longitude": -67.0883
-  },
-  {
-    "elevation": 170.7,
-    "mindate": "2009-06-01",
-    "maxdate": "2020-01-19",
-    "latitude": 18.3849,
-    "name": "PALMAREJO VEGA BAJA, US",
-    "datacoverage": 0.9969,
-    "id": "RQC00666730",
-    "elevationUnit": "METERS",
-    "longitude": -66.43
-  },
-
- */
   {
     "elevation": 410,
     "mindate": "2006-04-07",
@@ -26333,6 +26234,4 @@ let stations = [
     "elevationUnit": "METERS",
     "longitude": -90.6775
   }
-];
-
-export {findStation, stations};
+]

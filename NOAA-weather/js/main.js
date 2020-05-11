@@ -1,5 +1,5 @@
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2020 by The Concord Consortium, Inc. All rights reserved.
@@ -16,27 +16,39 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-/* global noaa */
-import * as stationDB from './noaaStations.js';
-import {dataTypes, defaultDataTypes, dataTypeIDs} from './noaaDataTypes.js';
+import {dataTypeIDs, dataTypes, defaultDataTypes} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 // import {noaaCDOConnect} from './noaa-cdo';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
+// noinspection SpellCheckingInspection
 let constants = {
   defaultEnd: '2020-01-31',
   defaultStart: '2020-01-01',
   defaultDateGranularity: 'day',
   defaultStationID: 'USW00014755',
+  defaultStation:   {
+    "elevation": 1911.7,
+    "mindate": "1948-01-01",
+    "maxdate": "2020-01-20",
+    "latitude": 44.27018,
+    "name": "MOUNT WASHINGTON, NH US",
+    "datacoverage": 0.9994,
+    "id": "USW00014755",
+    "elevationUnit": "METERS",
+    "longitude": -71.30336
+  },
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
+  StationDSName: 'US-Weather-Stations',
+  StationDSTitle: 'US Weather Stations',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/',
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
-  version: 'v0008',
+  version: 'v0009',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
@@ -57,28 +69,38 @@ let state = {
 };
 
 async function initialize() {
-
+  let isConnected = false;
   try {
-    await codapConnect.initialize(constants);
+    isConnected = await codapConnect.initialize(constants);
     state = await codapConnect.getInteractiveState() || {};
   } catch (ex) {
     console.log('Connection to codap unsuccessful.')
   }
 
   try {
-
+    const stationDatasetName = constants.StationDSName;
+    const stationCollectionName = constants.StationDSTitle;
     initializeState(state);
 
-    codapConnect.createStationsDataset(stationDB.stations, stationSelectionHandler);
+    if (isConnected) {
+      let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
+      if (!hasStationDataset) {
+        let dataset = await fetchStationDataset('./assets/data/weather-stations.json');
+        await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
+      }
+      await codapConnect.addNotificationHandler('notify',
+          `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
 
-    // Set up notification handler to respond to Weather Station selection
-    codapConnect.addNotificationHandler('notify',
-        `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+      // Set up notification handler to respond to Weather Station selection
+      await codapConnect.addNotificationHandler('notify',
+          `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
+    }
 
     ui.initialize(state, dataTypes, {
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
       getData: noaaNCEIConnect.doGetHandler,
+      clearData: clearDataHandler,
       newDataType: newDataTypeHandler,
       dateRangeSubmit: dateRangeSubmitHandler
     });
@@ -89,6 +111,20 @@ async function initialize() {
   }
 }
 
+async function fetchStationDataset(url) {
+  try {
+    let tResult = await fetch(url);
+    if (tResult.ok) {
+      return await tResult.json();
+    } else {
+      let msg = await tResult.text();
+      console.warn(`Failure fetching "${url}": ${msg}`);
+    }
+  } catch (ex) {
+    console.warn(`Exception fetching "${url}": ${ex}`);
+  }
+
+}
 
 function initializeState(state) {
   const today = dayjs();
@@ -98,7 +134,7 @@ function initializeState(state) {
   state.database = state.database || 'daily-summaries';
   state.sampleFrequency = constants.reportTypeMap[state.database];
 
-  state.selectedStation = state.selectedStation || stationDB.findStation(constants.defaultStationID);
+  state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
   state.customDataTypes && state.customDataTypes.forEach(function (name) {
     dataTypes[name] = {name:name};
@@ -134,10 +170,14 @@ async function noaaWeatherSelectionHandler(req) {
   }
 }
 
-function stationSelectionHandler(stationID) {
-  state.selectedStation = stationID? stationDB.findStation(stationID) : null;
-  ui.updateView(state);
-  ui.setTransferStatus('inactive', 'Selected new weather station');
+async function stationSelectionHandler(req) {
+  if (req.values.operation === 'selectCases') {
+    let result = req.values.result;
+    let myCase = result && result.cases && result.cases[0];
+    state.selectedStation = myCase.values;
+    ui.updateView(state);
+    ui.setTransferStatus('inactive', 'Selected new weather station');
+  }
 }
 
 /*
@@ -145,7 +185,7 @@ function stationSelectionHandler(stationID) {
  */
 function newDataTypeHandler(ev) {
   // get value
-  var value = ev.target.value;
+  let value = ev.target.value;
   // verify that datatype exists
   if (value && (dataTypeIDs.indexOf(value) >= 0)) {
     // make new record
@@ -169,13 +209,22 @@ function newDataTypeHandler(ev) {
   ev.stopPropagation();
 }
 
+async function clearDataHandler() {
+  console.log('clear data!')
+  ui.setTransferStatus('clearing', 'Clearing data')
+  let result = await codapConnect.clearData(constants.DSName);
+  let status = result && result.success? 'success': 'failure';
+  let message = result && result.success? `Cleared the ${constants.DSName} dataset`: result.message;
+  ui.setTransferStatus(status, message);
+}
+
 function sourceDatasetSelectionHandler (event) {
   state.database = event.target.value;
   state.sampleFrequency = constants.reportTypeMap[state.database];
   ui.updateView(state);
 }
 
-function dataTypeSelectAllHandler(el, ev) {
+function dataTypeSelectAllHandler(el/*, ev*/) {
   let isChecked = el.checked;
   if (el.type === 'checkbox') {
     Object.keys(dataTypes).forEach(function (key) {

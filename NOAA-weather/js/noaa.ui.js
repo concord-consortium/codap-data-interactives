@@ -31,6 +31,7 @@ import {Calendar} from "./calendar.js";
 
 let eventHandlers = null
 let calendars = {};
+let lastState = null; // save state to be able to refresh view upon cancel
 
 /**
  *
@@ -55,9 +56,15 @@ function initialize(state, dataTypes, iEventHandlers) {
     // const newTypeInput = document.getElementById('newDataType');
 
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
-    setEventHandler('#wx-get-button', 'click', eventHandlers.getData);
+    setEventHandler('#wx-get-button', 'click', function (ev) {
+        closeDateRangeSelector();
+        if (eventHandlers.getData) {
+            eventHandlers.getData(ev);
+        }
+    });
+    setEventHandler('#wx-clear-button', 'click', eventHandlers.clearData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
-    setEventHandler('.wx-dropdown-header', 'click', function (ev) {
+    setEventHandler('.wx-dropdown-header', 'click', function (/*ev*/) {
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
         if (isClosed) {
@@ -69,47 +76,59 @@ function initialize(state, dataTypes, iEventHandlers) {
         }
     });
 
-    setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (ev) {
+    setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
     });
 
-    setEventHandler('.wx-pop-over-anchor', 'click', function (ev) {
+    setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);
+
+    setEventHandler('.wx-pop-over-anchor', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(parentEl);
     });
 
-    setEventHandler('#wx-cancel-date-range', 'click', function (ev) {
+    setEventHandler('#wx-date-range-close', 'click', function (/*ev*/) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(el);
+        updateView(lastState);
     });
 
-    setEventHandler('#wx-set-date-range', 'click', function (ev) {
-        let el = findAncestorElementWithClass(this, 'wx-pop-over');
-        let dayRangeClause = el.querySelector('.wx-day-range-selector');
-        let isDailyRange = document.querySelector('#wx-daily:checked');
-        let values = {};
-        if (dayRangeClause && isDailyRange) {
-            values.startDate = calendars.from.selectedDate;
-            values.endDate = calendars.to.selectedDate;
-            if (values.startDate > values.endDate) {
-                let t = values.startDate;
-                values.startDate = values.endDate;
-                values.endDate = t;
-            }
-        } else {
-            let endDate = el.querySelector('#wx-drs-end-date').value;
-            let months = parseInt(el.querySelector('#wx-drs-duration').value);
-            values = {
-                startDate: (new dayjs(endDate)).subtract(months, 'month'),
-                endDate: endDate
-            };
+}
+
+function closeDateRangeSelector() {
+    let dateRangeSelectorEl = document.querySelector('#wx-date-range-selection-dialog');
+    if (dateRangeSelectorEl.classList.contains('wx-open')) {
+        togglePopOver(dateRangeSelectorEl);
+    }
+}
+
+function updateDateRange(/*ev*/) {
+    let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
+    let dayRangeClause = el.querySelector('.wx-day-range-selector');
+    let isDailyRange = document.querySelector('#wx-daily:checked');
+    let values = {};
+    if (dayRangeClause && isDailyRange) {
+        values.startDate = calendars.from.selectedDate;
+        values.endDate = calendars.to.selectedDate;
+        if (values.startDate > values.endDate) {
+            let t = values.startDate;
+            values.startDate = values.endDate;
+            values.endDate = t;
         }
-        if (eventHandlers.dateRangeSubmit) {
-            eventHandlers.dateRangeSubmit(values);
-        }
-        togglePopOver(el);
-    })
+    } else {
+        let endDate = el.querySelector('#wx-drs-end-date').value;
+        let months = parseInt(el.querySelector('#wx-drs-duration').value);
+        // noinspection JSPotentiallyInvalidConstructorUsage
+        values = {
+            startDate: (new dayjs(endDate)).subtract(months, 'month'),
+            endDate: endDate
+        };
+    }
+    if (eventHandlers.dateRangeSubmit) {
+        eventHandlers.dateRangeSubmit(values);
+    }
+    // togglePopOver(el);
 }
 
 function findAncestorElementWithClass(el, myClass) {
@@ -121,23 +140,33 @@ function findAncestorElementWithClass(el, myClass) {
     }
 }
 
-function updateShadedRange() {
-    let d1 = calendars.from.selectedDate;
-    let d2 = calendars.to.selectedDate;
+function handleDateSelection(calendar/*, newDate*/) {
+    let fromDate = calendars.from.selectedDate;
+    let toDate = calendars.to.selectedDate;
+    if (calendar === calendars.from && fromDate > toDate) {
+        toDate = fromDate;
+        calendars.to.selectedDate = fromDate;
+    }
+    if (calendar === calendars.to && fromDate > toDate) {
+        fromDate = toDate;
+        calendars.from.selectedDate = toDate;
+    }
     let range = {
-        fromDate: Math.min(d1,d2),
-        toDate: Math.max(d1, d2)
+        fromDate: fromDate,
+        toDate: toDate
     }
     calendars.from.shadedDateRange = range;
     calendars.to.shadedDateRange = range;
+    updateDateRange();
 }
+
 
 function renderCalendars(fromDate, toDate) {
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
-    calendars.from = new Calendar(lc, fromDate, 'From Date', updateShadedRange);
-    calendars.to = new Calendar(rc, toDate, 'To Date', updateShadedRange);
-    updateShadedRange();
+    calendars.from = new Calendar(lc, fromDate, 'From Date', handleDateSelection);
+    calendars.to = new Calendar(rc, toDate, 'To Date', handleDateSelection);
+    handleDateSelection();
 }
 
 function togglePopOver(el) {
@@ -157,7 +186,10 @@ function togglePopUp(el) {
         el.classList.add('wx-open');
     }
 }
+
 function updateView(state) {
+    lastState = state;
+
     document.getElementById('wx-stationName').innerHTML = state.selectedStation.name;
 
     let startDate = new Date(state.startDate);
@@ -199,8 +231,16 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     durationTimeUnitEl.innerHTML = durationUnit;
     endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
     durationEl.value = duration;
+    let dateRange = {
+        fromDate: startDate,
+        toDate: endDate
+    };
+    calendars.from.shadedDateRange = dateRange;
+    calendars.to.shadedDateRange = dateRange;
     calendars.from.selectedDate = startDate;
     calendars.to.selectedDate = endDate;
+    calendars.from.updateCalendar(startDate.getMonth(), startDate.getFullYear());
+    calendars.to.updateCalendar(endDate.getMonth(), endDate.getFullYear());
 }
 
 function updateDateSelectorView(sampleFrequency) {
@@ -214,10 +254,13 @@ function updateDateSelectorView(sampleFrequency) {
         monthRangeSelector.classList.add('wx-hide');
     }
 }
+
 function createElementWithProperties(tag, properties) {
     let el = document.createElement(tag);
     for (let key in properties) {
-        el[key] = properties[key];
+        if (properties.hasOwnProperty(key)) {
+            el[key] = properties[key];
+        }
     }
     return el;
 }
@@ -239,13 +282,16 @@ function makeDataTypeRow (key, name, description, units) {
     return row;
 }
 
-function renderDataTypes(dataTypes, iSelectionList) {
+function renderDataTypes(dataTypes/*, iSelectionList*/) {
     let insertionPoint = document.querySelector('#wx-data-type-table tbody');
 
     for (const theKey in dataTypes) {
-        const dataType = dataTypes[theKey];
-        insertionPoint.appendChild(makeDataTypeRow(theKey, dataType.name, dataType.description,
-            dataType.units));
+        if (dataTypes.hasOwnProperty(theKey)) {
+            const dataType = dataTypes[theKey];
+            insertionPoint.appendChild(
+                makeDataTypeRow(theKey, dataType.name, dataType.description,
+                    dataType.units));
+        }
     }
 }
 
@@ -257,9 +303,11 @@ function setEventHandler (selector, event, handler) {
     });
 }
 
+/*
 function setStationName(stationName) {
     document.getElementById('stationName').innerText = stationName;
 }
+*/
 
 function setMessage(message) {
     document.querySelector(".wx-message-area").innerHTML = message;
@@ -267,14 +315,14 @@ function setMessage(message) {
 
 /**
  *
- * @param status {'inactive', 'retrieving', 'transferring', 'success', 'failure'}
+ * @param status {'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param message
  */
 function setTransferStatus(status, message) {
     let getButtonIsActive = true;
     let el = document.querySelector('.wx-summary');
     let statusClass = '';
-    if (status === 'retrieving' || status === 'transferring') {
+    if (status === 'retrieving' || status === 'transferring' || status === 'clearing') {
         getButtonIsActive = false;
         statusClass = 'wx-transfer-in-progress';
     } else if (status === 'success') {

@@ -53,7 +53,8 @@ app.userActions = {
       //     make sure the case table is showing
 
       app.ui.displayStatus('Opening case table...');
-      await app.CODAPconnect.makeCaseTableAppear();
+      let id = await app.CODAPconnect.makeCaseTableAppear();
+      setTimeout(function () {app.CODAPconnect.autoscaleComponent(id);}, 2000);
 
       // console.log("the cases: " + JSON.stringify(oData));
 
