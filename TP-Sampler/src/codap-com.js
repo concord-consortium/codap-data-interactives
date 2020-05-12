@@ -244,17 +244,12 @@ define([
             if (results.success) {
               caseVariables = [];
 
-              var count = results.values,
-                  reqs = [];
-              for (var i = 0; i < count; i++) {
-                reqs.push({
-                  action: 'get',
-                  resource: _this.collectionResourceName + '.caseByIndex['+i+']'
-                });
-              }
-              codapInterface.sendRequest(reqs).then(function(results) {
-                results.forEach(function(res) {
-                  caseVariables.push(res.values['case'].values);
+              codapInterface.sendRequest({
+                action: 'get',
+                resource: _this.collectionResourceName + '.allCases'
+              }).then(function(results) {
+                caseVariables = results.values.cases.map(function(_case) {
+                  return _case.case.values;
                 });
                 resolve(caseVariables);
              });
