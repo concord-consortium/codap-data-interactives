@@ -177,7 +177,17 @@ app.CODAPconnect = {
     } else {
       console.log("FAILED to create case table: " + theMessage.title);
     }
+    return makeCaseTableResult.success && makeCaseTableResult.values.id;
+  },
 
+  autoscaleComponent: async function (name) {
+    return await codapInterface.sendRequest({
+      action: 'notify',
+      resource: `component[${name}]`,
+      values: {
+        request: 'autoScale'
+      }
+    })
   },
 
   ACSDataContextSetupObject: {

@@ -40,7 +40,7 @@ arbor.newCases = {
     },
 
     newCasesInData: function (iCommand, iCallback) {
-        console.log('Baum detected new data! ' + iCommand.resource);
+        console.log('Arbor detected new data! ' + iCommand.resource);
         var newCases = [];
 
         if (iCommand.values.operation === "createCases") {

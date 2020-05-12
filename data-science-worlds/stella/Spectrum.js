@@ -284,7 +284,7 @@ Spectrum.linePresenceCoefficient = function( iSpecies, iLogTemp ) {
             oCoeff = lineStrengthInterpolator(tTemp, 5000, 7500, 10000, 25000);
             break;
 
-        case "HeI":     //  HeI means "neutal Helium." HeII is singly ionized; it's like H with more nucleus.
+        case "HeI":     //  HeI means "neutral Helium." HeII is singly ionized; it's like H with more nucleus.
             oCoeff = lineStrengthInterpolator(tTemp, 9000, 10000, 28000, 40000);
             break;
 

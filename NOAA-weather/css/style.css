@@ -1,0 +1,573 @@
+/*
+==========================================================================
+
+ * Created by tim on 8/28/19.
+ 
+ 
+ ==========================================================================
+noaa-cdo in noaa-cdo
+
+Author:   Tim Erickson
+
+Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+*/
+/* colors and constants */
+:root {
+    --text: #222222;
+    --teal-dark: #177991;
+    --teal-light: #72bfca;
+    --teal-dark-75: rgba(23, 121, 145, 0.75);
+    --teal-light-25: rgba(114, 191, 202, 0.25);
+    --teal-light-12: rgba(114, 191, 202, 0.12);
+}
+
+/* fonts */
+@font-face {
+    font-family: Montserrat;
+    src: url("../assets/webfonts/Montserrat-Bold.otf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url("../assets/webfonts/Montserrat-SemiBold.otf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Montserrat;
+    src: url("../assets/webfonts/Montserrat-Regular.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* removes blue halo on Chrome around focused input */
+*:focus {
+    outline: none;
+}
+
+/* basic */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+}
+
+#content {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    height: 100vh;
+    margin: 0;
+    padding: 8px 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    max-width: 600px;
+}
+
+#content #wx-intro-section {
+    flex-basis: 36px;
+    border-bottom: thin solid var(--text);
+}
+
+#wx-date-section {
+    flex-basis: 74px;
+}
+
+#wx-summary-section {
+    flex-basis: 56px;
+}
+
+.wx-hide {
+    display: none!important;
+}
+
+.wx-day-range-selector {
+    /*position: absolute;*/
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    left: 12px;
+    right: 12px;
+    background-color: white;
+}
+
+.wx-day-range-selector input {
+    height: 32px;
+    flex-grow: 10;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: none;
+}
+
+.wx-day-range-selector .wx-calendar-button {
+    flex-grow: 0;
+}
+
+/* sections */
+.wx-section-header-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+
+.wx-section-title {
+    font-weight: 600;
+    flex: 125px 0 0;
+}
+
+.wx-subsection {
+    margin: 6px 12px;
+    border-radius: 3px;
+    border: solid 1px var(--teal-dark-75);
+    padding: 6px;
+}
+
+/* drop downs */
+.wx-dropdown .wx-dropdown-body {
+    padding: 0 12px;
+    overflow-y: hidden;
+    transition-property: max-height;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-dropdown.wx-down .wx-dropdown-body {
+    max-height: 400px;
+}
+
+.wx-dropdown.wx-up .wx-dropdown-body {
+    max-height: 0;
+}
+
+.wx-dropdown-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('../assets/images/arrow-drop-down.svg');
+}
+
+.wx-dropdown.wx-down .wx-dropdown-indicator {
+    transform: rotate(180deg);
+}
+
+.wx-dropdown-header, .wx-pop-over-anchor, .wx-info-button, .wx-button {
+    cursor: pointer;
+}
+
+/*
+ * pop-up: these elements display above a grayed out main page and are modal
+ */
+.wx-pop-up .wx-pop-up-content {
+    position: absolute;
+    max-height: 0;
+    left: 12px;
+    right: 12px;
+    top: 35px;
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    background-color: white;
+
+    border: 0 solid var(--teal-dark);
+    border-radius: 6px;
+
+    transition-property: max-height, border-width;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-pop-up-header {
+    flex-basis: 25px;
+}
+
+.wx-pop-up-footer {
+    flex-basis: 50px;
+}
+
+.wx-pop-up.wx-open .wx-pop-up-content {
+    max-height: 400px;
+    border-width: 1px;
+}
+
+.wx-pop-up .wx-cover {
+    position: absolute;
+    background-color: rgba(0,0,0,0.32);
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    visibility: hidden;
+}
+
+.wx-pop-up.wx-open .wx-cover{
+    visibility: visible;
+}
+
+.wx-pop-up-header {
+    background-color: var(--teal-dark);
+    height: 25px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    line-height: 25px;
+}
+
+.wx-pop-up-body {
+    background-color: white;
+    height: 349px;
+    padding: 0 12px;
+}
+
+/*
+    pop-overs: these elements pop out, but remain attached to their header and
+   are non-modal.
+*/
+.wx-pop-over-placeholder {
+    height: 32px;
+    /*width: 362px;*/
+}
+.wx-pop-over {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    max-height: 32px;
+    border: thin solid var(--teal-dark);
+    border-radius: 6px;
+    background-color: white;
+    overflow-y: hidden;
+
+    transition-property: max-height;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-pop-over .wx-pop-over-anchor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px;
+    transition: background-color .5s ease-in;
+}
+
+.wx-pop-over .wx-pop-over-body {
+    border-radius: 6px;
+}
+
+.wx-pop-over.wx-open {
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.25);
+    max-height: 400px;
+    z-index: 20;
+}
+
+.wx-pop-over.wx-open .wx-pop-over-anchor{
+    background-color: var(--teal-light-25);
+    border-bottom: thin solid var(--teal-dark-75);
+}
+
+.wx-pop-over.wx-open .wx-pop-over-body {
+    max-height: 600px;
+}
+
+/* selected types */
+.wx-selection-count {
+    padding: 1.5px 5px;
+    border-radius: 3px;
+    background-color: var(--teal-light-25);
+}
+
+.wx-user-selection {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    color: var(--teal-dark);
+    max-width: 164px;
+}
+
+/* buttons */
+.wx-info-button {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('../assets/images/info.svg');
+}
+
+.wx-calendar-button {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('../assets/images/date-range.svg');
+}
+
+.wx-button {
+    margin: 6px;
+    padding: 6px;
+    /*width: 82px;*/
+    /*height: 32px;*/
+    border-radius: 3px;
+    border: solid 1px var(--teal-light);
+    background-color: white;
+}
+
+.wx-radio-block {
+    display: flex;
+    align-items: center;
+}
+
+/* inputs */
+input[type=date] {
+    cursor: pointer;
+}
+
+input[type=radio] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    background-image: url('../assets/images/radio-button-unchecked.svg');
+    cursor: pointer;
+}
+
+input[type=radio]:checked {
+    background-image: url('../assets/images/radio-button-checked.svg');
+}
+
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background-image: url('../assets/images/check-box-outline-blank.svg');
+    cursor: pointer;
+}
+
+input[type=checkbox]:checked {
+    background-image: url('../assets/images/check-box.svg');
+}
+
+span#wx-dataset-form {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* misc */
+.wx-placeholder-text {
+    opacity: 0.5;
+    color: var(--text);
+}
+
+/* layout of specific objects */
+#wx-info-popup {
+}
+
+.wx-scroll-area {
+    border-top: thin solid var(--teal-light);
+    border-bottom: thin solid var(--teal-light);
+    flex-basis: 300px;
+    overflow-y: scroll;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+#content #wx-main-scroll-area {
+    height: 300px;
+    flex-grow: 10;
+    flex-shrink: 10;
+}
+
+#wx-month-range-selector {
+    padding: 6px;
+}
+
+#wx-month-range-selector input[type=number] {
+    width:49px;
+}
+
+#wx-attribute-section table {
+    width: 100%;
+}
+
+#wx-attribute-section table th {
+    background-color: rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.wx-status-graphic {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex: 18px 0 0;
+    margin-right: 6px;
+}
+
+#wx-double-calendar {
+    margin: 19px;
+    width: 274px;
+    height: 153px;
+    opacity: 0.5;
+    border: solid 1px var(--teal-dark);
+}
+
+.wx-control-area {
+    flex: 160px 0 0;
+}
+
+.wx-summary.wx-transfer-in-progress #wx-get-button {
+    background-color: var(--teal-light-25);
+}
+
+.wx-summary .wx-message-area {
+    color: var(--text);
+}
+
+.wx-summary.wx-transfer-success .wx-message-area,
+
+.wx-summary.wx-transfer-failure .wx-message-area {
+    color: var(--teal-dark);
+}
+
+
+.wx-summary button:hover {
+    background-color: var(--teal-light-12);
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.wx-summary.wx-transfer-in-progress  .wx-status-graphic {
+    background-image: url('../assets/images/progress-indicator.svg');
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+}
+
+.wx-summary.wx-transfer-success .wx-status-graphic {
+    background-image: url('../assets/images/done.svg');
+}
+
+.wx-summary.wx-transfer-failure .wx-status-graphic {
+    background-image: url('../assets/images/warning.svg');
+}
+
+/* calendar */
+.container-calendar {
+    background: #ffffff;
+    padding: 15px;
+    max-width: 475px;
+    margin: 0 auto;
+    overflow: auto;
+    font-family: sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.container-calendar .table-calendar th, .container-calendar .table-calendar td {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+}
+.wx-calendar-title {
+    text-align: center;
+}
+
+.button-container-calendar button {
+    cursor: pointer;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 1px 2px; /*5px 10px;*/
+}
+.table-calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-calendar td, .table-calendar th {
+    padding: 2px;
+    border: 1px solid /*#e2e2e2*/rgba(225,225,225,.25);
+    text-align: center;
+    vertical-align: top;
+}
+
+.date-picker.selected {
+    background-color: var(--teal-dark-75);
+}
+
+.button-container-calendar {
+    position: relative;
+    margin-bottom: 1em;
+    overflow: hidden;
+    clear: both;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer-container-calendar select {
+    cursor: pointer;
+    display: inline-block;
+    zoom: 1;
+    background: #ffffff;
+    color: #585858;
+    border: 1px solid #bfc5c5;
+    border-radius: 3px;
+    padding: 5px 1em;
+}
+
+.date-picker {
+    cursor: pointer;
+}
+
+.cal-shade {
+    background-color: var(--teal-light-25);
+}

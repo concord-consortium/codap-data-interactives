@@ -45,10 +45,19 @@ define([
         return codapInterface.init({
           name: appName,
           title: appName,
-          dimensions: {width: 235, height: 400},
           version: 'v0.4 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
+        }).then( function( iInitialState) {
+          if (!iInitialState) { // set default dimensions, if no initial state
+            return codapInterface.sendRequest({
+              action: 'update',
+              resource: 'interactiveFrame',
+              values: {
+                dimensions: {width: 235, height: 400},
+              }
+            })
+          }
         });
       },
 

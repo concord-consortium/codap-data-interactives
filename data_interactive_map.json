@@ -556,7 +556,7 @@
       "width": 600,
       "height": 400,
       "path": "https://codap.concord.org/data-science-worlds/acs/acs.html?lang=en",
-      "visible": false,
+      "visible": true,
       "categories": [
         "Partners"
       ]
@@ -619,11 +619,11 @@
     },
     {
       "title": "barty",
-      "description": "BART data for 2015. Over 10 million data points.",
+      "description": "BART data for 2015 through 2018. Over 10 million data points.",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/barty/barty.html",
-      "visible": false,
+      "visible": true,
       "aegis": "DSG",
       "categories": [
         "Data Worlds"
@@ -647,7 +647,7 @@
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/geiger/geiger.html",
-      "visible": false,
+      "visible": true,
       "aegis": "DSG",
       "categories": [
         "Data Worlds"
@@ -671,7 +671,7 @@
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/nhanes/nhanes.html",
-      "visible": false,
+      "visible": true,
       "aegis": "DSG",
       "categories": [
         "Data Worlds"
@@ -695,7 +695,7 @@
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/stella/stella.html",
-      "visible": false,
+      "visible": true,
       "aegis": "DSG",
       "categories": [
         "Data Worlds"
@@ -727,9 +727,10 @@
     {
       "title": "NOAA Weather",
       "description": "Get weather data from selected US weather stations",
-      "width": 400,
-      "height": 600,
-      "path": "/NOAA-weather",
+      "width": 380,
+      "height": 490,
+      "path": "/NOAA-weather/index.html",
+      "icon": "/NOAA-weather/assets/images/weather-x.svg",
       "visible": "true",
       "categories": [
         "Partners"

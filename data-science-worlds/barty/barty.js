@@ -87,7 +87,7 @@ var barty = {
             meetingParameters : {
                 day: 2,
                 hour: 14,
-                where: 'Orinda',
+                where: 'Haywrd',
                 number: 160
             }
         }

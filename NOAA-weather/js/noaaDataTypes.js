@@ -25,8 +25,7 @@ limitations under the License.
 ==========================================================================
 
 */
-/*global noaa:true */
-let defaultDataTypes = ["TMAX"];
+let defaultDataTypes = ["TMAX", "TMIN"];
 
 let dataTypes = {
     "TMAX": {
@@ -130,8 +129,132 @@ let dataTypes = {
                     }
                 },
             },
-        */
+            8?
+/* Datatypes for global-summary-of-the-day dataset
+    "DEWP": {
+        "id": "DEWP",
+        "name": "dewPoint",
+        "description": "Average Dew Point",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "fahrenheit"
+    },
+    "FRSHTT": {
+        "id": "FRSHTT",
+        "name": "indc",
+        "description": "Indicators",
+        "searchWeight": 1
+    },
+    "GUST": {
+        "id": "GUST",
+        "name": "gust",
+        "description": "Maximum Wind Gust",
+        "metricOutputPrecision": 1,
+        "metricOutputUnits": "meters per second",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "standardOutputPrecision": 1,
+        "standardOutputUnits": "knots",
+        "units": "knots"
+    },
+    "MAX": {
+        "id": "MAX",
+        "name": "tMax",
+        "description": "Maximum Temperature",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "fahrenheit"
+    },
+    "MIN": {
+        "id": "MIN",
+        "name": "tMin",
+        "description": "Minimum Temperature",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "fahrenheit"
+    },
+    "MXSPD": {
+        "id": "MXSPD",
+        "name": "mxWind",
+        "description": "Maximum Sustained Wind Speed",
+        "metricOutputPrecision": 1,
+        "metricOutputUnits": "meters per second",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "standardOutputPrecision": 1,
+        "standardOutputUnits": "knots",
+        "units": "knots"
+    },
+    "PRCP": {
+        "id": "PRCP",
+        "name": "precip",
+        "description": "Precipitation",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "inches"
+    },
+    "SLP": {
+        "id": "SLP",
+        "name": "pSeaLvl",
+        "description": "Average Sea Level Pressure",
+        "metricOutputPrecision": 2,
+        "metricOutputUnits": "hectopascals",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "standardOutputPrecision": 2,
+        "standardOutputUnits": "inches mercury",
+        "units": "hectopascals"
+    },
+    "SNDP": {
+        "id": "SNDP",
+        "name": "snow",
+        "description": "Snow Depth",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "inches"
+    },
+    "STP": {
+        "id": "STP",
+        "name": "pStn",
+        "description": "Average Station Pressure",
+        "metricOutputPrecision": 2,
+        "metricOutputUnits": "hectopascals",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "standardOutputPrecision": 2,
+        "standardOutputUnits": "inches mercury",
+        "units": "hectopascals"
+    },
 
+    "TEMP": {
+        "id": "TEMP",
+        "name": "temp",
+        "description": "Average Temperature",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "fahrenheit"
+    },
+    "VISIB": {
+        "id": "VISIB",
+        "name": "vis",
+        "description": "Average Visibility",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "units": "miles"
+    },
+    "WDSP": {
+        "id": "WDSP",
+        "name": "aveWind",
+        "description": "Average Wind Speed",
+        "metricOutputPrecision": 1,
+        "metricOutputUnits": "meters per second",
+        "scaleFactor": 1,
+        "searchWeight": 1,
+        "standardOutputPrecision": 1,
+        "standardOutputUnits": "knots",
+        "units": "knots"
+    }
+*/
 };
 
 // All remotely current dataType ids.

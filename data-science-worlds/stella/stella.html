@@ -1,13 +1,3 @@
-<!--
-Here is the URL...
-
-http://codap.concord.org/releases/dsg?di=http://www.eeps.com/dsg/stella/stella.html
-
-
-local:
-http://localhost:8888/plugins/stella/stella.html
-
--->
 
 <!--
 ==========================================================================
@@ -36,10 +26,14 @@ distributed under the License is distributed on an "AS IS" BASIS,
 limitations under the License.
 ==========================================================================
 
+Testing URLs
 
-Testing URL
+concord/eeps:
+    http://codap.concord.org/releases/dsg?di=http://www.eeps.com/dsg/stella/stella.html
 
-    Local MAMP: http://localhost:8888/concord-plugins/data-science-worlds/stella/stella.html
+local testing MAMP
+    http://localhost:8888/codap/static/dg/en/cert/index.html?di=http://localhost:8888/codap-data-interactives/data-science-worlds/stella/stella.html
+
 -->
 
 
@@ -140,7 +134,9 @@ Testing URL
         <li><a href="#starResultTab">Results</a></li>
         <li><a href="#instructionsTab">How To</a></li>
         <li><a href="#badgesTab">Badges</a></li>
+<!--
         <li><a href="#optionsTab">Options</a></li>
+-->
         <!--<li><a href="#debugTab">Debug</a></li> -->
     </ul>
 
@@ -195,10 +191,11 @@ Testing URL
             </div>
         </div>
         <br>
-        <button onclick="stella.photometryManager.expose(1)">1 sec</button>
-        <button onclick="stella.photometryManager.expose(10)">10 sec</button>
-        <button onclick="stella.photometryManager.expose(60)">60 sec</button>
-        <button onclick="stella.photometryManager.expose(600)">10 min</button>
+        <span>exposure: </span>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(1)">1 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(10)">10 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(60)">60 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(600)">10 min</button>
         <br>
         Filter:
         <select name="source" id="filterMenu" onchange="stella.manager.filterChanged();">
@@ -342,6 +339,7 @@ Testing URL
 
     <!--        OPTIONS tab      -->
 
+<!--
     <div id="optionsTab">
         <p>Use these options to simplify (or complexicate) the game.</p>
         <div class="vBox options" id="gameOptions" onclick="stella.options.optionChange()">
@@ -351,6 +349,7 @@ Testing URL
             <label><input type="checkbox" id="properMotion" checked>star locations show proper motion</label>
         </div>
     </div>
+-->
 
 
     <!-- <div id="debugTab">
