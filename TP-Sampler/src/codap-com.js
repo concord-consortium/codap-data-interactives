@@ -262,15 +262,19 @@ define([
           }
 
           function addAttributes() {
+            const requests = []
             _this.collectionAttributes.forEach(function (attr) {
               if (_this.drawAttributes.indexOf(attr) < 0) {
-                codapInterface.sendRequest({
+                requests.push({
                   action: 'create',
                   resource: getTargetDataSetPhrase() + '.collection[items].attribute',
                   values: [attr]
                 });
               }
             });
+
+
+            codapInterface.sendRequest(requests);
           }
 
           function setCollection (result) {
