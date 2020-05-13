@@ -294,7 +294,10 @@ function(Snap, CodapCom, View, ui, utils) {
     this.blur();
     experimentNumber = 0;
     codapCom.deleteAll();
-    codapCom.deleteAllAttributes(device, ui.populateContextsList(caseVariables, view, codapCom));
+    // we used to delete all attributes, and recreate them if we were a collector.
+    // we don't do that any more because it seems to take a very long time, and the request
+    // can sometimes timeout.
+    // codapCom.deleteAllAttributes(device, ui.populateContextsList(caseVariables, view, codapCom));
     codapCom.logAction("clearData:");
   }
 

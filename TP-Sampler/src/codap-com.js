@@ -179,6 +179,7 @@ define([
         });
       },
 
+      // not used any more, kept for record-keeping
       deleteAllAttributes: function(device, populateContextsList) {
         var _this = this;
         codapInterface.sendRequest( {
