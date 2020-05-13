@@ -293,7 +293,8 @@ function(Snap, CodapCom, View, ui, utils) {
   function resetButtonPressed() {
     this.blur();
     experimentNumber = 0;
-    codapCom.deleteAll(device, ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.deleteAll();
+    codapCom.deleteAllAttributes(device, ui.populateContextsList(caseVariables, view, codapCom));
     codapCom.logAction("clearData:");
   }
 

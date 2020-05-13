@@ -22,6 +22,7 @@ define([
       this.openTable = this.openTable.bind(this);
       this.setDataSetName = this.setDataSetName.bind(this);
       this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
+      this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
 
       this.drawAttributes = null;
       this.collectionAttributes = null;
@@ -171,46 +172,46 @@ define([
         this.addMultipleSamplesToCODAP([{run: run, values: vals}], isCollector);
       },
 
-      deleteAll: function(device, populateContextsList) {
-        var _this = this;
+      deleteAll: function() {
         codapInterface.sendRequest({
           action: 'delete',
           resource: getTargetDataSetPhrase() + '.collection[experiments].allCases'
         });
-        var structure = { items: ['value']};
-        Object.keys( structure).forEach( function( key) {
-          var tValidAttrs = structure[ key];
-          codapInterface.sendRequest( {
-            action: 'get',
-            resource: getTargetDataSetPhrase() + '.collection[' + key + '].attributeList'
-          }).then( function( iResult) {
-            var tMsgList = [];
-            if( iResult.success) {
-              iResult.values.forEach( function( iAttribute) {
-                if( tValidAttrs.indexOf( iAttribute.name) < 0) {
-                  tMsgList.push( {
-                    action: 'delete',
-                    resource: getTargetDataSetPhrase() + '.collection[' + key + '].attribute[' + iAttribute.name + ']'
-                  });
-                }
-              });
-              if( tMsgList.length > 0)
-                codapInterface.sendRequest( tMsgList).then( function( iResult) {
-                  if( iResult.success || (iResult.every( function(iItem) {
-                        return iItem.success;
-                      }))) {
-                    if (device === "collector") {
-                      return _this.getContexts().then(populateContextsList);
-                    }
-                  }
-                  else {
-                    return Promise.reject( "Failure to remove attributes");
-                  }
-                }).then( null, function( iMsg) {
-                  console.log( iMsg);
+      },
+
+      deleteAllAttributes: function(device, populateContextsList) {
+        var _this = this;
+        codapInterface.sendRequest( {
+          action: 'get',
+          resource: getTargetDataSetPhrase() + '.collection[items].attributeList'
+        }).then( function( iResult) {
+          var tMsgList = [];
+          if( iResult.success) {
+            iResult.values.forEach( function( iAttribute) {
+              if(iAttribute.name !== "value") {
+                tMsgList.push( {
+                  action: 'delete',
+                  resource: getTargetDataSetPhrase() + '.collection[items].attribute[' + iAttribute.name + ']'
                 });
+              }
+            });
+            if( tMsgList.length > 0) {
+              codapInterface.sendRequest( tMsgList).then( function( iResult) {
+                if( iResult.success || (iResult.every( function(iItem) {
+                      return iItem.success;
+                    }))) {
+                  if (device === "collector") {
+                    return _this.getContexts().then(populateContextsList);
+                  }
+                }
+                else {
+                  return Promise.reject( "Failure to remove attributes");
+                }
+              }).then( null, function( iMsg) {
+                console.log( iMsg);
+              });
             }
-          });
+          }
         });
       },
 
