@@ -27,7 +27,27 @@ define([
       this.drawAttributes = null;
       this.collectionAttributes = null;
 
+      // list of attribute names. We will listen for changes on these and update as needed
+      this.attrNames = {
+        experiment: "experiment",
+        sample_size: "sample_size",
+        sample: "sample",
+        value: "value"
+      }
+      this.attrIds = {};
+
       codapInterface.on('get', 'interactiveState', getStateFunc);
+
+      const _this = this;
+      // listen for changes to attribute names, and update internal names accordingly
+      codapInterface.on('notify', 'dataContextChangeNotice[' + targetDataSetName + ']', function(msg) {
+        if (msg.values.operation === "updateAttributes") {
+          msg.values.result.attrIDs.forEach((id, i) => {
+            const attrKey = _this.attrIds[id];
+            _this.attrNames[attrKey] = msg.values.result.attrs[i].name;
+          });
+        }
+      });
 
       // this.init();
     };
@@ -67,14 +87,17 @@ define([
       },
 
       findOrCreateDataContext: function () {
+        const _this = this;
+        const attrNames = this.attrNames;
+
         this.codapConnected = true;
         // Determine if CODAP already has the Data Context we need.
         // If not, create it.
         return codapInterface.sendRequest({
             action:'get',
             resource: getTargetDataSetPhrase()
-            }, function (result) {
-            if (result && !result.success) {
+            }, function (getDatasetResult) {
+            if (getDatasetResult && !getDatasetResult.success) {
               codapInterface.sendRequest({
                 action: 'create',
                 resource: 'dataContext',
@@ -84,8 +107,8 @@ define([
                     {
                       name: 'experiments',
                       attrs: [
-                        {name: "experiment", type: 'categorical'},
-                        {name: "sample_size", type: 'categorical'}
+                        {name: attrNames.experiment, type: 'categorical'},
+                        {name: attrNames.sample_size, type: 'categorical'}
                       ],
                       childAttrName: "experiment"
                     },
@@ -93,7 +116,7 @@ define([
                       name: 'samples',
                       parent: 'experiments',
                       // The parent collection has just one attribute
-                      attrs: [{name: "sample", type: 'categorical'}],
+                      attrs: [{name: attrNames.sample, type: 'categorical'}],
                       childAttrName: "sample"
                     },
                     {
@@ -104,11 +127,29 @@ define([
                         setOfCasesWithArticle: "an item"
                       },
                       // The child collection also has just one attribute
-                      attrs: [{name: "value"}]
+                      attrs: [{name: attrNames.value}]
                     }
                   ]
                 }
-              }, function(result) { console.log(result); });
+              }, function(createDatasetResult) {
+                if (createDatasetResult && createDatasetResult.success) {
+                  // need to get all the ids of the newly-created attributes, so we can notice if they change.
+                  // we will set these ids on the attrIds object
+                  const allAttrs = [["experiments", attrNames.experiment], ["experiments", attrNames.sample_size],
+                    ["samples", attrNames.sample], ["items", attrNames.value]];
+                  const reqs = allAttrs.map(collectionAttr => ({
+                      "action": "get",
+                      "resource": `dataContext[Sampler].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
+                  }));
+                  codapInterface.sendRequest(reqs, function(getAttrsResult) {
+                    getAttrsResult.forEach(res => {
+                      if (res.success) {
+                        _this.attrIds[res.values.id] = res.values.title;
+                      }
+                    });
+                  });
+                }
+              });
             }
           }
         );
@@ -160,6 +201,17 @@ define([
               item = Object.assign({}, v, {sample: run}, _this.itemProto);
             }
             items.push(item);
+          });
+        });
+        // rename all the attributes to any new names that the user has changed them to.
+        // easiest to do this all in one place here.
+        items.forEach(function(item) {
+          const attrs = Object.keys(item);
+          attrs.forEach(function (attr) {
+            if (_this.attrNames[attr] && _this.attrNames[attr] !== attr) {
+              item[_this.attrNames[attr]] = item[attr];
+              delete item[attr];
+            }
           });
         });
         codapInterface.sendRequest({
