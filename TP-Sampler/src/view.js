@@ -306,17 +306,17 @@ define(function() {
       }
     },
 
-    animateSelectNextVariable: function (selection, draw, selectionMadeCallback) {
+    animateSelectNextVariable: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
       if (!this.isRunning()) return;
 
       if (device === "mixer" || device === "collector") {
-        this.animateMixerSelection(selection, draw, selectionMadeCallback);
+        this.animateMixerSelection(selection, draw, selectionMadeCallback, allSelectionsMadeCallback);
       } else {
-        this.animateSpinnerSelection(selection, draw, selectionMadeCallback);
+        this.animateSpinnerSelection(selection, draw, selectionMadeCallback, allSelectionsMadeCallback);
       }
     },
 
-    moveLetterToSlot: function (slot, sourceLetter, insertBeforeElement, initialTrans, selectionMadeCallback) {
+    moveLetterToSlot: function (slot, sourceLetter, insertBeforeElement, initialTrans, selectionMadeCallback, allSelectionsMadeCallback) {
       var _this = this;
       if (!this.isRunning()) return;
       // move variable to slot
@@ -326,6 +326,7 @@ define(function() {
         clipPath: "none",
         dx: 0
       });
+      window.samples = samples;
       samples.push(letter);
       insertBeforeElement.before(letter);
 
@@ -342,14 +343,16 @@ define(function() {
 
       var speed = this.getProps().speed;
 
-      letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed);
-
-      if (slot === Math.floor(sampleSize)-1) {
-        _this.pushAllLettersOut(selectionMadeCallback);
-      }
+      letter.animate({transform: matrix, fontSize: size, dy: size/4}, 200/speed, function() {
+        if (slot === Math.floor(sampleSize)-1) {
+          _this.pushAllLettersOut(selectionMadeCallback, allSelectionsMadeCallback);
+        } else {
+          selectionMadeCallback();
+        }
+      });
     },
 
-    pushAllLettersOut: function(selectionMadeCallback) {
+    pushAllLettersOut: function(selectionMadeCallback, allSelectionsMadeCallback) {
       var _this = this;
       setTimeout(pushLettersOut, 300/speed);
       setTimeout(returnSlots, 600/speed);
@@ -359,6 +362,7 @@ define(function() {
           setTimeout(selectionMade, 200);
         } else {
           selectionMadeCallback();
+          allSelectionsMadeCallback();
         }
       }
 
@@ -391,6 +395,7 @@ define(function() {
           setTimeout(returnSlots, 200);
           return;
         }
+        samples.forEach(letter => letter.remove());
         samples = [];
         var speed = _this.getProps().speed,
             i, ii;
@@ -406,9 +411,9 @@ define(function() {
       }
     },
 
-    animateMixerSelection: function (selection, draw, selectionMadeCallback) {
+    animateMixerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
       if (isNaN(selection)) {   // EMPTY selection
-        this.pushAllLettersOut(selectionMadeCallback);
+        this.pushAllLettersOut(selectionMadeCallback, allSelectionsMadeCallback);
         return;
       }
       var _this = this,
@@ -432,7 +437,7 @@ define(function() {
           if (!withReplacement) {
             ball.attr({ visibility: "hidden"});
           }
-          _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
+          _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback, allSelectionsMadeCallback);
           ball.beingSelected = false;
           if (hidden) {
             setTimeout(function() {
@@ -445,7 +450,7 @@ define(function() {
         if (!withReplacement) {
           ball.attr({ visibility: "hidden"});
         }
-        _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback);
+        _this.moveLetterToSlot(draw, variable, ball, trans, selectionMadeCallback, allSelectionsMadeCallback);
       }
 
     },
@@ -672,7 +677,7 @@ define(function() {
       return label;
     },
 
-    animateSpinnerSelection: function (selection, draw, selectionMadeCallback) {
+    animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
       var _this = this;
       if (!needle) {
         // draw initial needle
@@ -704,7 +709,7 @@ define(function() {
 
       needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
         var letter = wedges[selection] || wedges[0];
-        _this.moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback);
+        _this.moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback, allSelectionsMadeCallback);
       });
     },
 
