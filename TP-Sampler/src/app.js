@@ -58,7 +58,9 @@ function(Snap, CodapCom, View, ui, utils) {
         withReplacement: withReplacement,
         hidden: hidden,
         password: password,
-        dataSetName: dataSetName
+        dataSetName: dataSetName,
+        attrNames: codapCom.attrNames,
+        attrIds: codapCom.attrIds
       }
     };
   }
@@ -84,6 +86,10 @@ function(Snap, CodapCom, View, ui, utils) {
       ui.render(hidden, password, false, withReplacement, device);
       if (isCollector) {
         refreshCaseList();
+      }
+      if (state.attrNames) {
+        codapCom.attrNames = state.attrNames;
+        codapCom.attrIds = state.attrIds;
       }
     }
     view.render();
