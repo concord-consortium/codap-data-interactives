@@ -1,4 +1,4 @@
-#!/usr/bin/env node --max-old-space-size=32768
+#!/usr/bin/env node --max-old-space-size=30000
 // ==========================================================================
 //  
 //  Author:   jsandoe
@@ -100,12 +100,31 @@ function getDataDictionary (codebook) {
 
 function getCSVFromFile(file) {
   return new Promise(function (resolve, reject) {
+    var data = [];
+    var errors = [];
     papa.parse(file, {
       // dynamicTyping: true,
       skipEmptyLines: true,
       encoding: 'utf8',
-      complete: function(results) {resolve(results);},
-      error: function(error) {reject(error);}
+      step: function (stepResult) {
+        data.push(stepResult.data);
+        if (stepResult.errors.length) {
+          stepResult.errors.forEach(function (e) { errors.push(e); } )
+        }
+        if (!(data.length % 10000)) {
+          console.log(data.length);
+        }
+      },
+      complete: function(results) {
+        results.completionResults = results.results;
+        results.data = data;
+        results.completionErrors = results.errors;
+        results.errors = errors;
+        resolve(results);
+      },
+      error: function(error) {
+        reject(error);
+      }
     });
   });
 }

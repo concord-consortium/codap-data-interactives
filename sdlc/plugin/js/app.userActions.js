@@ -23,8 +23,9 @@ app.userActions = {
       console.log("get cases!");
       let oData = [];
       app.ui.displayStatus('retrieving', 'Fetching data...');
-      let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
+      let result = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
         app.state.selectedStates, app.state.selectedYears);
+      let tData = result.map(function (res) { return (res.status === "fulfilled") && res.value; });
 
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.
@@ -34,13 +35,15 @@ app.userActions = {
         return;
       }
 
+      tData = tData.flat(1);
+
       let counter = 0;
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
       app.ui.displayStatus('transferring', 'Formatting data...');
-      tData.forEach( c => {
+      tData.forEach( function(c) {
           //  c is a case object
-        let sampleData = c.sample_data;
+        let sampleData = c;
         if (!sampleData) { return; }
         let o = { sample : app.state.sampleNumber };
         app.state.selectedAttributes.forEach(function (attrTitle) {
@@ -70,7 +73,7 @@ app.userActions = {
     app.ui.updateWholeUI();
   },
 
-  changeAttributeCheckbox : function(iAttName) {
+  changeAttributeCheckbox : function(/*iAttName*/) {
     // const tAtt = app.allAttributes[iAttName];
     //
     // tAtt.chosen = !tAtt.chosen;
@@ -140,8 +143,7 @@ app.userActions = {
     app.state.keepExistingData = $('#keepExistingDataCheckbox').is(':checked');
   },
   updateRequestedSampleSize: function () {
-    let requestedSize = $("#sampleSizeInput")[0].value;
-    app.state.requestedSampleSize = requestedSize;
+    app.state.requestedSampleSize = $("#sampleSizeInput")[0].value;
     app.ui.updateWholeUI();
   }
 };

@@ -56,34 +56,16 @@ let app = {
     app.ui.displayStatus('initializing', "Initializing");
     await app.CODAPconnect.initialize(null);
     app.logConnectionInfo();
-    let yearsPromise = app.DBconnect.getDBInfo("getYears").then(function (yearsList) {
-        app.years = yearsList;
-        $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
-        $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
-      },
-      handleError);
-    let statesPromise = app.DBconnect.getDBInfo('getStates').then( function (statesList) {
-        app.states = statesList;
-        $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
-        $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
-      },
-      handleError
-    );
-    // app.states = await app.DBconnect.getDBInfo('getStates');
-    // app.presetStates = await app.DBconnect.getDBInfo('getPresetState');
-    let attrPromise = app.getAllAttributes().then(function () {
-        $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
-      },
-      handleError
-    );
-
-    //      Make sure the correct tab panel comes to the front when the text link is clicked
-
-    Promise.allSettled([yearsPromise, statesPromise, attrPromise]).then(function () {
-      app.ui.init();
-      app.ui.displayStatus('inactive', "Ready");
-    });
-
+    let attrPromise = await app.getAllAttributes();
+    $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
+    app.years = await app.DBconnect.getDBInfo("getYears");
+    $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
+    $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
+    app.states = await app.DBconnect.getDBInfo('getStates');
+    $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
+    $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
+    app.ui.init();
+    app.ui.displayStatus('inactive', "Ready");
   },
 
   updateStateFromDOM: function (logMessage) {

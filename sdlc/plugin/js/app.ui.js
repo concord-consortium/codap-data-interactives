@@ -109,13 +109,12 @@ app.ui = (function () {
     makeStateListHTML: function () {
       let out = '<div><label><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</label></div>';
       let stateAttribute = app.allAttributes.State;
-      if (app.states) {
-        app.states.forEach(function (state) {
-          let id = 'state-' + state.state_code;
-          let name = stateAttribute.categories[state.state_code];
-          out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"/>' + name + '</label></div>';
-        });
-      }
+      let stateMap = stateAttribute.categories;
+      Object.keys(stateMap).forEach(function (stateCode) {
+        let stateName = stateMap[stateCode];
+        let id = 'state-' + stateCode;
+        out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"/>' + stateName + '</label></div>';
+      });
       return out;
     },
 
@@ -124,9 +123,9 @@ app.ui = (function () {
       let checked = '';
       if (app.years) {
         app.years.forEach(function (year) {
-          let id = 'year-' + year.year;
+          let id = 'year-' + year;
           out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"'
-              + checked + '/>' + year.year + '</label>' + '</div>';
+              + checked + '/>' + year + '</label>' + '</div>';
           checked = '';
         });
       }

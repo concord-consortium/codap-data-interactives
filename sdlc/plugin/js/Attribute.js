@@ -73,10 +73,8 @@ class Attribute {
     this.attributeMap = attributeMap;
   }
 
-  getRawValue(dataString) {
-    let startIndex = this.startPos - 1;
-    let out = dataString.slice(startIndex, startIndex + this.width);
-    return out;
+  getRawValue(dataObject) {
+    return dataObject[this.name];
   }
 
   isRecode() {
@@ -131,8 +129,8 @@ class Attribute {
   }
 
   decodeValue(dataString) {
-    let result = null;
-    let rawValue = null;
+    let result;
+    let rawValue;
     if (this.isRecode()) {
       rawValue = this.recodeValue(dataString);
     } else {
