@@ -97,6 +97,25 @@ define([
             action:'get',
             resource: getTargetDataSetPhrase()
             }, function (getDatasetResult) {
+
+            function getAttributeIds() {
+              // need to get all the ids of the newly-created attributes, so we can notice if they change.
+              // we will set these ids on the attrIds object
+              const allAttrs = [["experiments", attrNames.experiment],["experiments", attrNames.sample_size],
+                                ["samples", attrNames.sample], ["items", attrNames.value]];
+              const reqs = allAttrs.map(collectionAttr => ({
+                  "action": "get",
+                  "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
+              }));
+              codapInterface.sendRequest(reqs, function(getAttrsResult) {
+                getAttrsResult.forEach(res => {
+                  if (res.success) {
+                    _this.attrIds[res.values.id] = res.values.title;
+                  }
+                });
+              });
+            }
+
             if (getDatasetResult && !getDatasetResult.success) {
               codapInterface.sendRequest({
                 action: 'create',
@@ -131,25 +150,14 @@ define([
                     }
                   ]
                 }
-              }, function(createDatasetResult) {
-                if (createDatasetResult && createDatasetResult.success) {
-                  // need to get all the ids of the newly-created attributes, so we can notice if they change.
-                  // we will set these ids on the attrIds object
-                  const allAttrs = [["experiments", attrNames.experiment], ["experiments", attrNames.sample_size],
-                    ["samples", attrNames.sample], ["items", attrNames.value]];
-                  const reqs = allAttrs.map(collectionAttr => ({
-                      "action": "get",
-                      "resource": `dataContext[Sampler].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
-                  }));
-                  codapInterface.sendRequest(reqs, function(getAttrsResult) {
-                    getAttrsResult.forEach(res => {
-                      if (res.success) {
-                        _this.attrIds[res.values.id] = res.values.title;
-                      }
-                    });
-                  });
-                }
-              });
+              }, getAttributeIds);
+            } else if (getDatasetResult.success) {
+              // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
+              // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
+              // already updated attribute names, this won't work.
+              if (Object.keys(_this.attrIds).length === 0) {
+                getAttributeIds();
+              }
             }
           }
         );
