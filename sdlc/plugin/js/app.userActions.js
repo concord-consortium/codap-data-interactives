@@ -23,9 +23,8 @@ app.userActions = {
       console.log("get cases!");
       let oData = [];
       app.ui.displayStatus('retrieving', 'Fetching data...');
-      let result = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
+      let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
         app.state.selectedStates, app.state.selectedYears);
-      let tData = result.map(function (res) { return (res.status === "fulfilled") && res.value; });
 
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.

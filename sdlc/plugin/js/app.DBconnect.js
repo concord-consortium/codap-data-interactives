@@ -118,6 +118,9 @@ app.DBconnect = {
               } else {
                 reject(`Errors fetching ${presetURL}: ${response.errors.join(', ')}`);
               }
+            },
+            error: function (error/*, file*/) {
+              reject(error);
             }
           })
         } catch(ex) {
@@ -125,26 +128,32 @@ app.DBconnect = {
         }
       });
     }
+
+
     const tSampleSize = app.userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
+    let stateAttribute = app.allAttributes.State;
+    let stateMap = stateAttribute.categories;
+    let stateNames = iStateCodes.length?
+        iStateCodes.map(function (sc) { return stateMap[sc]; }):
+        ['all'];
+
     // TBD convert state codes to state names
-    iStateNames = ["all"];
     iYears = iYears || [];
 
     let chunks = app.getPartitionCount();
     if (!chunks) {
       return Promise.resolve([]);
     }
-    let chunkSize = tSampleSize;
+    let chunkSize = tSampleSize/chunks;
     let fetchPromises = [];
-    iStateNames.forEach(function (stateName) {
+    stateNames.forEach(function (stateName) {
       iYears.forEach(function (year) {
         fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize));
       });
     });
-    return Promise.allSettled(fetchPromises);
-
+    return Promise.all(fetchPromises);
   },
 
   getDBInfo: async function (iType) {
