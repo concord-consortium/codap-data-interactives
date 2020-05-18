@@ -150,7 +150,13 @@ app.DBconnect = {
     let fetchPromises = [];
     stateNames.forEach(function (stateName) {
       iYears.forEach(function (year) {
-        fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize));
+        // if chunk size is large get double, so we can get a unique subsample
+        if (chunkSize > 900) {
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize/2));
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize/2));
+        } else {
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize));
+        }
       });
     });
     return Promise.all(fetchPromises);
