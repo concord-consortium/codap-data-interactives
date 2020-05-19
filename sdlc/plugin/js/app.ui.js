@@ -17,7 +17,11 @@
  */
 /* global app */
 
-app.ui = (function () {
+import * as config from './config.js';
+import {constants} from './app.constants.js';
+import {userActions} from "./app.userActions.js";
+
+let ui = (function () {
   function findAncestorElementWithClass(el, myClass) {
     while (el !== null && el.parentElement !== el) {
       if (el.classList.contains(myClass)) {
@@ -60,17 +64,17 @@ app.ui = (function () {
         toggleClass(el, 'show-descriptions');
       }
 
-      setEventHandler('#sampleSizeInput', 'change', function (ev) {
-        app.userActions.updateRequestedSampleSize('Sample size change.');
+      setEventHandler('#sampleSizeInput', 'change', function (/*ev*/) {
+        userActions.updateRequestedSampleSize('Sample size change.');
       });
 
       setEventHandler('#getCasesButton', 'click',
-          app.userActions.pressGetCasesButton);
+          userActions.pressGetCasesButton);
 
       setEventHandler('#keepExistingDataCheckbox', 'change',
-          app.userActions.getKeepExistingDataOption);
+          userActions.getKeepExistingDataOption);
 
-      setEventHandler('.wx-dropdown-header', 'click', function (ev) {
+      setEventHandler('.wx-dropdown-header', 'click', function (/*ev*/) {
         let dropdownGroup = findAncestorElementWithClass(this, 'wx-dropdown-group');
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
@@ -87,17 +91,17 @@ app.ui = (function () {
         }
       });
 
-      setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (ev) {
+      setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
       });
 
-      setEventHandler('.wx-pop-over-anchor', 'click', function (ev) {
+      setEventHandler('.wx-pop-over-anchor', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(parentEl);
       });
 
-      setEventHandler('.show-attr-description-checkbox', 'click', function (ev) {
+      setEventHandler('.show-attr-description-checkbox', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'attributeCheckboxes');
         toggleDescriptions(parentEl);
       });
@@ -135,7 +139,7 @@ app.ui = (function () {
     makeAttributeListHTML: function () {
       let out = "";
 
-      app.config.attributeGroups.forEach( (g)=>{
+      config.attributeGroups.forEach( (g)=>{
         out += '    <div class="wx-dropdown wx-up">\n';
         out += '      <div class="wx-section-header-line wx-dropdown-header">';
         out += `        <span class="wx-section-title">${g.title}</span>`;
@@ -183,12 +187,12 @@ app.ui = (function () {
 
     updateWholeUI: function () {
       if (!this.initialized) return;
-      app.ui.refreshAttributeCheckboxes();
-      app.ui.refreshStateCheckboxes();
-      app.ui.refreshYearCheckboxes();
-      app.ui.refreshSampleSummary();
-      app.ui.refreshText();
-      app.ui.refreshLog();
+      ui.refreshAttributeCheckboxes();
+      ui.refreshStateCheckboxes();
+      ui.refreshYearCheckboxes();
+      ui.refreshSampleSummary();
+      ui.refreshText();
+      ui.refreshLog();
     },
 
     refreshAttributeCheckboxes: function () {
@@ -286,7 +290,7 @@ app.ui = (function () {
     },
 
     refreshText: function () {
-      $('#sampleSizeInput').val(app.state.requestedSampleSize || 1000);
+      $('#sampleSizeInput').val(app.state.requestedSampleSize || constants.kDefaultSampleSize);
       $('#keepExistingDataCheckbox')[0].checked = app.state.keepExistingData;
     },
 
@@ -339,3 +343,5 @@ app.ui = (function () {
 
   };
 })();
+
+export {ui};

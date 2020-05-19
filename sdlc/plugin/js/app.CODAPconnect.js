@@ -16,16 +16,17 @@
  *
  */
 
-//  import codapInterface from "../common/codapInterface";
+// import codapInterface from "../common/codapInterface";
+import {constants} from "./app.constants.js";
 
-app.CODAPconnect = {
+let CODAPconnect = {
 
-  initialize: async function (iCallback) {
+  initialize: async function (/*iCallback*/) {
     try {
       await codapInterface.init(this.iFrameDescriptor, null);
     } catch (e) {
       console.log('Error connecting to CODAP: ' + e);
-      app.state = Object.assign({}, app.freshState);
+      window.app.state = Object.assign({}, window.app.freshState);
       return;
     }
     await pluginHelper.initDataSet(this.ACSDataContextSetupObject);
@@ -51,9 +52,7 @@ app.CODAPconnect = {
       }
     };
 
-    const updateResult = await codapInterface.sendRequest(tMessage);
-
-    // app.ui.updateWholeUI();
+    return await codapInterface.sendRequest(tMessage);
   },
 
   logAction: function (iMessage) {
@@ -70,26 +69,24 @@ app.CODAPconnect = {
 
     const makeItemsMessage = {
       action : "create",
-      resource : "dataContext[" + app.constants.kACSDataSetName + "].item",
+      resource : "dataContext[" + constants.kACSDataSetName + "].item",
       values : iValues
     };
 
-    const createItemsResult = await codapInterface.sendRequest(makeItemsMessage);
-    return createItemsResult;
+    return await codapInterface.sendRequest(makeItemsMessage);
   },
 
   deleteAllCases: async function () {
     let theMessage = {
       action: 'delete',
-      resource : "dataContext[" + app.constants.kACSDataSetName + "].allCases"
+      resource : "dataContext[" + constants.kACSDataSetName + "].allCases"
     };
-    let result = await codapInterface.sendRequest(theMessage);
-    return result;
+    return await codapInterface.sendRequest(theMessage);
   },
 
   makeNewAttributesIfNecessary : async function() {
     async function getCODAPAttrList() {
-      let attrListResource = 'dataContext[' + app.constants.kACSDataSetName +
+      let attrListResource = 'dataContext[' + constants.kACSDataSetName +
           ']';
       let response =
           await codapInterface.sendRequest({
@@ -117,8 +114,8 @@ app.CODAPconnect = {
 
     theAttributes.forEach(function (attr) {
       if (!existingAttributeNames.includes(attr.title)) {
-        let attrResource = 'dataContext[' + app.constants.kACSDataSetName + '].collection['
-            + app.constants.kACSCollectionName + '].attribute';
+        let attrResource = 'dataContext[' + constants.kACSDataSetName + '].collection['
+            + constants.kACSCollectionName + '].attribute';
         let req = {
           action: 'create',
           resource: attrResource,
@@ -141,7 +138,7 @@ app.CODAPconnect = {
         if (!app.state.selectedAttributes.includes(attrName)) {
           let codapAttr = existingAttributeList.find(function (cAttr) {return attrName === cAttr.name;});
           if (codapAttr) {
-            let attrResource = 'dataContext[' + app.constants.kACSDataSetName +
+            let attrResource = 'dataContext[' + constants.kACSDataSetName +
                 '].collection[' + codapAttr.collectionID + '].attribute[' + codapAttr.name + ']';
             let req = {
               action: 'delete', resource: attrResource
@@ -165,8 +162,8 @@ app.CODAPconnect = {
       resource : "component",
       values : {
         type : 'caseTable',
-        dataContext : app.constants.kACSDataSetName,
-        name : app.constants.kACSCaseTableName,
+        dataContext : constants.kACSDataSetName,
+        name : constants.kACSCaseTableName,
         cannotClose : true
       }
     };
@@ -191,12 +188,12 @@ app.CODAPconnect = {
   },
 
   ACSDataContextSetupObject: {
-    name: app.constants.kACSDataSetName,
-    title: app.constants.kACSDataSetTitle,
+    name: constants.kACSDataSetName,
+    title: constants.kACSDataSetTitle,
     description: 'ACS portal',
     collections: [
       {
-        name: app.constants.kACSCollectionName,
+        name: constants.kACSCollectionName,
         labels: {
           singleCase: "person",
           pluralCase: "people",
@@ -212,7 +209,7 @@ app.CODAPconnect = {
 
 
   iFrameDescriptor: {
-    version: app.constants.version,
+    version: constants.version,
     name: 'sdlc',
     title: 'Microdata Portal',
     dimensions: {width: 380, height: 520},
@@ -220,3 +217,5 @@ app.CODAPconnect = {
     cannotClose: true
   }
 };
+
+export {CODAPconnect};

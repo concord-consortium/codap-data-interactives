@@ -16,21 +16,26 @@
  *
  */
 
-app.userActions = {
+import {constants} from './app.constants.js';
+import {CODAPconnect} from "./app.CODAPconnect.js";
+import {DBconnect} from "./app.DBconnect.js";
+import {ui} from "./app.ui.js"
+
+let userActions = {
 
   pressGetCasesButton : async function() {
     try {
       console.log("get cases!");
       let oData = [];
-      app.ui.displayStatus('retrieving', 'Fetching data...');
-      let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
+      ui.displayStatus('retrieving', 'Fetching data...');
+      let tData = await DBconnect.getCasesFromDB(app.state.selectedAttributes,
         app.state.selectedStates, app.state.selectedYears);
 
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.
       if (!tData) {
-        app.ui.displayStatus('failure', 'Fetch Error. Please retry.');
-        app.ui.updateWholeUI();
+        ui.displayStatus('failure', 'Fetch Error. Please retry.');
+        ui.updateWholeUI();
         return;
       }
 
@@ -39,7 +44,7 @@ app.userActions = {
       let counter = 0;
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
-      app.ui.displayStatus('transferring', 'Formatting data...');
+      ui.displayStatus('transferring', 'Formatting data...');
       tData.forEach( function(c) {
           //  c is a case object
         let sampleData = c;
@@ -54,22 +59,22 @@ app.userActions = {
       });
 
       //     make sure the case table is showing
-      app.ui.displayStatus('transferring', 'Opening case table...');
-      let id = await app.CODAPconnect.makeCaseTableAppear();
-      setTimeout(function () {app.CODAPconnect.autoscaleComponent(id);}, 2000);
+      ui.displayStatus('transferring', 'Opening case table...');
+      let id = await CODAPconnect.makeCaseTableAppear();
+      setTimeout(function () {CODAPconnect.autoscaleComponent(id);}, 2000);
 
-      app.ui.displayStatus('transferring', 'Sending data to codap...');
+      ui.displayStatus('transferring', 'Sending data to codap...');
       if (!app.state.keepExistingData) {
-        await app.CODAPconnect.deleteAllCases();
+        await CODAPconnect.deleteAllCases();
       }
-      await app.CODAPconnect.saveCasesToCODAP( oData );
-      app.ui.displayStatus('success', `Selected a random sample of ${counter} people`);
+      await CODAPconnect.saveCasesToCODAP( oData );
+      ui.displayStatus('success', `Selected a random sample of ${counter} people`);
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);
-      app.ui.displayStatus('failure', 'Fetch Error. Please retry.');
+      ui.displayStatus('failure', 'Fetch Error. Please retry.');
     }
-    app.ui.updateWholeUI();
+    ui.updateWholeUI();
   },
 
   changeAttributeCheckbox : function(/*iAttName*/) {
@@ -133,7 +138,7 @@ app.userActions = {
   getSelectedSampleSize: function () {
     let requestedSize = $("#sampleSizeInput")[0].value;
     let numPartitions = app.getPartitionCount();
-    let constrainedSize = Math.max(app.constants.kMinCases, Math.min(app.constants.kMaxCases, requestedSize));
+    let constrainedSize = Math.max(constants.kMinCases, Math.min(constants.kMaxCases, requestedSize));
     let partitionSize = Math.round(constrainedSize/numPartitions) || 1;
     return partitionSize * numPartitions;
   },
@@ -143,6 +148,8 @@ app.userActions = {
   },
   updateRequestedSampleSize: function () {
     app.state.requestedSampleSize = $("#sampleSizeInput")[0].value;
-    app.ui.updateWholeUI();
+    ui.updateWholeUI();
   }
 };
+
+export {userActions};

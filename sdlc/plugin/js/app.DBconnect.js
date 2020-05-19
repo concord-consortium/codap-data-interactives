@@ -15,9 +15,10 @@
  * ==========================================================================
  *
  */
+import {userActions} from "./app.userActions.js";
 
 /*global Papa:true */
-app.DBconnect = {
+let DBconnect = {
 
   metadata: {
     "datasetURL": "datasets",
@@ -130,7 +131,7 @@ app.DBconnect = {
     }
 
 
-    const tSampleSize = app.userActions.getSelectedSampleSize();
+    const tSampleSize = userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
     let stateAttribute = app.allAttributes.State;
@@ -171,3 +172,5 @@ app.DBconnect = {
     }
   }
 };
+
+export {DBconnect};

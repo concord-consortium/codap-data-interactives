@@ -20,13 +20,13 @@
  *
  * Configuration properties.
  */
-/*global app */
-app.config = {
+
   /*
    * The following declarations are specific to the data set.
    * Should consider moving to separate json.
    */
-  attributeGroups: [{
+let attributeGroups = [
+    {
       number: 1,
       open: false,
       title: 'Basic demographics'
@@ -55,9 +55,9 @@ app.config = {
       number: 6,
       open: false,
       title: 'Other'
-    }],
+    }];
 
-  attributeAssignment: [{
+let attributeAssignment = [{
       ipumsName: 'AGE',
       title: 'Age',
       group: 1,
@@ -850,4 +850,5 @@ app.config = {
       readonly: true,
       description: 'The four-digit year of the decennial census or ACS for each person\'s questionnaire responses. Note that you must select this attribute if you want to display year indicators in your case table or graphs.'
   }]
-};
+
+export {attributeGroups, attributeAssignment};

@@ -20,7 +20,14 @@
  */
 /* global: xml2js */
 
-let app = {
+import * as config from './config.js';
+import {ui} from './app.ui.js';
+import {userActions} from "./app.userActions.js";
+import {CODAPconnect} from "./app.CODAPconnect.js";
+import {DBconnect} from "./app.DBconnect.js";
+import {Attribute} from "./Attribute.js"
+
+window.app = {
   state: null,
   whence: "concord",
   // whence: "local",
@@ -45,27 +52,27 @@ let app = {
     if (info) {
       this.addLog('Connection: ' + [info.type, info.effectiveType,
         info.saveData, info.rtt, info.downlink, info.downlinkMax].join('/') );
-      this.ui.updateWholeUI();
+      ui.updateWholeUI();
     }
   },
 
   initialize: async function () {
-    function handleError(message) {
-      console.warn("Initializing Microdata Portal: " + message);
-    }
-    app.ui.displayStatus('initializing', "Initializing");
-    await app.CODAPconnect.initialize(null);
+    // function handleError(message) {
+    //   console.warn("Initializing Microdata Portal: " + message);
+    // }
+    ui.displayStatus('initializing', "Initializing");
+    await CODAPconnect.initialize(null);
     app.logConnectionInfo();
     let attrPromise = await app.getAllAttributes();
-    $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
-    app.years = await app.DBconnect.getDBInfo("getYears");
-    $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
-    $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
-    app.states = await app.DBconnect.getDBInfo('getStates');
-    $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
-    $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
-    app.ui.init();
-    app.ui.displayStatus('inactive', "Ready");
+    $('#chooseAttributeDiv input').on('change', userActions.changeAttributeCheckbox);
+    app.years = await DBconnect.getDBInfo("getYears");
+    $('#chooseSampleYearsDiv').html(ui.makeYearListHTML());
+    $('#chooseSampleYearsDiv input').on('change', userActions.changeSampleYearsCheckbox);
+    app.states = await DBconnect.getDBInfo('getStates');
+    $('#chooseStatesDiv').html(ui.makeStateListHTML());
+    $('#chooseStatesDiv input').on('change', userActions.changeSampleStateCheckbox);
+    ui.init();
+    ui.displayStatus('inactive', "Ready");
   },
 
   updateStateFromDOM: function (logMessage) {
@@ -73,15 +80,15 @@ let app = {
       // initialize state from CODAP, then update state
     }
     else {
-      this.state.selectedYears = app.userActions.getSelectedYears();
-      this.state.selectedStates = app.userActions.getSelectedStates();
-      this.state.selectedAttributes = app.userActions.getSelectedAttrs();
-      this.state.requestedSampleSize = app.userActions.getRequestedSampleSize();
+      this.state.selectedYears = userActions.getSelectedYears();
+      this.state.selectedStates = userActions.getSelectedStates();
+      this.state.selectedAttributes = userActions.getSelectedAttrs();
+      this.state.requestedSampleSize = userActions.getRequestedSampleSize();
       if (logMessage) {
-        this.CODAPconnect.logAction(logMessage);
+        CODAPconnect.logAction(logMessage);
       }
     }
-    this.ui.updateWholeUI();
+    ui.updateWholeUI();
   },
 
   addLog: function (logMessage) {
@@ -127,7 +134,7 @@ let app = {
   getAllAttributes: async function () {
     let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
-    app.config.attributeAssignment.forEach(function (configAttr) {
+    config.attributeAssignment.forEach(function (configAttr) {
       let codebookDef = dataDictionary.find(function (def) {
         return def.name === configAttr.ipumsName;
       });
@@ -135,8 +142,10 @@ let app = {
       app.allAttributes[tA.title] = tA;
     });
 
-    $("#chooseAttributeDiv").html(app.ui.makeAttributeListHTML());
+    $("#chooseAttributeDiv").html(ui.makeAttributeListHTML());
     return app.allAttributes;
   }
 
 };
+
+app.initialize();

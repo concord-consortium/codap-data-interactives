@@ -171,3 +171,4 @@ class Attribute {
   }
 }
 
+export {Attribute};

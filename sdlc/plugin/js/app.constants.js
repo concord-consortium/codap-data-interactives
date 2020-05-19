@@ -15,22 +15,22 @@
  * ==========================================================================
  *
  */
-/* global app */
-
-app.constants = {
-  version: "v0004",
+let constants = {
+  version: "v0005",
 
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
   kACSCollectionName: "people",
   kACSCaseTableName: "People from ACS",
 
-  kBasePhpURL: {
-    local: "http://localhost/~jsandoe/codap-data-interactives/sdlc/service/acs.php",
-    concord: "https://codap.concord.org/sdlc/service/acs.php"
-  },
-
+  // kBasePhpURL: {
+  //   local: "http://localhost/~jsandoe/codap-data-interactives/sdlc/service/acs.php",
+  //   concord: "https://codap.concord.org/sdlc/service/acs.php"
+  // },
+  //
   kMinCases: 0,
   kMaxCases: 1000,
   kDefaultSampleSize: 100
 };
+
+export {constants};
