@@ -19,7 +19,6 @@
 import {dataTypeIDs, dataTypes, defaultDataTypes} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
-// import {noaaCDOConnect} from './noaa-cdo';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
 // noinspection SpellCheckingInspection
@@ -48,7 +47,7 @@ let constants = {
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
-  version: 'v0009',
+  version: 'v0010',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
