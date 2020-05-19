@@ -84,6 +84,7 @@ body {
   overflow-y: hidden;
 }
 
+/* remove Chrome blue halo */
 input:focus,
 select:focus,
 textarea:focus,
@@ -91,6 +92,7 @@ button:focus {
   outline: none;
 }
 
+/* basic page style */
 .plugin-content {
   font-family: Montserrat, sans-serif;
   font-size: 12px;
@@ -104,14 +106,13 @@ button:focus {
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: stretch;
-
 }
 
-#summary, #atts, #states, #sampleYears, #about, #log {
-  margin : 0;
-  position: relative;
-  overflow-y: hidden;
-}
+/*#summary, #atts, #states, #sampleYears, #about, #log {*/
+/*  margin : 0;*/
+/*  position: relative;*/
+/*  overflow-y: hidden;*/
+/*}*/
 
 #getCasesButton {
   font-family: 'Montserrat',sans-serif;
@@ -174,14 +175,22 @@ button:focus {
   text-indent: -1.6em;
 }
 
-#chooseStatesDiv, #chooseSampleYearsDiv {
+#chooseStatesDiv div, #chooseSampleYearsDiv {
   display: flex;
   flex-wrap: wrap;
 }
 
-#chooseStatesDiv div {
+#chooseStatesDiv label, #chooseSampleYearsDiv label {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 6px;
+}
+
+#chooseStatesDiv label {
   flex-basis: 120px;
 }
+
 #chooseSampleYearsDiv div {
   flex-basis: 90px;
 }
@@ -430,10 +439,6 @@ body .ui-tabs .ui-tabs-panel {
   background-color: white;
 }
 
-label {
-  display: inline-flex;
-  align-items: center;
-}
 label.property-label {
   font-weight: 600;
 }
@@ -460,8 +465,8 @@ input[type=number] {
 }
 
 #wx-summary-section .summary-options{
-  text-align: right;
-  padding-bottom: 8px;
+  /*text-align: right;*/
+  /*padding-bottom: 8px;*/
 }
 
 #intro-section {
@@ -477,6 +482,12 @@ input[type=number] {
   flex-grow: 0;
   flex-shrink: 1;
   border-bottom: thin solid var(--teal-light);
+}
+
+.wx-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
 }
 
 .wx-summary.wx-transfer-in-progress button,
@@ -517,14 +528,14 @@ input[type=radio] {
   width: 17px;
   height: 17px;
   font-size: 17px;
-  /*background-image: url('../assets/images/radio-button-unchecked.svg');*/
-  content: var(--icon-radio-button-unchecked);
+  background-image: url('../assets/images/radio-button-unchecked.svg');
+  /*content: var(--icon-radio-button-unchecked);*/
   color: var(--teal-dark-75);
 }
 
 input[type=radio]:checked {
-  /*background-image: url('../assets/images/radio-button-checked.svg');*/
-  content: var(--icon-radio-button-checked);
+  background-image: url('../assets/images/radio-button-checked.svg');
+  /*content: var(--icon-radio-button-checked);*/
   color: var(--teal-dark);
 }
 input[type=checkbox] {

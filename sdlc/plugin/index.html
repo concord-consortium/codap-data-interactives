@@ -137,36 +137,12 @@
 
 <!--  <hr class="wx-fixed-section-divider"/>-->
 
-  <div id="fixed-height-section">
-    <label class="property-label">Number of people (Max 1000):&nbsp;
-    <input id="sampleSizeInput" type="number" value="100" min="0" max="1000"
-           step="50" title="Enter the number of samples desired (up to 1000)" >
-    </label>
-  </div>
-
   <div id="wx-main-scroll-area" class="wx-scroll-area wx-dropdown-group">
-
-    <div id="attribute-section" class="wx-dropdown wx-up">
-      <div class="wx-section-header-line wx-dropdown-header" title="Click to select sample attributes to fetch">
-        <span class="wx-section-title">Attributes</span>
-        <span class="wx-selection-count"></span>
-        <span class="wx-user-selection"></span>
-        <span class="wx-dropdown-indicator"></span>
-      </div>
-
-      <div class="wx-dropdown-body wx-dropdown-group">
-        <p>
-          Choose attributes to include in your sample data set from the lists below.
-        </p>
-        <div id="chooseAttributeDiv">
-        </div>
-      </div>
-    </div>
 
     <div id="states-section" class="wx-dropdown wx-up">
       <div class="wx-section-header-line wx-dropdown-header" title="Click to select State(s)">
-        <span class="wx-section-title">States</span>
-        <span class="wx-selection-count"></span>
+        <span class="wx-section-title">Place</span>
+        <span></span>
         <span class="wx-user-selection"></span>
         <span class="wx-dropdown-indicator"></span>
       </div>
@@ -193,20 +169,41 @@
         </div>
       </div>
     </div>
+
+    <div id="attribute-section" class="wx-dropdown wx-up">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to select sample attributes to fetch">
+        <span class="wx-section-title">Attributes</span>
+        <span class="wx-selection-count"></span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+
+      <div class="wx-dropdown-body wx-dropdown-group">
+        <p>
+          Choose attributes to include in your sample data set from the lists below.
+        </p>
+        <div id="chooseAttributeDiv">
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div id="wx-summary-section">
-    <div class="wx-section-header-line wx-summary">
+    <div class="wx-section-header-line summary-options">
+      <label title="Enter the number of samples desired (up to 1000)">People to fetch (<=1000):&nbsp;
+        <input id="sampleSizeInput" type="number" value="100" min="0" max="1000"
+               step="50" >
+      </label>
+      <label title="Check this box to retain data from prior fetches.">
+        Keep existing data
+        <input id="keepExistingDataCheckbox" type="checkbox"/>
+      </label>
+    </div>
+    <div class="wx-summary">
       <span class="wx-status-graphic"></span>
       <span id="status" class="wx-message-area"></span>
       <button id="getCasesButton" title="Fetch population data and send to CODAP">Get People</button>
-    </div>
-    <div class="summary-options">
-      <label>
-        Keep existing data
-        <input id="keepExistingDataCheckbox" type="checkbox"
-               title="Check this box to retain data from prior fetches."/>
-      </label>
     </div>
   </div>
 </main>

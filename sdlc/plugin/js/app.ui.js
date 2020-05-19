@@ -31,38 +31,83 @@ let ui = (function () {
     }
   }
 
+  function setEventHandler (selector, event, handler) {
+    const elements = document.querySelectorAll(selector);
+    if (!elements) { return; }
+    elements.forEach(function (el) {
+      el.addEventListener(event, handler);
+    });
+  }
+
+  function toggleClass(el, myClass) {
+    let isOpen = el.classList.contains(myClass);
+    if (isOpen) {
+      el.classList.remove(myClass);
+    } else {
+      el.classList.add(myClass);
+    }
+  }
+
+  function togglePopUp(el) {
+    toggleClass(el, 'wx-open');
+  }
+
+  function togglePopOver(el) {
+    toggleClass(el, 'wx-open');
+  }
+
+  function toggleDescriptions(el) {
+    toggleClass(el, 'show-descriptions');
+  }
+
+  /**
+   * A utility to create a DOM element with classes and content.
+   * @param tag {string}
+   * @param classList {[string]}
+   * @param content {[Element|Attribute]}
+   * @return {Element}
+   */
+  function createElement(tag, classList, content) {
+    let el = document.createElement(tag);
+    if (classList) {
+      if (typeof classList === 'string') classList = [classList];
+      classList.forEach( function (cl) {el.classList.add(cl);});
+    }
+    if (content) {
+      if (!Array.isArray(content)) { content = [content];}
+      content.forEach(function(c) {
+        if (c instanceof Attr) {
+          el.setAttributeNode(c);
+        } else {
+          el.append(c);
+        }
+      });
+    }
+    return el;
+  }
+
+  /**
+   * A utility to create a DOM attribute node.
+   * @param name {string}
+   * @param value {*}
+   * @return {Attribute}
+   */
+  function createAttribute(name, value) {
+    let attr = document.createAttribute(name);
+    attr.value = value;
+    return attr;
+  }
+
+
   return {
     initialized: false,
 
     init: function () {
-      function setEventHandler (selector, event, handler) {
-        const elements = document.querySelectorAll(selector);
-        if (!elements) { return; }
-        elements.forEach(function (el) {
-          el.addEventListener(event, handler);
-        });
-      }
-
-      function toggleClass(el, myClass) {
-        let isOpen = el.classList.contains(myClass);
-        if (isOpen) {
-          el.classList.remove(myClass);
-        } else {
-          el.classList.add(myClass);
-        }
-      }
-
-      function togglePopUp(el) {
-        toggleClass(el, 'wx-open');
-      }
-
-      function togglePopOver(el) {
-        toggleClass(el, 'wx-open');
-      }
-
-      function toggleDescriptions(el) {
-        toggleClass(el, 'show-descriptions');
-      }
+      $('#chooseAttributeDiv input').on('change', userActions.changeAttributeCheckbox);
+      $('#chooseSampleYearsDiv').html(ui.makeYearListHTML());
+      $('#chooseSampleYearsDiv input').on('change', userActions.changeSampleYearsCheckbox);
+      $('#chooseStatesDiv').append(ui.makeStateListHTML());
+      $('#chooseStatesDiv input').on('change', userActions.changeSampleStateCheckbox);
 
       setEventHandler('#sampleSizeInput', 'change', function (/*ev*/) {
         userActions.updateRequestedSampleSize('Sample size change.');
@@ -111,13 +156,28 @@ let ui = (function () {
     },
 
     makeStateListHTML: function () {
-      let out = '<div><label><input type="checkbox" id="state-all" class="select-all" checked="checked" />all states</label></div>';
+      function makeItem(label, value, myClass, checked) {
+        let inputEl = createElement('input', [myClass],
+            [
+              createAttribute('type', 'radio'),
+              createAttribute('name', 'state'),
+              createAttribute('id', value)
+            ]
+        );
+        if (checked) {
+          inputEl.setAttributeNode(createAttribute('checked', 'checked'));
+        }
+        return createElement('label', null, [inputEl, label]);
+      }
+
+      let out = createElement('div');
+      out.append(makeItem('all states', 'state-all', 'select-all', true));
       let stateAttribute = app.allAttributes.State;
       let stateMap = stateAttribute.categories;
       Object.keys(stateMap).forEach(function (stateCode) {
         let stateName = stateMap[stateCode];
         let id = 'state-' + stateCode;
-        out += '<div><label><input type="checkbox" id="' + id + '" class="select-item"/>' + stateName + '</label></div>';
+        out.append(makeItem(stateName, id, 'select-item', false));
       });
       return out;
     },

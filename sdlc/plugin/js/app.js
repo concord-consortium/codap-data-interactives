@@ -63,16 +63,11 @@ window.app = {
     ui.displayStatus('initializing', "Initializing");
     await CODAPconnect.initialize(null);
     app.logConnectionInfo();
-    let attrPromise = await app.getAllAttributes();
-    $('#chooseAttributeDiv input').on('change', userActions.changeAttributeCheckbox);
+    await app.getAllAttributes();
     app.years = await DBconnect.getDBInfo("getYears");
-    $('#chooseSampleYearsDiv').html(ui.makeYearListHTML());
-    $('#chooseSampleYearsDiv input').on('change', userActions.changeSampleYearsCheckbox);
     app.states = await DBconnect.getDBInfo('getStates');
-    $('#chooseStatesDiv').html(ui.makeStateListHTML());
-    $('#chooseStatesDiv input').on('change', userActions.changeSampleStateCheckbox);
     ui.init();
-    ui.displayStatus('inactive', "Ready");
+    ui.displayStatus('success', "Ready");
   },
 
   updateStateFromDOM: function (logMessage) {
