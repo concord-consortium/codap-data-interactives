@@ -69,9 +69,10 @@ let state = {
 
 async function initialize() {
   let isConnected = false;
+  let documentState = {};
   try {
     isConnected = await codapConnect.initialize(constants);
-    state = await codapConnect.getInteractiveState() || {};
+    documentState = await codapConnect.getInteractiveState() || {};
   } catch (ex) {
     console.log('Connection to codap unsuccessful.')
   }
@@ -79,7 +80,7 @@ async function initialize() {
   try {
     const stationDatasetName = constants.StationDSName;
     const stationCollectionName = constants.StationDSTitle;
-    initializeState(state);
+    initializeState(documentState);
 
     if (isConnected) {
       let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
@@ -125,17 +126,17 @@ async function fetchStationDataset(url) {
 
 }
 
-function initializeState(state) {
+function initializeState(documentState) {
   const today = dayjs();
   const monthAgo = today.subtract(1, 'month').toDate();
-  state.startDate = state.startDate || monthAgo;
-  state.endDate = state.endDate || today.toDate();
-  state.database = state.database || 'daily-summaries';
-  state.sampleFrequency = constants.reportTypeMap[state.database];
+  state.startDate = documentState.startDate || monthAgo;
+  state.endDate = documentState.endDate || today.toDate();
+  state.database = documentState.database || 'daily-summaries';
+  state.sampleFrequency = constants.reportTypeMap[documentState.database];
 
-  state.selectedStation = state.selectedStation || constants.defaultStation;
-  state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
-  state.customDataTypes && state.customDataTypes.forEach(function (name) {
+  state.selectedStation = documentState.selectedStation || constants.defaultStation;
+  state.selectedDataTypes = documentState.selectedDataTypes || defaultDataTypes;
+  state.customDataTypes && documentState.customDataTypes.forEach(function (name) {
     dataTypes[name] = {name:name};
   });
 }
