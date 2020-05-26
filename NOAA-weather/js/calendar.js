@@ -95,7 +95,12 @@ function renderCalendarFrame(attachmentEl, title) {
         ]);
       })),
       ' ',
-      createElement('select', 'year-select', yearSelect)
+      createElement('input', 'year-select', [
+          createAttribute('type', 'number'),
+          createAttribute('min', 1850),
+          createAttribute('max', new Date().getFullYear()),
+          createAttribute('step', 1)
+          ])
     ]),
     createElement('button', 'next-button', '\u203a')
   ]);
