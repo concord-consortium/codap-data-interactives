@@ -31,7 +31,7 @@ population.
 
 ### The IPUMS Extract
 
-IPUMS provides harmonized population microdata based on the decennial US Federal Census and the American Community Survey. The following steps will allow you to recreate an extract, for example, to update the selected properties of individuals. Updates to properties need to be coordinated with the attribute definitions in `plugin/js/config.js`.
+IPUMS provides harmonized population microdata based on the decennial US Federal Census and the American Community Survey. The following steps will allow you to recreate an extract, for example, to update the selected properties of individuals. Updates to properties need to be coordinated with the attribute definitions in `plugin/js/attributeConfig.js`.
 
 * Create an account:
   * Go to https://usa.ipums.org/usa/,

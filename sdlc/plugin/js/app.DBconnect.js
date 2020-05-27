@@ -27,12 +27,13 @@ let DBconnect = {
    * Each retrieval will return 1000 records. The actual number needed will be
    * randomly selected (without replacement) from this set.
    *
-   * @param iAtts Unused in current implementation.
+   * @param iAtts Selected attributes. Unused in current implementation.
    * @param iStateCodes
    * @param iYears
+   * @param iAllAttributes {{}} All possible attributes indexed by attribute name.
    * @return {Promise<*[]|[]>}
    */
-  getCasesFromDB: async function (iAtts, iStateCodes, iYears) {
+  getCasesFromDB: async function (iAtts, iStateCodes, iYears, iAllAttributes) {
     function computeSubsample(data, size) {
       if (data.length <= size) {
         return data;
@@ -85,7 +86,7 @@ let DBconnect = {
     const tSampleSize = userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
-    let stateAttribute = app.allAttributes.State;
+    let stateAttribute = iAllAttributes.State;
     let stateMap = stateAttribute.categories;
     let stateNames = iStateCodes.length?
         iStateCodes.map(function (sc) { return stateMap[sc]; }):
@@ -94,7 +95,7 @@ let DBconnect = {
     // TBD convert state codes to state names
     iYears = iYears || [];
 
-    let chunks = app.getPartitionCount();
+    let chunks = iStateCodes.length*iYears.length;
     if (!chunks) {
       return Promise.resolve([]);
     }

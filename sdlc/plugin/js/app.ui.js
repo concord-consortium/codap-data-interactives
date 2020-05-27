@@ -17,7 +17,7 @@
  */
 /* global app */
 
-import * as attributeConfig from './config.js';
+import * as attributeConfig from './attributeConfig.js';
 import {constants} from './app.constants.js';
 import {userActions} from "./app.userActions.js";
 
@@ -103,11 +103,18 @@ let ui = (function () {
     initialized: false,
 
     init: function () {
-      $('#chooseAttributeDiv input').on('change', userActions.changeAttributeCheckbox);
+      setEventHandler('#chooseAttributeDiv input', 'change',
+          userActions.changeAttributeCheckbox)
+
       $('#chooseSampleYearsDiv').html(ui.makeYearListHTML());
-      $('#chooseSampleYearsDiv input').on('change', userActions.changeSampleYearsCheckbox);
-      $('#chooseStatesDiv').append(ui.makeStateListHTML());
-      $('#chooseStatesDiv input').on('change', userActions.changeSampleStateCheckbox);
+
+      setEventHandler('#chooseSampleYearsDiv input', 'change',
+          userActions.changeSampleYearsCheckbox);
+
+      document.getElementById('chooseStatesDiv').append(ui.makeStateList());
+
+      setEventHandler('#chooseStatesDiv input','change',
+          userActions.changeSampleStateCheckbox);
 
       setEventHandler('#sampleSizeInput', 'change', function (/*ev*/) {
         userActions.updateRequestedSampleSize('Sample size change.');
@@ -155,7 +162,7 @@ let ui = (function () {
       this.updateWholeUI();
     },
 
-    makeStateListHTML: function () {
+    makeStateList: function () {
       function makeItem(label, value, myClass, checked) {
         let inputEl = createElement('input', [myClass],
             [

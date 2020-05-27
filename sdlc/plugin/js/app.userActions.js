@@ -29,7 +29,7 @@ let userActions = {
       let oData = [];
       ui.displayStatus('retrieving', 'Fetching data...');
       let tData = await DBconnect.getCasesFromDB(app.state.selectedAttributes,
-        app.state.selectedStates, app.state.selectedYears);
+        app.state.selectedStates, app.state.selectedYears, app.allAttributes);
 
       // If tData is empty, there must have been an error. We are relying on
       // lower layers to log the failure.

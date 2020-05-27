@@ -20,7 +20,7 @@
  */
 /* global: xml2js */
 
-import * as attributeConfig from './config.js';
+import * as attributeConfig from './attributeConfig.js';
 import {ui} from './app.ui.js';
 import {userActions} from "./app.userActions.js";
 import {CODAPconnect} from "./app.CODAPconnect.js";
@@ -29,13 +29,7 @@ import {Attribute} from "./Attribute.js"
 
 window.app = {
   state: null,
-  whence: "concord",
-  // whence: "local",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
-  decoder: {},
-  ancestries: {},
-  map: null,
-  isAltPressed: false,
 
   freshState: {
     sampleNumber: 1,
@@ -127,18 +121,23 @@ window.app = {
   },
 
   getAllAttributes: async function () {
-    let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
-    let dataDictionary = this.getDataDictionary(codeBook);
-    attributeConfig.attributeAssignment.forEach(function (configAttr) {
-      let codebookDef = dataDictionary.find(function (def) {
-        return def.name === configAttr.ipumsName;
+    let result = await fetch('../data/codebook.xml');
+    if (result.ok) {
+      let codeBook = await result.text();
+      let dataDictionary = this.getDataDictionary(codeBook);
+      attributeConfig.attributeAssignment.forEach(function (configAttr) {
+        let codebookDef = dataDictionary.find(function (def) {
+          return def.name === configAttr.ipumsName;
+        });
+        let tA = new Attribute(codebookDef, configAttr, app.allAttributes);
+        app.allAttributes[tA.title] = tA;
       });
-      let tA = new Attribute(codebookDef, configAttr, app.allAttributes);
-      app.allAttributes[tA.title] = tA;
-    });
 
-    $("#chooseAttributeDiv").html(ui.makeAttributeListHTML());
-    return app.allAttributes;
+      $("#chooseAttributeDiv").html(ui.makeAttributeListHTML());
+      return app.allAttributes;
+    } else {
+      console.log('CodeBook fetch failed');
+    }
   }
 
 };
