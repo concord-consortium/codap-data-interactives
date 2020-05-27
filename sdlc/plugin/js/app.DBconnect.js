@@ -20,65 +20,6 @@ import {userActions} from "./app.userActions.js";
 /*global Papa:true */
 let DBconnect = {
 
-  metadata: {
-    "datasetURL": "datasets",
-    years: [1940, 1960, 1970, 1980, 2000, 2010, 2017],
-    states: [
-      "Alabama",
-      "Alaska",
-      "Arizona",
-      "Arkansas",
-      "California",
-      "Colorado",
-      "Connecticut",
-      "Delaware",
-      "District of Columbia",
-      "Florida",
-      "Georgia",
-      "Hawaii",
-      "Idaho",
-      "Illinois",
-      "Indiana",
-      "Iowa",
-      "Kansas",
-      "Kentucky",
-      "Louisiana",
-      "Maine",
-      "Maryland",
-      "Massachusetts",
-      "Michigan",
-      "Minnesota",
-      "Mississippi",
-      "Missouri",
-      "Montana",
-      "Nebraska",
-      "Nevada",
-      "New Hampshire",
-      "New Jersey",
-      "New Mexico",
-      "New York",
-      "North Carolina",
-      "North Dakota",
-      "Ohio",
-      "Oklahoma",
-      "Oregon",
-      "Pennsylvania",
-      "Rhode Island",
-      "South Carolina",
-      "South Dakota",
-      "Tennessee",
-      "Texas",
-      "Utah",
-      "Vermont",
-      "Virginia",
-      "Washington",
-      "West Virginia",
-      "Wisconsin",
-      "Wyoming",
-      "all"
-    ]
-  },
-
   /**
    * Retrieves sample data from the server.
    *
@@ -105,25 +46,34 @@ let DBconnect = {
     async function fetchSubsampleChunk(stateName, year, chunkSize) {
       return new Promise(function (resolve, reject) {
         try {
-          let presetIndex = Math.floor(Math.random() * 100);
-          let presetName = 'preset-' + presetIndex;
-          let presetURL = `../datasets/${year}/${stateName}/${presetName}.csv`;
+          let dataset = _this.metadata.datasets.find(function (ds) {return ds.name === String(year);})
+          let presetCount = dataset && dataset.presetCount;
+          let presetIndex = Math.floor(Math.random() * presetCount);
+          let filePrefix = _this.metadata.filenamePrefix || 'preset-';
+          let fileSuffix = _this.metadata.filenameSuffix || '.csv';
+          let presetName = filePrefix + presetIndex + fileSuffix;
+          let dataExistsForYearAndState = _this.yearHasState(year, stateName);
+          if (dataExistsForYearAndState) {
+            let presetURL = `../datasets/${year}/${stateName}/${presetName}`;
 
-          // fetch chunks then randomly pick selection set.
-          Papa.parse(presetURL, {
-            header: true, /* converts CSV rows to objects as defined by the header line */
-            download: true, /* indicates this is a url to fetch */
-            complete: function (response) {
-              if (response.errors.length === 0) {
-                resolve(computeSubsample(response.data, chunkSize));
-              } else {
-                reject(`Errors fetching ${presetURL}: ${response.errors.join(', ')}`);
+            // fetch chunks then randomly pick selection set.
+            Papa.parse(presetURL, {
+              header: true, /* converts CSV rows to objects as defined by the header line */
+              download: true, /* indicates this is a url to fetch */
+              complete: function (response) {
+                if (response.errors.length === 0) {
+                  resolve(computeSubsample(response.data, chunkSize));
+                } else {
+                  reject(`Errors fetching ${presetURL}: ${response.errors.join(
+                      ', ')}`);
+                }
+              }, error: function (error/*, file*/) {
+                reject(error);
               }
-            },
-            error: function (error/*, file*/) {
-              reject(error);
-            }
-          })
+            })
+          } else {
+            resolve([]);
+          }
         } catch(ex) {
           reject(ex);
         }
@@ -131,6 +81,7 @@ let DBconnect = {
     }
 
 
+    let _this = this;
     const tSampleSize = userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
@@ -163,12 +114,51 @@ let DBconnect = {
     return Promise.all(fetchPromises);
   },
 
+  getDatasetNames: function () {
+    if (this.metadata.datasets) {
+      let names = this.metadata.datasets.map(function (ds) { return ds.name;});
+      return names;
+    } else {
+      return [];
+    }
+  },
+  getStateNames: function () {
+    let stateSet = {};
+    if (this.metadata.datasets) {
+      this.metadata.datasets.forEach(function (ds) {
+        ds.presetCollections.forEach(function (name) {
+          stateSet[name] = name;
+        });
+      });
+      return Object.keys(stateSet);
+    } else {
+      return [];
+    }
+  },
+
+  yearHasState: function (year, stateName) {
+    year = String(year);
+    if (this.metadata.datasets) {
+      let yearDataset = this.metadata.datasets.find(function (ds) { return ds.name === year});
+      return (yearDataset && (yearDataset.presetCollections.indexOf(stateName) >= 0));
+    }
+  },
+
   getDBInfo: async function (iType) {
+    if (!this.metadata) {
+      let response = await fetch('../datasets/metadata.json');
+      if (response.ok) {
+        this.metadata = await response.json();
+      } else {
+        this.metadata = {};
+        console.warn(`Metadata Fetch error: ${response.statusText}`);
+      }
+    }
     if (iType === 'getYears') {
-      return this.metadata.years;
+      return this.getDatasetNames();
     }
     else if (iType === 'getStates') {
-      return this.metadata.states;
+      return this.getStateNames();
     }
   }
 };

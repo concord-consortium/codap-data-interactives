@@ -20,7 +20,7 @@
  */
 /* global: xml2js */
 
-import * as config from './config.js';
+import * as attributeConfig from './config.js';
 import {ui} from './app.ui.js';
 import {userActions} from "./app.userActions.js";
 import {CODAPconnect} from "./app.CODAPconnect.js";
@@ -129,7 +129,7 @@ window.app = {
   getAllAttributes: async function () {
     let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
     let dataDictionary = this.getDataDictionary(codeBook);
-    config.attributeAssignment.forEach(function (configAttr) {
+    attributeConfig.attributeAssignment.forEach(function (configAttr) {
       let codebookDef = dataDictionary.find(function (def) {
         return def.name === configAttr.ipumsName;
       });

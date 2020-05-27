@@ -17,7 +17,7 @@
  */
 /* global app */
 
-import * as config from './config.js';
+import * as attributeConfig from './config.js';
 import {constants} from './app.constants.js';
 import {userActions} from "./app.userActions.js";
 
@@ -176,8 +176,10 @@ let ui = (function () {
       let stateMap = stateAttribute.categories;
       Object.keys(stateMap).forEach(function (stateCode) {
         let stateName = stateMap[stateCode];
-        let id = 'state-' + stateCode;
-        out.append(makeItem(stateName, id, 'select-item', false));
+        if (app.states.indexOf(stateName) >= 0) {
+          let id = 'state-' + stateCode;
+          out.append(makeItem(stateName, id, 'select-item', false));
+        }
       });
       return out;
     },
@@ -199,7 +201,7 @@ let ui = (function () {
     makeAttributeListHTML: function () {
       let out = "";
 
-      config.attributeGroups.forEach( (g)=>{
+      attributeConfig.attributeGroups.forEach( (g)=>{
         out += '    <div class="wx-dropdown wx-up">\n';
         out += '      <div class="wx-section-header-line wx-dropdown-header">';
         out += `        <span class="wx-section-title">${g.title}</span>`;

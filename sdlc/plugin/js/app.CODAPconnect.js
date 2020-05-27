@@ -214,7 +214,7 @@ let CODAPconnect = {
     title: 'Microdata Portal',
     dimensions: {width: 380, height: 520},
     preventDataContextReorg: false,
-    cannotClose: true
+    cannotClose: false
   }
 };
 
