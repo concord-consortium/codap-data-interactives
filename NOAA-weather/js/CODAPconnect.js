@@ -44,7 +44,7 @@ async function initialize(iPluginProperties) {
         await codapInterface.sendRequest(tMessage);
     } catch (ex) {
         success= false;
-        console.warn('Initialization of CODAP interface failed');
+        console.warn('Initialization of CODAP interface failed: ' + ex);
     }
     return success;
 }

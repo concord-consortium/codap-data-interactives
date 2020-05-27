@@ -321,18 +321,29 @@
          */
         sendRequest: function (message, callback) {
             return new Promise(function (resolve, reject){
+                var handled = false;
                 function handleResponse (request, response, callback) {
                     if (response === undefined) {
                         console.warn('handleResponse: CODAP request timed out');
-                        reject('handleResponse: CODAP request timed out: ' + JSON.stringify(request));
+                        // If we get a request timeout we wait before issuing it because we
+                        // may get a response
+                        setTimeout(function () {
+                            if (!handled) {
+                                reject('handleResponse: CODAP request timed out: ' + JSON.stringify(request));
+                            } else {
+                                console.warn('IFramephone Timeout on handled request');
+                            }
+                        }, 10000);
                         stats.countDiRplTimeout++;
+
                     } else {
                         connectionState = 'active';
+                        handled = true;
                         if (response.success) { stats.countDiRplSuccess++; } else { stats.countDiRplFail++; }
                         resolve(response);
-                    }
-                    if (callback) {
-                        callback(response, request);
+                        if (callback) {
+                            callback(response, request);
+                        }
                     }
                 }
                 switch (connectionState) {
