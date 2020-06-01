@@ -55,7 +55,7 @@ let DBconnect = {
           let presetName = filePrefix + presetIndex + fileSuffix;
           let dataExistsForYearAndState = _this.yearHasState(year, stateName);
           if (dataExistsForYearAndState) {
-            let presetURL = `../datasets/${year}/${stateName}/${presetName}`;
+            let presetURL = `${_this.metadata.baseURL}/${year}/${stateName}/${presetName}`;
 
             // fetch chunks then randomly pick selection set.
             Papa.parse(presetURL, {
@@ -92,10 +92,9 @@ let DBconnect = {
         iStateCodes.map(function (sc) { return stateMap[sc]; }):
         ['all'];
 
-    // TBD convert state codes to state names
     iYears = iYears || [];
 
-    let chunks = iStateCodes.length*iYears.length;
+    let chunks = stateNames.length * iYears.length;
     if (!chunks) {
       return Promise.resolve([]);
     }
@@ -145,9 +144,9 @@ let DBconnect = {
     }
   },
 
-  getDBInfo: async function (iType) {
+  getDBInfo: async function (iType, metadataURL) {
     if (!this.metadata) {
-      let response = await fetch('../datasets/metadata.json');
+      let response = await fetch(metadataURL);
       if (response.ok) {
         this.metadata = await response.json();
       } else {

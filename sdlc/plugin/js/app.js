@@ -26,6 +26,7 @@ import {userActions} from "./app.userActions.js";
 import {CODAPconnect} from "./app.CODAPconnect.js";
 import {DBconnect} from "./app.DBconnect.js";
 import {Attribute} from "./Attribute.js"
+import {constants} from "./app.constants";
 
 window.app = {
   state: null,
@@ -58,8 +59,8 @@ window.app = {
     await CODAPconnect.initialize(null);
     app.logConnectionInfo();
     await app.getAllAttributes();
-    app.years = await DBconnect.getDBInfo("getYears");
-    app.states = await DBconnect.getDBInfo('getStates');
+    app.years = await DBconnect.getDBInfo("getYears", constants.metadataURL);
+    app.states = await DBconnect.getDBInfo('getStates', constants.metadataURL);
     ui.init();
     ui.displayStatus('success', "Ready");
   },

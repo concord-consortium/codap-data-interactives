@@ -18,6 +18,8 @@
 let constants = {
   version: "v0005",
 
+  metadataURL: './assets/data/metadata.json',
+
   kACSDataSetName: "SDLCdata",
   kACSDataSetTitle: "SDLCdata",
   kACSCollectionName: "people",
