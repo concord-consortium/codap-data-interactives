@@ -47,6 +47,7 @@ let constants = {
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
+  stationDatasetURL: './assets/data/weather-stations.json',
   version: 'v0010',
   reportTypeMap: {
     'daily-summaries': 'daily',

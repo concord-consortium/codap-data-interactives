@@ -162,6 +162,8 @@ function handleDateSelection(calendar/*, newDate*/) {
 
 
 function renderCalendars(fromDate, toDate) {
+    fromDate = fromDate || new Date();
+    toDate = toDate || new Date();
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
     calendars.from = new Calendar(lc, fromDate, 'From Date', handleDateSelection);
@@ -189,8 +191,9 @@ function togglePopUp(el) {
 
 function updateView(state) {
     lastState = state;
+    let stationName = state.selectedStation? state.selectedStation.name: '';
 
-    document.getElementById('wx-stationName').innerHTML = state.selectedStation.name;
+    document.getElementById('wx-stationName').innerHTML = stationName;
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
@@ -347,6 +350,7 @@ function setWaitCursor(isWait) {
 }
 
 function updateDataTypeSummary(dataTypes, selectedTypes) {
+    selectedTypes = selectedTypes || [];
     let countDisplay = document.querySelector('.wx-selection-count');
     let summaryListDisplay = document.querySelector('.wx-data-type-selection');
     let summaryList = selectedTypes.filter(function (dt) {
@@ -360,6 +364,7 @@ function updateDataTypeSummary(dataTypes, selectedTypes) {
 }
 
 function updateDataTypes(dataTypes, selectedTypes) {
+    selectedTypes = selectedTypes || [];
     let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
     let checkBoxHash = {};
     checkBoxes && checkBoxes.forEach(function (el) {

@@ -23,8 +23,55 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==========================================================================
-
 */
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap);
+/* fonts */
+/*@font-face {*/
+/*    font-family: Montserrat;*/
+/*    src:   local(Montserrat-Bold), url("../assets/webfonts/Montserrat-Bold.woff") format("woff"),*/
+/*    url("../assets/webfonts/Montserrat-Bold.otf") format("opentype"),*/
+/*    url("../assets/webfonts/Montserrat-Bold.ttf") format("truetype"),*/
+/*    url("../assets/webfonts/Montserrat-Bold.svg") format("svg");*/
+/*    font-weight: 700;*/
+/*    font-style: normal;*/
+/*    font-display: swap;*/
+/*}*/
+
+/*@font-face {*/
+/*    font-family: Montserrat;*/
+/*    src: local(Montserrat-SemiBold), url("../assets/webfonts/Montserrat-SemiBold.otf");*/
+/*    font-weight: 600;*/
+/*    font-style: normal;*/
+/*    font-display: swap;*/
+/*}*/
+/*@font-face {*/
+/*    font-family: Montserrat;*/
+/*    src: local(Montserrat-Medium), url("../assets/webfonts/Montserrat-Medium.otf") format("opentype");*/
+/*    font-weight: 500;*/
+/*    font-display: swap;*/
+/*}*/
+/*@font-face {*/
+/*    font-family: Montserrat;*/
+/*    src: local(Montserrat-Regular),*/
+/*        url("../assets/webfonts/Montserrat-Regular.woff") format("woff"),*/
+/*    url("../assets/webfonts/Montserrat-Regular.otf") format("opentype"),*/
+/*    url("../assets/webfonts/Montserrat-Regular.ttf") format("truetype"),*/
+/*    url("../assets/webfonts/Montserrat-Regular.svg") format("svg");*/
+/*    font-weight: 400;*/
+/*    font-style: normal;*/
+/*    font-display: swap;*/
+/*}*/
+
+@font-face {
+    font-family: 'icomoon';
+    src:    url('../assets/webfonts/icomoon.eot?gbzaou#iefix') format('embedded-opentype'),
+    url('../assets/webfonts/icomoon.ttf?gbzaou') format('truetype'),
+    url('../assets/webfonts/icomoon.woff?gbzaou') format('woff'),
+    url('../assets/webfonts/icomoon.svg?gbzaou#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
 /* colors and constants */
 :root {
     --text: #222222;
@@ -33,28 +80,15 @@ limitations under the License.
     --teal-dark-75: rgba(23, 121, 145, 0.75);
     --teal-light-25: rgba(114, 191, 202, 0.25);
     --teal-light-12: rgba(114, 191, 202, 0.12);
-}
-
-/* fonts */
-@font-face {
-    font-family: Montserrat;
-    src: url("../assets/webfonts/Montserrat-Bold.otf");
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: Montserrat;
-    src: url("../assets/webfonts/Montserrat-SemiBold.otf");
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: Montserrat;
-    src: url("../assets/webfonts/Montserrat-Regular.otf");
-    font-weight: normal;
-    font-style: normal;
+    --icon-arrow-drop-down: "\e900";
+    --icon-check-box-outline-blank: "\e901";
+    --icon-check-box: "\e902";
+    --icon-date-range: "\e903";
+    --icon-done: "\e904";
+    --icon-info: "\e905";
+    --icon-radio-button-checked: "\e908";
+    --icon-radio-button-unchecked: "\e909";
+    --icon-warning: "\e90b";
 }
 
 /* removes blue halo on Chrome around focused input */
@@ -165,7 +199,16 @@ body {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/arrow-drop-down.svg');
+    flex-basis: 20px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.wx-dropdown-indicator::before {
+    font-family: icomoon;
+    font-size: 20px;
+    content: var(--icon-arrow-drop-down);
+    color: var(--teal-dark);
 }
 
 .wx-dropdown.wx-down .wx-dropdown-indicator {
@@ -312,14 +355,12 @@ body {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/info.svg');
 }
 
 .wx-calendar-button {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-image: url('../assets/images/date-range.svg');
 }
 
 .wx-button {
@@ -348,12 +389,8 @@ input[type=radio] {
     appearance: none;
     width: 17px;
     height: 17px;
-    background-image: url('../assets/images/radio-button-unchecked.svg');
+    font-size: 17px;
     cursor: pointer;
-}
-
-input[type=radio]:checked {
-    background-image: url('../assets/images/radio-button-checked.svg');
 }
 
 input[type=checkbox] {
@@ -362,12 +399,41 @@ input[type=checkbox] {
     appearance: none;
     width: 18px;
     height: 18px;
-    background-image: url('../assets/images/check-box-outline-blank.svg');
-    cursor: pointer;
+    font-size: 18px;
 }
 
-input[type=checkbox]:checked {
-    background-image: url('../assets/images/check-box.svg');
+input[type=checkbox],input[type=radio] {
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input[type=checkbox]:before {
+    content: var(--icon-check-box-outline-blank);
+    color: var(--teal-dark);
+}
+
+input[type=checkbox]:checked:before {
+    content: var(--icon-check-box);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:before {
+    content: var(--icon-radio-button-unchecked);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:checked:before {
+    content: var(--icon-radio-button-checked);
+    color: var(--teal-dark);
 }
 
 span#wx-dataset-form {
@@ -423,6 +489,7 @@ span#wx-dataset-form {
     height: 18px;
     flex: 18px 0 0;
     margin-right: 6px;
+    font-size: 18px;
 }
 
 #wx-double-calendar {
@@ -434,7 +501,7 @@ span#wx-dataset-form {
 }
 
 .wx-control-area {
-    flex: 160px 0 0;
+    flex: 173px 0 0;
 }
 
 .wx-summary.wx-transfer-in-progress #wx-get-button {
@@ -446,11 +513,9 @@ span#wx-dataset-form {
 }
 
 .wx-summary.wx-transfer-success .wx-message-area,
-
 .wx-summary.wx-transfer-failure .wx-message-area {
     color: var(--teal-dark);
 }
-
 
 .wx-summary button:hover {
     background-color: var(--teal-light-12);
@@ -484,6 +549,9 @@ span#wx-dataset-form {
         transform: rotate(360deg);
     }
 }
+.wx-summary .wx-status-graphic {
+    font-family: 'icomoon' !important;
+}
 
 .wx-summary.wx-transfer-in-progress  .wx-status-graphic {
     background-image: url('../assets/images/progress-indicator.svg');
@@ -492,13 +560,14 @@ span#wx-dataset-form {
     -o-animation: rotating 2s linear infinite;
     animation: rotating 2s linear infinite;
 }
-
-.wx-summary.wx-transfer-success .wx-status-graphic {
-    background-image: url('../assets/images/done.svg');
+.wx-summary.wx-transfer-success .wx-status-graphic::before {
+    content: var(--icon-done);
+    color: var(--teal-dark-75);
 }
 
-.wx-summary.wx-transfer-failure .wx-status-graphic {
-    background-image: url('../assets/images/warning.svg');
+.wx-summary.wx-transfer-failure .wx-status-graphic::before {
+    content: var(--icon-warning);
+    color: var(--teal-dark-75);
 }
 
 /* calendar */
@@ -575,4 +644,69 @@ span#wx-dataset-form {
 input.year-select {
     border: thin grey solid;
     height: 15px;
+}
+
+/*
+ * from font generated by icomoon
+ */
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    font-size: 20px;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-drop-down:before {
+    content: var(--icon-arrow-drop-down);
+    color: var(--teal-dark-75);
+}
+.icon-check-box-outline-blank:before {
+    content: var(--icon-check-box-outline-blank);
+    color: var(--teal-dark-75);
+}
+.icon-check-box:before {
+    content: var(--icon-check-box);
+    color: var(--teal-dark-75);
+}
+.icon-date-range:before {
+    content: var(--icon-date-range);
+    color: var(--teal-dark-75);
+}
+.icon-done:before {
+    content: var(--icon-done);
+    color: var(--teal-dark-75);
+}
+.icon-info:before {
+    content: var(--icon-info);
+    color: var(--teal-dark-75);
+}
+.icon-progress-indicator .path1:before {
+    content: "\e906";
+    color: rgb(114, 191, 202);
+}
+.icon-progress-indicator .path2:before {
+    content: "\e907";
+    margin-left: -1em;
+    color: rgb(23, 121, 145);
+}
+.icon-radio-button-checked:before {
+    content: var(--icon-radio-button-checked);
+    color: var(--teal-dark-75);
+}
+.icon-radio-button-unchecked:before {
+    content: var(--icon-radio-button-unchecked);
+    color: var(--teal-dark-75);
+}
+.icon-warning:before {
+    content: var(--icon-warning);
+    color: var(--warning-color);
 }

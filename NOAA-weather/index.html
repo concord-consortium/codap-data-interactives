@@ -40,13 +40,6 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 
     <link rel='stylesheet' type='text/css' href='css/style.css'/>
 
-    <script src="lib/iframe-phone.js"></script>
-    <script src="lib/codapInterface.js"></script>
-    <script src="lib/pluginHelper.js"></script>
-    <script src="lib/dayjs.min.js"></script>
-
-    <!--    Specific JS for this app     -->
-    <script src="js/main.js" type="module"></script>
 </head>
 
 <body>
@@ -56,7 +49,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 <div id="wx-intro-section" class="wx-pop-up" >
     <div class="wx-section-header-line">
         <span>Retrieve weather data from observing stations.</span>
-        <span class="wx-info-button wx-pop-up-anchor" title="Get further information about this CODAP plugin"></span>
+        <span class="wx-info-button wx-pop-up-anchor icon-info" title="Get further information about this CODAP plugin"></span>
     </div>
     <div class="wx-cover"></div>
     <div class="wx-pop-up-container">
@@ -134,7 +127,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
         <div id="wx-date-range-selection-dialog" class="wx-pop-over">
             <div class="wx-pop-over-anchor" title="Select a range of dates.">
                 <div id="wx-date-range"></div>
-                <span class="wx-calendar-button"></span>
+                <span class="wx-calendar-button icon-date-range"></span>
             </div>
             <div class="wx-pop-over-body">
                 <div class="wx-day-range-selector">
@@ -211,6 +204,14 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 </div>
 
 </main>
+
+<!--    Specific JS for this app     -->
+<script src="js/main.js" type="module"></script>
+
+<script src="lib/iframe-phone.js"></script>
+<script src="lib/codapInterface.js"></script>
+<script src="lib/pluginHelper.js"></script>
+<script src="lib/dayjs.min.js"></script>
 
 </body>
 
