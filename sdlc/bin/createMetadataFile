@@ -39,10 +39,10 @@ function configure() {
   let progName = process.argv[1].replace(/.*\//, '');
 
   configuration = {
-    codebookURL: '../data/codebook.xml',
-    datasetBaseURL: '../dataset',
+    codebookURL: './assets/data/codebook.xml',
+    baseURL: 'https://codap-resources.concord.org/us-microdata-presets-gz',
     filenamePrefix: 'preset-',
-    filenameSuffix: '.csv',
+    filenameSuffix: '.csv.gz',
     outputFile: process.argv[3],
     numPresetsPerGroup: 100,
     presetsDir: process.argv[2],
@@ -65,8 +65,8 @@ function configure() {
 function buildMetadata(configuration) {
   let out = {
     presetSize: configuration.presetSize,
-    codebookURL: configuration.codebookURL,
-    datasetBaseURL: configuration.datasetBaseURL,
+    codeBookURL: configuration.codebookURL,
+    baseURL: configuration.baseURL,
     filenamePrefix: configuration.filenamePrefix,
     filenameSuffix: configuration.filenameSuffix,
     datasets: [],
@@ -88,7 +88,7 @@ function buildMetadata(configuration) {
       let collectionSubdir = fs.readdirSync(collectionPath, {encoding: 'utf8', withFileTypes: true})
           .filter(function (ent) {return ent.isDirectory();});
       datasetMeta.presetCollections = collectionSubdir.map(function(ent) { return ent.name; });
-      let firstFileContents = fs.readFileSync(`${collectionPath}/${datasetMeta.presetCollections[0]}/${configuration.filenamePrefix}0${configuration.filenameSuffix}`, {encoding: 'utf8'});
+      let firstFileContents = fs.readFileSync(`${collectionPath}/${datasetMeta.presetCollections[0]}/${configuration.filenamePrefix}0${configuration.filenameSuffix.replace(/.gz$/, '')}`, {encoding: 'utf8'});
       let firstLine = firstFileContents && firstFileContents.slice(0, firstFileContents.indexOf('\r'));
       datasetMeta.presetAttributes = firstLine.split(',');
       out.datasets.push(datasetMeta);
