@@ -44,7 +44,7 @@ let DBconnect = {
       return filteredData.map(function (item) { return item.d;});
     }
 
-    async function fetchSubsampleChunk(stateName, year, chunkSize) {
+    function fetchSubsampleChunk(stateName, year, chunkSize) {
       return new Promise(function (resolve, reject) {
         try {
           let dataset = _this.metadata.datasets.find(function (ds) {return ds.name === String(year);})
@@ -58,17 +58,22 @@ let DBconnect = {
             let presetURL = `${_this.metadata.baseURL}/${year}/${stateName}/${presetName}`;
 
             // fetch chunks then randomly pick selection set.
+            app.addLog('Send request: ' + presetURL);
             Papa.parse(presetURL, {
               header: true, /* converts CSV rows to objects as defined by the header line */
               download: true, /* indicates this is a url to fetch */
               complete: function (response) {
                 if (response.errors.length === 0) {
+                  app.addLog('Good response: ' + (response.data?response.data.length: ''));
                   resolve(computeSubsample(response.data, chunkSize));
                 } else {
-                  reject(`Errors fetching ${presetURL}: ${response.errors.join(
-                      ', ')}`);
+                  let msg = `Errors fetching ${presetURL}: ${response.errors.join(
+                      ', ')}`;
+                  app.addLog(msg);
+                  reject(msg);
                 }
               }, error: function (error/*, file*/) {
+                app.addLog(error);
                 reject(error);
               }
             })
