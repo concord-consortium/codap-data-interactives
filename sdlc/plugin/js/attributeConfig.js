@@ -822,13 +822,17 @@ let attributeAssignment = [{
       title: 'State',
       group: 5,
       defCheck: true,
+      displayMe: true,
+      readonly: true,
       description: 'The state in which the individual lives, using a federal coding scheme that lists states alphabetically. Note that you must select this attribute if you want to display state names in your case table or graphs.'
     },
     {
       ipumsName: 'STATEFIP',
       title: 'Boundaries',
       group: 5,
-      defCheck: false,
+      defCheck: true,
+      displayMe: true,
+      readonly: true,
       description: 'State boundaries. Requires that the State attribute also be selected.',
       formula: 'lookupBoundary(US_state_boundaries, State)',
       formulaDependents: 'State'

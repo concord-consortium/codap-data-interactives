@@ -20,10 +20,11 @@ let constants = {
 
   metadataURL: './assets/data/metadata.json',
 
-  kACSDataSetName: "SDLCdata",
-  kACSDataSetTitle: "SDLCdata",
+  kACSDataSetName: "US Microdata",
+  kACSDataSetTitle: "US Microdata",
+  kTopCollectionName: "places",
   kACSCollectionName: "people",
-  kACSCaseTableName: "People from ACS",
+  kACSCaseTableName: "People",
 
   // kBasePhpURL: {
   //   local: "http://localhost/~jsandoe/codap-data-interactives/sdlc/service/acs.php",

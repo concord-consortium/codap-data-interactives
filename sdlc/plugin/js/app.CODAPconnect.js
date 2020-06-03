@@ -193,7 +193,17 @@ let CODAPconnect = {
     description: 'ACS portal',
     collections: [
       {
+        name: constants.kTopCollectionName,
+        attrs: [
+          {name: "sample", type: "categorical", description: "sample number"},
+          {name: "State", type: 'categorical', description: "State"},
+          {name: "Boundaries", type: 'categorical', description: "Boundary",
+            formula: 'lookupBoundary(US_state_boundaries, State)'}
+        ]
+      },
+      {
         name: constants.kACSCollectionName,
+        parent: constants.kTopCollectionName,
         labels: {
           singleCase: "person",
           pluralCase: "people",
@@ -201,7 +211,6 @@ let CODAPconnect = {
         },
 
         attrs: [ // note how this is an array of objects.
-          {name: "sample", type: 'categorical', description: "sample number"},
         ]
       }
     ]

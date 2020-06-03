@@ -37,7 +37,7 @@ window.app = {
     sampleSize: 16,
     selectedYears: [2017],
     selectedStates: [],
-    selectedAttributes: ['Sex', 'Age', 'Year', 'State'],
+    selectedAttributes: ['Sex', 'Age', 'Year', 'State', 'Boundaries'],
     keepExistingData: false,
     activityLog: []
   },
