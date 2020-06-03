@@ -101,7 +101,7 @@ button:focus {
   color: var(--text);
   background-color: white;
   padding: 8px 12px;
-  height: 98vh;
+  height: 95vh;
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -498,6 +498,8 @@ input[type=number] {
 
 .wx-summary .wx-message-area {
   color: var(--text);
+  flex-grow: 3;
+  flex-shrink: 3;
 }
 
 .wx-summary.wx-transfer-success .wx-message-area,
