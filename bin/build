@@ -17,7 +17,7 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin"
 HIDDEN_DIRS="Common"
 BUILT_PLUGIN_DIRS="onboarding"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
@@ -52,7 +52,10 @@ function buildPlugins() {
 }
 
 function copyStaticPlugins() {
-  cp -r "$@" "$BUILD_DIR"
+  for t in "$@"; do
+    mkdir -p "${BUILD_DIR}/${t}"
+    cp -r "${t}/" "${BUILD_DIR}/${t}"
+  done
 }
 
 function usage() {
