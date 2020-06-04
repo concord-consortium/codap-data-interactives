@@ -122,7 +122,7 @@ window.app = {
   },
 
   getAllAttributes: async function () {
-    let result = await fetch('../data/codebook.xml');
+    let result = await fetch('./assets/data/codebook.xml');
     if (result.ok) {
       let codeBook = await result.text();
       let dataDictionary = this.getDataDictionary(codeBook);
