@@ -58,10 +58,11 @@ let userActions = {
         counter ++;
       });
 
+      await CODAPconnect.guaranteeDataset();
+
       //     make sure the case table is showing
       ui.displayStatus('transferring', 'Opening case table...');
       let id = await CODAPconnect.makeCaseTableAppear();
-      setTimeout(function () {CODAPconnect.autoscaleComponent(id);}, 2000);
 
       ui.displayStatus('transferring', 'Sending data to codap...');
       if (!app.state.keepExistingData) {
@@ -69,6 +70,7 @@ let userActions = {
       }
       await CODAPconnect.saveCasesToCODAP( oData );
       ui.displayStatus('success', `Selected a random sample of ${counter} people`);
+      setTimeout(function () {CODAPconnect.autoscaleComponent(id);}, 1000);
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);

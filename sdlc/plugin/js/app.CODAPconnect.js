@@ -29,8 +29,6 @@ let CODAPconnect = {
       window.app.state = Object.assign({}, window.app.freshState);
       return;
     }
-    await pluginHelper.initDataSet(this.ACSDataContextSetupObject);
-
     //  restore the state if possible
 
     app.state = await codapInterface.getInteractiveState();
@@ -64,12 +62,21 @@ let CODAPconnect = {
       }
     });
   },
-  saveCasesToCODAP: async function (iValues) {
-    await this.makeNewAttributesIfNecessary();
 
+  makeCODAPAttributeDef: function (attr) {
+    return {
+      name: attr.title,
+      title: attr.title,
+      description: attr.description,
+      type: attr.format,
+      formula: attr.formula
+    }
+  },
+
+  saveCasesToCODAP: async function (iValues) {
     const makeItemsMessage = {
       action : "create",
-      resource : "dataContext[" + constants.kACSDataSetName + "].item",
+      resource : "dataContext[" + constants.datasetName + "].item",
       values : iValues
     };
 
@@ -79,14 +86,29 @@ let CODAPconnect = {
   deleteAllCases: async function () {
     let theMessage = {
       action: 'delete',
-      resource : "dataContext[" + constants.kACSDataSetName + "].allCases"
+      resource : "dataContext[" + constants.datasetName + "].allCases"
     };
     return await codapInterface.sendRequest(theMessage);
   },
 
+  guaranteeDataset: async function () {
+    let datasetResource = 'dataContext[' + constants.datasetName +
+        ']';
+    let response = await codapInterface.sendRequest({
+      action: 'get',
+      resource: datasetResource});
+    if (!response.success) {
+      await this.createNewMicrodataDataset(app.allAttributes);
+      response = await codapInterface.sendRequest({
+        action: 'get',
+        resource: datasetResource});
+    }
+    return await this.makeNewAttributesIfNecessary();
+  },
+
   makeNewAttributesIfNecessary : async function() {
     async function getCODAPAttrList() {
-      let attrListResource = 'dataContext[' + constants.kACSDataSetName +
+      let attrListResource = 'dataContext[' + constants.datasetName +
           ']';
       let response =
           await codapInterface.sendRequest({
@@ -114,31 +136,25 @@ let CODAPconnect = {
 
     theAttributes.forEach(function (attr) {
       if (!existingAttributeNames.includes(attr.title)) {
-        let attrResource = 'dataContext[' + constants.kACSDataSetName + '].collection['
-            + constants.kACSCollectionName + '].attribute';
+        let attrResource = 'dataContext[' + constants.datasetName + '].collection['
+            + constants.datasetChildCollectionName + '].attribute';
         let req = {
           action: 'create',
           resource: attrResource,
-          values: {
-            name: attr.title,
-            title: attr.title,
-            description: attr.description,
-            type: attr.format,
-            formula: attr.formula
-          }
+          values: this.makeCODAPAttributeDef(attr)
         };
         if (attr.hasCategoryMap) {
           req.values._categoryMap = attr.getCategoryMap();
         }
         codapRequests.push(req);
       }
-    });
+    }.bind(this));
     if (app.state.priorAttributes) {
       app.state.priorAttributes.forEach(function (attrName) {
         if (!app.state.selectedAttributes.includes(attrName)) {
           let codapAttr = existingAttributeList.find(function (cAttr) {return attrName === cAttr.name;});
           if (codapAttr) {
-            let attrResource = 'dataContext[' + constants.kACSDataSetName +
+            let attrResource = 'dataContext[' + constants.datasetName +
                 '].collection[' + codapAttr.collectionID + '].attribute[' + codapAttr.name + ']';
             let req = {
               action: 'delete', resource: attrResource
@@ -162,8 +178,8 @@ let CODAPconnect = {
       resource : "component",
       values : {
         type : 'caseTable',
-        dataContext : constants.kACSDataSetName,
-        name : constants.kACSCaseTableName,
+        dataContext : constants.datasetName,
+        name : constants.caseTableName,
         cannotClose : true
       }
     };
@@ -187,41 +203,44 @@ let CODAPconnect = {
     })
   },
 
-  ACSDataContextSetupObject: {
-    name: constants.kACSDataSetName,
-    title: constants.kACSDataSetTitle,
-    description: 'ACS portal',
-    collections: [
-      {
-        name: constants.kTopCollectionName,
-        attrs: [
-          {name: "sample", type: "categorical", description: "sample number"},
-          {name: "State", type: 'categorical', description: "State"},
-          {name: "Boundaries", type: 'categorical', description: "Boundary",
-            formula: 'lookupBoundary(US_state_boundaries, State)'}
-        ]
-      },
-      {
-        name: constants.kACSCollectionName,
-        parent: constants.kTopCollectionName,
-        labels: {
-          singleCase: "person",
-          pluralCase: "people",
-          setOfCasesWithArticle: "a sample of people"
-        },
+  createNewMicrodataDataset: async function (attributeList) {
 
-        attrs: [ // note how this is an array of objects.
-        ]
-      }
-    ]
+    return codapInterface.sendRequest({
+        action: 'create',
+        resource: 'dataContext',
+        values: {
+          name: constants.datasetName,
+          title: constants.datasetTitle,
+          description: constants.datasetDescription,
+          collections: [{
+            name: constants.datasetParentCollectionName,
+            attrs: [this.makeCODAPAttributeDef(
+                attributeList['State']), this.makeCODAPAttributeDef(
+                attributeList['Boundaries'])]
+          }, {
+            name: constants.datasetChildCollectionName,
+            parent: constants.datasetParentCollectionName,
+            labels: {
+              singleCase: "person",
+              pluralCase: "people",
+              setOfCasesWithArticle: "a sample of people"
+            },
+
+            attrs: [ // note how this is an array of objects.
+              {name: "sample", type: "categorical", description: "sample number"},]
+          }]
+        }
+    });
   },
-
 
   iFrameDescriptor: {
     version: constants.version,
-    name: 'sdlc',
-    title: 'Microdata Portal',
-    dimensions: {width: 380, height: 520},
+    name: constants.appName,
+    title: constants.appTitle,
+    dimensions: {
+      width: constants.appDefaultWidth,
+      height: constants.appDefaultHeight
+    },
     preventDataContextReorg: false,
     cannotClose: false
   }

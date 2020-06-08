@@ -35,9 +35,9 @@ window.app = {
   freshState: {
     sampleNumber: 1,
     sampleSize: 16,
-    selectedYears: [2017],
-    selectedStates: [],
-    selectedAttributes: ['Sex', 'Age', 'Year', 'State', 'Boundaries'],
+    selectedYears: constants.defaultSelectedYears,
+    selectedStates: constants.defaultSelectedStates,
+    selectedAttributes: constants.defaultSelectedAttributes,
     keepExistingData: false,
     activityLog: []
   },
