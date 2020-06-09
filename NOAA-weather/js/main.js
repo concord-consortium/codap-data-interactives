@@ -130,14 +130,16 @@ async function fetchStationDataset(url) {
 function initializeState(documentState) {
   const today = dayjs();
   const monthAgo = today.subtract(1, 'month').toDate();
-  state.startDate = documentState.startDate || monthAgo;
-  state.endDate = documentState.endDate || today.toDate();
-  state.database = documentState.database || 'daily-summaries';
-  state.sampleFrequency = constants.reportTypeMap[documentState.database];
+  state = documentState;
+  state.startDate = state.startDate || monthAgo;
+  state.endDate = state.endDate || today.toDate();
+  state.database = state.database || 'daily-summaries';
+  state.sampleFrequency = state.sampleFrequency
+      || constants.reportTypeMap[documentState.database];
 
-  state.selectedStation = documentState.selectedStation || constants.defaultStation;
-  state.selectedDataTypes = documentState.selectedDataTypes || defaultDataTypes;
-  state.customDataTypes && documentState.customDataTypes.forEach(function (name) {
+  state.selectedStation = state.selectedStation || constants.defaultStation;
+  state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
+  state.customDataTypes && state.customDataTypes.forEach(function (name) {
     dataTypes[name] = {name:name};
   });
 }
