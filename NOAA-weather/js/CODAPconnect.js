@@ -78,12 +78,15 @@ function createAttribute(datasetName, collectionName, dataType) {
  * @return a Promise fulfilled when all attributes are created.
  */
 async function updateDataset(dataTypes) {
-    const result = await codapInterface.sendRequest({
+    const getDatasetMsg = {
         action: 'get',
         resource: 'dataContext[' + pluginProperties.DSName + ']'
-    });
+    };
+    let result = await codapInterface.sendRequest(getDatasetMsg);
     if (!result || !result.success) {
-        return;
+        result = await pluginHelper.initDataSet(
+            getNoaaDataContextSetupObject(pluginProperties));
+        result = await codapInterface.sendRequest(getDatasetMsg);
     }
     const dataSetDef = result.values;
     const attrDefs = [];
