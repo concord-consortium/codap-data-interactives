@@ -48,7 +48,7 @@ let constants = {
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000,
   stationDatasetURL: './assets/data/weather-stations.json',
-  version: 'v0010',
+  version: 'v0011',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
