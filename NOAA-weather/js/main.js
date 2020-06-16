@@ -71,6 +71,7 @@ let state = {
 async function initialize() {
   let isConnected = false;
   let documentState = {};
+  ui.setTransferStatus('transferring', 'Connecting to CODAP');
   try {
     isConnected = await codapConnect.initialize(constants);
     documentState = await codapConnect.getInteractiveState() || {};
@@ -86,7 +87,9 @@ async function initialize() {
     if (isConnected) {
       let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
       if (!hasStationDataset) {
+        ui.setTransferStatus('retrieving', 'Fetching weather station data');
         let dataset = await fetchStationDataset('./assets/data/weather-stations.json');
+        ui.setTransferStatus('transferring', 'Sending weather station data to CODAP')
         await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
       }
       await codapConnect.addNotificationHandler('notify',
@@ -97,6 +100,7 @@ async function initialize() {
           `dataContextChangeNotice[${constants.DSName}]`, noaaWeatherSelectionHandler );
     }
 
+    ui.setTransferStatus('transferring', 'Initializing User Interface');
     ui.initialize(state, dataTypes, {
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
@@ -107,6 +111,7 @@ async function initialize() {
     });
 
     noaaNCEIConnect.initialize(state, constants);
+    ui.setTransferStatus('success', 'Ready');
   } catch (ex) {
     console.warn("NOAA-weather failed init", ex);
   }
