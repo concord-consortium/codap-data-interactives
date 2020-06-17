@@ -60,20 +60,20 @@ const noaaNCEIConnect = {
                     function (dt) {
                         return dt !== 'all-datatypes';
                     });
-                const tDataTypeIDClause = "dataTypes=" + dataTypes.join();
-                const tstartDateClause = "startDate=" + startDate;
-                const tEndDateClause = "endDate=" + endDate;
-                const tUnitClause = 'units=metric';
+                const tDataTypeIDClause = `dataTypes=${dataTypes.join()}`;
+                const tstartDateClause = `startDate=${startDate}`;
+                const tEndDateClause = `endDate=${endDate}`;
+                const tUnitClause = `units=${noaaNCEIConnect.state.unitSystem}`;
                 const tFormatClause = 'format=json';
 
                 let tURL = [noaaNCEIConnect.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tstartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
                     '&')].join('?');
-                console.log("Fetching: " + tURL);
+                console.log(`Fetching: ${tURL}`);
                 return tURL
             }
         }
 
-        async function processResults(results, reportType) {
+        async function processResults(results, reportType, unitSystem) {
             let dataRecords = [];
             results.forEach((r) => {
                 nRecords++;
@@ -87,7 +87,7 @@ const noaaNCEIConnect = {
             });
             ui.setMessage('Sending weather records to CODAP')
             await codapConnect.createNOAAItems(noaaNCEIConnect.constants,
-                dataRecords, noaaNCEIConnect.getSelectedDataTypes());
+                dataRecords, noaaNCEIConnect.getSelectedDataTypes(), unitSystem);
             resultText = "Retrieved " + dataRecords.length + " cases";
             return resultText;
         }
@@ -135,7 +135,7 @@ const noaaNCEIConnect = {
                         'Converting weather records')
                     const theJSON = await tResult.json();
                     if (theJSON) {
-                        resultText = await processResults(theJSON, reportType);
+                        resultText = await processResults(theJSON, reportType, noaaNCEIConnect.state.unitSystem);
                         resultStatus = 'success';
                     } else {
                         resultText = 'Retrieved no observations';
@@ -156,7 +156,7 @@ const noaaNCEIConnect = {
         }
         ui.setTransferStatus(resultStatus, resultText);
         ev.preventDefault();
-        this.blur();
+        ev.target && ev.target.blur();
         ui.setWaitCursor(false);
         return true;
     },

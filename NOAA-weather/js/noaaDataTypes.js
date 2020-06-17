@@ -30,7 +30,10 @@ let defaultDataTypes = ["TMAX", "TMIN"];
 let dataTypes = {
     "TMAX": {
         "name": "tMax",
-        "units" : "°C",
+        "units" : {
+            metric: "°C",
+            standard: "°F"
+        },
         "description": "Maximum temperature",
         "decode": {
             "GHCND": function (v) {
@@ -44,7 +47,10 @@ let dataTypes = {
 
     "TMIN": {
         "name": "tMin",
-        "units" : "°C",
+        "units" : {
+            metric: "°C",
+            standard: "°F"
+        },
         "description": "Minimum temperature",
         "decode": {
             "GHCND": function (v) {
@@ -58,7 +64,10 @@ let dataTypes = {
 
     "TAVG": {
         "name": "tAvg",
-        "units" : "°C",
+        "units" : {
+            metric: "°C",
+            standard: "°F"
+        },
         "description": "Average temperature",
         "decode": {
             "GHCND": function (v) {
@@ -72,7 +81,10 @@ let dataTypes = {
 
     "PRCP": {
         "name": "precip",
-        "units" : "mm",
+        "units" : {
+            metric: "mm",
+            standard: "in"
+        },
         "description": "Precipitation",
         "decode": {
             "GHCND": function (v) {
@@ -86,7 +98,10 @@ let dataTypes = {
 
     "SNOW": {
         "name": "snow",
-        "units" : "mm",
+        "units" : {
+            metric: "mm",
+            standard: "in"
+        },
         "description": "Snowfall",
         "decode": {
             "GHCND": function (v) {
@@ -103,7 +118,10 @@ let dataTypes = {
      */
     "AWND": {
         "name": "avgWind",
-        "units" : "m/s",
+        "units" : {
+            metric: "m/s",
+            standard: "mph"
+        },
         "description": "Average windspeed",
         "decode": {
             "GHCND": function (v) {
@@ -157,22 +175,6 @@ let dataTypes = {
         "standardOutputUnits": "knots",
         "units": "knots"
     },
-    "MAX": {
-        "id": "MAX",
-        "name": "tMax",
-        "description": "Maximum Temperature",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "fahrenheit"
-    },
-    "MIN": {
-        "id": "MIN",
-        "name": "tMin",
-        "description": "Minimum Temperature",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "fahrenheit"
-    },
     "MXSPD": {
         "id": "MXSPD",
         "name": "mxWind",
@@ -184,14 +186,6 @@ let dataTypes = {
         "standardOutputPrecision": 1,
         "standardOutputUnits": "knots",
         "units": "knots"
-    },
-    "PRCP": {
-        "id": "PRCP",
-        "name": "precip",
-        "description": "Precipitation",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "inches"
     },
     "SLP": {
         "id": "SLP",
@@ -226,14 +220,6 @@ let dataTypes = {
         "units": "hectopascals"
     },
 
-    "TEMP": {
-        "id": "TEMP",
-        "name": "temp",
-        "description": "Average Temperature",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "fahrenheit"
-    },
     "VISIB": {
         "id": "VISIB",
         "name": "vis",

@@ -49,7 +49,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
 function initialize(state, dataTypes, iEventHandlers) {
     eventHandlers = iEventHandlers;
 
-    renderDataTypes(dataTypes);
+    renderDataTypes(dataTypes, state.unitSystem);
     renderCalendars(state.startDate, state.endDate);
     updateView(state);
 
@@ -64,6 +64,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     });
     setEventHandler('#wx-clear-button', 'click', eventHandlers.clearData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
+    setEventHandler('input[name=wx-option-units]', 'click', eventHandlers.unitSystem);
     setEventHandler('.wx-dropdown-header', 'click', function (/*ev*/) {
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
@@ -191,9 +192,8 @@ function togglePopUp(el) {
 
 function updateView(state) {
     lastState = state;
-    let stationName = state.selectedStation? state.selectedStation.name: '';
-
-    document.getElementById('wx-stationName').innerHTML = stationName;
+    document.getElementById('wx-stationName').innerHTML
+        = state.selectedStation ? state.selectedStation.name : '';
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
@@ -201,7 +201,13 @@ function updateView(state) {
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
     updateDataTypeSummary(dataTypes, state.selectedDataTypes);
-    updateDataTypes(dataTypes, state.selectedDataTypes);
+    updateDataTypes(dataTypes, state.selectedDataTypes, state.unitSystem);
+    updateInfoPopup(state.unitSystem);
+}
+
+function updateInfoPopup(unitSystem) {
+    let el = document.querySelector('input[name=wx-option-units][value='+unitSystem+']');
+    el.checked=true;
 }
 
 /**
@@ -278,22 +284,32 @@ function makeDataTypeRow (key, name, description, units) {
     cell.appendChild(checkbox);
 
     let row = document.createElement('tr');
+    row.classList.add('wx-data-type');
     row.appendChild(cell);
     row.appendChild(createElementWithProperties('td', {textContent: description}));
     row.appendChild(createElementWithProperties('td', {textContent: name}));
-    row.appendChild(createElementWithProperties('td', {textContent: units}));
+    let unitEl = createElementWithProperties('td', {textContent: units});
+    unitEl.classList.add('wx-units');
+    row.appendChild(unitEl);
     return row;
 }
 
-function renderDataTypes(dataTypes/*, iSelectionList*/) {
+/**
+ *
+ * @param dataTypes {Object} dataType object describe NOAA NCEI DataTypes, including
+ * name, description, units.
+ * @param unitSystem {'metric'||'standard'}
+ */
+function renderDataTypes(dataTypes, unitSystem) {
     let insertionPoint = document.querySelector('#wx-data-type-table tbody');
 
     for (const theKey in dataTypes) {
         if (dataTypes.hasOwnProperty(theKey)) {
-            const dataType = dataTypes[theKey];
+            let dataType = dataTypes[theKey];
+            let unit = dataType.units[unitSystem]
             insertionPoint.appendChild(
                 makeDataTypeRow(theKey, dataType.name, dataType.description,
-                    dataType.units));
+                    unit));
         }
     }
 }
@@ -363,13 +379,18 @@ function updateDataTypeSummary(dataTypes, selectedTypes) {
     countDisplay.innerText = String(summaryList.length);
 }
 
-function updateDataTypes(dataTypes, selectedTypes) {
+function updateDataTypes(dataTypes, selectedTypes, unitSystem) {
     selectedTypes = selectedTypes || [];
     let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
     let checkBoxHash = {};
     checkBoxes && checkBoxes.forEach(function (el) {
         el.checked = false;
         checkBoxHash[el.id] = el;
+        let rowEl = findAncestorElementWithClass(el,'wx-data-type');
+        if (rowEl) {
+            let unitEl = rowEl.querySelector('.wx-units');
+            unitEl.innerHTML = dataTypes[el.id].units[unitSystem];
+        }
     });
     selectedTypes.forEach(function (id) {
         if (checkBoxHash[id]) {

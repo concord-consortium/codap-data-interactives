@@ -38,6 +38,7 @@ let constants = {
     "elevationUnit": "METERS",
     "longitude": -71.30336
   },
+  defaultUnitSystem: 'metric',
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
@@ -58,7 +59,6 @@ let constants = {
 }
 
 let state = {
-  customDataTypes: null,
   database: null,
   dateGranularity: null,
   endDate: null,
@@ -66,6 +66,7 @@ let state = {
   selectedDataTypes: null,
   selectedStation: null,
   startDate: null,
+  unitSystem: null
 };
 
 async function initialize() {
@@ -107,7 +108,8 @@ async function initialize() {
       getData: noaaNCEIConnect.doGetHandler,
       clearData: clearDataHandler,
       newDataType: newDataTypeHandler,
-      dateRangeSubmit: dateRangeSubmitHandler
+      dateRangeSubmit: dateRangeSubmitHandler,
+      unitSystem: unitSystemHandler
     });
 
     noaaNCEIConnect.initialize(state, constants);
@@ -144,9 +146,7 @@ function initializeState(documentState) {
 
   state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
-  state.customDataTypes && state.customDataTypes.forEach(function (name) {
-    dataTypes[name] = {name:name};
-  });
+  state.unitSystem = state.unitSystem || constants.defaultUnitSystem;
 }
 
 function setDataType(type, isSelected) {
@@ -186,6 +186,11 @@ async function stationSelectionHandler(req) {
     ui.updateView(state);
     ui.setTransferStatus('inactive', 'Selected new weather station');
   }
+}
+
+function unitSystemHandler() {
+  state.unitSystem = this.value;
+  ui.updateView(state);
 }
 
 /*

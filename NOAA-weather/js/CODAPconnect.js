@@ -32,8 +32,8 @@ async function initialize(iPluginProperties) {
     let success = true;
     try {
         await codapInterface.init(getPluginDescriptor(pluginProperties), null);
-        await pluginHelper.initDataSet(
-            getNoaaDataContextSetupObject(pluginProperties));
+        // await pluginHelper.initDataSet(
+        //     getNoaaDataContextSetupObject(pluginProperties));
 
         //  and now mutable
         const tMessage = {
@@ -55,18 +55,19 @@ async function getInteractiveState() {
 
 /**
  * Creates an attribute
- * @param datasetName
- * @param collectionName
- * @param dataType
+ * @param datasetName {string}
+ * @param collectionName {string}
+ * @param dataType {object}
+ * @param unitSystem {'metric'|'standard}
  * @return Promise of result
  */
-function createAttribute(datasetName, collectionName, dataType) {
+function createAttribute(datasetName, collectionName, dataType, unitSystem) {
     return codapInterface.sendRequest({
         action: 'create',
         resource: 'dataContext[' + datasetName + '].collection[' + collectionName + '].attribute',
         values: {
             name: dataType.name,
-            unit: dataType.units,
+            unit: dataType.units[unitSystem],
             description: dataType.description
         }
     })
@@ -77,7 +78,7 @@ function createAttribute(datasetName, collectionName, dataType) {
  * @param dataTypes
  * @return a Promise fulfilled when all attributes are created.
  */
-async function updateDataset(dataTypes) {
+async function updateDataset(dataTypes, unitSystem) {
     const getDatasetMsg = {
         action: 'get',
         resource: 'dataContext[' + pluginProperties.DSName + ']'
@@ -103,7 +104,7 @@ async function updateDataset(dataTypes) {
             return ad.name === attrName;
         });
         if (!attrDef) {
-            return createAttribute(dsName, lastCollection.name, dataType);
+            return createAttribute(dsName, lastCollection.name, dataType, unitSystem);
         } else {
             return Promise.resolve('Unknown attribute.')
         }
@@ -196,8 +197,8 @@ function addNotificationHandler(action, resource, handler) {
  * corresponding to attributes and values of the new cases.
  * @param dataTypes An array of datatypes to be reference for creating attributes
  */
-async function createNOAAItems (props, iValues, dataTypes) {
-    await updateDataset(dataTypes);
+async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
+    await updateDataset(dataTypes, unitSystem);
 
     iValues = pluginHelper.arrayify(iValues);
     console.log("noaa-cdo ... createNOAAItems with " + iValues.length + " case(s)");
