@@ -267,12 +267,14 @@ class Calendar {
       currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
       currentMonth = (currentMonth + 1) % 12;
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
     }
 
     function previous() {
       currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
       currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
     }
 
     function jump() {
@@ -281,6 +283,16 @@ class Calendar {
       currentYear = parseInt(selectYear.value);
       currentMonth = parseInt(selectMonth.value);
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
+      this.blur();
+    }
+
+    function updateDate(year, month, day) {
+      let d = new Date(year, month, day);
+      _this.selectedDate = d;
+      if (_this.onDateChange) {
+        _this.onDateChange(_this, d);
+      }
     }
 
     function dayHandler(ev) {
@@ -290,11 +302,14 @@ class Calendar {
         let selectedEl = calendarEl.querySelector('.selected');
         selectedEl && selectedEl.classList.remove('selected');
         picker.classList.add('selected');
-        let d = new Date(picker.getAttribute('data-year'), picker.getAttribute('data-month') - 1, picker.getAttribute('data-date'));
-        _this.selectedDate = d;
-        if (_this.onDateChange) {
-          _this.onDateChange(_this, d);
-        }
+        updateDate(picker.getAttribute('data-year'),
+            picker.getAttribute('data-month') - 1,
+            picker.getAttribute('data-date'));
+        // let d = new Date(picker.getAttribute('data-year'), picker.getAttribute('data-month') - 1, picker.getAttribute('data-date'));
+        // _this.selectedDate = d;
+        // if (_this.onDateChange) {
+        //   _this.onDateChange(_this, d);
+        // }
       }
     }
 
