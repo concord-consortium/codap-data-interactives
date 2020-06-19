@@ -73,19 +73,36 @@ function createAttribute(datasetName, collectionName, dataType, unitSystem) {
     })
 }
 
+function updateAttributeUnit(datasetDef, dataTypeName, unit) {
+    let collection = datasetDef.collections.find(function (collection) {
+        return collection.attrs.find(function (attr) {
+            return attr.name === dataTypeName;
+        });
+    });
+    let resource = `dataContext[${datasetDef.name}].collection[${collection.name}].attribute[${dataTypeName}]`;
+    return codapInterface.sendRequest({
+        action: 'update',
+        resource: resource,
+        values: {
+            unit: unit
+        }
+    });
+}
+
 /**
  * Creates new attributes for any that do not already exist.
- * @param dataTypes
+ * @param dataTypes {object}
+ * @param unitSystem {'metric'|'standard'}
  * @return a Promise fulfilled when all attributes are created.
  */
 async function updateDataset(dataTypes, unitSystem) {
     const getDatasetMsg = {
         action: 'get',
-        resource: 'dataContext[' + pluginProperties.DSName + ']'
+        resource: `dataContext[${pluginProperties.DSName}]`
     };
     let result = await codapInterface.sendRequest(getDatasetMsg);
     if (!result || !result.success) {
-        result = await pluginHelper.initDataSet(
+        result = await codapInterface.sendRequest(
             getNoaaDataContextSetupObject(pluginProperties));
         result = await codapInterface.sendRequest(getDatasetMsg);
     }
@@ -106,7 +123,12 @@ async function updateDataset(dataTypes, unitSystem) {
         if (!attrDef) {
             return createAttribute(dsName, lastCollection.name, dataType, unitSystem);
         } else {
-            return Promise.resolve('Unknown attribute.')
+            let unit = dataType.units[unitSystem];
+            if (attrDef.unit !== unit) {
+                return updateAttributeUnit(dataSetDef, attrName, unit);
+            } else {
+                return Promise.resolve('Unknown attribute.')
+            }
         }
     });
     return Promise.all(promises);
@@ -164,6 +186,10 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
             }]
         }
     });
+    if (!result.success) {
+        console.log(`Dataset, "${datasetName}", creation failed`);
+        return;
+    }
     result = await codapInterface.sendRequest({
         action: 'create',
         resource: `dataContext[${datasetName}].item`,
@@ -196,6 +222,7 @@ function addNotificationHandler(action, resource, handler) {
  * @param iValues   An array of objects containing the keys and values
  * corresponding to attributes and values of the new cases.
  * @param dataTypes An array of datatypes to be reference for creating attributes
+ * @param unitSystem {'metric'|'standard'}
  */
 async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
     await updateDataset(dataTypes, unitSystem);

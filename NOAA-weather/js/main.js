@@ -112,7 +112,10 @@ async function initialize() {
       unitSystem: unitSystemHandler
     });
 
-    noaaNCEIConnect.initialize(state, constants);
+    noaaNCEIConnect.initialize(state, constants, {
+      beforeFetchHandler: beforeFetchHandler,
+      fetchSuccessHandler: fetchSuccessHandler,
+      fetchErrorHandler: fetchErrorHandler});
     ui.setTransferStatus('success', 'Ready');
   } catch (ex) {
     console.warn("NOAA-weather failed init", ex);
@@ -268,6 +271,60 @@ function dateRangeSubmitHandler(values) {
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
   ui.updateView(state);
+}
+function beforeFetchHandler() {
+  ui.setWaitCursor(true);
+  ui.setTransferStatus('retrieving',
+      'Fetching weather records from NOAA');
+}
+
+function fetchSuccessHandler(data) {
+  let reportType = constants.reportTypeMap[state.database];
+  let unitSystem = state.unitSystem;
+  let dataRecords = [];
+  if (data) {
+    data.forEach((r) => {
+      const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
+      aValue.latitude = aValue.station.latitude;
+      aValue.longitude = aValue.station.longitude;
+      aValue.elevation = aValue.station.elevation;
+      aValue['report type'] = reportType;
+      dataRecords.push(aValue);
+    });
+    ui.setMessage('Sending weather records to CODAP')
+    codapConnect.createNOAAItems(constants, dataRecords,
+        noaaNCEIConnect.getSelectedDataTypes(), unitSystem)
+        .then(
+            function (result) {
+              ui.setTransferStatus('success', `Retrieved ${dataRecords.length} cases`);
+              ui.setWaitCursor(false);
+              return result;
+            },
+            function (msg) {
+              ui.setTransferStatus('failure', msg);
+              ui.setWaitCursor(false);
+            }
+        );
+  } else {
+    ui.setTransferStatus('success', 'No data retrieved');
+    ui.setWaitCursor(false);
+  }
+}
+
+function fetchErrorHandler(statusMessage, resultText) {
+  if (resultText && resultText.length && (resultText[0] === '<')) {
+    try {
+      let xmlDoc = new DOMParser().parseFromString(resultText, 'text/xml');
+      statusMessage = xmlDoc.getElementsByTagName('userMessage')[0].innerHTML;
+      statusMessage += '(' + xmlDoc.getElementsByTagName(
+          'developerMessage')[0].innerHTML + ')';
+    } catch (e) {
+    }
+  }
+  console.warn('fetchErrorHandler: ' + resultText);
+  console.warn("fetchErrorHandler error: " + statusMessage);
+  ui.setTransferStatus("failure", statusMessage);
+  ui.setWaitCursor(false);
 }
 
 export {constants};
