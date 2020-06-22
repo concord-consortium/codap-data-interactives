@@ -106,30 +106,17 @@ function closeDateRangeSelector() {
 
 function updateDateRange(/*ev*/) {
     let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
-    let dayRangeClause = el.querySelector('.wx-day-range-selector');
-    let isDailyRange = document.querySelector('#wx-daily:checked');
     let values = {};
-    if (dayRangeClause && isDailyRange) {
-        values.startDate = calendars.from.selectedDate;
-        values.endDate = calendars.to.selectedDate;
-        if (values.startDate > values.endDate) {
-            let t = values.startDate;
-            values.startDate = values.endDate;
-            values.endDate = t;
-        }
-    } else {
-        let endDate = el.querySelector('#wx-drs-end-date').value;
-        let months = parseInt(el.querySelector('#wx-drs-duration').value);
-        // noinspection JSPotentiallyInvalidConstructorUsage
-        values = {
-            startDate: (new dayjs(endDate)).subtract(months, 'month'),
-            endDate: endDate
-        };
+    values.startDate = calendars.from.selectedDate;
+    values.endDate = calendars.to.selectedDate;
+    if (values.startDate > values.endDate) {
+        let t = values.startDate;
+        values.startDate = values.endDate;
+        values.endDate = t;
     }
     if (eventHandlers.dateRangeSubmit) {
         eventHandlers.dateRangeSubmit(values);
     }
-    // togglePopOver(el);
 }
 
 function findAncestorElementWithClass(el, myClass) {
@@ -197,7 +184,6 @@ function updateView(state) {
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
-    updateDateSelectorView(state.sampleFrequency);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
     updateDataTypeSummary(dataTypes, state.selectedDataTypes);
@@ -228,18 +214,18 @@ function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
 }
 
 function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
-    let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
-    if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
-    let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
-    if (duration === 1) {
-        durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
-    }
-    let durationTimeUnitEl = document.querySelector('#wx-time-unit');
-    let endDateEl = document.querySelector('#wx-drs-end-date');
-    let durationEl = document.querySelector('#wx-drs-duration');
-    durationTimeUnitEl.innerHTML = durationUnit;
-    endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
-    durationEl.value = duration;
+    // let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+    // if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
+    // let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
+    // if (duration === 1) {
+    //     durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
+    // }
+    // let durationTimeUnitEl = document.querySelector('#wx-time-unit');
+    // let endDateEl = document.querySelector('#wx-drs-end-date');
+    // let durationEl = document.querySelector('#wx-drs-duration');
+    // durationTimeUnitEl.innerHTML = durationUnit;
+    // endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
+    // durationEl.value = duration;
     let dateRange = {
         fromDate: startDate,
         toDate: endDate
@@ -250,18 +236,6 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     calendars.to.selectedDate = endDate;
     calendars.from.updateCalendar(startDate.getMonth(), startDate.getFullYear());
     calendars.to.updateCalendar(endDate.getMonth(), endDate.getFullYear());
-}
-
-function updateDateSelectorView(sampleFrequency) {
-    let dayRangeSelector = document.querySelector('.wx-day-range-selector');
-    let monthRangeSelector = document.querySelector('#wx-month-range-selector');
-    if (sampleFrequency === 'monthly') {
-        monthRangeSelector.classList.remove('wx-hide');
-        dayRangeSelector.classList.add('wx-hide');
-    } else {
-        dayRangeSelector.classList.remove('wx-hide');
-        monthRangeSelector.classList.add('wx-hide');
-    }
 }
 
 function createElementWithProperties(tag, properties) {

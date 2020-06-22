@@ -76,12 +76,6 @@ function renderCalendarFrame(attachmentEl, title) {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-  let yearSelect = new Array(51).fill(0).map(function(x, ix) {
-    return (new Date().getFullYear() - 50 + ix);
-  }).map(function (yr) {
-    return createElement('option', [], String(yr));
-  });
-
   title = title || 'Calendar';
 
   let titleRow = createElement('div', ['wx-calendar-title'], title);
