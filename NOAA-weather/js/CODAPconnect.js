@@ -102,9 +102,17 @@ async function updateDataset(dataTypes, unitSystem) {
     };
     let result = await codapInterface.sendRequest(getDatasetMsg);
     if (!result || !result.success) {
-        result = await codapInterface.sendRequest(
-            getNoaaDataContextSetupObject(pluginProperties));
-        result = await codapInterface.sendRequest(getDatasetMsg);
+        result = await codapInterface.sendRequest({
+            action: 'create',
+            resource: 'dataContext',
+            values: getNoaaDataContextSetupObject(pluginProperties)
+        });
+        if (result.success) {
+            result = await codapInterface.sendRequest(getDatasetMsg);
+        }
+    }
+    if (!result.success) {
+        throw new Error('Could not find or create NOAA-Weather dataset');
     }
     const dataSetDef = result.values;
     const attrDefs = [];
