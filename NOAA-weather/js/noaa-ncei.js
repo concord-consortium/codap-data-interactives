@@ -137,15 +137,6 @@ const noaaNCEIConnect = {
         return [this.state.selectedStation && this.state.selectedStation.id];
     },
 
-    getSelectedDataTypes: function () {
-        return this.state.selectedDataTypes.filter(function (dt) {
-            return !!dataTypes[dt];
-        }).map(function (typeName) {
-            return dataTypes[typeName];
-        });
-
-    },
-
     decodeData: function (iField, iValue) {
         let result = null;
         switch (iField) {

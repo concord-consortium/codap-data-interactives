@@ -16,7 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-import {dataTypeIDs, dataTypes, defaultDataTypes} from './noaaDataTypes.js';
+import {defaultDataTypes, dataTypes, dataTypeStore} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
@@ -191,8 +191,33 @@ async function stationSelectionHandler(req) {
   }
 }
 
-function unitSystemHandler() {
-  state.unitSystem = this.value;
+function convertUnits(fromUnitSystem, toUnitSystem, data) {
+  data.forEach(function (item) {
+    Object.keys(item).forEach(function (prop) {
+      let dataType = dataTypeStore.findByName(prop);
+      if (dataType && dataType.convertUnits) {
+        item[prop] = dataType.convertUnits(dataType.units[fromUnitSystem], dataType.units[toUnitSystem], item[prop]);
+      }
+    });
+  });
+}
+
+async function updateUnitsInExistingItems(oldUnitSystem, newUnitSystem) {
+  // fetch existing items in existing dataset
+  let allItems = await codapConnect.getAllItems(constants.DSName);
+  // convert from old units to new units
+  convertUnits(oldUnitSystem, newUnitSystem, allItems)
+  // clear dataset
+  await codapConnect.clearData(constants.DSName);
+  // insert items
+  await codapConnect.createNOAAItems(constants, allItems, getSelectedDataTypes(), newUnitSystem)
+}
+
+function unitSystemHandler(unitSystem) {
+  if (unitSystem && (unitSystem != state.unitSystem)) {
+    updateUnitsInExistingItems(state.unitSystem, unitSystem);
+    state.unitSystem = unitSystem;
+  }
   ui.updateView(state);
 }
 
@@ -293,7 +318,7 @@ function fetchSuccessHandler(data) {
     });
     ui.setMessage('Sending weather records to CODAP')
     codapConnect.createNOAAItems(constants, dataRecords,
-        noaaNCEIConnect.getSelectedDataTypes(), unitSystem)
+        getSelectedDataTypes(), unitSystem)
         .then(
             function (result) {
               ui.setTransferStatus('success', `Retrieved ${dataRecords.length} cases`);
@@ -309,6 +334,14 @@ function fetchSuccessHandler(data) {
     ui.setTransferStatus('success', 'No data retrieved');
     ui.setWaitCursor(false);
   }
+}
+
+function getSelectedDataTypes () {
+  return state.selectedDataTypes.filter(function (dt) {
+    return !!dataTypes[dt];
+  }).map(function (typeName) {
+    return dataTypes[typeName];
+  });
 }
 
 function fetchErrorHandler(statusMessage, resultText) {

@@ -64,7 +64,6 @@ function initialize(state, dataTypes, iEventHandlers) {
     });
     setEventHandler('#wx-clear-button', 'click', eventHandlers.clearData);
     setEventHandler('input[name=frequencyControl]', 'click', eventHandlers.frequencyControl);
-    setEventHandler('input[name=wx-option-units]', 'click', eventHandlers.unitSystem);
     setEventHandler('.wx-dropdown-header', 'click', function (/*ev*/) {
         let sectionEl = findAncestorElementWithClass(this, 'wx-dropdown');
         let isClosed = sectionEl.classList.contains('wx-up');
@@ -80,6 +79,13 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
+        if (eventHandlers.unitSystem) {
+            let unitSystemEl = document.querySelector('input[name=wx-option-units]:checked');
+            let unitSystem = unitSystemEl? unitSystemEl.value : null;
+            if (unitSystem) {
+                eventHandlers.unitSystem(unitSystem)
+            }
+        }
     });
 
     setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);

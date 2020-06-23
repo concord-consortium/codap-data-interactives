@@ -354,12 +354,29 @@ async function clearData (datasetName) {
     }
 }
 
+async function getAllItems(datasetName) {
+    let result = await codapInterface.sendRequest({
+        action: 'get', resource: `dataContext[${datasetName}]`
+    });
+    if (!result) {
+        return [];
+    }
+    result = await codapInterface.sendRequest({
+        action: 'get',
+        resource: `dataContext[${datasetName}].itemSearch[*]`
+    });
+    if (result && result.success) {
+        return result.values.map(function (item) {return item.values});
+    }
+}
+
 export {
     addNotificationHandler,
     clearData,
     createAttribute,
     createNOAAItems,
     createStationsDataset,
+    getAllItems,
     getInteractiveState,
     hasDataset,
     initialize,
