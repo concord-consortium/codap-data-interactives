@@ -229,15 +229,26 @@ async function openMap(name) {
  * @return {Promise}
  */
 function openTextBox(title, message) {
-  let request = {
-    action: 'create',
-    resource: 'component',
-    values: {
-      type: 'text',
-      text: message,
-      title: title
+  // at this moment (6/2020) creating a text component with text is broken
+  // so we do it in two steps
+  let request = [
+    {
+      action: 'create',
+      resource: 'component',
+      values: {
+        type: 'text',
+        title: title,
+        name: title
+      }
+    },
+    {
+      action: 'update',
+      resource: `component[${title}]`,
+      values: {
+        text: message
+      }
     }
-  }
+  ];
   return codapInterface.sendRequest(request);
 }
 
