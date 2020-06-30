@@ -26,7 +26,7 @@ import {userActions} from "./app.userActions.js";
 import {CODAPconnect} from "./app.CODAPconnect.js";
 import {DBconnect} from "./app.DBconnect.js";
 import {Attribute} from "./Attribute.js"
-import {constants} from "./app.constants";
+import {constants} from "./app.constants.js";
 
 window.app = {
   state: null,

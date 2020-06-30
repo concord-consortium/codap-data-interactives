@@ -18,11 +18,11 @@
 //  limitations under the License.
 // ==========================================================================
 
-import * as uiControl from './modules/uiControl';
-import * as codapHelper from './modules/codapHelper';
-import * as csvImporter from './modules/csvImporter';
-import * as htmlImporter from './modules/htmlImporter';
-import * as geoJSONImporter from './modules/geoJSONImporter';
+import * as uiControl from './modules/uiControl.js';
+import * as codapHelper from './modules/codapHelper.js';
+import * as csvImporter from './modules/csvImporter.js';
+import * as htmlImporter from './modules/htmlImporter.js';
+import * as geoJSONImporter from './modules/geoJSONImporter.js';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
