@@ -1,7 +1,3 @@
-/*
-* Created by evangelineireland on 11/7/16.
-*/
-
 $(document).ready(function () {
 
     //Utility function to check if URL has query param and parse the query param. Returns true if it exists
@@ -59,9 +55,9 @@ $(document).ready(function () {
     }
 
     function buildNavBar(categories){
-        console.log("In buildNavBar, categories is: " + categories);
-        var nav_bar = $(".nav-bar");
-        var nav_bar_list = $("<ul>").addClass('menu-h');
+        console.log("In buildNavBar, categories are: " + categories);
+        var nav_bar = $("#top-nav-bar");
+        var nav_bar_list = $("<ul>").addClass('menu-h center');
         var cat_main_header, cat_sub_header;
 
         nav_bar_list.appendTo(nav_bar);
@@ -71,24 +67,8 @@ $(document).ready(function () {
             } else {
                 cat_main_header=key;
             }
-
-            nav_bar_list.append($('<li>').addClass('main_cat_'+cat_main_header).append($('<a>').attr('href', '#'+cat_main_header+'_header').text(key)));
-
-            var sub_headers = categories[key];
-            if(!(sub_headers===undefined)) {
-                $('.main_cat_'+cat_main_header).append($('<ul>').addClass('menu-h-dropdown sub_cat_'+cat_main_header));
-                sub_headers.forEach(function (el) {
-                    if(!(el===undefined)) {
-                        if (el.match(' ')) {
-                            cat_sub_header = el.replace(/ /g, '_');
-                        } else {
-                            cat_sub_header = el;
-                        }
-                        $('.sub_cat_'+cat_main_header).append($('<li>').append($('<a>').attr('href', '#'+cat_sub_header + '_header').text(el)));
-                    }
-                })
-            }
-
+            // nav_bar_list.append($('<li>').addClass('main_cat_'+cat_main_header).append($('<a>').attr('href', '#'+cat_main_header+'_header').text(key)));
+            nav_bar_list.append($('<li>').addClass('main_cat_'+cat_main_header+' tab').text(key));
         }
     }
 
@@ -108,7 +88,7 @@ $(document).ready(function () {
                 cat_main_header=key;
             }
 
-            var cat_listing_container = $('<div>').addClass('cat_listing_container').addClass(cat_main_header+'_div');
+            var cat_listing_container = $('<div>').addClass('cat_listing_container '+cat_main_header+'_div');
             listing_container.append(cat_listing_container);
             $('.'+cat_main_header+'_div').append($('<h2>').text(key).prop('id',cat_main_header+'_header'));
             $('.'+cat_main_header+'_div').append($('<ul>').prop('id',cat_main_header+'_list'));
@@ -219,6 +199,11 @@ $(document).ready(function () {
           buildListing(di_list);
           event.preventDefault();
           return false;});
+
+        $('#top-nav-bar ul').on('click','li',function(){
+            console.log('click on '+ $(this).text())
+            $(this).toggleClass('done')
+        });    
     }
 
     fetchObjList();

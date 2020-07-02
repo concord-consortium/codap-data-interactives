@@ -2,28 +2,26 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href ="./Common/css/site.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="./listing.js" language="javascript"></script>
     <title>Data Interactives</title>
 </head>
 <body>
 <header id="header">
-    <div>
-        <img src="https://codap.concord.org/_assets/img/codap-logo@2x.png" alt="Common Online Data Analysis Program">
-        <div id="cc">
-            a product of
-            <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, math, and engineering"><img src="http://codap.concord.org/_assets/img/cc-logo.png" alt="The Concord Consortium">
-            </a>
-        </div>
-    </div>
+    <img class="logo"src="https://codap.concord.org/_assets/img/codap-logo@2x.png" alt="Common Online Data Analysis Program">
+    <nav class = navigation>
+        <ul>
+            <li><a target="_blank" rel="noopener noreferrer" href="https://codap.concord.org/about/">About</a></li>
+            <li><a target="_blank" rel="noopener noreferrer" href="http://codap.concord.org/forums">Forums</a></li>
+            <li><a target="_blank" rel="noopener noreferrer" href="https://codap.concord.org/contact/">Contact</a></li>
+            <li><a target="_blank" rel="noopener noreferrer" href="http://codap.concord.org/help/">Help</a></li>
+        </ul>
+    </nav>
 </header>
 <div id="home-content">
     <h1> CODAP Data Interactive Plugins</h1>
-    <p>Click on the title to open a CODAP document with the plugin, or drag the "Embeddable Link" into CODAP.</p>
-    <div id = 'top-nav-bar'  class="center">
-        <nav class='nav-bar'></nav>
-    </div>
-
+    <h5>Click on the title to open a CODAP document with the plugin, or drag the "Embeddable Link" into CODAP.</h5>
+    <nav id = 'top-nav-bar' class='nav-bar'></nav>
     <div id = "listing_container"></div>
 
     <div class = "form_container">
@@ -42,14 +40,20 @@
     </div>
 </div>
 <div id="credits">
-    <!--<p>Data Interactives repository: <a href="https://github.com/backspaces/agentscript">github.com/backspaces/agentscript</a></p>-->
     <p>Concord Consortium's CODAP plugin repository: <a target="blank" href="https://github.com/concord-consortium/codap-data-interactives">github.com/concord-consortium/codap-data-interactives</a></p>
     <p>Concord Consortium's CODAP project repository: <a target="blank" href="https://github.com/concord-consortium/codap">github.com/concord-consortium/codap</a></p>
     <p>To find out more about the CODAP project: <a target="blank" href="https://concord.org/projects/codap">About CODAP</a></p>
 </div>
 
 <footer>
+    <div id="cc">
+        <a href="https://concord.org/"
+            title="The Concord Consortium - Revolutionary digital learning for science, math, and engineering"><img
+            src="http://codap.concord.org/_assets/img/cc-logo.png" alt="The Concord Consortium">
+        </a>
+    </div>
     <p>© Copyright 2017 <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, amth, and engineering">The Concord Consortium</a>. All rights reserved.</p>
+
 </footer>
 
 </body>
