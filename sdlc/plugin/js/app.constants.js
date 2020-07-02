@@ -15,21 +15,28 @@
  * ==========================================================================
  *
  */
-/* global app */
+let constants = {
+  version: "v0006",
+  appName: 'Microdata Portal',
+  appTitle: 'Microdata Portal',
+  appDefaultWidth: 380,
+  appDefaultHeight: 520,
 
-app.constants = {
-  version: "v0003",
+  metadataURL: './assets/data/metadata.json',
 
-  kACSDataSetName: "SDLCdata",
-  kACSDataSetTitle: "SDLCdata",
-  kACSCollectionName: "people",
-  kACSCaseTableName: "People from ACS",
+  datasetName: "US Microdata",
+  datasetTitle: "US Microdata",
+  datasetDescription: 'US Population Microdata from the Microdata Portal',
+  datasetParentCollectionName: "places",
+  datasetChildCollectionName: "people",
+  caseTableName: "People",
 
-  kBasePhpURL: {
-    local: "http://localhost/~jsandoe/codap-data-interactives/sdlc/service/acs.php",
-    concord: "https://codap.concord.org/sdlc/service/acs.php"
-  },
-
-  kMinCases: 1,
-  kMaxCases: 1000
+  kMinCases: 0,
+  kMaxCases: 1000,
+  kDefaultSampleSize: 100,
+  defaultSelectedYears: [2017],
+  defaultSelectedStates: [],
+  defaultSelectedAttributes: ['Sex', 'Age', 'Year', 'State', 'Boundaries']
 };
+
+export {constants};

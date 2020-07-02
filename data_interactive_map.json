@@ -15,8 +15,8 @@
     {
       "title": "Sampler",
       "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"http:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
-      "width": 450,
-      "height": 200,
+      "width": 232,
+      "height": 400,
       "path": "/TP-Sampler/index.html",
       "visible": true,
       "aegis": "ESTEEM",
@@ -584,11 +584,14 @@
       ]
     },
     {
-      "title": "USS Data Portal",
+      "title": "Microdata Portal",
       "description": "Portal to US census and American Community Survey Data",
-      "path": "https://codap.concord.org/sdlc/plugin/index.html",
-      "aegis": "sdlc",
-      "visible": "false",
+      "path": "/sdlc/plugin/index.html",
+      "icon": "/sdlc/plugin/assets/images/sdlc.svg",
+      "aegis": "SDLC",
+      "visible": "true",
+      "width": 380,
+      "height": 520,
       "categories": [
         "Partners"
       ]

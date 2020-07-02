@@ -26,8 +26,6 @@ limitations under the License.
 ==========================================================================
 
 */
-import * as codapConnect from './CODAPconnect.js';
-import * as ui from './noaa.ui.js';
 import {dataTypes} from './noaaDataTypes.js';
 
 const noaaNCEIConnect = {
@@ -36,128 +34,78 @@ const noaaNCEIConnect = {
 
     constants: null,
 
-    initialize: function (state, constants) {
+    beforeFetchHandler: null,
+    fetchSuccessHandler: null,
+    fetchErrorHandler: null,
+
+    initialize: function (state, constants, handlers) {
         this.state = state;
         this.constants = constants;
+        this.beforeFetchHandler = handlers.beforeFetchHandler;
+        this.fetchSuccessHandler = handlers.fetchSuccessHandler;
+        this.fetchErrorHandler = handlers.fetchErrorHandler;
     },
 
+    composeURL: function() {
+        const format = 'YYYY-MM-DD';
+
+        // noinspection JSPotentiallyInvalidConstructorUsage
+        const startDate = new dayjs(this.state.startDate).format(
+            format);
+        // noinspection JSPotentiallyInvalidConstructorUsage
+        const endDate = new dayjs(this.state.endDate).format(
+            format);
+        if (new Date(startDate) <= new Date(endDate)) {
+            // const typeNames = this.getSelectedDataTypes().map(function (dataType) {
+            //     return dataType.name;
+            // })
+            const tDatasetIDClause = `dataset=${this.state.database}`;
+            const tStationIDClause = `stations=${this.getSelectedStations().join()}`;
+            const dataTypes = this.state.selectedDataTypes.filter(
+                function (dt) {
+                    return dt !== 'all-datatypes';
+                });
+            const tDataTypeIDClause = `dataTypes=${dataTypes.join()}`;
+            const tstartDateClause = `startDate=${startDate}`;
+            const tEndDateClause = `endDate=${endDate}`;
+            const tUnitClause = `units=${this.state.unitSystem}`;
+            const tFormatClause = 'format=json';
+
+            let tURL = [this.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tstartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
+                '&')].join('?');
+            console.log(`Fetching: ${tURL}`);
+            return tURL
+        }
+    },
     doGetHandler: async function (ev) {
-        function composeURL() {
-            const format = 'YYYY-MM-DD';
-            // noinspection JSPotentiallyInvalidConstructorUsage
-            const startDate = new dayjs(noaaNCEIConnect.state.startDate).format(
-                format);
-            // noinspection JSPotentiallyInvalidConstructorUsage
-            const endDate = new dayjs(noaaNCEIConnect.state.endDate).format(
-                format);
-            if (new Date(startDate) <= new Date(endDate)) {
-                // const typeNames = noaaNCEIConnect.getSelectedDataTypes().map(function (dataType) {
-                //     return dataType.name;
-                // })
-                const tDatasetIDClause = "dataset=" + noaaNCEIConnect.state.database;
-                const tStationIDClause = "stations=" + noaaNCEIConnect.getSelectedStations().join();
-                const dataTypes = noaaNCEIConnect.state.selectedDataTypes.filter(
-                    function (dt) {
-                        return dt !== 'all-datatypes';
-                    });
-                const tDataTypeIDClause = "dataTypes=" + dataTypes.join();
-                const tstartDateClause = "startDate=" + startDate;
-                const tEndDateClause = "endDate=" + endDate;
-                const tUnitClause = 'units=metric';
-                const tFormatClause = 'format=json';
 
-                let tURL = [noaaNCEIConnect.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tstartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
-                    '&')].join('?');
-                console.log("Fetching: " + tURL);
-                return tURL
-            }
-        }
+        noaaNCEIConnect.beforeFetchHandler();
 
-        async function processResults(results, reportType) {
-            let dataRecords = [];
-            results.forEach((r) => {
-                nRecords++;
-                theText += "<br>" + JSON.stringify(r);
-                const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
-                aValue.latitude = aValue.station.latitude;
-                aValue.longitude = aValue.station.longitude;
-                aValue.elevation = aValue.station.elevation;
-                aValue['report type'] = reportType;
-                dataRecords.push(aValue);
-            });
-            ui.setMessage('Sending weather records to CODAP')
-            await codapConnect.createNOAAItems(noaaNCEIConnect.constants,
-                dataRecords, noaaNCEIConnect.getSelectedDataTypes());
-            resultText = "Retrieved " + dataRecords.length + " cases";
-            return resultText;
-        }
-
-        function convertErrorResult(result, errorMessage) {
-            if (result.length && (result[0] === '<')) {
-                try {
-                    let xmlDoc = new DOMParser().parseFromString(result,
-                        'text/xml');
-                    errorMessage = xmlDoc.getElementsByTagName(
-                        'userMessage')[0].innerHTML;
-                    errorMessage += '(' + xmlDoc.getElementsByTagName(
-                        'developerMessage')[0].innerHTML + ')';
-                } catch (e) {
-                }
-            }
-            console.warn('noaaNCEIConnect.doGetHandler(): ' + result);
-            console.warn(
-                "noaaNCEIConnect.doGetHandler() error: " + errorMessage);
-            return errorMessage;
-        }
-
-
-        ui.setWaitCursor(true);
-        ui.setTransferStatus('retrieving',
-            'Fetching weather records from NOAA');
-        let theText = "Default text";
-        let nRecords = 0;
-
-        const reportType = noaaNCEIConnect.constants.reportTypeMap[noaaNCEIConnect.state.database];
-        let tURL = composeURL();
+        let tURL = noaaNCEIConnect.composeURL();
 
         // let tHeaders = new Headers();
         // tHeaders.append("token", noaaNCEIConnect.constants.noaaToken);
         //
         const tRequest = new Request(tURL/*, {headers: tHeaders}*/);
 
-        let resultText = "";
-        let resultStatus = 'failure';
         try {
             if (tURL) {
                 const tResult = await fetch(tRequest);
                 if (tResult.ok) {
-                    ui.setTransferStatus('retrieving',
-                        'Converting weather records')
                     const theJSON = await tResult.json();
-                    if (theJSON) {
-                        resultText = await processResults(theJSON, reportType);
-                        resultStatus = 'success';
-                    } else {
-                        resultText = 'Retrieved no observations';
-                    }
+                    noaaNCEIConnect.fetchSuccessHandler(theJSON);
                 } else {
                     let result = await tResult.text();
-                    let errorMessage = convertErrorResult(result,
-                        tResult.statusText);
-                    resultText = "Error: " + errorMessage;
+                    noaaNCEIConnect.fetchErrorHandler(tResult.statusText, result);
                 }
             } else {
-                resultText = 'End date must be on or after start date';
+                noaaNCEIConnect.fetchErrorHandler('End date must be on or after start date');
             }
         } catch (msg) {
-            console.log('fetch error: ' + msg);
-            resultText = 'fetch error: ' + msg;
-            theText = msg;
+            noaaNCEIConnect.fetchErrorHandler(msg);
         }
-        ui.setTransferStatus(resultStatus, resultText);
         ev.preventDefault();
-        this.blur();
-        ui.setWaitCursor(false);
+        ev.target && ev.target.blur();
         return true;
     },
 
@@ -187,15 +135,6 @@ const noaaNCEIConnect = {
 
     getSelectedStations: function () {
         return [this.state.selectedStation && this.state.selectedStation.id];
-    },
-
-    getSelectedDataTypes: function () {
-        return this.state.selectedDataTypes.filter(function (dt) {
-            return !!dataTypes[dt];
-        }).map(function (typeName) {
-            return dataTypes[typeName];
-        });
-
     },
 
     decodeData: function (iField, iValue) {

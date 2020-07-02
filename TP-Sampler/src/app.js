@@ -58,7 +58,9 @@ function(Snap, CodapCom, View, ui, utils) {
         withReplacement: withReplacement,
         hidden: hidden,
         password: password,
-        dataSetName: dataSetName
+        dataSetName: dataSetName,
+        attrNames: codapCom.attrNames,
+        attrIds: codapCom.attrIds
       }
     };
   }
@@ -84,6 +86,10 @@ function(Snap, CodapCom, View, ui, utils) {
       ui.render(hidden, password, false, withReplacement, device);
       if (isCollector) {
         refreshCaseList();
+      }
+      if (state.attrNames) {
+        codapCom.attrNames = state.attrNames;
+        codapCom.attrIds = state.attrIds;
       }
     }
     view.render();
@@ -293,7 +299,11 @@ function(Snap, CodapCom, View, ui, utils) {
   function resetButtonPressed() {
     this.blur();
     experimentNumber = 0;
-    codapCom.deleteAll(device, ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.deleteAll();
+    // we used to delete all attributes, and recreate them if we were a collector.
+    // we don't do that any more because it seems to take a very long time, and the request
+    // can sometimes timeout.
+    // codapCom.deleteAllAttributes(device, ui.populateContextsList(caseVariables, view, codapCom));
     codapCom.logAction("clearData:");
   }
 
@@ -344,18 +354,27 @@ function(Snap, CodapCom, View, ui, utils) {
     }
 
     function selectNext() {
-      var timeout = (speed === kFastestSpeed) ? 0 :
+      var timeout = device === "spinner" ? 1 :
+          (speed === kFastestSpeed) ? 0 :
           // Give "Fast" a little extra
-          (speed === kFastestSpeed - 1 ? 1000 / kFastestSpeed :
-              1000 / speed);
+          (speed === kFastestSpeed - 1 ? 600 / kFastestSpeed :
+              600 / speed);
       if (!paused) {
         if (speed !== kFastestSpeed) {
           if (sequence[runNumber][draw] === "EMPTY") {
             // jump to the end. Slots will push out automatically.
             draw = sequence[runNumber].length - 1;
           }
-          view.animateSelectNextVariable(sequence[runNumber][draw], draw,
-              addNextSequenceRunToCODAP);
+          function selectionMade() {
+            if (running) {
+              if (sequence[runNumber]) {
+                setTimeout(selectNext, timeout);
+              } else {
+                setTimeout(view.endAnimation, timeout);
+              }
+            }
+          }
+          view.animateSelectNextVariable(sequence[runNumber][draw], draw, selectionMade, addNextSequenceRunToCODAP);
 
           if (draw < sequence[runNumber].length - 1) {
             draw++;
@@ -368,13 +387,7 @@ function(Snap, CodapCom, View, ui, utils) {
           return;
         }
       }
-      if (running) {
-        if (sequence[runNumber]) {
-          setTimeout(selectNext, timeout);
-        } else {
-          setTimeout(view.endAnimation, timeout);
-        }
-      }
+
       // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
     }
 

@@ -16,7 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-import * as geojsonHelper from "./geojsonHelper";
+import * as geojsonHelper from "./geojsonHelper.js";
 
 /**
  * Fetches a URL and parses as a CSV String

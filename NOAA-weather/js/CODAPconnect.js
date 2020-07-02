@@ -32,8 +32,8 @@ async function initialize(iPluginProperties) {
     let success = true;
     try {
         await codapInterface.init(getPluginDescriptor(pluginProperties), null);
-        await pluginHelper.initDataSet(
-            getNoaaDataContextSetupObject(pluginProperties));
+        // await pluginHelper.initDataSet(
+        //     getNoaaDataContextSetupObject(pluginProperties));
 
         //  and now mutable
         const tMessage = {
@@ -44,7 +44,7 @@ async function initialize(iPluginProperties) {
         await codapInterface.sendRequest(tMessage);
     } catch (ex) {
         success= false;
-        console.warn('Initialization of CODAP interface failed');
+        console.warn('Initialization of CODAP interface failed: ' + ex);
     }
     return success;
 }
@@ -55,35 +55,64 @@ async function getInteractiveState() {
 
 /**
  * Creates an attribute
- * @param datasetName
- * @param collectionName
- * @param dataType
+ * @param datasetName {string}
+ * @param collectionName {string}
+ * @param dataType {object}
+ * @param unitSystem {'metric'|'standard}
  * @return Promise of result
  */
-function createAttribute(datasetName, collectionName, dataType) {
+function createAttribute(datasetName, collectionName, dataType, unitSystem) {
     return codapInterface.sendRequest({
         action: 'create',
         resource: 'dataContext[' + datasetName + '].collection[' + collectionName + '].attribute',
         values: {
             name: dataType.name,
-            unit: dataType.units,
+            unit: dataType.units[unitSystem],
             description: dataType.description
         }
     })
 }
 
+function updateAttributeUnit(datasetDef, dataTypeName, unit) {
+    let collection = datasetDef.collections.find(function (collection) {
+        return collection.attrs.find(function (attr) {
+            return attr.name === dataTypeName;
+        });
+    });
+    let resource = `dataContext[${datasetDef.name}].collection[${collection.name}].attribute[${dataTypeName}]`;
+    return codapInterface.sendRequest({
+        action: 'update',
+        resource: resource,
+        values: {
+            unit: unit
+        }
+    });
+}
+
 /**
  * Creates new attributes for any that do not already exist.
- * @param dataTypes
+ * @param dataTypes {object}
+ * @param unitSystem {'metric'|'standard'}
  * @return a Promise fulfilled when all attributes are created.
  */
-async function updateDataset(dataTypes) {
-    const result = await codapInterface.sendRequest({
+async function updateDataset(dataTypes, unitSystem) {
+    const getDatasetMsg = {
         action: 'get',
-        resource: 'dataContext[' + pluginProperties.DSName + ']'
-    });
+        resource: `dataContext[${pluginProperties.DSName}]`
+    };
+    let result = await codapInterface.sendRequest(getDatasetMsg);
     if (!result || !result.success) {
-        return;
+        result = await codapInterface.sendRequest({
+            action: 'create',
+            resource: 'dataContext',
+            values: getNoaaDataContextSetupObject(pluginProperties)
+        });
+        if (result.success) {
+            result = await codapInterface.sendRequest(getDatasetMsg);
+        }
+    }
+    if (!result.success) {
+        throw new Error('Could not find or create NOAA-Weather dataset');
     }
     const dataSetDef = result.values;
     const attrDefs = [];
@@ -100,9 +129,14 @@ async function updateDataset(dataTypes) {
             return ad.name === attrName;
         });
         if (!attrDef) {
-            return createAttribute(dsName, lastCollection.name, dataType);
+            return createAttribute(dsName, lastCollection.name, dataType, unitSystem);
         } else {
-            return Promise.resolve('Unknown attribute.')
+            let unit = dataType.units[unitSystem];
+            if (attrDef.unit !== unit) {
+                return updateAttributeUnit(dataSetDef, attrName, unit);
+            } else {
+                return Promise.resolve('Unknown attribute.')
+            }
         }
     });
     return Promise.all(promises);
@@ -160,6 +194,10 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
             }]
         }
     });
+    if (!result.success) {
+        console.log(`Dataset, "${datasetName}", creation failed`);
+        return;
+    }
     result = await codapInterface.sendRequest({
         action: 'create',
         resource: `dataContext[${datasetName}].item`,
@@ -192,9 +230,10 @@ function addNotificationHandler(action, resource, handler) {
  * @param iValues   An array of objects containing the keys and values
  * corresponding to attributes and values of the new cases.
  * @param dataTypes An array of datatypes to be reference for creating attributes
+ * @param unitSystem {'metric'|'standard'}
  */
-async function createNOAAItems (props, iValues, dataTypes) {
-    await updateDataset(dataTypes);
+async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
+    await updateDataset(dataTypes, unitSystem);
 
     iValues = pluginHelper.arrayify(iValues);
     console.log("noaa-cdo ... createNOAAItems with " + iValues.length + " case(s)");
@@ -315,12 +354,29 @@ async function clearData (datasetName) {
     }
 }
 
+async function getAllItems(datasetName) {
+    let result = await codapInterface.sendRequest({
+        action: 'get', resource: `dataContext[${datasetName}]`
+    });
+    if (!result) {
+        return [];
+    }
+    result = await codapInterface.sendRequest({
+        action: 'get',
+        resource: `dataContext[${datasetName}].itemSearch[*]`
+    });
+    if (result && result.success) {
+        return result.values.map(function (item) {return item.values});
+    }
+}
+
 export {
     addNotificationHandler,
     clearData,
     createAttribute,
     createNOAAItems,
     createStationsDataset,
+    getAllItems,
     getInteractiveState,
     hasDataset,
     initialize,

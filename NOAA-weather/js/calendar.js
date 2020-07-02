@@ -76,12 +76,6 @@ function renderCalendarFrame(attachmentEl, title) {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-  let yearSelect = new Array(51).fill(0).map(function(x, ix) {
-    return (new Date().getFullYear() - 50 + ix);
-  }).map(function (yr) {
-    return createElement('option', [], String(yr));
-  });
-
   title = title || 'Calendar';
 
   let titleRow = createElement('div', ['wx-calendar-title'], title);
@@ -95,7 +89,12 @@ function renderCalendarFrame(attachmentEl, title) {
         ]);
       })),
       ' ',
-      createElement('select', 'year-select', yearSelect)
+      createElement('input', 'year-select', [
+          createAttribute('type', 'number'),
+          createAttribute('min', 1850),
+          createAttribute('max', new Date().getFullYear()),
+          createAttribute('step', 1)
+          ])
     ]),
     createElement('button', 'next-button', '\u203a')
   ]);
@@ -262,12 +261,14 @@ class Calendar {
       currentYear = (currentMonth === 11) ? currentYear + 1 : currentYear;
       currentMonth = (currentMonth + 1) % 12;
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
     }
 
     function previous() {
       currentYear = (currentMonth === 0) ? currentYear - 1 : currentYear;
       currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
     }
 
     function jump() {
@@ -276,6 +277,16 @@ class Calendar {
       currentYear = parseInt(selectYear.value);
       currentMonth = parseInt(selectMonth.value);
       showCalendar(currentMonth, currentYear);
+      updateDate(currentYear, currentMonth, _this.selectedDate.getDate());
+      this.blur();
+    }
+
+    function updateDate(year, month, day) {
+      let d = new Date(year, month, day);
+      _this.selectedDate = d;
+      if (_this.onDateChange) {
+        _this.onDateChange(_this, d);
+      }
     }
 
     function dayHandler(ev) {
@@ -285,11 +296,14 @@ class Calendar {
         let selectedEl = calendarEl.querySelector('.selected');
         selectedEl && selectedEl.classList.remove('selected');
         picker.classList.add('selected');
-        let d = new Date(picker.getAttribute('data-year'), picker.getAttribute('data-month') - 1, picker.getAttribute('data-date'));
-        _this.selectedDate = d;
-        if (_this.onDateChange) {
-          _this.onDateChange(_this, d);
-        }
+        updateDate(picker.getAttribute('data-year'),
+            picker.getAttribute('data-month') - 1,
+            picker.getAttribute('data-date'));
+        // let d = new Date(picker.getAttribute('data-year'), picker.getAttribute('data-month') - 1, picker.getAttribute('data-date'));
+        // _this.selectedDate = d;
+        // if (_this.onDateChange) {
+        //   _this.onDateChange(_this, d);
+        // }
       }
     }
 

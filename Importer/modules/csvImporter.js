@@ -110,11 +110,11 @@ async function retrieveData(config) {
   let importDate = new Date();
   if (config.text) {
     dataSet.resourceDescription = composeResourceDescription('local file -- ' +
-        (config.datasetName || config.filename ), importDate);
+        (config.filename || config.datasetName), importDate);
     dataSet.table = await Promise.resolve(parseCSVString(config.text));
     dataSet.sourceType = 'text';
   } else if (config.url) {
-    let name = config.datasetName || config.url;
+    let name = config.url || config.datasetName;
     dataSet.resourceDescription = composeResourceDescription(name, importDate);
     dataSet.table = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';

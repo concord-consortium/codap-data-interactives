@@ -49,7 +49,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
 function initialize(state, dataTypes, iEventHandlers) {
     eventHandlers = iEventHandlers;
 
-    renderDataTypes(dataTypes);
+    renderDataTypes(dataTypes, state.unitSystem);
     renderCalendars(state.startDate, state.endDate);
     updateView(state);
 
@@ -79,6 +79,13 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
+        if (eventHandlers.unitSystem) {
+            let unitSystemEl = document.querySelector('input[name=wx-option-units]:checked');
+            let unitSystem = unitSystemEl? unitSystemEl.value : null;
+            if (unitSystem) {
+                eventHandlers.unitSystem(unitSystem)
+            }
+        }
     });
 
     setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);
@@ -105,30 +112,17 @@ function closeDateRangeSelector() {
 
 function updateDateRange(/*ev*/) {
     let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
-    let dayRangeClause = el.querySelector('.wx-day-range-selector');
-    let isDailyRange = document.querySelector('#wx-daily:checked');
     let values = {};
-    if (dayRangeClause && isDailyRange) {
-        values.startDate = calendars.from.selectedDate;
-        values.endDate = calendars.to.selectedDate;
-        if (values.startDate > values.endDate) {
-            let t = values.startDate;
-            values.startDate = values.endDate;
-            values.endDate = t;
-        }
-    } else {
-        let endDate = el.querySelector('#wx-drs-end-date').value;
-        let months = parseInt(el.querySelector('#wx-drs-duration').value);
-        // noinspection JSPotentiallyInvalidConstructorUsage
-        values = {
-            startDate: (new dayjs(endDate)).subtract(months, 'month'),
-            endDate: endDate
-        };
+    values.startDate = calendars.from.selectedDate;
+    values.endDate = calendars.to.selectedDate;
+    if (values.startDate > values.endDate) {
+        let t = values.startDate;
+        values.startDate = values.endDate;
+        values.endDate = t;
     }
     if (eventHandlers.dateRangeSubmit) {
         eventHandlers.dateRangeSubmit(values);
     }
-    // togglePopOver(el);
 }
 
 function findAncestorElementWithClass(el, myClass) {
@@ -162,6 +156,8 @@ function handleDateSelection(calendar/*, newDate*/) {
 
 
 function renderCalendars(fromDate, toDate) {
+    fromDate = fromDate || new Date();
+    toDate = toDate || new Date();
     let lc = document.getElementById('wx-calendar-from');
     let rc = document.getElementById('wx-calendar-to')
     calendars.from = new Calendar(lc, fromDate, 'From Date', handleDateSelection);
@@ -189,16 +185,21 @@ function togglePopUp(el) {
 
 function updateView(state) {
     lastState = state;
-
-    document.getElementById('wx-stationName').innerHTML = state.selectedStation.name;
+    document.getElementById('wx-stationName').innerHTML
+        = state.selectedStation ? state.selectedStation.name : '';
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
-    updateDateSelectorView(state.sampleFrequency);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
     updateDataTypeSummary(dataTypes, state.selectedDataTypes);
-    updateDataTypes(dataTypes, state.selectedDataTypes);
+    updateDataTypes(dataTypes, state.selectedDataTypes, state.unitSystem);
+    updateInfoPopup(state.unitSystem);
+}
+
+function updateInfoPopup(unitSystem) {
+    let el = document.querySelector('input[name=wx-option-units][value='+unitSystem+']');
+    el.checked=true;
 }
 
 /**
@@ -219,18 +220,18 @@ function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
 }
 
 function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
-    let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
-    if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
-    let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
-    if (duration === 1) {
-        durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
-    }
-    let durationTimeUnitEl = document.querySelector('#wx-time-unit');
-    let endDateEl = document.querySelector('#wx-drs-end-date');
-    let durationEl = document.querySelector('#wx-drs-duration');
-    durationTimeUnitEl.innerHTML = durationUnit;
-    endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
-    durationEl.value = duration;
+    // let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+    // if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
+    // let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
+    // if (duration === 1) {
+    //     durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
+    // }
+    // let durationTimeUnitEl = document.querySelector('#wx-time-unit');
+    // let endDateEl = document.querySelector('#wx-drs-end-date');
+    // let durationEl = document.querySelector('#wx-drs-duration');
+    // durationTimeUnitEl.innerHTML = durationUnit;
+    // endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
+    // durationEl.value = duration;
     let dateRange = {
         fromDate: startDate,
         toDate: endDate
@@ -241,18 +242,6 @@ function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
     calendars.to.selectedDate = endDate;
     calendars.from.updateCalendar(startDate.getMonth(), startDate.getFullYear());
     calendars.to.updateCalendar(endDate.getMonth(), endDate.getFullYear());
-}
-
-function updateDateSelectorView(sampleFrequency) {
-    let dayRangeSelector = document.querySelector('.wx-day-range-selector');
-    let monthRangeSelector = document.querySelector('#wx-month-range-selector');
-    if (sampleFrequency === 'monthly') {
-        monthRangeSelector.classList.remove('wx-hide');
-        dayRangeSelector.classList.add('wx-hide');
-    } else {
-        dayRangeSelector.classList.remove('wx-hide');
-        monthRangeSelector.classList.add('wx-hide');
-    }
 }
 
 function createElementWithProperties(tag, properties) {
@@ -275,22 +264,32 @@ function makeDataTypeRow (key, name, description, units) {
     cell.appendChild(checkbox);
 
     let row = document.createElement('tr');
+    row.classList.add('wx-data-type');
     row.appendChild(cell);
     row.appendChild(createElementWithProperties('td', {textContent: description}));
     row.appendChild(createElementWithProperties('td', {textContent: name}));
-    row.appendChild(createElementWithProperties('td', {textContent: units}));
+    let unitEl = createElementWithProperties('td', {textContent: units});
+    unitEl.classList.add('wx-units');
+    row.appendChild(unitEl);
     return row;
 }
 
-function renderDataTypes(dataTypes/*, iSelectionList*/) {
+/**
+ *
+ * @param dataTypes {Object} dataType object describe NOAA NCEI DataTypes, including
+ * name, description, units.
+ * @param unitSystem {'metric'||'standard'}
+ */
+function renderDataTypes(dataTypes, unitSystem) {
     let insertionPoint = document.querySelector('#wx-data-type-table tbody');
 
     for (const theKey in dataTypes) {
         if (dataTypes.hasOwnProperty(theKey)) {
-            const dataType = dataTypes[theKey];
+            let dataType = dataTypes[theKey];
+            let unit = dataType.units[unitSystem]
             insertionPoint.appendChild(
                 makeDataTypeRow(theKey, dataType.name, dataType.description,
-                    dataType.units));
+                    unit));
         }
     }
 }
@@ -347,6 +346,7 @@ function setWaitCursor(isWait) {
 }
 
 function updateDataTypeSummary(dataTypes, selectedTypes) {
+    selectedTypes = selectedTypes || [];
     let countDisplay = document.querySelector('.wx-selection-count');
     let summaryListDisplay = document.querySelector('.wx-data-type-selection');
     let summaryList = selectedTypes.filter(function (dt) {
@@ -359,12 +359,18 @@ function updateDataTypeSummary(dataTypes, selectedTypes) {
     countDisplay.innerText = String(summaryList.length);
 }
 
-function updateDataTypes(dataTypes, selectedTypes) {
+function updateDataTypes(dataTypes, selectedTypes, unitSystem) {
+    selectedTypes = selectedTypes || [];
     let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
     let checkBoxHash = {};
     checkBoxes && checkBoxes.forEach(function (el) {
         el.checked = false;
         checkBoxHash[el.id] = el;
+        let rowEl = findAncestorElementWithClass(el,'wx-data-type');
+        if (rowEl) {
+            let unitEl = rowEl.querySelector('.wx-units');
+            unitEl.innerHTML = dataTypes[el.id].units[unitSystem];
+        }
     });
     selectedTypes.forEach(function (id) {
         if (checkBoxHash[id]) {

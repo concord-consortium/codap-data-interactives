@@ -44,6 +44,8 @@ class Attribute {
     this.description = iAttributeAssignment.description || iRecord.description;
     // no longer used
     this.chosen = iAttributeAssignment.defCheck;
+    // can't be changed
+    this.readonly = iAttributeAssignment.readonly;
 
     this.displayMe = iAttributeAssignment.displayMe; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;
@@ -71,10 +73,8 @@ class Attribute {
     this.attributeMap = attributeMap;
   }
 
-  getRawValue(dataString) {
-    let startIndex = this.startPos - 1;
-    let out = dataString.slice(startIndex, startIndex + this.width);
-    return out;
+  getRawValue(dataObject) {
+    return dataObject[this.name];
   }
 
   isRecode() {
@@ -129,8 +129,8 @@ class Attribute {
   }
 
   decodeValue(dataString) {
-    let result = null;
-    let rawValue = null;
+    let result;
+    let rawValue;
     if (this.isRecode()) {
       rawValue = this.recodeValue(dataString);
     } else {
@@ -171,3 +171,4 @@ class Attribute {
   }
 }
 
+export {Attribute};

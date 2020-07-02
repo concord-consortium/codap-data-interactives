@@ -40,13 +40,6 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 
     <link rel='stylesheet' type='text/css' href='css/style.css'/>
 
-    <script src="lib/iframe-phone.js"></script>
-    <script src="lib/codapInterface.js"></script>
-    <script src="lib/pluginHelper.js"></script>
-    <script src="lib/dayjs.min.js"></script>
-
-    <!--    Specific JS for this app     -->
-    <script src="js/main.js" type="module"></script>
 </head>
 
 <body>
@@ -56,7 +49,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 <div id="wx-intro-section" class="wx-pop-up" >
     <div class="wx-section-header-line">
         <span>Retrieve weather data from observing stations.</span>
-        <span class="wx-info-button wx-pop-up-anchor" title="Get further information about this CODAP plugin"></span>
+        <span class="wx-info-button wx-pop-up-anchor icon-info" title="Get further information about this CODAP plugin"></span>
     </div>
     <div class="wx-cover"></div>
     <div class="wx-pop-up-container">
@@ -65,7 +58,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
                 More Information
             </div>
             <div class="wx-pop-up-body">
-                <div id="wx-settings-section" class="wx-dropdown wx-hide">
+                <div id="wx-settings-section" class="wx-dropdown wx-down">
                     <div class="wx-section-header-line wx-dropdown-header">
                         <span class="wx-section-title">Settings</span>
                         <span class="wx-dropdown-indicator"></span>
@@ -86,15 +79,15 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
                             These weather data come from the National Centers
                             for Environmental Information(NCEI), part of the National
                             Oceanic and Atmospheric Administration (NOAA).
-                            Documentation is available at <a href="https://www.ncei.noaa.gov">https://www.ncei.noaa.gov</a>.
+                            Documentation is available at <a href="https://www.ncei.noaa.gov" target="_blank">https://www.ncei.noaa.gov</a>.
                         </p>
                         <p>
                             This weather data portal was developed by
-                            <a href="https://concord.org">The Concord
-                            Consortium</a> as part of the <a href="https://www.edc.org/weatherx">WeatherX Project—Strategies:
+                            <a href="https://concord.org" target="_blank">The Concord
+                            Consortium</a> as part of the <a href="https://www.edc.org/weatherx" target="_blank">WeatherX Project—Strategies:
                             Understanding Weather Extremes with Big Data:
                             Inspiring Rural Youth in Data Science</a> at the
-                            <a href="http://edc.org/">Education Development Center</a>.
+                            <a href="http://edc.org/" target="_blank">Education Development Center</a>.
                         </p>
                         <p>
                             This material is based on work supported by the
@@ -108,7 +101,7 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
                 </div>
             </div>
             <div id="wx-info-close-section" class="wx-pop-up-footer">
-                <div class="wx-section-header-line wx-control-row">
+                <div class="wx-control-row">
                     <span><button id="wx-info-close-button" class="wx-button" title="Hide this section.">Close</button></span>
                 </div>
             </div>
@@ -134,20 +127,12 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
         <div id="wx-date-range-selection-dialog" class="wx-pop-over">
             <div class="wx-pop-over-anchor" title="Select a range of dates.">
                 <div id="wx-date-range"></div>
-                <span class="wx-calendar-button"></span>
+                <span class="wx-calendar-button icon-date-range"></span>
             </div>
             <div class="wx-pop-over-body">
                 <div class="wx-day-range-selector">
                     <div id="wx-calendar-from" ></div>
                     <div id="wx-calendar-to" ></div>
-                </div>
-                <div id="wx-month-range-selector">
-                    <label>The
-                    <input type="number" id="wx-drs-duration" min="1" />
-                    <span id="wx-time-unit">days</span>
-                    preceding
-                    <input type="date" id="wx-drs-end-date" value=""/>
-                    </label>
                 </div>
                 <div class="wx-control-row">
                     <button id="wx-date-range-close" class="wx-button">Close</button>
@@ -211,6 +196,14 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
 </div>
 
 </main>
+
+<!--    Specific JS for this app     -->
+<script src="js/main.js" type="module"></script>
+
+<script src="lib/iframe-phone.js"></script>
+<script src="lib/codapInterface.js"></script>
+<script src="lib/pluginHelper.js"></script>
+<script src="lib/dayjs.min.js"></script>
 
 </body>
 

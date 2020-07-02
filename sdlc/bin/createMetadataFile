@@ -1,0 +1,115 @@
+#!/usr/bin/env node --max-old-space-size=30000
+// ==========================================================================
+//
+//  Author:   jsandoe
+//
+//  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ==========================================================================
+/**
+ * Node program to create a JSON description of a Microdata presets collection.
+ */
+const fs = require('fs');
+const console = require('console');
+const readline = require('readline');
+// const xml2js = require('xml-js');
+// const papa = require('papaparse');
+
+function printWarning(message) {
+  console.warn(message)
+}
+
+function printErrorAndExit(message) {
+  console.error(message);
+  process.exit(2);
+}
+
+function configure() {
+  let progName = process.argv[1].replace(/.*\//, '');
+
+  configuration = {
+    codebookURL: './assets/data/codebook.xml',
+    baseURL: 'https://codap-resources.concord.org/us-microdata-presets-gz',
+    filenamePrefix: 'preset-',
+    filenameSuffix: '.csv.gz',
+    outputFile: process.argv[3],
+    numPresetsPerGroup: 100,
+    presetsDir: process.argv[2],
+    presetSize: 1000,
+    progname: progName,
+    status: true,
+    statusMessage: 'ok',
+    threshold: 3000,
+  };
+
+  if (!configuration.presetsDir) {
+    configuration.status = false;
+    configuration.statusMessage = `usage: ${configuration.progname} presetsDir {outputFile}`
+  }
+
+  return configuration;
+
+}
+
+function buildMetadata(configuration) {
+  let out = {
+    presetSize: configuration.presetSize,
+    codeBookURL: configuration.codebookURL,
+    baseURL: configuration.baseURL,
+    filenamePrefix: configuration.filenamePrefix,
+    filenameSuffix: configuration.filenameSuffix,
+    datasets: [],
+  };
+  let dir = fs.readdirSync(configuration.presetsDir, {encoding: 'utf8', withFileTypes: true});
+  if (dir && Array.isArray(dir)) {
+    let datasetSubdirs = dir.filter(function (ent) {
+        return ent.isDirectory();
+      });
+    datasetSubdirs.forEach(function (datasetSubdir) {
+      let datasetMeta = {
+        name: datasetSubdir.name,
+        year: datasetSubdir.name,
+        presetCount: 100,
+        presetCollections: [],
+        presetAttributes: []
+      }
+      let collectionPath = `${configuration.presetsDir}/${datasetSubdir.name}`
+      let collectionSubdir = fs.readdirSync(collectionPath, {encoding: 'utf8', withFileTypes: true})
+          .filter(function (ent) {return ent.isDirectory();});
+      datasetMeta.presetCollections = collectionSubdir.map(function(ent) { return ent.name; });
+      let firstFileContents = fs.readFileSync(`${collectionPath}/${datasetMeta.presetCollections[0]}/${configuration.filenamePrefix}0${configuration.filenameSuffix.replace(/.gz$/, '')}`, {encoding: 'utf8'});
+      let firstLine = firstFileContents && firstFileContents.slice(0, firstFileContents.indexOf('\r'));
+      datasetMeta.presetAttributes = firstLine.split(',');
+      out.datasets.push(datasetMeta);
+    })
+  }
+  return out;
+}
+
+function main() {
+  let configuration = configure();
+  if (!configuration.status) {
+    printErrorAndExit(configuration.statusMessage);
+  }
+
+  let metadata = buildMetadata(configuration);
+
+  if (configuration.outputFile) {
+    fs.writeFileSync(configuration.outputFile, JSON.stringify(metadata, null, ' '));
+  } else {
+    process.stdout.write(JSON.stringify(metadata, null, '  '));
+  }
+}
+
+main();

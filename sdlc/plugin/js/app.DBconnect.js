@@ -15,74 +15,157 @@
  * ==========================================================================
  *
  */
+import {userActions} from "./app.userActions.js";
 
+/*global Papa:true */
+let DBconnect = {
 
-app.DBconnect = {
-
-  sendCommand: async function (iCommands) {
-    let theBody = new FormData();
-    for (let key in iCommands) {
-      if (iCommands.hasOwnProperty(key)) {
-        theBody.append(key, iCommands[key])
+  /**
+   * Retrieves sample data from the server.
+   *
+   * Will retrieve a subsample for each state/year combination.
+   * Each retrieval will return 1000 records. The actual number needed will be
+   * randomly selected (without replacement) from this set.
+   *
+   * @param iAtts Selected attributes. Unused in current implementation.
+   * @param iStateCodes
+   * @param iYears
+   * @param iAllAttributes {{}} All possible attributes indexed by attribute name.
+   * @return {Promise<*[]|[]>}
+   */
+  getCasesFromDB: async function (iAtts, iStateCodes, iYears, iAllAttributes) {
+    function computeSubsample(data, size) {
+      if (data.length <= size) {
+        return data;
       }
+      let randomizedData = data.map(function (item) { return {r: Math.random(), d: item};});
+      randomizedData.sort(function(a, b) { return a.r - b.r; });
+      let filteredData = randomizedData.filter(function (item, ix) {return (ix < size);})
+      return filteredData.map(function (item) { return item.d;});
     }
-    theBody.append("whence", app.whence);
 
-    app.addLog('Send request: ' + JSON.stringify(iCommands));
-    let theRequest = new Request(app.constants.kBasePhpURL[app.whence],
-        {method: 'POST', body: theBody, headers: new Headers()});
+    function fetchSubsampleChunk(stateName, year, chunkSize) {
+      return new Promise(function (resolve, reject) {
+        try {
+          let dataset = _this.metadata.datasets.find(function (ds) {return ds.name === String(year);})
+          let presetCount = dataset && dataset.presetCount;
+          let presetIndex = Math.floor(Math.random() * presetCount);
+          let filePrefix = _this.metadata.filenamePrefix || 'preset-';
+          let fileSuffix = _this.metadata.filenameSuffix || '.csv';
+          let presetName = filePrefix + presetIndex + fileSuffix;
+          let dataExistsForYearAndState = _this.yearHasState(year, stateName);
+          if (dataExistsForYearAndState) {
+            let presetURL = `${_this.metadata.baseURL}/${year}/${stateName}/${presetName}`;
 
-    try {
-      const theResult = await fetch(theRequest);
-      if (theResult && theResult.ok) {
-        let result = await theResult.json();
-        app.addLog('Good response: ' + (Array.isArray(result)?('rows='+result.length):''));
-        return result;
-      } else {
-        console.error("sendCommand bad result error: " + theResult.statusText);
-        app.addLog('Error response: /status,text/ [' +
-            [theResult.status, theResult.statusText].join + ']');
-      }
-    } catch (msg) {
-      console.log('fetch error in DBconnect.sendCommand(): ' + msg);
-      app.addLog('Error response: ' + msg);
+            // fetch chunks then randomly pick selection set.
+            app.addLog('Send request: ' + presetURL);
+            Papa.parse(presetURL, {
+              header: true, /* converts CSV rows to objects as defined by the header line */
+              download: true, /* indicates this is a url to fetch */
+              complete: function (response) {
+                if (response.errors.length === 0) {
+                  app.addLog('Good response: ' + (response.data?response.data.length: ''));
+                  resolve(computeSubsample(response.data, chunkSize));
+                } else {
+                  let msg = `Errors fetching ${presetURL}: ${response.errors.join(
+                      ', ')}`;
+                  app.addLog(msg);
+                  reject(msg);
+                }
+              }, error: function (error/*, file*/) {
+                app.addLog(error);
+                reject(error);
+              }
+            })
+          } else {
+            resolve([]);
+          }
+        } catch(ex) {
+          reject(ex);
+        }
+      });
     }
-  },
 
-  getCasesFromDB: async function (iAtts, iStateCodes, iYears) {
-    const tSampleSize = app.userActions.getSelectedSampleSize();
+
+    let _this = this;
+    const tSampleSize = userActions.getSelectedSampleSize();
 
     iStateCodes = iStateCodes || [];
+    let stateAttribute = iAllAttributes.State;
+    let stateMap = stateAttribute.categories;
+    let stateNames = iStateCodes.length?
+        iStateCodes.map(function (sc) { return stateMap[sc]; }):
+        ['all'];
+
     iYears = iYears || [];
-    let tAttNames = [];
-    iAtts.forEach(a => tAttNames.push("`" + a.name + "`"));   //  iAtts is an array, we need a comma-separated string
 
-    try {
-      const theCommands = {
-        c: "getCases",
-        atts: 'sample_data',
-        state_codes: iStateCodes.join(),
-        years: iYears.join(),
-        n: tSampleSize
-      };
-      return await app.DBconnect.sendCommand(theCommands);
+    let chunks = stateNames.length * iYears.length;
+    if (!chunks) {
+      return Promise.resolve([]);
     }
-
-    catch (msg) {
-      console.warn('getCasesFromDB() error: ' + msg);
-    }
-
+    let chunkSize = tSampleSize/chunks;
+    let fetchPromises = [];
+    stateNames.forEach(function (stateName) {
+      iYears.forEach(function (year) {
+        // if chunk size is large get double, so we can get a unique subsample
+        if (chunkSize > 900) {
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize/2));
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize/2));
+        } else {
+          fetchPromises.push(fetchSubsampleChunk(stateName, year, chunkSize));
+        }
+      });
+    });
+    return Promise.all(fetchPromises);
   },
 
-  getDBInfo: async function (iType) {
-    try {
-      const theCommands = {"c": iType};
-      return await app.DBconnect.sendCommand(theCommands);
+  getDatasetNames: function () {
+    if (this.metadata.datasets) {
+      let names = this.metadata.datasets.map(function (ds) { return ds.name;});
+      return names;
+    } else {
+      return [];
     }
+  },
+  getStateNames: function () {
+    let stateSet = {};
+    if (this.metadata.datasets) {
+      this.metadata.datasets.forEach(function (ds) {
+        ds.presetCollections.forEach(function (name) {
+          stateSet[name] = name;
+        });
+      });
+      return Object.keys(stateSet);
+    } else {
+      return [];
+    }
+  },
 
-    catch (msg) {
-      console.log(iType + ' getDBInfo() error: ' + msg);
+  yearHasState: function (year, stateName) {
+    year = String(year);
+    if (this.metadata.datasets) {
+      let yearDataset = this.metadata.datasets.find(function (ds) { return ds.name === year});
+      return (yearDataset && (yearDataset.presetCollections.indexOf(stateName) >= 0));
+    }
+  },
+
+  getDBInfo: async function (iType, metadataURL) {
+    if (!this.metadata) {
+      let response = await fetch(metadataURL);
+      if (response.ok) {
+        this.metadata = await response.json();
+      } else {
+        this.metadata = {};
+        console.warn(`Metadata Fetch error: ${response.statusText}`);
+      }
+    }
+    if (iType === 'getYears') {
+      return this.getDatasetNames();
+    }
+    else if (iType === 'getStates') {
+      return this.getStateNames();
     }
   }
-
 };
+
+export {DBconnect};
