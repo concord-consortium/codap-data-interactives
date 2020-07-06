@@ -29,32 +29,38 @@ let attributeGroups = [
     {
       number: 1,
       open: false,
-      title: 'Basic demographics'
+      title: 'Basic demographics',
+      tooltip: 'Choose characteristics like age, sex, and marital status'
     },
     {
       number: 2,
       open: false,
-      title: 'Race, ancestry, origins'
+      title: 'Race, ancestry, origins',
+      tooltip: "Choose characteristics relating to person's place of birth and ethnicity"
     },
     {
       number: 3,
       open: false,
-      title: 'Work & employment'
+      title: 'Work & employment',
+      tooltip: "Choose characteristics relating to person's work"
     },
     {
       number: 4,
       open: false,
-      title: 'Income'
+      title: 'Income',
+      tooltip: "Choose characteristics relating to person's income"
     },
     {
       number: 5,
       open: false,
-      title: 'Geography'
+      title: 'Geography',
+      tooltip: "Choose characteristics relating to where the person resides"
     },
     {
       number: 6,
       open: false,
-      title: 'Other'
+      title: 'Other',
+      tooltip: "Choose other characteristics"
     }];
 
 let attributeAssignment = [{
@@ -328,7 +334,7 @@ let attributeAssignment = [{
       group: 2,
       defCheck: false,
       format: 'categorical',
-      DEScription: 'Identifies individuals of Hispanic, Spanish, or Latino ' +
+      description: 'Identifies individuals of Hispanic, Spanish, or Latino ' +
       'origin and classifies them according to their country of origin. ' +
       'Recodes a detailed version of Hispanic into 15 categories.',
       rangeMap: [

@@ -63,8 +63,8 @@ let ui = (function () {
   /**
    * A utility to create a DOM element with classes and content.
    * @param tag {string}
-   * @param classList {[string]}
-   * @param content {[Element|Attribute]}
+   * @param [classList] {[string]}
+   * @param [content] {[Node]}
    * @return {Element}
    */
   function createElement(tag, classList, content) {
@@ -90,7 +90,7 @@ let ui = (function () {
    * A utility to create a DOM attribute node.
    * @param name {string}
    * @param value {*}
-   * @return {Attribute}
+   * @return {Attr}
    */
   function createAttribute(name, value) {
     let attr = document.createAttribute(name);
@@ -179,6 +179,7 @@ let ui = (function () {
 
       let out = createElement('div');
       out.append(makeItem('all states', 'state-all', 'select-all', true));
+      // noinspection JSUnresolvedVariable
       let stateAttribute = app.allAttributes.State;
       let stateMap = stateAttribute.categories;
       Object.keys(stateMap).forEach(function (stateCode) {
@@ -210,7 +211,7 @@ let ui = (function () {
 
       attributeConfig.attributeGroups.forEach( (g)=>{
         out += '    <div class="wx-dropdown wx-up">\n';
-        out += '      <div class="wx-section-header-line wx-dropdown-header">';
+        out += `      <div class="wx-section-header-line wx-dropdown-header" title="${g.tooltip}">`;
         out += `        <span class="wx-section-title">${g.title}</span>`;
         out += '        <span class="wx-selection-count"></span>';
         out += '        <span class="wx-user-selection"></span>';
@@ -324,6 +325,7 @@ let ui = (function () {
         return rtn;
       }
 
+      // noinspection JSUnresolvedVariable
       const stateAttr = app.allAttributes.State;
       let states = app.state.selectedStates.map(function (st) { return stateAttr.categories[Number(st)]; });
 
@@ -342,11 +344,11 @@ let ui = (function () {
       let yearsCountEl = document.querySelector('#years-section .wx-selection-count');
       let yearsListEl = document.querySelector('#years-section .wx-user-selection');
 
-      if (attrCountEl && attrs) attrCountEl.innerHTML = attrs.length;
+      if (attrCountEl && attrs) attrCountEl.innerHTML = '' + attrs.length;
       if (attrListEl && attrs) attrListEl.innerHTML = makeList(attrs);
       if (statesCountEl && states) statesCountEl.innerHTML = statesLength;
       if (statesListEl && states) statesListEl.innerHTML = makeList(states);
-      if (yearsCountEl && years) yearsCountEl.innerHTML = years.length;
+      if (yearsCountEl && years) yearsCountEl.innerHTML = '' + years.length;
       if (yearsListEl && years) yearsListEl.innerHTML = makeList(years);
       let subsectionCountEls = document.querySelectorAll(
           '#chooseAttributeDiv .wx-selection-count');
@@ -354,7 +356,7 @@ let ui = (function () {
       subsectionCountEls.forEach(function (el) {
         let parentEl = findAncestorElementWithClass(el, 'wx-dropdown');
         let checkedEls = parentEl.querySelectorAll('.select-item:checked');
-        el.innerHTML = checkedEls.length;
+        el.innerHTML = '' + checkedEls.length;
       });
     },
 
