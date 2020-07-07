@@ -835,7 +835,26 @@
       "resource": "component[mySlider]"
     }
   },
-
+  {
+    "name": "Select Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[mySlider]",
+      "values": {
+        "request": "select"
+      }
+    }
+  },
+  {
+    "name": "Autoscale Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[myTable]",
+      "values": {
+        "request": "autoScale"
+      }
+    }
+  },
   {
     "name": "Log a Message",
     "message": {
