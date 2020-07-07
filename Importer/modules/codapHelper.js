@@ -98,6 +98,17 @@ function setVisibilityOfSelf(isVisible) {
   return codapInterface.sendRequest(request);
 }
 
+async function selectComponent(id) {
+  return codapInterface.sendRequest(
+      {
+        action: 'notify',
+        resource: `component[${id}]`,
+        values: {
+          request: 'select'
+        }
+      }
+  );
+}
 /**
  * Closes this plugin.
  * @return {Promise}
@@ -183,7 +194,7 @@ function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow)
   return sendOneChunk();
 }
 
-function openCaseTableForDataSet(dataContext) {
+async function openCaseTableForDataSet(dataContext) {
   let request = {
     action: 'create',
     resource: 'component',
@@ -228,7 +239,7 @@ async function openMap(name) {
  * @param message
  * @return {Promise}
  */
-function openTextBox(title, message) {
+async function openTextBox(title, message) {
   // at this moment (6/2020) creating a text component with text is broken
   // so we do it in two steps
   let request = [
@@ -328,6 +339,7 @@ export {
   openMap,
   openTextBox,
   retrieveDatasetList,
+  selectComponent,
   sendRowsToCODAP,
   sendToCODAP,
 }

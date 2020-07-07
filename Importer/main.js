@@ -358,13 +358,17 @@ async function importDataIntoCODAP() {
   try {
     let data = config.sourceDataset.table;
     let result = null;
+    let caseTableID = null;
     if (config.operation === 'auto' || config.operation === 'new') {
 
       result = await createDataSetInCODAP(data, config);
       if (result && result.success) {
         config.datasetID = result.values.id;
       }
-      codapHelper.openCaseTableForDataSet(config.sourceDataset.datasetName);
+      result = await codapHelper.openCaseTableForDataSet(config.sourceDataset.datasetName);
+      if (result && result.success) {
+        caseTableID = result.values.id;
+      }
       codapHelper.openTextBox(config.sourceDataset.datasetName, config.sourceDataset.resourceDescription);
       if (config.contentType === 'application/geo+json') {
         codapHelper.openMap();
@@ -382,7 +386,14 @@ async function importDataIntoCODAP() {
     result = await codapHelper.sendRowsToCODAP(config.datasetID,
         config.sourceDataset.attributeNames, data, constants.chunkSize, config.sourceDataset.dataStartingRow);
     if (result && result.success) {
-      result = await codapHelper.closeSelf();
+      if (caseTableID !== null) {
+        setTimeout(async function () {
+          codapHelper.selectComponent(caseTableID);
+          result = await codapHelper.closeSelf();
+        }, 500);
+      } else {
+        result = await codapHelper.closeSelf();
+      }
     }
     else {
       uiControl.displayError(
