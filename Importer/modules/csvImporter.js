@@ -24,20 +24,23 @@
  */
 function fetchAndParseURL(url) {
   return fetch(url)
-      .then(function (resp) {
-        return new Promise(function (resolve, reject){
-          if (resp.ok) {
-            resp.text().then(function (data) {
-              let table = parseCSVString(data);
-              // console.log('made table: ' + (tab && tab.length));
-              resolve(table);
+      .then(
+          function (resp) {
+            return new Promise(function (resolve, reject){
+              if (resp.ok) {
+                resp.text().then(function (data) {
+                  let table = parseCSVString(data);
+                  // console.log('made table: ' + (tab && tab.length));
+                  resolve(table);
+                });
+              } else {
+                reject(resp.statusText);
+              }
             });
-          }
-          else {
-            reject(resp.statusText);
-          }
-        });
-      });
+          },
+          function (msg) {
+            throw new Error(`Network or server configuration`)
+          });
 }
 
 /**
@@ -84,6 +87,9 @@ function getTableStats(data) {
 
 function findOrCreateAttributeNames(dataSet) {
   let table = dataSet.table;
+  if (!table) {
+    return;
+  }
   let tableStats = getTableStats(table);
   let attrs = [];
   if (dataSet.firstRowIsAttrList && tableStats.numberOfRows > 0) {
@@ -122,8 +128,7 @@ async function retrieveData(config) {
     dataSet.resourceDescription = composeResourceDescription(config.datasetName || config.file.name, importDate);
     dataSet.table = await readAndParseFile(config.file);
     dataSet.sourceType = 'file';
-  } else
-  {
+  } else {
     console.log('csvImporter: expected text, url, or file: found none');
   }
   findOrCreateAttributeNames(dataSet);
