@@ -69,6 +69,10 @@ let state = {
   unitSystem: null
 };
 
+function selectHandler() {
+  codapConnect.selectSelf();
+}
+
 async function initialize() {
   let isConnected = false;
   let documentState = {};
@@ -103,6 +107,7 @@ async function initialize() {
 
     ui.setTransferStatus('transferring', 'Initializing User Interface');
     ui.initialize(state, dataTypes, {
+      selectHandler: selectHandler,
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
       getData: noaaNCEIConnect.doGetHandler,

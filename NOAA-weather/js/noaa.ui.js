@@ -55,6 +55,7 @@ function initialize(state, dataTypes, iEventHandlers) {
 
     // const newTypeInput = document.getElementById('newDataType');
 
+    setEventHandler('html', 'click', iEventHandlers.selectHandler, true);
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
     setEventHandler('#wx-get-button', 'click', function (ev) {
         closeDateRangeSelector();
@@ -294,11 +295,11 @@ function renderDataTypes(dataTypes, unitSystem) {
     }
 }
 
-function setEventHandler (selector, event, handler) {
+function setEventHandler (selector, event, handler, capture) {
     const elements = document.querySelectorAll(selector);
     if (!elements) { return; }
     elements.forEach(function (el) {
-        el.addEventListener(event, handler);
+        el.addEventListener(event, handler, {capture: capture});
     });
 }
 

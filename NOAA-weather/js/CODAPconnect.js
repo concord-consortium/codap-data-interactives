@@ -26,12 +26,13 @@ limitations under the License.
 
 */
 let pluginProperties = null;
+let myCODAPId = null;
 
 async function initialize(iPluginProperties) {
     pluginProperties = iPluginProperties;
     let success = true;
     try {
-        await codapInterface.init(getPluginDescriptor(pluginProperties), null);
+        let result = await codapInterface.init(getPluginDescriptor(pluginProperties), null);
         // await pluginHelper.initDataSet(
         //     getNoaaDataContextSetupObject(pluginProperties));
 
@@ -47,6 +48,29 @@ async function initialize(iPluginProperties) {
         console.warn('Initialization of CODAP interface failed: ' + ex);
     }
     return success;
+}
+
+/**
+ * Selects this component. In CODAP this will bring this component to the front.
+ *
+ * @return {Promise<void>}
+ */
+async function selectSelf() {
+    console.log('select!');
+    if (myCODAPId == null) {
+        let r1 = await codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'});
+        if (r1.success) {
+            myCODAPId = r1.values.id;
+        }
+    }
+    if (myCODAPId != null) {
+        return await codapInterface.sendRequest({
+            action: 'notify',
+            resource: `component[${myCODAPId}]`,
+            values: {request: 'select'
+            }
+        });
+    }
 }
 
 async function getInteractiveState() {
@@ -380,5 +404,6 @@ export {
     getInteractiveState,
     hasDataset,
     initialize,
+    selectSelf,
     selectStations
 };
