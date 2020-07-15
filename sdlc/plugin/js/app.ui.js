@@ -158,6 +158,8 @@ let ui = (function () {
         toggleDescriptions(parentEl);
       });
 
+      setEventHandler('html', 'click', userActions.selectHandler, true);
+
       this.initialized = true;
       this.updateWholeUI();
     },

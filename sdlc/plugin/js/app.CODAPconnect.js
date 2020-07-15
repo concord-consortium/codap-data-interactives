@@ -232,6 +232,23 @@ let CODAPconnect = {
         }
     });
   },
+  myCODAPIDd: null,
+  selectSelf: async function () {
+    if (this.myCODAPId == null) {
+      let r1 = await codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'});
+      if (r1.success) {
+        this.myCODAPId = r1.values.id;
+      }
+    }
+    if (this.myCODAPId != null) {
+      return await codapInterface.sendRequest({
+        action: 'notify',
+        resource: `component[${this.myCODAPId}]`,
+        values: {request: 'select'
+        }
+      });
+    }
+  },
 
   iFrameDescriptor: {
     version: constants.version,

@@ -151,7 +151,11 @@ let userActions = {
   updateRequestedSampleSize: function () {
     app.state.requestedSampleSize = $("#sampleSizeInput")[0].value;
     ui.updateWholeUI();
+  },
+  selectHandler: function () {
+    CODAPconnect.selectSelf();
   }
+
 };
 
 export {userActions};
