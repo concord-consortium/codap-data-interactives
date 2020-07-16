@@ -382,7 +382,31 @@ define([
             replaceArgs: iReplaceArgs
           }
         });
-      }
+      },
+
+      myCODAPIDd: null,
+      selectSelf: function () {
+        function selectSelf(id) {
+            return codapInterface.sendRequest({
+              action: 'notify',
+              resource: `component[${id}]`,
+              values: {
+                request: 'select'
+              }
+            });
+        }
+        if (this.myCODAPId == null) {
+          codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'}).then(function (resp) {
+            if (resp.success) {
+              this.myCODAPId = resp.values.id;
+              selectSelf(this.myCODAPId);
+            }
+          }.bind(this));
+        } else {
+          selectSelf(this.myCODAPId);
+        }
+      },
+
     };
 
     return CodapCom;

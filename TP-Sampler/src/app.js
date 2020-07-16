@@ -541,6 +541,10 @@ function(Snap, CodapCom, View, ui, utils) {
     paused = false;
   }
 
+  function becomeSelected() {
+    codapCom.selectSelf();
+  }
+
   // Set the model up to the initial conditions, reset all buttons and the view
   function setup() {
     getStarted();
@@ -550,7 +554,7 @@ function(Snap, CodapCom, View, ui, utils) {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
     stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
     setNumRuns, setSpeed, view.speedText, view.setVariableName, setReplacement, setHidden,
-    setOrCheckPassword, reloadDefaultSettings);
+    setOrCheckPassword, reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model
   getStarted();

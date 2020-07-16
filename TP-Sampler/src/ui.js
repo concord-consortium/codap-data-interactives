@@ -270,7 +270,7 @@ define(function() {
   function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
             stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
             setNumRuns, setSpeed, speedText, setVariableName, setReplacement, setHidden,
-            setOrCheckPassword, reloadDefaultSettings) {
+            setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("add-variable-series").onclick = addVariableSeries;
@@ -331,6 +331,8 @@ define(function() {
       reloadDefaultSettings();
       viewSampler();
     };
+    document.querySelector('body').addEventListener('click',
+        becomeSelected, {capture:true});
   }
 
   // Sets up the UI elements based on the loaded state of the model
