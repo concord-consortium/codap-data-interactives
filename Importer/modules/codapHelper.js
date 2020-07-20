@@ -135,7 +135,7 @@ function closeSelf() {
 function defineDataSet(config) {
   let attrList = config.attributeNames.map(function (attr) {
     let nameParts = analyzeRawName(attr);
-    return {name: attr, unit: nameParts.unit, type: (attr.toLowerCase()==='boundary')? 'boundary': null};
+    return {name: nameParts.baseName, unit: nameParts.unit, type: (attr.toLowerCase()==='boundary')? 'boundary': null};
   });
   let request = {
     action: 'create',
@@ -311,7 +311,7 @@ function sendToCODAP(action, resource, values) {
  * @return {{name: string}}
  */
 function analyzeRawName(iName, iReplaceNonWordCharacters) {
-  let tReg = /\(([^)]*)\)$/g;  // Identifies parenthesized substring at end
+  let tReg = /\(([^)]*)\)$/;  // Identifies parenthesized substring at end
   let tUnitMatch = tReg.exec(iName.trim());
   let tUnit = (tUnitMatch && tUnitMatch.length)? tUnitMatch[1]: null;
 
