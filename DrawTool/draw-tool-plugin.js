@@ -136,4 +136,31 @@ $(function () {
   drawingTool.on('drawing:changed', function () {
     codapInterface.sendRequest({action:'notify', resource: 'interactiveFrame', values: {"dirty": true}});
   });
+
+  var myCODAPId = null;
+
+  // On click, tell CODAP to select this component, thus bringing it to the front.
+  $('body').on('click', function () {
+    function select() {
+      codapInterface.sendRequest( {
+        action: 'notify',
+        resource: 'component[' + myCODAPId + ']',
+        values: {request: 'select'}
+      });
+    }
+
+    if (myCODAPId == null) {
+      codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'}).then(
+          function (result) {
+            if (result.success) {
+              myCODAPId = result.values.id;
+              select();
+            }
+          }
+      );
+    } else {
+      select();
+    }
+  }
+  )
 });
