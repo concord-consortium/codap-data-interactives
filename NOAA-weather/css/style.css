@@ -25,49 +25,13 @@ limitations under the License.
 ==========================================================================
 */
 @import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap);
-/* fonts */
-/*@font-face {*/
-/*    font-family: Montserrat;*/
-/*    src:   local(Montserrat-Bold), url("../assets/webfonts/Montserrat-Bold.woff") format("woff"),*/
-/*    url("../assets/webfonts/Montserrat-Bold.otf") format("opentype"),*/
-/*    url("../assets/webfonts/Montserrat-Bold.ttf") format("truetype"),*/
-/*    url("../assets/webfonts/Montserrat-Bold.svg") format("svg");*/
-/*    font-weight: 700;*/
-/*    font-style: normal;*/
-/*    font-display: swap;*/
-/*}*/
-
-/*@font-face {*/
-/*    font-family: Montserrat;*/
-/*    src: local(Montserrat-SemiBold), url("../assets/webfonts/Montserrat-SemiBold.otf");*/
-/*    font-weight: 600;*/
-/*    font-style: normal;*/
-/*    font-display: swap;*/
-/*}*/
-/*@font-face {*/
-/*    font-family: Montserrat;*/
-/*    src: local(Montserrat-Medium), url("../assets/webfonts/Montserrat-Medium.otf") format("opentype");*/
-/*    font-weight: 500;*/
-/*    font-display: swap;*/
-/*}*/
-/*@font-face {*/
-/*    font-family: Montserrat;*/
-/*    src: local(Montserrat-Regular),*/
-/*        url("../assets/webfonts/Montserrat-Regular.woff") format("woff"),*/
-/*    url("../assets/webfonts/Montserrat-Regular.otf") format("opentype"),*/
-/*    url("../assets/webfonts/Montserrat-Regular.ttf") format("truetype"),*/
-/*    url("../assets/webfonts/Montserrat-Regular.svg") format("svg");*/
-/*    font-weight: 400;*/
-/*    font-style: normal;*/
-/*    font-display: swap;*/
-/*}*/
 
 @font-face {
     font-family: 'icomoon';
     src:    url('../assets/webfonts/icomoon.eot?gbzaou#iefix') format('embedded-opentype'),
-    url('../assets/webfonts/icomoon.ttf?gbzaou') format('truetype'),
-    url('../assets/webfonts/icomoon.woff?gbzaou') format('woff'),
-    url('../assets/webfonts/icomoon.svg?gbzaou#icomoon') format('svg');
+            url('../assets/webfonts/icomoon.ttf?gbzaou') format('truetype'),
+            url('../assets/webfonts/icomoon.woff?gbzaou') format('woff'),
+            url('../assets/webfonts/icomoon.svg?gbzaou#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
     font-display: block;
