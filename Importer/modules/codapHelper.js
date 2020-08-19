@@ -132,33 +132,99 @@ function closeSelf() {
  * @param importDate
  * @return {Promise}
  */
-function defineDataSet(config) {
+async function defineDataSet(config) {
+
+  // make an array of attributes from the names list
   let attrList = config.attributeNames.map(function (attr) {
     let nameParts = analyzeRawName(attr);
     return {name: nameParts.baseName, unit: nameParts.unit, type: (attr.toLowerCase()==='boundary')? 'boundary': null};
   });
-  let request = {
-    action: 'create',
-    resource: 'dataContext',
-    values: {
-      name: config.datasetName,
-      title: config.datasetName,
-      metadata: {
-        source: config.source,
-        importDate: config.importDate
-      },
-      collections: [
-        {
-          name: config.collectionName,
-          attrs: attrList
+
+  // attempt to get the dataset
+  return codapInterface.sendRequest({
+    action: 'get',
+    resource: `dataContext[${config.datasetName}]`
+  }).then(
+      function (response) {
+
+        // if we found a dataset, then update its attribute list,
+        // otherwise create a new one
+        if (response.success) {
+          let dataset = response.values;
+          let lastCollectionName = dataset.collections[dataset.collections.length - 1].name;
+
+          // make a list of existing attribute names to simplify comparison
+          let existingAttrNames = [];
+          dataset.collections.forEach(function (collection) {
+            collection.attrs.forEach(function (attr) {
+              existingAttrNames.push(attr.name);
+            });
+          });
+
+          // if we are replacing existing dataset calculate attribute deletions
+          let requests = [];
+          if (config.isReplace) {
+            let toDelete = existingAttrNames.filter(function (attrName) {
+              return (config.attributeNames.indexOf(attrName) < 0);
+            });
+            requests = toDelete.map(function (attrName) {
+              let collection = dataset.collections.find(function (col) {
+                return col.attrs.find(function (attr) {
+                  return attrName === attr.name;
+                });
+              })
+              return {
+                action: 'delete',
+                resource: `dataContext[${dataset.name}].collection[${collection.name}].attribute[${attrName}]`
+              }
+            });
+          }
+
+          // extract new attributes from attribute list
+          let newAttributes = attrList.filter(function (attr) {
+            return (existingAttrNames.indexOf(attr.name) < 0);
+          });
+          if (newAttributes.length) {
+            requests.push({
+              action: 'create',
+              resource: `dataContext[${config.datasetName}].collection[${lastCollectionName}].attribute`,
+              values: newAttributes
+            });
+          }
+
+          if (requests.length) {
+            return codapInterface.sendRequest(requests);
+          } else {
+            return Promise.resolve(response);
+          }
+        } else {
+          return codapInterface.sendRequest({
+            action: 'create',
+            resource: 'dataContext',
+            values: {
+              name: config.datasetName,
+              title: config.datasetName,
+              metadata: {
+                source: config.source,
+                importDate: config.importDate
+              },
+              collections: [
+                {
+                  name: config.collectionName,
+                  attrs: attrList
+                }
+              ]
+            }
+          })
         }
-      ]
-    }
-  }
-  return codapInterface.sendRequest(request);
+      },
+      function (error) {
+        console.log("Error getting data set configuration: " + error);
+      }
+  )
 }
 
-function clearDataset(id) {
+async function clearDataset(id) {
   let request = {
     action: 'delete',
     resource: `dataContext[${id}].allCases`
@@ -166,7 +232,7 @@ function clearDataset(id) {
   return codapInterface.sendRequest(request);
 }
 
-function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
+async function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
 
   function sendOneChunk(){
     if (chunkIx > numRows) {

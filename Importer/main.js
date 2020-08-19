@@ -65,6 +65,8 @@ let config = {
   operation: 'auto', // auto || new || append || replace
   pluginState: null,
   source: null,
+  targetDatasetName: null, // will be set in pluginState to indicate an explicit
+                           // assignment of this import to this dataset
 }
 
 /**
@@ -155,16 +157,57 @@ function relTime(time) {
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies(dataSetList) {
+  const kAttrListLimit = 10;
   let numRows = config.sourceDataset.table.length;
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
 
   let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
-  if (matchingDataset) {
+
+  // if we have been given the name of the target dataset...
+  if (config.targetDatasetName) {
+    config.matchingDataset = dataSetList.find(function (dataSet) {
+      return dataSet.name === config.targetDatasetName;
+    });
+    uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
+
+    let dsName = config.targetDatasetName;
+    let sourceDataset = config.sourceDataset;
+    let rows = (sourceDataset
+        && sourceDataset.table
+        && (sourceDataset.table.length)) || 0;
+    if (sourceDataset.firstRowIsAttrList)
+      rows = rows - 1;
+    let attrCount = (sourceDataset && sourceDataset.attributeNames
+        && sourceDataset.attributeNames.length) || 0;
+    let attrList = (sourceDataset && sourceDataset.attributeNames &&
+        sourceDataset.attributeNames.slice(0, kAttrListLimit).reduce(function (a, attrName, ix) {
+          let joiner = (ix === 0)? ''
+              : (ix < sourceDataset.attributeNames.length - 1)? ', '
+              : ', and ';
+          return a + joiner + attrName;
+        }, '')
+      ) || '';
+    let attrListEnd = (sourceDataset
+        && sourceDataset.attributeNames
+        && sourceDataset.attributeNames.length > kAttrListLimit) ? '...': '.';
+
+    uiControl.displayMessage(`Preparing to import into <em>${dsName}</em>, 
+        ${rows} rows from a table with ${attrCount} attributes: ${attrList}${attrListEnd}`
+        , '#target-message');
+    uiControl.showSection('target-options', true);
+    // do not show the new dataset option
+    uiControl.showSection('new-dataset-option', false);
+    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  }
+
+  // or else, if we have found a likely matching dataset by query
+  else if (matchingDataset) {
     config.matchingDataset = matchingDataset;
     let matchingMetadata = matchingDataset.metadata || {};
     let uploadTimeSentence = matchingMetadata.importDate
         ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
         : '';
+
     uiControl.displayMessage('There already exists a dataset like this one,' +
         ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
         '#target-message');
@@ -186,7 +229,7 @@ async function determineIfAutoImportApplies(dataSetList) {
     uiControl.setInputValue('downsample', constants.defaultDownsample);
     codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
   }
-  return !(matchingDataset || sizeAboveThreshold);
+  return !(config.matchingDataset || sizeAboveThreshold);
 }
 
 
@@ -258,6 +301,18 @@ async function createDataSetInCODAP(data, config) {
     dataStartingRow: config.dataStartingRow,
     source: config.source,
     importDate: config.importDate,
+  }
+  return await codapHelper.defineDataSet(tableConfig);
+}
+
+async function updateDataSetInCODAP(config, isReplace) {
+  let tableConfig = {
+    datasetName: config.datasetName,
+    attributeNames: config.sourceDataset.attributeNames,
+    importDate: config.importDate,
+    collectionName: config.collectionName,
+    source: config.source,
+    isReplace: isReplace
   }
   return await codapHelper.defineDataSet(tableConfig);
 }
@@ -375,12 +430,14 @@ async function importDataIntoCODAP() {
       }
     }
 
-    if (config.operation === 'append' || config.operation === 'replace') {
-      config.datasetID = config.matchingDataset.id;
-    }
-
     if (config.operation === 'replace') {
       result = await clearDatasetInCODAP(config.datasetID);
+    }
+
+    if (config.operation === 'append' || config.operation === 'replace') {
+      config.datasetID = config.matchingDataset.id;
+      config.datasetName = config.matchingDataset.name;
+      await updateDataSetInCODAP(config, config.operation === 'replace');
     }
 
     result = await codapHelper.sendRowsToCODAP(config.datasetID,

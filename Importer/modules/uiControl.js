@@ -25,7 +25,7 @@ function displayMessage(message, selector) {
   } else {
     var el = document.querySelector(selector)
     if (el) {
-      el.textContent = message;
+      el.innerHTML = message;
     }
   }
 }
