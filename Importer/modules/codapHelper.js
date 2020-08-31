@@ -124,7 +124,13 @@ function closeSelf() {
 
 
 /**
- * Defines a dataset.
+ * Defines a dataset. If the dataset does not exist in CODAP it will create it
+ * with a single collection and the appropriate attributes. If it _does_ exist
+ * it will modify it by aligning the attributes. Any attributes in the existing
+ * dataset not present in the new attribute list will be removed and any attributes
+ * in the new attribute list that are not found among the existing attributes will
+ * be added to the child-most collection.
+ *
  * @param datasetName
  * @param collectionName
  * @param attrs

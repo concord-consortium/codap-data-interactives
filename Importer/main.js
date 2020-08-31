@@ -430,13 +430,12 @@ async function importDataIntoCODAP() {
       }
     }
 
-    if (config.operation === 'replace') {
-      result = await clearDatasetInCODAP(config.datasetID);
-    }
-
     if (config.operation === 'append' || config.operation === 'replace') {
       config.datasetID = config.matchingDataset.id;
       config.datasetName = config.matchingDataset.name;
+      if (config.operation === 'replace') {
+        result = await clearDatasetInCODAP(config.datasetID);
+      }
       await updateDataSetInCODAP(config, config.operation === 'replace');
     }
 
