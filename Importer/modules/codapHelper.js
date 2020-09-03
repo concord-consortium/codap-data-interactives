@@ -383,11 +383,12 @@ function sendToCODAP(action, resource, values) {
  * @return {{name: string}}
  */
 function analyzeRawName(iName, iReplaceNonWordCharacters) {
+  let tName = iName.trim();
   let tReg = /\(([^)]*)\)$/;  // Identifies parenthesized substring at end
-  let tUnitMatch = tReg.exec(iName.trim());
+  let tUnitMatch = tReg.exec(tName);
   let tUnit = (tUnitMatch && tUnitMatch.length)? tUnitMatch[1]: null;
 
-  let tNewName = iName.trim().replace(tReg, '');  // Get rid of parenthesized units
+  let tNewName = tName.replace(tReg, '').trim();  // Get rid of parenthesized units
 
   if (iReplaceNonWordCharacters)
     tNewName = tNewName.replace(/\W /g, '_');  // Replace non-word characters with underscore
