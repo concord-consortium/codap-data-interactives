@@ -141,7 +141,7 @@ async function retrieveData(config) {
  * @return {*}
  */
 function parseCSVString(data) {
-  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: true});
+  let parse = Papa.parse(data, {comments: '#', skipEmptyLines: 'greedy'});
   return parse.data;
 }
 
