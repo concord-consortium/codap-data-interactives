@@ -18,6 +18,9 @@
 // ==========================================================================
 let messageArea = document.getElementById('message-area');
 
+/* @property {{keyCode: handler}} */
+let keyMap = {};
+
 function displayMessage(message, selector) {
   if (selector == null) {
     messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
@@ -29,6 +32,7 @@ function displayMessage(message, selector) {
     }
   }
 }
+
 function displayError(message) {
   console.log('ImportCVS Plugin: ' + message);
   displayMessage('<span class="error">' + message + '</span>')
@@ -74,13 +78,34 @@ function installButtonHandler(selector, handler) {
   if (el) el.onclick = handler;
 }
 
+function installKeystrokeHandler(keyCode, handler) {
+  keyMap[keyCode] = handler;
+}
+
+function keystrokeHandler (ev) {
+  let handler = keyMap[ev.code];
+  if (handler) { return handler(ev); }
+}
+
+function focus() {
+  let el = document.querySelector('#submit');
+  if (el) el.focus();
+}
+function init() {
+  document.addEventListener('keydown', keystrokeHandler);
+}
+
+init();
+
 export {
   displayError,
   displayMessage,
+    focus,
   getHeight,
   getInputFileList,
   getInputValue,
   installButtonHandler,
+  installKeystrokeHandler,
   setInputValue,
   showSection
 };

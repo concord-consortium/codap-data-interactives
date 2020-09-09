@@ -17,6 +17,7 @@
 //  limitations under the License.
 // ==========================================================================
 /*global codapInterface */
+import * as uiControl from './uiControl.js';
 
 let pluginID = null;
 

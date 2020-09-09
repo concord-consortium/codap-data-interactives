@@ -480,6 +480,18 @@ function ensureUniqueDatasetName(proposedName, existingDatasetDefs) {
   }
   return newName;
 }
+function handleCancelEvent(ev) {
+  ev.preventDefault();
+  codapHelper.closeSelf();
+  return false;
+}
+
+function handleSubmitEvent(ev) {
+  ev.preventDefault();
+  handleSubmit();
+  return false;
+}
+
 /**
  * Start here.
  *
@@ -493,16 +505,10 @@ function ensureUniqueDatasetName(proposedName, existingDatasetDefs) {
  */
 async function main() {
   // create handlers
-  uiControl.installButtonHandler('#cancel', function(ev) {
-    ev.preventDefault();
-    codapHelper.closeSelf();
-    return false;
-  });
-  uiControl.installButtonHandler('#submit', function (ev) {
-    ev.preventDefault();
-    handleSubmit();
-    return false;
-  });
+  uiControl.installButtonHandler('#cancel', handleCancelEvent);
+  uiControl.installKeystrokeHandler('Escape', handleCancelEvent)
+  uiControl.installButtonHandler('#submit', handleSubmitEvent);
+  uiControl.installKeystrokeHandler('Enter', handleSubmitEvent);
 
   // initialize CODAP connection
   let pluginState = await codapHelper.init(codapConfig)
