@@ -39,6 +39,12 @@ The following URLs describe the NCEI API's in use by this plugin.
   
   Returns information about particular dataset, including supported datatypes.
 
+* https://www1.ncdc.noaa.gov/pub/data/noaa/isd-history.csv
+
+  Returns a historic list of weather stations in the Integrated Surface Data set. 
+  These stations contribute to the Hourly dataset. 
+  The list is updated regularly.
+
 #### Docs
 
 The following documents are included within this codeline.
