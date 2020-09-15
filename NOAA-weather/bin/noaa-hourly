@@ -1,0 +1,19 @@
+#!/bin/bash
+# Outputs hourly weather data for a range
+# of dates for a weather station. JSON output.
+# Requires curl.
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+function usage() {
+  echo usage: $PROGNAME mm-dd-yyyy mm-dd-yyyy station-id 2>&1
+  exit 1;
+}
+
+[ "$#" -eq 3 ] || usage
+
+curl "$NOAA_URL/$NOAA_ENDPOINT_DATA?dataset=global-hourly&stations=$3&startDate=$1&endDate=$2&dataTypes=DEW,NAME,SLP,TMP,VIS,WND&format=csv&units=metric"
+
