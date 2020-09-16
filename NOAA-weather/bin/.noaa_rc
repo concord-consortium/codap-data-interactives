@@ -18,9 +18,9 @@ NOAA_ENDPOINT_DATASETS=access/services/support/v3/datasets
 # URL: https://www.ncdc.noaa.gov/homr/api
 
 # Base URL
-HOMR_URL=http://www.ncdc.noaa.gov/homr/services/station
+HOMR_URL=https://www.ncdc.noaa.gov/homr/services/station
 # Search Endpoint
-HOMR_SEARCH_ENDPOINT=/search
+HOMR_SEARCH_ENDPOINT=search
 
 #
 # CDO API

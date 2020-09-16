@@ -16,17 +16,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-import {defaultDataTypes, dataTypes, dataTypeStore} from './noaaDataTypes.js';
+import {dataTypeStore} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
 // noinspection SpellCheckingInspection
 let constants = {
-  defaultEnd: '2020-01-31',
-  defaultStart: '2020-01-01',
-  defaultDateGranularity: 'day',
-  defaultStationID: 'USW00014755',
+  defaultNoaaDataset: 'daily-summaries',
   defaultStation:   {
     "elevation": 1911.7,
     "mindate": "1948-01-01",
@@ -44,10 +41,10 @@ let constants = {
   DSTitle: 'NOAA Weather',
   StationDSName: 'US-Weather-Stations',
   StationDSTitle: 'US Weather Stations',
-  noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/',
-  noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC',
+  noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
+  noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC', // may be obsolescent
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
-  recordCountLimit: 1000,
+  recordCountLimit: 1000, // may be obsolescent
   stationDatasetURL: './assets/data/weather-stations.json',
   version: 'v0011',
   reportTypeMap: {
@@ -69,6 +66,9 @@ let state = {
   unitSystem: null
 };
 
+/**
+ * When plugin is clicked on, cause it to become the selected component in CODAP.
+ */
 function selectHandler() {
   codapConnect.selectSelf();
 }
@@ -106,13 +106,12 @@ async function initialize() {
     }
 
     ui.setTransferStatus('transferring', 'Initializing User Interface');
-    ui.initialize(state, dataTypes, {
+    ui.initialize(state, dataTypeStore.findAllByNoaaDataset(state.database), {
       selectHandler: selectHandler,
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
       getData: noaaNCEIConnect.doGetHandler,
       clearData: clearDataHandler,
-      newDataType: newDataTypeHandler,
       dateRangeSubmit: dateRangeSubmitHandler,
       unitSystem: unitSystemHandler
     });
@@ -148,23 +147,23 @@ function initializeState(documentState) {
   state = documentState;
   state.startDate = state.startDate || monthAgo;
   state.endDate = state.endDate || today.toDate();
-  state.database = state.database || 'daily-summaries';
+  state.database = state.database || constants.defaultNoaaDataset;
   state.sampleFrequency = state.sampleFrequency
       || constants.reportTypeMap[documentState.database];
 
   state.selectedStation = state.selectedStation || constants.defaultStation;
-  state.selectedDataTypes = state.selectedDataTypes || defaultDataTypes;
+  state.selectedDataTypes = state.selectedDataTypes || dataTypeStore.getDefaultDatatypes();
   state.unitSystem = state.unitSystem || constants.defaultUnitSystem;
 }
 
-function setDataType(type, isSelected) {
+function selectDataType(typeName, isSelected) {
   let selectedTypes = state.selectedDataTypes;
   if (isSelected) {
-    if(selectedTypes.indexOf(type) < 0) {
-      selectedTypes.push(type);
+    if(selectedTypes.indexOf(typeName) < 0) {
+      selectedTypes.push(typeName)
     }
   } else {
-    const typeIx = selectedTypes.indexOf(type);
+    const typeIx = selectedTypes.indexOf(typeName);
     if (typeIx >= 0) {
       selectedTypes.splice(typeIx, 1);
     }
@@ -219,7 +218,7 @@ async function updateUnitsInExistingItems(oldUnitSystem, newUnitSystem) {
 }
 
 function unitSystemHandler(unitSystem) {
-  if (unitSystem && (unitSystem != state.unitSystem)) {
+  if (unitSystem && (unitSystem !== state.unitSystem)) {
     updateUnitsInExistingItems(state.unitSystem, unitSystem);
     state.unitSystem = unitSystem;
   }
@@ -229,32 +228,6 @@ function unitSystemHandler(unitSystem) {
 /*
  * DOM Event Handlers
  */
-function newDataTypeHandler(ev) {
-  // get value
-  let value = ev.target.value;
-  // verify that datatype exists
-  if (value && (dataTypeIDs.indexOf(value) >= 0)) {
-    // make new record
-    dataTypes[value] = {name: value};
-    // make new datatype checkbox
-    const newCheckHTML = ui.makeNewCheckbox(value, value, true);
-    ui.insertCheckboxAtEnd(newCheckHTML);
-    // clear current input
-    ev.target.value = '';
-    ev.target.focus();
-    // add datatype selection to state
-    setDataType(value, true);
-    // add custom datatype to stat
-    if (!state.customDataTypes) {
-      state.customDataTypes = [];
-    }
-    state.customDataTypes.push(value);
-  } else if (value) {
-    ui.setTransferStatus('failure', '"' + value + '" is not a valid NOAA DataType');
-  }
-  ev.stopPropagation();
-}
-
 async function clearDataHandler() {
   console.log('clear data!')
   ui.setTransferStatus('clearing', 'Clearing data')
@@ -273,10 +246,10 @@ function sourceDatasetSelectionHandler (event) {
 function dataTypeSelectAllHandler(el/*, ev*/) {
   let isChecked = el.checked;
   if (el.type === 'checkbox') {
-    Object.keys(dataTypes).forEach(function (key) {
-      setDataType(key, isChecked);
+    dataTypeStore.findAllByNoaaDataset(state.database).forEach(function (noaaType) {
+      selectDataType(noaaType.name, isChecked);
     });
-    setDataType('all-datatypes', isChecked);
+    selectDataType('all-datatypes', isChecked);
     ui.setTransferStatus('inactive',
         `${isChecked?'': 'un'}selected all attributes`);
   }
@@ -286,8 +259,8 @@ function dataTypeSelectionHandler(ev) {
   if (this.id === 'all-datatypes') {
     dataTypeSelectAllHandler(this, ev);
   } else if (this.type === 'checkbox') {
-    setDataType(this.id, this.checked);
-    ui.setTransferStatus('inactive', `${this.checked?'': 'un'}selected ${dataTypes[this.id].name}`);
+    selectDataType(this.id, this.checked);
+    ui.setTransferStatus('inactive', `${this.checked?'': 'un'}selected ${dataTypeStore.findByName(this.id).name}`);
   }
   ui.updateView(state);
 }
@@ -343,9 +316,9 @@ function fetchSuccessHandler(data) {
 
 function getSelectedDataTypes () {
   return state.selectedDataTypes.filter(function (dt) {
-    return !!dataTypes[dt];
+    return !!dataTypeStore.findByName(dt);
   }).map(function (typeName) {
-    return dataTypes[typeName];
+    return dataTypeStore.findByName(typeName);
   });
 }
 

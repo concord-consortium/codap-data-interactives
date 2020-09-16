@@ -26,7 +26,7 @@ limitations under the License.
 
 */
 
-import {dataTypes} from "./noaaDataTypes.js";
+import {NoaaType, dataTypeStore} from "./noaaDataTypes.js";
 import {Calendar} from "./calendar.js";
 
 let eventHandlers = null
@@ -35,8 +35,8 @@ let lastState = null; // save state to be able to refresh view upon cancel
 
 /**
  *
- * @param state
- * @param dataTypes
+ * @param state {Object}
+ * @param dataTypes {[NoaaType]}
  * @param iEventHandlers: expect an object with handlers for
  *      dataTypeSelector/click,
  *      frequencyControl/click,
@@ -52,8 +52,6 @@ function initialize(state, dataTypes, iEventHandlers) {
     renderDataTypes(dataTypes, state.unitSystem);
     renderCalendars(state.startDate, state.endDate);
     updateView(state);
-
-    // const newTypeInput = document.getElementById('newDataType');
 
     setEventHandler('html', 'click', iEventHandlers.selectHandler, true);
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
@@ -112,7 +110,7 @@ function closeDateRangeSelector() {
 }
 
 function updateDateRange(/*ev*/) {
-    let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
+    // let el = findAncestorElementWithClass(calendars.from.calendarEl, 'wx-pop-over');
     let values = {};
     values.startDate = calendars.from.selectedDate;
     values.endDate = calendars.to.selectedDate;
@@ -191,12 +189,21 @@ function updateView(state) {
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
+    updateStationView(state.selectedStation);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
-    updateDataTypeSummary(dataTypes, state.selectedDataTypes);
-    updateDataTypes(dataTypes, state.selectedDataTypes, state.unitSystem);
+    updateDataTypeSummary(dataTypeStore, state.selectedDataTypes);
+    updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem);
     updateInfoPopup(state.unitSystem);
 }
+
+function updateStationView(selectedStation) {
+    document.getElementById('wx-stationName').innerHTML =
+        selectedStation
+            ? `${selectedStation.name} (${selectedStation.mindate} - ${selectedStation.maxdate})`
+            : '';
+}
+
 
 function updateInfoPopup(unitSystem) {
     let el = document.querySelector('input[name=wx-option-units][value='+unitSystem+']');
@@ -220,7 +227,7 @@ function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
     }
 }
 
-function updateDateRangeSelectionPopup(startDate, endDate, sampleFrequency) {
+function updateDateRangeSelectionPopup(startDate, endDate/*, sampleFrequency*/) {
     // let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
     // if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
     // let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
@@ -277,22 +284,19 @@ function makeDataTypeRow (key, name, description, units) {
 
 /**
  *
- * @param dataTypes {Object} dataType object describe NOAA NCEI DataTypes, including
+ * @param dataTypeArray {[NoaaType]} dataType object describe NOAA NCEI DataTypes, including
  * name, description, units.
  * @param unitSystem {'metric'||'standard'}
  */
-function renderDataTypes(dataTypes, unitSystem) {
+function renderDataTypes(dataTypeArray, unitSystem) {
     let insertionPoint = document.querySelector('#wx-data-type-table tbody');
 
-    for (const theKey in dataTypes) {
-        if (dataTypes.hasOwnProperty(theKey)) {
-            let dataType = dataTypes[theKey];
-            let unit = dataType.units[unitSystem]
-            insertionPoint.appendChild(
-                makeDataTypeRow(theKey, dataType.name, dataType.description,
-                    unit));
-        }
-    }
+    dataTypeArray.forEach(function (dataType) {
+        let unit = dataType.units[unitSystem]
+        insertionPoint.appendChild(
+            makeDataTypeRow(dataType.name, dataType.name, dataType.description,
+                unit));
+    });
 }
 
 function setEventHandler (selector, event, handler, capture) {
@@ -346,21 +350,21 @@ function setWaitCursor(isWait) {
     }
 }
 
-function updateDataTypeSummary(dataTypes, selectedTypes) {
+function updateDataTypeSummary(dataTypeStore, selectedTypes) {
     selectedTypes = selectedTypes || [];
     let countDisplay = document.querySelector('.wx-selection-count');
     let summaryListDisplay = document.querySelector('.wx-data-type-selection');
     let summaryList = selectedTypes.filter(function (dt) {
-        return dataTypes[dt];
+        return dataTypeStore.findByName(dt);
     }).map(function (key) {
-            let type = dataTypes[key];
+            let type = dataTypeStore.findByName(key);
             return type.name;
         });
     summaryListDisplay.innerText = summaryList.join(', ');
     countDisplay.innerText = String(summaryList.length);
 }
 
-function updateDataTypes(dataTypes, selectedTypes, unitSystem) {
+function updateDataTypes(dataTypeStore, selectedTypes, unitSystem) {
     selectedTypes = selectedTypes || [];
     let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
     let checkBoxHash = {};
@@ -370,7 +374,7 @@ function updateDataTypes(dataTypes, selectedTypes, unitSystem) {
         let rowEl = findAncestorElementWithClass(el,'wx-data-type');
         if (rowEl) {
             let unitEl = rowEl.querySelector('.wx-units');
-            unitEl.innerHTML = dataTypes[el.id].units[unitSystem];
+            unitEl.innerHTML = dataTypeStore.findByName(el.id).units[unitSystem];
         }
     });
     selectedTypes.forEach(function (id) {

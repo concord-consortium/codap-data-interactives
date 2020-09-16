@@ -39,7 +39,6 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
     <meta name="description" content="A CODAP plugin to retrieve daily or monthly weather summaries">
 
     <link rel='stylesheet' type='text/css' href='css/style.css'/>
-
 </head>
 
 <body>
@@ -116,11 +115,12 @@ simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shar
         <span class="wx-section-title">Date Range</span>
         <span id="wx-dataset-form" title="Select monthly or daily weather summaries">
             <span class="wx-form-label">Data:</span>
-            <input type="radio" value="global-summary-of-the-month" id="wx-gsom" name="frequencyControl" >
+            <input type="radio" value="global-summary-of-the-month" id="wx-gsom" name="frequencyControl" />
             <label for="wx-gsom">monthly</label>
-            <input type="radio" value="daily-summaries"  id="wx-daily" name="frequencyControl" checked>
-            <label for="wx-daily">daily</label><!--
-            <label><input type="radio" value="global-hourly"  name="frequencyControl"> hourly</label>-->
+            <input type="radio" value="daily-summaries"  id="wx-daily" name="frequencyControl" checked />
+            <label for="wx-daily">daily</label>
+            <input type="radio" value="global-hourly"  id="wx-hourly" name="frequencyControl" />
+            <label for="wx-hourly">hourly</label>
         </span>
     </div>
     <div id="wx-day-or-month-selector" class="wx-pop-over-placeholder" >

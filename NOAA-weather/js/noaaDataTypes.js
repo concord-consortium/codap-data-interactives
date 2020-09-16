@@ -25,231 +25,31 @@ limitations under the License.
 ==========================================================================
 
 */
-let defaultDataTypes = ["TMAX", "TMIN"];
+const kUnitTypeAngle = 'angle';
+const kUnitTypeDistance = 'distance';
+const kUnitTypePrecip = 'precipitation';
+const kUnitTypePressure = 'pressure';
+const kUnitTypeSpeed = 'speed';
+const kUnitTypeTemp = 'temperature';
 
-let dataTypes = {
-    "TMAX": {
-        "name": "tMax",
-        "units" : {
-            metric: "°C",
-            standard: "°F"
-        },
-        "description": "Maximum temperature",
-        "decode": {
-            "GHCND": function (v) {
-                return v;
-            },
-            "GSOM": function (v) {
-                return v;
-            }
-        },
-        convertUnits: convertTemp
-    },
+const defaultDataTypes = ["tMax", "tMin"];
 
-    "TMIN": {
-        "name": "tMin",
-        "units" : {
-            metric: "°C",
-            standard: "°F"
-        },
-        "description": "Minimum temperature",
-        "decode": {
-            "GHCND": function (v) {
-                return v;
-            },
-            "GSOM": function (v) {
-                return v;
-            }
-        },
-        convertUnits: convertTemp
-    },
+const unitMap = {
+    angle: {metric: 'º', standard: 'º'},
+    distance: {metric: 'm', standard: 'yd'},
+    precipitation: {metric: "mm", standard: "in"},
+    pressure: {metric: 'hPa'},
+    speed: {metric: "m/s", standard: "mph"},
+    temperature: {metric: "°C", standard: "°F"},
+}
 
-    "TAVG": {
-        "name": "tAvg",
-        "units" : {
-            metric: "°C",
-            standard: "°F"
-        },
-        "description": "Average temperature",
-        "decode": {
-            "GHCND": function (v) {
-                return v;
-            },
-            "GSOM": function (v) {
-                return v;
-            }
-        },
-        convertUnits: convertTemp
-    },
-
-    "PRCP": {
-        "name": "precip",
-        "units" : {
-            metric: "mm",
-            standard: "in"
-        },
-        "description": "Precipitation",
-        "decode": {
-            "GHCND": function (v) {
-                return v;
-            },
-            "GSOM": function (v) {
-                return v;
-            }
-        },
-        convertUnits: convertPrecip
-    },
-
-    "SNOW": {
-        "name": "snow",
-        "units" : {
-            metric: "mm",
-            standard: "in"
-        },
-        "description": "Snowfall",
-        "decode": {
-            "GHCND": function (v) {
-                return v;
-            },
-            "GSOM": function (v) {
-                return v;
-            }
-        },
-        convertUnits: convertPrecip
-    },
-
-    /**
-     * Average (daily|monthly) wind speed in 0.1 m/s
-     */
-    "AWND": {
-        "name": "avgWind",
-        "units" : {
-            metric: "m/s",
-            standard: "mph"
-        },
-        "description": "Average windspeed",
-        "decode": {
-            "GHCND": function (v) {
-                return v/10;
-            },
-            "GSOM": function (v) {
-                return v/10;
-            }
-        },
-        convertUnits: convertWindspeed
-    },
-
-    /*
-            "EVAP": {
-                "name": "evap",
-                "units" : "mm",
-                "description": "Evaporation of water from the evaporation pan",
-                "decode": {
-                    "GHCND": function (v) {
-                        return v;
-                    },
-                    "GSOM": function (v) {
-                        return v;
-                    }
-                },
-            },
-            8?
-/* Datatypes for global-summary-of-the-day dataset
-    "DEWP": {
-        "id": "DEWP",
-        "name": "dewPoint",
-        "description": "Average Dew Point",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "fahrenheit"
-    },
-    "FRSHTT": {
-        "id": "FRSHTT",
-        "name": "indc",
-        "description": "Indicators",
-        "searchWeight": 1
-    },
-    "GUST": {
-        "id": "GUST",
-        "name": "gust",
-        "description": "Maximum Wind Gust",
-        "metricOutputPrecision": 1,
-        "metricOutputUnits": "meters per second",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "standardOutputPrecision": 1,
-        "standardOutputUnits": "knots",
-        "units": "knots"
-    },
-    "MXSPD": {
-        "id": "MXSPD",
-        "name": "mxWind",
-        "description": "Maximum Sustained Wind Speed",
-        "metricOutputPrecision": 1,
-        "metricOutputUnits": "meters per second",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "standardOutputPrecision": 1,
-        "standardOutputUnits": "knots",
-        "units": "knots"
-    },
-    "SLP": {
-        "id": "SLP",
-        "name": "pSeaLvl",
-        "description": "Average Sea Level Pressure",
-        "metricOutputPrecision": 2,
-        "metricOutputUnits": "hectopascals",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "standardOutputPrecision": 2,
-        "standardOutputUnits": "inches mercury",
-        "units": "hectopascals"
-    },
-    "SNDP": {
-        "id": "SNDP",
-        "name": "snow",
-        "description": "Snow Depth",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "inches"
-    },
-    "STP": {
-        "id": "STP",
-        "name": "pStn",
-        "description": "Average Station Pressure",
-        "metricOutputPrecision": 2,
-        "metricOutputUnits": "hectopascals",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "standardOutputPrecision": 2,
-        "standardOutputUnits": "inches mercury",
-        "units": "hectopascals"
-    },
-
-    "VISIB": {
-        "id": "VISIB",
-        "name": "vis",
-        "description": "Average Visibility",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "units": "miles"
-    },
-    "WDSP": {
-        "id": "WDSP",
-        "name": "aveWind",
-        "description": "Average Wind Speed",
-        "metricOutputPrecision": 1,
-        "metricOutputUnits": "meters per second",
-        "scaleFactor": 1,
-        "searchWeight": 1,
-        "standardOutputPrecision": 1,
-        "standardOutputUnits": "knots",
-        "units": "knots"
-    }
-*/
-};
-function convertable(value) {
-    return !(isNaN(value) || (typeof value === 'string' && value.trim() === ''))
+const converterMap = {
+    angle: null,
+    distance: null,
+    temperature: convertTemp,
+    precipitation: convertPrecip,
+    speed: convertWindspeed,
+    pressure: null
 }
 
 function convertPrecip(fromUnit, toUnit, value) {
@@ -290,19 +90,106 @@ function convertWindspeed(fromUnit, toUnit, value) {
     }
 }
 
+function formatNthCurry(n, separator, multiplier) {
+    return function (v) {
+        if (!v) {
+            return;
+        }
+        let value = v.split(separator)[n];
+        if (/^\+?9*$/.test(value)) {
+            return;
+        }
+        if (isNaN(value)) {
+            return;
+        }
+        if (!isNaN(value)) {
+            return Number(value) * multiplier;
+        }
+    }
+}
+
+const extractHourlyTemp = formatNthCurry(0, ',', .1);
+const extractHourlyVisibility = formatNthCurry(0, ',', 1);
+const extractHourlyPressure = formatNthCurry(0, ',', .1);
+const extractHourlyWindDirection = formatNthCurry(0, ',', 1);
+const extractHourlyWindspeed = formatNthCurry(3, ',', .1);
+
+
+function NoaaType(sourceName, name, unitType, description, datasetList, decoderMap) {
+    this.sourceName = sourceName;
+    this.name = name;
+    this.units = unitMap[unitType];
+    this.description = description;
+    this.datasetList = datasetList;
+    this.decode = decoderMap;
+    this.convertUnits = converterMap[unitType];
+}
+
+let dataTypes = [
+    new NoaaType('TMAX', 'tMax', kUnitTypeTemp, 'Maximum temperature',
+        ['daily-summaries', 'global-summary-of-the-month']),
+    new NoaaType('TMIN', 'tMin', kUnitTypeTemp, 'Minimum temperature',
+        ['daily-summaries', 'global-summary-of-the-month']),
+    new NoaaType('TAVG', 'tAvg', kUnitTypeTemp, 'Average temperature',
+        ['daily-summaries', 'global-summary-of-the-month']),
+    new NoaaType('PRCP', 'precip', kUnitTypePrecip, 'Precipitation',
+        ['daily-summaries', 'global-summary-of-the-month']),
+    new NoaaType('SNOW', 'snow', kUnitTypePrecip, 'Snowfall',
+        ['daily-summaries', 'global-summary-of-the-month']),
+    /**
+     * Average (daily|monthly) wind speed in 0.1 m/s
+     */
+    new NoaaType('AWND', 'avgWind', kUnitTypeSpeed, 'Average windspeed',
+        ['daily-summaries', 'global-summary-of-the-month'], {
+        "GHCND": function (v) {return v/10;}, "GSOM": function (v) {return v/10;}
+    }),
+
+    new NoaaType('DEW', 'Dew', kUnitTypeTemp, 'Dew Point',
+        ['global-hourly'], {'global-hourly': extractHourlyTemp}),
+    new NoaaType('SLP', 'Pressure', kUnitTypePressure,
+        'Barometric Pressure at sea level', ['global-hourly'],
+        {'global-hourly': extractHourlyPressure}),
+    new NoaaType('TMP', 'Temp', kUnitTypeTemp, 'Air Temperature',
+        ['global-hourly'], {'global-hourly': extractHourlyTemp}),
+    new NoaaType('VIS', 'Vis', kUnitTypeDistance, 'Visibility',
+        ['global-hourly'], {'global-hourly': extractHourlyVisibility}),
+    new NoaaType('WND', 'WDir', kUnitTypeAngle, 'Wind Direction',
+        ['global-hourly'], {'global-hourly': extractHourlyWindDirection}),
+    new NoaaType('WND', 'WSpeed', kUnitTypeSpeed, 'Wind Speed',
+        ['global-hourly'], {'global-hourly': extractHourlyWindspeed}),
+];
+
+function convertable(value) {
+    return !(isNaN(value) || (typeof value === 'string' && value.trim() === ''))
+}
+
 function findAllBySourceName(targetName) {
-    return dataTypes[targetName];
+    return dataTypes.filter(function (dataType) {
+        return targetName === dataType.sourceName;
+    });
 }
 
 function findByName(targetName) {
-    return Object.values(dataTypes).find(function (dataType) {
+    return dataTypes.find(function (dataType) {
         return targetName === dataType.name;
+    });
+}
+
+function getDefaultDatatypes() {
+    return defaultDataTypes;
+}
+
+function findAllByNoaaDataset(noaaDatasetName) {
+    return dataTypes.filter(function (noaaType) {
+       return (noaaType.datasetList.indexOf(noaaDatasetName) >= 0);
     });
 }
 
 let dataTypeStore = {
     findAllBySourceName: findAllBySourceName,
-    findByName: findByName
+    findByName: findByName,
+    getDefaultDatatypes: getDefaultDatatypes,
+    findAllByNoaaDataset: findAllByNoaaDataset,
 }
 
-export {defaultDataTypes, dataTypes, dataTypeStore};
+export {NoaaType, dataTypeStore};

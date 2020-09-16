@@ -2,6 +2,8 @@
 # Outputs a list of stations within one degree of
 # lat/long point with identifiers suitable for GSOM and Daily Summary datasets.
 # Requires curl.
+# Requires a CDO Token obtainable through the CDO website.
+# CDO Token should be placed in ~/.noaa_rc
 #
 PROGNAME=$(basename $0)
 DIRNAME=$(dirname $0)

@@ -26,7 +26,7 @@ limitations under the License.
 ==========================================================================
 
 */
-import {dataTypes} from './noaaDataTypes.js';
+import {dataTypeStore} from './noaaDataTypes.js';
 
 const noaaNCEIConnect = {
 
@@ -64,6 +64,8 @@ const noaaNCEIConnect = {
             const dataTypes = this.state.selectedDataTypes.filter(
                 function (dt) {
                     return dt !== 'all-datatypes';
+                }).map(function (name) {
+                    return dataTypeStore.findByName(name).sourceName;
                 });
             const tDataTypeIDClause = `dataTypes=${dataTypes.join()}`;
             const tstartDateClause = `startDate=${startDate}`;
@@ -116,18 +118,17 @@ const noaaNCEIConnect = {
             let dataTypeName;
             switch (key) {
                 case 'DATE':
-                    dataTypeName = 'when';
+                    out.when = value;
                     break;
                 case 'STATION':
-                    dataTypeName = 'where';
-                    value = this.state.selectedStation.name;
                     out.station = this.state.selectedStation;
+                    out.where = out.station.name;
                     break;
                 default:
-                    dataTypeName = dataTypes[key] && dataTypes[key].name;
-            }
-            if (dataTypeName) {
-                out[dataTypeName] = noaaNCEIConnect.decodeData(key, value);
+                    dataTypeStore.findAllBySourceName(key).forEach(function (dataType) {
+                        dataTypeName = dataType.name;
+                        out[dataTypeName] = noaaNCEIConnect.decodeData(dataTypeName, value);
+                    });
             }
         }.bind(this));
         return out;
@@ -137,25 +138,19 @@ const noaaNCEIConnect = {
         return [this.state.selectedStation && this.state.selectedStation.id];
     },
 
+    getSelectedDataTypes: function () {
+        return this.state.selectedDataTypes.filter(function (dt) {
+            return !!dataTypeStore.findByName(dt);
+        }).map(function (typeName) {
+            return dataTypeStore.findByName(typeName);
+        });
+
+    },
+
     decodeData: function (iField, iValue) {
-        let result = null;
-        switch (iField) {
-            case "STATION":
-            // const station = findStation(iValue);
-            // result = station?station.name: null;
-            // break;
-            case "AWND":
-            case "TMAX":
-            case "TMIN":
-            case "TAVG":
-            case "SNOW":
-            case "EVAP":
-            case "PRCP":
-                const decoder = dataTypes[iField] && dataTypes[iField].decode && dataTypes[iField].decode[this.state.database];
-                result = decoder ? decoder(iValue) : iValue;
-                break;
-        }
-        return result || iValue;
+        let dataType = dataTypeStore.findByName(iField)
+        let decoder = dataType && dataType.decode && dataType.decode[this.state.database];
+        return decoder ? decoder(iValue) : iValue;
     }
 };
 
