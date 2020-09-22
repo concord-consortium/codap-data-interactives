@@ -84,6 +84,7 @@
       "success": true
     }
   },
+
   {
     "name": "Create Data Context",
     "message": {
@@ -476,6 +477,27 @@
           "Species": "Duck"
         }
       }
+    }
+  },
+  {
+    "name": "Update multiple cases",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
+      "values": [
+        {
+          "id": 13,
+          "values":  {
+            "LifeSpan": 17
+           }
+        },
+        {
+          "id": 14,
+          "values":  {
+            "LifeSpan": 34
+           }
+        }
+      ]
     }
   },
   {
