@@ -32,7 +32,7 @@ const kUnitTypePressure = 'pressure';
 const kUnitTypeSpeed = 'speed';
 const kUnitTypeTemp = 'temperature';
 
-const defaultDataTypes = ["tMax", "tMin"];
+const defaultDataTypes = ["tMax", "tMin", "Temp", "Pressure"];
 
 const unitMap = {
     angle: {metric: 'º', standard: 'º'},
@@ -125,6 +125,10 @@ function NoaaType(sourceName, name, unitType, description, datasetList, decoderM
     this.convertUnits = converterMap[unitType];
 }
 
+NoaaType.prototype.isInDataSet = function (dataSet) {
+    return (this.datasetList.indexOf(dataSet) >= 0)
+}
+
 let dataTypes = [
     new NoaaType('TMAX', 'tMax', kUnitTypeTemp, 'Maximum temperature',
         ['daily-summaries', 'global-summary-of-the-month']),
@@ -163,26 +167,54 @@ function convertable(value) {
     return !(isNaN(value) || (typeof value === 'string' && value.trim() === ''))
 }
 
+/**
+ * Returns an array of types bound to the name in the source dataset.
+ * A given source field may embed multiple values.
+ * @param targetName
+ * @return {NoaaType[]}
+ */
 function findAllBySourceName(targetName) {
     return dataTypes.filter(function (dataType) {
         return targetName === dataType.sourceName;
     });
 }
 
+/**
+ * Returns a type of a given name.
+ * @param targetName
+ * @return {NoaaType}
+ */
 function findByName(targetName) {
     return dataTypes.find(function (dataType) {
         return targetName === dataType.name;
     });
 }
 
+/**
+ * Returns the dataTypes selected by default.
+ * @return {[string, string]}
+ */
 function getDefaultDatatypes() {
     return defaultDataTypes;
 }
 
+/**
+ * Returns an array of types that are populated in a given dataset.
+ * @param noaaDatasetName
+ * @return {NoaaType[]}
+ */
 function findAllByNoaaDataset(noaaDatasetName) {
     return dataTypes.filter(function (noaaType) {
-       return (noaaType.datasetList.indexOf(noaaDatasetName) >= 0);
+       return noaaType.isInDataSet(noaaDatasetName);
     });
+}
+
+/**
+ * Returns all types.
+ * @return {NoaaType[]}
+ */
+function findAll() {
+    return dataTypes;
 }
 
 let dataTypeStore = {
@@ -190,6 +222,7 @@ let dataTypeStore = {
     findByName: findByName,
     getDefaultDatatypes: getDefaultDatatypes,
     findAllByNoaaDataset: findAllByNoaaDataset,
+    findAll: findAll,
 }
 
 export {NoaaType, dataTypeStore};

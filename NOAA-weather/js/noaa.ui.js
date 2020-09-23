@@ -26,7 +26,7 @@ limitations under the License.
 
 */
 
-import {NoaaType, dataTypeStore} from "./noaaDataTypes.js";
+import {NoaaType} from "./noaaDataTypes.js";
 import {Calendar} from "./calendar.js";
 
 let eventHandlers = null
@@ -36,7 +36,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
 /**
  *
  * @param state {Object}
- * @param dataTypes {[NoaaType]}
+ * @param dataTypeStore {[NoaaType]}
  * @param iEventHandlers: expect an object with handlers for
  *      dataTypeSelector/click,
  *      frequencyControl/click,
@@ -46,12 +46,12 @@ let lastState = null; // save state to be able to refresh view upon cancel
  *      In all cases, handlers should expect 'this' to be the DOM element and
  *      one argument, the event.
  */
-function initialize(state, dataTypes, iEventHandlers) {
+function initialize(state, dataTypeStore, iEventHandlers) {
     eventHandlers = iEventHandlers;
 
-    renderDataTypes(dataTypes, state.unitSystem);
+    renderDataTypes(dataTypeStore.findAll(state.database), state.unitSystem);
     renderCalendars(state.startDate, state.endDate);
-    updateView(state);
+    updateView(state, dataTypeStore);
 
     setEventHandler('html', 'click', iEventHandlers.selectHandler, true);
     setEventHandler('#wx-data-type-table input', 'click', eventHandlers.dataTypeSelector)
@@ -97,7 +97,7 @@ function initialize(state, dataTypes, iEventHandlers) {
     setEventHandler('#wx-date-range-close', 'click', function (/*ev*/) {
         let el = findAncestorElementWithClass(this, 'wx-pop-over');
         togglePopOver(el);
-        updateView(lastState);
+        updateView(lastState, dataTypeStore);
     });
 
 }
@@ -182,7 +182,12 @@ function togglePopUp(el) {
     }
 }
 
-function updateView(state) {
+/**
+ *
+ * @param state {Object}
+ * @param dataTypeStore {Object}
+ */
+function updateView(state, dataTypeStore) {
     lastState = state;
     document.getElementById('wx-stationName').innerHTML
         = state.selectedStation ? state.selectedStation.name : '';
@@ -192,8 +197,8 @@ function updateView(state) {
     updateStationView(state.selectedStation);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
-    updateDataTypeSummary(dataTypeStore, state.selectedDataTypes);
-    updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem);
+    updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
+    updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
     updateInfoPopup(state.unitSystem);
 }
 
@@ -350,12 +355,13 @@ function setWaitCursor(isWait) {
     }
 }
 
-function updateDataTypeSummary(dataTypeStore, selectedTypes) {
+function updateDataTypeSummary(dataTypeStore, selectedTypes, dataSet) {
     selectedTypes = selectedTypes || [];
     let countDisplay = document.querySelector('.wx-selection-count');
     let summaryListDisplay = document.querySelector('.wx-data-type-selection');
     let summaryList = selectedTypes.filter(function (dt) {
-        return dataTypeStore.findByName(dt);
+        let noaaType = dataTypeStore.findByName(dt);
+        return (noaaType && noaaType.isInDataSet(dataSet));
     }).map(function (key) {
             let type = dataTypeStore.findByName(key);
             return type.name;
@@ -364,7 +370,7 @@ function updateDataTypeSummary(dataTypeStore, selectedTypes) {
     countDisplay.innerText = String(summaryList.length);
 }
 
-function updateDataTypes(dataTypeStore, selectedTypes, unitSystem) {
+function updateDataTypes(dataTypeStore, selectedTypes, unitSystem, database) {
     selectedTypes = selectedTypes || [];
     let checkBoxes = document.querySelectorAll('.wx-data-type-checkbox');
     let checkBoxHash = {};
@@ -374,7 +380,13 @@ function updateDataTypes(dataTypeStore, selectedTypes, unitSystem) {
         let rowEl = findAncestorElementWithClass(el,'wx-data-type');
         if (rowEl) {
             let unitEl = rowEl.querySelector('.wx-units');
-            unitEl.innerHTML = dataTypeStore.findByName(el.id).units[unitSystem];
+            let noahType = dataTypeStore.findByName(el.id);
+            unitEl.innerHTML = noahType.units[unitSystem];
+            if (noahType.isInDataSet(database)) {
+                rowEl.classList.add('wx-visible');
+            } else {
+                rowEl.classList.remove('wx-visible');
+            }
         }
     });
     selectedTypes.forEach(function (id) {

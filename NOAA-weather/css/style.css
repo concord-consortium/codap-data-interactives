@@ -247,7 +247,14 @@ body {
     visibility: hidden;
 }
 
-.wx-pop-up.wx-open .wx-cover{
+.wx-data-type {
+    visibility: collapse;
+}
+.wx-data-type.wx-visible {
+    visibility: visible;
+}
+
+.wx-pop-up.wx-open .wx-cover {
     visibility: visible;
 }
 

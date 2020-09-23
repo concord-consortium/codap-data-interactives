@@ -106,7 +106,7 @@ async function initialize() {
     }
 
     ui.setTransferStatus('transferring', 'Initializing User Interface');
-    ui.initialize(state, dataTypeStore.findAllByNoaaDataset(state.database), {
+    ui.initialize(state, dataTypeStore, {
       selectHandler: selectHandler,
       dataTypeSelector: dataTypeSelectionHandler,
       frequencyControl: sourceDatasetSelectionHandler,
@@ -190,7 +190,7 @@ async function stationSelectionHandler(req) {
     let result = req.values.result;
     let myCase = result && result.cases && result.cases[0];
     state.selectedStation = myCase.values;
-    ui.updateView(state);
+    updateView();
     ui.setTransferStatus('inactive', 'Selected new weather station');
   }
 }
@@ -222,7 +222,7 @@ function unitSystemHandler(unitSystem) {
     updateUnitsInExistingItems(state.unitSystem, unitSystem);
     state.unitSystem = unitSystem;
   }
-  ui.updateView(state);
+  updateView();
 }
 
 /*
@@ -240,7 +240,7 @@ async function clearDataHandler() {
 function sourceDatasetSelectionHandler (event) {
   state.database = event.target.value;
   state.sampleFrequency = constants.reportTypeMap[state.database];
-  ui.updateView(state);
+  updateView();
 }
 
 function dataTypeSelectAllHandler(el/*, ev*/) {
@@ -262,7 +262,11 @@ function dataTypeSelectionHandler(ev) {
     selectDataType(this.id, this.checked);
     ui.setTransferStatus('inactive', `${this.checked?'': 'un'}selected ${dataTypeStore.findByName(this.id).name}`);
   }
-  ui.updateView(state);
+  updateView();
+}
+
+function updateView() {
+  ui.updateView(state, dataTypeStore);
 }
 
 /**
@@ -273,7 +277,7 @@ function dataTypeSelectionHandler(ev) {
 function dateRangeSubmitHandler(values) {
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
-  ui.updateView(state);
+  updateView();
 }
 function beforeFetchHandler() {
   ui.setWaitCursor(true);
@@ -316,7 +320,8 @@ function fetchSuccessHandler(data) {
 
 function getSelectedDataTypes () {
   return state.selectedDataTypes.filter(function (dt) {
-    return !!dataTypeStore.findByName(dt);
+    let noaaType = dataTypeStore.findByName(dt);
+    return noaaType && noaaType.isInDataSet(state.database);
   }).map(function (typeName) {
     return dataTypeStore.findByName(typeName);
   });
