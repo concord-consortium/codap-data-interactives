@@ -2,18 +2,43 @@
 # Outputs hourly weather data for a range
 # of dates for a weather station. JSON output.
 # Requires curl.
-PROGNAME=`basename $0`
-DIRNAME=`dirname $0`
+#
+# Some Attributes:
+#   DEW  dew point
+#   NAME station name
+#   SLP  sea level pressure
+#   TMP  temperature
+#   VIS  visibility
+#   WND  wind
+#   AA1  precipitation
 
-. $DIRNAME/.noaa_rc
-. $HOME/.noaa_rc
+PROGNAME=$(basename "$0")
+DIRNAME=$(dirname "$0")
+
+# shellcheck source=.noaa_rc
+. "$DIRNAME"/.noaa_rc
+# shellcheck source=~/.noaa_rc
+if [ -e "$HOME"/.noaa_rc ]; then
+# shellcheck source=~/.noaa_rc
+  "$HOME"/.noaa_rc
+fi
 
 function usage() {
-  echo usage: $PROGNAME mm-dd-yyyy mm-dd-yyyy station-id 2>&1
+  echo usage: "$PROGNAME yyyy-mm-dd yyyy-mm-dd station-id [attr-list]" 2>&1
   exit 1;
 }
 
-[ "$#" -eq 3 ] || usage
+[ "$#" -ge 3 ] || usage
 
-curl "$NOAA_URL/$NOAA_ENDPOINT_DATA?dataset=global-hourly&stations=$3&startDate=$1&endDate=$2&dataTypes=DEW,NAME,SLP,TMP,VIS,WND&format=csv&units=metric"
+START_DATE="$1"
+END_DATE="$2"
+STATIONS="$3"
+ATTR_LIST="$4"
+
+QPS="dataset=global-hourly&format=csv&units=metric"
+QPS="$QPS&stations=$STATIONS"
+QPS="$QPS&startDate=$START_DATE&endDate=$END_DATE"
+[ "$ATTR_LIST" == "" ] || QPS="$QPS&dataTypes=$ATTR_LIST"
+
+curl "$NOAA_URL/$NOAA_ENDPOINT_DATA?$QPS"
 
