@@ -21,19 +21,37 @@ import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
+let today = dayjs();
+
 // noinspection SpellCheckingInspection
 let constants = {
-  defaultNoaaDataset: 'daily-summaries',
+  defaultNoaaDataset: 'global-hourly',
   defaultStation:   {
-    "elevation": 1911.7,
-    "mindate": "1948-01-01",
-    "maxdate": "2020-01-20",
-    "latitude": 44.27018,
-    "name": "MOUNT WASHINGTON, NH US",
-    "datacoverage": 0.9994,
-    "id": "USW00014755",
-    "elevationUnit": "METERS",
-    "longitude": -71.30336
+    "country":"US",
+    "state":"NH",
+    "latitude":44.27,
+    "longitude":-71.303,
+    "name":"MT. WASHINGTON OBSERVATORY",
+    "elevation":"+1911.7",
+    "ICAO":"KMWN",
+    "mindate":"1973-01-01",
+    "maxdate":"2020-09-27",
+    "isdID":"72613014755,72613099999",
+    "ghcndID": 'USW00014755'
+  },
+  defaultDates: {
+    'hourly': {
+      start: today.subtract(1, 'week').toDate(),
+      end: today.subtract(1, 'day').toDate()
+    },
+    'daily': {
+      start: today.subtract(1, 'month').toDate(),
+      end: today.subtract(1, 'day').toDate()
+    },
+    'monthly': {
+      start: today.subtract(1, 'year').toDate(),
+      end: today.toDate()
+    }
   },
   defaultUnitSystem: 'metric',
   dimensions: {height: 490, width: 380},
@@ -46,23 +64,25 @@ let constants = {
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000, // may be obsolescent
   stationDatasetURL: './assets/data/weather-stations.json',
-  version: 'v0011',
+  version: 'v0012',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
     'global-hourly': 'hourly',
     'global-summary-of-the-day': 'daily'
   }
+
 }
 
 let state = {
   database: null,
   dateGranularity: null,
-  endDate: null,
   sampleFrequency: null,
   selectedDataTypes: null,
   selectedStation: null,
+  userSelectedDate: null,
   startDate: null,
+  endDate: null,
   unitSystem: null
 };
 
@@ -93,7 +113,7 @@ async function initialize() {
       let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
       if (!hasStationDataset) {
         ui.setTransferStatus('retrieving', 'Fetching weather station data');
-        let dataset = await fetchStationDataset('./assets/data/weather-stations.json');
+        let dataset = await fetchStationDataset(constants.stationDatasetURL);
         ui.setTransferStatus('transferring', 'Sending weather station data to CODAP')
         await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
       }
@@ -142,18 +162,29 @@ async function fetchStationDataset(url) {
 }
 
 function initializeState(documentState) {
-  const today = dayjs();
-  const monthAgo = today.subtract(1, 'month').toDate();
   state = documentState;
-  state.startDate = state.startDate || monthAgo;
-  state.endDate = state.endDate || today.toDate();
   state.database = state.database || constants.defaultNoaaDataset;
+  if (!state.userSelectedDate) {
+    configureDates(state)
+  }
   state.sampleFrequency = state.sampleFrequency
       || constants.reportTypeMap[documentState.database];
 
   state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || dataTypeStore.getDefaultDatatypes();
   state.unitSystem = state.unitSystem || constants.defaultUnitSystem;
+}
+
+function configureDates(state) {
+  if (!state.userSelectedDate) {
+    let frequency = constants.reportTypeMap[state.database];
+    if (!frequency) {
+      console.log(`Unable to map noaa dataset to frequency: ${state.database}`);
+    } else {
+      state.startDate = constants.defaultDates[frequency].start;
+      state.endDate = constants.defaultDates[frequency].end;
+    }
+  }
 }
 
 function selectDataType(typeName, isSelected) {
@@ -176,7 +207,7 @@ function selectDataType(typeName, isSelected) {
 async function noaaWeatherSelectionHandler(req) {
   if (req.values.operation === 'selectCases') {
     const myCases = req.values.result && req.values.result.cases;
-    const myStations = myCases.filter(function (myCase) {
+    const myStations = myCases && myCases.filter(function (myCase) {
       return (myCase.collection.name === constants.DSName);
     }).map(function (myCase) {
       return (myCase.values.where);
@@ -189,9 +220,11 @@ async function stationSelectionHandler(req) {
   if (req.values.operation === 'selectCases') {
     let result = req.values.result;
     let myCase = result && result.cases && result.cases[0];
-    state.selectedStation = myCase.values;
-    updateView();
-    ui.setTransferStatus('inactive', 'Selected new weather station');
+    if (myCase) {
+      state.selectedStation = myCase.values;
+      updateView();
+      ui.setTransferStatus('inactive', 'Selected new weather station');
+    }
   }
 }
 
@@ -240,6 +273,7 @@ async function clearDataHandler() {
 function sourceDatasetSelectionHandler (event) {
   state.database = event.target.value;
   state.sampleFrequency = constants.reportTypeMap[state.database];
+  configureDates(state);
   updateView();
 }
 
@@ -279,6 +313,7 @@ function dateRangeSubmitHandler(values) {
   state.endDate = values.endDate || values.startDate;
   updateView();
 }
+
 function beforeFetchHandler() {
   ui.setWaitCursor(true);
   ui.setTransferStatus('retrieving',

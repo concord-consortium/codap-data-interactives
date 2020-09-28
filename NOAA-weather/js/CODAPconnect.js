@@ -206,14 +206,14 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
                 name: collectionName,
                 attrs: [
                     { name: 'name' },
-                    { name: 'datacoverage' },
-                    { name: 'elevation'},
-                    { name: 'elevationUnit' },
-                    { name: 'id' },
-                    { name: 'maxdate' },
-                    { name: 'mindate' },
-                    { name: 'latitude' },
-                    { name: 'longitude' },
+                    { name: 'ICAO'},
+                    { name: 'mindate', type: 'date' },
+                    { name: 'maxdate', type: 'date'},
+                    { name: 'latitude', unit: 'º'},
+                    { name: 'longitude', unit: 'º' },
+                    { name: 'elevation', unit: 'm'},
+                    { name: 'isdID'},
+                    { name: 'ghcndID'}
                 ]
             }]
         }

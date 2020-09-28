@@ -5,14 +5,43 @@
 % npm install
 % npm run build
 ```
+
+## Updating the Station Dataset
+
+The station dataset starts with a filtered, merged view of the NOAA ISD 
+(Integrated Station Data) data set, to which it adds correlated GHCN (Global 
+Historical Climatology Network) ids. To regenerate this data:
+```shell script
+# fetch the current ISD dataset
+./bin/noaa-get-isd-weather-stations > /tmp/hourly-weather-stations.json
+
+# fetch the current GHCN station data
+./bin/noaa-cdo-station-list-all > /tmp/cdo-station-list.json
+
+# create a merged dataset 
+./bin/noaa-merge-station-data /tmp/hourly-weather-stations.json \
+    /tmp/cdo-station-list.json > assets/data/weather-stations.json
+```
+*Important*: The second script, noaa-cdo-station-list-all, requires an access token. 
+This can be obtained for no cost from https://www.ncdc.noaa.gov/cdo-web/webservices/v2.
+Once obtained, this token should be placed in a text file file named, .noaa_rc, like:
+```shell script
+CDO_TOKEN=[your token]
+```
+
+Execution of these scripts requires the following programs to be present in your
+shell execution environment:
+* curl (standard on Macs)
+* jq (available through Homebrew on Macs)
+* csvjson (available through NPM)
+* node
+
 ## NOAA APIs
 
 This plugin uses various NOAA APIs and resources, both for preparing static 
 datasets the plugin relies on and, at runtime, to fetch historical weather data.
 
-### API Documents
-
-#### Links
+### Links
 
 The following URLs describe the NCEI API's in use by this plugin.
 
@@ -45,9 +74,10 @@ The following URLs describe the NCEI API's in use by this plugin.
   These stations contribute to the Hourly dataset. 
   The list is updated regularly.
 
-#### Docs
+### Docs
 
-The following documents are included within this codeline.
+The following documents are included within this codeline and may provide 
+helpful background.
 
 * docs/isd-format-document.pdf
 

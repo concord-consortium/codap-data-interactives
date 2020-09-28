@@ -1,0 +1,269 @@
+#!/usr/bin/env node
+// ==========================================================================
+//
+//  Author:   jsandoe
+//
+//  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ==========================================================================
+/**
+ * Merge historical weather station data to create a single parent record keyed
+ * to the geographic location. With with an array of subordinate records showing
+ * identifiers associated to various active periods.
+ * We will use the parent record for selection by CODAP Users, and the
+ * subordinate records for addressing NOAA datasets.
+ */
+const fs = require('fs');
+const console = require('console');
+const process = require('process');
+// const readline = require('readline');
+// const xml2js = require('xml-js');
+
+const kDeltaSq = 0.0001 // distance in degrees within which two stations are considered the same.
+
+function configure() {
+  let configuration = {};
+
+  configuration.progName = process.argv[1].replace(/.*\//, '');
+
+  let isdStationsFile = process.argv[2];
+  if (!(isdStationsFile && fs.existsSync(isdStationsFile) ) ) {
+    usage(configuration);
+  }
+  configuration.isdStationsFile = isdStationsFile;
+
+  let ghcndStationsFile = process.argv[3];
+  if (ghcndStationsFile && !fs.existsSync(ghcndStationsFile)) {
+    printErrorAndExit(`${configuration.progName}: File doesn't exist: ${ghcndStationsFile}`);
+  }
+  configuration.ghcndStationsFile = ghcndStationsFile;
+  return configuration;
+}
+
+// function printWarning(message) {
+//   console.warn(message)
+// }
+
+function printErrorAndExit(message, code) {
+  console.error(message);
+  process.exit(code || 1);
+}
+
+function usage(configuration) {
+  printErrorAndExit(`usage: ${configuration.progName} isd_stations.json [ghcnd_stations.json]`, 2);
+}
+
+function normalizeIsdStation(st) {
+  return {
+    country: st.country,
+    state: st.state,
+    latitude: st.latitude,
+    longitude: st.longitude,
+    name: st.name,
+    elevation: st.elevation,
+    ICAO: st.ICAO,
+    mindate: st.mindate,
+    maxdate: st.maxdate,
+    isdID: st.id,
+    ranges: [
+      {
+        mindate: st.mindate,
+        maxdate: st.maxdate,
+        latitude: st.latitude,
+        longitude: st.longitude,
+        name: st.name,
+        elevation: st.elevation,
+        ids: [
+          {type: 'USAF', id: st.USAF},
+          {type: 'WBAN', id: st.WBAN},
+          {type: 'ICAO', id: st.ICAO},
+          {type: 'isdID', id: st.id},
+        ]
+      }
+    ]
+  }
+}
+
+function normalizeGHCNDStation(st) {
+  let id = st.id.replace('GHCND:', '');
+  return {
+    latitude: st.latitude,
+    longitude: st.longitude,
+    name: st.name,
+    elevation: st.elevation,
+    mindate: st.mindate,
+    maxdate: st.maxdate,
+    ghcndID: id,
+    ranges: [
+      {
+        mindate: st.mindate,
+        maxdate: st.maxdate,
+        latitude: st.latitude,
+        longitude: st.longitude,
+        name: st.name,
+        elevation: st.elevation,
+        ids: [
+          {type: 'GHCND', id: id},
+        ]
+      }
+    ]
+  }
+}
+
+function mergeStations(st1, st2) {
+  st1.ranges = st1.ranges.concat(st2.ranges);
+  if (!st1.ICAO && st2.ICAO){
+    st1.ICAO = st2.ICAO;
+  }
+  if (st2.isdID) {
+    st1.isdID = `${st1.isdID},${st2.isdID}`
+  }
+  if (st2.ghcndID) {
+    if (st1.ghcndID) {
+      st1.ghcndID += ',' + st2.ghcndID;
+    } else {
+      st1.ghcndID = st2.ghcndID;
+    }
+  }
+  if (Date.parse(st2.mindate) < Date.parse(st1.mindate)) {
+    st1.mindate = st2.mindate;
+  }
+  // contents of base record reflect the latest activation of the station
+  if (Date.parse(st2.maxdate) > Date.parse(st1.maxdate)) {
+    st1.maxdate = st2.maxdate;
+    st1.latitude = st2.latitude;
+    st1.longitude = st2.longitude;
+    st1.elevation = st2.elevation;
+    st1.name = st2.name;
+  }
+
+  return st1;
+}
+
+function dist (x1, y1, x2, y2) {
+  return ((x1-x2)*(x1-x2)) + ((y1-y2)*(y1-y2))
+}
+
+function findMatching(stationList, candidateStation) {
+  return stationList.find(function (station) {
+    let icaoMatch = (station.ICAO && candidateStation.ICAO && station.ICAO === candidateStation.ICAO);
+    let nameMatch = station.name === candidateStation.name;
+    return icaoMatch || nameMatch ||
+        dist(station.longitude, station.latitude, candidateStation.longitude, candidateStation.latitude) < kDeltaSq;
+  })
+}
+
+/**
+ * From an array of data looking like this:
+ *   { "country": "US", "state": "CA", "latitude": "+36.000",
+ *   "longitude": "-121.233", "name": "JOLON HUNTER LIGGETT MIL RES",
+ *   "USAF": "690020", "WBAN": "93218", "ICAO": "KHGT", "elevation": "+0317.0",
+ *   "mindate": "1964-07-15", "maxdate": "1997-04-01", "id": "69002093218" }
+ * create an array of data looking like this:
+ *   {
+ *     "country": "US", "state": "CA", "latitude": "+36.000",
+ *     "longitude": "-121.233", "name": "JOLON HUNTER LIGGETT MIL RES",
+ *     "elevation": "+0317.0"
+ *     "ranges": [
+ *       {
+ *         "mindate": "1964-07-15", "maxdate": "1997-04-01",
+ *         "latitude": "+36.000", "longitude": "-121.233",
+ *         "name": "JOLON HUNTER LIGGETT MIL RES", "elevation": "+0317.0",
+ *         "ICAO": "KHGT",
+ *         "ids" [
+ *           {"type": "USAF", "id": "690020"},
+ *           {"type": "WBAN", "id": "93218"},
+ *           {"type": "ICAO", "id": "KHGT"},
+ *           {"type": "isdID", "id": 69002093218"}
+ *         ]
+ *       }
+ *     ]
+ *   }
+ * where ranges include the variant ranges found in the data for the same station
+ * where two stations are determined if: ICAO id's are defined and match,
+ * station names match exactly,
+ * or latitude and longitude are within a small distance (in degrees) of one another.
+ *
+ * @param rawStations
+ */
+function mergeIsdStationData(rawStations) {
+  let mergedStations = [];
+  rawStations.forEach(function (rawStation) {
+    let normalizedStation = normalizeIsdStation(rawStation);
+    let existingStation = findMatching(mergedStations, normalizedStation);
+    if (normalizedStation.latitude) {
+      if (existingStation) {
+        mergeStations(existingStation, normalizedStation);
+      } else {
+        mergedStations.push(normalizedStation);
+      }
+    }
+  })
+  return mergedStations;
+}
+
+function mergeGHCNDStations(stations, ghcndStations) {
+  ghcndStations.filter(function (stn) {
+      return !!stn.id;
+    })
+    .forEach(function (rawStation) {
+      let normalizedStation = normalizeGHCNDStation(rawStation);
+      let existingStation = findMatching(stations, normalizedStation);
+      if (existingStation) {
+        // console.log(`found match: "${existingStation.name}" "${normalizedStation.name}"` )
+        mergeStations(existingStation, normalizedStation);
+      }
+    });
+  return stations;
+}
+
+
+function removeTransientStations(stations) {
+  // A station should be in existence for a year
+  let minLifespan = 1000*60*60*24*365;
+  return stations.filter(function (station) {
+    return (Date.parse(station.maxdate) - Date.parse(station.mindate) > minLifespan);
+  });
+}
+
+function main() {
+  let configuration = configure();
+  let rawStations = null;
+  try {
+    let rawText = fs.readFileSync(configuration.isdStationsFile);
+    rawStations = JSON.parse(rawText)
+    rawText = null;
+    let mergedIsdStations = mergeIsdStationData(rawStations);
+    rawStations = null;
+    let mergedStations = removeTransientStations(mergedIsdStations);
+    mergedIsdStations = null;
+    if (configuration.ghcndStationsFile) {
+      rawText = fs.readFileSync(configuration.ghcndStationsFile);
+      rawStations = JSON.parse(rawText)
+      rawText = null;
+      mergeGHCNDStations(mergedStations, rawStations);
+      let accessibleStations = mergedStations.filter(function (stn){
+        return (stn.ghcndID && stn.isdID);
+      });
+      // output resulting object
+      console.log(JSON.stringify(accessibleStations));
+    } else {
+      console.log(JSON.stringify(mergedStations));
+    }
+  } catch (ex) {
+    printErrorAndExit(`Error reading input: ${ex}`);
+  }
+}
+
+main();

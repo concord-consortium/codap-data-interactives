@@ -20,7 +20,7 @@ DIRNAME=$(dirname "$0")
 # shellcheck source=~/.noaa_rc
 if [ -e "$HOME"/.noaa_rc ]; then
 # shellcheck source=~/.noaa_rc
-  "$HOME"/.noaa_rc
+  . "$HOME"/.noaa_rc
 fi
 
 function usage() {

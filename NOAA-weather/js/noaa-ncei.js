@@ -135,7 +135,8 @@ const noaaNCEIConnect = {
     },
 
     getSelectedStations: function () {
-        return [this.state.selectedStation && this.state.selectedStation.id];
+        let id = this.state.database === 'global-hourly'? 'isdID': 'ghcndID';
+        return [this.state.selectedStation && this.state.selectedStation[id]];
     },
 
     getSelectedDataTypes: function () {

@@ -194,6 +194,7 @@ function updateView(state, dataTypeStore) {
 
     let startDate = new Date(state.startDate);
     let endDate = new Date(state.endDate);
+    updateFrequencyControl(state.database);
     updateStationView(state.selectedStation);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
@@ -202,6 +203,16 @@ function updateView(state, dataTypeStore) {
     updateInfoPopup(state.unitSystem);
 }
 
+function updateFrequencyControl(databaseName) {
+    const reportTypeMap = {
+        'daily-summaries': 'wx-daily',
+        'global-summary-of-the-month': 'wx-gsom',
+        'global-hourly': 'wx-hourly',
+        'global-summary-of-the-day': 'wx-daily'
+    }
+    let el = document.getElementById(reportTypeMap[databaseName])
+    el.checked = true;
+}
 function updateStationView(selectedStation) {
     document.getElementById('wx-stationName').innerHTML =
         selectedStation

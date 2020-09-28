@@ -96,6 +96,7 @@ function formatNthCurry(n, separator, multiplier) {
             return;
         }
         let value = v.split(separator)[n];
+        // if all nines, interpret as empty
         if (/^\+?9*$/.test(value)) {
             return;
         }
@@ -113,6 +114,15 @@ const extractHourlyVisibility = formatNthCurry(0, ',', 1);
 const extractHourlyPressure = formatNthCurry(0, ',', .1);
 const extractHourlyWindDirection = formatNthCurry(0, ',', 1);
 const extractHourlyWindspeed = formatNthCurry(3, ',', .1);
+function extractHourlyPrecipitation(value) {
+    let parts = value.split(',')
+    let period = parts[0];
+    let depth = parts[1];
+    if (Number(period) !== 1) {
+        return;
+    }
+    return depth * .1;
+}
 
 
 function NoaaType(sourceName, name, unitType, description, datasetList, decoderMap) {
@@ -161,6 +171,8 @@ let dataTypes = [
         ['global-hourly'], {'global-hourly': extractHourlyWindDirection}),
     new NoaaType('WND', 'WSpeed', kUnitTypeSpeed, 'Wind Speed',
         ['global-hourly'], {'global-hourly': extractHourlyWindspeed}),
+    new NoaaType('AA1', 'Precip', kUnitTypePrecip, 'Precipitation in last hour',
+        ['global-hourly'], {'global-hourly': extractHourlyPrecipitation}),
 ];
 
 function convertable(value) {
