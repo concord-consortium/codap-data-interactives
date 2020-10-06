@@ -248,10 +248,10 @@ body {
 }
 
 .wx-data-type {
-    visibility: collapse;
+    display: none;
 }
 .wx-data-type.wx-visible {
-    visibility: visible;
+    display: table-row;
 }
 
 .wx-pop-up.wx-open .wx-cover {
