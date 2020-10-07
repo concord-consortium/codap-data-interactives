@@ -32,7 +32,21 @@ const kUnitTypePressure = 'pressure';
 const kUnitTypeSpeed = 'speed';
 const kUnitTypeTemp = 'temperature';
 
-const defaultDataTypes = ["tMax", "tMin", "Temp", "Pressure"];
+const defaultDataTypes = [
+    "tMax",
+    "tMin",
+    "tAvg",
+    "precip",
+    "snow",
+    "avgWind",
+    "Dew",
+    "Vis",
+    "Temp",
+    "Pressure",
+    "WSpeed",
+    "WDir",
+    "Precip"
+];
 
 const unitMap = {
     angle: {metric: 'º', standard: 'º'},
