@@ -522,10 +522,17 @@
     }
   },
   {
+    "name": "Case formula-based search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseFormulaSearch[Mass=max(Mass)]"
+    }
+  },
+  {
     "name": "Case search",
     "message": {
       "action": "get",
-      "resource": "dataContext[Mammals].collection[Mammals].caseSearch[name==Red Fox]"
+      "resource": "dataContext[Mammals].collection[Mammals].caseSearch[Mammal==Red Fox]"
     }
   },
   {

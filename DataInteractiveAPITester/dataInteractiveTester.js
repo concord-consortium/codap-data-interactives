@@ -428,6 +428,7 @@ $(function () {
           caseByID: 'case',
           caseCount: 'case',
           caseSearch: 'case',
+          caseFormulaSearch: 'case',
           collectionList: 'collection',
           componentList: 'component',
           dataContextFromURL: 'dataContext',
