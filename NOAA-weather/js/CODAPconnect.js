@@ -367,6 +367,7 @@ async function clearData (datasetName) {
     let result = await codapInterface.sendRequest({
         action: 'get', resource: `dataContext[${datasetName}]`
     });
+
     if (result.success) {
         let dc = result.values;
         let lastCollection = dc.collections[dc.collections.length-1];
@@ -374,7 +375,18 @@ async function clearData (datasetName) {
             action: 'delete',
             resource: `dataContext[${datasetName}].collection[${lastCollection.name}].allCases`
         });
-        return result;
+        let attrDeletePromises = lastCollection.attrs.filter(function (attr) {
+            return attr.name !== 'when';
+        }).map(function (attr) {
+                return codapInterface.sendRequest({
+                    action: 'delete',
+                    resource: `dataContext[${datasetName}].collection[${lastCollection.name}].attribute[${attr.name}]`
+                })
+            });
+        await Promise.allSettled(attrDeletePromises);
+        return {success: true};
+    } else {
+        return Promise.resolve({success: true});
     }
 }
 
