@@ -39,7 +39,7 @@ function fetchAndParseURL(url) {
             });
           },
           function (msg) {
-            throw new Error(`Network or server configuration`)
+            throw new Error(`Network or server configuration: ${msg}`);
           });
 }
 
@@ -72,6 +72,7 @@ function readAndParseFile(file) {
  * @return {string}
  */
 function composeResourceDescription(src, time) {
+  // noinspection SpellCheckingInspection
   return `source: ${src}\nimported: ${time.toLocaleString()}`
 }
 
@@ -101,7 +102,7 @@ function findOrCreateAttributeNames(dataSet) {
       attrs[i] = dataSet.defaultAttrName + i;
     }
   }
-  dataSet.attributeNames = attrs;
+  dataSet.attributeNames = attrs.map(function (attr) { return attr?attr.trim():'';});
 }
 
 /**

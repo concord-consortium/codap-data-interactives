@@ -97,7 +97,8 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
     var existingDatasetAttributeNames = [];
     dataset.collections && dataset.collections.forEach(function (collection) {
       collection.attrs && collection.attrs.forEach(function (attr) {
-        existingDatasetAttributeNames.push(canonicalize(attr.name || attr.title));
+        let parts = codapHelper.analyzeRawName(attr.name || attr.title, true);
+        existingDatasetAttributeNames.push(canonicalize(parts.baseName));
       });
     });
     let unmatchedAttributeName = canonicalAttributeNames.find(function (name) {
@@ -235,10 +236,10 @@ async function determineIfAutoImportApplies(dataSetList) {
 
 /**
  * Downsamples a dataset by random selection without replacement.
- * @param data {Array[{Array}]}
- * @param targetCount {Positive Integer}
- * @param start {Positive Integer} Index of first row with data.
- * @return {Array[{Array}]}
+ * @param data {[[]]}
+ * @param targetCount {Number} Positive integer
+ * @param start {Number} Index of first row with data.
+ * @return {[[]]}
  */
 function downsampleRandom(data, targetCount, start) {
   let dataLength = data.length - start;
@@ -274,10 +275,10 @@ function downsampleRandom(data, targetCount, start) {
 
 /**
  * Downsamples a data set by picking every nth row.
- * @param data {Array[{Array}]}
- * @param interval {Positive Integer}
- * @param start {Positive Integer} Index of the first row that has data
- * @return {Array[{Array}]}
+ * @param data {[[]]}
+ * @param interval {number}
+ * @param start {number} Index of the first row that has data
+ * @return {[[]]}
  */
 function downsampleEveryNth(data, interval, start) {
   let newArray = [];
