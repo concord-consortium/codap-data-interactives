@@ -834,12 +834,14 @@
     }
   },
   {
-    "name": "Update Component",
+    "name": "Update Map Component",
     "message": {
       "action": "update",
       "resource": "component[myMap]",
       "values": {
-        "legendAttribute": "Height"
+	      "legendAttributeName": "Height",
+          "center": [34.75, -114.328],
+          "zoom": 6
       }
     }
   },
