@@ -17,7 +17,6 @@
 //  limitations under the License.
 // ==========================================================================
 /*global codapInterface */
-import * as uiControl from './uiControl.js';
 
 let pluginID = null;
 
@@ -50,7 +49,7 @@ function _getIDOfSelf(pluginStatus) {
 /**
  * Resets the height of the plugin.
  * @param height
- * @return {Promise<never>|*|void}
+ * @return {Promise<object>|*|void}
  */
 function adjustHeightOfSelf(height) {
   if (pluginID == null) {
@@ -132,11 +131,13 @@ function closeSelf() {
  * in the new attribute list that are not found among the existing attributes will
  * be added to the child-most collection.
  *
- * @param datasetName
- * @param collectionName
- * @param attrs
- * @param source
- * @param importDate
+ * @param config {object} Expected properties:
+ *    * datasetName,
+ *    * collectionName
+ *    * attributeNames
+ *    * source
+ *    * importDate
+ *    * isReplace
  * @return {Promise}
  */
 async function defineDataSet(config) {
@@ -251,14 +252,13 @@ async function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStarti
       action: 'create',
       resource: `dataContext[${datasetID}].item`
     }
-    let items = chunk.map(function (row) {
-          let item = {values:{}};
-          attrArray.forEach(function (attr, attrIx) {
-            item.values[attr] = row[attrIx];
-          })
-          return item;
-        });
-    request.values = items;
+    request.values = chunk.map(function (row) {
+      let item = {values: {}};
+      attrArray.forEach(function (attr, attrIx) {
+        item.values[attr] = row[attrIx];
+      })
+      return item;
+    });
     return codapInterface.sendRequest(request).then(sendOneChunk);
   }
 
@@ -398,7 +398,7 @@ function analyzeRawName(iName, iReplaceNonWordCharacters) {
     tNewName = 'attr';
   }
   return {baseName: tNewName, unit: tUnit};
-};
+}
 
 export {
   init,

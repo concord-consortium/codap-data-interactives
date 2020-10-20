@@ -334,7 +334,7 @@ function setMessage(message) {
 }
 
 /**
- *
+ * Sets the "transfer status" icon and message.
  * @param status {'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param message
  */
