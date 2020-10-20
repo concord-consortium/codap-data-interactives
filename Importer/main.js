@@ -72,7 +72,7 @@ let config = {
 /**
  * Attempts to identify whether there is a matching dataset to the one currently
  * under consideration. Does this by comparing metadata.
- * @param datasetList
+ * @param {[{}]}   datasetList
  * @param {string} resourceName
  */
 function findMatchingSource(datasetList, resourceName) {
@@ -84,6 +84,12 @@ function findMatchingSource(datasetList, resourceName) {
   return foundDataset;
 }
 
+/**
+ *
+ * @param {[{}]} datasetList
+ * @param [string] attributeNames
+ * @return {*|number|bigint}
+ */
 function findDatasetMatchingAttributes(datasetList, attributeNames) {
   function canonicalize(s) {
     // convert whitespace and underscores
@@ -155,6 +161,8 @@ function relTime(time) {
 /**
  * Autoimport applies if the dataset is short and could not already be present.
  *
+ * @param {[{}]} Array of definitions of existing CODAP datasets. Structure of
+ *   dataset definitions aligns with structure in a saved CODAP document.
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies(dataSetList) {
@@ -319,9 +327,35 @@ async function updateDataSetInCODAP(config, isReplace) {
 }
 
 function inferContentType(file, url) {
-
+//TBD
 }
 
+/**
+ * Makes unique names from existing array of names by adding an ordinal.
+ * @param  nameArray [string] Array of names
+ * @return [string]
+ */
+function makeUniqueNames(nameArray) {
+  if (!nameArray) {
+    return;
+  }
+  let newNames = [];
+  nameArray.forEach(function (name) {
+    let ix = 0;
+    let uname = name;
+    while(newNames.includes(uname)) {
+      uname = name + (++ix);
+    }
+    newNames.push(uname);
+  });
+  return newNames;
+}
+
+/**
+ * Retrieve and process data
+ * @param {{contentType, file, url, source, text, datasetName}} retrievalProperties
+ * @return {Promise<{object}>}
+ */
 async function retrieveData(retrievalProperties) {
   let contentType = retrievalProperties.contentType;
   let dataset = null;
@@ -337,6 +371,8 @@ async function retrieveData(retrievalProperties) {
   else if (contentType === 'application/geo+json') {
     dataset = geoJSONImporter.retrieveData(retrievalProperties);
   }
+  dataset.rawAttributeNames = dataset.attributeNames;
+  dataset.attributeNames = makeUniqueNames(dataset.rawAttributeNames);
   return dataset;
 }
 
@@ -481,6 +517,7 @@ function ensureUniqueDatasetName(proposedName, existingDatasetDefs) {
   }
   return newName;
 }
+
 function handleCancelEvent(ev) {
   ev.preventDefault();
   codapHelper.closeSelf();
