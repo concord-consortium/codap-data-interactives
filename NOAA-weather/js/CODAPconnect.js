@@ -25,9 +25,20 @@ limitations under the License.
 ==========================================================================
 
 */
+/**
+ * @type {{
+ *   DSName, DSTitle, version, dimensions
+ * }}
+ */
 let pluginProperties = null;
 let myCODAPId = null;
 
+/**
+ * Initiates the connection to CODAP.
+ * @param iPluginProperties {{}}
+ * @return {Promise<boolean>} Whether connection was successful. If not, likely
+ *    the component is not an IFrame in a CODAP instance.
+ */
 async function initialize(iPluginProperties) {
     pluginProperties = iPluginProperties;
     let success = true;
@@ -175,6 +186,59 @@ async function hasDataset(name) {
 }
 
 /**
+ *
+ * @return {Promise<{latitude,longitude}>}
+ */
+async function getGeolocation (defaultCoords) {
+    return new Promise(function (resolve, reject) {
+        if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    resolve(pos.coords);
+                },
+                function() {
+                    resolve(defaultCoords);
+                }
+            );
+        }
+    });
+}
+
+async function createMap(name, dimensions, center, zoom) {
+    let result = await codapInterface.sendRequest({
+        action: 'create',
+        resource: 'component',
+        values: {
+            type: 'map',
+            name: name,
+            dimensions: dimensions
+        }
+    });
+    if (result.success) {
+        setTimeout(function () {
+            codapInterface.sendRequest({
+                action: 'update',
+                resource: `component[${name}]`,
+                values: {
+                    center: center,
+                    zoom: 4
+                }
+            });
+            setTimeout(function () {
+                codapInterface.sendRequest({
+                    action: 'update',
+                    resource: `component[${name}]`,
+                    values: {
+                        zoom: zoom
+                    }
+                });
+
+            }, 500)
+        }, 2000);
+    }
+}
+
+/**
  * Creates the weather station dataset in CODAP.
  * @param datasetName
  * @param collectionName
@@ -228,18 +292,9 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
         values: stations
     });
     if (!hasMap) {
-        result = await codapInterface.sendRequest({
-            action: 'create',
-            resource: 'component',
-            values: {
-                type: 'map',
-                name: 'US Weather Stations',
-                dimensions: {
-                    height: 350,
-                    width: 500
-                }
-            }
-        })
+        let coords = await getGeolocation(pluginProperties.defaultCoords);
+        result = await  createMap('US Weather Stations',
+            {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
     }
     return result;
 }
