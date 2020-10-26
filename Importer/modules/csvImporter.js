@@ -121,7 +121,12 @@ async function retrieveData(config) {
     dataSet.table = await Promise.resolve(parseCSVString(config.text));
     dataSet.sourceType = 'text';
   } else if (config.url) {
-    let name = config.url || config.datasetName;
+    let name;
+    if (config.url && !config.url.startsWith('data:')) {
+      name = config.url;
+    } else {
+      name = config.datasetName;
+    }
     dataSet.resourceDescription = composeResourceDescription(name, importDate);
     dataSet.table = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';
