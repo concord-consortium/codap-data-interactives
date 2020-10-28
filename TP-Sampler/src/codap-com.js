@@ -191,7 +191,8 @@ define([
           action: 'create',
           resource: 'component',
           values: {
-            type: 'caseTable'
+            type: 'caseTable',
+            dataContext: targetDataSetName
           }
         });
       },
