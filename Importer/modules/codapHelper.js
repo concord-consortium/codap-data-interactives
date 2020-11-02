@@ -48,8 +48,8 @@ function _getIDOfSelf(pluginStatus) {
 
 /**
  * Resets the height of the plugin.
- * @param height
- * @return {Promise<object>|*|void}
+ * @param height {number}
+ * @return {Promise<object|void>}
  */
 function adjustHeightOfSelf(height) {
   if (pluginID == null) {
@@ -67,9 +67,9 @@ function adjustHeightOfSelf(height) {
 }
 
 /**
- * Makes the component visible or not, depending on the
- * @param isVisible
- * @return {*|void}
+ * Makes the component visible or not, depending on the argument
+ * @param isVisible {boolean|null}
+ * @return {Promise<object>}
  */
 function setVisibilityOfSelf(isVisible) {
   if (isVisible == null) {
@@ -98,6 +98,14 @@ function setVisibilityOfSelf(isVisible) {
   return codapInterface.sendRequest(request);
 }
 
+/**
+ * Causes a component to become selected.
+ * A selected component will be brought to the fore and will have an inspector
+ * attached.
+ *
+ * @param id {string|number} The ID or unique name of the component.
+ * @return {Promise<object>}
+ */
 async function selectComponent(id) {
   return codapInterface.sendRequest(
       {
@@ -109,9 +117,10 @@ async function selectComponent(id) {
       }
   );
 }
+
 /**
  * Closes this plugin.
- * @return {Promise}
+ * @return {Promise<object|void>}
  */
 function closeSelf() {
   console.log('CSV Importer Plugin: closing self');
@@ -121,7 +130,6 @@ function closeSelf() {
   };
   return codapInterface.sendRequest(request);
 }
-
 
 /**
  * Defines a dataset. If the dataset does not exist in CODAP it will create it
@@ -138,7 +146,7 @@ function closeSelf() {
  *    * source
  *    * importDate
  *    * isReplace
- * @return {Promise}
+ * @return {Promise<object|void>}
  */
 async function defineDataSet(config) {
 
@@ -232,6 +240,11 @@ async function defineDataSet(config) {
   )
 }
 
+/**
+ * Clears a dataset.
+ * @param id {number|string}
+ * @return {Promise<object|void>}
+ */
 async function clearDataset(id) {
   let request = {
     action: 'delete',
@@ -240,7 +253,17 @@ async function clearDataset(id) {
   return codapInterface.sendRequest(request);
 }
 
-async function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStartingRow) {
+/**
+ * Sends an array of data in chunks to populate a CODAP dataset
+ * @param datasetID {number|string} identifies a dataset
+ * @param attrArray {[string]} Array of attribute names
+ * @param rows {[][]} Two-D table of values assignable in sequence to the attributes.
+ * @param chunkSize {number} the number of items to send at a time
+ * @param dataStartingRow {number} index of the first row to transmit in the table
+ * @return {Promise<object>}
+ */
+async function sendRowsToCODAP(datasetID, attrArray,
+    rows, chunkSize, dataStartingRow) {
 
   function sendOneChunk(){
     if (chunkIx > numRows) {
@@ -267,18 +290,28 @@ async function sendRowsToCODAP(datasetID, attrArray, rows, chunkSize, dataStarti
   return sendOneChunk();
 }
 
-async function openCaseTableForDataSet(dataContext) {
+/**
+ * Opens a case table for a given data set
+ * @param dataContextId {number|string} Unique name or id for data context.
+ * @return {Promise<object>}
+ */
+async function openCaseTableForDataSet(dataContextId) {
   let request = {
     action: 'create',
     resource: 'component',
     values: {
       type: 'caseTable',
-      dataContext: dataContext,
+      dataContext: dataContextId,
     }
   }
   return codapInterface.sendRequest(request);
 }
 
+/**
+ * Opens a map component if one does not exist
+ * @param name
+ * @return {Promise<Promise|{success: boolean}>}
+ */
 async function openMap(name) {
   name = name || 'My Map';
   let componentListRequest = {
@@ -306,6 +339,7 @@ async function openMap(name) {
     return Promise.resolve({success: true});
   }
 }
+
 /**
  *
  * @param title
@@ -336,6 +370,11 @@ async function openTextBox(title, message) {
   return codapInterface.sendRequest(request);
 }
 
+/**
+ * cause codap to display a busy indicator
+ * @param isBusy {boolean}
+ * @return {Promise}
+ */
 function indicateBusy(isBusy) {
   let request = {
     action: 'notify',
@@ -346,6 +385,7 @@ function indicateBusy(isBusy) {
   }
   return codapInterface.sendRequest(request)
 }
+
 /**
  * Fetches a list of dataset definitions from CODAP.
  * @return {Promise}
@@ -370,6 +410,13 @@ function retrieveDatasetList () {
       })
 }
 
+/**
+ * Send a message to CODAP.
+ * @param action {'create'|'update'|'delete'|'get'|'notify'}
+ * @param resource {string} A resource specification
+ * @param values {object}
+ * @return {Promise}
+ */
 function sendToCODAP(action, resource, values) {
   return codapInterface.sendRequest({action: action, resource: resource, values: values});
 }
@@ -381,7 +428,7 @@ function sendToCODAP(action, resource, values) {
  * its baseName and unit.
  * @param iName
  * @param iReplaceNonWordCharacters
- * @return {{name: string}}
+ * @return {{baseName: string, unit:string}}
  */
 function analyzeRawName(iName, iReplaceNonWordCharacters) {
   let tName = iName.trim();
@@ -400,12 +447,31 @@ function analyzeRawName(iName, iReplaceNonWordCharacters) {
   return {baseName: tNewName, unit: tUnit};
 }
 
+/**
+ *
+ * @param datasetID {string|number}
+ * @param collectionName {string}
+ * @param attributeList {[string]}
+ * @return {Promise}
+ */
+function createParentCollection(datasetID, collectionName, attributeList) {
+  return sendToCODAP('create', `dataContext[${datasetID}].collection`, {
+    parent: '_root_',
+    name: collectionName,
+    title: collectionName,
+    attrs: attributeList.map(function (attrName) {
+      return {name: attrName}
+    })
+  })
+}
+
 export {
   init,
   adjustHeightOfSelf,
   analyzeRawName,
   clearDataset,
   closeSelf,
+  createParentCollection,
   indicateBusy,
   setVisibilityOfSelf,
   defineDataSet,

@@ -23,10 +23,11 @@ let keyMap = {};
 
 function displayMessage(message, selector) {
   if (selector == null) {
+    // noinspection SpellCheckingInspection
     messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
     showSection('message-area', true);
   } else {
-    var el = document.querySelector(selector)
+    let el = document.querySelector(selector);
     if (el) {
       el.innerHTML = message;
     }
@@ -57,8 +58,7 @@ function showSection(sectionName, isVisible) {
 
 function getHeight() {
   let section = document.getElementById('submit-area');
-  let height = section.offsetTop + section.offsetHeight + 40;
-  return height;
+  return section.offsetTop + section.offsetHeight + 40;
 }
 
 function getInputValue(name) {
@@ -91,6 +91,7 @@ function focus() {
   let el = document.querySelector('#submit');
   if (el) el.focus();
 }
+
 function init() {
   document.addEventListener('keydown', keystrokeHandler);
 }

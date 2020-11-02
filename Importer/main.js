@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2019 by The Concord Consortium, Inc. All rights reserved.
@@ -17,7 +17,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-
+/* global Intl */
 import * as uiControl from './modules/uiControl.js';
 import * as codapHelper from './modules/codapHelper.js';
 import * as csvImporter from './modules/csvImporter.js';
@@ -33,9 +33,11 @@ let constants = {
   defaultTargetOperation: 'replace',
   defaultDownsample: 'random',
   name: 'Importer',  // plugin name
+  ordinal_attribute_name: '_import_ordinal_',
   thresholdColCount: 40,
   thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
+constants.reserved_attribute_names = [constants.ordinal_attribute_name];
 
 let codapConfig = {
   name: constants.name,
@@ -48,7 +50,7 @@ let config = {
   // attributeNames: null,
   collectionName: constants.defaultCollectionName,
   contentType: constants.defaultContentType,
-  childCollectionName: constants.defaultChildCollectionName,
+  childCollectionName: constants.defaultCollectionName,
   createKeySubcollection: false, // key subcollection supports the lookupBoundary()
                                 // codap function and is not generally necessary
   data: null,
@@ -77,18 +79,16 @@ let config = {
  */
 function findMatchingSource(datasetList, resourceName) {
   // console.log('findMatchingSource: list size: ' + (datasetList?datasetList.length:0));
-  let foundDataset = datasetList && datasetList.find(function (dataset) {
+  return datasetList && datasetList.find(function (dataset) {
     return dataset.metadata && dataset.metadata.source === resourceName;
   });
-
-  return foundDataset;
 }
 
 /**
  *
- * @param {[{}]} datasetList
- * @param [string] attributeNames
- * @return {*|number|bigint}
+ * @param datasetList {[{}]}
+ * @param attributeNames [string]
+ * @return {*|number}
  */
 function findDatasetMatchingAttributes(datasetList, attributeNames) {
   function canonicalize(s) {
@@ -99,12 +99,14 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
     let parts = codapHelper.analyzeRawName(name, true);
     return canonicalize(parts.baseName);
   });
-  let foundDataset = datasetList && datasetList.find(function (dataset) {
-    var existingDatasetAttributeNames = [];
+  return datasetList && datasetList.find(function (dataset) {
+    let existingDatasetAttributeNames = [];
     dataset.collections && dataset.collections.forEach(function (collection) {
       collection.attrs && collection.attrs.forEach(function (attr) {
         let parts = codapHelper.analyzeRawName(attr.name || attr.title, true);
-        existingDatasetAttributeNames.push(canonicalize(parts.baseName));
+        if (!constants.reserved_attribute_names.includes(parts.baseName)) {
+          existingDatasetAttributeNames.push(canonicalize(parts.baseName));
+        }
       });
     });
     let unmatchedAttributeName = canonicalAttributeNames.find(function (name) {
@@ -112,7 +114,6 @@ function findDatasetMatchingAttributes(datasetList, attributeNames) {
     });
     return (unmatchedAttributeName == null);
   });
-  return foundDataset;
 }
 
 
@@ -123,6 +124,7 @@ function adjustPluginHeight() {
   let pageHeight = uiControl.getHeight();
   let pluginHeight = config.pluginState && config.pluginState.dimensions && config.pluginState.dimensions.height;
   if (!pluginHeight || pageHeight>pluginHeight) {
+    // noinspection JSIgnoredPromiseFromCall
     codapHelper.adjustHeightOfSelf(pageHeight);
   }
 }
@@ -158,85 +160,99 @@ function relTime(time) {
     return (relativeTimeFormat.format(Math.round(delta), 'day'));
   }
 }
+
+function prepareKnownTargetDatasetDialog() {
+  const kAttrListLimit = 10;
+  uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
+
+  let dsName = config.targetDatasetName;
+  let sourceDataset = config.sourceDataset;
+  let rows = (sourceDataset
+      && sourceDataset.table
+      && (sourceDataset.table.length)) || 0;
+  if (sourceDataset.firstRowIsAttrList)
+    rows = rows - 1;
+  let attrCount = (sourceDataset && sourceDataset.attributeNames
+      && sourceDataset.attributeNames.length) || 0;
+  let attrList = (sourceDataset && sourceDataset.attributeNames &&
+      sourceDataset.attributeNames.slice(0, kAttrListLimit).reduce(function (a, attrName, ix) {
+        let joiner = (ix === 0)? ''
+            : (ix < sourceDataset.attributeNames.length - 1)? ', '
+                : ', and ';
+        return a + joiner + attrName;
+      }, '')
+  ) || '';
+  let attrListEnd = (sourceDataset
+      && sourceDataset.attributeNames
+      && sourceDataset.attributeNames.length > kAttrListLimit) ? '...': '.';
+
+  uiControl.displayMessage(`Preparing to import into <em>${dsName}</em>, 
+        ${rows} rows from a table with ${attrCount} attributes: ${attrList}${attrListEnd}`
+      , '#target-message');
+  uiControl.showSection('target-options', true);
+  // do not show the new dataset option
+  uiControl.showSection('new-dataset-option', false);
+  codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+
+}
+
+function prepareFoundTargetDatasetDialog(matchingDataset) {
+  let matchingMetadata = matchingDataset.metadata || {};
+  let uploadTimeSentence = matchingMetadata.importDate
+      ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
+      : '';
+
+  uiControl.displayMessage('There already exists a dataset like this one,' +
+      ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
+      '#target-message');
+  uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
+  uiControl.showSection('target-options', true);
+  codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+}
+
+function prepareSizeAboveThresholdDialog(numRows) {
+  let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
+  uiControl.displayMessage(`The imported file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
+      ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
+      ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
+      '#downsample-message'
+  );
+  uiControl.showSection('downsample-options', true);
+  uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
+  uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
+  uiControl.setInputValue('downsample', constants.defaultDownsample);
+  codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+}
+
 /**
- * Autoimport applies if the dataset is short and could not already be present.
+ * Autoimport applies if the dataset is short, could not already be present, and
+ * there is no targetDataset already designated.
  *
- * @param {[{}]} Array of definitions of existing CODAP datasets. Structure of
+ * @param dataSetList {[{}]} Array of definitions of existing CODAP datasets. Structure of
  *   dataset definitions aligns with structure in a saved CODAP document.
  * @return {Promise<boolean>}
  */
 async function determineIfAutoImportApplies(dataSetList) {
-  const kAttrListLimit = 10;
-  let numRows = config.sourceDataset.table.length;
-  let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
-
-  let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
-
   // if we have been given the name of the target dataset...
   if (config.targetDatasetName) {
     config.matchingDataset = dataSetList.find(function (dataSet) {
       return dataSet.name === config.targetDatasetName;
     });
-    uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
-
-    let dsName = config.targetDatasetName;
-    let sourceDataset = config.sourceDataset;
-    let rows = (sourceDataset
-        && sourceDataset.table
-        && (sourceDataset.table.length)) || 0;
-    if (sourceDataset.firstRowIsAttrList)
-      rows = rows - 1;
-    let attrCount = (sourceDataset && sourceDataset.attributeNames
-        && sourceDataset.attributeNames.length) || 0;
-    let attrList = (sourceDataset && sourceDataset.attributeNames &&
-        sourceDataset.attributeNames.slice(0, kAttrListLimit).reduce(function (a, attrName, ix) {
-          let joiner = (ix === 0)? ''
-              : (ix < sourceDataset.attributeNames.length - 1)? ', '
-              : ', and ';
-          return a + joiner + attrName;
-        }, '')
-      ) || '';
-    let attrListEnd = (sourceDataset
-        && sourceDataset.attributeNames
-        && sourceDataset.attributeNames.length > kAttrListLimit) ? '...': '.';
-
-    uiControl.displayMessage(`Preparing to import into <em>${dsName}</em>, 
-        ${rows} rows from a table with ${attrCount} attributes: ${attrList}${attrListEnd}`
-        , '#target-message');
-    uiControl.showSection('target-options', true);
-    // do not show the new dataset option
-    uiControl.showSection('new-dataset-option', false);
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
-  }
-
+    prepareKnownTargetDatasetDialog();
+ }
   // or else, if we have found a likely matching dataset by query
-  else if (matchingDataset) {
-    config.matchingDataset = matchingDataset;
-    let matchingMetadata = matchingDataset.metadata || {};
-    let uploadTimeSentence = matchingMetadata.importDate
-        ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
-        : '';
-
-    uiControl.displayMessage('There already exists a dataset like this one,' +
-        ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
-        '#target-message');
-    uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
-    uiControl.showSection('target-options', true);
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+  else {
+    let matchingDataset = findDatasetMatchingAttributes(dataSetList, config.sourceDataset.attributeNames);
+    if (matchingDataset) {
+      config.matchingDataset = matchingDataset;
+      prepareFoundTargetDatasetDialog(matchingDataset);
+    }
   }
 
+  let numRows = config.sourceDataset.table.length;
   let sizeAboveThreshold = (numRows > constants.thresholdRowCount);
   if (sizeAboveThreshold) {
-    uiControl.displayMessage(`The imported file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
-      ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
-        ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
-        '#downsample-message'
-    );
-    uiControl.showSection('downsample-options', true);
-    uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
-    uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
-    uiControl.setInputValue('downsample', constants.defaultDownsample);
-    codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
+    prepareSizeAboveThresholdDialog(numRows)
   }
   return !(config.matchingDataset || sizeAboveThreshold);
 }
@@ -337,7 +353,7 @@ function inferContentType(file, url) {
  */
 function makeUniqueNames(nameArray) {
   if (!nameArray) {
-    return;
+    return [];
   }
   let newNames = [];
   nameArray.forEach(function (name) {
@@ -371,8 +387,10 @@ async function retrieveData(retrievalProperties) {
   else if (contentType === 'application/geo+json') {
     dataset = geoJSONImporter.retrieveData(retrievalProperties);
   }
-  dataset.rawAttributeNames = dataset.attributeNames;
-  dataset.attributeNames = makeUniqueNames(dataset.rawAttributeNames);
+  if (dataset) {
+    dataset.rawAttributeNames = dataset.attributeNames;
+    dataset.attributeNames = makeUniqueNames(dataset.rawAttributeNames);
+  }
   return dataset;
 }
 
@@ -380,8 +398,9 @@ async function handleFileInputs() {
   let url = uiControl.getInputValue('source-input-url');
   let file = uiControl.getInputValue('source-input-file');
   config.sourceDataset = await retrieveData({url: url, file: file});
+  let exitingDatasets = await codapHelper.retrieveDatasetList();
   if (config.sourceDataset) {
-    let isAuto = await determineIfAutoImportApplies();
+    let isAuto = await determineIfAutoImportApplies(exitingDatasets);
     if (isAuto) {
       await importDataIntoCODAP();
     }
@@ -428,6 +447,62 @@ function clearDatasetInCODAP(id) {
 }
 
 /**
+ * Compute new import ordinal value. This is one greater than the greatest
+ * existing ordinal.
+ * @param datasetID {string|number}
+ * @param collectionID {string|number}
+ * @param ordinalAttributeName {string}
+ * @return {Promise<number>}
+ */
+async function computeImportOrdinal(datasetID, collectionID, ordinalAttributeName) {
+  let result = await codapHelper.sendToCODAP('get',
+      `dataContext[${datasetID}].collection[${collectionID}].caseFormulaSearch[max(${ordinalAttributeName})=${ordinalAttributeName}]`);
+  if (result.success) {
+    let myCase = (Array.isArray(
+        result.values)) ? result.values[0] : result.values;
+    return myCase ? Number(
+        myCase.values[constants.ordinal_attribute_name]) + 1 : 2;
+  }
+}
+
+/**
+ * Configures the ordinal attribute. An ordinal attribute is configured to
+ * attach an index to each append import.
+ * The attribute is appended to the source attribute list.
+ * If it already exists we determine its highest existing value and add one to
+ * set config.importOrdinal, the value to assign to the new import.
+ * @return {Promise<void>}
+ */
+async function configureOrdinalAttribute() {
+  let ordinalAttr = null;
+  let ordinalCol = config.matchingDataset.collections.find(
+      function (collection) {
+        return collection.attrs.find(function (attr) {
+          if (attr.name === constants.ordinal_attribute_name) {
+            ordinalAttr = attr;
+            return true;
+          } else {
+            return false;
+          }
+        })
+      })
+
+  if (ordinalAttr) {
+    // we are appending and there is an ordinal attribute, so we need to find
+    // the max ordinal value and set one higher
+    config.importOrdinal = await computeImportOrdinal(config.matchingDataset.id,
+        ordinalCol.id, constants.ordinal_attribute_name);
+  } else {
+    // we are appending and there is no ordinal attribute, so we need to
+    // modify the dataset to add a root collection with the ordinal attribute
+    // as its single attribute and set the ordinal value to two
+    config.importOrdinal = 2;
+    await codapHelper.createParentCollection(config.datasetID, 'Imports', [constants.ordinal_attribute_name]);
+  }
+  config.sourceDataset.attributeNames.push(constants.ordinal_attribute_name);
+}
+
+/**
  * Orchestrate the various import operations.
  *
  * 1. if needed, create dataset in CODAP.
@@ -471,13 +546,29 @@ async function importDataIntoCODAP() {
       config.datasetID = config.matchingDataset.id;
       config.datasetName = config.matchingDataset.name;
       if (config.operation === 'replace') {
+        // we are replacing, so we need to remove the existing data and
+        // the ordinal attribute and collection
         result = await clearDatasetInCODAP(config.datasetID);
+      } else {
+        await configureOrdinalAttribute();
+
+        // modify the dataset to add the ordinal
+        let ordinalAttrIx = config.sourceDataset.attributeNames.findIndex(function (name) {
+          return name === constants.ordinal_attribute_name;
+        });
+        data.forEach(function (row, ix) {
+          if (ix >= config.sourceDataset.dataStartingRow) {
+            row[ordinalAttrIx] = config.importOrdinal;
+          }
+        })
       }
       await updateDataSetInCODAP(config, config.operation === 'replace');
     }
 
     result = await codapHelper.sendRowsToCODAP(config.datasetID,
-        config.sourceDataset.attributeNames, data, constants.chunkSize, config.sourceDataset.dataStartingRow);
+        config.sourceDataset.attributeNames, data, constants.chunkSize,
+        config.sourceDataset.dataStartingRow);
+
     if (result && result.success) {
       if (caseTableID !== null) {
         setTimeout(async function () {
