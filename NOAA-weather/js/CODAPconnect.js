@@ -238,6 +238,16 @@ async function createMap(name, dimensions, center, zoom) {
     }
 }
 
+function centerAndZoomMap(mapName, center, zoom) {
+    codapInterface.sendRequest({
+        action: 'update',
+        resource: `component[${mapName}]`,
+        values: {
+            center: center,
+            zoom: zoom
+        }
+    });
+}
 /**
  * Creates the weather station dataset in CODAP.
  * @param datasetName
@@ -293,7 +303,7 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
     });
     if (!hasMap) {
         let coords = await getGeolocation(pluginProperties.defaultCoords);
-        result = await  createMap('US Weather Stations',
+        result = await  createMap('Map',
             {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
     }
     return result;
@@ -461,8 +471,17 @@ async function getAllItems(datasetName) {
     }
 }
 
+async function queryCases(dataset, collection, query) {
+    let resource = `dataContext[${dataset}].collection[${collection}].caseFormulaSearch[${query}]`;
+    return codapInterface.sendRequest({
+        action: 'get',
+        resource: resource
+    });
+}
+
 export {
     addNotificationHandler,
+    centerAndZoomMap,
     clearData,
     createAttribute,
     createNOAAItems,
@@ -471,6 +490,7 @@ export {
     getInteractiveState,
     hasDataset,
     initialize,
+    queryCases,
     selectSelf,
     selectStations
 };

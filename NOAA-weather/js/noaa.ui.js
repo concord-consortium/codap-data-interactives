@@ -28,6 +28,7 @@ limitations under the License.
 
 import {NoaaType} from "./noaaDataTypes.js";
 import {Calendar} from "./calendar.js";
+import {GeonameSearch} from "./geonameSearch.js";
 
 let eventHandlers = null
 let calendars = {};
@@ -42,6 +43,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
  *      frequencyControl/click,
  *      getData/click,
  *      dataSet/click
+ *      stationLocation/enter,blur
  *
  *      In all cases, handlers should expect 'this' to be the DOM element and
  *      one argument, the event.
@@ -100,6 +102,10 @@ function initialize(state, dataTypeStore, iEventHandlers) {
         updateView(lastState, dataTypeStore);
     });
 
+    if (eventHandlers.stationLocation) {
+        let el = document.getElementById('geonameContainer');
+        new GeonameSearch(el, 'codap', eventHandlers.stationLocation);
+    }
 }
 
 function closeDateRangeSelector() {

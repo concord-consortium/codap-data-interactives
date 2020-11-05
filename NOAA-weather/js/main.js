@@ -61,6 +61,7 @@ let constants = {
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
+  geonamesUser: 'jsandoe',
   StationDSName: 'US-Weather-Stations',
   StationDSTitle: 'US Weather Stations',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
@@ -137,7 +138,8 @@ async function initialize() {
       getData: noaaNCEIConnect.doGetHandler,
       clearData: clearDataHandler,
       dateRangeSubmit: dateRangeSubmitHandler,
-      unitSystem: unitSystemHandler
+      unitSystem: unitSystemHandler,
+      stationLocation: stationLocationHandler
     });
 
     noaaNCEIConnect.initialize(state, constants, {
@@ -305,6 +307,35 @@ function dataTypeSelectionHandler(ev) {
 
 function updateView() {
   ui.updateView(state, dataTypeStore);
+}
+
+async function findNearestStation(lat, long) {
+  let result = await codapConnect.queryCases(constants.StationDSName,
+      constants.StationDSTitle,
+      `greatCircleDistance(latitude, longitude, ${lat}, ${long})=min(greatCircleDistance(latitude, longitude, ${lat}, ${long}))`);
+  if (result.success) {
+    if (Array.isArray(result.values)) {
+      return result.values[0];
+    } else {
+      return result.values;
+    }
+  }
+}
+
+async function stationLocationHandler (location) {
+  if (!location) {
+    return;
+  }
+  console.log(`Location: ${JSON.stringify(location)}`);
+  let nearestStation = await findNearestStation(location.latitude,
+      location.longitude);
+  if (nearestStation) {
+    state.selectedStation = nearestStation.values;
+    await codapConnect.selectStations([state.selectedStation.name]);
+    await codapConnect.centerAndZoomMap('Map',
+        [location.latitude, location.longitude], 9);
+    updateView();
+  }
 }
 
 /**
