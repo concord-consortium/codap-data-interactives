@@ -451,7 +451,7 @@ function analyzeRawName(iName, iReplaceNonWordCharacters) {
  *
  * @param datasetID {string|number}
  * @param collectionName {string}
- * @param attributeList {[string]}
+ * @param attributeList {[string|object]} list of attribute names or attribute objects.
  * @return {Promise}
  */
 function createParentCollection(datasetID, collectionName, attributeList) {
@@ -459,8 +459,12 @@ function createParentCollection(datasetID, collectionName, attributeList) {
     parent: '_root_',
     name: collectionName,
     title: collectionName,
-    attrs: attributeList.map(function (attrName) {
-      return {name: attrName}
+    attrs: attributeList.map(function (attr) {
+      if (typeof attr === 'string') {
+        return {name: attr}
+      } else if (typeof attr === 'object') {
+        return attr;
+      }
     })
   })
 }

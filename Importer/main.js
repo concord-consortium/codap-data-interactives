@@ -33,7 +33,8 @@ let constants = {
   defaultTargetOperation: 'replace',
   defaultDownsample: 'random',
   name: 'Importer',  // plugin name
-  ordinal_attribute_name: '_import_ordinal_',
+  ordinal_attribute_name: '_import_index_',
+  ordinal_attribute_type: 'categorical',
   thresholdColCount: 40,
   thresholdRowCount: 5000, // beyond this size datasets are considered large
 }
@@ -497,7 +498,12 @@ async function configureOrdinalAttribute() {
     // modify the dataset to add a root collection with the ordinal attribute
     // as its single attribute and set the ordinal value to two
     config.importOrdinal = 2;
-    await codapHelper.createParentCollection(config.datasetID, 'Imports', [constants.ordinal_attribute_name]);
+    await codapHelper.createParentCollection(config.datasetID, 'Imports', [
+        {
+          name: constants.ordinal_attribute_name,
+          type: constants.ordinal_attribute_type
+        }
+      ]);
   }
   config.sourceDataset.attributeNames.push(constants.ordinal_attribute_name);
 }
