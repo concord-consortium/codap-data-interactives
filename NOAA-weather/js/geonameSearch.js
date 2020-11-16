@@ -45,6 +45,7 @@ class GeonameSearch {
 
   /**
    * Formats and ends a query to geonames.org.
+   * API is documented here: https://www.geonames.org/export/geonames-search.html
    * @param searchString {string} free form city, state
    * @param [maxRows] {number} number of results
    * @return {Promise<Uint8Array|BigInt64Array|{latitude: *, name: string, longitude: *}[]|Float64Array|Int8Array|Float32Array|Int32Array|Uint32Array|Uint8ClampedArray|BigUint64Array|Int16Array|Uint16Array>}
@@ -54,12 +55,14 @@ class GeonameSearch {
     const countryClause = 'country=US';
     const maxRowsClause = `maxRows=${maxRows || kDefaultMaxRows}`;
     const featureClassClause = 'featureClass=P'; // populated places
+    const orderByClause = 'orderby=relevance'
     const languageClause = 'lang=en';
     const typeClause = 'type=json';
     const nameRequiredClause = 'isNameRequired=true';
 
-    let nameClause = `q=${searchString}`;
-    let url = `${kGeonamesService}?${[userClause, countryClause, maxRowsClause, featureClassClause, languageClause, typeClause, nameRequiredClause, nameClause].join(
+    // let nameClause = `q=${searchString}`;
+    let nameClause = `name_startsWith=${searchString}`;
+    let url = `${kGeonamesService}?${[userClause, countryClause, maxRowsClause, /*orderByClause, *//*featureClassClause, */languageClause, typeClause, nameRequiredClause, nameClause].join(
         '&')}`;
     let response = await fetch(url);
     if (response.ok) {
