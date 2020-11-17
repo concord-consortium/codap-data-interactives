@@ -28,6 +28,7 @@ let constants = {
   chunkSize: 200, // number of items to transmit at a time
   defaultAttrName: 'attr', // default attribute name prefix
   defaultCollectionName: 'cases', // default collection name
+  defaultImportsCollectionName: 'imports',
   defaultDataSetName: 'dataset', // default dataset name
   defaultContentType: 'text/csv',
   defaultTargetOperation: 'replace',
@@ -498,12 +499,17 @@ async function configureOrdinalAttribute() {
     // modify the dataset to add a root collection with the ordinal attribute
     // as its single attribute and set the ordinal value to two
     config.importOrdinal = 2;
-    await codapHelper.createParentCollection(config.datasetID, 'Imports', [
+    await codapHelper.createParentCollection(config.datasetID, constants.defaultImportsCollectionName, [
         {
           name: constants.ordinal_attribute_name,
           type: constants.ordinal_attribute_type
         }
       ]);
+    let myCase = await codapHelper.getCaseByIndex(config.datasetID, constants.defaultImportsCollectionName, 0);
+    if (myCase) {
+      myCase.values[constants.ordinal_attribute_name] = 1;
+      codapHelper.updateCase(config.datasetID, constants.defaultImportsCollectionName, myCase)
+    }
   }
   config.sourceDataset.attributeNames.push(constants.ordinal_attribute_name);
 }

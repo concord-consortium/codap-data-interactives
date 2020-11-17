@@ -469,6 +469,25 @@ function createParentCollection(datasetID, collectionName, attributeList) {
   })
 }
 
+/**
+ *
+ * @param datasetID {string|number}
+ * @param collectionName {string|number}
+ * @param index {number} 0 based index
+ */
+async function getCaseByIndex(datasetID, collectionName, index) {
+  let resource = `dataContext[${datasetID}].collection[${collectionName}].caseByIndex[${index}]`;
+  let result = await sendToCODAP('get', resource);
+  if (result.success) {
+    return result.values.case;
+  }
+}
+
+async function updateCase(datasetID, collectionName, iCase) {
+  let resource = `dataContext[${datasetID}].collection[${collectionName}].caseByID[${iCase.id}]`;
+  return sendToCODAP('update', resource, iCase);
+}
+
 export {
   init,
   adjustHeightOfSelf,
@@ -476,6 +495,7 @@ export {
   clearDataset,
   closeSelf,
   createParentCollection,
+  getCaseByIndex,
   indicateBusy,
   setVisibilityOfSelf,
   defineDataSet,
@@ -486,4 +506,5 @@ export {
   selectComponent,
   sendRowsToCODAP,
   sendToCODAP,
+  updateCase
 }
