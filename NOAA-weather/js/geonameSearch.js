@@ -25,9 +25,10 @@ const kMinNameLength = 3;
 const kPlaceholderText = 'city, state';
 
 const kClassGeoNameInput = 'geo-name-select';
-const kClassSelectList = 'selection-list';
-const kClassSelectOption = 'selector-option';
-const kClassHidden = 'hidden';
+const kClassSelectList = 'geoname-selection-list';
+const kClassSelectOption = 'geoname-selector-option';
+const kClassHidden = 'geoname-hidden';
+const kClassCandidate = 'geoname-candidate';
 
 class GeonameSearch {
   myGeonamesUser;
@@ -90,7 +91,10 @@ class GeonameSearch {
    * object should be displayed.
    */
   populateGeoNameSelector(containerEl, placeList) {
-    let optionEls = containerEl.querySelectorAll('.selector-option');
+    if (!this.placeList || !this.placeList.length) {
+      return;
+    }
+    let optionEls = containerEl.querySelectorAll('.' + kClassSelectOption);
     containerEl.classList.remove(kClassHidden);
     let optionEl;
     optionEls.forEach(function (el) {
@@ -107,7 +111,11 @@ class GeonameSearch {
       }
       optionEl.innerText = place.name;
       optionEl.setAttribute('dataIx', ix);
+      if (ix === 0) {
+        optionEl.classList.add(kClassCandidate);
+      }
     });
+
   }
 
   /**
@@ -146,27 +154,61 @@ class GeonameSearch {
      * @param ev
      */
     function handleKeyDown(ev) {
+      let selectorHidden = _this.selectionListEl.classList.contains(kClassHidden);
+      let option = _this.selectionListEl.querySelector('.' + kClassCandidate);
       if (ev.key === 'Enter') {
-        _this.autoComplete();
-      }
-      let value = this.value;
-      _this.selectedPlace = null;
-      if (value.length >= kMinNameLength) {
-        if (_this.timer) {
-          clearTimeout(_this.timer);
+        if (selectorHidden) {
+          _this.autoComplete();
+          ev.stopPropagation();
+        } else {
+          if (option) {
+            _this.inputEl.value = option.innerText;
+            _this.selectedPlace = _this.placeList[Number(option.attributes.dataix.value)];
+            _this.selectionHandler(_this.selectedPlace);
+            _this.selectionListEl.classList.add(kClassHidden);
+          }
         }
-        _this.timer = setTimeout(handleTimeout, kMinQueryInterval);
+      } else if (ev.key === 'ArrowDown') {
+        if (!selectorHidden && option) {
+          let next = _this.selectionListEl.querySelector('.' + kClassCandidate + '+.' + kClassSelectOption);
+          if (next ) {
+            option.classList.remove(kClassCandidate);
+          }
+        }
+      } else if (ev.key === 'ArrowUp') {
+
+      } else {
+
+        let value = this.value;
+        _this.selectedPlace = null;
+        if (value.length >= kMinNameLength) {
+          if (_this.timer) {
+            clearTimeout(_this.timer);
+          }
+          _this.timer = setTimeout(handleTimeout, kMinQueryInterval);
+        }
       }
     }
 
     function handlePlaceNameSelection(ev) {
       let target = ev.target;
-      if (target.classList.contains('selector-option')) {
+      if (target.classList.contains(kClassSelectOption)) {
         _this.inputEl.value = target.innerText;
         _this.selectedPlace = _this.placeList[Number(target.attributes.dataix.value)];
         _this.selectionHandler(_this.selectedPlace);
       }
       this.classList.add(kClassHidden);
+    }
+
+    function handleHover(ev) {
+      let target = ev.target;
+      if (target.classList.contains(kClassSelectOption)) {
+        _this.selectionListEl.querySelectorAll('.' + kClassCandidate).forEach(function (el) {
+          el.classList.remove(kClassCandidate);
+        });
+        target.classList.add(kClassCandidate);
+        ev.stopPropagation();
+      }
     }
 
     this.selectionHandler = selectionEventHandler;
@@ -184,7 +226,9 @@ class GeonameSearch {
     el = document.createElement('div');
     el.classList.add(kClassSelectList);
     el.classList.add(kClassHidden);
+    el.addEventListener('mouseover', handleHover)
     el.addEventListener('click', handlePlaceNameSelection)
+    el.addEventListener('keydown', handleKeyDown);
     this.selectionListEl = el;
     attachmentEl.append(el);
   }

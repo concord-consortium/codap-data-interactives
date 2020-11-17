@@ -636,17 +636,17 @@ input.year-select {
     height: 18px;
 }
 
-.selection-list {
+.geoname-selection-list {
     position: absolute;
     background-color: white;
     width: 200px;
     padding: 0.5em;
     border: thin solid gray;
 }
-.selection-list .selector-option:hover {
+/*.geoname-selection-list .geoname-selector-option:hover, */.geoname-candidate {
     background-color: lightblue;
 }
-.hidden {
+.geoname-hidden {
     display: none;
 }
 
