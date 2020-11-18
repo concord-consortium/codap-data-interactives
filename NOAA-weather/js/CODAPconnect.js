@@ -185,25 +185,6 @@ async function hasDataset(name) {
     return result.success === true;
 }
 
-/**
- *
- * @return {Promise<{latitude,longitude}>}
- */
-async function getGeolocation (defaultCoords) {
-    return new Promise(function (resolve, reject) {
-        if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-            navigator.geolocation.getCurrentPosition(
-                function(pos) {
-                    resolve(pos.coords);
-                },
-                function() {
-                    resolve(defaultCoords);
-                }
-            );
-        }
-    });
-}
-
 async function createMap(name, dimensions, center, zoom) {
     let result = await codapInterface.sendRequest({
         action: 'create',
@@ -248,6 +229,22 @@ function centerAndZoomMap(mapName, center, zoom) {
         }
     });
 }
+
+/*
+ * Whether the CODAP instance has an active Map Component.
+ */
+async function hasMap() {
+    const componentsResult = await codapInterface.sendRequest({
+        action: 'get',
+        resource: 'componentList'
+    });
+    const hasMap = componentsResult
+        && componentsResult.success
+        && componentsResult.values.find(function (component) {
+            return component.type==="map";
+        });
+}
+
 /**
  * Creates the weather station dataset in CODAP.
  * @param datasetName
@@ -260,16 +257,6 @@ function centerAndZoomMap(mapName, center, zoom) {
  * @return {Promise<void>}
  */
 async function createStationsDataset(datasetName, collectionName, stations, selectionHandler) {
-    const componentsResult = await codapInterface.sendRequest({
-        action: 'get',
-        resource: 'componentList'
-    });
-    const hasMap = componentsResult
-        && componentsResult.success
-        && componentsResult.values.find(function (component) {
-        return component.type==="map";
-    });
-
     let result = await codapInterface.sendRequest({
         action: 'create',
         resource: 'dataContext',
@@ -301,11 +288,6 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
         resource: `dataContext[${datasetName}].item`,
         values: stations
     });
-    if (!hasMap) {
-        let coords = await getGeolocation(pluginProperties.defaultCoords);
-        result = await  createMap('Map',
-            {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
-    }
     return result;
 }
 
@@ -484,11 +466,13 @@ export {
     centerAndZoomMap,
     clearData,
     createAttribute,
+    createMap,
     createNOAAItems,
     createStationsDataset,
     getAllItems,
     getInteractiveState,
     hasDataset,
+    hasMap,
     initialize,
     queryCases,
     selectSelf,

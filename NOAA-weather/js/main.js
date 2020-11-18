@@ -20,6 +20,7 @@ import {dataTypeStore} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
+import {hasMap} from "./CODAPconnect.js";
 
 let today = dayjs();
 
@@ -98,9 +99,30 @@ function selectHandler() {
   codapConnect.selectSelf();
 }
 
+/**
+ *
+ * @return {Promise<{latitude,longitude}>}
+ */
+async function getGeolocation (defaultCoords) {
+  return new Promise(function (resolve, reject) {
+    if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
+      navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            resolve(pos.coords);
+          },
+          function() {
+            resolve(defaultCoords);
+          }
+      );
+    }
+  });
+}
+
 async function initialize() {
   let isConnected = false;
   let documentState = {};
+  let needMap = false;
+
   ui.setTransferStatus('transferring', 'Connecting to CODAP');
   try {
     isConnected = await codapConnect.initialize(constants);
@@ -121,6 +143,9 @@ async function initialize() {
         let dataset = await fetchStationDataset(constants.stationDatasetURL);
         ui.setTransferStatus('transferring', 'Sending weather station data to CODAP')
         await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
+        if (! await codapConnect.hasMap()) {
+          needMap = true;
+        }
       }
       await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
@@ -142,6 +167,13 @@ async function initialize() {
       stationLocation: stationLocationHandler
     });
 
+    if (needMap) {
+      let coords = await getGeolocation(constants.defaultCoords);
+      let result = await  codapConnect.createMap('Map',
+          {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
+      await setNearestStation(coords);
+    }
+
     noaaNCEIConnect.initialize(state, constants, {
       beforeFetchHandler: beforeFetchHandler,
       fetchSuccessHandler: fetchSuccessHandler,
@@ -152,6 +184,11 @@ async function initialize() {
   }
 }
 
+/**
+ *
+ * @param url {string}
+ * @return {Promise<any>}
+ */
 async function fetchStationDataset(url) {
   try {
     let tResult = await fetch(url);
@@ -167,6 +204,10 @@ async function fetchStationDataset(url) {
 
 }
 
+/**
+ * Initializes state of plugin from that persisted in CODAP document.
+ * @param documentState {object}
+ */
 function initializeState(documentState) {
   state = documentState;
   state.database = state.database || constants.defaultNoaaDataset;
@@ -234,6 +275,9 @@ async function stationSelectionHandler(req) {
   }
 }
 
+/*
+ * Units
+ */
 function convertUnits(fromUnitSystem, toUnitSystem, data) {
   data.forEach(function (item) {
     Object.keys(item).forEach(function (prop) {
@@ -322,7 +366,7 @@ async function findNearestStation(lat, long) {
   }
 }
 
-async function stationLocationHandler (location) {
+async function setNearestStation (location) {
   if (!location) {
     return;
   }
@@ -336,6 +380,10 @@ async function stationLocationHandler (location) {
         [location.latitude, location.longitude], 9);
     updateView();
   }
+}
+
+async function stationLocationHandler (location) {
+    setNearestStation(location);
 }
 
 /**
