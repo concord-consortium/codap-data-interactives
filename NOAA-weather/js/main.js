@@ -16,11 +16,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+/*global dayjs:true */
 import {dataTypeStore} from './noaaDataTypes.js';
 import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
-import {hasMap} from "./CODAPconnect.js";
 
 let today = dayjs();
 
@@ -89,7 +89,8 @@ let state = {
   userSelectedDate: null,
   startDate: null,
   endDate: null,
-  unitSystem: null
+  unitSystem: null,
+  isFetchable: null,
 };
 
 /**
@@ -129,7 +130,7 @@ function adjustStationDataset(dataset) {
  * @return {Promise<{latitude,longitude}>}
  */
 async function getGeolocation (defaultCoords) {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function (resolve, /*reject*/) {
     if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
       navigator.geolocation.getCurrentPosition(
           function(pos) {
@@ -195,7 +196,7 @@ async function initialize() {
 
     if (needMap) {
       let coords = await getGeolocation(constants.defaultCoords);
-      let result = await  codapConnect.createMap('Map',
+      /*let result = */await  codapConnect.createMap('Map',
           {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
       await setNearestStation(coords);
     }
@@ -227,7 +228,6 @@ async function fetchStationDataset(url) {
   } catch (ex) {
     console.warn(`Exception fetching "${url}": ${ex}`);
   }
-
 }
 
 /**
@@ -246,6 +246,22 @@ function initializeState(documentState) {
   state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || dataTypeStore.getDefaultDatatypes();
   state.unitSystem = state.unitSystem || constants.defaultUnitSystem;
+}
+
+function areDatesInRangeForStation() {
+  let inRange = false;
+  // be optimistic in the face of ambiguity
+  if (!state.startDate || !state.endDate || !state.selectedStation) {
+    inRange = true;
+  } else {
+    let stationStart = dayjs(state.selectedStation.mindate);
+    let stationEnd = dayjs(state.selectedStation.maxdate==='present'
+        ? undefined
+        : state.selectedStation.maxdate);
+    inRange = !(stationStart.isAfter(dayjs(state.endDate)) ||
+        stationEnd.isBefore(dayjs(state.startDate)));
+  }
+  return inRange;
 }
 
 function configureDates(state) {
@@ -295,8 +311,8 @@ async function stationSelectionHandler(req) {
     let myCase = result && result.cases && result.cases[0];
     if (myCase) {
       state.selectedStation = myCase.values;
-      updateView();
       ui.setTransferStatus('inactive', 'Selected new weather station');
+      updateView();
     }
   }
 }
@@ -376,6 +392,13 @@ function dataTypeSelectionHandler(ev) {
 }
 
 function updateView() {
+  let isFetchable = areDatesInRangeForStation();
+  if (isFetchable && !state.isFetchable) {
+    ui.setTransferStatus("inactive", "");
+  } else if (!isFetchable && state.isFetchable) {
+    ui.setTransferStatus("disabled", "Weather station not reporting in time range")
+  }
+  state.isFetchable = isFetchable;
   ui.updateView(state, dataTypeStore);
 }
 
@@ -409,7 +432,7 @@ async function setNearestStation (location) {
 }
 
 async function stationLocationHandler (location) {
-    setNearestStation(location);
+    await setNearestStation(location);
 }
 
 /**

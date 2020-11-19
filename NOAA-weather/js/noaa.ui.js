@@ -37,7 +37,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
 /**
  *
  * @param state {Object}
- * @param dataTypeStore {[NoaaType]}
+ * @param dataTypeStore {object}
  * @param iEventHandlers: expect an object with handlers for
  *      dataTypeSelector/click,
  *      frequencyControl/click,
@@ -207,8 +207,13 @@ function updateView(state, dataTypeStore) {
     updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
     updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
     updateInfoPopup(state.unitSystem);
+    // updateGetDataButton(state.isFetchable);
 }
 
+// function updateGetDataButton(isFetchable) {
+//     let button = document.getElementById('wx-get-button');
+//     button.disabled = !isFetchable;
+// }
 function updateFrequencyControl(databaseName) {
     const reportTypeMap = {
         'daily-summaries': 'wx-daily',
@@ -250,18 +255,6 @@ function updateDateRangeSummary(startDate, endDate, sampleFrequency) {
 }
 
 function updateDateRangeSelectionPopup(startDate, endDate/*, sampleFrequency*/) {
-    // let duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
-    // if (sampleFrequency === 'monthly') duration = Math.round(duration / 30);
-    // let durationUnit = (sampleFrequency === 'monthly')? 'months' : 'days';
-    // if (duration === 1) {
-    //     durationUnit = (sampleFrequency === 'monthly')? 'month' : 'day';
-    // }
-    // let durationTimeUnitEl = document.querySelector('#wx-time-unit');
-    // let endDateEl = document.querySelector('#wx-drs-end-date');
-    // let durationEl = document.querySelector('#wx-drs-duration');
-    // durationTimeUnitEl.innerHTML = durationUnit;
-    // endDateEl.value = dayjs(endDate).format('YYYY-MM-DD');
-    // durationEl.value = duration;
     let dateRange = {
         fromDate: startDate,
         toDate: endDate
@@ -341,25 +334,27 @@ function setMessage(message) {
 
 /**
  * Sets the "transfer status" icon and message.
- * @param status {'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
+ * @param status {'disabled', 'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param message
  */
 function setTransferStatus(status, message) {
     let getButtonIsActive = true;
     let el = document.querySelector('.wx-summary');
     let statusClass = '';
-    if (status === 'retrieving' || status === 'transferring' || status === 'clearing') {
+    if (status === 'retrieving' || status === 'transferring' || status === 'clearing' ) {
         getButtonIsActive = false;
         statusClass = 'wx-transfer-in-progress';
     } else if (status === 'success') {
         statusClass = 'wx-transfer-success';
     } else if (status === 'failure') {
         statusClass = 'wx-transfer-failure';
+    } else if (status === 'disabled') {
+        getButtonIsActive = false;
     }
     el.classList.remove('wx-transfer-in-progress', 'wx-transfer-success', 'wx-transfer-failure');
     if (statusClass) { el.classList.add(statusClass); }
 
-    el.querySelector('button').disabled=!getButtonIsActive;
+    el.querySelector('#wx-get-button').disabled=!getButtonIsActive;
     setWaitCursor(!getButtonIsActive);
     setMessage(message);
 }

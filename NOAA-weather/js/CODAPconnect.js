@@ -335,6 +335,9 @@ async function findStationByID(stationID) {
 }
 
 async function selectStations(stationNames) {
+    if (!stationNames) {
+        return;
+    }
     const dsName = 'US-Weather-Stations';
     const collectionName = 'US Weather Stations';
     const req = stationNames.map(function (stationName) {
