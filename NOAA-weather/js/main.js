@@ -396,7 +396,7 @@ function updateView() {
   if (isFetchable && !state.isFetchable) {
     ui.setTransferStatus("inactive", "");
   } else if (!isFetchable && state.isFetchable) {
-    ui.setTransferStatus("disabled", "Weather station not reporting in time range")
+    ui.setTransferStatus("disabled", "Weather station inactive in date range")
   }
   state.isFetchable = isFetchable;
   ui.updateView(state, dataTypeStore);

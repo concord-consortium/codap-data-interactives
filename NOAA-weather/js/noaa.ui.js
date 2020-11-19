@@ -207,13 +207,8 @@ function updateView(state, dataTypeStore) {
     updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
     updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
     updateInfoPopup(state.unitSystem);
-    // updateGetDataButton(state.isFetchable);
 }
 
-// function updateGetDataButton(isFetchable) {
-//     let button = document.getElementById('wx-get-button');
-//     button.disabled = !isFetchable;
-// }
 function updateFrequencyControl(databaseName) {
     const reportTypeMap = {
         'daily-summaries': 'wx-daily',
@@ -322,12 +317,6 @@ function setEventHandler (selector, event, handler, capture) {
     });
 }
 
-/*
-function setStationName(stationName) {
-    document.getElementById('stationName').innerText = stationName;
-}
-*/
-
 function setMessage(message) {
     document.querySelector(".wx-message-area").innerHTML = message;
 }
@@ -349,6 +338,7 @@ function setTransferStatus(status, message) {
     } else if (status === 'failure') {
         statusClass = 'wx-transfer-failure';
     } else if (status === 'disabled') {
+        statusClass = 'wx-transfer-failure';
         getButtonIsActive = false;
     }
     el.classList.remove('wx-transfer-in-progress', 'wx-transfer-success', 'wx-transfer-failure');
