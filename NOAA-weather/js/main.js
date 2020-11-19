@@ -100,6 +100,31 @@ function selectHandler() {
 }
 
 /**
+ * We assume that the station dataset was prepared in the past but
+ * stations that were active at the time of preparation are still active.
+ * If they reported within a week of the dataset's max date, we mark the
+ * max date as "present".
+ * @param dataset
+ */
+function adjustStationDataset(dataset) {
+  let maxDate = dataset.reduce(function (max, station) {
+    let date = dayjs(station.maxdate);
+    if (max == null || max.isBefore(date)) {
+      max = date;
+    }
+    return max;
+  }, null);
+  if (maxDate) {
+    let refDate = maxDate.subtract(1, 'week');
+    dataset.forEach(function (station) {
+      let d = dayjs(station.maxdate);
+      if (d && d.isAfter(refDate)) {
+        station.maxdate = 'present';
+      }
+    })
+  }
+}
+/**
  *
  * @return {Promise<{latitude,longitude}>}
  */
@@ -141,6 +166,7 @@ async function initialize() {
       if (!hasStationDataset) {
         ui.setTransferStatus('retrieving', 'Fetching weather station data');
         let dataset = await fetchStationDataset(constants.stationDatasetURL);
+        adjustStationDataset(dataset);
         ui.setTransferStatus('transferring', 'Sending weather station data to CODAP')
         await codapConnect.createStationsDataset(stationDatasetName, stationCollectionName, dataset);
         if (! await codapConnect.hasMap()) {
