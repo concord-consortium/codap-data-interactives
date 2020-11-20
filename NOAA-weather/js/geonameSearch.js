@@ -104,13 +104,14 @@ class GeonameSearch {
       if (optionEls && optionEls[ix]) {
         optionEl = optionEls[ix];
         optionEl.classList.remove(kClassHidden);
+        optionEl.classList.remove(kClassCandidate);
       } else {
         optionEl = document.createElement('div');
         optionEl.classList.add(kClassSelectOption);
         containerEl.append(optionEl);
       }
       optionEl.innerText = place.name;
-      optionEl.setAttribute('dataIx', ix);
+      optionEl.setAttribute('dataix', ix);
       if (ix === 0) {
         optionEl.classList.add(kClassCandidate);
       }
@@ -169,16 +170,42 @@ class GeonameSearch {
           }
         }
       } else if (ev.key === 'ArrowDown') {
-        if (!selectorHidden && option) {
-          let next = _this.selectionListEl.querySelector('.' + kClassCandidate + '+.' + kClassSelectOption);
-          if (next ) {
-            option.classList.remove(kClassCandidate);
+        if (!selectorHidden) {
+          let currentCandidateEl = _this.selectionListEl.querySelector('.' + kClassCandidate );
+          let currentIx = currentCandidateEl && currentCandidateEl.getAttribute('dataix');
+          let nextIx = (currentIx != null) && Math.min(Number(currentIx) + 1, kDefaultMaxRows);
+          if (nextIx && Number(currentIx) !== nextIx) {
+            let optionEls = _this.selectionListEl.querySelectorAll(`.${kClassSelectOption}`);
+            let nextEl = optionEls[nextIx];
+            if ((nextEl != null)
+                && (nextEl !== currentCandidateEl)
+                && !nextEl.classList.contains(kClassHidden)) {
+              currentCandidateEl.classList.remove(kClassCandidate);
+              nextEl.classList.add(kClassCandidate);
+              ev.stopPropagation();
+              ev.preventDefault();
+            }
           }
         }
       } else if (ev.key === 'ArrowUp') {
-
+        if (!selectorHidden) {
+          let currentCandidateEl = _this.selectionListEl.querySelector('.' + kClassCandidate );
+          let currentIx = currentCandidateEl && currentCandidateEl.getAttribute('dataix');
+          let nextIx = (currentIx != null) && Math.max(Number(currentIx) - 1, 0);
+          if ((nextIx != null) && Number(currentIx) !== nextIx) {
+            let optionEls = _this.selectionListEl.querySelectorAll(`.${kClassSelectOption}`);
+            let nextEl = optionEls[nextIx];
+            if ((nextEl != null)
+                && (nextEl !== currentCandidateEl)
+                && !nextEl.classList.contains(kClassHidden)) {
+              currentCandidateEl.classList.remove(kClassCandidate);
+              nextEl.classList.add(kClassCandidate);
+              ev.stopPropagation();
+              ev.preventDefault();
+            }
+          }
+        }
       } else {
-
         let value = this.value;
         _this.selectedPlace = null;
         if (value.length >= kMinNameLength) {
