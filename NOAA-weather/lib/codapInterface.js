@@ -312,8 +312,8 @@
          * Sends a request to CODAP. The format of the message is as defined in
          * {@link https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API}.
          *
-         * @param message {String}
-         * @param callback {function(response, request)} Optional callback to handle
+         * @param message {String|Object}
+         * @param [callback] {function(response, request)} Optional callback to handle
          *    the CODAP response. Note both the response and the initial request will
          *    sent.
          *
@@ -379,7 +379,7 @@
          *
          * @param actionSpec {'get' || 'notify'} (optional) Action to handle. Defaults to 'notify'.
          * @param resourceSpec {String} A resource string.
-         * @param operation {String} (optional) name of operation, e.g. 'create', 'delete',
+         * @param [operation] {String} (optional) name of operation, e.g. 'create', 'delete',
          *   'move', 'resize', .... If not specified, all operations will be reported.
          * @param handler {Function} A handler to receive the notifications.
          */

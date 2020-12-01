@@ -20,8 +20,8 @@ function daysInMonth(iMonth, iYear) {
 /**
  * A utility to create a DOM element with classes and content.
  * @param tag {string}
- * @param classList {[string]}
- * @param content {[Element|AttributeNode]}
+ * @param [classList] {[string]|string}
+ * @param [content] {[Element|Attr]|Element|Attr|string}
  * @return {Element}
  */
 function createElement(tag, classList, content) {
@@ -48,7 +48,7 @@ function createElement(tag, classList, content) {
  * A utility to create a DOM attribute node.
  * @param name {string}
  * @param value {*}
- * @return {AttributeNode}
+ * @return {Attr}
  */
 function createAttribute(name, value) {
   let attr = document.createAttribute(name);
