@@ -249,7 +249,7 @@ function initializeState(documentState) {
 }
 
 function areDatesInRangeForStation() {
-  let inRange = false;
+  let inRange;
   // be optimistic in the face of ambiguity
   if (!state.startDate || !state.endDate || !state.selectedStation) {
     inRange = true;
@@ -357,6 +357,9 @@ async function clearDataHandler() {
   console.log('clear data!')
   ui.setTransferStatus('clearing', 'Clearing data')
   let result = await codapConnect.clearData(constants.DSName);
+  if (result.success) {
+    result = await codapConnect.deleteAttributes(constants.DSName, constants.DSTitle, state.selectedDataTypes);
+  }
   let status = result && result.success? 'success': 'failure';
   let message = result && result.success? `Cleared the ${constants.DSName} dataset`: result.message;
   ui.setTransferStatus(status, message);

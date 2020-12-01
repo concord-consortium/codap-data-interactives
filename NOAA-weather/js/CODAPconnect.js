@@ -30,7 +30,7 @@ limitations under the License.
  *   DSName, DSTitle, version, dimensions
  * }}
  */
-let pluginProperties = null;
+let pluginProperties;
 let myCODAPId = null;
 
 /**
@@ -41,24 +41,21 @@ let myCODAPId = null;
  */
 async function initialize(iPluginProperties) {
     pluginProperties = iPluginProperties;
-    let success = true;
+    let result = {success: true};
     try {
-        let result = await codapInterface.init(getPluginDescriptor(pluginProperties), null);
-        // await pluginHelper.initDataSet(
-        //     getNoaaDataContextSetupObject(pluginProperties));
-
-        //  and now mutable
+        await codapInterface.init(getPluginDescriptor(pluginProperties), null);
         const tMessage = {
             "action": "update", "resource": "interactiveFrame", "values": {
-                "preventBringToFront": false, "preventDataContextReorg": false,
+                "preventBringToFront": false,
+                "preventDataContextReorg": false,
             }
         };
-        await codapInterface.sendRequest(tMessage);
+        result = await codapInterface.sendRequest(tMessage);
     } catch (ex) {
-        success= false;
+        result.success= false;
         console.warn('Initialization of CODAP interface failed: ' + ex);
     }
-    return success;
+    return result.success;
 }
 
 /**
@@ -220,6 +217,7 @@ async function createMap(name, dimensions, center, zoom) {
 }
 
 function centerAndZoomMap(mapName, center, zoom) {
+    // noinspection JSIgnoredPromiseFromCall
     codapInterface.sendRequest({
         action: 'update',
         resource: `component[${mapName}]`,
@@ -238,7 +236,7 @@ async function hasMap() {
         action: 'get',
         resource: 'componentList'
     });
-    const hasMap = componentsResult
+    return componentsResult
         && componentsResult.success
         && componentsResult.values.find(function (component) {
             return component.type==="map";
@@ -421,23 +419,31 @@ async function clearData (datasetName) {
     if (result.success) {
         let dc = result.values;
         let lastCollection = dc.collections[dc.collections.length-1];
-        result = await codapInterface.sendRequest({
+        return await codapInterface.sendRequest({
             action: 'delete',
             resource: `dataContext[${datasetName}].collection[${lastCollection.name}].allCases`
         });
-        let attrDeletePromises = lastCollection.attrs.filter(function (attr) {
-            return attr.name !== 'when';
-        }).map(function (attr) {
-                return codapInterface.sendRequest({
-                    action: 'delete',
-                    resource: `dataContext[${datasetName}].collection[${lastCollection.name}].attribute[${attr.name}]`
-                })
-            });
-        await Promise.allSettled(attrDeletePromises);
-        return {success: true};
     } else {
         return Promise.resolve({success: true});
     }
+}
+
+/**
+ * Removes attributes in the named dataset collection except those in the
+ * exception list;
+ * @param datasetName {string}
+ * @param collectionName {string}
+ * @param attributeNames {[string]}
+ * @return {Promise}
+ */
+async function deleteAttributes(datasetName, collectionName, attributeNames) {
+    let attrDeletePromises = attributeNames.map(function (attrName) {
+        return codapInterface.sendRequest({
+            action: 'delete',
+            resource: `dataContext[${datasetName}].collection[${collectionName}].attribute[${attrName}]`
+        })
+    });
+    return await Promise.allSettled(attrDeletePromises);
 }
 
 async function getAllItems(datasetName) {
@@ -472,6 +478,7 @@ export {
     createMap,
     createNOAAItems,
     createStationsDataset,
+    deleteAttributes,
     getAllItems,
     getInteractiveState,
     hasDataset,
