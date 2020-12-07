@@ -136,7 +136,8 @@ async function getGeolocation (defaultCoords) {
           function(pos) {
             resolve(pos.coords);
           },
-          function() {
+          function(err) {
+            console.log(`Weather Plugin.getGeolocation failed: ${err.code}, ${err.message}`);
             resolve(defaultCoords);
           }
       );
