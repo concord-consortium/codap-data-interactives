@@ -62,7 +62,7 @@ let constants = {
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
-  geonamesUser: 'jsandoe',
+  geonamesUser: 'codap',
   StationDSName: 'US-Weather-Stations',
   StationDSTitle: 'US Weather Stations',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
@@ -81,16 +81,16 @@ let constants = {
 }
 
 let state = {
-  database: null,
+  database: constants.defaultNoaaDataset,
   dateGranularity: null,
   sampleFrequency: null,
   selectedDataTypes: null,
-  selectedStation: null,
+  selectedStation: constants.defaultStation,
   userSelectedDate: null,
   startDate: null,
   endDate: null,
-  unitSystem: null,
-  isFetchable: null,
+  unitSystem: constants.defaultUnitSystem,
+  isFetchable: true,
 };
 
 /**
@@ -206,7 +206,11 @@ async function initialize() {
       beforeFetchHandler: beforeFetchHandler,
       fetchSuccessHandler: fetchSuccessHandler,
       fetchErrorHandler: fetchErrorHandler});
-    ui.setTransferStatus('success', 'Ready');
+    if (state.isFetchable) {
+      ui.setTransferStatus('success', 'Ready');
+    } else {
+      ui.setTransferStatus('disabled', 'Weather station inactive in date range');
+    }
   } catch (ex) {
     console.warn("NOAA-weather failed init", ex);
   }
@@ -236,17 +240,14 @@ async function fetchStationDataset(url) {
  * @param documentState {object}
  */
 function initializeState(documentState) {
-  state = documentState;
-  state.database = state.database || constants.defaultNoaaDataset;
+  Object.assign(state, documentState);
   if (!state.userSelectedDate) {
     configureDates(state)
   }
   state.sampleFrequency = state.sampleFrequency
       || constants.reportTypeMap[documentState.database];
 
-  state.selectedStation = state.selectedStation || constants.defaultStation;
   state.selectedDataTypes = state.selectedDataTypes || dataTypeStore.getDefaultDatatypes();
-  state.unitSystem = state.unitSystem || constants.defaultUnitSystem;
 }
 
 function areDatesInRangeForStation() {
@@ -399,8 +400,6 @@ function updateView() {
   let isFetchable = areDatesInRangeForStation();
   if (isFetchable && !state.isFetchable) {
     ui.setTransferStatus("inactive", "");
-  } else if (!isFetchable && state.isFetchable) {
-    ui.setTransferStatus("disabled", "Weather station inactive in date range")
   }
   state.isFetchable = isFetchable;
   ui.updateView(state, dataTypeStore);
