@@ -94,9 +94,9 @@ define([
         // Determine if CODAP already has the Data Context we need.
         // If not, create it.
         return codapInterface.sendRequest({
-            action:'get',
-            resource: getTargetDataSetPhrase()
-            }, function (getDatasetResult) {
+              action:'get',
+              resource: getTargetDataSetPhrase()
+            }).then( function (getDatasetResult) {
 
             function getAttributeIds() {
               // need to get all the ids of the newly-created attributes, so we can notice if they change.
@@ -150,7 +150,11 @@ define([
                     }
                   ]
                 }
-              }, getAttributeIds);
+              }, getAttributeIds).then(
+                  _this.openTable,
+                  function (e) {
+                    console.log('Sampler: findOrCreateDataContext failed: ' + e);
+                  });
             } else if (getDatasetResult.success) {
               // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
               // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
@@ -174,7 +178,6 @@ define([
           console.log('Not in CODAP');
           return;
         }
-        _this.openTable();
 
         this.itemProto = {
           experiment: experimentNumber,
@@ -187,7 +190,7 @@ define([
           return;
         }
 
-        codapInterface.sendRequest({
+        return codapInterface.sendRequest({
           action: 'create',
           resource: 'component',
           values: {
@@ -367,9 +370,11 @@ define([
             }
           }
 
-          codapInterface.sendRequest({
-            action: 'get',
-            resource: 'dataContext[' + contextName + '].collectionList'
+          _this.findOrCreateDataContext().then(function () {
+            return codapInterface.sendRequest({
+              action: 'get',
+              resource: 'dataContext[' + contextName + '].collectionList'
+            })
           }).then(setCollection);
         });
       },

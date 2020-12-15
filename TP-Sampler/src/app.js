@@ -98,8 +98,6 @@ function(Snap, CodapCom, View, ui, utils) {
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
   codapCom.init()
       .then(setCodapDataSetName)
-      .then(codapCom.findOrCreateDataContext)
-// eslint-disable-next-line dot-notation
       .catch(codapCom.error);
 
   function setCodapDataSetName() {
@@ -402,25 +400,27 @@ function(Snap, CodapCom, View, ui, utils) {
     // this doesn't get written out in array, or change the length
     variables.EMPTY = "";
     experimentNumber += 1;
-    codapCom.startNewExperimentInCODAP(experimentNumber, tSampleSize);
+    codapCom.findOrCreateDataContext().then(function () {
+      codapCom.startNewExperimentInCODAP(experimentNumber, tSampleSize);
 
-    console.log('sample group size: ' + sampleGroupSize);
-    sentRun = 0;
+      console.log('sample group size: ' + sampleGroupSize);
+      sentRun = 0;
 
-    sequence = createRandomSequence(tSampleSize, tNumRuns);
+      sequence = createRandomSequence(tSampleSize, tNumRuns);
 
-    if (!hidden && (device === "mixer" || device === "collector")) {
-      view.animateMixer();
-    }
+      if (!hidden && (device === "mixer" || device === "collector")) {
+        view.animateMixer();
+      }
 
-    if (speed === kFastestSpeed) {
-      // send sequence directly to codap
-      addValuesToCODAPNoDelay();
-      return;
-    }
+      if (speed === kFastestSpeed) {
+        // send sequence directly to codap
+        addValuesToCODAPNoDelay();
+        return;
+      }
 
 
-    selectNext();
+      selectNext();
+    });
   }
 
   // permanently sorts variables so identical ones are next to each other
