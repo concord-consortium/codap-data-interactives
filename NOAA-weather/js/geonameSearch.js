@@ -34,7 +34,9 @@ class GeonameSearch {
   myGeonamesUser;
   selectionHandler;
 
+  // @type {DOMElement}
   inputEl = null; // the selection text element
+  // @type {DOMElement}
   selectionListEl = null; // the initially hidden selection list element
 
   placeList = [];

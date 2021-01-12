@@ -86,7 +86,8 @@ async function getInteractiveState() {
 }
 
 /**
- * Creates an attribute
+ * Creates an attribute.
+ * Todo: remove dependence on Datatype and unit system.
  * @param datasetName {string}
  * @param collectionName {string}
  * @param dataType {object}
@@ -105,13 +106,21 @@ function createAttribute(datasetName, collectionName, dataType, unitSystem) {
     })
 }
 
-function updateAttributeUnit(datasetDef, dataTypeName, unit) {
+/**
+ * Modifies attribute unit property.
+ * @param datasetDef {object} Previously fetched dataContext object.
+ * @param attrName {string}
+ * @param unit {string}
+ * @return {Promise<object>}
+ */
+function updateAttributeUnit(datasetDef, attrName, unit) {
     let collection = datasetDef.collections.find(function (collection) {
         return collection.attrs.find(function (attr) {
-            return attr.name === dataTypeName;
+            return attr.name === attrName;
         });
     });
-    let resource = `dataContext[${datasetDef.name}].collection[${collection.name}].attribute[${dataTypeName}]`;
+    let resource = `dataContext[${datasetDef.name}]
+        .collection[${collection.name}].attribute[${attrName}]`;
     return codapInterface.sendRequest({
         action: 'update',
         resource: resource,
@@ -123,6 +132,8 @@ function updateAttributeUnit(datasetDef, dataTypeName, unit) {
 
 /**
  * Creates new attributes for any that do not already exist.
+ * Todo: refactor to remove Weather plugin knowledge and make more generic or
+ * Todo: move to main.
  * @param dataTypes {object}
  * @param unitSystem {'metric'|'standard'}
  * @return a Promise fulfilled when all attributes are created.
@@ -137,7 +148,7 @@ async function updateWeatherDataset(dataTypes, unitSystem) {
         result = await codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
-            values: getNoaaDataContextSetupObject(pluginProperties)
+            values: getNoaaDataContextSetupObject(pluginProperties.DSName)
         });
         if (result.success) {
             result = await codapInterface.sendRequest(getDatasetMsg);
@@ -174,6 +185,11 @@ async function updateWeatherDataset(dataTypes, unitSystem) {
     return Promise.all(promises);
 }
 
+/**
+ * Returns whether the named dataset exists in CODAP.
+ * @param name {string}
+ * @return {Promise<boolean>}
+ */
 async function hasDataset(name) {
     let result = await codapInterface.sendRequest({
         action: 'get',
@@ -182,6 +198,14 @@ async function hasDataset(name) {
     return result.success === true;
 }
 
+/**
+ *
+ * @param name {string}
+ * @param dimensions {{width:number,height:number}}
+ * @param center {[2]} // latitude, longitude
+ * @param zoom {number}
+ * @return {Promise<object>}
+ */
 async function createMap(name, dimensions, center, zoom) {
     let result = await codapInterface.sendRequest({
         action: 'create',
@@ -216,6 +240,12 @@ async function createMap(name, dimensions, center, zoom) {
     }
 }
 
+/**
+ *
+ * @param mapName {string}
+ * @param center {[2]} latitude, longitude
+ * @param zoom {number}
+ */
 function centerAndZoomMap(mapName, center, zoom) {
     // noinspection JSIgnoredPromiseFromCall
     codapInterface.sendRequest({
@@ -230,6 +260,7 @@ function centerAndZoomMap(mapName, center, zoom) {
 
 /*
  * Whether the CODAP instance has an active Map Component.
+ * @return {boolean}
  */
 async function hasMap() {
     const componentsResult = await codapInterface.sendRequest({
@@ -245,6 +276,7 @@ async function hasMap() {
 
 /**
  * Creates the weather station dataset in CODAP.
+ * todo: refactor to make this module generic
  * @param datasetName
  * @param collectionName
  * @param datasetName
@@ -289,16 +321,25 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
     return result;
 }
 
+/**
+ * Adds a notification handler to CODAP interface.
+ *
+ * @param action {'get'|'notify'}
+ * @param resource {string}
+ * @param handler {function}
+ */
 function addNotificationHandler(action, resource, handler) {
     codapInterface.on(action, resource, handler);
 }
 
 /**
  * Tell CODAP to make items.
- * @param props
- * @param iValues   An array of objects containing the keys and values
+ * Todo: refactor to remove weather plugin dependencies or move to main.
+ *
+ * @param props {{}}
+ * @param iValues {[{}]}   An array of objects containing the keys and values
  * corresponding to attributes and values of the new cases.
- * @param dataTypes An array of datatypes to be reference for creating attributes
+ * @param dataTypes {[string]} An array of datatypes to be reference for creating attributes
  * @param unitSystem {'metric'|'standard'}
  */
 async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
@@ -320,6 +361,13 @@ async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
 }
 
 // noinspection JSUnusedLocalSymbols
+/**
+ *
+ * todo: refactor to make module generic
+ * @param stationID
+ * @return {Promise<*>}
+ */
+// noinspection JSUnusedLocalSymbols
 async function findStationByID(stationID) {
     const dsName = 'US-Weather-Stations';
     const collectionName = 'US Weather Stations';
@@ -332,6 +380,12 @@ async function findStationByID(stationID) {
     }
 }
 
+/**
+ *
+ * todo: Refactor to make the module generic
+ * @param stationNames {[string]}
+ * @return {Promise<void>}
+ */
 async function selectStations(stationNames) {
     if (!stationNames) {
         return;
@@ -359,9 +413,8 @@ async function selectStations(stationNames) {
 
 /**
  * Returns a plugin descriptor object for creating connection to CODAP/
- * @param props: must have DSName, name of Weather dataset; DSTitle, title of
- * dataset; version, version string; and dimensions.
- * @return {{}}}
+ * @param props {{DSName:string,DSTitle:string,version:string,dimensions:string}}
+ * @return {{name:string,title:string,version:string,dimensions:string}}
  */
 function getPluginDescriptor(props) {
     return {
@@ -376,16 +429,17 @@ function getPluginDescriptor(props) {
  * Returns a data context initialization object for NOAA weather information.
  * This is a two level hierarchy. Top level has data about the station.
  * Bottom level has weather data for a discrete time interval.
- * @param props: pluginConfiguration object. Must have DSName, name of dataset.
+ * Todo: refactor to main
+ * @param dsName {string}
  * @return {{}}
  */
-function getNoaaDataContextSetupObject(props) {
+function getNoaaDataContextSetupObject(dsName) {
     return {
-        name: props.DSName,
-        title: props.DSName,
+        name: dsName,
+        title: dsName,
         description: "Data from NOAA",
         collections: [{
-            name: props.DSName,
+            name: dsName,
             labels: {
                 singleCase: "station", pluralCase: "stations",
             },
@@ -399,7 +453,7 @@ function getNoaaDataContextSetupObject(props) {
         },
         {
             name: "Observations",
-            parent: props.DSName,
+            parent: dsName,
             labels: {
                 singleCase: "observation",
                 pluralCase: "observations",
@@ -407,10 +461,14 @@ function getNoaaDataContextSetupObject(props) {
             },
             attrs: [{name: "when", type: 'date', description: "what day"}]
         }]
-
     };
 }
 
+/**
+ * Deletes all cases from the named dataset.
+ * @param datasetName {string}
+ * @return {Promise<*|{success: boolean}>}
+ */
 async function clearData (datasetName) {
     let result = await codapInterface.sendRequest({
         action: 'get', resource: `dataContext[${datasetName}]`
@@ -446,6 +504,11 @@ async function deleteAttributes(datasetName, collectionName, attributeNames) {
     return await Promise.allSettled(attrDeletePromises);
 }
 
+/**
+ * Returns all items in a dataset.
+ * @param datasetName {string}
+ * @return {Promise<*[object]|*>}
+ */
 async function getAllItems(datasetName) {
     let result = await codapInterface.sendRequest({
         action: 'get', resource: `dataContext[${datasetName}]`
@@ -462,6 +525,14 @@ async function getAllItems(datasetName) {
     }
 }
 
+/**
+ * Performs a formula query against a dataset. Returns all cases for which
+ * formula resolves to true.
+ * @param dataset {string}
+ * @param collection {string}
+ * @param query {string}
+ * @return {Promise<[object]>}
+ */
 async function queryCases(dataset, collection, query) {
     let resource = `dataContext[${dataset}].collection[${collection}].caseFormulaSearch[${query}]`;
     return codapInterface.sendRequest({

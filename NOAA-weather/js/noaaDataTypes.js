@@ -68,7 +68,7 @@ const converterMap = {
 
 function convertPrecip(fromUnit, toUnit, value) {
     let k = 25.4;
-    if (!convertable(value)) {
+    if (!convertible(value)) {
         return value;
     } else if (fromUnit === 'mm' && toUnit === "in") {
         return value / k;
@@ -80,7 +80,7 @@ function convertPrecip(fromUnit, toUnit, value) {
 }
 
 function convertTemp(fromUnit, toUnit, value) {
-    if (!convertable(value)) {
+    if (!convertible(value)) {
         return value;
     } else if (fromUnit === '°C' && toUnit === "°F") {
         return 1.8*value + 32;
@@ -93,7 +93,7 @@ function convertTemp(fromUnit, toUnit, value) {
 
 function convertWindspeed(fromUnit, toUnit, value) {
     let k=0.44704;
-    if (!convertable(value)) {
+    if (!convertible(value)) {
         return value;
     } else if (fromUnit === 'm/s' && toUnit === "mph") {
         return value / k;
@@ -189,7 +189,7 @@ let dataTypes = [
         ['global-hourly'], {'global-hourly': extractHourlyPrecipitation}),
 ];
 
-function convertable(value) {
+function convertible(value) {
     return !(isNaN(value) || (typeof value === 'string' && value.trim() === ''))
 }
 
