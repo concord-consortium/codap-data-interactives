@@ -127,7 +127,7 @@ function updateAttributeUnit(datasetDef, dataTypeName, unit) {
  * @param unitSystem {'metric'|'standard'}
  * @return a Promise fulfilled when all attributes are created.
  */
-async function updateDataset(dataTypes, unitSystem) {
+async function updateWeatherDataset(dataTypes, unitSystem) {
     const getDatasetMsg = {
         action: 'get',
         resource: `dataContext[${pluginProperties.DSName}]`
@@ -302,7 +302,7 @@ function addNotificationHandler(action, resource, handler) {
  * @param unitSystem {'metric'|'standard'}
  */
 async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
-    await updateDataset(dataTypes, unitSystem);
+    await updateWeatherDataset(dataTypes, unitSystem);
 
     iValues = pluginHelper.arrayify(iValues);
     console.log("noaa-cdo ... createNOAAItems with " + iValues.length + " case(s)");
@@ -486,5 +486,6 @@ export {
     initialize,
     queryCases,
     selectSelf,
-    selectStations
+    selectStations,
+    updateWeatherDataset
 };

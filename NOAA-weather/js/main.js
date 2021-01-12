@@ -164,6 +164,7 @@ async function initialize() {
     initializeState(documentState);
 
     if (isConnected) {
+      await codapConnect.updateWeatherDataset([], documentState.unitSystem);
       let hasStationDataset = await codapConnect.hasDataset(stationDatasetName);
       if (!hasStationDataset) {
         ui.setTransferStatus('retrieving', 'Fetching weather station data');
