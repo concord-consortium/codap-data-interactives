@@ -815,7 +815,8 @@
       "resource": "component",
       "values": {
         "type": "caseTable",
-        "dataContext": "Mammals"
+        "dataContext": "Mammals",
+        "horizontalScrollOffset": 500
       }
     }
   },
