@@ -235,6 +235,27 @@
       "resource": "dataContext[Mammals]"
     }
   },
+  {
+    "name": "Set Aside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "setAside",
+        "caseIDs": [13, 14]
+      }
+    }
+  },
+  {
+    "name": "Restore Setaside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "restoreSetasides"
+      }
+    }
+  },
 
   {
     "name": "Create Parent Collection",
