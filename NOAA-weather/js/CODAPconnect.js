@@ -202,41 +202,31 @@ async function hasDataset(name) {
  *
  * @param name {string}
  * @param dimensions {{width:number,height:number}}
- * @param center {[2]} // latitude, longitude
- * @param zoom {number}
+ * @param [center] {[2]} // latitude, longitude
+ * @param [zoom] {number}
  * @return {Promise<object>}
  */
 async function createMap(name, dimensions, center, zoom) {
-    let result = await codapInterface.sendRequest({
-        action: 'create',
-        resource: 'component',
-        values: {
-            type: 'map',
-            name: name,
-            dimensions: dimensions
-        }
+    let map;
+    let componentListResult = await codapInterface.sendRequest({
+        action: 'get',
+        resource: 'componentList'
     });
-    if (result.success) {
-        setTimeout(function () {
-            codapInterface.sendRequest({
-                action: 'update',
-                resource: `component[${name}]`,
-                values: {
-                    center: center,
-                    zoom: 4
-                }
-            });
-            setTimeout(function () {
-                codapInterface.sendRequest({
-                    action: 'update',
-                    resource: `component[${name}]`,
-                    values: {
-                        zoom: zoom
-                    }
-                });
-
-            }, 500)
-        }, 2000);
+    if (componentListResult && componentListResult.success) {
+        map = componentListResult.values.find(function (component) { return component.type==='map';})
+    }
+    if (!map) {
+        let result = await codapInterface.sendRequest({
+            action: 'create', resource: 'component', values: {
+                type: 'map', name: name, dimensions: dimensions
+            }
+        });
+        if (result.success) {
+            map = result.values;
+        }
+    }
+    if (map && center && (zoom != null)) {
+        return centerAndZoomMap(map.id, center, zoom)
     }
 }
 
@@ -245,16 +235,32 @@ async function createMap(name, dimensions, center, zoom) {
  * @param mapName {string}
  * @param center {[2]} latitude, longitude
  * @param zoom {number}
+ * @return {Promise}
  */
 function centerAndZoomMap(mapName, center, zoom) {
     // noinspection JSIgnoredPromiseFromCall
-    codapInterface.sendRequest({
-        action: 'update',
-        resource: `component[${mapName}]`,
-        values: {
-            center: center,
-            zoom: zoom
-        }
+    return new Promise(function (resolve) {
+        setTimeout(function () {
+            codapInterface.sendRequest({
+                action: 'update',
+                resource: `component[${mapName}]`,
+                values: {
+                    center: center,
+                    zoom: 4
+                }
+            });
+            setTimeout(function () {
+                codapInterface.sendRequest({
+                    action: 'update',
+                    resource: `component[${mapName}]`,
+                    values: {
+                        zoom: zoom
+                    }
+                });
+
+            }, 500)
+        }, 2000);
+        resolve();
     });
 }
 

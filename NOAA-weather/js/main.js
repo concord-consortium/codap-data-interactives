@@ -36,7 +36,7 @@ let constants = {
     "elevation":"+1911.7",
     "ICAO":"KMWN",
     "mindate":"1973-01-01",
-    "maxdate":"2020-09-27",
+    "maxdate":"present",
     "isdID":"72613014755,72613099999",
     "ghcndID": 'USW00014755'
   },
@@ -141,6 +141,9 @@ async function getGeolocation (defaultCoords) {
             resolve(defaultCoords);
           }
       );
+    } else {
+      console.log("Geolocation not supported by browser");
+      resolve(defaultCoords);
     }
   });
 }
@@ -197,10 +200,33 @@ async function initialize() {
     });
 
     if (needMap) {
-      let coords = await getGeolocation(constants.defaultCoords);
-      /*let result = */await  codapConnect.createMap('Map',
-          {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
-      await setNearestStation(coords);
+      await codapConnect.createMap('Map', {height: 350, width: 500});
+
+      let coords = constants.defaultCoords;
+      let coordsResolved = false;
+
+      // getting geolocation can hang for a long time, so we wait a few seconds
+      // and if we don't have one we make a map at the default coords and go on.
+      // If the user grants permissions late, we can move the center point.
+      setTimeout(function () {
+        if (!coordsResolved) {
+          codapConnect.createMap('Map',
+              {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
+        }
+      }, 5000);
+      getGeolocation(constants.defaultCoords).then(
+        function (coords) {
+          ui.setTransferStatus('success', 'Centering map');
+          coordsResolved = true;
+          codapConnect.centerAndZoomMap([coords.latitude, coords.longitude], 7)
+          ui.setTransferStatus('success', 'Looking up nearest weather station');
+          setNearestStation(coords);
+          ui.setTransferStatus('success', 'Ready');
+        },
+        function (err) {
+          console.warn(`Error getting geolocation: ${err}`)
+        }
+      );
     }
 
     noaaNCEIConnect.initialize(state, constants, {
