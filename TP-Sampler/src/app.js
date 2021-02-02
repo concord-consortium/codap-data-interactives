@@ -532,10 +532,16 @@ function(Snap, CodapCom, View, ui, utils) {
     codapCom.logAction("reloadDefaultSettings");
   }
 
+  function registerForCODAPNotices() {
+    codapCom.register('notify', '*', 'titleChange', refreshCaseList);
+    codapCom.register('notify', '*', 'dataContextCountChanged', refreshCaseList);
+  }
+
   function getStarted() {
     view.reset();
     ui.enableButtons();
     ui.render(hidden, password, false, withReplacement, device);
+    registerForCODAPNotices();
     samples = [];
     running = false;
     paused = false;

@@ -122,7 +122,7 @@ define(function() {
       sel.innerHTML = "";
       collections.forEach(function (col) {
         if (col.name !== 'Sampler')
-          sel.innerHTML += '<option value="' + col.name + '">' + col.name + "</option>";
+          sel.innerHTML += '<option value="' + col.name + '">' + col.title + "</option>";
       });
 
       if (!sel.innerHTML) {

@@ -412,7 +412,9 @@ define([
           selectSelf(this.myCODAPId);
         }
       },
-
+      register: function (action, resource, operation, callback) {
+        codapInterface.on(action, resource, operation, callback);
+      }
     };
 
     return CodapCom;
