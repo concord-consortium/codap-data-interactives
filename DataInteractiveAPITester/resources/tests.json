@@ -868,6 +868,16 @@
     }
   },
   {
+    "name": "Update Table Component",
+    "message": {
+      "action": "update",
+      "resource": "component[176]",
+      "values": {
+        "isIndexHidden": true
+      }
+    }
+  },
+  {
     "name": "Get Component",
     "message": {
       "action": "get",
