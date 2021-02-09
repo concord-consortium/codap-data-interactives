@@ -106,13 +106,11 @@ define(function() {
       show(document.getElementById("remove-variable"));
       show(document.getElementById("add-variable-series"));
       hide(document.getElementById("select-collection"));
-      hide(document.getElementById("refresh-list"));
     } else {
       hide(document.getElementById("add-variable"));
       hide(document.getElementById("remove-variable"));
       hide(document.getElementById("add-variable-series"));
       show(document.getElementById("select-collection"));
-      show(document.getElementById("refresh-list"));
     }
   }
 
@@ -203,7 +201,6 @@ define(function() {
         disable(spinnerButton);
       if (!hasClass(collectorButton, "active"))
         disable(collectorButton);
-      hide(document.getElementById("refresh-list"));
       show(document.getElementById("password-area"));
     } else {
       hide(mixerCover);
@@ -211,8 +208,6 @@ define(function() {
       enable(mixerButton);
       enable(spinnerButton);
       enable(collectorButton);
-      if (hasClass(collectorButton, "active"))
-        show(document.getElementById("refresh-list"));
       hide(document.getElementById("password-area"));
     }
     setReplacement( withReplacement, device, hidden);
@@ -280,7 +275,6 @@ define(function() {
     document.getElementById("mixer").onclick = switchState;
     document.getElementById("spinner").onclick = switchState;
     document.getElementById("collector").onclick = switchState;
-    document.getElementById("refresh-list").onclick = refreshCaseList;
     document.getElementById("sample_size").addEventListener('input', function (evt) {
       setSampleSize(this.value);
     });
