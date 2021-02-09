@@ -124,7 +124,7 @@ define(function() {
       });
 
       if (!sel.innerHTML) {
-        sel.innerHTML += "<option>No collections</option>";
+        sel.innerHTML += "<option>No data sets</option>";
         sel.setAttribute("disabled", "disabled");
         return;
       } else {
@@ -143,7 +143,7 @@ define(function() {
           .then(setVariablesAndRender);
         codapCom.logAction('chooseCollection: %@ (auto)', sel.childNodes[0].value);
       } else {
-        sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
+        sel.innerHTML = "<option>Select a data set</option>" + sel.innerHTML;
         setVariablesAndRender([]);  // empty out mixer
         sel.onchange = function(evt) {
           if(evt.target.value) {
