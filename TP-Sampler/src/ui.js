@@ -163,16 +163,30 @@ define(function() {
   function viewSampler() {
     addClass(document.getElementById("tab-sampler"), "active");
     removeClass(document.getElementById("tab-options"), "active");
+    removeClass(document.getElementById("tab-about"), "active");
     show(document.getElementById("sampler"));
     hide(document.getElementById("options"));
+    hide(document.getElementById("about-panel"));
   }
 
   function viewOptions() {
     removeClass(document.getElementById("tab-sampler"), "active");
     addClass(document.getElementById("tab-options"), "active");
+    removeClass(document.getElementById("tab-about"), "active");
     hide(document.getElementById("sampler"));
     show(document.getElementById("options"));
     hide(document.getElementById("password-failed"));
+    hide(document.getElementById("about-panel"));
+  }
+
+  function viewAbout() {
+    removeClass(document.getElementById("tab-sampler"), "active");
+    removeClass(document.getElementById("tab-options"), "active");
+    addClass(document.getElementById("tab-about"), "active");
+    hide(document.getElementById("sampler"));
+    hide(document.getElementById("options"));
+    hide(document.getElementById("password-failed"));
+    show(document.getElementById("about-panel"));
   }
 
   function hideModel(hidden) {
@@ -296,6 +310,7 @@ define(function() {
     };
     document.getElementById("tab-sampler").onclick = viewSampler;
     document.getElementById("tab-options").onclick = viewOptions;
+    document.getElementById("tab-about").onclick = viewAbout;
 
     document.getElementById("with-replacement").onclick = function(evt) {
       setReplacement(evt.currentTarget.checked);

@@ -66,7 +66,7 @@ define([
         return codapInterface.init({
           name: appName,
           title: appName,
-          version: 'v0.4 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.5 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
         }).then( function( iInitialState) {
