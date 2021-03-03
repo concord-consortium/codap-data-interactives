@@ -17,59 +17,115 @@
 //  limitations under the License.
 // ==========================================================================
 
+const APP_NAME = 'CIDSEE Plugin';
+const DATASETS = [
+  {
+    name: 'CDC COVID State Data',
+    endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', ['datasource'], [
+        createElement('h3', null, [this.name]),
+        createElement('p', null, [
+          createElement('label', null, [
+              'Enter Two Char State Code: ',
+              createElement('input', null, [
+                  createAttribute('type', 'text'),
+                  createAttribute('style', 'width: 2em;')
+              ])
+          ])
+        ])
+      ]));
+    }
+  }
+]
+
 const DATASET_NAME = "CDC COVID State Data";
 const ENDPOINT = 'https://data.cdc.gov/resource/9mfq-cb36.json';
-const ATTRS = [
-  'submission_date',
-  'state',
-  'tot_cases',
-  'conf_cases',
-  'prob_cases',
-  'new_case',
-  'pnew_case',
-  'tot_death',
-  'conf_death',
-  'prob_death',
-  'new_death',
-  'pnew_death',
-  'created_at',
-  'consent_cases',
-  'consent_deaths'
-];
 
-function specifyDataset() {
+/**
+ * A utility to create a DOM element with classes and content.
+ * @param tag {string}
+ * @param [classList] {[string]}
+ * @param [content] {[Node]}
+ * @return {Element}
+ */
+function createElement(tag, classList, content) {
+  let el = document.createElement(tag);
+  if (classList) {
+    if (typeof classList === 'string') classList = [classList];
+    classList.forEach( function (cl) {el.classList.add(cl);});
+  }
+  if (content) {
+    if (!Array.isArray(content)) { content = [content];}
+    content.forEach(function(c) {
+      if (c instanceof Attr) {
+        el.setAttributeNode(c);
+      } else {
+        el.append(c);
+      }
+    });
+  }
+  return el;
+}
+
+/**
+ * A utility to create a DOM attribute node.
+ * @param name {string}
+ * @param value {*}
+ * @return {Attr}
+ */
+function createAttribute(name, value) {
+  let attr = document.createAttribute(name);
+  attr.value = value;
+  return attr;
+}
+
+/**
+ *
+ * @param datasetName {string}
+ * @param attributeNames {[string]}
+ * @return {{collections: [{name: string, attrs: *}], name, title}}
+ */
+function specifyDataset(datasetName, attributeNames) {
   return {
-    name: DATASET_NAME,
-    title: DATASET_NAME,
+    name: datasetName,
+    title: datasetName,
     collections: [{
       name: 'cases',
-      attrs: ATTRS.map(function (attr) {
+      attrs: attributeNames.map(function (attr) {
         return {name: attr};
       })
     }]
   };
 }
 
-function guaranteeDataset() {
-  return codapInterface.sendRequest({action: 'get', resource: `dataContext[${DATASET_NAME}]`})
+/**
+ *
+ * @param datasetName {string}
+ * @param attributeNames {[string]}
+ * @return Promise
+ */
+function guaranteeDataset(datasetName, attributeNames) {
+  return codapInterface.sendRequest({action: 'get', resource: `dataContext[${datasetName}]`})
       .then(function (result) {
         if (result && result.success) {
           return Promise.resolve(result.values);
         } else {
-          return codapInterface.sendRequest({action: 'create', resource: 'dataContext', values: specifyDataset()});
+          return codapInterface.sendRequest({
+            action: 'create',
+            resource: 'dataContext',
+            values: specifyDataset(datasetName, attributeNames)
+          });
         }
       })
 }
 
-function sendItemsToCODAP(response) {
-  if (response.ok) {
-    response.json().then(function (data) {
+function sendItemsToCODAP(data) {
       return codapInterface.sendRequest({
         action: 'create',
         resource: `dataContext[${DATASET_NAME}].item`,
         values: data
       })
-    })
         .then(function () {
           return codapInterface.sendRequest({
             action: 'create',
@@ -80,9 +136,6 @@ function sendItemsToCODAP(response) {
             }
           })
         });
-  } else {
-    return Promise.reject(response.statusText);
-  }
 }
 
 
@@ -93,6 +146,9 @@ function init() {
     dimensions:{width: 260, height: 240},
     preventDataContextReorg: false
   });
+  DATASETS.forEach(function (ds) {
+    ds.uiCreate(document.querySelector('.contents'));
+  })
   let button = document.querySelector('button');
   button.addEventListener('click', updateCODAP);
 }
@@ -102,13 +158,30 @@ function message(msg) {
   messageEl.innerHTML = msg;
 }
 
+function getAttrs(array) {
+  if (!Array.isArray(array) || !array[0] || (typeof array[0] !== "object")) {
+    return;
+  }
+  return Object.keys(array[0]);
+}
+
 function updateCODAP() {
   let stateCode = document.querySelector('input').value;
   if (stateCode && stateCode.length === 2) {
-    let url = ENDPOINT + `?state=${stateCode}`
-    guaranteeDataset()
-        .then(fetch(url).then(sendItemsToCODAP)
-        );
+    let url = ENDPOINT + `?state=${stateCode}`;
+    return fetch(url).then(function (response) {
+      if (response.ok) {
+        return response.json().then(function (data) {
+          let attrs = getAttrs(data)
+          return guaranteeDataset(DATASET_NAME, attrs)
+              .then(function () {
+                return sendItemsToCODAP(data);
+              });
+        });
+      } else {
+        return Promise.reject(response.statusText);
+      }
+    });
   } else {
     message('Please enter two character state code');
   }
