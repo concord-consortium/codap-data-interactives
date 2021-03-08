@@ -20,21 +20,120 @@
 const APP_NAME = 'CIDSEE Plugin';
 const DATASETS = [
   {
+    id: 'StateData',
     name: 'CDC COVID State Data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     uiCreate: function (parentEl) {
-      parentEl.append(createElement('div', ['datasource'], [
-        createElement('h3', null, [this.name]),
-        createElement('p', null, [
+      parentEl.append(createElement('div', null, [
           createElement('label', null, [
-              'Enter Two Char State Code: ',
+              'Enter Two Char State Abbr: ',
               createElement('input', null, [
                   createAttribute('type', 'text'),
                   createAttribute('style', 'width: 2em;')
               ])
           ])
+        ]));
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#StateData input[type=text]`).value;
+      if (stateCode && stateCode.length === 2) {
+        return this.endpoint + `?state=${stateCode}`;
+      } else {
+        message('Please enter two character state code');
+      }
+    }
+  },
+  {
+    id: 'DeathByCounty',
+    name: 'CDC COVID Death Counts by County',
+    endpoint: 'https://data.cdc.gov/resource/kn79-hsxy.json',
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Enter Two Char State Abbr: ',
+          createElement('input', null, [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 2em;')
+          ])
         ])
       ]));
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      if (stateCode) {
+        return this.endpoint + `?State=${stateCode}`;
+      } else {
+        message('Please enter full state name');
+      }
+    }
+  },
+  {
+    id: 'DeathConds',
+    name: 'CDC COVID Contributing Conditions',
+    endpoint: 'https://data.cdc.gov/resource/hk9y-quqm.json',
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Enter full state name: ',
+          createElement('input', null, [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 12em;')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      if (stateCode) {
+        return this.endpoint + `?state=${stateCode}`;
+      } else {
+        message('Please enter full state name');
+      }
+    }
+  },
+  {
+    id: 'ExcessDeaths',
+    name: 'CDC COVID Excess Deaths',
+    endpoint: 'https://data.cdc.gov/resource/xkkf-xrst.json',
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Enter full state name: ',
+          createElement('input', null, [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 12em;')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      if (stateCode) {
+        return this.endpoint + `?state=${stateCode}`;
+      } else {
+        message('Please enter full state name');
+      }
+    }
+  },
+  {
+    id: 'Microdata',
+    name: 'CDC Case Surveillance Public Use',
+    endpoint: 'https://data.cdc.gov/resource/vbim-akqf.json',
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Number of cases(max 5000): ',
+          createElement('input', null, [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 4em;')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      let value = document.querySelector(`#${this.id} input[type=text]`).value;
+      value = (value && isNaN(value))?5000:Math.min(value, 5000);
+      return this.endpoint + `?$limit=${value}`;
     }
   }
 ]
@@ -120,10 +219,10 @@ function guaranteeDataset(datasetName, attributeNames) {
       })
 }
 
-function sendItemsToCODAP(data) {
+function sendItemsToCODAP(datasetName, data) {
       return codapInterface.sendRequest({
         action: 'create',
-        resource: `dataContext[${DATASET_NAME}].item`,
+        resource: `dataContext[${datasetName}].item`,
         values: data
       })
         .then(function () {
@@ -143,11 +242,24 @@ function init() {
   codapInterface.init({
     name: 'CDC COVID Data',
     title: 'CDC COVID Data',
-    dimensions:{width: 260, height: 240},
+    dimensions:{width: 360, height: 440},
     preventDataContextReorg: false
   });
-  DATASETS.forEach(function (ds) {
-    ds.uiCreate(document.querySelector('.contents'));
+  let anchor = document.querySelector('.contents');
+  DATASETS.forEach(function (ds, ix) {
+    let el = createElement('div', ['datasource'], [
+      createAttribute('id', ds.id),
+      createElement('h3', null, [
+        createElement('input', null, [
+          createAttribute('type', 'radio'),
+          createAttribute('name', 'source'),
+          createAttribute('value', ix)
+        ]),
+        ds.name
+      ])
+    ]);
+    ds.uiCreate(el);
+    anchor.append(el);
   })
   let button = document.querySelector('button');
   button.addEventListener('click', updateCODAP);
@@ -166,25 +278,28 @@ function getAttrs(array) {
 }
 
 function updateCODAP() {
-  let stateCode = document.querySelector('input').value;
-  if (stateCode && stateCode.length === 2) {
-    let url = ENDPOINT + `?state=${stateCode}`;
-    return fetch(url).then(function (response) {
-      if (response.ok) {
-        return response.json().then(function (data) {
-          let attrs = getAttrs(data)
-          return guaranteeDataset(DATASET_NAME, attrs)
-              .then(function () {
-                return sendItemsToCODAP(data);
-              });
-        });
-      } else {
-        return Promise.reject(response.statusText);
-      }
-    });
-  } else {
-    message('Please enter two character state code');
+  let sourceSelect = document.querySelector('input[name=source]:checked');
+  if (!sourceSelect) {
+    message('Pick a source');
+    return;
   }
+  let sourceIX = Number(sourceSelect.value);
+  let url = DATASETS[sourceIX].makeURL();
+  if (!url) { return; }
+  console.log(`source: ${sourceIX}:${DATASETS[sourceIX].name}, url: ${url}`);
+  return fetch(url).then(function (response) {
+    if (response.ok) {
+      return response.json().then(function (data) {
+        let attrs = getAttrs(data)
+        return guaranteeDataset(DATASETS[sourceIX].name, attrs)
+            .then(function () {
+              return sendItemsToCODAP(DATASETS[sourceIX].name, data);
+            });
+      });
+    } else {
+      return Promise.reject(response.statusText);
+    }
+  });
 }
 
 window.addEventListener('load', init);
