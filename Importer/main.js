@@ -508,7 +508,7 @@ async function configureOrdinalAttribute() {
     let myCase = await codapHelper.getCaseByIndex(config.datasetID, constants.defaultImportsCollectionName, 0);
     if (myCase) {
       myCase.values[constants.ordinal_attribute_name] = 1;
-      codapHelper.updateCase(config.datasetID, constants.defaultImportsCollectionName, myCase)
+      await codapHelper.updateCase(config.datasetID, constants.defaultImportsCollectionName, myCase)
     }
   }
   config.sourceDataset.attributeNames.push(constants.ordinal_attribute_name);
@@ -548,9 +548,9 @@ async function importDataIntoCODAP() {
       if (result && result.success) {
         caseTableID = result.values.id;
       }
-      codapHelper.openTextBox(config.sourceDataset.datasetName, config.sourceDataset.resourceDescription);
+      // codapHelper.openTextBox(config.sourceDataset.datasetName, config.sourceDataset.resourceDescription);
       if (config.contentType === 'application/geo+json') {
-        codapHelper.openMap();
+        await codapHelper.openMap();
       }
     }
 
@@ -580,11 +580,14 @@ async function importDataIntoCODAP() {
     result = await codapHelper.sendRowsToCODAP(config.datasetID,
         config.sourceDataset.attributeNames, data, constants.chunkSize,
         config.sourceDataset.dataStartingRow);
+    if (result.success && caseTableID && config.sourceDataset.attributeNames.length <= 4) {
+      result = await codapHelper.autoscaleComponent(caseTableID);
+    }
 
     if (result && result.success) {
       if (caseTableID !== null) {
         setTimeout(async function () {
-          codapHelper.selectComponent(caseTableID);
+          await codapHelper.selectComponent(caseTableID);
           result = await codapHelper.closeSelf();
         }, 500);
       } else {
@@ -657,7 +660,7 @@ async function main() {
   // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
   config.pluginState = pluginState;
 
-  codapHelper.setVisibilityOfSelf(false);
+  await codapHelper.setVisibilityOfSelf(false);
 
   // then, if there is data or a url, get it and create the data set
   // otherwise display a dialog
@@ -671,20 +674,20 @@ async function main() {
     config.source = pluginState.url || pluginState.filename || pluginState.name;
 
     try {
-      codapHelper.indicateBusy(true);
+      await codapHelper.indicateBusy(true);
       config.sourceDataset = await retrieveData(pluginState);
     } catch (ex) {
       uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
       // uiControl.showSection('source-input');
-      codapHelper.setVisibilityOfSelf(true);
+      await codapHelper.setVisibilityOfSelf(true);
       return;
     } finally {
-      codapHelper.indicateBusy(false);
+      await codapHelper.indicateBusy(false);
     }
     if (!config.sourceDataset || !config.sourceDataset.table) {
       uiControl.displayMessage("Could not find tabular data in a format that can be imported into CODAP");
       // uiControl.showSection('source-input');
-      codapHelper.setVisibilityOfSelf(true);
+      await codapHelper.setVisibilityOfSelf(true);
     }
     else {
       let exitingDatasets = await codapHelper.retrieveDatasetList();
@@ -696,7 +699,7 @@ async function main() {
     }
   } else {
     uiControl.showSection('source-input', true);
-    codapHelper.setVisibilityOfSelf(true);
+    await codapHelper.setVisibilityOfSelf(true);
   }
 }
 

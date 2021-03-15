@@ -488,10 +488,21 @@ async function updateCase(datasetID, collectionName, iCase) {
   return sendToCODAP('update', resource, iCase);
 }
 
+async function autoscaleComponent (name) {
+  return await codapInterface.sendRequest({
+    action: 'notify',
+    resource: `component[${name}]`,
+    values: {
+      request: 'autoScale'
+    }
+  })
+}
+
 export {
   init,
   adjustHeightOfSelf,
   analyzeRawName,
+  autoscaleComponent,
   clearDataset,
   closeSelf,
   createParentCollection,
