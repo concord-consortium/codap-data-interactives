@@ -456,17 +456,35 @@
   },
 
   {
-    "name": "Create Parent Case",
+    "name": "Create Parent or Single Collection Case",
     "message": {
       "action": "create",
-      "resource": "dataContext[Mammals].collection[Toons].case",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
       "values": [
         {
           "values": {
-            "Name": "Mickey",
-            "Species": "Mouse",
-            "Gender": "Male",
-            "Studio": "Disney"
+            "Mammal": "Cartoon Mouse",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.03,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
+          }
+        },
+        {
+          "values": {
+            "Mammal": "Cartoon Duck",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.05,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
           }
         }
       ]
@@ -495,7 +513,7 @@
       "resource": "dataContext[Mammals].collection[Mammals].caseByID[15]",
       "values": {
         "values": {
-          "Species": "Duck"
+          "Mammal": "Duck"
         }
       }
     }
@@ -830,7 +848,7 @@
     }
   },
   {
-    "name": "Create Case Tables",
+    "name": "Create Case Table",
     "message": {
       "action": "create",
       "resource": "component",
@@ -838,6 +856,18 @@
         "type": "caseTable",
         "dataContext": "Mammals",
         "horizontalScrollOffset": 500
+      }
+    }
+  },
+  {
+    "name": "Create Case Card",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseCard",
+        "dataContext": "Mammals",
+        "position": "bottom"
       }
     }
   },
@@ -851,6 +881,20 @@
         "name": "name-webview",
         "title": "Concord",
         "URL": "http://concord.org",
+        "dimensions": {"width": 400, "height": 300}
+      }
+    }
+  },
+  {
+    "name": "Create Image View",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "image",
+        "name": "image",
+        "title": "Concord",
+        "URL": "https://codap.concord.org/_assets/img/education-logos.jpg",
         "dimensions": {"width": 400, "height": 300}
       }
     }
