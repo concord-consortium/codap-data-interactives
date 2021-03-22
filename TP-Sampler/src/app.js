@@ -395,13 +395,20 @@ function(Snap, CodapCom, View, ui, utils) {
         tSampleSize = Math.floor(sampleSize),
         tNumRuns = Math.floor(numRuns),
         // sample group size is the number of samples we will send in one message
-        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1));
+        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1)),
+        tItems = device === "mixer" ? "balls" : (device === "spinner" ? "segments" : "cases"),
+        tReplacement = withReplacement ? " (with replacement)" : " (without replacement)",
+        tUniqueVariables = new Set(variables),
+        tNumItems = device === "spinner" ? tUniqueVariables.size : variables.length,
+        tCollectorDataset = isCollector ? " from " + ui.getCollectorCollectionName() : "",
+        tDescription = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
+            tCollectorDataset + tReplacement;
 
     // this doesn't get written out in array, or change the length
     variables.EMPTY = "";
     experimentNumber += 1;
     codapCom.findOrCreateDataContext().then(function () {
-      codapCom.startNewExperimentInCODAP(experimentNumber, tSampleSize);
+      codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
 
       console.log('sample group size: ' + sampleGroupSize);
       sentRun = 0;
