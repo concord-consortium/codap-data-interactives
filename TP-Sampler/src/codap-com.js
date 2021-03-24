@@ -67,7 +67,7 @@ define([
         return codapInterface.init({
           name: appName,
           title: appName,
-          version: 'v0.6 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.7 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
         }).then( function( iInitialState) {
@@ -128,7 +128,7 @@ define([
                       name: 'experiments',
                       attrs: [
                         {name: attrNames.experiment, type: 'categorical'},
-                        {name: attrNames.experiment_description, type: 'categorical'},
+                        {name: attrNames.experiment_description, type: 'categorical', description: 'Feel free to edit!'},
                         {name: attrNames.sample_size, type: 'categorical'}
                       ],
                       childAttrName: "experiment"
@@ -198,7 +198,8 @@ define([
           resource: 'component',
           values: {
             type: 'caseTable',
-            dataContext: targetDataSetName
+            dataContext: targetDataSetName,
+            isIndexHidden: true
           }
         });
       },

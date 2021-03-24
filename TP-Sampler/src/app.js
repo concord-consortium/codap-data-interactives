@@ -403,7 +403,7 @@ function(Snap, CodapCom, View, ui, utils) {
         tNumRuns = Math.floor(numRuns),
         // sample group size is the number of samples we will send in one message
         sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1)),
-        tItems = device === "mixer" ? "balls" : (device === "spinner" ? "segments" : "cases"),
+        tItems = device === "mixer" ? "items" : (device === "spinner" ? "sections" : "cases"),
         tReplacement = withReplacement ? " (with replacement)" : " (without replacement)",
         tUniqueVariables = new Set(variables),
         tNumItems = device === "spinner" ? tUniqueVariables.size : variables.length,
