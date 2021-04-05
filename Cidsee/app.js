@@ -135,7 +135,48 @@ const DATASETS = [
       value = (value && isNaN(value))?5000:Math.min(value, 5000);
       return this.endpoint + `?$limit=${value}`;
     }
+  },
+  {
+    id: 'Microdata2',
+    name: 'CDC COVID-19 Case Surveillance Public Use Data with Geography',
+    endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
+    default: true,
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Enter Two Char State Abbr: ',
+          createElement('input', 'in-state-digraph', [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 2em;')
+          ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'Enter county name: ',
+          createElement('input', 'in-county', [
+            createAttribute('type', 'text'),
+            createAttribute('style', 'width: 12em;')
+          ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'Number of cases(max 5000): ',
+          createElement('input', 'in-limit', [
+            createAttribute('type', 'number'),
+            createAttribute('style', 'width: 4em;')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      let limit = document.querySelector(`#${this.id} .in-limit`).value;
+      limit = (isNaN(limit) || limit <= 0)?5000:Math.min(limit, 5000);
+      let stateAbbr = document.querySelector(`#${this.id} .in-state-digraph`).value.toUpperCase();
+      let county = document.querySelector(`#${this.id} .in-county`).value.toUpperCase();
+      return this.endpoint + `?res_state=${stateAbbr}&res_county=${county}&$limit=${limit}`;
+    }
   }
+
 ]
 
 const DATASET_NAME = "CDC COVID State Data";
@@ -237,6 +278,11 @@ function sendItemsToCODAP(datasetName, data) {
         });
 }
 
+function selectSource(ev) {
+  // this is the selected event
+  document.querySelectorAll('.datasource').forEach((el) => el.classList.remove('selected-source'));
+  this.parentElement.parentElement.classList.add('selected-source');
+}
 
 function init() {
   codapInterface.init({
@@ -260,7 +306,13 @@ function init() {
     ]);
     ds.uiCreate(el);
     anchor.append(el);
+    if (ds.default) {
+      let input = el.querySelector('input');
+      input.checked = true;
+      el.classList.add('selected-source')
+    }
   })
+  document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
   let button = document.querySelector('button');
   button.addEventListener('click', updateCODAP);
 }
