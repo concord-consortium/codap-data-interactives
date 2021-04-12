@@ -1,0 +1,31 @@
+body {
+  background: white;
+  font-size: smaller;
+}
+
+.datasource div {
+  /*display: none;*/
+  max-height: 0;
+  transition: max-height 1s ease-out;
+  overflow-y: hidden;
+}
+
+.datasource.selected-source div {
+  /*display: block;*/
+  max-height: 200px;
+  transition: max-height 1s ease-in;
+  overflow-y: hidden;
+}
+
+.datasource h3 {
+  margin-top: .25em;
+  margin-bottom: .25em;
+}
+
+.datasource input[type='text'] {
+  padding: 0;
+}
+
+.datasource label {
+  margin-left: 1em;
+}

@@ -76,7 +76,7 @@
 
 (function (global) {
 
-  var iframePh = (typeof module !== 'undefined')? require('iframe-phone') : iframePhone;
+  var iframePh = (typeof module !== 'undefined')? require('lib/iframe-phone') : iframePhone;
 
   var config = null;
 

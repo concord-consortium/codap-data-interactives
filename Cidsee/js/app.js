@@ -16,8 +16,9 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+// import {calendar} from './calendar.js';
 
-const APP_NAME = 'CIDSEE Plugin';
+const APP_NAME = 'CDC COVID Data';
 const DATASETS = [
   {
     id: 'StateData',
@@ -37,7 +38,7 @@ const DATASETS = [
     makeURL: function () {
       let stateCode = document.querySelector(`#StateData input[type=text]`).value;
       if (stateCode && stateCode.length === 2) {
-        return this.endpoint + `?state=${stateCode}`;
+        return this.endpoint + `?state=${stateCode.toUpperCase()}`;
       } else {
         message('Please enter two character state code');
       }
@@ -61,9 +62,9 @@ const DATASETS = [
     makeURL: function () {
       let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
       if (stateCode) {
-        return this.endpoint + `?State=${stateCode}`;
+        return this.endpoint + `?State=${stateCode.toUpperCase()}`;
       } else {
-        message('Please enter full state name');
+        message('Please enter two character state code');
       }
     }
   },
@@ -83,11 +84,11 @@ const DATASETS = [
       ]));
     },
     makeURL: function () {
-      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
-      if (stateCode) {
-        return this.endpoint + `?state=${stateCode}`;
+      let stateName = document.querySelector(`#${this.id} input[type=text]`).value;
+      if (stateName) {
+        return this.endpoint + `?state=${toInitialCaps(stateName)}`;
       } else {
-        message('Please enter full state name');
+        message('Please enter full state name(initial caps)');
       }
     }
   },
@@ -109,7 +110,7 @@ const DATASETS = [
     makeURL: function () {
       let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
       if (stateCode) {
-        return this.endpoint + `?state=${stateCode}`;
+        return this.endpoint + `?state=${toInitialCaps(stateCode)}`;
       } else {
         message('Please enter full state name');
       }
@@ -165,22 +166,38 @@ const DATASETS = [
             createAttribute('type', 'number'),
             createAttribute('style', 'width: 4em;')
           ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+            'Start date: ',
+            createElement('input', ['in-start-date'], [
+                createAttribute('type', 'date')
+            ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'End date: ',
+          createElement('input', ['in-end-date'], [
+            createAttribute('type', 'date')
+          ])
         ])
       ]));
     },
     makeURL: function () {
       let limit = document.querySelector(`#${this.id} .in-limit`).value;
       limit = (isNaN(limit) || limit <= 0)?5000:Math.min(limit, 5000);
-      let stateAbbr = document.querySelector(`#${this.id} .in-state-digraph`).value.toUpperCase();
+      let limitPhrase = `$limit=${limit}`
+      let stateCode = document.querySelector(`#${this.id} .in-state-digraph`).value.toUpperCase();
+      let stateCodePhrase = stateCode? `res_state=${stateCode}&`: '';
       let county = document.querySelector(`#${this.id} .in-county`).value.toUpperCase();
-      return this.endpoint + `?res_state=${stateAbbr}&res_county=${county}&$limit=${limit}`;
+      let countyPhrase = county?`res_county=${county}&`: '';
+      let startDate = document.querySelector(`#${this.id} .in-start-date`).value;
+      let endDate = document.querySelector(`#${this.id} .in-end-date`).value;
+      let datePhrase = (startDate && endDate)? `$where=case_month>='${startDate}' AND case_month<='${endDate}'&`: '';
+      return this.endpoint + `?${stateCodePhrase}${countyPhrase}${datePhrase}${limitPhrase}`;
     }
   }
-
 ]
-
-const DATASET_NAME = "CDC COVID State Data";
-const ENDPOINT = 'https://data.cdc.gov/resource/9mfq-cb36.json';
 
 /**
  * A utility to create a DOM element with classes and content.
@@ -218,6 +235,13 @@ function createAttribute(name, value) {
   let attr = document.createAttribute(name);
   attr.value = value;
   return attr;
+}
+
+function toInitialCaps(str) {
+  return str.split(/ +/)
+      .map(function (w) {
+        return w.toLowerCase().replace(/./, w[0].toUpperCase());
+      }).join(' ');
 }
 
 /**
@@ -272,13 +296,13 @@ function sendItemsToCODAP(datasetName, data) {
             resource: `component`,
             values: {
               type: "caseTable",
-              dataContext: DATASET_NAME
+              dataContext: datasetName
             }
           })
         });
 }
 
-function selectSource(ev) {
+function selectSource(/*ev*/) {
   // this is the selected event
   document.querySelectorAll('.datasource').forEach((el) => el.classList.remove('selected-source'));
   this.parentElement.parentElement.classList.add('selected-source');
@@ -286,8 +310,8 @@ function selectSource(ev) {
 
 function init() {
   codapInterface.init({
-    name: 'CDC COVID Data',
-    title: 'CDC COVID Data',
+    name: APP_NAME,
+    title: APP_NAME,
     dimensions:{width: 360, height: 440},
     preventDataContextReorg: false
   });
@@ -313,8 +337,19 @@ function init() {
     }
   })
   document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
-  let button = document.querySelector('button');
-  button.addEventListener('click', updateCODAP);
+  let button = document.querySelector('button.fetch-button');
+  button.addEventListener('click', function () {
+    updateCODAP().then(
+        function (result) {
+          if (!result.success) {
+            message(`Import to CODAP failed. ${result.values.error}`)
+          }
+        },
+        function (err) {
+          message(err);
+        }
+    );
+  });
 }
 
 function message(msg) {
@@ -342,11 +377,16 @@ function updateCODAP() {
   return fetch(url).then(function (response) {
     if (response.ok) {
       return response.json().then(function (data) {
-        let attrs = getAttrs(data)
-        return guaranteeDataset(DATASETS[sourceIX].name, attrs)
-            .then(function () {
-              return sendItemsToCODAP(DATASETS[sourceIX].name, data);
-            });
+        let attrs = getAttrs(data);
+        if (attrs) {
+          return guaranteeDataset(DATASETS[sourceIX].name, attrs)
+              .then(function () {
+                return sendItemsToCODAP(DATASETS[sourceIX].name, data);
+              });
+        }
+        else {
+          return Promise.reject('CDC Server returned no data');
+        }
       });
     } else {
       return Promise.reject(response.statusText);
