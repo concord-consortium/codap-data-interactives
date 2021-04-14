@@ -264,13 +264,19 @@ async function fetchStationDataset(url) {
 
 /**
  * Initializes state of plugin from that persisted in CODAP document.
+ * We make our local `state` reference that state, so that CODAP will save
+ * its values with the document.
  * @param documentState {object}
  */
 function initializeState(documentState) {
-  Object.assign(state, documentState);
-  if (!state.userSelectedDate) {
-    configureDates(state)
-  }
+  // sync documentState properties to state, for properties that are unassigned
+  Object.keys(state).forEach(function (key) {
+    if (documentState[key] == null) {
+      documentState[key] = state[key];
+    }
+  });
+  state = documentState;
+  configureDates(state)
   state.sampleFrequency = state.sampleFrequency
       || constants.reportTypeMap[documentState.database];
 
@@ -471,6 +477,10 @@ async function stationLocationHandler (location) {
  * @param values {{startDate,endDate}}
  */
 function dateRangeSubmitHandler(values) {
+  if (values.startDate !== state.startDate ||
+      values.endDate !== state.endDate) {
+    state.userSelectedDate = true;
+  }
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
   updateView();
