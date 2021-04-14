@@ -23,6 +23,7 @@ const DATASETS = [
   {
     id: 'StateData',
     name: 'CDC COVID State Data',
+    documentation: 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -48,8 +49,11 @@ const DATASETS = [
     id: 'DeathByCounty',
     name: 'CDC COVID Death Counts by County',
     endpoint: 'https://data.cdc.gov/resource/kn79-hsxy.json',
+    documentation: 'https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-in-the-United-St/kn79-hsxy',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
+        'Data is cumulative not historical. One row per county.',
+        createElement('br', [], []),
         createElement('label', null, [
           'Enter Two Char State Abbr: ',
           createElement('input', null, [
@@ -58,11 +62,13 @@ const DATASETS = [
           ])
         ])
       ]));
+
     },
     makeURL: function () {
       let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      let stateCodePhrase = stateCode? `State=${stateCode.toUpperCase()}&`: '';
       if (stateCode) {
-        return this.endpoint + `?State=${stateCode.toUpperCase()}`;
+        return this.endpoint + `?${stateCodePhrase}`;
       } else {
         message('Please enter two character state code');
       }
@@ -71,6 +77,7 @@ const DATASETS = [
   {
     id: 'DeathConds',
     name: 'CDC COVID Contributing Conditions',
+    documentation: 'https://www.splitgraph.com/cdc-gov/conditions-contributing-to-deaths-involving-hk9y-quqm',
     endpoint: 'https://data.cdc.gov/resource/hk9y-quqm.json',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -95,6 +102,7 @@ const DATASETS = [
   {
     id: 'ExcessDeaths',
     name: 'CDC COVID Excess Deaths',
+    documentation: 'https://data.cdc.gov/NCHS/Excess-Deaths-Associated-with-COVID-19/xkkf-xrst',
     endpoint: 'https://data.cdc.gov/resource/xkkf-xrst.json',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -119,6 +127,7 @@ const DATASETS = [
   {
     id: 'Microdata',
     name: 'CDC Case Surveillance Public Use',
+    documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf',
     endpoint: 'https://data.cdc.gov/resource/vbim-akqf.json',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -140,6 +149,7 @@ const DATASETS = [
   {
     id: 'Microdata2',
     name: 'CDC COVID-19 Case Surveillance Public Use Data with Geography',
+    documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
     default: true,
     uiCreate: function (parentEl) {
@@ -326,8 +336,16 @@ function init() {
           createAttribute('value', ix)
         ]),
         ds.name
+      ]),
+      createElement('div', [], [
+        createElement('a', [], [
+            createAttribute('href', ds.documentation),
+            createAttribute('target', '_blank'),
+            'dataset documentation'
+        ])
       ])
     ]);
+
     ds.uiCreate(el);
     anchor.append(el);
     if (ds.default) {
