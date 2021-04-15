@@ -149,9 +149,9 @@ const DATASETS = [
   {
     id: 'Microdata2',
     name: 'CDC COVID-19 Case Surveillance Public Use Data with Geography',
+    default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
-    default: true,
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -206,9 +206,50 @@ const DATASETS = [
       let datePhrase = (startDate && endDate)? `$where=case_month>='${startDate}' AND case_month<='${endDate}'&`: '';
       return this.endpoint + `?${stateCodePhrase}${countyPhrase}${datePhrase}${limitPhrase}`;
     }
+  },
+  {
+    id: 'Microdata3',
+    name: 'CDC COVID-19 Case Surveillance Lancaster Co, PA',
+    documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
+    endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
+    downsample: true,
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+          'Number of cases(max 1000): ',
+          createElement('input', 'in-limit', [
+            createAttribute('type', 'number'),
+            createAttribute('min', '0'),
+            createAttribute('max', '1000'),
+            createAttribute('step', '100'),
+            createAttribute('value', '500'),
+            createAttribute('style', 'width: 4em;')
+          ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'Month: ',
+          createElement('input', ['in-month'], [
+            createAttribute('type', 'month'),
+            createAttribute('min', '2020-01')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      const stateCode = 'PA', county='LANCASTER';
+      downsampleGoal = document.querySelector(`#${this.id} .in-limit`).value;
+      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?500:Math.min(downsampleGoal, 1000);
+      let limitPhrase = `$limit=20000`
+      let stateCodePhrase = `res_state=${stateCode}&`;
+      let countyPhrase = county?`res_county=${county}&`: '';
+      let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
+      let datePhrase = `case_month=${month}&`;
+      return this.endpoint + `?${stateCodePhrase}${countyPhrase}${datePhrase}${limitPhrase}`;
+    }
   }
 ]
-
+let downsampleGoal = 500;
 /**
  * A utility to create a DOM element with classes and content.
  * @param tag {string}
@@ -357,7 +398,7 @@ function init() {
   document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
   let button = document.querySelector('button.fetch-button');
   button.addEventListener('click', function () {
-    updateCODAP().then(
+    fetchDataAndProcess().then(
         function (result) {
           if (!result.success) {
             message(`Import to CODAP failed. ${result.values.error}`)
@@ -382,7 +423,40 @@ function getAttrs(array) {
   return Object.keys(array[0]);
 }
 
-function updateCODAP() {
+function downsampleRandom(data, targetCount, start) {
+  let dataLength = data.length - start;
+  let ct = Math.min(dataLength, Math.max(0, targetCount));
+  let randomAreSelected = ct < (dataLength/2);
+  let pickArray = new Array(dataLength).fill(!randomAreSelected);
+  if (!randomAreSelected) {
+    ct = dataLength - ct;
+  }
+
+  // construct an array of selection choices
+  let i = 0;
+  while (i < ct) {
+    let value = Math.floor(Math.random()*dataLength);
+    if (pickArray[value] !== randomAreSelected) {
+      i++;
+      pickArray[value] = randomAreSelected;
+    }
+  }
+
+  let newData = [];
+  // copy the non-data rows
+  for (let ix = 0; ix < start; ix += 1) {
+    newData.push(data[ix]);
+  }
+  // use pick array to determine if we should add each row of original table to new
+  pickArray.forEach(function(shouldPick, ix) {
+    if (shouldPick) newData.push(data[ix + start]);
+  });
+
+  return newData;
+}
+
+
+function fetchDataAndProcess() {
   let sourceSelect = document.querySelector('input[name=source]:checked');
   if (!sourceSelect) {
     message('Pick a source');
@@ -395,6 +469,9 @@ function updateCODAP() {
   return fetch(url).then(function (response) {
     if (response.ok) {
       return response.json().then(function (data) {
+        if (DATASETS[sourceIX].downsample && downsampleGoal) {
+          data = downsampleRandom(data, downsampleGoal, 0);
+        }
         let attrs = getAttrs(data);
         if (attrs) {
           return guaranteeDataset(DATASETS[sourceIX].name, attrs)
