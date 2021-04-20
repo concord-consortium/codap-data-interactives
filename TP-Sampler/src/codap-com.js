@@ -30,6 +30,7 @@ define([
       // list of attribute names. We will listen for changes on these and update as needed
       this.attrNames = {
         experiment: "experiment",
+        experiment_description: "description",
         sample_size: "sample_size",
         sample: "sample",
         value: "value"
@@ -66,7 +67,7 @@ define([
         return codapInterface.init({
           name: appName,
           title: appName,
-          version: 'v0.6 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.7 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
         }).then( function( iInitialState) {
@@ -101,8 +102,8 @@ define([
             function getAttributeIds() {
               // need to get all the ids of the newly-created attributes, so we can notice if they change.
               // we will set these ids on the attrIds object
-              const allAttrs = [["experiments", attrNames.experiment],["experiments", attrNames.sample_size],
-                                ["samples", attrNames.sample], ["items", attrNames.value]];
+              const allAttrs = [["experiments", attrNames.experiment],["description", attrNames.experiment_description],
+                                ["experiments", attrNames.sample_size], ["samples", attrNames.sample], ["items", attrNames.value]];
               const reqs = allAttrs.map(collectionAttr => ({
                   "action": "get",
                   "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
@@ -127,6 +128,7 @@ define([
                       name: 'experiments',
                       attrs: [
                         {name: attrNames.experiment, type: 'categorical'},
+                        {name: attrNames.experiment_description, type: 'categorical', description: 'Feel free to edit!'},
                         {name: attrNames.sample_size, type: 'categorical'}
                       ],
                       childAttrName: "experiment"
@@ -172,7 +174,7 @@ define([
         this.codapConnected = false;
       },
 
-      startNewExperimentInCODAP: function(experimentNumber, sampleSize) {
+      startNewExperimentInCODAP: function(experimentNumber, description, sampleSize) {
         var _this = this;
         if (!_this.codapConnected) {
           console.log('Not in CODAP');
@@ -181,6 +183,7 @@ define([
 
         this.itemProto = {
           experiment: experimentNumber,
+          experiment_description: description,
           sample_size: sampleSize
         };
       },
@@ -195,7 +198,8 @@ define([
           resource: 'component',
           values: {
             type: 'caseTable',
-            dataContext: targetDataSetName
+            dataContext: targetDataSetName,
+            isIndexHidden: true
           }
         });
       },

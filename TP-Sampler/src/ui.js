@@ -6,6 +6,8 @@
 
 define(function() {
 
+  var collectorCollectionName = '';
+
   function addClass(el, className) {
     if (el.classList)
       el.classList.add(className);
@@ -114,6 +116,10 @@ define(function() {
     }
   }
 
+  function getCollectionName() {
+    var sel = document.getElementById("select-collection");
+  }
+
   function populateContextsList(caseVariables, view, codapCom) {
     return function (collections) {
       var sel = document.getElementById("select-collection");
@@ -139,7 +145,8 @@ define(function() {
       }
 
       if (sel.childNodes.length === 1) {
-        codapCom.setCasesFromContext(sel.childNodes[0].value, caseVariables)
+        collectorCollectionName = sel.childNodes[0].value;
+        codapCom.setCasesFromContext(collectorCollectionName, caseVariables)
           .then(setVariablesAndRender);
         codapCom.logAction('chooseCollection: %@ (auto)', sel.childNodes[0].value);
       } else {
@@ -147,12 +154,17 @@ define(function() {
         setVariablesAndRender([]);  // empty out mixer
         sel.onchange = function(evt) {
           if(evt.target.value) {
-            codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
+            collectorCollectionName = evt.target.value;
+            codapCom.setCasesFromContext(collectorCollectionName).then(setVariablesAndRender);
             codapCom.logAction('chooseCollection: %@', evt.target.value);
           }
         };
       }
     };
+  }
+
+  function getCollectorCollectionName() {
+    return collectorCollectionName;
   }
 
   function toggleDevice(oldDevice, newDevice) {
@@ -354,6 +366,7 @@ define(function() {
   }
 
   return {
+    getCollectorCollectionName: getCollectorCollectionName,
     appendUIHandlers: appendUIHandlers,
     enableButtons: enableButtons,
     disableButtons: disableButtons,
@@ -363,6 +376,7 @@ define(function() {
     toggleDevice: toggleDevice,
     renderVariableControls: renderVariableControls,
     populateContextsList: populateContextsList,
+    getCollectionName: getCollectionName,
     setRunButtonMode: setRunButtonMode,
     render: render
   };
