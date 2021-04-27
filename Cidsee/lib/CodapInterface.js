@@ -207,7 +207,7 @@
      * @param iConfig {object} Configuration. Optional properties: title {string},
      *                        version {string}, dimensions {object}
      *
-     * @param iCallback {function(interactiveState)}
+     * @param [iCallback] {function(interactiveState)}
      * @return {Promise} Promise of interactiveState;
      */
     init: function (iConfig, iCallback) {
@@ -315,8 +315,8 @@
      * Sends a request to CODAP. The format of the message is as defined in
      * {@link https://github.com/concord-consortium/codap/wiki/CODAP-Data-Interactive-API}.
      *
-     * @param message {String}
-     * @param callback {function(response, request)} Optional callback to handle
+     * @param message {{action: string, resource:string, [values]:any}}
+     * @param [callback] {function(response, request)} Optional callback to handle
      *    the CODAP response. Note both the response and the initial request will
      *    sent.
      *

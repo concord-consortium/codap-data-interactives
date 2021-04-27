@@ -149,7 +149,6 @@ const DATASETS = [
   {
     id: 'Microdata2',
     name: 'CDC COVID-19 Case Surveillance Public Use Data with Geography',
-    default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
     uiCreate: function (parentEl) {
@@ -246,6 +245,89 @@ const DATASETS = [
       let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
       let datePhrase = `case_month=${month}&`;
       return this.endpoint + `?${stateCodePhrase}${countyPhrase}${datePhrase}${limitPhrase}`;
+    }
+  },
+  {
+    id: 'Microdata4',
+    name: 'CDC COVID-19 Case Surveillance Selected States & Counties',
+    default: true,
+    documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
+    endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
+    downsample: true,
+    uiCreate: function (parentEl) {
+      parentEl.append(createElement('div', null, [
+        createElement('label', null, [
+            'State or county: ',
+            createElement('select', 'in-geo', [
+              createAttribute('id', 'in-geo'),
+              createElement('option', null, [
+                'Colorado',
+                createAttribute('value', 'res_state=CO')
+              ]),
+              createElement('option', null, [
+                'Maine',
+                createAttribute('value', 'res_state=ME')
+              ]),
+              createElement('option', null, [
+                'Nebraska',
+                createAttribute('value', 'res_state=NE')
+              ]),
+              createElement('option', null, [
+                'Connecticut',
+                createAttribute('value', 'res_state=CT')
+              ]),
+              createElement('option', null, [
+                'Pennsylvania',
+                createAttribute('value', 'res_state=PA')
+              ]),
+              createElement('option', null, [
+                'Indiana',
+                createAttribute('value', 'res_state=IN')
+              ]),
+              createElement('option', null, [
+                'New York',
+                createAttribute('value', 'res_state=NY')
+              ]),
+              createElement('option', null, [
+                'Orange County, CA',
+                createAttribute('value', 'res_state=CA&res_county=ORANGE')
+              ]),
+              createElement('option', null, [
+                'Missouri',
+                createAttribute('value', 'res_state=MO')
+              ]),
+            ])
+          ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'Number of cases(max 1000): ',
+          createElement('input', 'in-limit', [
+            createAttribute('type', 'number'),
+            createAttribute('min', '0'),
+            createAttribute('max', '1000'),
+            createAttribute('step', '100'),
+            createAttribute('value', '500'),
+            createAttribute('style', 'width: 4em;')
+          ])
+        ]),
+        createElement('br', null, null),
+        createElement('label', null, [
+          'Month: ',
+          createElement('input', ['in-month'], [
+            createAttribute('type', 'month'),
+            createAttribute('min', '2020-01')
+          ])
+        ])
+      ]));
+    },
+    makeURL: function () {
+      downsampleGoal = document.querySelector(`#${this.id} .in-limit`).value;
+      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?500:Math.min(downsampleGoal, 1000);
+      let limitPhrase = `$limit=100000`
+      let stateCodePhrase = document.querySelector(`#${this.id} .in-geo`).value;
+      let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
+      let datePhrase = `&case_month=${month}&`;
+      return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
     }
   }
 ]
@@ -464,9 +546,11 @@ function fetchDataAndProcess() {
   }
   let sourceIX = Number(sourceSelect.value);
   let url = DATASETS[sourceIX].makeURL();
+  let headers = new Headers();
+  headers.append('X-App-Token', 'CYxytZqW1xHsoBvRkE7C74tUL');
   if (!url) { return; }
   console.log(`source: ${sourceIX}:${DATASETS[sourceIX].name}, url: ${url}`);
-  return fetch(url).then(function (response) {
+  return fetch(url, {headers: headers}).then(function (response) {
     if (response.ok) {
       return response.json().then(function (data) {
         if (DATASETS[sourceIX].downsample && downsampleGoal) {

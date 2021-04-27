@@ -24,7 +24,9 @@ Historical Climatology Network) ids. To regenerate this data:
 ```
 *Important*: The second script, noaa-cdo-station-list-all, requires an access token. 
 This can be obtained for no cost from https://www.ncdc.noaa.gov/cdo-web/webservices/v2.
-Once obtained, this token should be placed in a text file file named, .noaa_rc, like:
+Once obtained, this token should be placed in a text file named, .noaa_rc, in 
+the current working directory or your home directory. 
+Like:
 ```shell script
 CDO_TOKEN=[your token]
 ```
