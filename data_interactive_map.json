@@ -751,6 +751,17 @@
       "categories": [
         "Partners"
       ]
+    },
+    {
+      "title": "Choosy",
+      "description": "A utility to help organize how the data in a dataset is presented in CODAP",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/Choosy/index.html",
+      "visible": "true",
+      "categories": [
+        "Partners"
+      ]
     }
   ]
 }

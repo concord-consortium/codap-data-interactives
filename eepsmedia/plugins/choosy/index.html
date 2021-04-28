@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 9/29/20.
+ 
+ 
+ ==========================================================================
+index in choosy
+
+    Author:   Tim Erickson
+
+Copyright (c) 2020 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+-->
+
+<!--
+  LOCAL, TESTING:         http://localhost/plugins/choosy/
+  LOCAL testing WITH CODAP:
+        http://localhost/codap/static/dg/en/cert/index.html?di=http://localhost/plugins/choosy/
+-->
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Choosy</title>
+
+    <!--        jquery section      -->
+    <script src="../../common/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" type='text/css' href="../../common/jquery/jquery-ui.min.css">
+    <script src="../../common/jquery/jquery-ui.min.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel='stylesheet' type='text/css' href='css/choosy.css'/>
+
+    <script src="../../common/src/iframe-phone.js"></script>
+    <script src="../../common/src/codapInterface.js"></script>
+    <script src="../../common/src/pluginHelper.js"></script>
+    <script type="module" src="../../common/src/TEEUtils.js"></script>
+
+
+    <script src="src/choosy.js"></script>
+    <script src="src/choosy_ui.js"></script>
+    <script src="src/connect.js"></script>
+    <script src="src/notify.js"></script>
+
+    <script src="../../common/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            choosy.initialize();
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#dataset">dataset</a></li>
+        <li><a href="#atts">attributes</a></li>
+        <li><a href="#tag-cases">tag cases</a></li>
+    </ul>
+
+
+    <div id="dataset">
+        <div id="choosyHeaderDIV" class="stripe">
+            <h1 class="stripe-hed">Choosy</h1>&emsp;
+            <img class="stripe-element"
+                 src="../../common/art/refresh-empty.png"
+                 onclick="choosy.setUpDatasets()"
+                 style="cursor: pointer"
+                 height="16"
+                 title="refresh" alt="refresh button"
+            >
+            <a class="stripe-element"
+               target="_blank" href="https://github.com/eepsmedia/plugins/blob/master/choosy/readme.md#choosy">
+                <img src="../../common/art/info.png" class="infoIcon" alt="info"
+                     title="Drag the URL into an existing CODAP document. Categorize attributes. Tag cases.">
+            </a>
+
+        </div>
+
+        <div id="chooseDatasetDIV" class="stripe">
+            <div class="stripe-element" id="chooseDatasetControl"></div>
+
+        </div>
+
+        <div id="summaryDIV" class="stripe">
+            <div id="summaryInfo" class="stripe-element"></div>
+        </div>
+
+    </div>
+
+    <div id="atts">
+        <div class="stripe">
+            <div>Group attributes by: </div>
+            <div
+                    id="attribute-grouping-mode-control"
+                    onmousedown="choosy.handlers.toggleAttributeGroupingMode()">
+            </div>
+<!--
+            <input id="byBatchButton" name="batchingStrategyRadioGroup"
+                   onchange="choosy_ui.update()"
+                   value="byBatch" type="radio" checked>
+            <span>batch  | layer</span>
+            <input id="byLevelButton" name="batchingStrategyRadioGroup"
+                   onchange="choosy_ui.update()"
+                   value="byLevel" type="radio">
+-->
+        </div>
+
+        <div id="batchNameDIV" class="stripe">
+            New batch name: &ensp;
+            <input type="text" id="batch-name-text-input"
+                   placeholder="batch name"
+                   style="width : 99px;"
+                   onchange="choosy_ui.changeAttributeBatchNameInput()">
+
+        </div>
+        <div id="chooseAttributeDiv"></div>
+
+    </div>
+
+    <!--
+        Cases and Tags
+    -->
+    <div id="tag-cases">
+
+        <fieldset>
+            <legend>Selected</legend>
+            <div id="selection-status"></div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Tag selected cases!</legend>
+            <div class="stripe">
+
+                <input type="radio" name="tag-mode" value="simple" id="simple-mode-radio"
+                       onchange="choosy.handlers.changeTagMode()"> simple
+                <input type="radio" name="tag-mode" value="binary" id="binary-mode-radio"
+                       onchange="choosy.handlers.changeTagMode()" checked> binary
+                <input type="radio" name="tag-mode" value="random" id="random-mode-radio"
+                       onchange="choosy.handlers.changeTagMode()"> random
+            </div>
+
+            <div id="simple-tag">
+                <p>Tag the selected cases with the value in the box.</p>
+                <label class="selection-text-input-label" for="tag-value-input">Tag value: </label>
+                <input id="tag-value-input" type="text" class="tag-name-box">
+
+                <div id="select-buttons" class="tag-button-cluster stripe">
+                    &emsp;
+                    <img id="add-button" class="medium-button-image" src="../../common/art/add.png"
+                         alt="add button"
+                         onclick='choosy.handlers.applyTagToSelection("add")'>
+                    &ensp;
+                    <label for="add-button">tag selection</label>
+                    &emsp;
+                    <img id="subtract-button" class="medium-button-image" src="../../common/art/subtract.png"
+                         alt="subtract button"
+                         onclick='choosy.handlers.applyTagToSelection("remove")'>
+                    &ensp;
+                    <label for="subtract-button">un-tag</label>
+                    &emsp;
+                </div>
+            </div>
+
+            <div id="binary-tag">
+                <p>Tag the selected cases with the value in the first box.
+                    Everything else gets the value in the second box.</p>
+
+                <label class="selection-text-input-label" for="tag-value-selected">Selected: </label>
+                <input id="tag-value-selected" type="text"
+                       class="tag-name-box">
+                <br>
+                <label class="selection-text-input-label" for="tag-value-not-selected">The rest: </label>
+                <input id="tag-value-not-selected" type="text" class="tag-name-box">
+
+                <div id="binary-select-buttons" class="tag-button-cluster stripe">
+                    &emsp;
+                    <img id="binary-tag-button" class="medium-button-image" src="../../common/art/add.png"
+                         width="24" alt="add button"
+                         onclick='choosy.handlers.applyBinaryTags()'>
+                    &ensp;
+                    <label for="binary-tag-button">tag the selection and the rest</label>
+                    &emsp;
+                </div>
+            </div>
+
+            <div id="random-tag">
+                <p>Randomly put a proportion of the cases into "Group A."
+                    The rest are "Group B."<br>
+                    Enter how you want them tagged.</p>
+
+                <label class="selection-text-input-label" for="tag-value-selected">proportion in group A:
+                <input id="tag-percentage" type="text" class="tag-number-box" value="20%">
+                </label>
+                <br>(Enter a fraction, decimal, or percentage)
+                <br>
+
+                <label class="selection-text-input-label" for="tag-value-group-A">Call group A: </label>
+                <input id="tag-value-group-A" type="text" class="tag-name-box">
+                <br>
+                <label class="selection-text-input-label" for="tag-value-group-B">Call group B: </label>
+                <input id="tag-value-group-B" type="text" class="tag-name-box">
+
+                <div id="random-select-buttons" class="tag-button-cluster stripe">
+                    &emsp;
+                    <img id="random-tag-button" class="medium-button-image" src="../../common/art/add.png"
+                         width="24" alt="add button"
+                         onclick='choosy.handlers.applyRandomTags()'>
+                    &ensp;
+                    <label for="random-tag-button">apply tags</label>
+                    &emsp;
+                </div>
+            </div>
+
+        </fieldset>
+
+        <div class="tag-button-cluster stripe">
+            &emsp;
+            <label for="tag-attribute-name-text" class="stripe-element">Name for tag attribute:
+                <input id="tag-attribute-name-text" class="tag-name-box"
+                       type="text">
+                &ensp;&ensp;
+            </label>
+        </div>
+
+        <div class="tag-button-cluster stripe">
+            &emsp;
+            <img id="clear-button" class="medium-button-image"
+                 src="../../common/art/clear.png" alt="press to clear tags"
+                 onclick='choosy.handlers.clearAllTags()'>
+            &ensp;&ensp;
+            <label for="clear-button" class="stripe-element">clear all tags
+            </label>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</body>
+</html>
