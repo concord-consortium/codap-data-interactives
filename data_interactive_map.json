@@ -403,17 +403,6 @@
       ]
     },
     {
-      "title": "Desmos Geometry",
-      "description": "DO NOT MAKE VISIBLE: DESMOS PROTECTIVE OF API",
-      "width": 600,
-      "height": 400,
-      "path": "/DesmosGeometry/index.html",
-      "visible": false,
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
       "title": "GeoJSON Importer",
       "description": "",
       "width": 600,
@@ -757,6 +746,7 @@
       "description": "A utility to help organize how the data in a dataset is presented in CODAP",
       "width": 400,
       "height": 600,
+      "icon": "/eepsmedia/plugins/Choosy/art/choosy.svg",
       "path": "/eepsmedia/plugins/Choosy/index.html",
       "visible": "true",
       "categories": [
