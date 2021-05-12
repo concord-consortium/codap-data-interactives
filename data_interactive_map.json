@@ -31,7 +31,7 @@
       "width": 290,
       "height": 304,
       "path": "/ShipOdyssey/index.html",
-      "visible": true,
+      "visible": false,
       "aegis": "SRRI",
       "categories": [
         "Partners",
@@ -44,7 +44,7 @@
       "width": 290,
       "height": 304,
       "path": "/Chainsaw/index.html",
-      "visible": true,
+      "visible": false,
       "aegis": "SRRI",
       "categories": [
         "Partners",
@@ -57,7 +57,7 @@
       "width": 290,
       "height": 304,
       "path": "/Inference/index.html",
-      "visible": true,
+      "visible": false,
       "aegis": "SRRI",
       "categories": [
         "Partners",
