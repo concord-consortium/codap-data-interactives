@@ -18,6 +18,7 @@ function(Snap, CodapCom, View, ui, utils) {
       isCollector = device === "collector",
       withReplacement = true,
       previousExperimentDescription = '', // Used to tell when user has changed something
+      previousSampleSize = null,  // Also used to help know whether to increment experiment number
 
       running = false,
       paused = false,
@@ -63,6 +64,7 @@ function(Snap, CodapCom, View, ui, utils) {
         password: password,
         dataSetName: dataSetName,
         previousExperimentDescription: previousExperimentDescription,
+        previousSampleSize: previousSampleSize,
         attrNames: codapCom.attrNames,
         attrIds: codapCom.attrIds
       }
@@ -73,6 +75,7 @@ function(Snap, CodapCom, View, ui, utils) {
     if (state) {
       dataSetName = state.dataSetName;
       previousExperimentDescription = state.previousExperimentDescription;
+      previousSampleSize = state.previousSampleSize;
       experimentNumber = state.experimentNumber || experimentNumber;
       mostRecentRunNumber = state.mostRecentRunNumber || mostRecentRunNumber;
       if (state.variables) {
@@ -412,9 +415,11 @@ function(Snap, CodapCom, View, ui, utils) {
             tCollectorDataset + tReplacement,
         tStringifiedVariables = JSON.stringify(variables);
 
-    if( tDescription + tStringifiedVariables !== previousExperimentDescription) {
+    if( tDescription + tStringifiedVariables !== previousExperimentDescription ||
+        (previousSampleSize !== null && previousSampleSize !== tSampleSize)) {
       experimentNumber++;
       previousExperimentDescription = tDescription + tStringifiedVariables;
+      previousSampleSize = tSampleSize;
       mostRecentRunNumber = 0;
     }
     runNumberSentInCurrentSequence = 0;
