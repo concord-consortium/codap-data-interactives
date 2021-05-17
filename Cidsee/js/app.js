@@ -25,6 +25,7 @@ const DATASETS = [
     name: 'CDC COVID State Data',
     documentation: 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
           createElement('label', null, [
@@ -49,6 +50,7 @@ const DATASETS = [
     id: 'DeathByCounty',
     name: 'CDC COVID Death Counts by County',
     endpoint: 'https://data.cdc.gov/resource/kn79-hsxy.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-in-the-United-St/kn79-hsxy',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -79,6 +81,7 @@ const DATASETS = [
     name: 'CDC COVID Contributing Conditions',
     documentation: 'https://www.splitgraph.com/cdc-gov/conditions-contributing-to-deaths-involving-hk9y-quqm',
     endpoint: 'https://data.cdc.gov/resource/hk9y-quqm.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -104,6 +107,7 @@ const DATASETS = [
     name: 'CDC COVID Excess Deaths',
     documentation: 'https://data.cdc.gov/NCHS/Excess-Deaths-Associated-with-COVID-19/xkkf-xrst',
     endpoint: 'https://data.cdc.gov/resource/xkkf-xrst.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -129,6 +133,7 @@ const DATASETS = [
     name: 'CDC Case Surveillance Public Use',
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf',
     endpoint: 'https://data.cdc.gov/resource/vbim-akqf.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -151,6 +156,7 @@ const DATASETS = [
     name: 'CDC COVID-19 Case Surveillance Public Use Data with Geography',
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -212,6 +218,7 @@ const DATASETS = [
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
     downsample: true,
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
@@ -253,6 +260,7 @@ const DATASETS = [
     default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     downsample: true,
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
@@ -328,6 +336,48 @@ const DATASETS = [
       let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
       let datePhrase = `&case_month=${month}&`;
       return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
+    }
+  },
+  {
+    id: 'TexasCases',
+    name: 'Texas HHS Cases and Mortality',
+    documentation: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/2',
+    endpoint: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/2/query',
+    downsample: false,
+    preprocess: function (data) {
+      return data.features.map(function (item) {
+        item.attributes.Date = new Date(item.attributes.Date).toLocaleDateString();
+        return item.attributes;
+      });
+    },
+    uiCreate: function (parentEl) {
+    },
+    makeURL: function () {
+      let wherePhrase = 'where=CumulativeCases>0';
+      let outFieldsPhrase = 'outFields=*';
+      let formatPhrase = 'f=json';
+      return this.endpoint + `?${wherePhrase}&${outFieldsPhrase}&${formatPhrase}`;
+    }
+  },
+  {
+    id: 'TexasCounties',
+    name: 'Texas HHS County Data',
+    documentation: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/1',
+    endpoint: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/1/query',
+    downsample: false,
+    preprocess: function (data) {
+      return data.features.map(function (item) {
+        item.attributes.Date = new Date(item.attributes.Date).toLocaleDateString();
+        return item.attributes;
+      });
+    },
+    uiCreate: function (parentEl) {
+    },
+    makeURL: function () {
+      let wherePhrase = 'where=Positive>0';
+      let outFieldsPhrase = 'outFields=*';
+      let formatPhrase = 'f=json';
+      return this.endpoint + `?${wherePhrase}&${outFieldsPhrase}&${formatPhrase}`;
     }
   }
 ]
@@ -545,22 +595,28 @@ function fetchDataAndProcess() {
     return;
   }
   let sourceIX = Number(sourceSelect.value);
-  let url = DATASETS[sourceIX].makeURL();
+  let datasetSpec = DATASETS[sourceIX];
+  let url = datasetSpec.makeURL();
   let headers = new Headers();
-  headers.append('X-App-Token', 'CYxytZqW1xHsoBvRkE7C74tUL');
+  if (datasetSpec.apiToken) {
+    headers.append('X-App-Token', datasetSpec.apiToken);
+  }
   if (!url) { return; }
-  console.log(`source: ${sourceIX}:${DATASETS[sourceIX].name}, url: ${url}`);
+  console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
   return fetch(url, {headers: headers}).then(function (response) {
     if (response.ok) {
       return response.json().then(function (data) {
-        if (DATASETS[sourceIX].downsample && downsampleGoal) {
+        if (datasetSpec.preprocess) {
+          data = datasetSpec.preprocess(data);
+        }
+        if (datasetSpec.downsample && downsampleGoal) {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
         let attrs = getAttrs(data);
         if (attrs) {
-          return guaranteeDataset(DATASETS[sourceIX].name, attrs)
+          return guaranteeDataset(datasetSpec.name, attrs)
               .then(function () {
-                return sendItemsToCODAP(DATASETS[sourceIX].name, data);
+                return sendItemsToCODAP(datasetSpec.name, data);
               });
         }
         else {
