@@ -269,40 +269,47 @@ const DATASETS = [
             createElement('select', 'in-geo', [
               createAttribute('id', 'in-geo'),
               createElement('option', null, [
+                 '-- Please choose a state or county --'
+              ]),
+              createElement('option', null, [
                 'Colorado',
                 createAttribute('value', 'res_state=CO')
-              ]),
-              createElement('option', null, [
-                'Maine',
-                createAttribute('value', 'res_state=ME')
-              ]),
-              createElement('option', null, [
-                'Nebraska',
-                createAttribute('value', 'res_state=NE')
               ]),
               createElement('option', null, [
                 'Connecticut',
                 createAttribute('value', 'res_state=CT')
               ]),
               createElement('option', null, [
-                'Pennsylvania',
-                createAttribute('value', 'res_state=PA')
-              ]),
-              createElement('option', null, [
                 'Indiana',
                 createAttribute('value', 'res_state=IN')
+              ]),
+              createElement('option', null, [
+                'Maine',
+                createAttribute('value', 'res_state=ME')
+              ]),
+              createElement('option', null, [
+                'Missouri',
+                createAttribute('value', 'res_state=MO')
+              ]),
+              createElement('option', null, [
+                'Nebraska',
+                createAttribute('value', 'res_state=NE')
+              ]),
+              createElement('option', null, [
+                'New Mexico',
+                createAttribute('value', 'res_state=NM')
               ]),
               createElement('option', null, [
                 'New York',
                 createAttribute('value', 'res_state=NY')
               ]),
               createElement('option', null, [
-                'Orange County, CA',
-                createAttribute('value', 'res_state=CA&res_county=ORANGE')
+                'Pennsylvania',
+                createAttribute('value', 'res_state=PA')
               ]),
               createElement('option', null, [
-                'Missouri',
-                createAttribute('value', 'res_state=MO')
+                'Orange County, CA',
+                createAttribute('value', 'res_state=CA&res_county=ORANGE')
               ]),
             ])
           ]),
@@ -335,7 +342,11 @@ const DATASETS = [
       let stateCodePhrase = document.querySelector(`#${this.id} .in-geo`).value;
       let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
       let datePhrase = `&case_month=${month}&`;
-      return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
+      if (stateCodePhrase) {
+        return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
+      } else {
+        message('Please chose a state or county')
+      }
     }
   },
   {
@@ -381,6 +392,7 @@ const DATASETS = [
     }
   }
 ]
+const DISPLAYED_DATASETS = ['StateData', 'DeathByCounty', 'Microdata4'];
 let downsampleGoal = 500;
 /**
  * A utility to create a DOM element with classes and content.
@@ -499,32 +511,36 @@ function init() {
     preventDataContextReorg: false
   });
   let anchor = document.querySelector('.contents');
-  DATASETS.forEach(function (ds, ix) {
-    let el = createElement('div', ['datasource'], [
-      createAttribute('id', ds.id),
-      createElement('h3', null, [
-        createElement('input', null, [
-          createAttribute('type', 'radio'),
-          createAttribute('name', 'source'),
-          createAttribute('value', ix)
+  DISPLAYED_DATASETS.forEach(function (dsId) {
+    let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
+    if (ix>=0) {
+      let ds = DATASETS[ix]
+      let el = createElement('div', ['datasource'], [
+        createAttribute('id', ds.id),
+        createElement('h3', null, [
+          createElement('input', null, [
+            createAttribute('type', 'radio'),
+            createAttribute('name', 'source'),
+            createAttribute('value', ix)
+          ]),
+          ds.name
         ]),
-        ds.name
-      ]),
-      createElement('div', [], [
-        createElement('a', [], [
-            createAttribute('href', ds.documentation),
-            createAttribute('target', '_blank'),
-            'dataset documentation'
+        createElement('div', [], [
+          createElement('a', [], [
+              createAttribute('href', ds.documentation),
+              createAttribute('target', '_blank'),
+              'dataset documentation'
+          ])
         ])
-      ])
-    ]);
+      ]);
 
-    ds.uiCreate(el);
-    anchor.append(el);
-    if (ds.default) {
-      let input = el.querySelector('input');
-      input.checked = true;
-      el.classList.add('selected-source')
+      ds.uiCreate(el);
+      anchor.append(el);
+      if (ds.default) {
+        let input = el.querySelector('input');
+        input.checked = true;
+        el.classList.add('selected-source')
+      }
     }
   })
   document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
