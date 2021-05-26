@@ -19,6 +19,345 @@
 // import {calendar} from './calendar.js';
 
 const APP_NAME = 'CDC COVID Data';
+const POPULATION_DATA =
+    [
+      {
+        "State or territory": "Alabama",
+        "USPS Code": "AL",
+        "FIPS Code": "1",
+        "Population": "4779736"
+      },
+      {
+        "State or territory": "Alaska",
+        "USPS Code": "AK",
+        "FIPS Code": "2",
+        "Population": "710231"
+      },
+      {
+        "State or territory": "American Samoa",
+        "USPS Code": "AS",
+        "FIPS Code": "60",
+        "Population": "55519"
+      },
+      {
+        "State or territory": "Arizona",
+        "USPS Code": "AZ",
+        "FIPS Code": "4",
+        "Population": "6392017"
+      },
+      {
+        "State or territory": "Arkansas",
+        "USPS Code": "AR",
+        "FIPS Code": "5",
+        "Population": "2915918"
+      },
+      {
+        "State or territory": "California",
+        "USPS Code": "CA",
+        "FIPS Code": "6",
+        "Population": "37253956"
+      },
+      {
+        "State or territory": "Colorado",
+        "USPS Code": "CO",
+        "FIPS Code": "8",
+        "Population": "5029196"
+      },
+      {
+        "State or territory": "Connecticut",
+        "USPS Code": "CT",
+        "FIPS Code": "9",
+        "Population": "3574097"
+      },
+      {
+        "State or territory": "Delaware",
+        "USPS Code": "DE",
+        "FIPS Code": "10",
+        "Population": "897934"
+      },
+      {
+        "State or territory": "District of Columbia",
+        "USPS Code": "DC",
+        "FIPS Code": "11",
+        "Population": "601723"
+      },
+      {
+        "State or territory": "Florida",
+        "USPS Code": "FL",
+        "FIPS Code": "12",
+        "Population": "18801310"
+      },
+      {
+        "State or territory": "Georgia",
+        "USPS Code": "GA",
+        "FIPS Code": "13",
+        "Population": "9687653"
+      },
+      {
+        "State or territory": "Guam",
+        "USPS Code": "GU",
+        "FIPS Code": "66",
+        "Population": "159358"
+      },
+      {
+        "State or territory": "Hawaii",
+        "USPS Code": "HI",
+        "FIPS Code": "15",
+        "Population": "1360301"
+      },
+      {
+        "State or territory": "Idaho",
+        "USPS Code": "ID",
+        "FIPS Code": "16",
+        "Population": "1567582"
+      },
+      {
+        "State or territory": "Illinois",
+        "USPS Code": "IL",
+        "FIPS Code": "17",
+        "Population": "12830632"
+      },
+      {
+        "State or territory": "Indiana",
+        "USPS Code": "IN",
+        "FIPS Code": "18",
+        "Population": "6483802"
+      },
+      {
+        "State or territory": "Iowa",
+        "USPS Code": "IA",
+        "FIPS Code": "19",
+        "Population": "3046355"
+      },
+      {
+        "State or territory": "Kansas",
+        "USPS Code": "KS",
+        "FIPS Code": "20",
+        "Population": "2853118"
+      },
+      {
+        "State or territory": "Kentucky",
+        "USPS Code": "KY",
+        "FIPS Code": "21",
+        "Population": "4339367"
+      },
+      {
+        "State or territory": "Louisiana",
+        "USPS Code": "LA",
+        "FIPS Code": "22",
+        "Population": "4533372"
+      },
+      {
+        "State or territory": "Maine",
+        "USPS Code": "ME",
+        "FIPS Code": "23",
+        "Population": "1328361"
+      },
+      {
+        "State or territory": "Maryland",
+        "USPS Code": "MD",
+        "FIPS Code": "24",
+        "Population": "5773552"
+      },
+      {
+        "State or territory": "Massachusetts",
+        "USPS Code": "MA",
+        "FIPS Code": "25",
+        "Population": "6547629"
+      },
+      {
+        "State or territory": "Michigan",
+        "USPS Code": "MI",
+        "FIPS Code": "26",
+        "Population": "9883640"
+      },
+      {
+        "State or territory": "Minnesota",
+        "USPS Code": "MN",
+        "FIPS Code": "27",
+        "Population": "5303925"
+      },
+      {
+        "State or territory": "Mississippi",
+        "USPS Code": "MS",
+        "FIPS Code": "28",
+        "Population": "2967297"
+      },
+      {
+        "State or territory": "Missouri",
+        "USPS Code": "MO",
+        "FIPS Code": "29",
+        "Population": "5988927"
+      },
+      {
+        "State or territory": "Montana",
+        "USPS Code": "MT",
+        "FIPS Code": "30",
+        "Population": "989415"
+      },
+      {
+        "State or territory": "Nebraska",
+        "USPS Code": "NE",
+        "FIPS Code": "31",
+        "Population": "1826341"
+      },
+      {
+        "State or territory": "Nevada",
+        "USPS Code": "NV",
+        "FIPS Code": "32",
+        "Population": "2700551"
+      },
+      {
+        "State or territory": "New Hampshire",
+        "USPS Code": "NH",
+        "FIPS Code": "33",
+        "Population": "1316470"
+      },
+      {
+        "State or territory": "New Jersey",
+        "USPS Code": "NJ",
+        "FIPS Code": "34",
+        "Population": "8791894"
+      },
+      {
+        "State or territory": "New Mexico",
+        "USPS Code": "NM",
+        "FIPS Code": "35",
+        "Population": "2059179"
+      },
+      {
+        "State or territory": "New York",
+        "USPS Code": "NY",
+        "FIPS Code": "36",
+        "Population": "19378102"
+      },
+      {
+        "State or territory": "North Carolina",
+        "USPS Code": "NC",
+        "FIPS Code": "37",
+        "Population": "9535483"
+      },
+      {
+        "State or territory": "North Dakota",
+        "USPS Code": "ND",
+        "FIPS Code": "38",
+        "Population": "672591"
+      },
+      {
+        "State or territory": "Northern Mariana Islands",
+        "USPS Code": "MP",
+        "FIPS Code": "69",
+        "Population": "53883"
+      },
+      {
+        "State or territory": "Ohio",
+        "USPS Code": "OH",
+        "FIPS Code": "39",
+        "Population": "11536504"
+      },
+      {
+        "State or territory": "Oklahoma",
+        "USPS Code": "OK",
+        "FIPS Code": "40",
+        "Population": "3751351"
+      },
+      {
+        "State or territory": "Oregon",
+        "USPS Code": "OR",
+        "FIPS Code": "41",
+        "Population": "3831074"
+      },
+      {
+        "State or territory": "Pennsylvania",
+        "USPS Code": "PA",
+        "FIPS Code": "42",
+        "Population": "12702379"
+      },
+      {
+        "State or territory": "Puerto Rico",
+        "USPS Code": "PR",
+        "FIPS Code": "72",
+        "Population": "3725789"
+      },
+      {
+        "State or territory": "Rhode Island",
+        "USPS Code": "RI",
+        "FIPS Code": "44",
+        "Population": "1052567"
+      },
+      {
+        "State or territory": "South Carolina",
+        "USPS Code": "SC",
+        "FIPS Code": "45",
+        "Population": "4625364"
+      },
+      {
+        "State or territory": "South Dakota",
+        "USPS Code": "SD",
+        "FIPS Code": "46",
+        "Population": "814180"
+      },
+      {
+        "State or territory": "Tennessee",
+        "USPS Code": "TN",
+        "FIPS Code": "47",
+        "Population": "6346105"
+      },
+      {
+        "State or territory": "Texas",
+        "USPS Code": "TX",
+        "FIPS Code": "48",
+        "Population": "25145561"
+      },
+      {
+        "State or territory": "U.S. Virgin Islands",
+        "USPS Code": "VI",
+        "FIPS Code": "78",
+        "Population": "106405"
+      },
+      {
+        "State or territory": "Utah",
+        "USPS Code": "UT",
+        "FIPS Code": "49",
+        "Population": "2763885"
+      },
+      {
+        "State or territory": "Vermont",
+        "USPS Code": "VT",
+        "FIPS Code": "50",
+        "Population": "625741"
+      },
+      {
+        "State or territory": "Virginia",
+        "USPS Code": "VA",
+        "FIPS Code": "51",
+        "Population": "8001024"
+      },
+      {
+        "State or territory": "Washington",
+        "USPS Code": "WA",
+        "FIPS Code": "53",
+        "Population": "6724540"
+      },
+      {
+        "State or territory": "West Virginia",
+        "USPS Code": "WV",
+        "FIPS Code": "54",
+        "Population": "1852994"
+      },
+      {
+        "State or territory": "Wisconsin",
+        "USPS Code": "WI",
+        "FIPS Code": "55",
+        "Population": "5686986"
+      },
+      {
+        "State or territory": "Wyoming",
+        "USPS Code": "WY",
+        "FIPS Code": "56",
+        "Population": "563626"
+      }
+    ];
 
 const DATASETS = [
   {
@@ -28,6 +367,24 @@ const DATASETS = [
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     omittedAttributeNames: ['pnew_case', 'pnew_death', 'created_at','consent_cases','consent_deaths'],
+    additionalAttributes: [
+      {
+        name: 'new_cases_per_100000',
+        formula: 'new_case*100000/population'
+      },
+      {
+        name: 'new_deaths_per_100000',
+        formula: 'new_death*100000/population'
+      },
+      {
+        name: 'total_cases_per_100000',
+        formula: 'tot_cases*100000/population'
+      },
+      {
+        name: 'total_deaths_per_100000',
+        formula: 'tot_death*100000/population'
+      },
+    ],
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
           createElement('label', null, [
@@ -46,6 +403,21 @@ const DATASETS = [
       } else {
         message('Please enter two character state code');
       }
+    },
+    preprocess: function (data) {
+      let cached = null;
+      data.forEach(function(dataItem) {
+        let state = dataItem.state;
+        if (!cached || (cached['USPS Code'] !== state)) {
+          cached = POPULATION_DATA.find(function (st) {
+            return st['USPS Code'] === state.toLocaleUpperCase();
+          })
+        }
+        if (cached) {
+          dataItem.population = cached.Population;
+        }
+      });
+      return data;
     }
   },
   {
@@ -358,6 +730,7 @@ const DATASETS = [
     endpoint: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/2/query',
     downsample: false,
     preprocess: function (data) {
+      // noinspection JSUnresolvedVariable
       return data.features.map(function (item) {
         item.attributes.Date = new Date(item.attributes.Date).toLocaleDateString();
         return item.attributes;
@@ -379,6 +752,7 @@ const DATASETS = [
     endpoint: 'https://services5.arcgis.com/ACaLB9ifngzawspq/ArcGIS/rest/services/TX_DSHS_COVID19_Cases_Service/FeatureServer/1/query',
     downsample: false,
     preprocess: function (data) {
+      // noinspection JSUnresolvedVariable
       return data.features.map(function (item) {
         item.attributes.Date = new Date(item.attributes.Date).toLocaleDateString();
         return item.attributes;
@@ -455,18 +829,16 @@ function toInitialCaps(str) {
  * Creates a dataset in CODAP.
  *
  * @param datasetName {string}
- * @param attributeNames {[string]}
+ * @param attributeList {[object]}
  * @return {{collections: [{name: string, attrs: *}], name, title}}
  */
-function specifyDataset(datasetName, attributeNames) {
+function specifyDataset(datasetName, attributeList) {
   return {
     name: datasetName,
     title: datasetName,
     collections: [{
       name: 'cases',
-      attrs: attributeNames.map(function (attr) {
-        return {name: attr};
-      })
+      attrs: attributeList
     }]
   };
 }
@@ -474,10 +846,10 @@ function specifyDataset(datasetName, attributeNames) {
 /**
  * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
- * @param attributeNames {[string]}
+ * @param attributeList {[object]}
  * @return Promise
  */
-function guaranteeDataset(datasetName, attributeNames) {
+function guaranteeDataset(datasetName, attributeList) {
   return codapInterface.sendRequest({action: 'get', resource: `dataContext[${datasetName}]`})
       .then(function (result) {
         if (result && result.success) {
@@ -486,7 +858,7 @@ function guaranteeDataset(datasetName, attributeNames) {
           return codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
-            values: specifyDataset(datasetName, attributeNames)
+            values: specifyDataset(datasetName, attributeList)
           });
         }
       })
@@ -522,54 +894,55 @@ function init() {
     title: APP_NAME,
     dimensions:{width: 360, height: 440},
     preventDataContextReorg: false
-  });
-  let anchor = document.querySelector('.contents');
-  DISPLAYED_DATASETS.forEach(function (dsId) {
-    let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
-    if (ix>=0) {
-      let ds = DATASETS[ix]
-      let el = createElement('div', ['datasource'], [
-        createAttribute('id', ds.id),
-        createElement('h3', null, [
-          createElement('input', null, [
-            createAttribute('type', 'radio'),
-            createAttribute('name', 'source'),
-            createAttribute('value', ix)
+  }).then(function () {
+    let anchor = document.querySelector('.contents');
+    DISPLAYED_DATASETS.forEach(function (dsId) {
+      let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
+      if (ix>=0) {
+        let ds = DATASETS[ix]
+        let el = createElement('div', ['datasource'], [
+          createAttribute('id', ds.id),
+          createElement('h3', null, [
+            createElement('input', null, [
+              createAttribute('type', 'radio'),
+              createAttribute('name', 'source'),
+              createAttribute('value', ix)
+            ]),
+            ds.name
           ]),
-          ds.name
-        ]),
-        createElement('div', [], [
-          createElement('a', [], [
+          createElement('div', [], [
+            createElement('a', [], [
               createAttribute('href', ds.documentation),
               createAttribute('target', '_blank'),
               'dataset documentation'
+            ])
           ])
-        ])
-      ]);
+        ]);
 
-      ds.uiCreate(el);
-      anchor.append(el);
-      if (ds.default) {
-        let input = el.querySelector('input');
-        input.checked = true;
-        el.classList.add('selected-source')
-      }
-    }
-  })
-  document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
-  let button = document.querySelector('button.fetch-button');
-  button.addEventListener('click', function () {
-    fetchDataAndProcess().then(
-        function (result) {
-          if (!result.success) {
-            message(`Import to CODAP failed. ${result.values.error}`)
-          }
-        },
-        function (err) {
-          message(err);
+        ds.uiCreate(el);
+        anchor.append(el);
+        if (ds.default) {
+          let input = el.querySelector('input');
+          input.checked = true;
+          el.classList.add('selected-source')
         }
-    );
-  });
+      }
+    })
+    document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
+    let button = document.querySelector('button.fetch-button');
+    button.addEventListener('click', function () {
+      fetchDataAndProcess().then(
+          function (result) {
+            if (!result.success) {
+              message(`Import to CODAP failed. ${result.values.error}`)
+            }
+          },
+          function (err) {
+            message(err);
+          }
+      );
+    });
+  })
 }
 
 /**
@@ -582,14 +955,14 @@ function message(msg) {
 }
 
 /**
- * Is passed a CSV-style table and returns an array of attribute names.
- * Assumes first row is array of attribute names.
- * @param array {string[][]}
+ * Is passed an array of objects. Returns the keys for the first object
+ * in the array. Assumes all other objects have identical keys.
+ * @param array {object[]}
  * @return {string[]}
  */
-function getAttrs(array) {
+function getAttributeNamesFromData(array) {
   if (!Array.isArray(array) || !array[0] || (typeof array[0] !== "object")) {
-    return;
+    return [];
   }
   return Object.keys(array[0]);
 }
@@ -634,7 +1007,7 @@ function fetchDataAndProcess() {
   let sourceSelect = document.querySelector('input[name=source]:checked');
   if (!sourceSelect) {
     message('Pick a source');
-    return;
+    return Promise.reject('No source selected');
   }
   let sourceIX = Number(sourceSelect.value);
   let datasetSpec = DATASETS[sourceIX];
@@ -643,7 +1016,7 @@ function fetchDataAndProcess() {
   if (datasetSpec.apiToken) {
     headers.append('X-App-Token', datasetSpec.apiToken);
   }
-  if (!url) { return; }
+  if (!url) { return Promise.reject('No URL to fetch'); }
   console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
   return fetch(url, {headers: headers}).then(function (response) {
     if (response.ok) {
@@ -655,11 +1028,17 @@ function fetchDataAndProcess() {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
         let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
-        let attrs = getAttrs(data).filter(function (attrName) {
+        let attributeNames = getAttributeNamesFromData(data).filter(function (attrName) {
           return !omittedAttributeNames.includes(attrName);
         });
-        if (attrs) {
-          return guaranteeDataset(datasetSpec.name, attrs)
+        if (attributeNames) {
+          let attributeList = attributeNames.map(function(attrName) {
+            return {name:attrName};
+          })
+          if (datasetSpec.additionalAttributes) {
+            attributeList = attributeList.concat(datasetSpec.additionalAttributes);
+          }
+          return guaranteeDataset(datasetSpec.name, attributeList)
               .then(function () {
                 return sendItemsToCODAP(datasetSpec.name, data);
               });
