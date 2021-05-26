@@ -19,6 +19,7 @@
 // import {calendar} from './calendar.js';
 
 const APP_NAME = 'CDC COVID Data';
+
 const DATASETS = [
   {
     id: 'StateData',
@@ -26,6 +27,7 @@ const DATASETS = [
     documentation: 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
+    omittedAttributeNames: ['pnew_case', 'pnew_death', 'created_at','consent_cases','consent_deaths'],
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
           createElement('label', null, [
@@ -222,13 +224,13 @@ const DATASETS = [
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
-          'Number of cases(max 1000): ',
+          `Number of cases(max ${DOWNSAMPLE_GOAL_MAX}): `,
           createElement('input', 'in-limit', [
             createAttribute('type', 'number'),
             createAttribute('min', '0'),
-            createAttribute('max', '1000'),
+            createAttribute('max', DOWNSAMPLE_GOAL_MAX),
             createAttribute('step', '100'),
-            createAttribute('value', '500'),
+            createAttribute('value', DOWNSAMPLE_GOAL_DEFAULT),
             createAttribute('style', 'width: 4em;')
           ])
         ]),
@@ -245,7 +247,7 @@ const DATASETS = [
     makeURL: function () {
       const stateCode = 'PA', county='LANCASTER';
       downsampleGoal = document.querySelector(`#${this.id} .in-limit`).value;
-      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?500:Math.min(downsampleGoal, 1000);
+      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?DOWNSAMPLE_GOAL_DEFAULT:Math.min(downsampleGoal, DOWNSAMPLE_GOAL_MAX);
       let limitPhrase = `$limit=20000`
       let stateCodePhrase = `res_state=${stateCode}&`;
       let countyPhrase = county?`res_county=${county}&`: '';
@@ -315,13 +317,13 @@ const DATASETS = [
           ]),
         createElement('br', null, null),
         createElement('label', null, [
-          'Number of cases(max 1000): ',
+          `Number of cases(max ${DOWNSAMPLE_GOAL_MAX}): `,
           createElement('input', 'in-limit', [
             createAttribute('type', 'number'),
             createAttribute('min', '0'),
-            createAttribute('max', '1000'),
+            createAttribute('max', DOWNSAMPLE_GOAL_MAX),
             createAttribute('step', '100'),
-            createAttribute('value', '500'),
+            createAttribute('value', DOWNSAMPLE_GOAL_DEFAULT),
             createAttribute('style', 'width: 4em;')
           ])
         ]),
@@ -337,7 +339,7 @@ const DATASETS = [
     },
     makeURL: function () {
       downsampleGoal = document.querySelector(`#${this.id} .in-limit`).value;
-      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?500:Math.min(downsampleGoal, 1000);
+      downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?DOWNSAMPLE_GOAL_DEFAULT:Math.min(downsampleGoal, DOWNSAMPLE_GOAL_MAX);
       let limitPhrase = `$limit=100000`
       let stateCodePhrase = document.querySelector(`#${this.id} .in-geo`).value;
       let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
@@ -392,8 +394,11 @@ const DATASETS = [
     }
   }
 ]
-const DISPLAYED_DATASETS = ['StateData', 'DeathByCounty', 'Microdata4'];
-let downsampleGoal = 500;
+const DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
+const DOWNSAMPLE_GOAL_DEFAULT = 500;
+const DOWNSAMPLE_GOAL_MAX = 1000;
+let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
+
 /**
  * A utility to create a DOM element with classes and content.
  * @param tag {string}
@@ -432,6 +437,13 @@ function createAttribute(name, value) {
   return attr;
 }
 
+/**
+ * A utility to convert a string to capitalize the first letter of each word
+ * and lowercase each succeeding letter. A word is considered to be a string
+ * separated from other words by space characters.
+ * @param str {string}
+ * @return {string}
+ */
 function toInitialCaps(str) {
   return str.split(/ +/)
       .map(function (w) {
@@ -440,6 +452,7 @@ function toInitialCaps(str) {
 }
 
 /**
+ * Creates a dataset in CODAP.
  *
  * @param datasetName {string}
  * @param attributeNames {[string]}
@@ -459,7 +472,7 @@ function specifyDataset(datasetName, attributeNames) {
 }
 
 /**
- *
+ * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
  * @param attributeNames {[string]}
  * @return Promise
@@ -559,11 +572,21 @@ function init() {
   });
 }
 
+/**
+ *  Displays a message in the message area
+ *  @param msg {string}
+ **/
 function message(msg) {
   let messageEl = document.querySelector('#msg');
   messageEl.innerHTML = msg;
 }
 
+/**
+ * Is passed a CSV-style table and returns an array of attribute names.
+ * Assumes first row is array of attribute names.
+ * @param array {string[][]}
+ * @return {string[]}
+ */
 function getAttrs(array) {
   if (!Array.isArray(array) || !array[0] || (typeof array[0] !== "object")) {
     return;
@@ -603,7 +626,10 @@ function downsampleRandom(data, targetCount, start) {
   return newData;
 }
 
-
+/**
+ * Fetches data from the selected dataset and sends it to CODAP.
+ * @return {Promise<Response>}
+ */
 function fetchDataAndProcess() {
   let sourceSelect = document.querySelector('input[name=source]:checked');
   if (!sourceSelect) {
@@ -628,7 +654,10 @@ function fetchDataAndProcess() {
         if (datasetSpec.downsample && downsampleGoal) {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
-        let attrs = getAttrs(data);
+        let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
+        let attrs = getAttrs(data).filter(function (attrName) {
+          return !omittedAttributeNames.includes(attrName);
+        });
         if (attrs) {
           return guaranteeDataset(datasetSpec.name, attrs)
               .then(function () {
