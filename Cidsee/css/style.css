@@ -3,6 +3,10 @@ body {
   font-size: smaller;
 }
 
+body.busy {
+  cursor: progress;
+}
+
 .datasource div {
   /*display: none;*/
   max-height: 0;
@@ -28,4 +32,10 @@ body {
 
 .datasource div {
   margin-left: 1em;
+}
+
+body.busy button.fetch-button {
+  background-color: darkgray;
+  border: thin darkgray;
+  border-radius: initial;
 }

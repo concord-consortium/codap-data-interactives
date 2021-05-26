@@ -772,6 +772,7 @@ const DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
+let isInFetch = false;
 
 /**
  * A utility to create a DOM element with classes and content.
@@ -888,61 +889,86 @@ function selectSource(/*ev*/) {
   this.parentElement.parentElement.classList.add('selected-source');
 }
 
+function setBusy(isBusy) {
+  if (isBusy) {
+    document.body.classList.add('busy');
+  } else {
+    document.body.classList.remove('busy');
+  }
+  isInFetch = isBusy;
+}
+function fetchHandler(ev) {
+  if (!isInFetch)
+  setBusy(true);
+  fetchDataAndProcess().then(
+      function (result) {
+        if (result && !result.success) {
+          message(`Import to CODAP failed. ${result.values.error}`)
+        } else if (result && result.success) {
+          message('');
+        }
+        setBusy(false)
+      },
+      function (err) {
+        message(err);
+        setBusy(false)
+      }
+  );
+}
+
+function createUI () {
+  let anchor = document.querySelector('.contents');
+  DISPLAYED_DATASETS.forEach(function (dsId) {
+    let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
+    if (ix>=0) {
+      let ds = DATASETS[ix]
+      let el = createElement('div', ['datasource'], [
+        createAttribute('id', ds.id),
+        createElement('h3', null, [
+          createElement('input', null, [
+            createAttribute('type', 'radio'),
+            createAttribute('name', 'source'),
+            createAttribute('value', ix)
+          ]),
+          ds.name
+        ]),
+        createElement('div', [], [
+          createElement('a', [], [
+            createAttribute('href', ds.documentation),
+            createAttribute('target', '_blank'),
+            'dataset documentation'
+          ])
+        ])
+      ]);
+
+      ds.uiCreate(el);
+      anchor.append(el);
+      if (ds.default) {
+        let input = el.querySelector('input');
+        input.checked = true;
+        el.classList.add('selected-source')
+      }
+    }
+  })
+  document.querySelectorAll('input[type=radio][name=source]')
+      .forEach((el) => el.addEventListener('click', selectSource))
+  document.querySelectorAll('input[type=text]')
+      .forEach(function (el) { el.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') {
+          fetchHandler(ev);
+        }
+      })})
+  let button = document.querySelector('button.fetch-button');
+  button.addEventListener('click', fetchHandler);
+}
+
 function init() {
   codapInterface.init({
     name: APP_NAME,
     title: APP_NAME,
     dimensions:{width: 360, height: 440},
     preventDataContextReorg: false
-  }).then(function () {
-    let anchor = document.querySelector('.contents');
-    DISPLAYED_DATASETS.forEach(function (dsId) {
-      let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
-      if (ix>=0) {
-        let ds = DATASETS[ix]
-        let el = createElement('div', ['datasource'], [
-          createAttribute('id', ds.id),
-          createElement('h3', null, [
-            createElement('input', null, [
-              createAttribute('type', 'radio'),
-              createAttribute('name', 'source'),
-              createAttribute('value', ix)
-            ]),
-            ds.name
-          ]),
-          createElement('div', [], [
-            createElement('a', [], [
-              createAttribute('href', ds.documentation),
-              createAttribute('target', '_blank'),
-              'dataset documentation'
-            ])
-          ])
-        ]);
-
-        ds.uiCreate(el);
-        anchor.append(el);
-        if (ds.default) {
-          let input = el.querySelector('input');
-          input.checked = true;
-          el.classList.add('selected-source')
-        }
-      }
-    })
-    document.querySelectorAll('input[type=radio][name=source]').forEach((el) => el.addEventListener('click', selectSource))
-    let button = document.querySelector('button.fetch-button');
-    button.addEventListener('click', function () {
-      fetchDataAndProcess().then(
-          function (result) {
-            if (!result.success) {
-              message(`Import to CODAP failed. ${result.values.error}`)
-            }
-          },
-          function (err) {
-            message(err);
-          }
-      );
-    });
-  })
+  }).then(createUI);
 }
 
 /**
@@ -1017,9 +1043,11 @@ function fetchDataAndProcess() {
     headers.append('X-App-Token', datasetSpec.apiToken);
   }
   if (!url) { return Promise.reject('No URL to fetch'); }
-  console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
+  // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
+  message(`Fetching ${datasetSpec.name}...`)
   return fetch(url, {headers: headers}).then(function (response) {
     if (response.ok) {
+      message('Converting...')
       return response.json().then(function (data) {
         if (datasetSpec.preprocess) {
           data = datasetSpec.preprocess(data);
@@ -1040,6 +1068,7 @@ function fetchDataAndProcess() {
           }
           return guaranteeDataset(datasetSpec.name, attributeList)
               .then(function () {
+                message('Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, data);
               });
         }
