@@ -662,8 +662,10 @@ const DATASETS = [
             'State or county: ',
             createElement('select', 'in-geo', [
               createAttribute('id', 'in-geo'),
+              createAttribute('required', 'required'),
               createElement('option', null, [
-                 '-- Please choose a state or county --'
+                 '-- Please choose a state or county --',
+                createAttribute('value', '')
               ]),
               createElement('option', null, [
                 'Colorado',
@@ -724,7 +726,9 @@ const DATASETS = [
           'Month: ',
           createElement('input', ['in-month'], [
             createAttribute('type', 'month'),
-            createAttribute('min', '2020-01')
+            createAttribute('min', '2020-01'),
+            createAttribute('pattern', '[0-9]{4}-[0-9]{2}'),
+            createAttribute('placeholder', 'yyyy-mm')
           ])
         ])
       ]));
@@ -734,12 +738,17 @@ const DATASETS = [
       downsampleGoal = (isNaN(downsampleGoal) || downsampleGoal <= 0)?DOWNSAMPLE_GOAL_DEFAULT:Math.min(downsampleGoal, DOWNSAMPLE_GOAL_MAX);
       let limitPhrase = `$limit=100000`
       let stateCodePhrase = document.querySelector(`#${this.id} .in-geo`).value;
-      let month = document.querySelector(`#${this.id} .in-month`).value || '2020-01';
+      let monthEl = document.querySelector(`#${this.id} .in-month`);
+      let month = monthEl.checkValidity()? monthEl.value:'';
       let datePhrase = `&case_month=${month}&`;
       if (stateCodePhrase) {
-        return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
+        if (month) {
+          return this.endpoint + `?${stateCodePhrase}${datePhrase}${limitPhrase}`;
+        } else {
+          message('Month has incorrect format (expect yyyy-mm) or out of range (2020-01 to present)');
+        }
       } else {
-        message('Please chose a state or county')
+        message('Please chose a state or county');
       }
     }
   },
@@ -999,6 +1008,10 @@ function message(msg) {
   let messageEl = document.querySelector('#msg');
   messageEl.innerHTML = msg;
 }
+function getLastMessage() {
+  let messageEl = document.querySelector('#msg');
+  return messageEl.innerText;
+}
 
 /**
  * Is passed an array of objects. Returns the keys for the first object
@@ -1062,7 +1075,7 @@ function fetchDataAndProcess() {
   if (datasetSpec.apiToken) {
     headers.append('X-App-Token', datasetSpec.apiToken);
   }
-  if (!url) { return Promise.reject('No URL to fetch'); }
+  if (!url) { return Promise.reject(getLastMessage()); }
   // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
   message(`Fetching ${datasetSpec.name}...`)
   return fetch(url, {headers: headers}).then(function (response) {
