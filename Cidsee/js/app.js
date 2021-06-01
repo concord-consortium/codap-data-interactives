@@ -363,10 +363,21 @@ const DATASETS = [
   {
     id: 'StateData',
     name: 'CDC COVID State Data',
+    default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
-    omittedAttributeNames: ['pnew_case', 'pnew_death', 'created_at','consent_cases','consent_deaths'],
+    omittedAttributeNames: [
+      'conf_cases',
+      'conf_death',
+      'consent_cases',
+      'consent_deaths',
+      'created_at',
+      'pnew_case',
+      'pnew_death',
+      'prob_cases',
+      'prob_death',
+    ],
     additionalAttributes: [
       {
         name: 'new_cases_per_100000',
@@ -404,19 +415,29 @@ const DATASETS = [
         message('Please enter two character state code');
       }
     },
-    preprocess: function (data) {
+    mergePopulation: function (data, referenceKeyAttr, correlatedKey) {
       let cached = null;
       data.forEach(function(dataItem) {
-        let state = dataItem.state;
-        if (!cached || (cached['USPS Code'] !== state)) {
+        let key = dataItem[referenceKeyAttr];
+        if (!cached || (cached[correlatedKey] !== key)) {
           cached = POPULATION_DATA.find(function (st) {
-            return st['USPS Code'] === state.toLocaleUpperCase();
+            return st[correlatedKey] === key.toLocaleUpperCase();
           })
         }
         if (cached) {
           dataItem.population = cached.Population;
         }
       });
+      return data;
+    },
+    sortOnDateAttr(data, attr) {
+      return data.sort(function (a, b) {
+        return (new Date(a[attr])) - (new Date(b[attr]));
+      })
+    },
+    preprocess: function (data) {
+      data = this.mergePopulation(data, 'state', 'USPS Code');
+      data = this.sortOnDateAttr(data, 'submission_date');
       return data;
     }
   },
@@ -631,7 +652,6 @@ const DATASETS = [
   {
     id: 'Microdata4',
     name: 'CDC COVID-19 Case Surveillance Selected States & Counties',
-    default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data-with-Ge/n8mc-b4w4',
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
