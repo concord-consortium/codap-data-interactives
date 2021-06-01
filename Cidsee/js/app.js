@@ -396,6 +396,12 @@ const DATASETS = [
         formula: 'tot_death*100000/population'
       },
     ],
+    overriddenAttributes: [
+        {
+          name: 'submission_date',
+          type: 'date'
+        }
+    ],
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
           createElement('label', null, [
@@ -1083,6 +1089,33 @@ function downsampleRandom(data, targetCount, start) {
   return newData;
 }
 
+function resolveAttributes(datasetSpec, attributeNames) {
+  let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
+  attributeNames = attributeNames.filter(
+      function (attrName) {
+        return !omittedAttributeNames.includes(attrName);
+      });
+  if (attributeNames) {
+    let attributeList = attributeNames.map(function (attrName) {
+      return {name: attrName};
+    })
+    if (datasetSpec.overriddenAttributes) {
+      datasetSpec.overriddenAttributes.forEach(function (overrideAttr) {
+        let attr = attributeList.find(function (attr) {
+          return attr.name === overrideAttr.name;
+        });
+        if (attr) {
+          Object.assign(attr, overrideAttr);
+        }
+      })
+    }
+    if (datasetSpec.additionalAttributes) {
+      attributeList = attributeList.concat(datasetSpec.additionalAttributes);
+    }
+    return attributeList;
+  }
+}
+
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
  * @return {Promise<Response>}
@@ -1113,17 +1146,9 @@ function fetchDataAndProcess() {
         if (datasetSpec.downsample && downsampleGoal) {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
-        let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
-        let attributeNames = getAttributeNamesFromData(data).filter(function (attrName) {
-          return !omittedAttributeNames.includes(attrName);
-        });
-        if (attributeNames) {
-          let attributeList = attributeNames.map(function(attrName) {
-            return {name:attrName};
-          })
-          if (datasetSpec.additionalAttributes) {
-            attributeList = attributeList.concat(datasetSpec.additionalAttributes);
-          }
+        let attributeList = resolveAttributes(datasetSpec, getAttributeNamesFromData(
+            data));
+        if (attributeList) {
           return guaranteeDataset(datasetSpec.name, attributeList)
               .then(function () {
                 message('Sending data to CODAP')
