@@ -896,22 +896,35 @@ function guaranteeDataset(datasetName, attributeList) {
       })
 }
 
+function createCaseTable(datasetName) {
+  return codapInterface.sendRequest({
+    action: 'create',
+    resource: `component`,
+    values: {
+      type: "caseTable",
+      dataContext: datasetName
+    }
+  })
+  .then(function (result) {
+    if (result.success) {
+      let componentID = result.values.id;
+      if (componentID) {
+        return codapInterface.sendRequest({
+          action: 'notify',
+          resource: `component[${componentID}]`,
+          values: {request: 'autoScale'}
+        })
+      }
+    }
+  });
+}
+
 function sendItemsToCODAP(datasetName, data) {
-      return codapInterface.sendRequest({
-        action: 'create',
-        resource: `dataContext[${datasetName}].item`,
-        values: data
-      })
-        .then(function () {
-          return codapInterface.sendRequest({
-            action: 'create',
-            resource: `component`,
-            values: {
-              type: "caseTable",
-              dataContext: datasetName
-            }
-          })
-        });
+  return codapInterface.sendRequest({
+    action: 'create',
+    resource: `dataContext[${datasetName}].item`,
+    values: data
+  });
 }
 
 function selectSource(/*ev*/) {
@@ -1115,6 +1128,10 @@ function fetchDataAndProcess() {
               .then(function () {
                 message('Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, data);
+              })
+              .then(function () {
+                message('creating a case table');
+                return createCaseTable(datasetSpec.name);
               });
         }
         else {
