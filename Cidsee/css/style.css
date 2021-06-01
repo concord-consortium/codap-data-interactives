@@ -1,8 +1,7 @@
 body {
-  background: white;
+  background-color: #eeffff;
   font-size: smaller;
 }
-
 body.busy {
   cursor: progress;
 }
