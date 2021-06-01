@@ -797,9 +797,11 @@ const DATASETS = [
     }
   }
 ]
-const DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
+
+var displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
 let isInFetch = false;
 
@@ -947,7 +949,7 @@ function fetchHandler(ev) {
 
 function createUI () {
   let anchor = document.querySelector('.contents');
-  DISPLAYED_DATASETS.forEach(function (dsId) {
+  displayedDatasets.forEach(function (dsId) {
     let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
     if (ix>=0) {
       let ds = DATASETS[ix]
@@ -992,6 +994,16 @@ function createUI () {
 }
 
 function init() {
+  let datasets = (new URL(document.location)).searchParams.get('datasets');
+  if (datasets) {
+    if (datasets === 'all') {
+      datasets = DATASETS.map(function (ds) { return ds.id; });
+    } else {
+      datasets = datasets.split(',');
+    }
+    displayedDatasets = datasets;
+  }
+
   codapInterface.init({
     name: APP_NAME,
     title: APP_NAME,
