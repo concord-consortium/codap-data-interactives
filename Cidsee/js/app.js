@@ -662,6 +662,7 @@ const DATASETS = [
     endpoint: 'https://data.cdc.gov/resource/n8mc-b4w4.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     downsample: true,
+    omittedAttributeNames: ['state_fips_code', 'county_fips_code', 'process', 'exposure'],
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
         createElement('label', null, [
