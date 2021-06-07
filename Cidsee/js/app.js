@@ -359,11 +359,12 @@ const POPULATION_DATA =
       }
     ];
 
+const DEFAULT_DATASET = 'StateData';
+
 const DATASETS = [
   {
     id: 'StateData',
     name: 'CDC COVID State Data',
-    default: true,
     documentation: 'https://data.cdc.gov/Case-Surveillance/United-States-COVID-19-Cases-and-Deaths-by-State-o/9mfq-cb36/data',
     endpoint: 'https://data.cdc.gov/resource/9mfq-cb36.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
@@ -997,7 +998,7 @@ function createUI () {
 
       ds.uiCreate(el);
       anchor.append(el);
-      if (ds.default) {
+      if (ds.id === DEFAULT_DATASET) {
         let input = el.querySelector('input');
         input.checked = true;
         el.classList.add('selected-source')
