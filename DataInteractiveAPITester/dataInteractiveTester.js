@@ -422,7 +422,6 @@ $(function () {
 
   var resourceMap = {
           attributeList: 'attribute',
-          attributeLocation: 'attribute',
           allCases: 'case',
           caseByIndex: 'case',
           caseByID: 'case',
