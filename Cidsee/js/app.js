@@ -402,6 +402,7 @@ const DATASETS = [
           type: 'date'
         }
     ],
+    parentAttributes: ['state', 'population'],
     uiCreate: function (parentEl) {
       parentEl.append(createElement('div', null, [
           createElement('label', null, [
@@ -421,29 +422,9 @@ const DATASETS = [
         message('Please enter two character state code');
       }
     },
-    mergePopulation: function (data, referenceKeyAttr, correlatedKey) {
-      let cached = null;
-      data.forEach(function(dataItem) {
-        let key = dataItem[referenceKeyAttr];
-        if (!cached || (cached[correlatedKey] !== key)) {
-          cached = POPULATION_DATA.find(function (st) {
-            return st[correlatedKey] === key.toLocaleUpperCase();
-          })
-        }
-        if (cached) {
-          dataItem.population = cached.Population;
-        }
-      });
-      return data;
-    },
-    sortOnDateAttr(data, attr) {
-      return data.sort(function (a, b) {
-        return (new Date(a[attr])) - (new Date(b[attr]));
-      })
-    },
     preprocess: function (data) {
-      data = this.mergePopulation(data, 'state', 'USPS Code');
-      data = this.sortOnDateAttr(data, 'submission_date');
+      data = mergePopulation(data, 'state', 'USPS Code');
+      data = sortOnDateAttr(data, 'submission_date');
       return data;
     }
   },
@@ -807,10 +788,34 @@ const DATASETS = [
 const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
+const CHILD_COLLECTION_NAME = 'cases';
+const PARENT_COLLECTION_NAME = 'groups';
 
 var displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
 let isInFetch = false;
+
+function mergePopulation(data, referenceKeyAttr, correlatedKey) {
+  let cached = null;
+  data.forEach(function(dataItem) {
+    let key = dataItem[referenceKeyAttr];
+    if (!cached || (cached[correlatedKey] !== key)) {
+      cached = POPULATION_DATA.find(function (st) {
+        return st[correlatedKey] === key.toLocaleUpperCase();
+      })
+    }
+    if (cached) {
+      dataItem.population = cached.Population;
+    }
+  });
+  return data;
+}
+
+function sortOnDateAttr(data, attr) {
+  return data.sort(function (a, b) {
+    return (new Date(a[attr])) - (new Date(b[attr]));
+  })
+}
 
 /**
  * A utility to create a DOM element with classes and content.
@@ -868,27 +873,24 @@ function toInitialCaps(str) {
  * Creates a dataset in CODAP.
  *
  * @param datasetName {string}
- * @param attributeList {[object]}
+ * @param collectionList {[object]}
  * @return {{collections: [{name: string, attrs: *}], name, title}}
  */
-function specifyDataset(datasetName, attributeList) {
+function specifyDataset(datasetName, collectionList) {
   return {
     name: datasetName,
     title: datasetName,
-    collections: [{
-      name: 'cases',
-      attrs: attributeList
-    }]
+    collections: collectionList
   };
 }
 
 /**
  * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
- * @param attributeList {[object]}
+ * @param collectionList {[object]}
  * @return Promise
  */
-function guaranteeDataset(datasetName, attributeList) {
+function guaranteeDataset(datasetName, collectionList) {
   return codapInterface.sendRequest({action: 'get', resource: `dataContext[${datasetName}]`})
       .then(function (result) {
         if (result && result.success) {
@@ -897,7 +899,7 @@ function guaranteeDataset(datasetName, attributeList) {
           return codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
-            values: specifyDataset(datasetName, attributeList)
+            values: specifyDataset(datasetName, collectionList)
           });
         }
       })
@@ -948,6 +950,7 @@ function setBusy(isBusy) {
   }
   isInFetch = isBusy;
 }
+
 function fetchHandler(ev) {
   if (!isInFetch)
   setBusy(true);
@@ -1040,6 +1043,7 @@ function message(msg) {
   let messageEl = document.querySelector('#msg');
   messageEl.innerHTML = msg;
 }
+
 function getLastMessage() {
   let messageEl = document.querySelector('#msg');
   return messageEl.innerText;
@@ -1117,6 +1121,33 @@ function resolveAttributes(datasetSpec, attributeNames) {
   }
 }
 
+function resolveCollectionList(datasetSpec, attributeNames) {
+  let attributeList = resolveAttributes(datasetSpec, attributeNames);
+  let collectionsList = [];
+  let childCollection = {
+    name: CHILD_COLLECTION_NAME,
+    attrs: []
+  }
+  let parentCollection;
+  if (datasetSpec.parentAttributes) {
+    parentCollection = {
+      name: PARENT_COLLECTION_NAME,
+      attrs: []
+    }
+    collectionsList.push(parentCollection);
+    childCollection.parent = PARENT_COLLECTION_NAME;
+  }
+  collectionsList.push(childCollection);
+
+  attributeList.forEach(function (attr) {
+    if (datasetSpec.parentAttributes && datasetSpec.parentAttributes.includes(attr.name)) {
+      parentCollection.attrs.push(attr);
+    } else {
+      childCollection.attrs.push(attr);
+    }
+  });
+  return collectionsList;
+}
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
  * @return {Promise<Response>}
@@ -1147,10 +1178,10 @@ function fetchDataAndProcess() {
         if (datasetSpec.downsample && downsampleGoal) {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
-        let attributeList = resolveAttributes(datasetSpec, getAttributeNamesFromData(
+        let collectionList = resolveCollectionList(datasetSpec, getAttributeNamesFromData(
             data));
-        if (attributeList) {
-          return guaranteeDataset(datasetSpec.name, attributeList)
+        if (collectionList) {
+          return guaranteeDataset(datasetSpec.name, collectionList)
               .then(function () {
                 message('Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, data);
