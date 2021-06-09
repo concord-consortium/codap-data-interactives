@@ -461,6 +461,42 @@ const DATASETS = [
     }
   },
   {
+    id: 'VaccinesHistorical',
+    name: 'CDC COVID-19 Vaccinations in the United States, County',
+    endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
+    documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
+    parentAttributes: ['recip_state', 'recip_county'],
+    overriddenAttributes: [
+      {
+        name: 'date',
+        type: 'date'
+      }
+    ],
+    uiComponents: [
+      {
+        type: 'text',
+        width: 2,
+        name: 'stateCode',
+        apiName: 'recip_state',
+        label: 'Enter Two Char State Code'
+      }
+    ],
+    uiCreate: function (parentEl) {
+      parentEl.append(createUIControl(this.uiComponents[0]));
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      let limitPhrase = `$limit=100000`
+      let stateCodePhrase = stateCode? `recip_state=${stateCode.toUpperCase()}&`: '';
+      if (stateCode) {
+        return this.endpoint + `?${stateCodePhrase}&${limitPhrase}`;
+      } else {
+        message('Please enter two character state code');
+      }
+    }
+  },
+  {
     id: 'DeathConds',
     name: 'CDC COVID Contributing Conditions',
     documentation: 'https://www.splitgraph.com/cdc-gov/conditions-contributing-to-deaths-involving-hk9y-quqm',
