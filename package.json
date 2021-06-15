@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "CODAP Plugins",
   "main": "index.html",
-  "homepage": "https://concord-consortium.github.io/codap-data-interactive/",
+  "homepage": "https://concord-consortium.github.io/codap-data-interactives/",
   "scripts": {
     "check": "bin/check",
     "predeploy": "npm run build",
