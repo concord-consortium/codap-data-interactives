@@ -17,349 +17,9 @@
 //  limitations under the License.
 // ==========================================================================
 // import {calendar} from './calendar.js';
+import {STATE_POPULATION_DATA, COUNTY_POPULATION_DATA} from './data.js';
 
 const APP_NAME = 'CDC COVID Data';
-const POPULATION_DATA =
-    [
-      {
-        "State or territory": "Alabama",
-        "USPS Code": "AL",
-        "FIPS Code": "1",
-        "Population": "4779736"
-      },
-      {
-        "State or territory": "Alaska",
-        "USPS Code": "AK",
-        "FIPS Code": "2",
-        "Population": "710231"
-      },
-      {
-        "State or territory": "American Samoa",
-        "USPS Code": "AS",
-        "FIPS Code": "60",
-        "Population": "55519"
-      },
-      {
-        "State or territory": "Arizona",
-        "USPS Code": "AZ",
-        "FIPS Code": "4",
-        "Population": "6392017"
-      },
-      {
-        "State or territory": "Arkansas",
-        "USPS Code": "AR",
-        "FIPS Code": "5",
-        "Population": "2915918"
-      },
-      {
-        "State or territory": "California",
-        "USPS Code": "CA",
-        "FIPS Code": "6",
-        "Population": "37253956"
-      },
-      {
-        "State or territory": "Colorado",
-        "USPS Code": "CO",
-        "FIPS Code": "8",
-        "Population": "5029196"
-      },
-      {
-        "State or territory": "Connecticut",
-        "USPS Code": "CT",
-        "FIPS Code": "9",
-        "Population": "3574097"
-      },
-      {
-        "State or territory": "Delaware",
-        "USPS Code": "DE",
-        "FIPS Code": "10",
-        "Population": "897934"
-      },
-      {
-        "State or territory": "District of Columbia",
-        "USPS Code": "DC",
-        "FIPS Code": "11",
-        "Population": "601723"
-      },
-      {
-        "State or territory": "Florida",
-        "USPS Code": "FL",
-        "FIPS Code": "12",
-        "Population": "18801310"
-      },
-      {
-        "State or territory": "Georgia",
-        "USPS Code": "GA",
-        "FIPS Code": "13",
-        "Population": "9687653"
-      },
-      {
-        "State or territory": "Guam",
-        "USPS Code": "GU",
-        "FIPS Code": "66",
-        "Population": "159358"
-      },
-      {
-        "State or territory": "Hawaii",
-        "USPS Code": "HI",
-        "FIPS Code": "15",
-        "Population": "1360301"
-      },
-      {
-        "State or territory": "Idaho",
-        "USPS Code": "ID",
-        "FIPS Code": "16",
-        "Population": "1567582"
-      },
-      {
-        "State or territory": "Illinois",
-        "USPS Code": "IL",
-        "FIPS Code": "17",
-        "Population": "12830632"
-      },
-      {
-        "State or territory": "Indiana",
-        "USPS Code": "IN",
-        "FIPS Code": "18",
-        "Population": "6483802"
-      },
-      {
-        "State or territory": "Iowa",
-        "USPS Code": "IA",
-        "FIPS Code": "19",
-        "Population": "3046355"
-      },
-      {
-        "State or territory": "Kansas",
-        "USPS Code": "KS",
-        "FIPS Code": "20",
-        "Population": "2853118"
-      },
-      {
-        "State or territory": "Kentucky",
-        "USPS Code": "KY",
-        "FIPS Code": "21",
-        "Population": "4339367"
-      },
-      {
-        "State or territory": "Louisiana",
-        "USPS Code": "LA",
-        "FIPS Code": "22",
-        "Population": "4533372"
-      },
-      {
-        "State or territory": "Maine",
-        "USPS Code": "ME",
-        "FIPS Code": "23",
-        "Population": "1328361"
-      },
-      {
-        "State or territory": "Maryland",
-        "USPS Code": "MD",
-        "FIPS Code": "24",
-        "Population": "5773552"
-      },
-      {
-        "State or territory": "Massachusetts",
-        "USPS Code": "MA",
-        "FIPS Code": "25",
-        "Population": "6547629"
-      },
-      {
-        "State or territory": "Michigan",
-        "USPS Code": "MI",
-        "FIPS Code": "26",
-        "Population": "9883640"
-      },
-      {
-        "State or territory": "Minnesota",
-        "USPS Code": "MN",
-        "FIPS Code": "27",
-        "Population": "5303925"
-      },
-      {
-        "State or territory": "Mississippi",
-        "USPS Code": "MS",
-        "FIPS Code": "28",
-        "Population": "2967297"
-      },
-      {
-        "State or territory": "Missouri",
-        "USPS Code": "MO",
-        "FIPS Code": "29",
-        "Population": "5988927"
-      },
-      {
-        "State or territory": "Montana",
-        "USPS Code": "MT",
-        "FIPS Code": "30",
-        "Population": "989415"
-      },
-      {
-        "State or territory": "Nebraska",
-        "USPS Code": "NE",
-        "FIPS Code": "31",
-        "Population": "1826341"
-      },
-      {
-        "State or territory": "Nevada",
-        "USPS Code": "NV",
-        "FIPS Code": "32",
-        "Population": "2700551"
-      },
-      {
-        "State or territory": "New Hampshire",
-        "USPS Code": "NH",
-        "FIPS Code": "33",
-        "Population": "1316470"
-      },
-      {
-        "State or territory": "New Jersey",
-        "USPS Code": "NJ",
-        "FIPS Code": "34",
-        "Population": "8791894"
-      },
-      {
-        "State or territory": "New Mexico",
-        "USPS Code": "NM",
-        "FIPS Code": "35",
-        "Population": "2059179"
-      },
-      {
-        "State or territory": "New York",
-        "USPS Code": "NY",
-        "FIPS Code": "36",
-        "Population": "19378102"
-      },
-      {
-        "State or territory": "North Carolina",
-        "USPS Code": "NC",
-        "FIPS Code": "37",
-        "Population": "9535483"
-      },
-      {
-        "State or territory": "North Dakota",
-        "USPS Code": "ND",
-        "FIPS Code": "38",
-        "Population": "672591"
-      },
-      {
-        "State or territory": "Northern Mariana Islands",
-        "USPS Code": "MP",
-        "FIPS Code": "69",
-        "Population": "53883"
-      },
-      {
-        "State or territory": "Ohio",
-        "USPS Code": "OH",
-        "FIPS Code": "39",
-        "Population": "11536504"
-      },
-      {
-        "State or territory": "Oklahoma",
-        "USPS Code": "OK",
-        "FIPS Code": "40",
-        "Population": "3751351"
-      },
-      {
-        "State or territory": "Oregon",
-        "USPS Code": "OR",
-        "FIPS Code": "41",
-        "Population": "3831074"
-      },
-      {
-        "State or territory": "Pennsylvania",
-        "USPS Code": "PA",
-        "FIPS Code": "42",
-        "Population": "12702379"
-      },
-      {
-        "State or territory": "Puerto Rico",
-        "USPS Code": "PR",
-        "FIPS Code": "72",
-        "Population": "3725789"
-      },
-      {
-        "State or territory": "Rhode Island",
-        "USPS Code": "RI",
-        "FIPS Code": "44",
-        "Population": "1052567"
-      },
-      {
-        "State or territory": "South Carolina",
-        "USPS Code": "SC",
-        "FIPS Code": "45",
-        "Population": "4625364"
-      },
-      {
-        "State or territory": "South Dakota",
-        "USPS Code": "SD",
-        "FIPS Code": "46",
-        "Population": "814180"
-      },
-      {
-        "State or territory": "Tennessee",
-        "USPS Code": "TN",
-        "FIPS Code": "47",
-        "Population": "6346105"
-      },
-      {
-        "State or territory": "Texas",
-        "USPS Code": "TX",
-        "FIPS Code": "48",
-        "Population": "25145561"
-      },
-      {
-        "State or territory": "U.S. Virgin Islands",
-        "USPS Code": "VI",
-        "FIPS Code": "78",
-        "Population": "106405"
-      },
-      {
-        "State or territory": "Utah",
-        "USPS Code": "UT",
-        "FIPS Code": "49",
-        "Population": "2763885"
-      },
-      {
-        "State or territory": "Vermont",
-        "USPS Code": "VT",
-        "FIPS Code": "50",
-        "Population": "625741"
-      },
-      {
-        "State or territory": "Virginia",
-        "USPS Code": "VA",
-        "FIPS Code": "51",
-        "Population": "8001024"
-      },
-      {
-        "State or territory": "Washington",
-        "USPS Code": "WA",
-        "FIPS Code": "53",
-        "Population": "6724540"
-      },
-      {
-        "State or territory": "West Virginia",
-        "USPS Code": "WV",
-        "FIPS Code": "54",
-        "Population": "1852994"
-      },
-      {
-        "State or territory": "Wisconsin",
-        "USPS Code": "WI",
-        "FIPS Code": "55",
-        "Population": "5686986"
-      },
-      {
-        "State or territory": "Wyoming",
-        "USPS Code": "WY",
-        "FIPS Code": "56",
-        "Population": "563626"
-      }
-    ];
-
-const DEFAULT_DATASET = 'StateData';
 
 const DATASETS = [
   {
@@ -406,18 +66,18 @@ const DATASETS = [
     parentAttributes: ['state', 'population'],
     uiComponents: [
       {
-        type: 'text',
-        width: 2,
+        type: 'select',
         name: 'stateCode',
         apiName: 'state',
-        label: 'Enter Two Char State Abbr'
+        label: 'Select State',
+        lister: function () { return STATE_POPULATION_DATA.map(function (st) { return st["USPS Code"];})}
       }
     ],
     uiCreate: function (parentEl) {
       parentEl.append(createUIControl(this.uiComponents[0]));
     },
     makeURL: function () {
-      let stateCode = document.querySelector(`#StateData input[type=text]`).value;
+      let stateCode = document.querySelector(`#StateData [name=stateCode]`).value;
       if (stateCode && stateCode.length === 2) {
         return this.endpoint + `?state=${stateCode.toUpperCase()}`;
       } else {
@@ -466,7 +126,12 @@ const DATASETS = [
     endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
-    parentAttributes: ['recip_state', 'recip_county'],
+    parentAttributes: ['recip_state', 'recip_county', 'population'],
+    omittedAttributeNames: [
+        'fips',
+        'mmwr_week',
+        'completeness_pct'
+    ],
     overriddenAttributes: [
       {
         name: 'date',
@@ -475,25 +140,68 @@ const DATASETS = [
     ],
     uiComponents: [
       {
-        type: 'text',
-        width: 2,
+        type: 'select',
         name: 'stateCode',
-        apiName: 'recip_state',
-        label: 'Enter Two Char State Code'
+        apiName: 'state',
+        label: 'Select State',
+        lister: function () {
+          return STATE_POPULATION_DATA.map(function (st) {
+            return st["USPS Code"];
+          });
+        }
+      },
+      {
+        type: 'select',
+        name: 'countyName',
+        apiName: 'county',
+        label: 'Select County',
+        dependsUpon: 'stateCode',
+        default: 'AL',
+        lister: function () { return []; },
+        updater: function(parentEl, stateCode) {
+          let el = parentEl.querySelector('[name=countyName]');
+          let stateRecord = STATE_POPULATION_DATA.find(function (st) {return st["USPS Code"] === stateCode;});
+          let stateName = stateRecord && stateRecord["State or territory"];
+          let nameList = stateName? COUNTY_POPULATION_DATA
+                .filter(function (item) {return item.STNAME === stateName && item.COUNTY !== "000";})
+                .map(function (co) {return co.CTYNAME;})
+              : [];
+          el.innerHTML = '';
+          nameList.forEach(function (name) {
+            el.append(createElement('option', [], [name]));
+          });
+        },
       }
     ],
     uiCreate: function (parentEl) {
-      parentEl.append(createUIControl(this.uiComponents[0]));
+      let stateCtlDef = this.uiComponents[0];
+      let countyCtlDef = this.uiComponents[1];
+      let ctlState = createUIControl(stateCtlDef);
+      let ctlCounty = createUIControl(countyCtlDef);
+      parentEl.append(ctlState);
+      parentEl.append(ctlCounty);
+      countyCtlDef.updater(parentEl, 'AL');
+      let stateInputEl = ctlState.querySelector('[name=stateCode]');
+      if (stateInputEl) {
+        stateInputEl.addEventListener('change', function (ev) {countyCtlDef.updater(parentEl, ev.target.value);});
+      }
     },
     makeURL: function () {
-      let stateCode = document.querySelector(`#${this.id} input[type=text]`).value;
+      let stateCode = document.querySelector(`#${this.id} [name=stateCode]`).value;
+      let county = document.querySelector(`#${this.id} [name=countyName]`).value;
       let limitPhrase = `$limit=100000`
       let stateCodePhrase = stateCode? `recip_state=${stateCode.toUpperCase()}&`: '';
+      let countyPhrase = county? `recip_county=${county}&`: '';
       if (stateCode) {
-        return this.endpoint + `?${stateCodePhrase}&${limitPhrase}`;
+        return this.endpoint + `?${[stateCodePhrase, countyPhrase, limitPhrase].join('&')}`;
       } else {
         message('Please enter two character state code');
       }
+    },
+    preprocess: function (data) {
+      data = mergeCountyPopulation(data, 'recip_state', 'recip_county', 'STCODE', 'CTYNAME');
+      data = sortOnDateAttr(data, 'date');
+      return data;
     }
   },
   {
@@ -839,13 +547,14 @@ const DATASETS = [
     }
   }
 ]
-const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'Microdata4'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'Microdata4'];
+const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
 const CHILD_COLLECTION_NAME = 'cases';
 const PARENT_COLLECTION_NAME = 'groups';
 
-var displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
+let displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
 let isInFetch = false;
 
@@ -862,12 +571,36 @@ function mergePopulation(data, referenceKeyAttr, correlatedKey) {
   data.forEach(function(dataItem) {
     let key = dataItem[referenceKeyAttr];
     if (!cached || (cached[correlatedKey] !== key)) {
-      cached = POPULATION_DATA.find(function (st) {
+      cached = STATE_POPULATION_DATA.find(function (st) {
         return st[correlatedKey] === key.toLocaleUpperCase();
       })
     }
     if (cached) {
       dataItem.population = cached.Population;
+    }
+  });
+  return data;
+}
+/**
+ * A utility to merge state population stats with a dataset.
+ * @param data {[object]} attribute keyed data
+ * @param referenceKeyAttr {string} the name of the attribute in the merged into dataset that
+ *                         is a foreign key into the population dataset.
+ * @param correlatedKey    {string} the corresponding key in the population dataset
+ * @return {[object]} the data object modified
+ */
+function mergeCountyPopulation(data, referenceState, referenceCty, correlatedState, correlatedCty) {
+  let cachedPopRecord = null;
+  data.forEach(function(dataItem) {
+    let stateKey = dataItem[referenceState];
+    let countyKey = dataItem[referenceCty];
+    if (!cachedPopRecord || (cachedPopRecord[correlatedState] !== stateKey) || (cachedPopRecord[correlatedCty] !== countyKey)) {
+      cachedPopRecord = COUNTY_POPULATION_DATA.find(function (item) {
+        return item[correlatedState] === stateKey && item[correlatedCty] === countyKey;
+      })
+    }
+    if (cachedPopRecord) {
+      dataItem.population = cachedPopRecord.POPESTIMATE2019;
     }
   });
   return data;
@@ -885,6 +618,34 @@ function sortOnDateAttr(data, attr) {
   })
 }
 
+function _csc(def, optionList) {
+  let l = def.label || '';
+  let n = def.name || '';
+  let selectEl = createElement('select', null,
+      [createAttribute('name',
+          n)]);
+  optionList.forEach(function (v) {
+    selectEl.append(createElement('option', [], [v]));
+  })
+  return createElement('div', null, [createElement('label', null,
+      [
+        `${l}: `,
+        selectEl,
+      ])
+  ]);
+
+}
+function createSelectControl(def) {
+  return _csc(def, def.lister());
+}
+
+// function createConditionalSelectControl(def) {
+//   let conditionalEl = document.querySelector(`#${def.section} [name=${def.dependsUpon}]`);
+//   let conditional = conditionalEl? conditionalEl.value: def.default;
+//   let list = conditional? def.lister(conditional): [];
+//   return csc(def, list);
+// }
+
 function createTextControl(def) {
   let w = def.width || 10;
   let l = def.label || '';
@@ -901,6 +662,12 @@ function createUIControl(def) {
     case 'text':
       el = createTextControl(def);
       break;
+    case 'select':
+      el = createSelectControl(def);
+      break;
+    // case 'conditionalSelect':
+    //   el = createConditionalSelectControl(def);
+    //   break;
     default:
       console.warn(`createUIControl: unknown type: ${def.type}`);
   }
