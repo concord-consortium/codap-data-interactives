@@ -3,10 +3,15 @@
   "version": "0.0.1",
   "description": "CODAP Plugins",
   "main": "index.html",
+  "homepage": "https://concord-consortium.github.io/codap-data-interactives/",
   "scripts": {
-    "build": "bin/build",
     "check": "bin/check",
-    "deploy": "bin/deploy",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "increment-build-number": "bin/increment-build-number",
     "build-and-deploy": "npm run check && npm run increment-build-number && npm run build && npm run deploy"
   },
@@ -24,8 +29,31 @@
   "bugs": {
     "url": "https://github.com/concord-consortium/codap-data-interactives/issues"
   },
-  "homepage": "https://github.com/concord-consortium/codap-data-interactives#readme",
   "dependencies": {
-    "simplify-geojson": "^1.0.3"
+    "simplify-geojson": "^1.0.3",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "dompurify": "^2.2.7",
+    "gh-pages": "^3.1.0",
+    "html-react-parser": "^1.2.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.3"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

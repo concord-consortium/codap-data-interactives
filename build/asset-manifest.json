@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/~eireland/codap-data-interactives/static/css/main.048dc08c.chunk.css",
+    "main.js": "/~eireland/codap-data-interactives/static/js/main.375e295d.chunk.js",
+    "main.js.map": "/~eireland/codap-data-interactives/static/js/main.375e295d.chunk.js.map",
+    "runtime-main.js": "/~eireland/codap-data-interactives/static/js/runtime-main.f7c020f4.js",
+    "runtime-main.js.map": "/~eireland/codap-data-interactives/static/js/runtime-main.f7c020f4.js.map",
+    "static/js/2.6acf1abd.chunk.js": "/~eireland/codap-data-interactives/static/js/2.6acf1abd.chunk.js",
+    "static/js/2.6acf1abd.chunk.js.map": "/~eireland/codap-data-interactives/static/js/2.6acf1abd.chunk.js.map",
+    "index.html": "/~eireland/codap-data-interactives/index.html",
+    "precache-manifest.6f38910fd4f650f3c479506e030acb0f.js": "/~eireland/codap-data-interactives/precache-manifest.6f38910fd4f650f3c479506e030acb0f.js",
+    "service-worker.js": "/~eireland/codap-data-interactives/service-worker.js",
+    "static/css/main.048dc08c.chunk.css.map": "/~eireland/codap-data-interactives/static/css/main.048dc08c.chunk.css.map",
+    "static/js/2.6acf1abd.chunk.js.LICENSE.txt": "/~eireland/codap-data-interactives/static/js/2.6acf1abd.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f7c020f4.js",
+    "static/js/2.6acf1abd.chunk.js",
+    "static/css/main.048dc08c.chunk.css",
+    "static/js/main.375e295d.chunk.js"
+  ]
+}

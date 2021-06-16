@@ -1,0 +1,35 @@
+@import "../../var.css";
+
+.header {
+  top: 0;
+  width: 100%;
+  height: 115px;
+}
+
+.headerTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--cc-teal-light6);
+  padding: 10px;
+  border-bottom: solid 1px var(--cc-charcoal-light2);
+  position: sticky;
+  z-index: 1;
+}
+
+.codap-logo {
+  height: auto;
+  width: 120px;
+}
+
+.headerCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex: 1;
+}
+
+.title {
+  font-size: 24px;
+}

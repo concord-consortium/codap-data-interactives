@@ -1,0 +1,109 @@
+@import "../../var.css";
+
+.navigationTabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 15px;
+  height: 40px;
+  list-style-type: none;
+  padding: 0;
+}
+.navigationTabs:before{
+  z-index: 1;
+}
+.navigationTabs:after {
+  content: "";
+  border-bottom: solid 1px var(--cc-charcoal-light1);
+  width: 100%;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 40px;
+  border-radius: 10px 10px 0 0;
+  padding: 0 20px;
+  margin: 0 5px;
+  border: solid 1px var(--cc-charcoal-light1);
+  width: fit-content;
+  cursor: pointer;
+  z-index: 0;
+  position: relative;
+}
+
+.tab:active {
+  color: white;
+}
+.tab.selected {
+  border-bottom: none;
+  z-index: 2;
+}
+
+.tab.Partners {
+  background-color: var(--cc-teal-light5);
+}
+
+.tab.Utilities {
+  background-color: var(--cc-orange-light4);
+}
+
+.tab.Data.Games {
+  background-color: var(--support-blue-light2);
+}
+
+.tab.Data.Worlds {
+background-color: var(--feedback-green-light4);
+}
+
+.tab.Partners:hover {
+  background-color: var(--cc-teal-light3);
+}
+
+.tab.Utilities:hover {
+  background-color: var(--cc-orange-light2);
+}
+
+.tab.Data.Games:hover {
+  background-color: var(--support-blue-dark1);
+}
+
+.tab.Data.Worlds:hover {
+background-color: var(--feedback-green-light2);
+}
+
+.tab.Partners.selected {
+    background-color: var(--cc-teal-light3);
+    border-bottom: none;
+    z-index: 2;
+}
+
+.tab.Utilities.selected {
+    background-color: var(--cc-orange-light2);
+    border-bottom: none;
+    z-index: 2;
+}
+
+.tab.Data.Games.selected {
+    background-color: var(--support-blue-light3);
+    border-bottom: none;
+}
+
+.tab.Data.Worlds.selected {
+  background-color: var(--feedback-green-light2);
+  border-bottom: none;
+}
+
+ul {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  padding-inline-start: 0;
+}
+
