@@ -7,7 +7,7 @@
   "scripts": {
     "check": "bin/check",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -a -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
