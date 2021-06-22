@@ -138,6 +138,16 @@ const DATASETS = [
         type: 'date'
       }
     ],
+    renamedAttributes: [
+      {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
+      {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
+      {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
+      {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
+      {old: 'series_complete_yes', new: 'total count fully vaccinated'},
+      {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
+      {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
+      {old: 'series_complete_65plus', new: 'count 65 and older fully vaccinated'},
+    ],
     uiComponents: [
       {
         type: 'select',
@@ -547,6 +557,7 @@ const DATASETS = [
     }
   }
 ]
+
 const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'Microdata4'];
 const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
@@ -581,12 +592,14 @@ function mergePopulation(data, referenceKeyAttr, correlatedKey) {
   });
   return data;
 }
+
 /**
- * A utility to merge state population stats with a dataset.
- * @param data {[object]} attribute keyed data
- * @param referenceKeyAttr {string} the name of the attribute in the merged into dataset that
- *                         is a foreign key into the population dataset.
- * @param correlatedKey    {string} the corresponding key in the population dataset
+ * A utility to merge state and county population stats with a dataset.
+ * @param data {[object]} attribute keyed dataset
+ * @param referenceState {string} the name of the attribute in the dataset that identifies the state.
+ * @param referenceCty {string} the name of the attribute in the dataset that identifies the county.
+ * @param correlatedState {string} the attribute in the population dataset that matches the state attribute in the passed in dataset
+ * @param correlatedCty {string} the attribute in the population dataset that matches the county attribute in the passed in dataset
  * @return {[object]} the data object modified
  */
 function mergeCountyPopulation(data, referenceState, referenceCty, correlatedState, correlatedCty) {
@@ -635,16 +648,22 @@ function _csc(def, optionList) {
   ]);
 
 }
+
+/**
+ * A select box ui generator.
+ *
+ * @param def {{
+ *     type: {'select'},
+ *     name: {string},
+ *     apiName: {string},
+ *     label: {string},
+ *     lister: {function}
+ *   }}
+ * @return {Element}
+ */
 function createSelectControl(def) {
   return _csc(def, def.lister());
 }
-
-// function createConditionalSelectControl(def) {
-//   let conditionalEl = document.querySelector(`#${def.section} [name=${def.dependsUpon}]`);
-//   let conditional = conditionalEl? conditionalEl.value: def.default;
-//   let list = conditional? def.lister(conditional): [];
-//   return csc(def, list);
-// }
 
 function createTextControl(def) {
   let w = def.width || 10;
@@ -675,7 +694,7 @@ function createUIControl(def) {
 }
 
 /**
- * A utility to create a DOM element with classes and content.
+ * A UI utility to create a DOM element with classes and content.
  * @param tag {string}
  * @param [classList] {[string]}
  * @param [content] {[Node]}
@@ -701,7 +720,7 @@ function createElement(tag, classList, content) {
 }
 
 /**
- * A utility to create a DOM attribute node.
+ * A UI utility to create a DOM attribute node.
  * @param name {string}
  * @param value {*}
  * @return {Attr}
@@ -762,6 +781,11 @@ function guaranteeDataset(datasetName, collectionList) {
       })
 }
 
+/**
+ * Create an autoscaled Case Table Component in CODAP
+ * @param datasetName
+ * @return {Promise<object>}
+ */
 function createCaseTable(datasetName) {
   return codapInterface.sendRequest({
     action: 'create',
@@ -785,6 +809,12 @@ function createCaseTable(datasetName) {
   });
 }
 
+/**
+ * Send an array of data items to CODAP
+ * @param datasetName {string}
+ * @param data {[object]}
+ * @return {Promise}
+ */
 function sendItemsToCODAP(datasetName, data) {
   return codapInterface.sendRequest({
     action: 'create',
@@ -799,6 +829,10 @@ function selectSource(/*ev*/) {
   this.parentElement.parentElement.classList.add('selected-source');
 }
 
+/**
+ * Sets and removes 'busy' class at the 'body' level.
+ * @param isBusy
+ */
 function setBusy(isBusy) {
   if (isBusy) {
     document.body.classList.add('busy');
@@ -808,6 +842,11 @@ function setBusy(isBusy) {
   isInFetch = isBusy;
 }
 
+/**
+ * Responds to a 'fetch' button press. Normally, of course, this would initiate
+ * a fetch of the selected data from the selected data source and its transfer to
+ * CODAP.
+ */
 function fetchHandler(/*ev*/) {
   if (!isInFetch)
   setBusy(true);
@@ -827,6 +866,9 @@ function fetchHandler(/*ev*/) {
   );
 }
 
+/**
+ * Creates the plugin UI and associates the correct event handlers.
+ */
 function createUI () {
   let anchor = document.querySelector('.contents');
   displayedDatasets.forEach(function (dsId) {
@@ -919,6 +961,13 @@ function getAttributeNamesFromData(array) {
   return Object.keys(array[0]);
 }
 
+/**
+ * A utility to downsample a dataset by selecting a random subset.
+ * @param data
+ * @param targetCount
+ * @param start
+ * @return {*[]}
+ */
 function downsampleRandom(data, targetCount, start) {
   let dataLength = data.length - start;
   let ct = Math.min(dataLength, Math.max(0, targetCount));
@@ -951,6 +1000,14 @@ function downsampleRandom(data, targetCount, start) {
   return newData;
 }
 
+/**
+ * Makes an array of CODAP Attribute Specs from the dataset definition and the
+ * attribute names discovered in the data.
+ *
+ * @param datasetSpec
+ * @param attributeNames
+ * @return {[object] | undefined}
+ */
 function resolveAttributes(datasetSpec, attributeNames) {
   let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
   attributeNames = attributeNames.filter(
@@ -1005,11 +1062,23 @@ function resolveCollectionList(datasetSpec, attributeNames) {
   });
   return collectionsList;
 }
+
+function renameAttributes(data, renames) {
+  data.forEach(function (item) {
+    renames.forEach(function (rename) {
+      item[rename.new] = item[rename.old];
+      delete item[rename.old];
+    })
+  });
+  return data;
+}
+
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
  * @return {Promise<Response>}
  */
 function fetchDataAndProcess() {
+  // determine what datasource we are fetching
   let sourceSelect = document.querySelector('input[name=source]:checked');
   if (!sourceSelect) {
     message('Pick a source');
@@ -1017,6 +1086,8 @@ function fetchDataAndProcess() {
   }
   let sourceIX = Number(sourceSelect.value);
   let datasetSpec = DATASETS[sourceIX];
+
+  // fetch the data
   let url = datasetSpec.makeURL();
   let headers = new Headers();
   if (datasetSpec.apiToken) {
@@ -1026,23 +1097,35 @@ function fetchDataAndProcess() {
   // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
   message(`Fetching ${datasetSpec.name}...`)
   return fetch(url, {headers: headers}).then(function (response) {
+
     if (response.ok) {
       message('Converting...')
       return response.json().then(function (data) {
+        // rename attributes in the data
+        if (datasetSpec.renamedAttributes) {
+          data = renameAttributes(data, datasetSpec.renamedAttributes);
+        }
+        // preprocess the data: this is guided by the datasetSpec and may include,
+        // for example sorting and filtering
         if (datasetSpec.preprocess) {
           data = datasetSpec.preprocess(data);
         }
+        // downsample the data, if necessary
         if (datasetSpec.downsample && downsampleGoal) {
           data = downsampleRandom(data, downsampleGoal, 0);
         }
+        // create the specification of the CODAP collections
         let collectionList = resolveCollectionList(datasetSpec, getAttributeNamesFromData(
             data));
         if (collectionList) {
+          // create the dataset, if needed.
           return guaranteeDataset(datasetSpec.name, collectionList)
+              // send the data
               .then(function () {
                 message('Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, data);
               })
+              // create a Case Table Component to show the data
               .then(function () {
                 message('creating a case table');
                 return createCaseTable(datasetSpec.name);
