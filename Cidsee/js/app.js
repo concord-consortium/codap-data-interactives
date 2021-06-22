@@ -760,6 +760,33 @@ function specifyDataset(datasetName, collectionList) {
   };
 }
 
+function guaranteeAttributes(existingDataset, desiredCollectionDefs) {
+  let datasetName = existingDataset.name;
+  let existingCollections = existingDataset.collections;
+  let childMostCollectionName = existingCollections[existingCollections.length-1].name;
+  let existingAttributes = [];
+  existingCollections.forEach(function (collection) {
+      existingAttributes = existingAttributes.concat(collection.attrs);
+    });
+  let desiredAttributes = [];
+    desiredCollectionDefs.forEach(function (collection) {
+      desiredAttributes = desiredAttributes.concat( collection.attrs);
+    });
+  let missingAttributes = desiredAttributes.filter(function (dAttr) {
+    return !existingAttributes.find(function (eAttr) {
+      return eAttr.name === dAttr.name;
+    })
+  });
+  if (missingAttributes.length) {
+    return codapInterface.sendRequest({
+      action: 'create',
+      resource: `dataContext[${datasetName}].collection[${childMostCollectionName}].attribute`,
+      values: missingAttributes
+    });
+  } else {
+    return Promise.resolve({success: true});
+  }
+}
 /**
  * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
@@ -770,7 +797,7 @@ function guaranteeDataset(datasetName, collectionList) {
   return codapInterface.sendRequest({action: 'get', resource: `dataContext[${datasetName}]`})
       .then(function (result) {
         if (result && result.success) {
-          return Promise.resolve(result.values);
+          return guaranteeAttributes(result.values, collectionList);
         } else {
           return codapInterface.sendRequest({
             action: 'create',
