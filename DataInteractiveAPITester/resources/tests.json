@@ -818,12 +818,25 @@
         "title": "title-text",
         "text": "T'was brillig and the slithy toves...",
         "dimensions": {
-          "width": 60,
-          "height": 200
-        },
-        "position": {
-          "left": 300,
-          "top": 100
+          "width": 200,
+          "height": 60
+        }
+      }
+    }
+  },
+  {
+    "name": "Create Plugin",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "game",
+        "name": "Weather",
+        "title": "NOAA Weather",
+        "URL": "//codap-server.concord.org/releases/latest/extn/plugins/NOAA-weather/",
+        "dimensions": {
+          "width": 200,
+          "height": 60
         }
       }
     }
