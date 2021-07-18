@@ -352,10 +352,16 @@ async function stationSelectionHandler(req) {
   }
 }
 
-/*
- * Units
+/**
+ * Converts the data values according to unit systsm
+ * @param fromUnitSystem {'metric'|'standard'}
+ * @param toUnitSystem {'metric'|'standard'}
+ * @param data {[object]}
  */
 function convertUnits(fromUnitSystem, toUnitSystem, data) {
+  if (fromUnitSystem === toUnitSystem) {
+    return;
+  }
   data.forEach(function (item) {
     Object.keys(item).forEach(function (prop) {
       let dataType = dataTypeStore.findByName(prop);
@@ -505,6 +511,7 @@ function fetchSuccessHandler(data) {
       aValue['report type'] = reportType;
       dataRecords.push(aValue);
     });
+    convertUnits('metric', unitSystem, dataRecords);
     ui.setMessage('Sending weather records to CODAP')
     codapConnect.createNOAAItems(constants, dataRecords,
         getSelectedDataTypes(), unitSystem)

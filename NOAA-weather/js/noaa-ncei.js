@@ -70,7 +70,7 @@ const noaaNCEIConnect = {
             const tDataTypeIDClause = `dataTypes=${dataTypes.join()}`;
             const tstartDateClause = `startDate=${startDate}`;
             const tEndDateClause = `endDate=${endDate}`;
-            const tUnitClause = `units=${this.state.unitSystem}`;
+            const tUnitClause = `units=metric`;
             const tFormatClause = 'format=json';
 
             let tURL = [this.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tstartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
