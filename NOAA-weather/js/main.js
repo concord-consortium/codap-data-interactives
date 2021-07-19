@@ -70,7 +70,7 @@ let constants = {
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000, // may be obsolescent
   stationDatasetURL: './assets/data/weather-stations.json',
-  version: 'v0012',
+  version: 'v0013',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
