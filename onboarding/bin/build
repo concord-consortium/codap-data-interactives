@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Build the onboarding deployment
+TARGET=./target
+JSX_SOURCE=source/jsx
+HTML_SOURCE=source/index.html
+CSS_SOURCE=source/style/onboarding.css
+JS_SOURCE=source/js
+CODAP_INTERFACE_SOURCE=../Common/js/CodapInterface.js
+IFRAME_PHONE_SOURCE=../Common/js/iframe-phone.js
+RESOURCE_SOURCE=source/resources
+
+mkdir $TARGET
+npm run build-onboarding
+npm run build-task_descriptions
+npm run build-task_descriptions_2
+
+cp $HTML_SOURCE $TARGET
+cp $CSS_SOURCE $TARGET
+cp -r $RESOURCE_SOURCE $TARGET
+cp $JS_SOURCE/* $TARGET
+cp $CODAP_INTERFACE_SOURCE $TARGET
+cp $IFRAME_PHONE_SOURCE $TARGET

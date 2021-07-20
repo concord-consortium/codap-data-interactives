@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+
+PROGNAME=$(basename $0)
+DIRNAME=$(dirname $0)
+
+function usage() {
+  echo usage: $PROGNAME preset-directory
+  exit 1;
+}
+
+PRESET_DIR=$1
+if [ "$PRESET_DIR" = "" ]; then usage; fi
+
+function output () {
+  echo $1;
+}
+
+
+IFS=$'\n'
+for j in $(find "$PRESET_DIR" -name "*.csv")
+do
+  UNIQ_CASES=$(sort -u "$j" | wc -l | sed 's/ //g')
+  YR_ST=$(echo $j | sed "s/$PRESET_DIR\///;s/\//,/g")
+  echo "$YR_ST",$(expr $UNIQ_CASES - 1)
+#  echo "$YR_ST",$UNIQ_CASES
+done
+
+#for FN in ${arr[@]}
+#do
+#    UNIQ_CASES=$(sort -u "$FN")
+#done

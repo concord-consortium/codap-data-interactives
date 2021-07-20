@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Simple Sampling</title>
+    <style>
+        @import "style.css";
+    </style>
+    <script src="../Common/js/jquery.js"></script>
+    <script src="../Common/js/iframe-phone.js"></script>
+    <script src="embedded-mode-demo.js"></script>
+</head>
+<body>
+<div id="app">
+    <div id="sampler" class="reserved-sampler"></div>
+    <h1>An Exploration of Sampling</h1>
+    <p>At left is a sampler. Press its <em>Run</em> button to see it work.</p>
+    <p>It mixes the labeled balls and chooses or <em>draws</em>, one at a time at random.
+        After the ball's label is recorded, the ball returns to the mix.</p>
+    <p>After the sampler has drawn two balls, it puts the results in a data set.
+        You can see a table of the data by pressing this button:
+        <button id="addTableButton">Add Table</button>
+    </p>
+    <p>Press the <em>Run</em> button again and watch the draws added to the table.</p>
+    <p>Notice that each time you press Run, you get a new <em>experiment</em>. And each experiment has as many runs
+        as there are repetitions.</p>
+    <p>The rightmost portion of the table keeps track of the <em>draws</em>.</p>
+    <p>To make a graph of the Draws, press this button:
+        <button id="addGraphButton">Add Graph</button>
+    </p>
+    <p>Any time you want to remove all the data, press this button: <button id="clearDataButton">Clear Data</button></p>
+    <h2>Questions</h2>
+    <ol>
+        <li>Explain the relationship between the labelled balls and the graph of <em>values</em>.
+        <input type="text" size="100"/></li>
+        <li>Drag <em>combinations</em> from the table to the graph's x-axis. Which combination appears most frequently? Why?
+        <input type="text" size="100"></li>
+    </ol>
+
+</div>
+<iframe id="codapIFrame" class="no-pointer-events" allowTransparency="true"
+        src="http://localhost:4020/dg?embeddedMode=yes"></iframe>
+<div class="no-pointer-events pointer-manager"></div>
+<div class="monitor"></div>
+</body>
+</html>

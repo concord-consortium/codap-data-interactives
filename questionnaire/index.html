@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Questionnaire</title>
+  <script src="js/knockout-latest.js"></script>
+  <script src="js/survey.ko.min.js"></script>
+  <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+  <script src="../Common/js/jquery.js"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+  <!--<link href="css/survey.css" type="text/css" rel="stylesheet" />-->
+  <style>
+    @import url('css/survey.css');
+    body {
+      background-color: white;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    h5 {
+      font-weight: normal;
+      margin: auto;
+    }
+    #messages .error {
+      color: red;
+    }
+    #messages {
+      font-size: smaller;
+    }
+  </style>
+</head>
+<body>
+<div id="surveyAttachPoint" ><script type="text/javascript">
+  document.write('This page is meant to be embedded in <a target="_blank" href="//codap.concord.org">CODAP</a>');
+  if (location.protocol !== 'file') {
+    document.write(' like <a target="_blank" href="//codap.concord.org/releases/latest?di=' + window.location + '">this</a>.');
+  }
+</script></div>
+<div id="messages"></div>
+<script type="application/javascript" src="js/questionnaire.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+[
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "calculator"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "map",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        }
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "slider",
+        "name": "ageSlider",
+        "lowerBound": -0.5,
+        "upperBound": 21.5,
+        "animationDirection": 1,
+        "animationMode": 1,
+        "title": "ageSlider"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "text",
+        "componentStorage": {
+          "text": "T'was brillig and the slithy toves did gyre and gimble in the wabe."
+        }
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "DataContext1",
+        "xAttributeName": "age",
+        "yAttributeName": "height"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "DataContext1",
+        "xAttributeName": "height",
+        "yAttributeName": "age"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseTable",
+        "dimensions": {
+          "width": 480,
+          "height": 200
+        },
+        "dataContext": "DataContext1"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "webView",
+        "title": "Concord",
+        "url": "http://www.concord.org"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  }
+]

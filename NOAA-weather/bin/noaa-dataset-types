@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Outputs the NOAA Datatypes referenced in the given dataset
+# Requires curl and jq.
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+function usage() {
+  echo usage: $PROGNAME dataset 2>&1
+  exit
+}
+
+[ "$1" == "" ] && usage;
+set -x
+echo name,description
+curl -s "$NOAA_URL/$NOAA_ENDPOINT_DATASETS/${1}.json" | 
+  jq  -r '.dataTypes[]|[.id,.name]|@csv'

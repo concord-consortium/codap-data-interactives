@@ -1,0 +1,8 @@
+#!/bin/sh
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+cd $DIRNAME/../..
+rsync --exclude=.idea -av Cidsee/ codap-server.concord.org:public_html/Cidsee-new/
+
+

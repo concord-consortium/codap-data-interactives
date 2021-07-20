@@ -1,0 +1,44 @@
+<!--// ==========================================================================-->
+<!--// Project:   Sampler-->
+<!--// ==========================================================================-->
+
+<!--/**-->
+ <!--* @fileoverview Defines Sampler component to be embedded in DG to generate random samples.-->
+ <!--* @author williamfinzer@gmail.com (William Finzer)-->
+ <!--*/-->
+
+<html>
+<head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+    <link rel="stylesheet" media="screen,projection" type="text/css" href="Sampler.css" />
+    <script src="../Common/js/kcpcommon.js" language="javascript"></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <script src="Sampler.js" language="javascript"></script>
+
+
+    <title>Sampler</title>
+</head>
+
+<body>
+<h1>Sampler</h1>
+<p>Specify the nature of the samples you wish to generate.</p>
+<form name="form1">
+    Name of population: <input type="text" size=15 maxlength=30 name="popName" value="People"><br>
+    Name of value attribute: <input type="text" size=15 maxlength=30 name="attrName" value="height"><br>
+    Population mean: <input type="text" size=7 maxlength=12 name="popMean" value="168"><br>
+    Population SD: <input type="text" size=7 maxlength=12 name="popSD" value="10"><br>
+    Sample Size: <input type="text" size=7 maxlength=12 name="sampleSize" value="7"><br>
+    Number of samples: <input type="text" size=7 maxlength=12 name="numSamples" value="11"><br>
+	<input type="button" onClick="Sampler.generateSamples();" value="Generate Samples">
+</form>
+
+<code>
+</code>
+<div id="report">
+<p></p>
+</div>
+</body>
+</html>

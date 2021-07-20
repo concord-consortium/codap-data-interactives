@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# Script to deploy endorsed CODAP plugins on a server. It is expected that
+# the user running this script has appropriate access the server and directories
+# on the server in question. In the case of the CODAP server, this is root
+# access.
+#
+# It is assumed that the CODAP server supports standard unix utilities, including
+# ssh, scp, rm, unzip, ln.
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+HOMEDIR=$DIRNAME/..
+cd $HOMEDIR
+# exit immediately upon any error
+set -e
+
+# We source configuration values from .codap-build.rc for information about
+# the server we will be installing on. Values expected from this file:
+#
+# * CODAP_SERVER           DNS name of server to install to
+# * CODAP_SERVER_WWW_BASE  BASE directory on the server
+#
+. ${HOME}/.codap-build.rc
+CODAP_SERVER=${CODAP_SERVER:-"codap-server.concord.org"}
+CODAP_SERVER_WWW_BASE=${CODAP_SERVER_WWW_BASE:="/var/www/html"}
+
+BUILD_NUM=`cat lib/build-num.txt`
+ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
+SOURCE_PATH=target/$ZIP_FILENAME
+INSTALL_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/
+LATEST_PATH=${CODAP_SERVER_WWW_BASE}/plugins/releases/latest
+
+function error() {
+  echo "${PROGNAME}: error - $*" 1>&2
+  exit 1
+}
+
+[ -r $SOURCE_PATH ] || error "$SOURCE_PATH not found"
+
+echo "Copy $SOURCE_PATH to $CODAP_SERVER:/tmp ..."
+scp $SOURCE_PATH $CODAP_SERVER:/tmp
+echo "On $CODAP_SERVER, make install path: $INSTALL_PATH"
+ssh $CODAP_SERVER "sudo mkdir -p $INSTALL_PATH"
+echo "On $CODAP_SERVER, unzip $ZIP_FILENAME"
+ssh $CODAP_SERVER "sudo unzip -q /tmp/$ZIP_FILENAME -d $INSTALL_PATH"
+echo "On $CODAP_SERVER, link $LATEST_PATH to $INSTALL_PATH/build_$BUILD_NUM"
+ssh $CODAP_SERVER "sudo rm -f $LATEST_PATH && sudo ln -s $INSTALL_PATH/build_$BUILD_NUM $LATEST_PATH"
+echo "On $CODAP_SERVER, clean up"
+ssh $CODAP_SERVER "rm /tmp/$ZIP_FILENAME"
+

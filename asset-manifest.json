@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/codap-data-interactives/static/css/main.048dc08c.chunk.css",
+    "main.js": "/codap-data-interactives/static/js/main.6b0e6e93.chunk.js",
+    "main.js.map": "/codap-data-interactives/static/js/main.6b0e6e93.chunk.js.map",
+    "runtime-main.js": "/codap-data-interactives/static/js/runtime-main.f26bf6cc.js",
+    "runtime-main.js.map": "/codap-data-interactives/static/js/runtime-main.f26bf6cc.js.map",
+    "static/js/2.6acf1abd.chunk.js": "/codap-data-interactives/static/js/2.6acf1abd.chunk.js",
+    "static/js/2.6acf1abd.chunk.js.map": "/codap-data-interactives/static/js/2.6acf1abd.chunk.js.map",
+    "index.html": "/codap-data-interactives/index.html",
+    "precache-manifest.c25f3ee2c90de210547bfa1bdae9bfa9.js": "/codap-data-interactives/precache-manifest.c25f3ee2c90de210547bfa1bdae9bfa9.js",
+    "service-worker.js": "/codap-data-interactives/service-worker.js",
+    "static/css/main.048dc08c.chunk.css.map": "/codap-data-interactives/static/css/main.048dc08c.chunk.css.map",
+    "static/js/2.6acf1abd.chunk.js.LICENSE.txt": "/codap-data-interactives/static/js/2.6acf1abd.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f26bf6cc.js",
+    "static/js/2.6acf1abd.chunk.js",
+    "static/css/main.048dc08c.chunk.css",
+    "static/js/main.6b0e6e93.chunk.js"
+  ]
+}

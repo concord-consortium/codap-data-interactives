@@ -1,0 +1,79 @@
+body
+{
+	font-family: sans-serif;
+}
+
+.welcome
+{
+    color: white;
+}
+
+.panel
+{
+	border:2px solid silver;
+	border-radius:6px;
+	box-shadow: 5px 5px 5px #888888;
+	background-color: #FFF0B8;
+}
+
+.cover
+{
+	background-color: rgba(217, 217, 217, 0.52);
+}
+
+.bottomPanel
+{
+	border:2px solid silver;
+	border-bottom-left-radius:6px;
+    border-bottom-right-radius:6px;
+	box-shadow: 5px 5px 5px #888888;
+	background-color: #c5c5c5;
+}
+
+.infobox
+{
+	border:2px solid silver;
+    box-shadow: 5px 5px 5px #888888;
+    background-color: #f5f5f5;
+}
+
+.customButton
+{
+	border:1px solid silver;
+	border-radius:5px;
+	padding-top:3px;
+	padding-bottom:3px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.customButton:hover 
+{
+	background:#DDDDDD;
+}
+
+.customButton:active
+{
+	background:#EEEEEE;
+}
+
+.resultsheading
+{
+    text-decoration: underline;
+}
+
+.result
+{
+    font-weight: bold;
+}
+
+#money
+{
+    color: white;
+}
+
+#turn
+{
+    font-size: 105%;
+}
+

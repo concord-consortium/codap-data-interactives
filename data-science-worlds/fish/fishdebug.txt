@@ -1,0 +1,32 @@
+... [newTurn] updating from 2020
+[newGame].......2019-03-27 11:54:05 (-05)
+	New game. PHP version 7.2.14
+	Ready to make the code. ..... the number is 43
+	new game code just made: warm.gut.loop
+[joinGame].......2019-03-27 11:54:05 (-05)
+	Tim does not already exist in warm.gut.loop
+	joinGame query: INSERT INTO players (playerName, gameCode, onTurn, balance) VALUES (:playerName, :gameCode, :onTurn, :balance)
+	joinGame exit with: {"newPlayer":true}
+	Tim caught 20 fish during 2020
+... [newTurn] updating from 2020
+	Tim caught 22 fish during 2021
+... [newTurn] updating from 2021
+	Tim caught 22 fish during 2022
+... [newTurn] updating from 2022
+	Tim caught 22 fish during 2023
+... [newTurn] updating from 2023
+	Tim caught 22 fish during 2024
+... [newTurn] updating from 2024
+	Tim caught 22 fish during 2025
+... [newTurn] updating from 2025
+	Tim caught 22 fish during 2026
+... [newTurn] updating from 2026
+	Tim caught 22 fish during 2027
+... [newTurn] updating from 2027
+	Tim caught 22 fish during 2028
+... [newTurn] updating from 2028
+	Tim caught 22 fish during 2029
+... [newTurn] updating from 2029
+	Tim caught 22 fish during 2030
+... [newTurn] updating from 2030
+	Tim caught 22 fish during 2031

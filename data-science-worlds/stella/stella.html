@@ -1,0 +1,365 @@
+
+<!--
+==========================================================================
+
+ * Created by tim on 5/8/16.
+
+
+ ==========================================================================
+ stella.html in data-science-games.t
+HTML wrapper for ....
+
+    Author:   Tim Erickson
+
+Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+Testing URLs
+
+concord/eeps:
+    http://codap.concord.org/releases/dsg?di=http://www.eeps.com/dsg/stella/stella.html
+
+local testing MAMP
+    http://localhost:8888/codap/static/dg/en/cert/index.html?di=http://localhost:8888/codap-data-interactives/data-science-worlds/stella/stella.html
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!--        stylesheets         -->
+    <link rel='stylesheet' type='text/css' href='stella.css'/>
+    <link rel='stylesheet' type='text/css' href='../common/jqueryFolder/jquery-ui.min.css'/>
+
+    <!-- These two scripts take care of the communication with CODAP and commons -->
+    <script src="../common/iframe-phone.js"></script>
+    <script src="../common/codapInterface.js" ></script>
+
+    <script src="../common/pluginHelper.js" ></script>
+
+    <script src="../common/TEEUtils.js" ></script>
+    <script src="../common/jqueryFolder/jquery.min.js"></script>
+    <script src="../common/jqueryFolder/jquery-ui.min.js"></script>
+
+    <title>Stella</title>
+
+    <!-- Snap -->
+    <script src="../common/snap.svg-min.js"></script>
+
+    <!--            our game source         -->
+    <script src="stella.js" ></script>
+
+    <script src="Line.js" ></script>
+    <script src="Spectrum.js" ></script>
+    <script src="SpectrumView.js" ></script>
+    <script src="System.js" ></script>
+    <script src="Star.js" ></script>
+    <script src="Planet.js" ></script>
+    <script src="elementalSpectra.js" ></script>
+    <script src="StarResult.js" ></script>
+
+
+    <script src="stella.badges.js" ></script>
+    <script src="stella.player.js" ></script>
+    <script src="stella.manager.js" ></script>
+    <script src="stella.spectrumManager.js" ></script>
+    <script src="stella.photometryManager.js" ></script>
+    <script src="stella.share.js" ></script>
+    <script src="stella.model.js" ></script>
+    <script src="stella.connector.js" ></script>
+    <script src="stella.ui.js" ></script>
+    <script src="stella.skyView.js" ></script>
+    <script src="stella.options.js" ></script>
+    <script src="staticStars.js" ></script>
+
+
+    <script>
+        /**
+         * Runs when everything is loaded.
+         */
+        $(function () {
+            $("#tabs").tabs();
+            startCodapConnection();
+        });
+    </script>
+
+
+</head>
+<body>
+
+<div id="stellaBanner" class="vBox">
+    <div id="starInfo">
+
+    </div>
+    <div id="timeAndPointingControlBanner">
+        <!--
+                <span id="shortStatus"></span>
+                &nbsp;| &nbsp;
+        -->
+        <label for="pointAtStar">point at </label>
+        <input id="pointAtStar" class="textIO" width="40px"
+               onblur="stella.ui.keypressInStarPointingBox(event)"
+               onkeypress="stella.ui.keypressInStarPointingBox(event)"
+        />
+        <span> • wait</span>
+        <button class="zoomyButton" onclick="stella.elapse(0.001)"><span class="non-click-text">0.001</span></button>&nbsp;
+        <button class="zoomyButton" onclick="stella.elapse(0.01)"><span class="non-click-text">0.01</span></button>&nbsp;
+        <button class="zoomyButton" onclick="stella.elapse(0.1)"><span class="non-click-text">0.1</span></button>&nbsp;
+        <span>(years)</span>
+
+    </div>
+</div>
+
+<div id="tabs">
+    <!--    list the tabs for this jquery_ui widget -->
+    <ul>
+        <li><a href="#skyTab">Sky</a></li>
+        <li><a href="#photometryTab">Photometry</a></li>
+        <li><a href="#spectraTab">Spectra</a></li>
+        <li><a href="#starResultTab">Results</a></li>
+        <li><a href="#instructionsTab">How To</a></li>
+        <li><a href="#badgesTab">Badges</a></li>
+<!--
+        <li><a href="#optionsTab">Options</a></li>
+-->
+        <!--<li><a href="#debugTab">Debug</a></li> -->
+    </ul>
+
+    <!--    Now describe each tab separately, note how the list above references the IDs    -->
+
+    <!--        SKY     -->
+
+    <div id="skyTab">     <!--    The main tab, where the game is     -->
+        <svg id="stellaSkyView" width="300" height="300">
+            <rect width="100" height="100" fill="dodgerblue"></rect>
+            <rect width="100" height="100" x="200" y="200" fill="dodgerblue"></rect>
+            <rect width="200" height="200" x="50" y="50" fill="goldenrod" fill-opacity="0.5"></rect>
+            <text x="75" y="117">Press the START button below</text>
+        </svg>
+        <svg width="300" height="16">
+            <rect width="300" height="16" fill="#222"></rect>
+            <text id="telescopeStatusText" x="8" y="12" fill="#8f8">Sample text</text>
+        </svg>
+        <br>
+        magnification:
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(1)">1x</button>&nbsp;
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(5)">5x</button>&nbsp;
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(30)">30x</button>&nbsp;
+        <button class="zoomyButton astrometry1" onclick="stella.manager.changeMagnificationTo(500)">500x</button>&nbsp;
+        <button class="zoomyButton astrometry1" onclick="stella.manager.changeMagnificationTo(10000)">10000x</button>&nbsp;
+    </div>
+
+    <!--        "PHOTOMETRY"     -->
+
+    <div id="photometryTab">
+        <div class="hBox">
+            <div class="vBox">
+                <svg id="photometryView" width="200" height="200">
+                    <rect x="0" y="0" width="200" height="200" fill="black"></rect>
+                    <defs>
+                        <radialGradient id="exampleGradient">
+                            <stop offset="10%" stop-color="white"/>
+                            <stop offset="95%" stop-color="black"/>
+                        </radialGradient>
+                    </defs>
+
+                    <circle fill="url(#exampleGradient)" cx="100" cy="100" r="60"/>
+
+                    <text x="20" y="35" font-family="Verdana" font-size="20" fill="goldenrod">
+                        sample image
+                    </text>
+
+                </svg>
+            </div>
+            <div>
+                <div id="photometryResultsText"></div>
+            </div>
+        </div>
+        <br>
+        <span>exposure: </span>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(1)">1 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(10)">10 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(60)">60 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(600)">10 min</button>
+        <br>
+        Filter:
+        <select name="source" id="filterMenu" onchange="stella.manager.filterChanged();">
+            <option value="F400">F400 (350-450nm) violet</option>
+            <option value="F500">F500 (450-550nm) green</option>
+            <option value="F600">F600 (550-650nm) red</option>
+            <option value="---" disabled>---</option>
+            <option value="none" selected>none (350-700nm)</option>
+        </select>
+
+    </div>
+
+
+    <!--        SPECTRA     -->
+
+    <div id="spectraTab">
+        <label>
+            Wavelength range (nm):
+            <input type="number" id="lambdaMin" value="350" max="700" min="350" style="width : 6em"
+                   onblur="stella.spectrumManager.spectrumParametersChanged();">
+            -
+            <input type="number" id="lambdaMax" value="700" max="700" min="350" style="width : 6em"
+                   onblur="stella.spectrumManager.spectrumParametersChanged();">
+        </label>
+
+        <h2 id="spectrogramHeading">Spectrograms</h2>
+        <h3 id="skySpectrumLabel">From a Star</h3>
+        <div class="hBox">
+            <svg id="skySpectrumDisplay" width="300" height="64">
+                <rect width="100" height="100" fill="dodgerblue"></rect>
+            </svg>
+            <button id="saveSkySpectrumButton" onclick="stella.spectrumManager.saveSpectrumToCODAP('sky')">save</button>
+        </div>
+
+        <hr>
+
+        <h3 id="labSpectrumLabel">From the Lab</h3>
+        <div class="hBox">
+            <svg id="labSpectrumDisplay" width="300" height="64"></svg>
+            <button id="saveLabSpectrumButton" onclick="stella.spectrumManager.saveSpectrumToCODAP('lab')">save</button>
+        </div>
+
+        <div class="vBox">
+
+            <fieldset>
+                <legend>Lab settings: Source</legend>
+                <div class="hBox">
+                    <input type="radio" name="sourceType" value="discharge"
+                           onchange="stella.spectrumManager.spectrumParametersChanged();" checked>
+                    <label for="dischargeTubeMenu">Discharge tube:</label>
+
+                    <select name="source" id="dischargeTubeMenu"
+                            onchange="stella.spectrumManager.spectrumParametersChanged();">
+                        <option value="H">Hydrogen</option>
+                        <option value="HeI">Helium</option>
+                        <option value="LiI">Lithium (neutral)</option>
+                        <option value="NaI">Sodium</option>
+                        <option value="CaII">Calcium (+)</option>
+                        <option value="FeI">Iron (neutral)</option>
+                    </select>
+                </div>
+
+                <div class="hBox">
+                    <input type="radio" name="sourceType" value="blackbody"
+                           onchange="stella.spectrumManager.spectrumParametersChanged();">
+                    <label for="labTempSlider">
+                        Blackbody spectrum at <span id="labTempDisplay">5800</span> K:&nbsp;&nbsp;
+                    </label>
+                    <input
+                            id="labTempSlider" type="range" width="200px"
+                            min="1000" max="30000" step="100" value="5800"
+                            oninput="stella.ui.slideBlackbodyTemperature()"
+                    >
+                    </input>
+
+
+                </div>
+            </fieldset>
+
+            <!--
+            <label>
+                Gain:
+                <div id="labSpectrographGainSlider" class="ui-slider"></div>
+                <div id="gainDisplay" class="sliderLabel"></div>
+            </label>
+            -->
+        </div>
+
+    </div>
+
+
+    <!--        "STAR RESULTS"     -->
+
+    <div id="starResultTab">
+
+        <h2 id="starResultHeadline"></h2>
+        <p>Choose what type of result you're recording, enter a value, and press <b>save</b></p>
+
+        <span id="starResultMenu"></span>
+        <input id="starResultValue" type="number" maxlength="15"
+               onblur="stella.manager.starResultValueChanged( false )"/>
+        <span id="starResultUnits"></span>
+        <button id="saveStarResult" onclick="stella.manager.saveMyOwnStarResult()">save</button>
+        <br>
+        <span id="relevantValuesText"></span><br>
+        <span id="badgePrivilegeText"></span>
+        <button id="findAutoResult" onclick="stella.manager.getStarDataUsingBadge()">auto</button>
+
+    </div>
+
+
+    <div id="instructionsTab">
+        <p>In the Sky tab, click on a star to point at it. Its record will appear in the catalog (if you have created
+            the tables). You can also click in the catalog to point at a star, or type in the star in the green box.</p>
+        <p><b>Record results to get points and badges</b>. Record (simple) results
+            from your investigations as records in the <b>Results</b> tab.
+            A good example of a simple result is the current position of the star you're pointing at.
+            If you're kinda close, it will record the value for posterity, and award you points.</p>
+        <p>You can record position, temperature, and radial velocity ("Away" is positive),
+            and use position to derive proper motion and parallax.
+            Parallax leads to distance.</p>
+        <p>For temperature and radial velocity, you need spectra.
+            Go to the <b>Spectra</b> tab to see and record spectra from the star you're pointing at.
+            You can also create
+            and record spectra in the lab.</p>
+        <p>Blackbody spectra have characteristic shapes; you can use them to figure out stellar temperatures.</p>
+        <p>Use shifts in spectral lines to figure out radial velocity.</p>
+        <p><b>Zooming for spectra</b>. For precise wavelengths, you need to zoom in.
+            Click in the colored areas to zoom in to spectra.
+            Click in the gray areas to zoom out.</p>
+    </div>
+
+
+    <!--        BADGES tab      -->
+
+
+    <div id="badgesTab">
+        <p id="badgesHTML"></p>
+    </div>
+
+
+    <!--        OPTIONS tab      -->
+
+<!--
+    <div id="optionsTab">
+        <p>Use these options to simplify (or complexicate) the game.</p>
+        <div class="vBox options" id="gameOptions" onclick="stella.options.optionChange()">
+            <label><input type="checkbox" id="tempAffectsWhichLinesArePresent" checked>
+                temperature affects which lines are present</label>
+            <label><input type="checkbox" id="parallax" checked>star locations show parallax</label>
+            <label><input type="checkbox" id="properMotion" checked>star locations show proper motion</label>
+        </div>
+    </div>
+-->
+
+
+    <!-- <div id="debugTab">
+         <span id="debugText"></span>
+     </div>
+     -->
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,165 @@
+<html>
+	<head>
+		<title>Floyd's of Fargo</title>
+
+        <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
+		<link rel="stylesheet" type="text/css" href="style/fargo_style.css" />
+		<link rel="stylesheet" type="text/css" href="style/fargo_layout.css" />
+
+		<script src="../Common/js/kcpcommon.js" type="text/javascript"></script>
+        <script src="../Common/js/raphael.js" type="text/javascript"></script>
+		<script src="../Common/js/dgapi.js" type="text/javascript"></script>
+		<script src="../Common/js/events.js" type="text/javascript"></script>
+		<script src="js/fargo_model.js" type="text/javascript"></script>
+		<script src="js/fargo_settings.js" type="text/javascript"></script>
+		<script src="js/fargo_view.js" type="text/javascript"></script>
+
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <script type="text/javascript">
+
+      var FargoGame = {
+            initializeGame: function() {
+              //this.dataGamesAPI = new DataGamesAPI();
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback){
+                    var operation = iCmd && iCmd.operation,
+                            args = iCmd && iCmd.args,
+                            model = FargoGame.model;
+                    switch( operation) {
+                        case 'saveState':
+                            callback(model.saveGameState());
+                            break;
+                        case 'restoreState':
+                            callback(model.restoreGameState( args.state));
+                            break;
+                        default:
+                            callback({success:false});
+                    }
+                }, "codap-game", window.parent);
+              this.model = new FargoModel(FargoGame.codapPhone, FargoGame.doAppCommand);
+              this.view = new FargoView();
+    
+              this.view.initialize();
+              this.model.initialize();
+    
+              this.view.eventDispatcher.addEventListener("onFinishTurn", this.model.finishTurn, this.model);
+              this.model.eventDispatcher.addEventListener("onFargoModelUpdated", this.view.update, this.view);
+              
+              this.model.updateView();
+            }
+      }
+    </script>
+        <style type="text/css">
+            html {
+                overflow:hidden;
+            }
+        </style>
+    </head>
+	<body onload="FargoGame.initializeGame()">
+
+		<div id="backbox">
+
+            <div id="welcome_panel">
+                <div id="welcome_pic"
+                     onclick="FargoGame.model.playGame()">
+                </div>
+                <div id="welcome_text" class="welcome">
+                    <p>There was a horrible tack spill on North Dakota Highway 6.</p>
+                    <p>You're insuring cars against flat tires.</p>
+                    <p>It costs $100 to buy a tire. You need to set the price of your premium.</p>
+                    <p>How much money can you make in 10 turns?</p>
+                </div>
+                <button id="play" type="button" class="button bigrounded rosy"
+                         onclick="FargoGame.model.playGame();">
+                     Play
+                </button>
+            </div>
+
+            <div id="control_cover" class="cover">
+                <!--Used to prevent access to controls when results are up-->
+            </div>
+			<div id="control_panel" class="panel">
+                <div id="turn"></div>
+                <button id="watch_button" type="button" class="button medium gray"
+                        title="No income and no costs."
+                        onclick="FargoGame.model.watch();">
+                    Watch
+                </button>
+                <button id="sell_button" type="button" class="button medium gray"
+                        title="Customers purchase insurance. You pay for their flats."
+                        onclick="FargoGame.model.sell();">
+           			Sell
+				</button>
+                <div id="price_input">
+                    <span title="Change price by typing or clicking arrow buttons.">
+                    <div id="price">Price per customer</div>
+                    <img id="down" src="img/down.png" onmousedown="FargoGame.model.decrementPrice()"
+                            onmouseup="FargoGame.model.endPriceChange()"
+                            ondragstart="FargoGame.model.endPriceChange()"/>
+                    <input id="price_input_box" type="text"
+                    onchange="FargoGame.model.setPrice(document.getElementById('price_input_box').value)" />
+                    <img id="up" src="img/up.png" onmousedown="FargoGame.model.incrementPrice()"
+                         onmouseup="FargoGame.model.endPriceChange()"
+                         ondragstart="FargoGame.model.endPriceChange()"/>
+                    </span>
+                </div>
+                <button id="auto_play_button" type="button" class="button medium gray"
+                        title="Remaining turns are quickly played at the current price."
+                        onclick="FargoGame.model.autoplayGame();">
+            					Auto Finish
+				</button>
+			</div>
+
+			<div id="gamebox" class="infobox">
+                <div id="feedback">
+                    <a class="linkNormal" title="Number of Cars">
+                        <div id="cars">
+                            <span id="numCars">0</span>
+                        </div>
+                    </a>
+                    <a class="linkNormal" title="Number of Flat Tires">
+                        <div id="flats">
+                            <span id="numFlats">0</span>
+                        </div>
+                    </a>
+                    <a class="linkNormal" title="Profit/Loss">
+                    <div id="profit">
+                        <img id="moneyChangeImage" src="img/profit.png" height="30" style="float:left" />
+                        <span id="numProfit">0</span>
+                    </div>
+                    </a>
+                    <a class="linkNormal" title="Current Balance">
+                        <div id="money">
+                            <span id="numMoney">0</span>
+                        </div>
+                    </a>
+                </div>
+				<div id="carCanvas">
+
+                    <div id="resultsbox" class="panel">
+                        <div class="resultsheading">Game <span id="result_gameNumber" class="result"></span> Results</div>
+                        The last premium price was <span id="result_lastPrice" class="result"></span>.<br>
+                         <span id="result_customers" class="result"></span> customers paid a total of
+                            <span id="result_revenue" class="result"></span>.<br>
+                         There were <span id="result_flats" class="result"></span> flats costing
+                            <span id="result_flatsCost" class="result"></span>.<br>
+                        The end balance was <span id="result_endingBalance" class="result"></span>.<br>
+                    </div>
+
+                     <div id="zeroCustomers" class="panel">
+                         There were no customers and no flat tires.
+                     </div>
+
+				</div>
+			</div>
+
+            <div id="outercontrols" class="bottomPanel">
+                <button id="game_button" type="button" class="button medium white"
+                        onclick="FargoGame.model.handleGameButton();">
+            		End Game
+            	</button>
+                <div id="game">Game <span id="gameNum">1</span></div>
+            </div>
+        </div>
+	</body>
+</html>

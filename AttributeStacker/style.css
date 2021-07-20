@@ -1,0 +1,81 @@
+body {
+  padding: 0 2em;
+  background-color: white;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  width: 75px;
+}
+
+td {
+  border: thin silver solid;
+}
+
+section {
+  border: thin grey solid;
+  padding: 1em 2em;
+  margin: 0.5em;
+}
+
+#attribute-stacking {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#src-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+#src-stack .item {
+  margin-bottom: 2px;
+}
+
+.drag-active {
+  opacity: .1;
+}
+
+.inactive {
+  visibility: hidden;
+}
+
+.drop-area {
+  border: thin silver solid;
+  border-radius: 5px;
+  width: 98px;
+  height: 20px;
+}
+
+.drag-in-progress .drop-area:empty {
+  border-color: yellow;
+}
+
+.item {
+  position: relative;
+  border: thin blue solid;
+  border-radius: 5px;
+  width: 90px;
+  padding: 0 4px;
+  overflow: hidden;
+  background-color: skyblue;
+  color: white;
+  font-family: sans-serif;
+  font-size: smaller;
+  text-align: center;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+}
+
+.over {
+  background-color: lightgrey;
+}

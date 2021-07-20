@@ -1,0 +1,135 @@
+body {
+  background-color: #fffaf0;
+  font-family: sans-serif;
+  color: rgb(110,109,95);
+}
+section {
+  margin: 0.25em 0;
+  padding: 0.25em 0;
+  width: 480px;
+  background-color: rgb(178,182,151);
+}
+section .collection-name {
+  margin: 0.25em ;
+  font-weight: bold;
+  color: white;
+}
+.card-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+}
+.card-section {
+  width: 480px;
+}
+.case-display {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.attr-container, .case-frame {
+  /*padding: 0 0.5em;*/
+  background-color: rgb(110,109,95);
+  padding: 0 0 2px;
+  border: 1px solid transparent;
+}
+.case-frame {
+  width: 212px;
+  overflow: hidden;
+  position: relative;
+}
+@keyframes animateCases {
+  from {
+    left: 0;
+  }
+  to {
+    left: -212px;
+  }
+}
+.case-container {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  /*animation-name: animateCases;*/
+  /*animation-duration: 1s;*/
+  /*animation-direction: alternate;*/
+  /*animation-iteration-count: 4;*/
+  /*animation-timing-function: linear;*/
+}
+.case {
+  width: 208px;
+  font-family: serif;
+  color: black;
+}
+.attr-list, .case {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.attr, .attr-value {
+  width: 200px;
+  height: 20px;
+  margin: 2px 1px 0;
+  padding: 2px 4px;
+  border-width: 0;
+}
+.attr-value:disabled {
+  background-color: #dddddd;
+}
+.attr {
+  border-radius: 5px;
+  background-color: #fffaf0;
+  line-height: 2.1;
+  font-size: 11px;
+}
+.attr-value {
+  background-color: white;
+}
+.left-ctls,.right-ctls {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 .2em;
+}
+button.control {
+  border: 1px dimgray solid;
+  border-radius: .6em;
+  background-color: #fffaf0;
+  padding: 0 4px;
+  margin: 2px 0;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */
+}
+button.control:hover {
+  font-weight: bold;
+  cursor: pointer;
+  border-width: 2px;
+}
+button.control[disabled] {
+  background-color: lightgray;
+}
+
+input.update-case {
+  margin: 4px 2px;
+}
+
+div.mode-selector {
+  display: inline;
+}

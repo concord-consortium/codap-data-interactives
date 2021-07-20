@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Geometry</title>
+  <style>
+    #geometry-anchor {
+      width: 100%;
+      height: 100vh;
+    }
+  </style>
+  <script src="https://www.desmos.com/api/v0.9/geometry.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
+  <script src="../Common/js/iframe-phone.js"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+</head>
+<body>
+<div id="geometry-anchor"></div>
+<script>
+  function pollState() {
+    interactiveState.geometry = geometry.getState();
+    console.log('Saving state: ' + JSON.stringify(interactiveState.geometry));
+    setTimeout(pollState, 10000);
+  }
+  var elt = document.getElementById('geometry-anchor');
+  var geometry = Desmos.Geometry(elt);
+  var interactiveState;
+  codapInterface.init({
+    name: 'Desmos Geometry',
+    version: '0.1'
+  }).then(function () {
+    interactiveState = codapInterface.getInteractiveState();
+    if (interactiveState.geometry) {
+      geometry.setState(interactiveState.geometry);
+    }
+    setTimeout(pollState, 10000);
+  });
+</script>
+</body>
+</html>

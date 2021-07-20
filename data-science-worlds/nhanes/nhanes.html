@@ -1,0 +1,147 @@
+<!--
+  ~ ==========================================================================
+  ~ Copyright (c) 2018 by eeps media.
+  ~ Last modified 8/18/18 9:03 PM
+  ~
+  ~ Created by Tim Erickson on 8/18/18 9:03 PM
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  ~ ==========================================================================
+  ~
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/nhanes/nhanes.html
+  EEPS:         https://www.eeps.com/codap/nhanes/nhanes.html
+
+  WHEN UPLOADING TO EEPS
+  * Make sure the mysql database is latest, in case of tweaks... (Export from MySQL Pro, then Import)
+  * in nhanes.js, change <whence> to "eeps."
+
+  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>NHANES Tool</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css" language="javascript">
+
+    <link rel='stylesheet' type='text/css' href='nhanes.css'/>
+
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js" language="javascript"></script>
+
+    <script src="Attribute.js" language="javascript"></script>
+    <script src="nhanes.js" language="javascript"></script>
+    <script src="nhanes.constants.js" language="javascript"></script>
+    <script src="nhanes.ui.js" language="javascript"></script>
+    <script src="nhanes.userActions.js" language="javascript"></script>
+    <script src="nhanes.CODAPconnect.js" language="javascript"></script>
+    <script src="nhanes.DBconnect.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            nhanes.initialize();
+        });
+
+    </script>
+
+</head>
+<body>
+
+<div id="pluginHeader">
+    <h1>2003 NHANES Data Portal</h1>
+    <label for="sampleSizeInput">How many people? </label>
+    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" onchange="nhanes.ui.updateWholeUI()">
+    <button id="getCasesButton" onclick="nhanes.userActions.pressGetCasesButton()">get people</button>
+</div>
+<br>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#summary">summary</a></li>
+        <li><a href="#atts">options</a></li>
+        <li><a href="#challenges">challenges</a></li>
+        <li><a href="#cases">about</a></li>
+
+    </ul>
+
+
+    <div id="summary">
+        <div id="sampleSummaryDiv"></div>
+        <p>Click the <b>get people</b> button to obtain a table with data from a random sample of Americans of all ages from
+            the 2003 National Health and Nutrition Examination Survey
+            (<a href="https://www.cdc.gov/nchs/nhanes/index.htm" target="_blank">NHANES</a>).</a> For many more variables, click on the <b>options</b> tab. </p>
+    </div>
+
+
+    <div id="atts">
+        <p>Options for modifying the random sample:</p>
+        <p>Choose an age range:</p>
+        <div id="chooseCasesDiv">
+            <input type="number" min="0" id="minAgeBox" onchange="nhanes.ui.updateWholeUI()">
+            to <input type="number" min="0" id="maxAgeBox" onchange="nhanes.ui.updateWholeUI()">
+        </div>
+        <p>Choose the attributes you would like to sample from the lists below:</p>
+        <div id="chooseAttributeDiv">
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(0)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(1)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(2)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(3)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(4)"></div>
+            <div class="attributeGroupDiv" onclick="nhanes.ui.toggleAttributeGroupOpen(5)"></div>
+        </div>
+
+    </div>
+
+    <div id="challenges">
+        <p>Try the following data challenges:
+        <ol>
+            <li>Do an online search for what is considered a  healthy weight for an 18-year-old.
+                How does this compare to the average weight of youth in this dataset?</li>
+            <li>Examine the relationships between women who are pregnant and their age, marital status, education status, and
+                household income. What trends do you notice?</li>
+            <li>Are certain groups more likely to be anemic than other groups? Can you predict how much iron a person has in his
+                or her blood based on the individual’s age, race, or other factors?</li>
+            <!-- <li>Take a look at the cholesterol level of U.S. citizens. What percent of adults aged 20 and over have high serum total
+                cholesterol measurements (greater than or equal to 240 mg/dL)? What percent of youth and adolescents have high
+                cholesterol?</li> -->
+        </ol>
+
+        </p>
+    </div>
+
+    <div id="cases">
+        <p>The National Health and Nutrition Examination Survey (NHANES) is a population survey designed to collect information
+            on the health and nutrition of the U.S. population. If you have ever wondered about the average height of, say, a
+            32-year-old male in the U.S., this dataset will provide that kind of information. Many health professionals have come
+            across this data as part of their medical training. NHANES data has been used to improve the health of the U.S. population
+            in several ways, including informing policies leading to the removal of lead from U.S. gasoline, creating pediatric growth
+            charts, and estimating baseline standards for cholesterol, blood pressure, and Hepatitis C.
+        </p>
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

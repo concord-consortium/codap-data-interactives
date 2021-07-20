@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+
+<!--
+==========================================================================
+
+ * Created by tim on 4/19/18.
+ 
+ 
+ ==========================================================================
+fish in fish
+
+    Author:   Tim Erickson
+
+Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+Deployment Notes :
+
+fish.js ~70: value of fish.whence
+fish.js ~320: URL for the fish.php file
+
+fishEstablishCredentials.php ~15: URL for the credentials file (fishCred.php. stored elsewhere, see below for format)
+
+
+------------------- fishCred.php ---------------
+
+<?php
+
+$credentials = array(
+    "local_concordRepository" => array(        //  http://localhost:8888/concord-plugins/data-science-worlds/fish/fish.php
+        "dbname" => "fish",
+        "host" => "localhost",
+        "user" => "fish",
+        "pass" => "xxxx"
+    ),
+    "local" => array(        //  http://localhost:8888/plugins/fish/fish.php
+        "dbname" => "fish",
+        "host" => "localhost",
+        "user" => "fish",
+        "pass" => "xxxx"
+    ),
+    "xyz" => array(         //  https://codap.xyz/projects/fish/fish.php
+        "dbname" => "codapxyz_fish",
+        "host" => "localhost",
+        "user" => "codapxyz_tim",
+        "pass" => "xxxx"
+    ),
+    "eeps" => array(         //  https://www.eeps.com/codap/fish/fish.php
+        "dbname" => "denofinq_fish",
+        "host" => "localhost",
+        "user" => "denofinq_eeps",
+        "pass" => "xxxx"
+    )
+);
+
+?>
+--------------------------
+ON EEPS: https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=40888
+LOCALLY: http://localhost/~tim/codap/static/dg/en/cert/index.html#shared=40890
+
+LOCAL, TESTING:         http://localhost:8888/plugins/fish/fish.html?lang=es
+LOCAL, TESTING, CONCORD:         http://localhost:8888/concord-plugins/data-science-worlds/fish/fish.html?lang=es
+
+On eeps: https://www.eeps.com/codap/fish/fish.html
+
+On greenGeeks:  https://codap.xyz/projects/fish/fish.html
+
+PHP general log setup
+set global general_log = 'on';
+set global general_log_file = '/Users/tim/Desktop/llog.txt';
+SHOW VARIABLES LIKE "general_log%";
+
+
+todo let regular players know who still has to fish
+
+todo: improve end of game messages
+todo: add hysteresis model level
+todo: add level with steeper growth curve
+todo: add level with more chance to not see enough
+todo: fix the end-of-game alert bug
+
+todo: fix bug: at end of game, historical records don't include the very last one. Perhaps only if auto.
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fish</title>
+
+
+    <link href='https://fonts.googleapis.com/css?family=Maven+Pro:700,900' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300, 700' rel='stylesheet'>
+
+    <link rel='stylesheet' type='text/css' href='fish.css'/>
+
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.min.js" language="javascript"></script>
+
+    <script src="fish.js" language="JavaScript"></script>
+
+    <script src="fishGameConfigurations.js" language="JavaScript"></script>
+    <script src="fishStrings.js" language="JavaScript"></script>
+
+    <script src="fishphpConnector.js" language="JavaScript"></script>
+    <script src="fishCODAPConnector.js" language="JavaScript"></script>
+    <script src="fishUI.js" language="JavaScript"></script>
+    <script src="fishUserActions.js" language="JavaScript"></script>
+    <script src="fishModel.js" language="JavaScript"></script>
+    <script src="fishHistoricalData.js" language="JavaScript"></script>
+
+    <script>
+        $(function () {
+            //  $("#tabs").tabs();
+            fish.initialize();
+        });
+    </script>
+
+</head>
+<body>
+
+
+<div id="status" class="fishUIblock">
+    <div id="statusText">
+        $<span class="info" id="statusBalance" title="your current balance"></span> |
+        <span class="info" id="statusPlayer" title="your name"></span> |
+        <span class="info" id="statusGame" title="this game's code"></span>
+    </div>
+
+    <div id="clock">
+        <div class="info" id="statusYear">
+
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div id="getPlayerName" class="fishUIblock">
+    <div id="needPlayerName">
+        <label class="noNameYet" id="playerNameLabel" for="playerName">xxx NAME xxx?</label>
+        <input class="noNameYet" type="text" id="playerName">
+        <button id="setNameButton" onclick="fish.userActions.pressNameButton('need')" value="setName">xxx SET NAME xxx
+        </button>
+    </div>
+    <div id="havePlayerName">
+
+    </div>
+</div>
+
+<div id="joinGame" class="fishUIblock">
+    <input id="joinRadioButton" type="radio" name="newGameOrJoinExisting" value="join" onchange="fish.ui.update()"
+           checked>
+    <label id="joinExistingGameButtonLabel" for="joinRadioButton">xxx JOIN EXISTING xxx</label>
+
+    <input id="newRadioButton" type="radio" name="newGameOrJoinExisting" value="new" onchange="fish.ui.update()">
+    <label id="makeNewGameButtonLabel" for="newRadioButton">make new game</label>
+
+    <div id="joinExistingDIV" class="fishUIsub">
+        <label id="gameCodeTextFieldLabel" for="gameCodeTextField">xxx GAME CODE xxx</label>
+        <input type="text" id="gameCodeTextField" onchange="fish.ui.gameCodeTextFieldChange()">
+        <button id="joinGameButton" onclick="fish.userActions.clickJoinButton('join')" value="start new game">
+            xxx JOIN xxx
+        </button>
+    </div>
+
+    <div id="makeNewGameDIV" class="fishUIsub">
+        <label id="gameLevelMenuLabel" for="gameLevelMenu">xxx LEVEL xxx</label>
+        <select id="gameLevelMenu" onchange="fish.ui.update();"></select>
+        &nbsp;
+        <button id="createGameButton" onclick="fish.userActions.clickJoinButton('new')" value="start new game">
+            xxx CREATE xxx
+        </button>
+    </div>
+
+    <br>
+    <hr>
+    <div class="notice">
+
+    </div>
+</div>
+
+<div id="catchFishDIV" class="fishUIblock">
+    <span id="catchManualSpan">
+        <label id="fishQuantityLabel" for="howManyFish">xxx HOW MANY xxx</label>
+        <input type="number" id="howManyFish">
+        <button id="catchButton" onclick="fish.userActions.catchFish()"> xxx CATCH xxx</button>
+    </span>
+    <span id="catchAutoSpan">
+        <label id="automateCatchLabel" for="automateCatchCheckbox"> xxx AUTOMATE xxx</label>
+        <input type="checkbox" id="automateCatchCheckbox" onchange="fish.ui.update()">
+    </span>
+</div>
+
+
+<div id="winLoseDialog" class="fishUIblock">
+    <div>
+        <span id="winLoseText">Content you want the user to see goes here.</span> <br><br>
+        <button id="startNewGameButton" onclick="fish.startWaitingForNewGame()">OK, start a new game</button>
+    </div>
+</div>
+
+<div id="notice" class="fishUIblock"></div>
+
+
+<div id="chairControls" class="fishUIblock">
+    <hr>
+    <span id="youAreChairText">You are the "chair" of this game.</span><br>
+    <button id="chairEndsTurnButton" onclick="fish.userActions.chairEndsTurn()" class="chairOnly">
+        xxx END TURN xxx
+    </button>
+    <label id="automateChairLabel" for="automateChairCheckbox">xxx AUTOMATE CHAIR xxx</label>
+    <input type="checkbox" id="automateChairCheckbox" onchange="fish.ui.update()">
+
+</div>
+
+<div id="aboutPlayersText" class="fishUIblock"></div>
+<div id="debug" class="fishUIblock">
+    <span id="debugSpan"></span>
+</div>
+
+
+
+</body>
+</html>

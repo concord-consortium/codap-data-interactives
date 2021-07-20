@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Data Set</title>
+  <style>
+    @import url('css/style.css');
+  </style>
+  <script src="../Common/js/jquery.js"></script>
+  <script src="../Common/js/iframe-phone.js"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+  <script src="js/papaparse.js"></script>
+  <script src="js/live-data-set.js"></script>
+</head>
+<body>
+  <div class="tab-bar"><div id="tab-0" class="tab data-set-name selected"></div><div id="new-tab" class="tab">+</div></div>
+  <div id="work-area">
+    <div class="step" id="no-step">
+      This page is a <a href="https://codap.concord.org">CODAP</a> plugin.
+    </div>
+    <div class="step" id="start-step">
+      <p>
+        This CODAP Plugin lets you use a continuously updated CSV data source in CODAP.
+        It will create a matching data set in CODAP. When the original data changes,
+        CODAP will be updated.  New attributes with formulas and changes to the
+        data set organization will be unaffected when updates occur.
+      </p>
+      <form id="source-form" target="#">
+        <p>
+          <input id="csv-url-entry" size="40" type="text" placeholder="Enter url for live CSV" />
+          <input type="submit" value="fetch" />
+        </p>
+      </form>
+    </div>
+    <div class="step" id="load-step">
+      <div><span class="label">URL: </span><span class="csv-url"></span></div>
+      <div><span class="label">Cols: </span><span class="csv-cols"></span>
+      <span class="label">Rows: </span><span class="csv-rows"></span></div>
+      <form id="load-form">
+        <label>Data Set: <input id="data-set-name" type="text"/></label>
+        <label><input id="csv-first-line-is-header" type="checkbox" checked /> First row is header</label>
+        <input type="submit" value="fetch" />
+        <button class="restart-button">Restart</button>
+      </form>
+    </div>
+    <div class="step" id="run-step">
+      <div><span class="label">URL: </span><span class="csv-url"></span></div>
+      <div><span class="label">Cols: </span><span class="csv-cols"></span>
+      <span class="label">Rows: </span><span class="csv-rows"></span></div>
+      <div><span class="label">Data Set: </span><span class="data-set-name"></span></div>
+      <div><span class="label">First Line is Header: </span><span class="first-line-is-header"></span></div>
+      <div><span class="label">Last fetch: </span><span class="last-fetch"></span></div>
+      <label>Update interval (minutes): <input type="text" size="3" id="update-interval" /></label>
+      <form id="run-form">
+        <input type="submit" value="fetch" />
+      </form>
+    </div>
+  </div>
+<hr />
+<div id="message-area"></div>
+</body>
+</html>

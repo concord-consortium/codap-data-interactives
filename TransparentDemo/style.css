@@ -1,0 +1,95 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  margin: 10px;
+  display: inline-block;
+}
+
+button {
+  float: right;
+  margin: 10px 10px 0 0;
+}
+
+iframe {
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  width:100%;
+  height:0;
+  border:none;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background: transparent;
+}
+
+#app {
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  overflow:hidden;
+  /*display: none;*/
+}
+
+#lorem {
+  position:fixed;
+  top:50px;
+  left:20px;
+  bottom:0;
+  right:20px;
+  white-space: pre-line;
+}
+
+.no-pointer-events {
+  pointer-events: none!important;
+}
+
+.pointer-events {
+  pointer-events: auto!important;
+}
+
+.pointer-manager {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: fixed;
+}
+
+.overlay, .overlay-frame{
+  position: fixed;
+  opacity: .1;
+}
+.overlay-frame {
+  background-color: white;
+  z-index: 1;
+}
+.overlay {
+  background-color: green;
+}
+.monitor {
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border: thin solid transparent;
+}
+.monitor.in-codap {
+  background-color:green;
+}
+.monitor.in-move-or-resize {
+  border: thin solid black;
+}

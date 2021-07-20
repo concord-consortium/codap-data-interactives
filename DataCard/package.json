@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "browserify -t [ babelify --presets [ react ] ] src/DataCard.jsx -o js/DataCard.js"
+  }
+}

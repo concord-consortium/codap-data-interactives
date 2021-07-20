@@ -1,0 +1,214 @@
+/*  the body    */
+
+
+body {
+    font-family: "Helvetica Neue",Verdana, Geneva, sans-serif;
+    font-size : 80%;
+}
+/*  BASIC TEXT FONTS */
+
+h1 {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    line-height: 22px;
+}
+h2 {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 17px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    line-height: 19px;
+}
+h3 {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    line-height: 15.4px;
+}
+p, li {
+    font-family: Baskerville, "Baskerville Old Face", "Hoefler Text", Garamond, "Times New Roman", serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 20px;
+}
+blockquote {
+    font-family: Baskerville, "Baskerville Old Face", "Hoefler Text", Garamond, "Times New Roman", serif;
+    font-size: 17.5px;
+    font-style: italic;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 25px;
+}
+pre {
+    font-family: "Lucida Sans Typewriter", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
+    font-size: 13px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 18.5714px;
+}
+
+#cutpointText {
+    width : 4em
+}
+
+/* Attribute Configuration  */
+
+.attributeConfigurationHead {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    line-height: 15.4px;
+    padding: 8px;
+    background-color: #abc;
+}
+
+.attributeConfigurationFooter {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 15.4px;
+    padding: 8px;
+    background-color: #abc;
+}
+
+.attributeConfigurationDoneButton {
+    float : right;
+}
+
+
+/*  Tree parts  */
+
+
+#attributeConfigurationSection {
+    position : fixed;
+    top : 20px;
+    left: 20px;
+    background-color: #eee;
+    padding : 12px;
+    border : 1px solid black;
+    font-family: "Helvetica Neue",Verdana, Geneva, sans-serif;
+}
+
+#attributeDialog {
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width:100%;
+    height:100%;
+    text-align:center;
+    z-index: 1000;
+}
+
+#attributeDialog div {
+    width:300px;
+    margin: 100px auto;
+    background-color: #fff;
+    border:1px solid #000;
+    padding:15px;
+    text-align:center;
+}
+
+#settings {
+    display:grid;
+    grid-template-columns : 1fr;
+
+}
+
+.baumControlGroup {
+    padding : 8px;
+    margin : 4px;
+    border-radius: 4px;
+    background-color: #dcb;
+}
+
+/*  Special stuff   */
+
+
+.noselect {
+    cursor: default;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.leftSide {
+    background-color: #aca;
+    color: #444;
+}
+
+.rightSide {
+    background-color: #c99;
+    color : #444;
+}
+
+.noPointer {
+     pointer-events: none;
+    }
+
+#resultsText {
+    font-family: Consolas, monospace;
+    /*font-size: 80%;*/
+}
+
+
+/*		BOX CLASSES		*/
+
+.hBox	{
+    display: flex;
+    flex-direction: row;
+    /*display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	horizontal;
+    -moz-box-orient:	horizontal;
+    box-orient:	horizontal;*/
+}
+
+.vBox	{
+    display: flex;
+    flex-direction: column;
+    /*
+    display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	vertical;
+    -moz-box-orient:	vertical;
+    box-orient:	vertical;
+    */
+}
+
+/*  TABLE STYLING   */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    width : 50%;
+    padding: 6px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    text-align: center;
+
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access the Pivotal Tracker API via CORS</title>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'
+            type='text/javascript'></script>
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="PTImporter.js" language="javascript"></script>
+    <style>
+        body {
+            background-color: #204677;
+            font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+            font-size: 12px;
+            color: white;
+        }
+    </style>
+    <title>Pivotal Tracker Importer</title>
+</head>
+<body>
+<form>
+    <p>
+        <label for='token'>User API Token:</label>
+        <input type='text' id='token' size = '50' placeholder = 'Pivotal Tracker API Token'/>
+    </p>
+    <p>
+        <label for='project_id'>Pivotal Tracker Project ID:</label>
+        <input type='text' id='project_id' value="1055240" />
+    </p>
+    <p>
+        <label for='created_sinceDate'>Created Since:</label>
+        <input type='text' id="created_sinceDate" value ='05/01/2015' placeholder = 'mm/dd/yyyy' />
+    </p>
+    <p>
+        <label for='story_done'>Number of stories limit:</label>
+        <input type='text' id="limit_by" value ='100'  />
+    </p>
+    <p>
+        <label for='story_done'>Include done stories:</label>
+        <input type='checkbox' id="story_done" value ='done'  />
+    </p>
+    <button type="button" onclick="PTImporter.doImport()" value="Import">Import</button>
+</form>
+<div id="error_msg"></div>
+</body>
+</html>

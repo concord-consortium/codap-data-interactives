@@ -1,0 +1,88 @@
+{
+  "pages": [
+    {
+      "name": "location",
+      "questions": [
+        {
+          "type": "text",
+          "name": "Country",
+          "title": "What country are you located in?"
+        },
+        {
+          "type": "text",
+          "name": "Contributor",
+          "title": "What is your name?"
+        },
+        {
+          "type": "text",
+          "name": "Site_Details",
+          "startWithNewLine": false,
+          "title": "School/Organization:"
+        },
+        {
+          "type": "text",
+          "name": "Latitude",
+          "title": "What is your site latitude in decimal degrees?"
+        },
+        {
+          "type": "text",
+          "name": "Longitude",
+          "startWithNewLine": false,
+          "title": "What is your site longitude in decimal degrees?"
+        }
+      ]
+    },
+    {
+      "name": "conditions",
+      "questions": [
+        {
+          "type": "text",
+          "name": "Elevation",
+          "title": "What is the site elevation in meters?"
+        },
+        {
+          "type": "text",
+          "name": "Distance_from_shore",
+          "startWithNewLine": false,
+          "title": "What is the distance of the sampling site from the ocean in kilometers?"
+        },
+        {
+          "type": "text",
+          "name": "Temperature",
+          "title": "What was the temperature outside in Celsius?"
+        },
+        {
+          "type": "text",
+          "name": "Precipitation",
+          "startWithNewLine": false,
+          "title": "What is the mean annual precipitation of your site in millimeters?"
+        }
+      ]
+    },
+    {
+      "name": "characterization",
+      "questions": [
+        {
+          "type": "comment",
+          "name": "Habitat_type",
+          "title": "Describe the Habitat"
+        },
+        {
+          "type": "dropdown",
+          "choices": [
+            "Desert",
+            "Grassland/Cold desert",
+            "Temperate seasonal forest",
+            "Tropical rainforest",
+            "Tropical seasonal forest/Savanna",
+            "Woodland/Shrubland"
+          ],
+          "name": "Biome"
+        }
+      ]
+    }
+
+  ],
+  "showQuestionNumbers": "off",
+  "title": "Site Information"
+}

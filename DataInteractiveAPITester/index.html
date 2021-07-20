@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Interactive API Tester</title>
+  <style type="text/css">
+    @import url("style.css");
+  </style>
+  <script src="../Common/js/iframe-phone.js"></script>
+  <script src="../Common/js/CodapInterface.js"></script>
+  <script src="../Common/js/build-include.js"></script>
+  <script src="../Common/js/jquery.js"></script>
+  <script src="dataInteractiveTester.js"></script>
+</head>
+<body>
+<header>
+  <h1>Data Interactive API Tester</h1>
+</header>
+<article>
+  <section id="ctl">
+  </section>
+  <section id="main">
+    <div class="di-label">message log</div>
+    <div id="message-log"></div>
+    <div>
+      Sent: <span id="sentMessages">0</span> Success: <span id="success">0</span>
+      <button id="clear-log-button" title="clear message log">clear</button>
+      <button id="reset-codap-button" title="remove all components and data sets to reset CODAP">reset</button>
+      <button id="record-button" title="record log">record</button>
+      <button id="filter-button" title="filter out notifications" class="filter-active">filter</button>
+    </div>
+  </section>
+  <section id="recordings-section">
+    <div class="di-label">recordings</div>
+    <div id="recordings"></div>
+  </section>
+</article>
+</body>
+</html>

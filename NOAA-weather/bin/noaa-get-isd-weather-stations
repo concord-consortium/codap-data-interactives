@@ -1,0 +1,38 @@
+#!/bin/bash
+# Retrieves the current isd-history list of
+# weather stations and formats it as a JSON object.
+# Requires curl, csvjson, and jq (csvjson obtainable from node, jq from homebrew)
+#PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+URL=$ISD_HISTORY_URL
+
+#TODAY=$(date "+%Y%m%d")
+#YESTERDAY=$(date -v-1d "+%Y%m%d")
+#DAYBEFORE=$(date -v-2d "+%Y%m%d")
+
+curl $URL |
+  csvjson |
+#  jq --arg today "$TODAY" --arg yest "$YESTERDAY" --arg dbef $DAYBEFORE '[
+  jq '[
+  .[] |
+  select(.CTRY=="US" and .STATE!="" and .STATE!="PR" and .STATE!="VI" )|
+  {
+    country:.CTRY,
+    state:.STATE,
+    latitude: (if .LAT == "" then "" else (.LAT | tonumber | fabs ) end ),
+    longitude: (if .LON == "" then "" else (.LON | tonumber | fabs * -1) end ),
+    name:."STATION NAME",
+    USAF:.USAF,
+    WBAN:.WBAN,
+    ICAO:.ICAO,
+    elevation:."ELEV(M)",
+    mindate:(.BEGIN[0:4]+"-"+.BEGIN[4:6]+"-"+.BEGIN[6:8]),
+    maxdate:(.END[0:4]+"-"+.END[4:6]+"-"+.END[6:8]),
+    id:(""+.USAF+""+.WBAN)
+   }
+]'
+#    maxdate:(if .END == $today or .END == $yest or .END == $dbef then "Present" else (.END[0:4]+"-"+.END[4:6]+"-"+.END[6:8]) end),

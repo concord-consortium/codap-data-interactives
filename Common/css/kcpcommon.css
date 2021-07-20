@@ -1,0 +1,275 @@
+/*These area styles used across the KCP Data Games*/
+
+body{
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+html {
+    overflow:hidden;
+}
+
+.tooltip {
+    /*border-bottom: 1px dotted #0077AA;*/
+    /*z-index: 999;*/
+}
+
+.tooltip::after {
+    background: rgba(255, 254, 213, 0.90);
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+    color: black;
+    content: attr(data-tooltip); /* The main part of the code, determining the content of the pop-up prompt */
+    opacity: 0; /* Our element is transparent... */
+    padding: 3px 7px;
+    position: absolute;
+    visibility: hidden; /* ...and hidden. */
+    width: 100%;
+
+    -moz-transition: all 0.4s ease-in-out; /* To add some smoothness */
+}
+
+.tooltip:hover::after, .tooltip:hover:before {
+    opacity: 1; /* Make it visible */
+    visibility: visible;
+    z-index: 999;
+}
+
+/* Button styles */
+/* http://snipplr.com/view/47951/css3-gradient-buttons/ */
+.button {
+	display: inline-block;
+	zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
+	*display: inline;
+	vertical-align: baseline;
+	margin: 0 2px;
+	outline: none;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	font: 14px/100% Arial, Helvetica, sans-serif;
+	padding: .5em 2em .55em;
+	text-shadow: 0 1px 1px rgba(0,0,0,.3);
+	-webkit-border-radius: .5em;
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+	box-shadow: 0 1px 2px rgba(0,0,0,.2);
+}
+.button:hover {
+	text-decoration: none;
+}
+.button:active {
+	position: relative;
+	/*top: 1px;*/
+}
+.button:disabled {
+    cursor: auto;
+}
+
+.bigrounded {
+    font-size: 18px;
+    font-weight: bold;
+	-webkit-border-radius: 2em;
+	-moz-border-radius: 2em;
+	border-radius: 2em;
+}
+.medium {
+	font-size: 12px;
+	padding: .4em 1.5em .42em;
+}
+.small {
+	font-size: 11px;
+	padding: .2em 1em .275em;
+}
+
+.verysmall {
+	font-size: 10px;
+	padding: .1em .2em .1em;
+}
+
+/* gray */
+.gray {
+	color: #e9e9e9;
+	border: solid 1px #555;
+	background: #6e6e6e;
+	background: -webkit-gradient(linear, left top, left bottom, from(#888), to(#575757));
+	background: -moz-linear-gradient(top,  #888,  #575757);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888', endColorstr='#575757');
+    background-image: -ms-linear-gradient(top, #888, #575757); /* IE10+ */
+    background: linear-gradient(to bottom, #888 0%,#575757 100%); /* W3C */
+}
+.gray:hover {
+	background: #616161;
+	background: -webkit-gradient(linear, left top, left bottom, from(#757575), to(#4b4b4b));
+	background: -moz-linear-gradient(top,  #757575,  #4b4b4b);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#757575', endColorstr='#4b4b4b');
+    background-image: -ms-linear-gradient(top, #757575, #4b4b4b); /* IE10+ */
+    background: linear-gradient(to bottom, #757575 0%,#4b4b4b 100%); /* W3C */
+}
+.gray:active {
+	color: #afafaf;
+	background: -webkit-gradient(linear, left top, left bottom, from(#575757), to(#888));
+	background: -moz-linear-gradient(top,  #575757,  #888);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#575757', endColorstr='#888888');
+    background-image: -ms-linear-gradient(top, #575757, #888); /* IE10+ */
+    background: linear-gradient(to bottom, #575757 0%,#888 100%); /* W3C */
+}
+
+/* white */
+.white:hover {
+	background: #ededed;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#dcdcdc));
+	background: -moz-linear-gradient(top,  #fff,  #dcdcdc);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dcdcdc');
+    background-image: -ms-linear-gradient(top, #fff, #dcdcdc); /* IE10+ */
+    background: linear-gradient(to bottom, #fff 0%,#dcdcdc 100%); /* W3C */
+}
+.white:active {
+	color: #999;
+	background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#fff));
+	background: -moz-linear-gradient(top,  #ededed,  #fff);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#ffffff');
+    background-image: -ms-linear-gradient(top, #ededed, #fff); /* IE10+ */
+    background: linear-gradient(to bottom, #ededed 0%,#ffffff 100%); /* W3C */
+}
+.white, .white:disabled {
+	color: #606060;
+	border: solid 1px #b7b7b7;
+	background: #fff;
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ededed));
+	background: -moz-linear-gradient(top,  #fff,  #ededed);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed');
+    background-image: -ms-linear-gradient(top, #fff, #ededed); /* IE10+ */
+    background: linear-gradient(to bottom, #fff 0%,#ededed 100%); /* W3C */
+}
+/* rosy */
+.rosy {
+	color: #fae7e9;
+	border: solid 1px #b73948;
+	background: #da5867;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f16c7c), to(#bf404f));
+	background: -moz-linear-gradient(top,  #f16c7c,  #bf404f);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f16c7c', endColorstr='#bf404f');
+    background-image: -ms-linear-gradient(top, #f16c7c, #bf404f); /* IE10+ */
+    background: linear-gradient(to bottom, #f16c7c 0%,#bf404f 100%); /* W3C */
+}
+.rosy:hover {
+	background: #ba4b58;
+	background: -webkit-gradient(linear, left top, left bottom, from(#cf5d6a), to(#a53845));
+	background: -moz-linear-gradient(top,  #cf5d6a,  #a53845);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#cf5d6a', endColorstr='#a53845');
+    background-image: -ms-linear-gradient(top, #cf5d6a, #a53845); /* IE10+ */
+    background: linear-gradient(to bottom, #cf5d6a 0%,#a53845 100%); /* W3C */
+}
+.rosy:active {
+	color: #dca4ab;
+	background: -webkit-gradient(linear, left top, left bottom, from(#bf404f), to(#f16c7c));
+	background: -moz-linear-gradient(top,  #bf404f,  #f16c7c);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#bf404f', endColorstr='#f16c7c');
+    background-image: -ms-linear-gradient(top, #bf404f, #f16c7c); /* IE10+ */
+    background: linear-gradient(to bottom, #bf404f 0%,#f16c7c 100%); /* W3C */
+}
+.button, .button:hover, .button:active, .button:disabled, .bigrounded, .bigrounded:hover, .bigrounded:active {
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); /* IE9 gradient doesn't work with rounded corners */
+}
+
+.translucent {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.levels
+{
+    border-width: 2px;
+    border-radius: 5px;
+    border-color: #000000;
+    background-color: #b3eee8;
+    padding: 10px;
+}
+
+.levels_table_style
+{
+    background-color: #bd9a85;
+}
+
+.speaker_on
+{
+    background-image: url("../img/speaker.png");
+    background-repeat: no-repeat;
+}
+
+.speaker_off
+{
+    background-image: url("../img/speaker_off.png");
+    background-repeat: no-repeat;
+}
+
+.indicator
+{
+    width: 40px;
+    background-repeat: no-repeat;
+    background-origin: padding-box;
+    padding: 5px;
+}
+
+.green
+{
+    background-image: url("../img/green.png");
+    background-position: left;
+}
+
+.red
+{
+    background-image: url("../img/red.png");
+    background-position: right;
+}
+
+.level_normal
+{
+    cursor: pointer;
+}
+
+.level_normal:hover
+{
+    background-color: white;
+}
+
+.level_highlight
+{
+    background-color: yellow;
+}
+
+.levelButton
+{
+    width: 80px;
+}
+
+#levels_close
+{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 18px;
+    height: 18px;
+    background-image: url("../img/x_icon.png");
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+#levels_panel
+{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    visibility: hidden;
+}
+
+#levels_table
+{
+    width: 100%;
+}
+

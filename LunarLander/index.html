@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC>
+<html lang="en">
+	<head>
+		<title>Lunar Lander</title>
+		
+        <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
+		<link rel="stylesheet" type="text/css" href="style/LunarLayout.css" />
+
+        <script src="../Common/js/jquery.js" type="text/javascript"></script>
+        <script type="text/javascript" src="../Common/js/kcpcommon.js"></script>
+        <script type="text/javascript" src="../Common/js/dgapi.js"></script>
+        <script type="text/javascript" src="../Common/js/events.js"></script>
+      	<script type="text/javascript" src="../Common/js/raphael.js"></script>
+
+        <script type="text/javascript" src="js/LunarSettings.js"></script>
+        <script type="text/javascript" src="js/LunarLanderModel.js"></script>
+        <script type="text/javascript" src="js/LanderModel.js"></script>
+        <script type="text/javascript" src="js/SetupView.js"></script>
+        <script type="text/javascript" src="js/GaugeView.js"></script>
+        <script type="text/javascript" src="js/LanderView.js"></script>
+        <script type="text/javascript" src="js/LanderController.js"></script>
+        <script type="text/javascript" src="js/LunarLanderController.js"></script>
+        <script type="text/javascript" src="js/LunarLanderView.js"></script>
+
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+        <script type="text/javascript">
+            /*This global is here to make it obvious how things get going*/
+            var LunarLanderGame = {
+                  initializeGame:function () {
+                      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback) {
+                          var operation = iCmd && iCmd.operation,
+                                  args = iCmd && iCmd.args,
+                                  model = LunarLanderGame.model;
+                          switch(operation) {
+                              case 'saveState':
+                                  callback(model.saveGameState());
+                                  break;
+                              case 'restoreState':
+                                  callback(model.restoreGameState( args.state));
+                                  break;
+                              default:
+                                callback({success:false});
+                          }
+                      }, "codap-game", window.parent);
+                      this.model = new LunarLanderModel(this.codapPhone, LunarLanderGame.doAppCommand);
+                      this.view = new LunarLanderView( this.model );
+                      this.controller = new LunarLanderController( this.model, this.view );
+                      $( '#right_gauge' ).toggle( false);
+
+                      // Call initGame from here after construction is complete.
+                      this.model.initGame();
+                  }
+             };
+
+        </script>
+    </head>
+	<body onload="LunarLanderGame.initializeGame()" >
+		
+		<div id="backgroundBox">
+            <div id="buttons">
+                <!--<img src="img/platform.png" alt="" id="platform">-->
+                <button id="start_descent"  type="button" class="button medium white">
+                    Start Descent
+                </button>
+                <button id="setup"   type="button" class="button medium white">
+                    Setup
+                </button>
+              	<button id="two_landers"   type="button" class="button medium white">
+                      Two Landers
+                  </button>
+            </div>
+            <div id="left_gauge" class="left gauge">
+            </div>
+            <div id="left_lander" class="left lander">
+            </div>
+            <div id="left_setup" class="setup">
+                <input id="left_setup_shipName" size="10" /><br>
+                <input id="left_setup_captainName" size="10" /> <br>
+                Top: <br>
+                    <select id="left_setup_topColor">
+                    </select>
+                <br>
+                Bottom: <br>
+                    <select id="left_setup_bottomColor">
+                    </select>
+                   <br>
+                Fire Top: <br><input id="left_setup_fireTop" text="text" size="1" /> <br>
+                Fire Bottom: <br><input id="left_setup_fireBottom" text="text" size="1" /> <br>
+            </div>
+
+            <div id="right_gauge" class="right gauge">
+            </div>
+            <div id="right_lander" class="right lander">
+            </div>
+            <div id="right_setup" class="setup">
+                <input id="right_setup_shipName" size="10" /><br>
+                <input id="right_setup_captainName" size="10" /> <br>
+                Top: <br>
+                    <select id="right_setup_topColor">
+                    </select>
+                <br>
+                Bottom: <br>
+                    <select id="right_setup_bottomColor">
+                    </select>
+                   <br>
+                Fire Top: <br><input id="right_setup_fireTop" text="text" size="1" /> <br>
+                Fire Bottom: <br><input id="right_setup_fireBottom" text="text" size="1" /> <br>
+            </div>
+
+            <div id="video_panel">
+                <video id="welcome_video" width="178" height="541" autoplay="autoplay" loop="loop">
+                    <source src="img/welcome.m4v" type="video/mp4"/>
+                    <source src="img/welcome.ogv" type="video/ogg"/>
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div id="welcome_panel" onclick="LunarLanderGame.model.getStarted();">
+                <div id="buttons_cover">
+                    <!--JPG to keep things looking good during movie-->
+                </div>
+                <div id="welcome_text" class="welcome">
+                    <p>Lunar Lander</p>
+                    <p>The moon's surface lies below. Land as softly, yet quickly, as you can.
+                    And don't forget to leave fuel for the journey home!</p>
+                    <button id="start_game_button" type="button" class="button bigrounded rosy">
+                         Play
+                    </button>
+                </div>
+            </div>
+        </div>
+
+	</body>
+</html>

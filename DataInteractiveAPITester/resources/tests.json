@@ -1,0 +1,1066 @@
+[
+  {
+    "name": "Update Interactive Frame",
+    "message": {
+      "action": "update",
+      "resource": "interactiveFrame",
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        },
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "externalUndoAvailable": false,
+        "standaloneUndoModeAvailable": false,
+        "cannotClose": false
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "name": "Get Interactive Frame",
+    "message": {
+      "action": "get",
+      "resource": "interactiveFrame"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Tester",
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "dimensions": {
+        },
+        "externalUndoAvailable": true,
+        "standaloneUndoModeAvailable": false
+      }
+    }
+  },
+  {
+    "name": "Notify Interactive Frame is dirty",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "dirty": true
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "name": "Notify Interactive Frame has screenshot",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "image": "data:image/png;base64,sdkfalsdjf=="
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+
+  {
+    "name": "Request guide configuration menu",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "request": "openGuideConfiguration"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+
+  {
+    "name": "Create Data Context",
+    "message": {
+      "action": "create",
+      "resource": "dataContext",
+      "values": {
+        "name": "Mammals",
+        "title": "Mammals",
+        "description": "Information about some mammals",
+        "collections": [
+          {
+            "name": "Mammals",
+            "title": "Mammals",
+            "labels": {
+              "singleCase": "mammal",
+              "pluralCase": "mammals"
+            },
+            "attrs": [
+              {
+                "name": "Mammal",
+                "description": "The species of mammal"
+              },
+              {
+                "name": "Order",
+                "description": "The order of the species",
+                "type": "categorical"
+              },
+              {
+                "name": "Lifespan",
+                "description": "The expected lifespan of the mammal in the wild",
+                "type": "numeric",
+                "unit": "years"
+              },
+              {
+                "name": "Height",
+                "description": "The height of the mammal at maturity",
+                "type": "numeric",
+                "unit": "meters"
+              },
+              {
+                "name": "Mass",
+                "description": "The mass of a full grown adult",
+                "type": "numeric",
+                "unit": "kg"
+              },
+              {
+                "name": "Sleep",
+                "description": "The average sleep time per day of an adult",
+                "type": "numeric",
+                "unit": "hrs"
+              },
+              {
+                "name": "Speed",
+                "type": "numeric",
+                "unit": "km/h"
+              },
+              {
+                "name": "Habitat",
+                "type": "categorical"
+              },
+              {
+                "name": "Diet",
+                "type": "categorical"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expect": {
+      "id": "%%",
+      "name": "Mammals"
+    }
+  },
+
+  {
+    "name": "Create Data Context",
+    "message": {
+      "action": "create",
+      "resource": "dataContext",
+      "values": {
+        "name": "Mammals",
+        "title": "Mammals",
+        "description": "Information about Mammals"
+      }
+    },
+    "expect": {
+      "id": "%%",
+      "name": "Mammals"
+    }
+  },
+
+  {
+    "name": "Create Data Context from URL",
+    "message": {
+      "action": "create",
+      "resource": "dataContextFromURL",
+      "values": {
+        "URL": "https://vincentarelbundock.github.io/Rdatasets/csv/datasets/AirPassengers.csv"
+      }
+    }
+  },
+
+  {
+    "name": "Update Data Context",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "title": "Mammalia"
+      }
+    }
+  },
+
+  {
+    "name": "Get Data Context",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "%%",
+        "title": "%%",
+        "collections": []
+      }
+    }
+  },
+
+  {
+    "name": "Get Data Context List",
+    "message": {
+      "action": "get",
+      "resource": "dataContextList"
+    },
+    "expect": {
+      "success": true,
+      "values": [
+
+      ]
+    }
+  },
+  {
+    "name": "Delete Data Context",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals]"
+    }
+  },
+  {
+    "name": "Set Aside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "setAside",
+        "caseIDs": [13, 14]
+      }
+    }
+  },
+  {
+    "name": "Restore Setaside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "restoreSetasides"
+      }
+    }
+  },
+
+  {
+    "name": "Create Parent Collection",
+    "message":
+    {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection",
+      "values": [
+        {
+          "parent": "_root_",
+          "name": "Top",
+          "title": "Top",
+          "attrs": [
+            {
+              "name": "version"
+            }
+          ]
+        }
+      ]
+    },
+    "expect": {
+      "success": true,
+      "values": [
+        {
+          "id": "%%",
+          "name": "People"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Create Child Collection w/ Attributes",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection",
+      "values": {
+        "name": "Sightings",
+        "parent": "Cases",
+        "attributes": [
+          {
+            "name": "When",
+            "type": "date"
+          },
+          {
+            "name": "Witness"
+          }
+        ]
+      }
+    },
+    "expect": {
+      "success": true,
+      "values": [
+        {
+          "id": "%%",
+          "name": "Movies"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Update Collection",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals]",
+      "values": {
+        "title": "Mammalia"
+      }
+    }
+  },
+  {
+    "name": "Get Collection",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "id": "%%",
+        "name": "Mammals",
+        "title": "%%"
+      }
+
+    }
+  },
+  {
+    "name": "Get Collection List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collectionList"
+    },
+    "expect": {
+      "success": true,
+      "values": [
+        {
+          "id": "%%",
+          "name": "%%"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Delete Collection",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].collection[Mammals]"
+    }
+  },
+
+  {
+    "name": "Create Categorical Attribute",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute",
+      "values": [
+        {
+          "name": "Resting Heartrate",
+          "type": "categorical",
+          "title": "Heartrate",
+          "description": "The typical resting heartrate",
+          "editable": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "Create Numeric Attribute",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute",
+      "values": [
+        {
+          "name": "Year",
+          "type": "numeric",
+          "title": "Year of discovery",
+          "description": "Year of discovery",
+          "editable": false,
+          "precision": 0,
+          "unit": "years"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Update Attribute",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Toons].attribute[name]",
+      "values": {
+        "title": "Name"
+      }
+    }
+  },
+  {
+    "name": "Get Attribute",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name]"
+    }
+  },
+  {
+    "name": "Get Attribute List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].attributeList"
+    }
+  },
+  {
+    "name": "Delete Attribute",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name]"
+    }
+  },
+  {
+    "name": "Update Attribute Location to Parent",
+    "message":
+    {
+      "action": "update",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
+      "values": {
+        "collection": "parent",
+        "position": 0
+      }
+    }
+  },
+  {
+    "name": "Update Attribute Location",
+    "message":
+    {
+      "action": "update",
+      "resource": "dataContext[DataContextName].collection[currentCollectionName].attributeLocation[attributeName]",
+      "values": {
+        "collection": "collectionName",
+        "position": 2
+      }
+    }
+  },
+
+  {
+    "name": "Create Parent or Single Collection Case",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
+      "values": [
+        {
+          "values": {
+            "Mammal": "Cartoon Mouse",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.03,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
+          }
+        },
+        {
+          "values": {
+            "Mammal": "Cartoon Duck",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.05,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Create Child Case",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
+      "values": [
+        {
+          "parent": "23",
+          "values": {
+            "Witness": "Steamboat Willie",
+            "When": "11/18/1928"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Update Case By ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals].caseByID[15]",
+      "values": {
+        "values": {
+          "Mammal": "Duck"
+        }
+      }
+    }
+  },
+  {
+    "name": "Update multiple cases",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
+      "values": [
+        {
+          "id": 13,
+          "values":  {
+            "LifeSpan": 17
+           }
+        },
+        {
+          "id": 14,
+          "values":  {
+            "LifeSpan": 34
+           }
+        }
+      ]
+    }
+  },
+  {
+    "name": "Get Case Count",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseCount"
+    }
+  },
+  {
+    "name": "Get Case By Index",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseByIndex[0]"
+    }
+  },
+  {
+    "name": "Get Case By ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].caseByID[20]"
+    }
+  },
+  {
+    "name": "Case formula-based search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseFormulaSearch[Mass=max(Mass)]"
+    }
+  },
+  {
+    "name": "Case search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseSearch[Mammal==Red Fox]"
+    }
+  },
+  {
+    "name": "Delete Case",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].collection[Mammals].caseByID[15]"
+    }
+  },
+  {
+    "name": "Delete all cases in dataContext",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].allCases"
+    }
+  },
+  {
+    "name": "Create Global Value",
+    "message": {
+      "action": "create",
+      "resource": "global",
+      "values": {
+        "name": "g1",
+        "value": 1
+      }
+    }
+  },
+
+  {
+    "name": "Update Global Value",
+    "message": {
+      "action": "update",
+      "resource": "global[g1]",
+      "values": {
+        "value": 2
+      }
+    }
+  },
+  {
+    "name": "Get Global Value",
+    "message": {
+      "action": "get",
+      "resource": "global[g1]"
+    }
+  },
+  {
+    "name": "Get Global Value List",
+    "message": {
+      "action": "get",
+      "resource": "globalList"
+    }
+  },
+
+  {
+    "name": "Create Items",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].item",
+      "values": [
+        {
+          "Name": "Daffy Duck",
+          "Order": "Cartoonae",
+          "Lifespan": 99,
+          "Height": 1,
+          "Weight": 3,
+          "Habitat": "Cinema",
+          "Diet": "plants"
+        },
+        {
+          "Name": "Elmer Fudd",
+          "Order": "Cartoonae",
+          "Lifespan": 99,
+          "Height": 2,
+          "Weight": 150,
+          "Habitat": "Cinema",
+          "Diet": "plants"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Get Item By Item ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemByID[123456]"
+    }
+  },
+  {
+    "name": "Get Item By Index",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].item[12]"
+    }
+  },
+  {
+    "name": "Update Item by Item Index",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].itemByID[123456]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Update Item by Item ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].itemByID[12]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Get Item by Case ID",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemByCaseID[23]"
+    }
+  },
+  {
+    "name": "Get Item Count",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemCount"
+    }
+  },
+  {
+    "name": "Update Item by Case ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].itemByCaseID[23]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Delete Item by Case ID",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].itemByCaseID[23]"
+    }
+  },
+  {
+    "name": "Get Item by Search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemSearch[Species==human]"
+    }
+  },
+  {
+
+    "name": "Get All Items",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemSearch[*]"
+    }
+  },
+  {
+    "name": "Delete Item by Search",
+    "message": {
+      "action": "delete",
+      "resource": "dataContext[Mammals].itemSearch[Age>4]"
+    }
+  },
+  {
+    "name": "Create Selection List",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].selectionList",
+      "values": [
+        9
+      ]
+    }
+  },
+  {
+    "name": "Update Selection List",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].selectionList",
+      "values": [
+        10
+      ]
+    }
+  },
+  {
+    "name": "Get Selection List",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].selectionList"
+    }
+  },
+
+  {
+    "name": "Create Calculator",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "name": "name-calculator",
+        "title": "title-calculator",
+        "type": "calculator"
+      }
+    }
+  },
+  {
+    "name": "Create Map",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "map",
+        "name": "name-map",
+        "title": "title-map",
+        "dataContextName": "Mammals",
+        "legendAttributeName": "Legend"
+      }
+    }
+  },
+  {
+    "name": "Create Slider",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "title": "title-slider",
+        "type": "slider",
+        "globalValueName": "g1",
+        "lowerBound": -10,
+        "upperBound": 10
+      }
+    }
+  },
+  {
+    "name": "Create Text",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "text",
+        "name": "name-text",
+        "title": "title-text",
+        "text": "T'was brillig and the slithy toves...",
+        "dimensions": {
+          "width": 200,
+          "height": 60
+        }
+      }
+    }
+  },
+  {
+    "name": "Create Plugin",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "game",
+        "name": "Weather",
+        "title": "NOAA Weather",
+        "URL": "//codap-server.concord.org/releases/latest/extn/plugins/NOAA-weather/",
+        "dimensions": {
+          "width": 200,
+          "height": 60
+        }
+      }
+    }
+  },
+  {
+    "name": "Create Graph",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "Mammals",
+        "xAttributeName": "height",
+        "yAttributeName": "age"
+      }
+    }
+  },
+  {
+    "name": "Create Case Table",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseTable",
+        "dataContext": "Mammals",
+        "horizontalScrollOffset": 500
+      }
+    }
+  },
+  {
+    "name": "Create Case Card",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseCard",
+        "dataContext": "Mammals",
+        "position": "bottom"
+      }
+    }
+  },
+  {
+    "name": "Create Web View",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "webView",
+        "name": "name-webview",
+        "title": "Concord",
+        "URL": "http://concord.org",
+        "dimensions": {"width": 400, "height": 300}
+      }
+    }
+  },
+  {
+    "name": "Create Image View",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "image",
+        "name": "image",
+        "title": "Concord",
+        "URL": "https://codap.concord.org/_assets/img/education-logos.jpg",
+        "dimensions": {"width": 400, "height": 300}
+      }
+    }
+  },
+  {
+    "name": "Update Map Component",
+    "message": {
+      "action": "update",
+      "resource": "component[myMap]",
+      "values": {
+	      "legendAttributeName": "Height",
+          "center": [34.75, -114.328],
+          "zoom": 6
+      }
+    }
+  },
+  {
+    "name": "Update Table Component",
+    "message": {
+      "action": "update",
+      "resource": "component[176]",
+      "values": {
+        "isIndexHidden": true
+      }
+    }
+  },
+  {
+    "name": "Get Component",
+    "message": {
+      "action": "get",
+      "resource": "component[HeightAge]"
+    }
+  },
+  {
+    "name": "Get Component List",
+    "message": {
+      "action": "get",
+      "resource": "componentList"
+    }
+  },
+  {
+    "name": "Delete Component",
+    "message": {
+      "action": "delete",
+      "resource": "component[mySlider]"
+    }
+  },
+  {
+    "name": "Select Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[mySlider]",
+      "values": {
+        "request": "select"
+      }
+    }
+  },
+  {
+    "name": "Autoscale Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[myTable]",
+      "values": {
+        "request": "autoScale"
+      }
+    }
+  },
+  {
+    "name": "Log a Message",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "formatStr": "Launched rocket with %@ engine toward %@",
+        "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+
+  {
+    "name": "Log a Message with topic",
+    "message": {
+      "action": "notify",
+      "resource": "logMessage",
+      "values": {
+        "topic": "dataflow",
+        "formatStr": "Did this thing"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging: full fire hose",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "message": "*"
+      }
+    }
+  },
+
+  {
+    "name": "Subscribe to Message Logging by topic",
+    "message": {
+      "action": "register",
+      "resource": "logMessageMonitor",
+      "values": {
+        "topic": "dataflow",
+        "clientId": "abc123"
+      }
+    }
+  },
+
+  {
+    "name": "Unsubscribe to Message Logging by topic",
+    "message": {
+      "action": "unregister",
+      "resource": "logMessageMonitor",
+      "values": {
+        "clientId": "abc123"
+      }
+    }
+  },
+
+  {
+    "name": "Undo Change",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "undoableActionPerformed"
+      }
+    }
+  },
+  {
+    "name": "Undo Button Press",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "undoButtonPress"
+      }
+    }
+  },
+  {
+    "name": "Redo Button Press",
+    "message": {
+      "action": "notify",
+      "resource": "undoChangeNotice",
+      "values": {
+        "operation": "redoButtonPress"
+      }
+    }
+  }
+]

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+      @import url(./style.css);
+    </style>
+    <title>Attribute Stacker</title>
+    <script src="../Common/js/jquery.js"></script>
+    <script src="../Common/js/iframe-phone.js"></script>
+    <script src="../Common/js/CodapInterface.js"></script>
+    <script src="attr-stacker.js"></script>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Attribute Stacker</h1>
+      <!--<p>-->
+        <!--This CODAP Data Interactive is a tool for improving the 'tidiness' of a data-->
+        <!--set. Tidy data is organized for flexible inquiry. In relational database terms,-->
+        <!--tidy data has third normal form.-->
+      <!--</p>-->
+
+      <section id="dataset-selection">
+
+      </section>
+
+      <section>
+        <div id="attribute-stacking" >
+          <div id="src-stack">
+            <div class="items"></div>
+            <div class="drop-area"></div>
+          </div>
+          <table id="target-table">
+          </table>
+        </div>
+        <div>
+          <button id="submitStackingButton">create a stacked data set</button>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

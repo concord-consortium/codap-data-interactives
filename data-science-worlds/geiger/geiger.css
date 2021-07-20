@@ -1,0 +1,36 @@
+canvas {
+    background-color: #225577;
+}
+
+input {
+    text-align: right;
+}
+
+/* ID options */
+
+#options   {
+    background-color: #fae7e9;
+}
+
+#detectorX, #detectorY {
+    width : 4.0em;
+}
+/*		BOX CLASSES		*/
+
+.hBox	{
+    display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	horizontal;
+    -moz-box-orient:	horizontal;
+    box-orient:	horizontal;
+}
+
+.vBox	{
+    display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	vertical;
+    -moz-box-orient:	vertical;
+    box-orient:	vertical;
+}

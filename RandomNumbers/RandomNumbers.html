@@ -1,0 +1,79 @@
+<!--This page is an example simulation for CODAP.
+    When embedded in CODAP it will generate samples of random numbers.-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!--These two scripts take care of the communication with CODAP-->
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="../Common/js/codap_helper.js" language="javascript"></script>
+    <title>Random Numbers</title>
+</head>
+
+<body bgcolor="white">
+<h1>Random Numbers</h1>
+<form name="form1">
+    How many numbers: <input type="text" name="howMany" value="10"><br>
+	<input type="button" onClick="RandomNumbers.generateNumbers();" value="Generate Them!">
+</form>
+</body>
+
+<script>
+    // Modify this Javascript to create your own simulation.
+    // The following runs as the page is loaded. If it finds that it is embedded in CODAP, it sets
+    //  things up for the simulation to send data.
+    codapHelper.initSim({
+        name: 'Random Numbers',
+        dimensions: {width: 300, height: 150},
+        collections: [  // There are two collections: a parent and a child
+            {
+                name: 'samples',
+                // The parent collection has just one attribute
+                attrs: [ {name: "sample", type: 'categorical'}],
+                childAttrName: "sample"
+            },
+            {
+                name: 'numbers',
+                labels: {
+                    pluralCase: "numbers",
+                    setOfCasesWithArticle: "a sample"
+                },
+                // The child collection also has just one attribute
+                attrs: [{name: "number", type: 'numeric', precision: 1}]
+            }
+        ]
+    });
+    var RandomNumbers = {
+        sampleNumber: 0,
+
+        // Here is the function that is triggered when the user presses the button
+        generateNumbers: function () {
+            // If we're not embedded in CODAP, we bring up an alert and don't draw the sample
+            if( !codapHelper.checkForCODAP())
+                return;
+
+            // This function is called once the parent case is opened
+            var doSample = function( iResult) {
+                var tID = iResult.caseID,
+                    tHowMany = document.forms.form1.howMany.value.trim(),
+
+                addOneNumber = function() {
+                    if( tHowMany > 0) {
+                        var tRandom = Math.random() * 100 + 1; // Choose a random number between 1 and 100
+                        // Tell CODAP to create a case in the child collection
+                        codapHelper.createCase('numbers', tRandom, tID, addOneNumber);
+                        tHowMany--;
+                    }
+                    else codapHelper.closeCase('samples', null, tID);
+                };
+
+                addOneNumber(); // This starts an asynchronous recursion
+            };
+
+            // generateNumbers starts here
+            this.sampleNumber++;
+            // Tell CODAP to open a parent case and call doSample when done
+            codapHelper.openCase( 'samples', this.sampleNumber, doSample);
+        }
+    };
+</script></html>

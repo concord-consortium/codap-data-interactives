@@ -1,0 +1,211 @@
+<!--
+  ~ ==========================================================================
+  ~ Copyright (c) 2018 by eeps media.
+  ~ Last modified 8/18/18 9:03 PM
+  ~
+  ~ Created by Tim Erickson on 8/18/18 9:03 PM
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+  ~ ==========================================================================
+  ~
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/acs/acs.html
+  EEPS:         https://www.eeps.com/codap/acs/acs.html
+
+  WHEN UPLOADING TO EEPS
+  * Make sure the mysql database is latest, in case of tweaks... (Export form MySQL Pro, then Import)
+  * app.js, change <whence> to "eeps."
+
+  -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=380, initial-scale=1">
+  <meta name="description"
+        content="A CODAP plugin to access US Population microdata from a number of US Census or American Community Survey datasets" >
+  <title>Microdata Portal</title>
+
+  <link rel='stylesheet' type='text/css' href='./css/style.css'/>
+
+  <script src="./lib/iframe-phone.js" type="text/javascript"></script>
+  <script src="./lib/codapInterface.js" type="text/javascript"></script>
+  <script src="./lib/pluginHelper.js" type="text/javascript"></script>
+  <script src="./lib/jquery.min.js" type="text/javascript"></script>
+  <script src="./lib/xml-js.min.js" type="text/javascript"></script>
+  <script src="./lib/papaparse.min.js" type="text/javascript"></script>
+
+  <script src="js/app.js" type="module"></script>
+
+</head>
+
+<body>
+<main class="plugin-content">
+
+  <header id="intro-section" class="wx-pop-up">
+    <div class="wx-section-header-line">
+      <span>
+        Retrieve random sample data from the
+        <a href="https://www.census.gov/history/www/programs/demographic/decennial_census.html"
+           rel="noopener noreferrer" target="_blank">decennial census</a>
+        and the
+        <a href="https://www.census.gov/programs-surveys/acs"
+           rel="noopener noreferrer" target="_blank">American Community Survey</a>.
+      </span>
+      <span title="Further information about this CODAP plugin" class="wx-info-button wx-pop-up-anchor icon-info"></span>
+    </div>
+    <div class="wx-cover"></div>
+    <div class="wx-pop-up-container">
+      <div class="wx-pop-up-content" >
+        <div class="wx-pop-up-body wx-scroll-area wx-dropdown-group">
+          <div id="wx-info-section" class="wx-dropdown wx-up">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">Resources</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+              <p>See the resources below to learn more about the American Community
+                Survey (ACS) and decennial census data and using the data portal.</p>
+              <blockquote>
+                <dl>
+                  <dt><a href="https://drive.google.com/file/d/1zk-3utubXQDbwfOyEdz6DzybPA6SLIc8/view?usp=sharing"
+                         rel="noopener noreferrer" target="_blank">ACS Questionnaire (English)</a></dt>
+                  <dd>Survey questions from the 2017 ACS.</dd>
+                  <dt><a href="https://drive.google.com/file/d/1toVTmsngFxQhPFxDhfkhkoZYoqSs--DM/view?usp=sharing"
+                         rel="noopener noreferrer" target="_blank">ACS Questionnaire (Spanish)</a></dt>
+                  <dd>Survey questions from the 2017 ACS.</dd>
+                  <dt><a href="https://docs.google.com/document/d/14kxWQWXR-fkg4Ycuy9bfP4jYMZyEpXN_x30exEKLuU4/edit?usp=sharing"
+                         rel="noopener noreferrer" target="_blank">USS-DATA Codebook</a></dt>
+                  <dd>Details about variables (or attributes) and their codes from the ACS and the decennial census.</dd>
+                  <dt><a href="https://docs.google.com/document/d/1VxaLJzo_NW1jzyVwsaX2FqgYAKI7BZAByBINHcP20hA/edit?usp=sharing"
+                         rel="noopener noreferrer" target="_blank">CODAP Reference Guide</a></dt>
+                  <dd>Guidance on getting started with the data portal and CODAP.</dd>
+                </dl>
+              </blockquote>
+            </div>
+          </div>
+          <div id="about" class="wx-dropdown wx-up">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">About</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+              <p>
+                Brought to you by the Strengthening Data Literacy
+                Across the Curriculum (SDLC) Project, a collaboration between EDC,
+                the California Polytechnic State University, and the CODAP project at the
+                Concord Consortium.
+              </p>
+
+              <p>
+                Data are provided by IPUMS-USA, University of Minnesota, www.ipums.org.
+              </p>
+
+              <p>
+                This material is based on work supported by the National Science
+                Foundation under Grant No. DRL-1813956. Any opinions, findings, and
+                conclusions or recommendations expressed in this material are those of
+                the authors and do not necessarily reflect the views of the NSF.
+              </p>
+            </div>
+          </div>
+          <div id="log" class="wx-dropdown wx-up">
+            <div class="wx-section-header-line wx-dropdown-header">
+              <span class="wx-section-title">Log</span>
+              <span class="wx-dropdown-indicator"></span>
+            </div>
+            <div class="wx-dropdown-body">
+            </div>
+          </div>
+        </div>
+        <div id="wx-info-close-section" class="wx-pop-up-footer">
+          <div class="wx-section-header-line wx-control-row">
+            <span><button id="wx-info-close-button" class="wx-button">Close</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+<!--  <hr class="wx-fixed-section-divider"/>-->
+
+  <div id="wx-main-scroll-area" class="wx-scroll-area wx-dropdown-group">
+
+    <div id="states-section" class="wx-dropdown wx-up">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to select State(s)">
+        <span class="wx-section-title">Place</span>
+        <span></span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+
+      <div class="wx-dropdown-body">
+        <p>Choose a State to include in your data set from the list below.</p>
+        <div id="chooseStatesDiv">
+        </div>
+      </div>
+    </div>
+
+    <div id="years-section" class="wx-dropdown wx-up">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to select year(s).">
+        <span class="wx-section-title">Years</span>
+        <span class="wx-selection-count"></span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator wx-down"></span>
+      </div>
+
+      <div class="wx-dropdown-body">
+        <p>Choose which year(s) to include in your data set from the list
+          below.</p>
+        <div id="chooseSampleYearsDiv">
+        </div>
+      </div>
+    </div>
+
+    <div id="attribute-section" class="wx-dropdown wx-up">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to select which attributes to fetch">
+        <span class="wx-section-title">Attributes</span>
+        <span class="wx-selection-count"></span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+
+      <div class="wx-dropdown-body wx-dropdown-group">
+        <p>
+          Choose attributes to include in your data set from the lists below.
+        </p>
+        <div id="chooseAttributeDiv">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="wx-summary-section">
+    <div class="wx-section-header-line summary-options">
+      <label title="Enter the number of people desired (up to 1000)">Fetch (Max 1000):&nbsp;
+        <input id="sampleSizeInput" type="number" value="100" min="0" max="1000"
+               step="50" >
+      </label>
+      <label title="Check this box to retain data from prior fetches.">
+        Keep existing data
+        <input id="keepExistingDataCheckbox" type="checkbox"/>
+      </label>
+    </div>
+    <div class="wx-summary">
+      <span class="wx-status-graphic"></span>
+      <span id="status" class="wx-message-area"></span>
+      <button id="getCasesButton" title="Fetch population data and send to CODAP">Get People</button>
+    </div>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "case-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "js/CaseGenerator.js",
+  "author": "Doug Martin",
+  "license": "MIT"
+}

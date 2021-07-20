@@ -1,0 +1,260 @@
+/*Style sheet for concord-consortium.github.io/codap-data-interactive site*/
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500';src: static_url('webfonts/MuseoSans_500.svg') format('svg');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.otf') format('otf');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.ttf') format('truetype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.eot') format('embedded-opentype');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.woff') format('woff');}
+@font-face {font-family: 'MuseoSans-500-Italic';src: static_url('webfonts/MuseoSans_500_Italic.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Regular';src: static_url('webfonts/Montserrat-Regular.svg') format('svg');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.otf') format('otf');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.ttf') format('truetype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.eot') format('embedded-opentype');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.woff') format('woff');}
+@font-face {font-family: 'Montserrat-Bold';src: static_url('webfonts/Montserrat-Bold.svg') format('svg');}
+
+body {
+    background-color: #FFFAE6;
+    font: 100% "MuseoSans-500", lato,verdana,arial,sans-serif;
+    margin: 0;
+    padding: 1em;
+}
+
+header {
+    background: #fee9aa;
+    display:block;
+}
+
+header div {
+    margin: 0 auto;
+    overflow: hidden;
+    width: 800px;
+}
+
+header img {
+    float: left;
+    margin: .75em 0;
+    width: 185px;
+    height: auto;
+}
+
+header #cc {
+    color: rgb(0, 147, 176);
+    float: right;
+    font-size: .5em;
+    margin-top: 20px;
+    text-align: right;
+    width: 121px;
+}
+
+header #cc img {
+    clear: both;
+    display: block;
+    height: auto;
+    margin: 0;
+    width: 121px;
+}
+
+#home-content {
+    margin: 0 auto;
+    max-width: 800px;
+    overflow: hidden;
+    padding-bottom: 2em;
+    width: 100%;
+    /*height: 100px;*/
+}
+
+h1 {
+    color: #e16a3e;
+    font: 2.5em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
+    text-align: center;
+}
+
+h2 {
+    color: #777;
+    font: 1.75em "MuseoSans-500",verdana,arial,helvetica,sans-serif;
+}
+
+footer {
+    background: #72bfca;
+    color: #fff;
+    height: 170px;
+    padding-top: 20px;
+}
+
+footer p {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#credits {
+    margin-left: 20px;
+    font-size: 0.8em;
+    color: #777;
+}
+
+#credits p {
+    padding-left: 2em;
+    margin-bottom: 0.01em;
+}
+
+p {
+    color: #777;
+    font: 100 1em "MuseoSans-500", lato, verdana, helvetica, sans-serif;
+    line-height: 125%;
+    margin-bottom: .5em;
+}
+
+
+#top-nav-bar a {
+    width:165px;
+    background-color: #7fb2be;
+    color: white;
+    font-size: 16px;
+    padding: 0.2em 0.5em;
+    border-right: 1px solid white;
+}
+
+#top-nav-bar a:hover {
+    background-color: #0797A8;
+}
+
+#top-nav-bar {
+
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+}
+
+.nav-bar {
+    width:100%;
+    margin: 0;
+    font-size: 16px;
+}
+
+.nav-bar a {
+    background-color: #0797A8;
+}
+
+.menu-h li {
+    padding: 3px;
+    display: inline-block;
+    position:relative;
+}
+
+.menu-h li a:hover {
+    background: #7fb2be;
+    text-decoration: none;
+    white-space: nowrap;
+    color: white;
+}
+
+.nav-bar ul li:hover ul {
+    display: block;
+    position: absolute;
+}
+
+.menu-h-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    z-index:999;
+}
+.menu-h-dropdown li {
+    padding:0px;
+}
+
+.menu-h-dropdown a{
+    display: block;
+    background: #7fb2be;
+    text-decoration: none;
+    white-space: nowrap;
+    /*color: white;*/
+}
+
+a {
+    color: #3a878b;
+    font-weight: 600;
+    text-decoration: none;
+}
+a:hover {
+    color: #da5936;
+}
+
+.nav-to-top {
+    font-size: 10px;
+}
+
+.home-icon {
+    height: 20px;
+    width: 20px;
+}
+
+li {
+    text-align: -webkit-match-parent;
+}
+
+ul {
+    display: flex;
+    flex-wrap: wrap;
+    width:100%;
+}
+
+
+.listing {
+    box-shadow: 1px 1px 5px rgba(51, 51, 51, .3);
+    height: auto;
+    list-style: none;
+    margin: 5px;
+    min-height: 140px;
+    padding: 1%;
+    position: relative;
+    width: 200px;
+    background-color:white;
+}
+
+.listing-title {
+    font-size: 16px;
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    width:150px;
+    max-width:150px;
+}
+
+.listing-desc {
+    -webkit-margin-before:.1em;
+    -webkit-margin-after:.1em;
+    font-size: 12px;
+}
+
+.listing-link {
+    font-size: 10px;
+    position: absolute;
+    bottom:10px;
+}
+
+.form_container {
+    margin-top: 1em;
+    padding-left: 2em;
+    position: absolute;
+    margin-bottom: 2em;
+}
+
+.form_container input[type=text] {
+    border: 1px solid #aaa;
+    border-radius: .375em;
+    color: black;
+    font-size: 1em;
+    font-weight: 200;
+    width: 650px;
+}

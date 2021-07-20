@@ -1,0 +1,61 @@
+<html lang="en" >
+<head>
+  <title>Import CSV to CODAP</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css" >
+  <script src="lib/iframe-phone.js"></script>
+  <script src="lib/CodapInterface.js"></script>
+  <script src="main.js" type="module"></script>
+  <script src="lib/papaparse.min.js"></script>
+  <script src="lib/topojson.js"></script>
+</head>
+<body>
+  <form action="#">
+    <div id="content">
+
+      <div id="message-area" class="panel" hidden></div>
+
+      <div id="source-input" class="panel" hidden>
+        <div><label>Enter url: <input type="url" name="source-input-url"></label></div>
+        or
+        <div><input type="file" accept="text/csv,text/plain,application/json,application/geo+json,application/vnd.geo+json,text/json" name="source-input-file"></div>
+      </div>
+
+      <div id="downsample-options" hidden>
+        <div id="downsample-message" class="panel message"></div>
+        <div class="section-title panel">Downsample Options...</div>
+        <div class="option-list">
+          <label class="panel">
+            <input type="radio" name="downsample" value="random">
+            Randomly select
+            <input type="number" name="random-sample-size" min="0" max="99999" step="500"/> rows
+          </label>
+          <label class="panel">
+            <input type="radio" name="downsample" value="every-nth" >
+            Select every
+            <input type="number" name="pick-interval" min="1" max="99"/>th row
+          </label>
+          <label class="panel">
+            <input type="radio" name="downsample" value="all" checked="checked">Import all rows
+          </label>
+        </div>
+      </div>
+
+      <div id="target-options" hidden>
+        <div id="target-message" class="panel message"></div>
+        <div class="panel">Target Options...</div>
+        <div class="option-list">
+          <label class="panel"><input type="radio" name="target-operation" value="replace">Replace existing dataset with this one</label>
+          <label class="panel"><input type="radio" name="target-operation" value="append">Append this dataset to the existing one</label>
+          <label id="new-dataset-option" class="panel"><input type="radio" name="target-operation" value="new" checked="checked">Create a new data set</label>
+        </div>
+      </div>
+
+      <div id="submit-area" class="panel">
+        <button id="cancel">Cancel</button>
+        <button id="submit">OK</button>
+      </div>
+
+    </div>
+  </form>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 8/24/18.
+ 
+ 
+ ==========================================================================
+journalWriter in journal
+
+    Author:   Tim Erickson
+
+Copyright (c) 2018 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/nos2/journalWriter.html
+  EEPS:         https://www.eeps.com/codap/nos2/journalAdmin.html
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Journal Writer</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css" language="javascript">
+
+    <link rel='stylesheet' type='text/css' href='journal.css'/>
+
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.min.js" language="javascript"></script>
+
+    <script src="nos2.js" language="javascript"></script>
+    <script src="journal.js" language="javascript"></script>
+    <script src="nos2.DBconnect.js" language="javascript"></script>
+<!--
+    <script src="CODAP_Connect.js" language="javascript"></script>
+-->
+    <script src="userAction.js" language="javascript"></script>
+    <script src="writerUI.js" language="javascript"></script>
+    <script src="strings.js" language="javascript"></script>
+    <script src="DataPack.js" language="javascript"></script>
+    <script src="Paper.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs({
+                activate : (event, ui) => {
+                    const theNewTabName = ui.newTab[0].innerText;
+                    journal.ui.changeTabTo(theNewTabName);
+                }
+            });
+
+            $("#paperPreview").dialog({
+                autoOpen: false,
+
+                show: {
+                    effect: "blind",
+                    duration: 200
+                },
+                hide: {
+                    effect: "blind",
+                    duration: 200
+                }
+
+            });
+
+            journal.initialize();
+        });
+    </script>
+
+</head>
+<body>
+
+<div id="paperPreview">
+
+</div>
+
+<div id="writerStatusBarDiv">
+
+</div>
+
+
+<div id="joinWorldDiv" class="startup">
+    <h1>Join a World</h1>
+
+    <p>You need to get a world code from someone who has created a world.
+        If that person is you, create a world
+        <a href = "journalAdmin.html" target="_blank">by following this link</a>.</p>
+    <label for="worldCodeBox">World code: </label>
+    <input type="text" id="worldCodeBox">
+    <button id="joinButton" onclick="journal.userAction.joinWorld()">join</button>
+    <br>
+</div>
+
+<div id="joinTeamDiv" class="startup">
+    <h1>Join a Team</h1>
+    <div id="chooseTeamFromListDiv"></div>
+
+</div>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#list">list</a></li>
+        <li><a href="#writing">writing</a></li>
+        <li><a href="#journal">journal</a></li>
+    </ul>
+
+    <div id="list">
+        <h1>Paper Status</h1>
+        <button id="statusRefreshButton" onclick="journal.ui.update()">refresh list</button>
+        <div id="paperTaskTable"></div>
+
+    </div>
+
+    <div id="writing">
+        <h1>Writing Papers</h1>
+        <button id="savePaperButton" onclick="journal.userAction.savePaper()">save</button>
+        <button id="submitPaperButton" onclick="journal.userAction.submitPaper()">save and submit for publication</button>
+        <button id="previewPaperButton" onclick="journal.userAction.makePaperPreview( )">preview</button>
+        <br>
+
+        <table>
+            <tr>
+                <td><label for="paperStatusBox" >status:</label></td>
+                <td id="paperStatusBox"></td>
+            </tr>
+            <tr>
+                <td><label for="paperTitleBox" >title:</label></td>
+                <td><input type="text" size="44" id="paperTitleBox" placeholder="My Great Paper"></td>
+            </tr>
+            <tr>
+                <td><label for="paperAuthorsBox">authors:</label></td>
+                <td><input type="text" size="44" id="paperAuthorsBox" placeholder="Fink & Snerd"></td>
+            </tr>
+            <tr>
+                <td><label for="paperTeamBox">team:</label></td>
+                <td><span id="paperTeamBox" ></span></td>
+            </tr>
+            <tr>
+                <td><label for="paperTextBox">text:</label></td>
+                <td><textarea id="paperTextBox" placeholder="Your text here" rows="5", cols="44"></textarea></td>
+            </tr>
+            <tr>
+                <td><label for="dataPackMenu">Data:</label></td>
+                <td><select id="dataPackMenu" onchange = "journal.userAction.chooseOneDataPack(this)"></select></td>
+            </tr>
+        </table>
+        <br>
+<!--
+        <button id="erasePaperButton" onclick="journal.userAction.erasePaper()">erase</button>
+-->
+
+        <!--    Section about data packs -->
+
+        <details>
+            <summary>
+                View figure(s)
+            </summary>
+            <div>
+
+                <div id="oneDataPackTitle"></div>
+                <svg id="oneDataPackFigure"></svg>
+                <div id="oneDataPackCaption"></div>
+
+<!--
+                <table>
+                    <tr>
+                        <td>
+                            <div id="writerDataListContents">The contents of the list</div>
+                        </td>
+                        <td>
+                            <div id="oneDataPackTitle"></div>
+                            <svg id="oneDataPackFigure" width="500" height="300"></svg>
+                            <div id="oneDataPackCaption"></div>
+                            <button onclick="journal.userAction.assignDataPack()">use this one!</button>
+                        </td>
+                    </tr>
+                </table>
+-->
+            </div>
+        </details>
+
+        <!--        comversation section    -->
+        <details>
+            <summary>Convo History</summary>
+            <div>
+                <td><label for="messageTextBox">message:</label></td>
+                <button id="sendMessageButton" onclick="journal.userAction.sendMessageFrom('author')">send to editor</button>
+                <td><textarea id="messageTextBox" placeholder="Message to the editor" rows="5", cols="44"></textarea></td>
+                <div>
+                    <table id="paperConvoHistory"></table>
+                </div>
+            </div>
+        </details>
+
+    </div>
+
+
+    <div id="journal">
+        <h1 id="readingDivHeading">Journal</h1>
+        <button id="refreshJournalButton" onclick="journal.ui.update()">refresh journal</button>
+        <div id="journalDiv"></div>
+
+    </div>
+</div>
+
+</body>
+</html>

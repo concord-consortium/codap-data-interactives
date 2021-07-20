@@ -1,0 +1,349 @@
+#backbox
+{
+	position:absolute;
+    top: 0;
+    left: 0;
+    width: 550px;
+    height: 315px;
+    background-image: url("../img/back.jpg");
+}
+
+#cover
+{
+	position:absolute;
+    top: 0;
+    left: 0;
+    right: 0px;
+    bottom: 0px;
+}
+
+#welcome_video
+{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+#welcome_panel
+{
+	position:absolute;
+	bottom:0px;
+	left:0px;
+    right: 0px;
+	height:38px;
+    padding: 5px;
+}
+
+#welcome_text
+{
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    right: 140px;
+}
+
+#video_panel
+{
+	position:absolute;
+	top:0px;
+	width:550px;
+    height: 278px;
+}
+
+#start_game_button
+{
+	position:absolute;
+	top:5px;
+	right:5px;
+}
+#game_button
+{
+	position:absolute;
+	left:8px;
+	top:7px;
+}
+
+#levels_button
+{
+    position: absolute;
+    right: 10px;
+    top: 7px;
+}
+
+#outercontrols
+{
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    height:38px;
+    visibility: hidden;
+}
+
+#IEroot #outercontrols
+{
+    background-color: #114267;
+}
+
+#exit
+{
+    position: absolute;
+    right: 0px;
+    width: 112px;
+    top: 10px;
+    height: 148px;
+    background-image: url("../img/exit.png");
+}
+
+#speaker
+{
+    position: absolute;
+    right: 0px;
+    width: 20px;
+    top: 0px;
+    height: 20px;
+    cursor: pointer;
+}
+
+#rock_button
+{
+    position: absolute;
+    left: 15px;
+    top: 18px;
+    width: 50px;
+    height: 50px;
+}
+
+#paper_button
+{
+    position: absolute;
+    left: 15px;
+    top: 83px;
+    width: 50px;
+    height: 50px;
+}
+
+#scissors_button
+{
+    position: absolute;
+    left: 15px;
+    top: 148px;
+    width: 50px;
+    height: 50px;
+}
+
+#throw_area
+{
+    position: absolute;
+    left: 100px;
+    width: 200px;
+    top: 100px;
+    height: 130px;
+    background-image: -webkit-linear-gradient(top, rgba(99, 99, 99, 0.47), rgba(255, 255, 255, 0.67));
+    background-image: -moz-linear-gradient(top, rgba(99, 99, 99, 0.47), rgba(255, 255, 255, 0.67));
+    background-image: -ms-linear-gradient(top, rgba(99, 99, 99, 0.47), rgba(255, 255, 255, 0.67));
+    background-image: -o-linear-gradient(top, rgba(99, 99, 99, 0.47), rgba(255, 255, 255, 0.67));
+    background-image: linear-gradient(to bottom, rgba(99, 99, 99, 0.47), rgba(255, 255, 255, 0.67));
+    background-color: lightgray;
+    visibility: hidden;
+}
+
+#gameArea
+{
+    position: absolute;
+    top: 32px;
+    bottom: 38px;
+    left: 65px;
+    width: 373px;
+    visibility: hidden;
+}
+
+#poleArea
+{
+    position: absolute;
+    top: 0px;
+    bottom: 38px;
+    left: 450px;
+    right: 0px;
+}
+
+#moveButtonArea
+{
+    position: absolute;
+    top: 32px;
+    bottom: 38px;
+    left: 0px;
+    width: 65px;
+}
+
+#gameCover
+{
+    position: absolute;
+    top: 24px;
+    bottom: 48px;
+    width: 100%;
+    visibility: hidden;
+    background-color: rgba(255,255,255,.01);
+}
+
+#button_cover
+{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    visibility: hidden;
+    background-color: rgba(255,255,255,.01);
+}
+
+#game_panel
+{
+    position: absolute;
+    left: 0px;
+    right: 112px;
+    height: 32px;
+}
+
+#IEroot #game_panel
+{
+    background-color: #114267;
+}
+
+#label
+{
+    position: absolute;
+    top: 2px;
+    left: 5px;
+}
+
+#strategy_button
+{
+    position: absolute;
+    left: 100px;
+    top: 4px;
+    width: 9em !important;
+}
+
+#strategy_dialog
+{
+    position: absolute;
+    top: 5px;
+    bottom: 65px;
+    left: 5px;
+    right: 15px;
+    visibility: hidden;
+}
+
+#strat_title
+{
+    position: absolute;
+    top: -2px;
+    left: 0px;
+    right: 122px;
+    height: 19px;
+    padding: 3px;
+}
+
+#strat_instr
+{
+    position: absolute;
+    top: 19px;
+    right: 0px;
+    bottom: 0px;
+    width:  122px;
+    padding: 5px;
+}
+
+#strat_clear
+{
+    position: absolute;
+    top: 3px;
+    left: 7px;
+}
+
+#back_to_game
+{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    left: 7px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#hint
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100px;
+}
+
+#strategy_tiles
+{
+    position: absolute;
+    top: 19px;
+    bottom: 0px;
+    left: 0px;
+    right: 130px;
+}
+
+#auto_button
+{
+    position: absolute;
+    left: 100px;
+    top: 4px;
+    visibility: hidden;
+}
+
+#slider
+{
+    position: absolute;
+    left: 212px;
+    top: 4px;
+    height: 28px;
+    width: 100px;
+    visibility: hidden;
+}
+
+#level
+{
+    position: absolute;
+    padding: 7px;
+    right: 85px;
+    height: 100%;
+}
+
+#level_alert
+{
+    position: absolute;
+    left: 140px;
+    width: 300px;
+    top: 10px;
+    height: 200px;
+    visibility: hidden;
+}
+
+#level_alert_bar
+{
+    position: absolute;
+    height: 20px;
+    width: 290px;
+}
+
+#unlock_info
+{
+    position: absolute;
+    top: 30px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 5px;
+}
+
+#OK_button
+{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}

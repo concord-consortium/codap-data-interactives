@@ -1,0 +1,479 @@
+[
+  {
+    "comment": "Set interactive frame ......",
+    "message": [{
+      "action": "update",
+      "resource": "interactiveFrame",
+      "values": {
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        }
+      }
+    },{
+      "action": "get",
+      "resource": "interactiveFrame"
+    }],
+    "expect": [{
+      "success": true
+    },{
+      "success": true,
+      "values": {
+        "title": "DI-API Test",
+        "version": "0.1",
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        }
+      }
+    }]
+  },
+  {
+    "comment": "Create a data Context .......",
+    "message": {
+      "action": "create",
+      "resource": "dataContext",
+      "values": {
+        "name": "DataContext1",
+        "title": "My Data Context",
+        "description": "Displays individual items in a set of data, one item at a time."
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  }, {
+  "message": {
+    "action": "get", "resource": "dataContextList"
+  }, "expect": {
+    "success": true,
+    "values": [{
+      "name": "DataContext1", "title": "My Data Context"
+    }]
+  }
+},
+  {
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1]",
+      "values": {
+        "title": "Data, Data, Data"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContextList"
+    },
+    "expect": {
+      "success": true,
+      "values": [{
+        "title": "Data, Data, Data"
+      }]
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "title": "Data, Data, Data"
+      }
+    }
+  },
+
+  {
+    "comment": "Create a collection ........",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection",
+      "values": {
+        "name": "Disney_Characters",
+        "title": "Poeple"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collectionList"
+    },
+    "expect": {
+      "success": true,
+      "values": [{
+        "name": "Disney_Characters",
+        "title": "Poeple"
+      }]
+    }
+  },
+  {
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters]",
+      "values": {
+        "title": "People"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters]"
+    },
+    "expect": {
+      "success": true,
+      "values": {
+        "name": "Disney_Characters",
+        "title": "People"
+      }
+    }
+  },
+  {
+    "comment": "Create attributes ..........",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attribute",
+      "values": [
+        {
+          "name": "name",
+          "type": "categorical"
+        },
+        {
+          "name": "age",
+          "type": "numeric"
+        },
+        {
+          "name": "height (cm)",
+          "type": "numeric"
+        }
+      ]
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attribute[name]"
+    },
+    "expect": {
+      "success": true,
+      "values":{"title":"name"}
+    }
+  },
+  {
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attribute[name]",
+      "values": {
+        "title": "Name"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attribute[name]"
+    },
+    "expect": {
+      "success": true,
+      "values":{"title":"Name"}
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attribute[age]"
+    },
+    "expect": {
+      "success": true,
+      "values":{"type":"numeric"}
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].attributeList"
+    },
+    "expect": {
+      "success": true,
+      "values":[{"name":"name"},{"name":"age"},{"name":"height"}]
+    }
+  },
+  {
+    "comment": "create some cases ......",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].case",
+      "values": {
+        "values": {
+          "name": "Mickey",
+          "age": 88,
+          "height": 40
+        }
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].case",
+      "values": [
+        {
+          "values": {
+            "name": "Minnie",
+            "age": 88,
+            "height": 38
+          }
+        },
+        {
+          "values": {
+            "name": "Donald",
+            "age": 82,
+            "height": 51
+          }
+        }
+      ]
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].caseCount"
+    },
+    "expect": {
+      "success": true,
+      "values": 3
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].caseByIndex[0]"
+    },
+    "expect": {
+      "success": true,
+      "values": {"case": {"values": {"name": "Mickey"}}}
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].collection[Disney_Characters].caseByIndex[1]"
+    },
+    "expect": {
+      "success": true,
+      "values": {"case": {"values": {"name": "Minnie"}}}
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "calculator"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "map",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        }
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "slider",
+        "name": "ageSlider",
+        "lowerBound": -0.5,
+        "upperBound": 21.5,
+        "animationDirection": 1,
+        "animationMode": 1,
+        "title": "ageSlider"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "text",
+        "componentStorage": {
+          "text": "T'was brillig and the slithy toves did gyre and gimble in the wabe."
+        }
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "DataContext1",
+        "xAttributeName": "age",
+        "yAttributeName": "height"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "graph",
+        "name": "HeightAge",
+        "dimensions": {
+          "width": 240,
+          "height": 240
+        },
+        "position": "top",
+        "dataContext": "DataContext1",
+        "xAttributeName": "height",
+        "yAttributeName": "age"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseTable",
+        "dimensions": {
+          "width": 480,
+          "height": 200
+        },
+        "dataContext": "DataContext1"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "webView",
+        "title": "Concord",
+        "url": "http://www.concord.org"
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "create",
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        9
+      ]
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].selectionList"
+    },
+    "expect": {
+      "success": true,
+      "values": [{
+        "caseID": 9
+      }]
+    }
+  },
+  {
+    "message": {
+      "action": "update",
+      "resource": "dataContext[DataContext1].selectionList",
+      "values": [
+        10
+      ]
+    },
+    "expect": {
+      "success": true
+    }
+  },
+  {
+    "message": {
+      "action": "get",
+      "resource": "dataContext[DataContext1].selectionList"
+    },
+    "expect": {
+      "success": true,
+      "values": [{
+        "caseID": 9
+      },{
+        "caseID": 10
+      }]
+    }
+  }
+]

@@ -1,0 +1,359 @@
+<!--
+
+==========================================================================
+dsgBART.html
+
+HTML for BART aggregate data.
+
+    Author:   Tim Erickson
+
+Copyright (c) 2016 by The Concord Consortium, Inc. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+URLs:
+To run from the github.io concord repo:
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html?di=https://concord-consortium.github.io/codap-data-interactives/data-science-worlds/barty/barty.html
+
+
+local (tim using cloned Concord repository):
+                http://localhost:8888/codap-data-interactives/data-science-worlds/barty/barty.html
+
+Local CODAP, local plugin
+
+http://localhost:8888/codap/static/dg/en/cert/index.html?di=http://localhost:8888/codap-data-interactives/data-science-worlds/barty/barty.html
+-->
+
+<!--
+
+HOW TO DEPLOY THIS THING
+    I (Tim) develop with a local version of the data set (MAMP).
+    AFTER UPLOAD, you have to change the base URL to point to eeps or concord for the php.
+
+    You will find relevant material in barty.constants.js (about line 45) and in establishCredentials.php.
+    Also in the credential file itself, which is not in the reporitory for security reasons.
+
+    Another key variable is "whence" in constants.
+
+    Look in the github wiki for detailed instructions.
+    https://github.com/concord-consortium/codap-data-interactives/wiki/Configuration
+
+    If you have to change the php, you will need to reupload THAT as well, and edit it to point to the appropriate
+    data files. Then, fix the passwords, etc. at about line 90.
+
+    Do this editing using CyberDuck or Fetch.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>barty</title>
+
+    <link rel='stylesheet' type='text/css' href='barty.css'/>
+    <link rel='stylesheet' type='text/css' href='../common/jqueryFolder/jquery-ui.css'/>
+
+    <!-- These scripts take care of the communication with CODAP and commons -->
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js"></script>
+
+
+    <!-- Our game source -->
+    <script src="barty.js" language="JavaScript"></script>
+    <script src="barty.constants.js" language="JavaScript"></script>
+    <script src="bartyManager.js" language="JavaScript"></script>
+    <script src="barty.ui.js" language="JavaScript"></script>
+    <script src="bartyCODAPConnector.js" language="JavaScript"></script>
+    <script src="bartyMeetings.js" language="JavaScript"></script>
+    <script src="bartStations.js" language="JavaScript"></script>
+
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            barty.initialize();
+        });
+        $( "#dateControl" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            /*
+                        minDate : barty.constants.kMinDateString,
+                        maxDate : barty.constants.kMaxDateString
+            */
+        });
+
+
+    </script>
+
+</head>
+<body>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#dataTab">Data</a></li>
+        <li><a href="#backgroundTab">Background</a></li>
+        <!--
+                <li><a href="#scenarioTab">Scenario</a></li>
+        -->
+        <li><a href="#mapTab">Map</a></li>
+        <li><a href="#optionsTab">Options</a></li>
+        <!--
+                <li><a href="#debugTab">Debugging</a></li>
+        -->
+    </ul>
+
+    <div id="dataTab">
+
+        <!--
+                <button id="newGameButton" onclick="barty.ui.newGameButtonPressed()">new game</button>
+                <br><br>
+        -->
+        <table width="100%" style="padding: 6px; margin-bottom:6px; background-color:#ddf;">
+            <tr>
+                <td style="padding: 12px">
+                    Click the <b>get data</b> button to get a sample of BART data
+                    from Bay Area Rapid Transit (BART) ridership reports.
+
+                </td>
+            </tr>
+        </table>
+
+        <fieldset id="getDataBlock" onchange="barty.ui.dataSelectionChanged()" width="100%">
+            <legend>Specify time period (don't use Internet Explorer)</legend>
+            <!--
+                        <span>
+                            ... current setting:<br>
+                            <span id="dataIntervalStatement"></span>
+                        </span>
+                        <br><br>
+            -->
+            <label>start date: <input id="dateControl" type="date"></label><br>
+            <label>how much data?
+                <select id="numberOfDaysControl">
+                    <option value="1">1 day</option>
+                    <option value="7">7 days</option>
+                    <option value="30">30 days</option>
+                </select>
+            </label>
+
+            <!--
+                    </fieldset>
+                    <br>
+                    <fieldset id="advancedData" onchange="barty.ui.dataSelectionChanged()">
+                        <legend>Advanced data options</legend>
+            -->
+            <br>
+            <div id="oneDayOnlyControl">
+                <label for="useWeekday"><span id="useWeekdayItemText"></span></label>
+                <input type="checkbox" id="useWeekday">
+            </div>
+            <label>
+                <span id="useHoursItemText">use hour:</span>
+                <input type="checkbox" id="useHour">
+            </label>
+
+            <div id="hourControl"></div>    <!--    the hour range slider -->
+
+            <br>
+
+        </fieldset>
+        <br>
+
+        <table width="100%" style="padding: 6px; margin-bottom:6px; background-color:#ddf;">
+            <tr>
+                <td style="padding: 12px">
+                    <button id="getDataButton" onclick="barty.ui.getDataButtonPressed()">get data</button>
+
+                </td>
+                <td valign="middle" align="right" style="padding-right: 12px">
+                    Click<br><strong>get data</strong><br> to get:
+                </td>
+                <td valign="middle">
+                    <span id="downloadOptionTimeAndStationsText"></span>
+
+                </td>
+            </tr>
+        </table>
+
+        <br>
+
+        <fieldset id="showPricesBlock" onchange="barty.ui.dataSelectionChanged()">
+            <legend>Specify Stations</legend>
+
+            <table>
+                <tr>
+                    <td><img src="art/blueDot.svg"></td>
+                    <td colspan="2"><select id="departureSelector"></select></td>
+                    <td rowspan="2">
+                        <button onclick="barty.ui.swapStations()">swap</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><img src="art/yellowDot.svg"></td>
+                    <td colspan="3"><select id="arrivalSelector"></select></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="dataChoice" id="byRouteItem" value="byRoute" checked/>
+                    </td>
+                    <td>
+                        <img src="art/byRoute40.jpg">
+                    </td>
+                    <td><span id="byRouteItemText"></span></td>
+                    <td><span id="byRouteCostText"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="dataChoice" id="byDepartureItem" value="byDeparture"/>
+                    </td>
+                    <td>
+                        <img src="art/byDeparture40.jpg">
+                    </td>
+                    <td><span id="byDepartureItemText"></span></td>
+                    <td><span id="byDepartureCostText"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="dataChoice" id="byArrivalItem" value="byArrival"/>
+                    </td>
+                    <td>
+                        <img src="art/byArrival40.jpg">
+                    </td>
+                    <td><span id="byArrivalItemText"></span></td>
+                    <td><span id="byArrivalCostText"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="dataChoice" id="betweenAnyItem" value="betweenAny"/>
+                    </td>
+                    <td>
+                        <img src="art/betweenAny40.jpg">
+                    </td>
+                    <td><span id="betweenAnyItemText"></span></td>
+                    <td><span id="betweenAnyCostText"></span></td>
+                </tr>
+            </table>
+
+            <br>
+            <!--
+                        <button id="showPricesButton" onclick="barty.ui.showPricesButtonPressed()">estimate data load</button>
+            -->
+        </fieldset>
+
+
+        <p>
+            <span id="result"></span> <span id="status">Ready.</span>
+        </p>
+    </div>
+
+    <div id="backgroundTab">
+
+        <p>This setup gives you a window into data on almost 500 million BART exits from 2015 through 2018.
+            Each record represents one hour at a station,
+            recording how many people exited that station during the hour.
+            There is a separate record from each of the
+            other stations in the BART system.</p>
+        <p>As of version 002k, data include all of 2015 through 2018</p>
+        <p>Useful Variables</p>
+        <ul>
+            <li><strong>riders</strong>: number of exits during that hour.
+            <li><strong>when</strong>: date and time.</li>
+            <li><strong>hour</strong>: the integer hour out of 24.</li>
+            <li><strong>day</strong>: weekday.</li>
+            <li><strong>startAt</strong>: station where the passenger entered the system</li>
+            <li><strong>endAt</strong>: station where the passenger left the system</li>
+            <li><strong>startReg, endReg</strong>: regions for start and end.
+                These might make some graphs simpler. "City" is SF but not downtown.
+            </li>
+        </ul>
+        <p>Thanks to Pam Herhold of BART, for access!</p>
+
+    </div>
+
+
+    <!--
+        <div id="scenarioTab">
+            <p>You are trying to find a meeting in the Bay Area, and you have only BART data to do it with.
+                You know the meeting is near a BART station. You know it's at the same time very week.</p>
+            <p>Before you press <strong>new game</strong>, check out the <strong>Options</strong> tab.
+            </p>
+            <p>Use that to set up the game.</p>
+            <ul>
+                <li>Begin by using the defaults (Orinda, Tuesday, 2 PM, 160 people). So you know the answer.</li>
+                <li>See if you can make a graph that shows the meeting in the BART data.</li>
+                <ul>
+                    <li>Notice that the controls let you define what data to get, for example, what date and for what
+                        hours.
+                    </li>
+                    <li>Notice that you can learn the cost of your data.
+                        <b>Eventually, you will have to confirm your purchase.</b></li>
+                </ul>
+                <li>When you have that nailed, set the time to "surprise me" and play another game.
+                    See if you can figure out the time.
+                </li>
+                <li>Gradually move up to other attributes or even to combinations!</li>
+            </ul>
+            <h2>Hints</h2>
+            <p>If you're stuck about making a graph with the default options:</p>
+            <ol>
+                <li>Make sure a Tuesday is selected, such as April 14.</li>
+                <li>Make sure "From Embarcadero to Orinda" is selected. Click <strong>get data</strong>.</li>
+                <li>Click the <strong>Tables</strong> icon above. A data table appears. See what it looks like.</li>
+                <li>Click <strong>Graph</strong>. A mixed-up graph appears.
+                    Drag the heading <strong>hours</strong> to the horizontal axis of the graph.
+                </li>
+                <li>Drag <strong>count</strong> to the vertical axis. You should see a bump at 2 PM.</li>
+                <li>Try dragging other attributes to various axes &#45;&#45; or to the middle of the graph.</li>
+
+            </ol>
+            <p>Notice that we "knew" Embarcadero would be a good source. In reality, you don't know that.
+                How would you figure it out?</p>
+            <p>That should get you started. Oh: to start over, just reload the page.</p>
+        </div>
+    -->
+
+
+    <div id="mapTab">
+        <img src="https://www.bart.gov/sites/all/themes/bart_desktop/img/system-map.gif">
+
+    </div>
+
+
+    <div id="optionsTab">
+        <p>In this tab, you can set up a "game" in which the user (even you) are trying to
+        find the place, day of week, size, and time of a mystery meeting. </p>
+        <button id="newGameButton" onclick="barty.ui.newGameButtonPressed()">new game</button>
+        <br><br>
+        <div class="options">
+            Day: <select id="meetingDaySelector"></select><br>
+            Location: <select id="meetingLocationSelector"></select><br>
+            Time: <select id="meetingTimeSelector"></select><br>
+            Size: <select id="meetingSizeSelector"></select><br>
+        </div>
+    </div>
+
+
+
+</div>
+
+</body>
+
+
+</html>

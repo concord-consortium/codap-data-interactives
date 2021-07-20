@@ -1,0 +1,34 @@
+[
+  {
+    "comment": "Set interactive frame ......",
+    "message": [{
+      "action": "update",
+      "resource": "interactiveFrame",
+      "values": {
+        "title": "DI-API Test",
+        "version": "0.1",
+        "preventBringToFront": false,
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        }
+      }
+    },{
+      "action": "get",
+      "resource": "interactiveFrame"
+    }],
+    "expect": [{
+      "success": true
+    },{
+      "success": true,
+      "values": {
+        "title": "DI-API Test",
+        "version": "0.1",
+        "dimensions": {
+          "width": 600,
+          "height": 500
+        }
+      }
+    }]
+  }
+]

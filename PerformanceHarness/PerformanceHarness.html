@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <script src="PerformanceHarness.js" language="javascript"></script>
+
+
+    <title>Performance Harness</title>
+</head>
+
+<body bgcolor="#93A2B5">
+<h1>Performance</h1>
+<form name="form1">
+    <p>
+        Number of trials <input type="text" size=5 maxlength=4 name="numTrials" value = 100>
+    </p>
+    <p>
+        Delay between trials <input type="text" size=5 maxlength=4 name="delay" value=1> ms<br>
+        <input type="checkbox" name="profile">Profile
+    </p>
+    <input type="button" onClick="PerformanceHarness.runTest();" name="run" value="Run">
+</form>
+<p>Time = <span id="time"></span> ms, Rate = <span id="rate"></span> cases/sec</p>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC>
+<html lang="en">
+	<head>
+		<title>Proximity</title>
+
+        <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
+		<link rel="stylesheet" type="text/css" href="style/proximity_style.css" />
+		<link rel="stylesheet" type="text/css" href="style/proximity_layout.css" />
+
+        <script src="../Common/js/raphael.js" type="text/javascript"></script>
+        <script src="../Common/js/jquery.js" type="text/javascript"></script>
+		<script src="../Common/js/kcpcommon.js" type="text/javascript"></script>
+        <script src="../Common/js/events.js" type="text/javascript"></script>
+		<script src="../Common/js/dgapi.js" type="text/javascript"></script>
+        <script src="../Common/js/level_manager.js" type="text/javascript"></script>
+        <script src="js/proximity_settings.js" type="text/javascript"></script>
+        <script src="js/ball.js" type="text/javascript"></script>
+        <script src="js/proximity_levels.js" type="text/javascript"></script>
+        <script src="js/goal.js" type="text/javascript"></script>
+        <script src="js/putter.js" type="text/javascript"></script>
+        <script src="js/measurer.js" type="text/javascript"></script>
+		<script src="js/proximity_model.js" type="text/javascript"></script>
+		<script src="js/proximity_view.js" type="text/javascript"></script>
+
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+
+    <script type="text/javascript">
+            /*This global is here to make it obvious how things get going*/
+      var ProximityGame = {
+            initializeGame: function() {
+              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback){
+                  var operation = iCmd && iCmd.operation,
+                          args = iCmd && iCmd.args,
+                          model = ProximityGame.model;
+                  switch( operation) {
+                      case 'saveState':
+                          callback(model.saveGameState());
+                          break;
+                      case 'restoreState':
+                          callback(model.restoreGameState( args.state));
+                          break;
+                      default:
+                        callback({success:false});
+                  }
+              }, "codap-game", window.parent);
+              this.model = new ProximityModel(ProximityGame.codapPhone, ProximityGame.doAppCommand);
+              this.view = new ProximityView( this.model);
+    
+              this.view.initialize();
+              this.model.initialize();
+            }
+      }
+    </script>
+    </head>
+
+	<body onload="ProximityGame.initializeGame()" bgcolor="9e9fa6">
+
+		<div id="backbox">  <!--Everything lives within this-->
+            <div id="gameArea">  <!--Raphael is used to draw everything within this-->
+            </div>
+
+            <div id="gameCover">  <!--Prevent mouse interaction when game is over-->
+            </div>
+
+            <div id="video_panel">
+                <video id="welcome_video" width="462px" height="294px" autoplay="autoplay" loop="loop"
+                       onclick="ProximityGame.model.playGame()">
+                    <source src="img/welcome.mp4" type="video/mp4"/>
+                    <source src="img/welcome.ogv" type="video/ogg"/>
+                    Your browser does not support the video tag.
+                </video>
+                <button id="start_game_button" type="button" class="button bigrounded rosy"
+                         onclick="ProximityGame.model.playGame();">
+                     Play
+                </button>
+            </div>
+            <div id="welcome_panel" class="bottomPanel">
+                <div id="welcome_text" class="welcome">
+                    Proximity! The closer you get, the higher your score.
+                </div>
+            </div>
+
+            <div id="outercontrols" class="bottomPanel">
+                <button id="game_button" type="button" class="button medium white"
+                        onclick="ProximityGame.model.handleGameButton();">
+            	</button>
+                <div id="goal">
+                    Goal<div id="goalNum" class="info_small"></div>
+                </div>
+                <div id="score">
+                    Score<div id="scoreValue" class="info"></div>
+                </div>
+                <div id="level">
+                    Level <span id="levelNum"></span><div id="levelName" class="info"></div>
+                </div>
+                <div id="game">
+                    Game<div id="gameNum" class="info"></div>
+                </div>
+                <button id="levels_button" type="button" class="button medium white"
+                        onclick="ProximityGame.model.handleLevelsButton();">
+                    Levels
+            	</button>
+            </div>
+
+            <div id="cover" class="translucent"></div>  <!--Prevent mouse interaction when levels are showing-->
+            <div id="levels_panel" class="levels">
+                <div id="levels_close" onclick="ProximityGame.model.levelManager.leaveLevelsMode();"></div>
+                Choose a level. (You are currently on <span id="currLevel"></span>.)
+                <table id="levels_table" class="levels_table_style">
+                </table>
+            </div>
+
+            <div id="level_alert" class="alert">
+                <div id="level_alert_bar" class="bar">
+                    Level Alert!
+                </div>
+                <div id="unlock_info" class="unlock">
+                    Congratulations! You have unlocked level <span id="unlock"></span>!
+                    <button id="OK_button" type="button" class="button medium white"
+                            onclick="">
+                        OK
+                	</button>
+                </div>
+            </div>
+        </div>
+	</body>
+</html>

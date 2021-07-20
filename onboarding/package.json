@@ -1,0 +1,17 @@
+{
+  "devDependencies": {
+    "babel-preset-react": "^6.22.0",
+    "babelify": "^7.3.0",
+    "browserify": "^15.2.0"
+  },
+  "dependencies": {},
+  "scripts": {
+    "build-onboarding": "browserify -t [ babelify --presets [ react ] ] source/jsx/onboarding.jsx -o target/onboarding.js",
+    "build-task_descriptions": "browserify -t [ babelify --presets [ react ] ] source/jsx/task_descriptions.jsx -o target/task_descriptions.js",
+    "build-task_descriptions_2": "browserify -t [ babelify --presets [ react ] ] source/jsx/task_descriptions_2.jsx -o target/task_descriptions_2.js",
+    "build-onboarding-pre": "mkdir target",
+    "build": "bin/build",
+    "clean": "rm -rf target",
+    "zip": "zip -rv onboarding.zip target"
+  }
+}

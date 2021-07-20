@@ -1,0 +1,31 @@
+<!--This page serves as a starting place for emulation of TinkerPlots Sampler.-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+    <style>
+        body {
+            background-color: white;
+        }
+    </style>
+    <title>Proto-TP-Sampler</title>
+</head>
+
+<body>
+<form name="form1">
+    <select id="drawFromChoice" onchange="ProtoTPSampler.handleDrawFromChange()">
+        <option value="drawElements">Draw Elements</option>
+        <option value="sampleCollection">Sample from Collection</option>
+    </select>
+    <div id="drawFrom">
+
+    </div>
+    <label>Draw: <input type="text" name="draws" size="5" value="2"></label> at a time<br>
+    <label>Repeat: <input type="text" name="runs" size="4" value="5"></label> times<br>
+    <input type="button" onClick="ProtoTPSampler.conductExperiment();" value="Conduct Experiment">
+</form>
+<p><span id="message">Ready</span></p>
+<script src="proto-tp-sampler.js"></script>
+</body>
+</html>

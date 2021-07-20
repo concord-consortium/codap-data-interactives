@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en"></p>
+
+<!--
+==========================================================================</p>
+
+<p> * Created by tim on 11/30/17.
+ 
+ 
+ ==========================================================================
+arborWorkshop in xeno</p>
+
+<p>    Author:   Tim Erickson</p>
+
+<p>Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.</p>
+
+<p>    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at</p>
+
+<p>http://www.apache.org/licenses/LICENSE-2.0</p>
+
+<p>    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Arbor Workshop</title>
+
+    <!--Stylesheets-->
+    <link rel='stylesheet' type='text/css' href='arborWorkshop.css'/>
+
+</head>
+<body>
+
+<h1>Trees in a Diagnosis Game</h1>
+
+<p>To begin, simplify the screen: minimize the <b>diagnostic tree</b> window
+    by pressing the minus sign in its title bar.
+    Move it away so you're not distracted by it; we'll get to it later.</p>
+<img src="art/minimizer.png" width="333">
+
+<p style="background-color: #aaccbb; padding : 12px;"><b>Scenario</b>:
+    You're a xenobiologist studying alien creatures.
+    Sometimes they get sick. At the beginning of our tale, you have records for 10 creatures, some of whom were
+    suffering from <i>ague</i> (an alien disease).
+    What is it about the creatures that makes them susceptible to ague?
+</p>
+
+<ul>
+    <li>Starting with the Arbor Xenobiological Services panel in Training mode, explore the data you already have&mdash;10 cases&mdash;to
+        see if you can figure out what "predicts" the disease (in this case, ague).
+        <ul>
+            <li>
+                In the "creatures" data table, the <b>health</b> column tells you if they are sick or well.
+            </li>
+            <li>
+                Figure out what <i>other</i> data you can use to predict <b>health</b>.
+            </li>
+            <li>
+                Making a graph of the data might help. A lot. (This is CODAP, after all!)
+                If you have never made a graph in CODAP before, try
+                <a href="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=32840" target="_blank">this</a>.
+            </li>
+        </ul>
+        <img src="art/arborControls.png" width="333">
+    <li>Get additional cases to confirm your ideas.
+        Do this by pressing <b>make new cases</b>
+        in the little panel
+        on the right side of <b>Arbor Xenobiological Services</b>.
+    </li>
+    <li>When you're confident, change the left-hand choice to <b>one by one</b>.
+    <li>Now you will diagnose individual cases. See if you're right.
+        If you're not consistently right, review your data
+        and see what you might have missed.
+        (Notice that you're gaining points!)
+    <li>When you think you have this figured out, we will automate the process of diagnosing these creatures.
+        See the next section on using trees for diagnosis.
+</ul>
+
+<h1>Trees for Diagnosis</h1>
+<p>
+    To diagnose a patient, we ask a sequence of questions.
+    The answers will help us predict whether creatures have this sickness.
+    The answer to a question leads either to a diagnosis (sick or well) or to a further question.
+    We will represent&mdash;and automate&mdash;this process using the diagnostic tree.
+</p>
+<ul>
+    <li>Expand the diagnostic tree by pressing that minus sign again.
+    <li>Arrange your screen so you can see it. (You might want to make your data table smaller.)</li>
+</ul>
+<p>The diagnostic tree should look like the next picture, except that your numbers will be different.</p>
+
+<img src="art/treeRootOnlyBeginnning.png" width="333">
+
+<p>Grow your tree by dragging attribute names from the palette of names (at the bottom of the window) to the box.
+    You probably already figured out which attribute is important.</p>
+<ul>
+    <li>
+        Drag <b>hair</b> from the palette to the box.
+    </li>
+</ul>
+
+<p>You should see this:</p>
+
+<img src="art/treeOneSplitHairNoDiag.png" width="333">
+
+<p>Here's what it means:</p>
+<ul>
+    <li>Look at the top box (in the illustration; your numbers will be different). Among all of the creatures, 5 out of 10 (50%) are sick.
+    <li>Our first "question" is, what color hair does the patient have? (That's why <b>hair?</b> is in the bottom
+        stripe).
+    <li>There are two possible answers, <b>blue</b> and <b>pink</b>. Each one leads to a different box.
+    <li>The left-hand box tells us that there are 5 creatures with blue hair, and none of them (0%) are sick.
+    <li>The right-hand box tells us that there are 5 creatures with pink hair, and all 5 of them (100%) are sick.
+</ul>
+
+<p>Note: You can also "hover" over any box or link in the diagnostic tree to get more information.</p>
+
+<h2>Positive and Negative</h2>
+
+<p>Often, medical specialists talk about "positive" and "negative" diagnoses and results.
+    With our tree tool, we will think of "sick" as <i>positive</i>, like a positive test for ague.
+    To predict which creatures have ague, we will label them as positive.</p>
+
+<h2>Automation</h2>
+<p>Suppose we want to automate our diagnoses.
+    We have to tell the tree to assign the pink-hair box to the positive ("sick") group
+    and the blue-hair box to the negative ("well") group.</p>
+<ul>
+    <li>
+        Click the box at the top for <b>show diagnosis "leaves."</b> You will see this:
+    </li>
+</ul>
+<img src="art/treeOneSplitDiagNoAssignments.png" width="333">
+
+
+<p>The gray circles with <b>(?)</b> indicate that you have not yet assigned diagnoses to those boxes. </p>
+<ul>
+    <li>Click them to assign diagnoses. Make it so it looks like this:</li>
+</ul>
+
+<img src="art/treeOneSplitDiagGood.png" width="333">
+<p>
+    When you have your tree set the way you want it, go back to <b>Arbor Xenobiological Services</b> and choose
+    <b>auto</b> on the left.
+    Then click the <b>run tree</b> button to create 10 cases.</p>
+<img src="art/automate.png" width="333">
+<p>Your diagnostic tree will automatically diagnose 10 new patients. How did your tree do?</p>
+
+<h2>Explore</h2>
+<ul>
+    <li>If you haven't already, make graphs of the data to show why your diagnosis works.</li>
+    <li>Click a case in the data table or in a graph. See how it is reflected in the tree.
+    <li>Click one of the bottom boxes in the tree. See how it is reflected in the table and in any graphs.
+    <li>Try making some bad trees, or make bigger trees, and see how they work.
+    <li>Figure out what affects your score.
+    <li>Try other scenarios. They're harder.
+        (When you choose one, your old data will disappear. And you'll have to configure variables. See below.)
+    </li>
+</ul>
+
+<h2>Configuring Variables</h2>
+<p>
+    You will find, as you work through harder scenarios,
+    that you will want your question to be different from what the default situation allows.
+    For example, suppose you want to ask about <b>weight</b>.
+    Since each question is <em>binary</em>, you can only ask if the weight is above or below some number.
+    But what number?
+</p>
+<img src="art/showGearButton.png" width="144">
+<p>
+    You need to <em>configure</em> the attribute. When you hover over its name in the tree,
+    you will see a gear button appear to the left.</p>
+<img src="art/gear.png" width="333">
+
+ <p>   Click it to get the configuration dialog.
+
+</p>
+<img src="art/configurationWeight.png" width="333">
+
+<ul>
+    <li> For a numeric attribute, you can set the "cutoff point."</li>
+    <li> For a numeric attribute, you can set the operator, that is, greater than or less than.</li>
+    <li> For a categorical attribute, click the possible values to move them left and right.</li>
+    <li> For any attribute, click the left-right button to swap the left and right values.</li>
+    <li> For any attribute, change the labels to be something meaningful. For example, for <b>weight</b>,
+        you might use <em>heavy</em> and <em>light</em>.
+    </li>
+</ul>
+</body>
+</html>

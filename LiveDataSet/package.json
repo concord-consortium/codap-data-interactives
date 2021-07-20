@@ -1,0 +1,14 @@
+{
+  "name": "livedataset",
+  "version": "1.0.0",
+  "description": "",
+  "main": "live-data-set.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "string-hash": "^1.1.3"
+  }
+}

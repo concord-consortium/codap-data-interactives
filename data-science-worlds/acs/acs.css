@@ -1,0 +1,105 @@
+/*
+ * ==========================================================================
+ * Copyright (c) 2018 by eeps media.
+ * Last modified 8/18/18 9:03 PM
+ *
+ * Created by Tim Erickson on 8/18/18 9:03 PM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * ==========================================================================
+ *
+ */
+
+body, #summary, #atts, #about, #variables  {
+    margin : 0;
+    /*height : 320px;*/
+    font-family: 'IBM Plex Sans Condensed', sans-serif;font-size: 16px;
+    font-weight: 300;
+    color : #555;
+    background: linear-gradient(#eef, #cce );
+    position: relative;
+    /* max-width: 400px; */
+}
+
+.ui-tabs-anchor {
+    font-family: 'Rokkitt',sans-serif;font-size: 18px;
+    font-weight: 300;
+
+}
+
+h1 {
+    font-family: 'Rokkitt',sans-serif;font-size: 22px;
+    font-weight: 700;
+    color : #44a;
+}
+
+h2 {
+    font-family: 'Rokkitt',sans-serif;font-size: 20px;
+    font-weight: 700;
+    color : #44a;
+}
+
+h3 {
+    font-family: 'Rokkitt',sans-serif;font-size: 18px;
+    font-weight: 700;
+    color : #44a;
+}
+
+#variables p {
+    padding-left: 1em;
+}
+
+#variables strong {
+    font-family: 'Rokkitt',sans-serif;
+    color : #44a;
+}
+
+#sampleSummary b {
+    font-family: 'Rokkitt',sans-serif;font-size: 18px;
+    font-weight: 700;
+    color : #44a;
+}
+
+#pluginHeader {
+    padding-left: 1.4em;
+}
+
+#acsMap {
+    padding-top: 1em;
+    height : 300px;
+    width : 100%;
+}
+
+#sampleSizeInput {
+    font-family: 'Rokkitt',sans-serif;font-size: 16px;
+    font-weight: 700;
+    width: 3.5em;
+    /*  float: right;   */
+}
+
+#getCasesButton {
+    font-family: 'Rokkitt',sans-serif;font-size: 16px;
+    font-weight: 300;
+}
+
+.attributeCheckboxes {
+    padding-left: 1.5em;
+    padding-bottom: 0.5em;
+}
+
+.attNameBold {
+    font-weight: 700;
+    color : #004;
+}
+
+.oneAttCheckboxPlusLabel {
+    display: block;
+    padding-left: 1.0em;
+    text-indent: -1.6em;
+}

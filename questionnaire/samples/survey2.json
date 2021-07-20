@@ -1,0 +1,68 @@
+{
+  "pages": [
+    {
+      "name": "Baits",
+      "questions": [
+        {
+          "type": "radiogroup",
+          "choices": [
+            {
+              "value": "Amino Acids",
+              "text": "Amino Acids"
+            },
+            {
+              "value": "Cookie",
+              "text": "Cookie"
+            },
+            {
+              "value": "Sugar",
+              "text": "Sugar"
+            },
+            {
+              "value": "Water",
+              "text": "Water"
+            },
+            {
+              "value": "Olive Oil",
+              "text": "Olive Oil"
+            },
+            {
+              "value": "Salt",
+              "text": "Salt"
+            }
+          ],
+          "colCount": 3,
+          "isRequired": true,
+          "name": "Bait_Type",
+          "title": "Please answer the questions for stations of each of these bait types."
+        },
+        {
+          "type": "text",
+          "name": "Number_of_Ants",
+          "title": "How many ants came to this bait type altogether",
+          "validators": [
+            {
+              "type": "answercount",
+              "minCount": "0"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "name": "Percent_of_Baits_with_Ants",
+          "title": "What percentage of this type of bait stations had any ants",
+          "validators": [
+            {
+              "type": "numeric",
+              "maxValue": "100",
+              "minValue": "0"
+            }
+          ]
+        }
+      ],
+      "title": "Bait Types"
+    }
+  ],
+  "showQuestionNumbers": "off",
+  "title": "Baits"
+}

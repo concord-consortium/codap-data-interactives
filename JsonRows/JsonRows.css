@@ -1,0 +1,32 @@
+body {
+  background-color: #fffaf0;
+  font-family: sans-serif;
+  color: rgb(110,109,95);
+}
+
+div.wizard-step {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+}
+
+div.nav-buttons {
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  left: 10px;
+}
+div.nav-buttons button.next-button, button.done-button {
+  float: right;
+}
+
+div.wizard-step div {
+  margin: 10px 0;
+}
+
+input[type=text] {
+  width: 250px;
+}

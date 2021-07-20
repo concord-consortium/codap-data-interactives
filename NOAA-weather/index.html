@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--
+==========================================================================
+
+ * Created by tim on 2019-08-23.
+ 
+ 
+ ==========================================================================
+index in noaa-cdo
+
+    Author:   Tim Erickson
+
+Copyright (c) 2019 by Epistemological Engineering. All rights reserved.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+
+
+LOCAL:  http://localhost:8888/plugins/noaa-cdo/
+simple shared doc: http://localhost:8888/codap/static/dg/en/cert/index.html#shared=113045
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>NOAA-Weather</title>
+    <meta name="viewport" content="width=380">
+    <meta name="description" content="A CODAP plugin to retrieve daily or monthly weather summaries">
+
+    <link rel='stylesheet' type='text/css' href='css/style.css'/>
+</head>
+
+<body>
+
+<main id="content">
+
+<div id="wx-intro-section" class="wx-pop-up" >
+    <div class="wx-section-header-line">
+        <span>Retrieve weather data from observing stations.</span>
+        <span class="wx-info-button wx-pop-up-anchor icon-info" title="Get further information about this CODAP plugin"></span>
+    </div>
+    <div class="wx-cover"></div>
+    <div class="wx-pop-up-container">
+        <div class="wx-pop-up-content" >
+            <div class="wx-pop-up-header">
+                More Information
+            </div>
+            <div class="wx-pop-up-body">
+                <div id="wx-settings-section" class="wx-dropdown wx-down">
+                    <div class="wx-section-header-line wx-dropdown-header">
+                        <span class="wx-section-title">Settings</span>
+                        <span class="wx-dropdown-indicator"></span>
+                    </div>
+                    <div class="wx-dropdown-body">
+                        <div>Units</div>
+                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-metric" value="metric" checked /><label for="wx-option-units-metric">Metric</label></div>
+                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-standard" value="standard"/><label for="wx-option-units-standard">Standard</label></div>
+                    </div>
+                </div>
+                <div id="wx-about-section" class="wx-dropdown wx-down">
+                    <div class="wx-section-header-line wx-dropdown-header" title="About this plugin">
+                        <div class="wx-section-title">About</div>
+                        <span class="wx-dropdown-indicator"></span>
+                    </div>
+                    <div class="wx-dropdown-body">
+                        <p>
+                            These weather data come from the National Centers
+                            for Environmental Information(NCEI), part of the National
+                            Oceanic and Atmospheric Administration (NOAA).
+                            Documentation is available at <a href="https://www.ncei.noaa.gov" target="_blank">https://www.ncei.noaa.gov</a>.
+                        </p>
+                        <p>
+                            This weather data portal was developed by
+                            <a href="https://concord.org" target="_blank">The Concord
+                            Consortium</a> as part of the <a href="https://www.edc.org/weatherx" target="_blank">WeatherX Project—Strategies:
+                            Understanding Weather Extremes with Big Data:
+                            Inspiring Rural Youth in Data Science</a> at the
+                            <a href="http://edc.org/" target="_blank">Education Development Center</a>.
+                        </p>
+                        <p>
+                            This material is based on work supported by the
+                            National Science Foundation under Grant No.
+                            DRL-1850477. Any opinions, findings, and conclusions
+                            or recommendations expressed in this material are
+                            those of the authors and do not necessarily reflect
+                            the views of the NSF.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="wx-info-close-section" class="wx-pop-up-footer">
+                <div class="wx-control-row">
+                    <span><button id="wx-info-close-button" class="wx-button" title="Hide this section.">Close</button></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="wx-fixed-section-divider"/>
+
+<div id="wx-date-section">
+    <div id="wx-database-selection" class="wx-section-header-line">
+        <span class="wx-section-title">Date Range</span>
+        <span id="wx-dataset-form" title="Select monthly or daily weather summaries">
+            <span class="wx-form-label">Data:</span>
+            <input type="radio" value="global-summary-of-the-month" id="wx-gsom" name="frequencyControl" />
+            <label for="wx-gsom">monthly</label>
+            <input type="radio" value="daily-summaries"  id="wx-daily" name="frequencyControl" />
+            <label for="wx-daily">daily</label>
+            <input type="radio" value="global-hourly"  id="wx-hourly" name="frequencyControl" />
+            <label for="wx-hourly">hourly</label>
+        </span>
+    </div>
+    <div id="wx-day-or-month-selector" class="wx-pop-over-placeholder" >
+        <div id="wx-date-range-selection-dialog" class="wx-pop-over">
+            <div class="wx-pop-over-anchor" title="Select a range of dates.">
+                <div id="wx-date-range"></div>
+                <span class="wx-calendar-button icon-date-range"></span>
+            </div>
+            <div class="wx-pop-over-body">
+                <div class="wx-day-range-selector">
+                    <div id="wx-calendar-from" ></div>
+                    <div id="wx-calendar-to" ></div>
+                </div>
+                <div class="wx-control-row">
+                    <button id="wx-date-range-close" class="wx-button">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="wx-main-scroll-area" class="wx-scroll-area">
+
+    <div id="wx-location-section" class="wx-dropdown wx-down">
+        <div class="wx-section-header-line wx-dropdown-header" title="Which weather station from which to fetch data.">
+            <span class="wx-section-title">Station Location</span>
+            <span id="wx-stationName" class="wx-user-selection"></span>
+            <span class="wx-dropdown-indicator"></span>
+        </div>
+        <div class="wx-dropdown-body">
+            <div>
+                <label>Find a weather station near: <div id="geonameContainer"></div></label>
+            </div>
+            <div>
+                Or, choose a station by selecting it on the map.
+            </div>
+        </div>
+    </div>
+
+    <hr class="wx-fixed-section-divider"/>
+
+    <div id="wx-attribute-section" class="wx-dropdown wx-up">
+        <div class="wx-section-header-line wx-dropdown-header" title="Choose types of weather data to fetch.">
+            <span class="wx-section-title">Attributes</span>
+            <span class="wx-selection-count"></span>
+            <span class="wx-data-type-selection wx-user-selection"></span>
+            <span class="wx-dropdown-indicator"></span>
+        </div>
+        <div class="wx-dropdown-body">
+            <p>
+                Choose attributes to include in your data set from the list below.
+            </p>
+            <table id="wx-data-type-table">
+                <thead>
+                    <tr>
+                        <th><input id="all-datatypes" type="checkbox" class="wx-data-type-checkbox" title="Select all attributes"/></th>
+                        <th>Attributes</th>
+                        <th>Abbr.</th>
+                        <th>Units</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="wx-summary-section">
+    <div class="wx-section-header-line wx-summary">
+        <span class="wx-status-graphic"></span>
+        <span class="wx-message-area"></span>
+        <span class="wx-control-area">
+            <button id="wx-clear-button" class="wx-button" title="Clear weather data in CODAP.">Clear Data</button>
+            <button id="wx-get-button" class="wx-button" title="Fetch weather data from NOAA and send to CODAP">Get Data</button>
+        </span>
+    </div>
+</div>
+
+</main>
+
+<!--    Specific JS for this app     -->
+<script src="js/main.js" type="module"></script>
+
+<script src="lib/iframe-phone.js"></script>
+<script src="lib/codapInterface.js"></script>
+<script src="lib/pluginHelper.js"></script>
+<script src="lib/dayjs.min.js"></script>
+
+</body>
+
+</html>

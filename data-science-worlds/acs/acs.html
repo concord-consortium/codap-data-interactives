@@ -1,0 +1,276 @@
+<!--
+  ~ ==========================================================================
+  ~ Copyright (c) 2018 by eeps media.
+  ~ Last modified 8/18/18 9:03 PM
+  ~
+  ~ Created by Tim Erickson on 8/18/18 9:03 PM
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~
+  ~ You may obtain a copy of the License at
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software distributed under the License
+  is distributed on an "AS-IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and limitations under the License.
+  ~ ==========================================================================
+  ~
+
+
+  LOCAL, TESTING:         http://localhost:8888/plugins/acs/acs.html
+  Tim LOCAL, MAMP TESTING form Concord repository:
+        http://localhost:8888/concord-plugins/data-science-worlds/acs/acs.html
+  EEPS:         https://www.eeps.com/codap/acs/acs.html
+
+  DEPLOYING
+  * Make sure the mysql database is latest, in case of tweaks... (Export form MySQL Pro, then Import)
+
+  * acs.js, change <whence> to "eeps" or "concord" or whatever is appropriate.
+
+  * in acs.establishCrededntial.php, be sure that the suitable credentials (for "whence") are listed
+
+  * in acs.constants.js, make sure the value for the object kBasePhpURL has the "whence" as a key with the
+    corresponding URL for the php file.
+
+  -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ACS Tool</title>
+
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel="stylesheet" href="../common/jqueryFolder/jquery-ui.css">
+
+    <link rel='stylesheet' type='text/css' href='acs.css'/>
+
+    <script src="../common/iframe-phone.js" language="javascript"></script>
+    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery.min.js" language="javascript"></script>
+    <script src="../common/jqueryFolder/jquery-ui.js" language="javascript"></script>
+
+    <script src="Attribute.js" language="javascript"></script>
+    <script src="acs.js" language="javascript"></script>
+    <script src="acs.constants.js" language="javascript"></script>
+    <script src="acs.ui.js" language="javascript"></script>
+    <script src="acs.userActions.js" language="javascript"></script>
+    <script src="acs.CODAPconnect.js" language="javascript"></script>
+    <script src="acs.DBconnect.js" language="javascript"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            acs.initialize();
+        });
+
+    </script>
+
+</head>
+<body>
+
+<div id="pluginHeader">
+    <h1>2013 California ACS Data Portal</h1>
+    <label for="sampleSizeInput">How many people? </label>
+    <input id="sampleSizeInput" type="number" value="10" min="1" max="1000" oninput="acs.ui.updateWholeUI()">
+    <button id="getCasesButton" onclick="acs.userActions.pressGetCasesButton()">get people</button>
+</div>
+<br>
+
+<div id="tabs">
+    <ul>
+        <li><a href="#summary">summary</a></li>
+        <li><a href="#atts">options</a></li>
+        <li><a href="#variables">key</a></li>
+        <li><a href="#about">challenges</a></li>
+    </ul>
+
+
+    <div id="summary">
+    <!--    <p>Click the get people button to obtain a table with data from a random sample of Californians of all ages from
+            the 2013 <a href="https://www.census.gov/programs-surveys/acs/" target="_blank">American Community
+                Survey</a> (ACS).</p>-->
+        <div id="sampleSummaryDiv"></div>
+        <p>To change which attributes you are collecting, click the <b>options</b> tab above
+            or <a id="linkToAttributePanel" href="#atts;return false;">click this link</a>.</p>
+
+    </div>
+    <div id="atts">
+        <p>Choose attributes from the lists below</p>
+        <div id="chooseAttributeDiv">
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(0)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(1)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(2)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(3)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(4)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(5)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(6)"></div>
+            <div class="attributeGroupDiv" onclick="acs.ui.toggleAttributeGroupOpen(7)"></div>
+        </div>
+    </div>
+
+    <div id="variables">
+
+        <h2>Key to the Attributes</h2>
+
+        <p>The following is a summary of variable names used in the results of the 2013 American Community Survey.
+            For a full summary of the variables, visit the
+            <a href="https://www2.census.gov/programs-surveys/acs/tech_docs/subject_definitions/2013_ACSSubjectDefinitions.pdf?#"
+               target="_blank">ACS Subject Definitions</a> (PDF).</p>
+
+        <h3>Sex</h3>
+        <p>
+            Binary biological sex of individuals.
+        </p>
+
+        <h3>Marital status</h3>
+        <ul>
+            <li> <strong>Never married</strong>: people who have never been married (includes annulled marriage(s)).</li>
+            <li> <strong>Separated</strong>: people who are legally separated or absent from their spouse.</li>
+            <li> <strong>Divorced</strong>: people who have divorced and have not remarried.</li>
+            <li> <strong>Married</strong>: people who are now married, includes people who are separated (see above).</li>
+        </ul>
+
+        <h3>Race</h3>
+        <p>The self-identified race of individuals who responded to the survey.
+            In the survey, people could select more than one race in their response.</p>
+
+        <ul>
+            <li> <strong>White</strong>: people who have origins of Europe, the Middle East, or
+                North Africa.
+            </li>
+            <li> <strong>Black</strong>: people having origins in any of the Black racial groups of
+                Africa.
+            </li>
+            <li> <strong>AmInd</strong>: people who have origins in any of the original peoples of North and South America.</li>
+            <li> <strong>Asian</strong>: people having origins in the Far East, Southeast Asia, or the Indian subcontinent.</li>
+            <li> <strong>HawPacIsl</strong>: people having origins in any of the original peoples
+                of Hawaii, Guam, Samoa, or other Pacific Islands.</li>
+            <li> <strong>Other</strong>: some other race, includes people not included in the
+                "White," "Black," "AmInd," "Asian," and "HawPacIsl" race categories.
+            </li>
+        </ul>
+
+        <h3>Hispanic</h3>
+        <p>
+            People who identify their origin as Hispanic, Latino, or Spanish.
+            Values include various countries of origin, and <strong>Not Hisp</strong>.
+        </p>
+
+        <h3>Employment</h3>
+        <ul>
+            <li><strong>Armed Forces</strong><br>
+                People on active duty in the United States Armed Forces.
+            </li>
+
+
+            <li><strong>Civilian Employed</strong><br>Civilians 16 years old and over who were "at work," that is, those
+                who did any work at all during the reference week as paid employees,
+                worked in their own business or profession, worked on their own farm,
+                or worked 15 hours or more as unpaid workers on a family farm or in a family business.
+            </li>
+
+            <li><strong>Civilian Employed – not working</strong><br>
+                Civilians 16 years old and over who were "with a job but not at work," that is,
+                those who did not work during the reference week but had jobs or businesses
+                from which they were temporarily absent due to illness, bad weather,
+                industrial dispute, vacation, or other personal reasons.
+                <br>
+                Note: Excluded from <i>Civilian Employed</i> and from <i>Civilian Employed – not working</i>
+                are people whose only activity consisted of work around the house or unpaid volunteer work for
+                religious, charitable, and similar organizations; also excluded are all institutionalized people
+                and people on active duty in the United States Armed Forces.
+
+            </li>
+
+            <li><strong>Not in Labor Force</strong><br>
+                People who are not looking or cannot look for work. Mainly, students, homemakers, retired workers,
+                seasonal workers interviewed in an off season who were not looking for work,
+                institutionalized people, and people doing only incidental unpaid family work
+                (less than 15 hours during the reference week).
+            </li>
+
+            <li><strong>Unemployed</strong><br>
+                All civilians 16 years old and over are classified as unemployed if they
+                <ul>
+                    <li>were neither "at work" nor "with a job but not at work" during the reference week, and
+                    </li>
+                    <li>were actively looking for work during the last 4 weeks, and
+                    </li>
+                    <li>were available to start a job.</li>
+                </ul>
+                <br>
+                Also included as unemployed are civilians who did not work at all during the reference week,
+                were waiting to be called back to a job from which they had been laid off,
+                and were available for work except for temporary illness.
+            </li>
+        </ul>
+
+
+        <h3>Total Income</h3>
+        <p>In the past 12 months, for people 15 year of age and older, The sum total of </p>
+
+        <ul>
+            <li>wage or salary income;</li>
+            <li>net self-employment income;</li>
+            <li>interest, dividends, or net rental or royalty income or income from estates and trusts;</li>
+            <li>Social Security or Railroad Retirement income;</li>
+            <li>Supplemental Security Income (SSI);</li>
+            <li>public assistance or welfare payments;</li>
+            <li>retirement, survivor, or disability pensions;</li>
+            <li>and all other income.
+            <br>Note: Receipts from the following sources are not included as income: capital gains,
+            money received from the sale of property (unless the recipient was engaged
+            in the business of selling such property); the value of income "in kind" from food stamps,
+            public housing subsidies, medical care, employer contributions for individuals, etc.;
+            withdrawal of bank deposits; money borrowed; tax refunds; exchange of money
+            between relatives living in the same household; gifts and lump-sum inheritances,
+            insurance payments, and other types of lumpsum receipts.
+            </li>
+        </ul>
+
+    </div>
+
+    <div id="about">
+
+        <p>The American Community Survey (ACS) is designed to collect information on the U.S. population.
+            The ACS provides data about marital status, individual income, disability status, and other topics.</p>
+
+        <p>Try the following data challenges:</p>
+        <ol>
+            <li>What would you say is the approximate age range of Californians who work full-time?</li>
+            <li>Estimate the number of Californians who got married in 2013.
+            <li>What are some differences in individual earnings based on sex, age, race, and educational attainment?
+            </li>
+            <li>Make a visualization to find out how many people came here from Mexico, other Latin American countries,
+                Europe, and Asia. What region did most immigrants to California come from in 2013?
+            </li>
+
+        </ol>
+    </div>
+
+
+    <!--
+        <div id="map">
+            <H1>Where?</H1>
+            <label for="pumaNumberBox">PUMA: </label>
+            <input id="pumaNumberBox" type="number">
+            <button id="makeMapButton" onclick="acs.userActions.clickMakeMapButton()">make map</button>
+            <div id="acsMap"></div>
+        </div>
+    -->
+
+
+</div>
+
+
+</body>
+</html>

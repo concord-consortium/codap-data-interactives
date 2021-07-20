@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Syncs a local directory with the us-microdata-presets-gz directory on the
+# S3 bucket, 'codap-resources'
+PROGNAME=$(basename $0)
+DIRNAME=$(dirname $0)
+function usage() {
+  echo usage: $PROGNAME directory-to-sync
+  exit 1
+}
+
+if [ "$1" = "" ] ; then 
+  usage;
+fi
+
+if [ \! -d "$1" ]; then
+  usage;
+fi
+
+aws s3 sync "$1" s3://codap-resources/us-microdata-presets-gz --content-type text/csv --content-encoding gzip

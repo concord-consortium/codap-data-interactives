@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Sampler</title>
+<html lang="en">
+  <head>
+    <title>TP-Sampler</title>
+    <link rel="stylesheet" type="text/css" href="tp-sampler.css" />
+  </head>
+  <body>
+    <div id="tabs">
+      <div id="tab-sampler" class="active">Sampler</div>
+      <div id="tab-options">Options</div>
+      <div id="tab-about">About</div>
+    </div>
+    <div id="sampler">
+      <div id="top-bar">
+        <button id="run">START</button>
+        <button id="stop">STOP</button>
+        <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
+        <datalist id="speedsettings">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </datalist>
+        <span id="speed-text">Medium</span>
+      </div>
+      <div id="draw-settings">
+        <div>
+          <span>Select</span>
+          <input id="sample_size" />
+          <span>items</span>
+        </div>
+        <div>
+          <span>Collect&nbsp;</span>
+          <input id="repeat" />
+          <span>samples</span>
+        </div>
+      </div>
+      <div id="model">
+        <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
+      </div>
+      <div id="model-controls">
+        <button id="add-variable" title="Add the next item to the mixer">+</button>
+        <button id="remove-variable" title="Remove the last item from the mixer">-</button>
+        <button id="add-variable-series" title="Specify a series of labels for items">...</button>
+        <select id="select-collection" class="hidden" name="select">
+          <option selected>Loading collections...</option>
+        </select>
+      </div>
+      <div>
+        <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
+      </div>
+      <div id="device-selection">
+        <button id="mixer" class="active">Mixer</button>
+        <button id="spinner">Spinner</button>
+        <button id="collector">Collector</button>
+      </div>
+      <input id="variable-name-change" type="text" />
+      <div id="model-cover" class="hidden">?</div>
+      <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="transparent cover"></div>
+    </div>
+    <div id="options" class="hidden">
+      <div id="selection-options" class="disablable">
+        <div id="select-cases">Select cases</div>
+        <input type="radio" id="with-replacement" name="replacement-group" value="with-replacement">
+        <label for="with-replacement">with replacement</label>
+        <br>
+        <input type="radio" id="without-replacement" name="replacement-group" value="without-replacement">
+        <label for="without-replacement">without replacement</label>
+      </div>
+      <div id="hide-options" class="disablable">
+        <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
+        <label for="hideModel">Hide model</label>
+      </div>
+      <div id="password-area">
+        <label for="password" id="pass-text">Lock settings with password:</label>
+        <div>
+          <input id="password" type="text" />
+          <button id="pass-lock">Lock</button>
+        </div>
+        <div id="password-failed" class="hidden">
+          Password is incorrect.
+        </div>
+      </div>
+      <div>
+        <button id="reload-settings">Reload default settings</button>
+      </div>
+    </div>
+    <div id="about-panel" class="hidden">
+      <div>
+        <p>
+          The CODAP Sampler plugin can randomly choose items placed in a mixer,
+          choose items based on sector sizes of a spinner, or choose cases
+          from a collection of data.
+        </p>
+        <ul>
+          <li><b>Select &lt;n&gt; items</b> determines the sample size,
+            while</li>
+          <li><b>Collect &lt;n&gt; samples</b> controls how many
+            samples to repeat in a given experiment.</li>
+        </ul>
+        <p>
+          The speed of sampling can be controlled, as well as whether to
+          sample with or without replacement (in Options tab).
+          The data generated from the Sampler will appear in a hierarchical
+          table.
+          The top level represents the experiment
+          (one complete run of a simulation)
+          and allows you to compute statistics about an entire experiment.
+          The next level contains information about each sample and allows
+          one to compute statistics about each sample.
+          The items level shows each individual value drawn from the Sampler.
+          This
+          <a href="https://www.youtube.com/watch?v=aPibzv3goJY&list=PLq_mgFaS8OGYF1cKF4IrBl_0RwB_SWQk1&index=2"
+             target="_blank" rel="noreferrer noopener">video tutorial</a>
+          explains Sampler basics.
+        </p>
+        <p>
+          The Sampler in CODAP was inspired by the Sampler in
+          <a href="http://www.tinkerplots.com/" target="_blank" rel="noreferrer noopener">TinkerPlots</a>.
+          It was developed by the <a href="https://concord.org" target="_blank" rel="noreferrer noopener">Concord Consortium</a> as part of the
+          <a href="https://hirise.fi.ncsu.edu/projects/esteem/" target="_blank" rel="noreferrer noopener">ESTEEM project</a>
+          with support by the National Science Foundation
+          under Grant No. DUE <span style="color:red;">1625713</span> awarded to North Carolina State
+          University.
+          <img src="esteem-logo.jpg" alt="Esteem logo" style="float:right; width:100px;margin-left:1em;"/>
+          Any opinions, findings, and conclusions or recommendations in
+          this material are those of the principal investigators and do
+          not necessarily reflect the views of the National Science
+          Foundation.
+        </p>
+      </div>
+    </div>
+    <script src="../Common/js/build-include.js"></script>
+    <script data-main="src/app" src="src/lib/require.js"></script>
+  </body>
+</html>

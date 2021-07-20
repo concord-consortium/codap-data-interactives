@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:se="http://svg-edit.googlecode.com" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="777" height="480">                                    
+<title>my vector image</title>                                    
+
+<!-- Created with Vector Paint - http://www.vectorpaint.yaks.com/ https://chrome.google.com/webstore/detail/hnbpdiengicdefcjecjbnjnoifekhgdo -->                                    
+
+<rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="#FFFFFF" stroke="none"/>                                
+
+<g class="currentLayer"><title>Layer 1</title>
+
+<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end="" 
+d="M129,240 C129,225 141,213 156,213 C171,213 183,225 183,240 C183,255 172,267 156,267 C141,267 129,255 129,240 z" id="svg_1" class="selected"/>
+
+<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="" marker-mid="" marker-end="" d="M277,240 C277,225 289,213. 304,213 C319,213 331,225 331,240 C331,255 319,267 304,267 C289,267 277,255 277,240 z" 
+class="selected" id="svg_3"/>
+
+<path fill="#4a90d6" fill-opacity="1" stroke="#222222" stroke-opacity="1" stroke-width="2" stroke-dasharray="none" stroke-linejoin="round" stroke-linecap="butt" stroke-dashoffset="" fill-rule="nonzero" opacity="1" marker-start="url(#Arrow1Lstart)" 
+marker-mid="" marker-end="url(#Arrow1Lend)" 
+d="M183.86665852864584,240.66666666666663L275.8666585286458,240" id="svg_4" class="selected"/>
+</g>
+
+<defs>
+<marker id="Arrow1Lstart" refX="0" refY="0" orient="auto" inkscape:stockid="Arrow1Lstart" overflow="visible">
+
+<path transform="scale(.8) translate(12.5)" d="M0 0l5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt" style="fill: rgb(34, 34, 34); stroke: rgb(34, 34, 34); stroke-dasharray: none;"/>
+</marker>
+
+<marker id="Arrow1Lend" refX="0" refY="0" orient="auto" inkscape:stockid="Arrow1Lend" overflow="visible">
+<path transform="matrix(-.8 0 0 -.8 -10 0)" d="M0 0l5-5-17.5 5 17.5 5-5-5z" fill-rule="evenodd" stroke="#000" stroke-width="1pt" style="fill: rgb(34, 34, 34); stroke: rgb(34, 34, 34); stroke-dasharray: none;"/>
+</marker>
+</defs>
+</svg>
