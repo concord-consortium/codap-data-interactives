@@ -194,7 +194,11 @@
       "action": "update",
       "resource": "dataContext[Mammals]",
       "values": {
-        "title": "Mammalia"
+        "title": "Mammalia",
+        "preventReorg": true,
+        "metadata": {
+          "description": "Some factoids about some mammals."
+        }
       }
     }
   },
@@ -983,6 +987,36 @@
       "values": {
         "formatStr": "Launched rocket with %@ engine toward %@",
         "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+
+  {
+    "name": "Get formula function definitions",
+    "message": {
+      "action": "get",
+      "resource": "formulaEngine"
+    }
+  },
+  {
+    "name":  "Evaluate a formula",
+    "message": {
+      "action": "notify",
+      "resource": "formulaEngine",
+      "values": {
+        "request": "evalExpression",
+        "source": "a + 1",
+        "records": [
+          {
+            "a": 1
+          },
+          {
+            "a": 2
+          },
+          {
+            "a": 3
+          }
+        ]
       }
     }
   },
