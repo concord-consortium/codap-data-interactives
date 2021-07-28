@@ -33,6 +33,7 @@ $(function () {
       'global',
       'selectionList',
       'undoChangeNotice',
+      'formulaEngine',
       'logMessage',
       'logMessageMonitor'
     ];
