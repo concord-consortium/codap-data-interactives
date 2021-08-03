@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 #
+# Assembles built images of standard plugins whether local to this repo or in another repo.
+#
 # Creates a zip file, "codap-data-interactives-{build-num}.zip" in target
 # containing self-contained versions of each endorsed plugin.
 #
@@ -19,7 +21,7 @@ ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
 STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy"
 HIDDEN_DIRS="Common eepsmedia/common"
-BUILT_PLUGIN_DIRS="onboarding"
+BUILT_PLUGIN_DIRS="onboarding ../codap-transformers ../codap-google-sheets-importer-public"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 
@@ -34,7 +36,10 @@ function makeIndexJSON() {
     [ "$tmp" != "" ] && tmp="$tmp,"
     tmp="$tmp\"/$t\""
   done
-  cat $PLUGIN_MAP_FILE | $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
+  echo tmp=$tmp
+  cat $PLUGIN_MAP_FILE |
+#    $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
+    $JSON_PARSER '[.data_interactives[] | select(.isStandard=="true")]' > ${PUBLISHED_PLUGIN_MAP_FILE}
 }
 
 function echoPlugins() {
@@ -46,8 +51,13 @@ function echoPlugins() {
 
 function buildPlugins() {
   for plugin in "$@"; do
+    PLUGIN_BUILD_DIR=build
+    PLUGIN_NAME=$(basename $plugin)
+    if [ "$plugin" == "onboarding" ] ; then
+      PLUGIN_BUILD_DIR=target
+    fi
     echo Building $plugin
-    ( cd $plugin && npm run clean && npm run build && cp -r target "$BUILD_DIR/$plugin" )
+    ( cd $plugin && npm install && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
   done
 }
 
@@ -78,7 +88,7 @@ echo "Build: $BUILD_NUM"
 echoPlugins $ALL_DIRS
 copyStaticPlugins $COPIED_DIRS
 buildPlugins $BUILT_PLUGIN_DIRS
-makeIndexJSON $STATIC_PLUGIN_DIRS
+makeIndexJSON $ALL_DIRS
 cp "$PUBLISHED_PLUGIN_MAP_FILE" "$BUILD_DIR"
 
  ( cd "$WORKING" ; zip -rq "$TARGET/$ZIP_FILENAME" plugins )

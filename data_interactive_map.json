@@ -6,7 +6,7 @@
       "width": 550,
       "height": 500,
       "path": "https://oceantracks.org/map/trackmenu_1.html",
-      "visible": true,
+      "visible": "true",
       "aegis": "Ocean Tracks",
       "categories": [
         "Partners"
@@ -19,8 +19,9 @@
       "height": 400,
       "path": "/TP-Sampler/index.html",
       "icon": "/TP-Sampler/icon-sampler.svg",
-      "visible": true,
+      "visible": "true",
       "aegis": "ESTEEM",
+      "isStandard": "true",
       "categories": [
         "Partners", "Utilities"
       ]
@@ -166,18 +167,6 @@
       "width": 300,
       "height": 150,
       "path": "/NewRandomNumbers/index.html",
-      "visible": true,
-      "aegis": "CODAP",
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
-      "title": "Fast Plants Simulator",
-      "description": "Simulate growth of fast plants for use in cognitive interviews.",
-      "width": 400,
-      "height": 250,
-      "path": "/FastPlants/FastPlants.html",
       "visible": true,
       "aegis": "CODAP",
       "categories": [
@@ -570,6 +559,7 @@
       "path": "/DrawTool/index.html",
       "icon": "/DrawTool/icon-draw-tool.svg",
       "visible": true,
+      "isStandard": "true",
       "categories": [
         "Utilities"
       ]
@@ -583,6 +573,7 @@
       "visible": "true",
       "width": 380,
       "height": 520,
+      "isStandard": "true",
       "categories": [
         "Partners"
       ]
@@ -726,6 +717,7 @@
       "path": "/NOAA-weather/index.html",
       "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
       "visible": "true",
+      "isStandard": "true",
       "categories": [
         "Partners"
       ]
@@ -749,6 +741,31 @@
       "icon": "/eepsmedia/plugins/Choosy/art/choosy.svg",
       "path": "/eepsmedia/plugins/Choosy/index.html",
       "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Transformer",
+      "description": "Create new datasets in CODAP from existing ones through a collection of powerful transformation tools.",
+      "width": 350,
+      "height": 450,
+      "icon": "/codap-transformers/transformers-icon-small.svg",
+      "path": "/codap-transformers/",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Google Sheets Importer",
+      "description": "Import selections from Google Sheets into CODAP",
+      "width": 300,
+      "height": 500,
+      "visible": "true",
+      "path": "/codap-google-sheets-importer-public/",
       "categories": [
         "Partners"
       ]
