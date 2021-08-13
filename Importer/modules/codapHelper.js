@@ -143,6 +143,7 @@ function closeSelf() {
  *    * datasetName,
  *    * collectionName
  *    * attributeNames
+ *    * attributeDefs: properties of attributes, if found in annotations
  *    * source
  *    * importDate
  *    * isReplace
@@ -152,8 +153,21 @@ async function defineDataSet(config) {
 
   // make an array of attributes from the names list
   let attrList = config.attributeNames.map(function (attr) {
+    let attrDef = config.attributeDefs
+                  ? (config.attributeDefs.find(function (ad) {return attr === ad.name}) || {} )
+                  : {};
     let nameParts = analyzeRawName(attr);
-    return {name: nameParts.baseName, unit: nameParts.unit, type: (attr.toLowerCase()==='boundary')? 'boundary': null};
+    let record = {
+      name: nameParts.baseName,
+      unit: attrDef.unit || nameParts.unit,
+      type: attrDef.type || (attr.toLowerCase()==='boundary')? 'boundary': null,
+      description: attrDef.description,
+      precision: attrDef.precision,
+    };
+    if (attrDef && attrDef.editable) {
+      record.editable = true;
+    }
+    return record;
   });
 
   // attempt to get the dataset
@@ -221,8 +235,9 @@ async function defineDataSet(config) {
               name: config.datasetName,
               title: config.datasetName,
               metadata: {
-                source: config.source,
-                importDate: config.importDate
+                source: config.metadata.source || config.source,
+                importDate: config.metadata.importDate || config.importDate,
+                description: config.metadata.description
               },
               collections: [
                 {
