@@ -137,6 +137,9 @@ function relTime(time) {
   if (!(time instanceof Date)) {
     time = new Date(time);
   }
+  if (isNaN(time)) {
+    return 'Unknown interval';
+  }
   let delta = (time - new Date())/1000;
   // Safari, as of 9/2019 does not implement RelativeTimeFormat, so we fake it
   if (!relativeTimeFormat) {
@@ -325,6 +328,8 @@ async function createDataSetInCODAP(data, config) {
     datasetName: config.sourceDataset.datasetName,
     collectionName: config.collectionName,
     attributeNames: config.sourceDataset.attributeNames,
+    attributeDefs: config.sourceDataset.attributeDefs || [],
+    metadata: config.sourceDataset.metadata || {},
     dataStartingRow: config.dataStartingRow,
     source: config.source,
     importDate: config.importDate,
@@ -336,6 +341,8 @@ async function updateDataSetInCODAP(config, isReplace) {
   let tableConfig = {
     datasetName: config.datasetName,
     attributeNames: config.sourceDataset.attributeNames,
+    attributeDefs: config.sourceDataset.attributeDefs || [],
+    metadata: config.sourceDataset.metadata || {},
     importDate: config.importDate,
     collectionName: config.collectionName,
     source: config.source,

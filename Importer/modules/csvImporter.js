@@ -29,9 +29,7 @@ function fetchAndParseURL(url) {
             return new Promise(function (resolve, reject){
               if (resp.ok) {
                 resp.text().then(function (data) {
-                  let table = parseCSVString(data);
-                  // console.log('made table: ' + (tab && tab.length));
-                  resolve(table);
+                  resolve(data);
                 });
               } else {
                 reject(resp.statusText);
@@ -48,13 +46,12 @@ function fetchAndParseURL(url) {
  * @param file
  * @return {Promise}
  */
-function readAndParseFile(file) {
+function readFile(file) {
   return new Promise(function (resolve, reject) {
     function handleAbnormal() {
       reject("Abort or error on file read.");
     }
     function handleRead() {
-      let data = parseCSVString(this.result);
       resolve(data)
     }
     let reader = new FileReader ();
@@ -105,6 +102,36 @@ function findOrCreateAttributeNames(dataSet) {
   dataSet.attributeNames = attrs.map(function (attr) { return attr?attr.trim():'';});
 }
 
+function extractMetadataFromCommentString(commentStrings) {
+  var metadata = {}
+  commentStrings.forEach(function (str) {
+    var match = /^# (\w*): (.*)$/.exec(str)
+    if (match) { metadata[match[1]] = match[2]; }
+  });
+  return metadata;
+}
+
+function extractAttributeDefsFromCommentStrings(commentStrings) {
+  return commentStrings
+      .map(function (c) {
+        var match = /^# attribute -- (.+)$/.exec(c);
+        var props;
+        var attrDefs = {};
+        if (match) {
+          props = match[1].split(',');
+          props.forEach(function (prop) {
+            var propsMatch = /^\s*(\w+): (.+)\s*$/.exec(prop);
+            if (propsMatch) {
+              attrDefs[propsMatch[1]] = propsMatch[2];
+            }
+          })
+          return attrDefs;
+        } else {
+          return null;
+        }
+      })
+      .filter(function (a) { return a != null;});
+}
 /**
  * Retrieve data in whatever form provided and parse as a CSV String
  * @return {Promise}
@@ -118,7 +145,7 @@ async function retrieveData(config) {
   if (config.text) {
     dataSet.resourceDescription = composeResourceDescription('local file -- ' +
         config.source, importDate);
-    dataSet.table = await Promise.resolve(parseCSVString(config.text));
+    dataSet.rawData = config.text;
     dataSet.sourceType = 'text';
   } else if (config.url) {
     let name;
@@ -128,14 +155,22 @@ async function retrieveData(config) {
       name = config.datasetName;
     }
     dataSet.resourceDescription = composeResourceDescription(name, importDate);
-    dataSet.table = await fetchAndParseURL(config.url);
+    dataSet.rawData = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';
   } else if (config.file) {
     dataSet.resourceDescription = composeResourceDescription(config.datasetName || config.file.name, importDate);
-    dataSet.table = await readAndParseFile(config.file);
+    dataSet.rawData = await readFile(config.file);
     dataSet.sourceType = 'file';
   } else {
     console.log('csvImporter: expected text, url, or file: found none');
+  }
+  dataSet.table = dataSet.rawData && parseCSVString(dataSet.rawData);
+  dataSet.commentLines = dataSet.rawData && dataSet.rawData
+      .split(/[\n\r]+/)
+      .filter(function (line) {return (line && line[0] === '#');});
+  if (dataSet.commentLines && dataSet.commentLines.length > 0) {
+    dataSet.metadata = extractMetadataFromCommentString(dataSet.commentLines);
+    dataSet.attributeDefs = extractAttributeDefsFromCommentStrings(dataSet.commentLines);
   }
   findOrCreateAttributeNames(dataSet);
   return dataSet;
