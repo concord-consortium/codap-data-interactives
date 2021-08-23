@@ -341,8 +341,8 @@ async function updateDataSetInCODAP(config, isReplace) {
   let tableConfig = {
     datasetName: config.datasetName,
     attributeNames: config.sourceDataset.attributeNames,
-    attributeDefs: [],
-    metadata: {},
+    attributeDefs: config.sourceDataset.attributeDefs || [],
+    metadata: config.sourceDataset.metadata || {},
     importDate: config.importDate,
     collectionName: config.collectionName,
     source: config.source,

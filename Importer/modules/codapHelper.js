@@ -160,7 +160,7 @@ async function defineDataSet(config) {
     let record = {
       name: nameParts.baseName,
       unit: attrDef.unit || nameParts.unit,
-      type: attrDef.type || (attr.toLowerCase()==='boundary')? 'boundary': null,
+      type: attrDef.type || ((attr.toLowerCase()==='boundary')? 'boundary': null),
       description: attrDef.description,
       precision: attrDef.precision,
     };
@@ -236,7 +236,7 @@ async function defineDataSet(config) {
               title: config.datasetName,
               metadata: {
                 source: config.metadata.source || config.source,
-                importDate: config.metadata.importDate || config.importDate,
+                importDate: config.importDate || config.metadata.importDate,
                 description: config.metadata.description
               },
               collections: [

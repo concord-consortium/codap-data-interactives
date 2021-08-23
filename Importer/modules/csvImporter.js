@@ -114,7 +114,7 @@ function extractMetadataFromCommentString(commentStrings) {
 function extractAttributeDefsFromCommentStrings(commentStrings) {
   return commentStrings
       .map(function (c) {
-        var match = /^# Attribute -- (.+)$/.exec(c);
+        var match = /^# attribute -- (.+)$/.exec(c);
         var props;
         var attrDefs = {};
         if (match) {
