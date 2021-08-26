@@ -1,4 +1,5 @@
 /*global $, codapInterface, Promise, DrawingTool */
+
 $(function () {
   var kPluginConfig = window.codapPluginConfig || {},
       kPluginName = "DrawTool",

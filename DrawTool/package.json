@@ -1,0 +1,17 @@
+{
+  "name": "drawtool-plugin",
+  "version": "1.0.0",
+  "description": "Plugin enabling Concord Consortium drawing-tool as a component in CODAP.",
+  "main": "draw-tool-plugin.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "drawing-tool": "^2.1.1"
+  }
+}
