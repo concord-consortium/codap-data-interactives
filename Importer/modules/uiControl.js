@@ -35,7 +35,7 @@ function displayMessage(message, selector) {
 }
 
 function displayError(message) {
-  console.log('ImportCVS Plugin: ' + message);
+  console.log('Import Plugin: ' + message);
   displayMessage('<span class="error">' + message + '</span>')
 }
 

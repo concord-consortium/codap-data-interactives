@@ -429,7 +429,7 @@ function retrieveDatasetList () {
  * Send a message to CODAP.
  * @param action {'create'|'update'|'delete'|'get'|'notify'}
  * @param resource {string} A resource specification
- * @param values {object}
+ * @param [values] {object}
  * @return {Promise}
  */
 function sendToCODAP(action, resource, values) {
