@@ -51,7 +51,7 @@ function readFile(file) {
     function handleAbnormal() {
       reject("Abort or error on file read.");
     }
-    function handleRead() {
+    function handleRead(data) {
       resolve(data)
     }
     let reader = new FileReader ();
@@ -103,9 +103,9 @@ function findOrCreateAttributeNames(dataSet) {
 }
 
 function extractMetadataFromCommentString(commentStrings) {
-  var metadata = {}
+  let metadata = {};
   commentStrings.forEach(function (str) {
-    var match = /^# (\w*): (.*)$/.exec(str)
+    let match = /^# (\w*): (.*)$/.exec(str);
     if (match) { metadata[match[1]] = match[2]; }
   });
   return metadata;
@@ -114,13 +114,13 @@ function extractMetadataFromCommentString(commentStrings) {
 function extractAttributeDefsFromCommentStrings(commentStrings) {
   return commentStrings
       .map(function (c) {
-        var match = /^# attribute -- (.+)$/.exec(c);
-        var props;
-        var attrDefs = {};
+        let match = /^# attribute -- (.+)$/.exec(c);
+        let props;
+        let attrDefs = {};
         if (match) {
           props = match[1].split(',');
           props.forEach(function (prop) {
-            var propsMatch = /^\s*(\w+): (.+)\s*$/.exec(prop);
+            let propsMatch = /^\s*(\w+): (.+)\s*$/.exec(prop);
             if (propsMatch) {
               attrDefs[propsMatch[1]] = propsMatch[2];
             }

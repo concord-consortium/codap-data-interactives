@@ -23,6 +23,7 @@ import * as codapHelper from './modules/codapHelper.js';
 import * as csvImporter from './modules/csvImporter.js';
 import * as htmlImporter from './modules/htmlImporter.js';
 import * as geoJSONImporter from './modules/geoJSONImporter.js';
+import * as googleSheetsImporter from './modules/googleSheetsImporter.js';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
@@ -391,10 +392,13 @@ async function retrieveData(retrievalProperties) {
     dataset = await csvImporter.retrieveData(retrievalProperties);
   }
   else if (contentType === 'text/html') {
-    dataset = htmlImporter.retrieveData(retrievalProperties);
+    dataset = await htmlImporter.retrieveData(retrievalProperties);
   }
   else if (contentType === 'application/geo+json') {
-    dataset = geoJSONImporter.retrieveData(retrievalProperties);
+    dataset = await geoJSONImporter.retrieveData(retrievalProperties);
+  }
+  else if (contentType === 'application/vnd.google-apps.spreadsheet') {
+    dataset = await googleSheetsImporter.retrieveData(retrievalProperties);
   }
   if (dataset) {
     dataset.rawAttributeNames = dataset.attributeNames;
@@ -683,8 +687,8 @@ async function main() {
     try {
       await codapHelper.indicateBusy(true);
       config.sourceDataset = await retrieveData(pluginState);
-    } catch (ex) {
-      uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${ex}"`);
+    } catch (msg) {
+      uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${msg.toString()}"`);
       // uiControl.showSection('source-input');
       await codapHelper.setVisibilityOfSelf(true);
       return;
@@ -698,6 +702,7 @@ async function main() {
     }
     else {
       let exitingDatasets = await codapHelper.retrieveDatasetList();
+      config.datasetName = config.sourceDataset.datasetName || config.datasetName;
       config.sourceDataset.datasetName = ensureUniqueDatasetName(config.datasetName, exitingDatasets);
       let autoImport = await determineIfAutoImportApplies(exitingDatasets);
       if (autoImport) {
