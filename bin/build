@@ -23,7 +23,6 @@ STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsme
 HIDDEN_DIRS="Common eepsmedia/common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
-                   ../codap-google-sheets-importer-public
                    ../story-builder"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
