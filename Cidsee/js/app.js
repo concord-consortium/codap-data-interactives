@@ -558,7 +558,7 @@ const DATASETS = [
   }
 ]
 
-const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'Microdata4'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical'];
 const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
