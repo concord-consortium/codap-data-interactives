@@ -16,6 +16,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+// noinspection SpellCheckingInspection
+
 import * as geojsonHelper from "./geojsonHelper.js";
 
 /**

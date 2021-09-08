@@ -351,9 +351,24 @@ async function updateDataSetInCODAP(config, isReplace) {
   }
   return await codapHelper.defineDataSet(tableConfig);
 }
+function recognizeURLMime(urlString) {
+  let parsedURL = new URL(urlString);
+  let path = parsedURL && parsedURL.pathname;
+  let suffixMatch = path && path.match(/\.[^\.]*$/);
+  let suffix = suffixMatch && suffixMatch[0];
+  return {
+    '.csv': 'text/csv',
+    '.txt': 'text/csv',
+    '.geojson': 'application/geo+json'
+  }[suffix];
+}
 
 function inferContentType(file, url) {
-//TBD
+  if (file && file.type) {
+    return file.type;
+  } else if (url) {
+    return recognizeURLMime(url);
+  }
 }
 
 /**
@@ -409,7 +424,11 @@ async function retrieveData(retrievalProperties) {
 
 async function handleFileInputs() {
   let url = uiControl.getInputValue('source-input-url');
-  let file = uiControl.getInputValue('source-input-file');
+  let files = uiControl.getInputValue('source-input-file');
+  let file;
+  if (files.length) {
+    file = files[0];
+  }
   config.sourceDataset = await retrieveData({url: url, file: file});
   let exitingDatasets = await codapHelper.retrieveDatasetList();
   if (config.sourceDataset) {

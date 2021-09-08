@@ -16,6 +16,8 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+// noinspection SpellCheckingInspection
+
 /**
  * Fetches a URL and extracts the first HTML table it finds into a javascript array of arrays.
  * @param url

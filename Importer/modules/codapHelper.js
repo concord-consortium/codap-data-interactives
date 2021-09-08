@@ -443,23 +443,17 @@ function sendToCODAP(action, resource, values) {
  * its baseName and unit.
  * @param iName
  * @param iReplaceNonWordCharacters
- * @return {{baseName: string, unit:string}}
+ * @return {{baseName: string, unit:string|null}}
  */
 function analyzeRawName(iName, iReplaceNonWordCharacters) {
   let tName = iName.trim();
-  let tReg = /\(([^)]*)\)$/;  // Identifies parenthesized substring at end
-  let tUnitMatch = tReg.exec(tName);
-  let tUnit = (tUnitMatch && tUnitMatch.length)? tUnitMatch[1]: null;
-
-  let tNewName = tName.replace(tReg, '').trim();  // Get rid of parenthesized units
-
   if (iReplaceNonWordCharacters)
-    tNewName = tNewName.replace(/\W /g, '_');  // Replace non-word characters with underscore
+    tName = tName.replace(/\W /g, '_');  // Replace non-word characters with underscore
   // if after all this we have an empty string replace with a default name.
-  if (tNewName.length === 0) {
-    tNewName = 'attr';
+  if (tName.length === 0) {
+    tName = 'attr';
   }
-  return {baseName: tNewName, unit: tUnit};
+  return {baseName: tName, unit: null};
 }
 
 /**

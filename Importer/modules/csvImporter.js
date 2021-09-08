@@ -47,19 +47,7 @@ function fetchAndParseURL(url) {
  * @return {Promise}
  */
 function readFile(file) {
-  return new Promise(function (resolve, reject) {
-    function handleAbnormal() {
-      reject("Abort or error on file read.");
-    }
-    function handleRead(data) {
-      resolve(data)
-    }
-    let reader = new FileReader ();
-    reader.onabort = handleAbnormal;
-    reader.onerror = handleAbnormal;
-    reader.onload = handleRead;
-    return reader.readAsText(file);
-  });
+  return file.text();
 }
 
 /**

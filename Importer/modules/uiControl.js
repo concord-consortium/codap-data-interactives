@@ -62,7 +62,12 @@ function getHeight() {
 }
 
 function getInputValue(name) {
-  return document.forms[0][name].value;
+  let el = document.forms[0][name];
+  if (el.type === 'file') {
+    return el.files;
+  } else {
+    return el.value;
+  }
 }
 
 function getInputFileList(name) {
