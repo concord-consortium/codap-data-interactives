@@ -14,6 +14,7 @@ $(function () {
       kDefaultComponentWidth = kDefaultCanvasWidth + kDrawToolExtraWidth,
       kDefaultComponentHeight = kDefaultCanvasHeight + kDrawToolExtraHeight;
 
+  var componentID = null;
   /*
    * Initialize DrawingTool
    */
@@ -35,24 +36,36 @@ $(function () {
   // Initialize the codapInterface: we tell it our name, dimensions, version...
   codapInterface
     .init(interfaceConfig)
-    .then(function (initialState) {
-      if (initialState) {
-        drawingTool.load(JSON.stringify(initialState), function() {
-            // resets undo history so the initial state is the state _after_ load.
-            drawingTool.resetHistory();
-          }, true);
-      } else { // set default dimensions, if no initial state
+      .then(function (initialState) {
+        if (initialState) {
+          drawingTool.load(JSON.stringify(initialState), function() {
+              // resets undo history so the initial state is the state _after_ load.
+              drawingTool.resetHistory();
+            }, true);
+        } else { // set default dimensions, if no initial state
+          return codapInterface.sendRequest({
+            action: 'update',
+            resource: 'interactiveFrame',
+            values: {
+              dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
+            }
+          })
+        }
+        // that's all we need, so return a resolved promise.
+        return Promise.resolve(initialState);
+      })
+      .then(function (initialState) {
         return codapInterface.sendRequest({
-          action: 'update',
-          resource: 'interactiveFrame',
-          values: {
-            dimensions: {width: kDefaultComponentWidth, height: kDefaultComponentHeight},
-          }
+          action: 'get',
+          resource: 'interactiveFrame'
         })
-      }
-      // that's all we need, so return a resolved promise.
-      return Promise.resolve(initialState);
-    }).catch(function (msg) {
+      })
+      .then(function (response) {
+        if (response.success) {
+          componentID = response.values.id;
+        }
+      })
+      .catch(function (msg) {
       // handle errors
       console.log(msg);
     });
@@ -69,6 +82,17 @@ $(function () {
                                   values: frameValues });
   }
 
+  function resizeDrawToolToComponent() {
+    codapInterface.sendRequest({
+      action: 'get',
+      resource: 'component[' + componentID + ']',
+    }).then(function (reply) {
+      if (reply.success) {
+        let dimensions = reply.values.dimensions;
+        drawingTool.setDimensions(dimensions.width, dimensions.height);
+      }
+    });
+  }
   codapInterface.on('update', 'backgroundImage', function(args) {
     var bgDataURL = args.values.image;
     drawingTool.setBackgroundImage(bgDataURL, 'resizeCanvasToBackground', updateInteractiveFrame);
@@ -80,6 +104,13 @@ $(function () {
         state = jsonState && JSON.parse(jsonState);
     return ({success: true, values: state });
   });
+
+  codapInterface.on('notify', 'component', function(args) {
+    let values = args.values;
+    if (values && values.operation === 'resize' && values.id === componentID) {
+      resizeDrawToolToComponent();
+    }
+  })
 
   $('#camera').on('click', function () {
     var img = drawingTool.canvas.toDataURL();
