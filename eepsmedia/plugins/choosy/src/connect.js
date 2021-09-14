@@ -177,7 +177,7 @@ const connect = {
                         break;
                     case choosy.constants.tagsAttributeName:
                         out.tagsCollection = coll.name;
-                        console.log(`¬   Found [${choosy.constants.tagsAttributeName}] in [${coll.name}]`);
+                        choosy.log(`¬   Found [${choosy.constants.tagsAttributeName}] in [${coll.name}]`);
                         break;
                 }
             })
@@ -213,7 +213,7 @@ const connect = {
                 }
             }
             const addBatchResult = await codapInterface.sendRequest(tMessage);
-            console.log(`    ∂    ${addBatchResult.success ? "success" : "failure"} adding ${iAttName} to batch ${iBatch}`);
+            choosy.log(`    ∂    ${addBatchResult.success ? "success" : "failure"} adding ${iAttName} to batch ${iBatch}`);
         } else {
             Swal.fire({icon: "error", title: "Drat!", text: `Could not find a collection for attribute [${iAttName}]`});
         }
@@ -244,7 +244,7 @@ const connect = {
                 }
             }
             const hideResult = await codapInterface.sendRequest(tMessage);
-            console.log(`    ∂    ${hideResult.success ? "success" : "failure"} changing ${iAttrName} to ${toHide ? "hidden" : "visible"}`);
+            choosy.log(`    ∂    ${hideResult.success ? "success" : "failure"} changing ${iAttrName} to ${toHide ? "hidden" : "visible"}`);
             let goodAttributes = [];
 
             if (hideResult.success) {
@@ -312,7 +312,7 @@ const connect = {
                 nFailure++;
             }
         })
-        console.log(`    ∂    ${nSuccess} successes and ${nFailure} failures changing ${messageList.length} attributes to ${toHide ? "hidden" : "visible"}`);
+        choosy.log(`    ∂    ${nSuccess} successes and ${nFailure} failures changing ${messageList.length} attributes to ${toHide ? "hidden" : "visible"}`);
 
         if (problemAttributes.length > 0) {
             Swal.fire({
@@ -376,7 +376,7 @@ const connect = {
                     const makeTagsAttResult = await codapInterface.sendRequest(tMessage);
 
                     if (makeTagsAttResult.success) {
-                        console.log(`µ   Yay! Made "${tagAttributeName}" in collection "${theTagsCollectionName}"!`);
+                        choosy.log(`µ   Yay! Made "${tagAttributeName}" in collection "${theTagsCollectionName}"!`);
                         Swal.fire({
                             icon: "success",
                             title: "Yay!",
@@ -392,7 +392,7 @@ const connect = {
                         });
                     }
                 } else {
-                    console.log(`Hmm. The tags attribute already existed in ${theTagsCollectionName}.`);
+                    choosy.log(`Hmm. The tags attribute already existed in ${theTagsCollectionName}.`);
                 }
             } else {
                 Swal.fire({
@@ -625,7 +625,7 @@ const connect = {
 
         const tagCasesResult = await codapInterface.sendRequest(theRequest);
         if (tagCasesResult.success) {
-            console.log(`Applied tags to ${tagCasesResult.caseIDs.length} case(s)`);
+            choosy.log(`Applied tags to ${tagCasesResult.caseIDs.length} case(s)`);
         } else {
             Swal.fire({
                 icon: 'error',

@@ -40,9 +40,9 @@ const choosy_ui = {
         //  set up the dataset menu
         try {
             await this.datasetMenu.install();      //  async but we can go on...
-            console.log(`ui initialize: dataset menu installed`);
+            choosy.log(`ui initialize: dataset menu installed`);
         } catch (msg) {
-            console.log(`ui initialize: caught trying to install the datasetMenu: ${msg}`);
+            choosy.log(`ui initialize: caught trying to install the datasetMenu: ${msg}`);
         }
         //  this.update();
     },
@@ -55,7 +55,7 @@ const choosy_ui = {
     update: async function () {
         this.updateCount++;
         if (this.updateCount % 50 === 0) {
-            console.log(`fyi     ${this.updateCount} calls to choosy_ui.update(). `);
+            choosy.log(`fyi     ${this.updateCount} calls to choosy_ui.update(). `);
         }
 
         choosy.datasetInfo = await connect.refreshDatasetInfoFor(choosy.dsID);
@@ -174,7 +174,7 @@ const choosy_ui = {
             if (theElement) {   //  there might be an empty batch, so no element to be open or closed
                 const isOpen = theElement.hasAttribute("open");
                 this.batchRecord[batch].open = isOpen;
-                console.log(`ç  recording that ${batch} is ${isOpen ? " open" : " closed"}`);
+                choosy.log(`ç  recording that ${batch} is ${isOpen ? " open" : " closed"}`);
             }
             //  }
         }
@@ -502,7 +502,7 @@ const choosy_ui = {
                     if (theElement) {
                         theElement.addEventListener('toggle', choosy.handlers.toggleDetail);
                     } else {
-                        console.log(`bogus batch in registerForMoreNotifications(): ${batchName}`)
+                        choosy.log(`bogus batch in registerForMoreNotifications(): ${batchName}`)
                     }
                 }
 
@@ -515,7 +515,7 @@ const choosy_ui = {
                         theElement.addEventListener('dragstart',
                             event => {
                                 event.dataTransfer.setData('text/plain', `${att.name}`);
-                                console.log(`dragging ${att.name}`);
+                                choosy.log(`dragging ${att.name}`);
                             })
                     })
                 })
@@ -540,7 +540,7 @@ const choosy_ui = {
                     theElement.addEventListener('drop',
                         event => {
                             const droppedName = event.dataTransfer.getData('text');
-                            console.log(`${batchName} gets ${droppedName}`);
+                            choosy.log(`${batchName} gets ${droppedName}`);
                             choosy.addAttributeToBatch(droppedName, batchName);
                             choosy_ui.update();
                         })
@@ -595,9 +595,9 @@ const choosy_ui = {
                 const theChosenID = tElement.value;
                 await choosy.setTargetDatasetByID(theChosenID);   //  will set the new ID if necessary
                 choosy_ui.update();
-                console.log(`handling dataset change to ${theChosenID} number ${this.nHandles}`);
+                choosy.log(`handling dataset change to ${theChosenID} number ${this.nHandles}`);
             } else {
-                console.log(`NB: no dataset menu`);
+                choosy.log(`NB: no dataset menu`);
             }
         },
 
@@ -631,13 +631,13 @@ const choosy_ui = {
                 tGuts += `<select id="dataset-menu" onchange="choosy_ui.datasetMenu.handle()">`;
                 theList.forEach(ds => {
                     const selectedGuts = (chosen === ds.id) ? "selected" : "";
-                    console.log(`making menu:  ds ${ds.id} named [${ds.name}] title [${ds.title}]`);
+                    choosy.log(`making menu:  ds ${ds.id} named [${ds.name}] title [${ds.title}]`);
                     tGuts += `<option value=${ds.id} ${selectedGuts}>${ds.title} </option>`;
                 })
                 tGuts += `</select>`;
             }
 
-            console.log(`µ   made dataset menu with ${theList.length} dataset(s)`);
+            choosy.log(`µ   made dataset menu with ${theList.length} dataset(s)`);
             return {guts: tGuts, chosen: chosen};
         },
     },

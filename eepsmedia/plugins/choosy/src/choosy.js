@@ -50,7 +50,7 @@ const choosy = {
         /*
                 if (Object.keys(choosy.state).length === 0 && choosy.state.constructor === Object) {
                     await codapInterface.updateInteractiveState(choosy.freshState);
-                    console.log("choosy: getting a fresh state");
+                    choosy.log("choosy: getting a fresh state");
                 }
         */
 
@@ -64,7 +64,7 @@ const choosy = {
      * @returns {{dsID: null, datasetName: string}}
      */
     freshState: function () {
-        console.log(`called choosy.freshState()`);
+        choosy.log(`called choosy.freshState()`);
         return {
             dsID: null,
         };
@@ -72,16 +72,16 @@ const choosy = {
 
     setUpDatasets: async function () {
         try {
-            console.log(`ds  choosy --- setUpDatasets --- try`);
+            choosy.log(`ds  choosy --- setUpDatasets --- try`);
 
             this.datasetList = await connect.getListOfDatasets();
-            console.log(`ds      found ${this.datasetList.length} dataset(s)`);
+            choosy.log(`ds      found ${this.datasetList.length} dataset(s)`);
 
             const tdsID = await choosy_ui.datasetMenu.install();
             await this.setTargetDatasetByID(tdsID);
             await choosy_ui.update();
         } catch (msg) {
-            console.error(`ds  choosy --- setUpDatasets --- catch [${msg}]`);
+            choosy.error(`ds  choosy --- setUpDatasets --- catch [${msg}]`);
         }
     },
 
@@ -100,15 +100,15 @@ const choosy = {
 
         if (iDsID) {
             if (iDsID !== choosy.dsID) {   //      there has been a change in dataset ID; either it's new or an actual change
-                console.log(`ds      now looking at dataset ${iDsID} (choosy.setTargetDatasetByID())`);
+                choosy.log(`ds      now looking at dataset ${iDsID} (choosy.setTargetDatasetByID())`);
                 choosy.dsID = iDsID;
                 await notify.setUpNotifications();
             } else {
-                console.log(`ds      still looking at dataset ${iDsID} (choosy.setTargetDatasetByID())`);
+                choosy.log(`ds      still looking at dataset ${iDsID} (choosy.setTargetDatasetByID())`);
             }
         } else {
             choosy.dsID = iDsID;
-            console.log(`?   called setTargetDatasetByID without a dataset ID`);
+            choosy.log(`?   called setTargetDatasetByID without a dataset ID`);
         }
     },
 
@@ -269,7 +269,7 @@ const choosy = {
             const theBatchName = theID.substring(5);
             const toHide = theType === "hide";
 
-            console.log(`${toHide ? "Hiding" : "Showing"} all attributes in [${theBatchName}]`);
+            choosy.log(`${toHide ? "Hiding" : "Showing"} all attributes in [${theBatchName}]`);
 
             let theAttNames = [];
 
@@ -296,13 +296,13 @@ const choosy = {
         toggleDetail: function (event) {
             const theBatchName = event.target.id.substring(8);
             choosy_ui.recordCurrentOpenDetailStates();
-            console.log(`batch toggle! ${theBatchName}`);
+            choosy.log(`batch toggle! ${theBatchName}`);
         },
 
         //  todo: decide if we really need this
         handleSelectionChangeFromCODAP: async function () {
             choosy.selectedCaseIDs = await connect.tagging.getCODAPSelectedCaseIDs();
-            console.log(`    ${choosy.selectedCaseIDs.length} selected case(s)`);
+            choosy.log(`    ${choosy.selectedCaseIDs.length} selected case(s)`);
             choosy_ui.update();
         },
 
@@ -341,7 +341,7 @@ const choosy = {
     },
 
     constants: {
-        version: '2021k',
+        version: '2021m',
         datasetSummaryEL: 'summaryInfo',
         selectionStatusElementID: 'selection-status',
         tagValueElementID: "tag-value-input",
@@ -354,5 +354,14 @@ const choosy = {
         kGroupAttributeByBatchMode : "byBatch",
         kGroupAttributeByLevelMode : "byLevel",
         defaultTagName : "Tag",
+    },
+    log: function (msg) {
+        // console.log(msg);
+    },
+    warn: function (msg) {
+        console.warn(msg);
+    },
+    error: function (msg) {
+        console.error(msg);
     }
 }

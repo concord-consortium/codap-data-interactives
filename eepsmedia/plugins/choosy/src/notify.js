@@ -9,7 +9,7 @@ const notify = {
             //  'updateAttribute',
             notify.handleDocumentChangeNotice
         );
-        console.log(`˜  notifications on [${tResource}]`);
+        choosy.log(`˜  notifications on [${tResource}]`);
     },
     /**
      * Ask to be notified about changes in attributes and selections
@@ -25,7 +25,7 @@ const notify = {
             //'selectCases',
             notify.handleDataContextChangeNotice
         );
-        console.log(`˜  notifications on [${sResource}]`);
+        choosy.log(`˜  notifications on [${sResource}]`);
     },
 
     nHandled : 0,
@@ -35,12 +35,12 @@ const notify = {
         if (iMessage.resource = `dataContextChangeNotice[${theCurrentDSName}]`) {
             this.nHandled++;
             if (this.nHandled % 50 === 0) {
-                console.log(`fyi     ${this.nHandled} notifications handled. `)
+                choosy.log(`fyi     ${this.nHandled} notifications handled. `)
             }
 
             const theValues = iMessage.values;
 
-            console.log(`˜  handleDataContextChangeNotice operation ${this.nHandled}: ${theValues.operation}`);
+            choosy.log(`˜  handleDataContextChangeNotice operation ${this.nHandled}: ${theValues.operation}`);
             switch (theValues.operation) {
                 case `selectCases`:
                 case `updateCases`:
@@ -68,7 +68,7 @@ const notify = {
                     break;
 
                 default:
-                    console.log(`?  handleDataContextChangeNotice unhandled operation: ${theValues.operation}`);
+                    choosy.log(`?  handleDataContextChangeNotice unhandled operation: ${theValues.operation}`);
                     break;
             }
         }
@@ -77,10 +77,10 @@ const notify = {
     handleDocumentChangeNotice: function (iMessage) {
         this.nHandled++;
         if (this.nHandled % 50 === 0) {
-            console.log(`fyi     ${this.nHandled} notifications handled. `)
+            choosy.log(`fyi     ${this.nHandled} notifications handled. `)
         }
         const theValues = iMessage.values;
-        // console.log(`handleDocumentChange operation: ${theValues.operation}`);
+        // choosy.log(`handleDocumentChange operation: ${theValues.operation}`);
         choosy.setUpDatasets();
     },
 
