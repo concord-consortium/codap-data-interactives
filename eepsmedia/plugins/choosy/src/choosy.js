@@ -54,6 +54,7 @@ const choosy = {
                 }
         */
 
+        await notify.setUpDocumentNotifications();
         document.getElementById("tag-attribute-name-text").value = choosy.tagsAttributeName;
         choosy_ui.update();
     },
