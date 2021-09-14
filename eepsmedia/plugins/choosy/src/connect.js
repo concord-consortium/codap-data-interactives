@@ -82,6 +82,8 @@ const connect = {
                 Swal.fire({icon: "error", title: "Drat!", text: `Dataset #[${iDsID}] -- couldn't find its name`});
                 return null;
             }
+        } else {
+            return {};
         }
     },
 
@@ -104,7 +106,7 @@ const connect = {
 
         const tItemCountResult = await codapInterface.sendRequest(tMessage);
 
-        return (tItemCountResult.success) ? tItemCountResult.values : null;
+        return (tItemCountResult.success) ? tItemCountResult.values : 0;
     },
 
 

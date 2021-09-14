@@ -79,8 +79,9 @@ const choosy = {
 
             const tdsID = await choosy_ui.datasetMenu.install();
             await this.setTargetDatasetByID(tdsID);
+            await choosy_ui.update();
         } catch (msg) {
-            console.log(`ds  choosy --- setUpDatasets --- catch [${msg}]`);
+            console.error(`ds  choosy --- setUpDatasets --- catch [${msg}]`);
         }
     },
 
@@ -106,6 +107,7 @@ const choosy = {
                 console.log(`ds      still looking at dataset ${iDsID} (choosy.setTargetDatasetByID())`);
             }
         } else {
+            choosy.dsID = iDsID;
             console.log(`?   called setTargetDatasetByID without a dataset ID`);
         }
     },
@@ -119,7 +121,7 @@ const choosy = {
         //  get the name of the last collection...
         const colls = this.datasetInfo.collections;
         const nCollections = colls.length;
-        const lastCollName = colls[nCollections - 1].name;
+        const lastCollName = colls.length? colls[nCollections - 1].name: null;
         return lastCollName;
     },
 
@@ -173,9 +175,12 @@ const choosy = {
             theRecord["attrs"] = [];
         }
 
+        if (!theInfo.collections) {
+            theInfo.collections = [];
+        }
         theInfo.collections.forEach(coll => {
             coll.attrs.forEach(att => {
-                let theDescription = att.description;
+                let theDescription = att.description || '';
                 let theBatch = choosy.constants.noBatchString;
                 const leftB = theDescription.indexOf("{");
                 const rightB = theDescription.indexOf("}");
