@@ -60,27 +60,28 @@ const connect = {
     refreshDatasetInfoFor: async function (iDsID) {
         let theName = choosy.getNameOfCurrentDataset();
 
-        if (theName) {
-            const tMessage = {
-                "action": "get",
-                "resource": `dataContext[${theName}]`
-            }
-            const dsInfoResult = await codapInterface.sendRequest(tMessage);
-            if (dsInfoResult.success) {
-                // await choosy.processDatasetInfoForAttributeBatchs(dsInfoResult.values);
-                return dsInfoResult.values;
+        if (iDsID) {
+            if (theName) {
+                const tMessage = {
+                    "action": "get",
+                    "resource": `dataContext[${theName}]`
+                }
+                const dsInfoResult = await codapInterface.sendRequest(tMessage);
+                if (dsInfoResult.success) {
+                    // await choosy.processDatasetInfoForAttributeBatchs(dsInfoResult.values);
+                    return dsInfoResult.values;
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Drat!",
+                        text: `Problem getting information for dataset [${theName}]`
+                    });
+                    return null;
+                }
             } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Drat!",
-                    text: `Problem getting information for dataset [${theName}]`
-                });
+                Swal.fire({icon: "error", title: "Drat!", text: `Dataset #[${iDsID}] -- couldn't find its name`});
                 return null;
             }
-        } else {
-            Swal.fire({icon: "error", title: "Drat!", text: `Dataset #[${iDsID}] -- couldn't find its name`});
-            return null;
-
         }
     },
 
