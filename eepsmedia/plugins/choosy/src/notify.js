@@ -32,7 +32,7 @@ const notify = {
 
     handleDataContextChangeNotice: function (iMessage) {
         const theCurrentDSName = choosy.getNameOfCurrentDataset();
-        if (iMessage.resource = `dataContextChangeNotice[${theCurrentDSName}]`) {
+        if (iMessage.resource === `dataContextChangeNotice[${theCurrentDSName}]`) {
             this.nHandled++;
             if (this.nHandled % 50 === 0) {
                 choosy.log(`fyi     ${this.nHandled} notifications handled. `)
@@ -44,7 +44,6 @@ const notify = {
             switch (theValues.operation) {
                 case `selectCases`:
                 case `updateCases`:
-                    const theSelectedCases = (theValues.result.cases) ? theValues.result.cases : [];
                     choosy.handlers.handleSelectionChangeFromCODAP();
                     break;
 
@@ -55,13 +54,14 @@ const notify = {
                 case `deleteAttributes` :
                 case `createAttributes` :
                 case `updateAttributes`:
-                    choosy_ui.update();     //  which reads the database structure (colls, atts) from CODAP
+                    choosy_ui.update();     //  which reads the database structure (cols, atts) from CODAP
                     break;
                 //  todo: alter when JS fixes the bug about not issuing notifications for plugin-initiated changes.
 
                 case `updateDataContext`:       //  includes renaming dataset, so we have to redo the menu
                     choosy.setUpDatasets();
                     choosy_ui.update();
+                    break;
 
                 case 'createCases':
                 case 'createItems':
@@ -79,7 +79,6 @@ const notify = {
         if (this.nHandled % 50 === 0) {
             choosy.log(`fyi     ${this.nHandled} notifications handled. `)
         }
-        const theValues = iMessage.values;
         // choosy.log(`handleDocumentChange operation: ${theValues.operation}`);
         choosy.setUpDatasets();
     },
