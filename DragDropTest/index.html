@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drag/Drop Test</title>
+  <script src="./lib/iframe-phone.js" ></script>
+  <script src="./lib/CodapInterface.js" ></script>
+  <style>
+    body {
+      background: white;
+      overflow-y: scroll;
+      margin: 0;
+      padding: 0;
+    }
+    canvas {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+<!--<p>Drag an attribute here</p>-->
+<!--<p id="message-area"></p>-->
+<canvas id="canvas" width="300" height="175"></canvas>
+<script type="text/javascript">
+  function logMessage(msg) {
+    count++;
+    let data = msg.values;
+    let loc = data && (data.position ? JSON.stringify(data.position) : "");
+    let action = data && data.operation;
+    let dsName = data && data.context.name;
+    let cName = data && data.collection.name;
+    let aName = data && data.attribute.name;
+
+    console.log(`${count}: ${action} ${loc} ${dsName}.${cName}.${aName}`);
+  }
+  function drawPoint(x, y, color, text) {
+    let size = (color==='red')? 3:1;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, 2*Math.PI);
+    ctx.fill();
+    if (text) {
+      ctx.fillText(text, x, y);
+    }
+  }
+  function handleDragDrop(msg) {
+    const colorMap = {
+      drag: 'gray',
+      drop: 'red'
+    };
+    if (msg.values.position) {
+      drawPoint(msg.values.position.x, msg.values.position.y, colorMap[msg.values.operation],
+          (msg.values.operation==='drop')? msg.values.text: null);
+    }
+    logMessage(msg);
+  }
+  let connection = codapInterface.init({name: 'Drag and Drop Test'});
+  codapInterface.on('notify', 'dragDrop[attribute]', handleDragDrop)
+  // let messageAreaEl = document.getElementById('message-area');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = 'darkgreen';
+  ctx.strokeStyle = 'green'
+  ctx.font = '20px sans-serif';
+  ctx.fillText('Drag an attribute here', 10, 20);
+  ctx.font = '10px sans-serif';
+  let count = 0;
+</script>
+</body>
+</html>
