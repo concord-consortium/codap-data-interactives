@@ -1,12 +1,14 @@
 export function getCategories(plugins) {
   let categoryArray = [];
   
-  plugins.map(plugin => {
-    plugin.categories.forEach(category => {
-      if (!categoryArray.includes(category)) {
-        categoryArray.push(category)
-      }
-    })
+  plugins.forEach(plugin => {
+    if (plugin.visible && plugin.visible !== "false"){
+      plugin.categories.forEach(category => {
+        if (!categoryArray.includes(category)) {
+          categoryArray.push(category)
+        }
+      })
+    }
   })
   if (!isDevMode()) {
     categoryArray.splice(categoryArray.indexOf("Utilities"),1);

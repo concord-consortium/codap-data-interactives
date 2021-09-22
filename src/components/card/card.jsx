@@ -4,6 +4,10 @@ import parse from "html-react-parser";
 
 import "./card.css"
 
+function getURLRoot() {
+  let urlRoot = window.location.origin+window.location.pathname;
+  return urlRoot.replace(/index.html$/, '').replace(/\/build\//, '');
+}
 export class Card extends React.PureComponent{
   render(){
     let cardClassNames = `card`
@@ -20,13 +24,11 @@ export class Card extends React.PureComponent{
   renderPluginTitleAndDescription() {
     let { plugin, url } = this.props;
     let pluginPath = "";
-    let urlRoot = window.location.origin+window.location.pathname;
     if (plugin.path.match(/^http/i)) {
       pluginPath = plugin.path;
     }
     else {
-      urlRoot=urlRoot.replace(/index.html$/, '');
-      pluginPath = urlRoot+plugin.path;
+      pluginPath = getURLRoot()+plugin.path;
     }
     if (url.match(/^https/i) && !pluginPath.match(/^https/i)) {
       pluginPath=pluginPath.replace(/http/i,'https');
@@ -50,15 +52,13 @@ export class Card extends React.PureComponent{
   cleanPath() {
     const { plugin } = this.props;
     let path = '';
-    let url_root=window.location.origin+window.location.pathname;
     let url="https://codap.concord.org/app/"
 
     if (plugin.path.match(/^http/i)) {
       path = plugin.path;
     }
     else {
-      url_root = url_root.replace(/index.html$/, '');
-      path = url_root + plugin.path;
+      path = getURLRoot() + plugin.path;
     }
 
     if (url.match(/^https/i) && !path.match(/^https/i)) {

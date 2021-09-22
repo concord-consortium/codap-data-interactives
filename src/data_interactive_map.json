@@ -6,7 +6,7 @@
       "width": 550,
       "height": 500,
       "path": "https://oceantracks.org/map/trackmenu_1.html",
-      "visible": true,
+      "visible": "true",
       "aegis": "Ocean Tracks",
       "categories": [
         "Partners"
@@ -19,10 +19,11 @@
       "height": 400,
       "path": "/TP-Sampler/index.html",
       "icon": "/TP-Sampler/icon-sampler.svg",
-      "visible": true,
+      "visible": "true",
       "aegis": "ESTEEM",
+      "isStandard": "true",
       "categories": [
-        "Partners", "Utilities"
+        "Partners"
       ]
     },
     {
@@ -157,7 +158,7 @@
       "visible": false,
       "aegis": "CODAP",
       "categories": [
-        "Utilities"
+        "Misc"
       ]
     },
     {
@@ -174,7 +175,7 @@
     },
     {
       "title": "Fast Plants Simulator",
-      "description": "Simulate growth of fast plants for use in cognitive interviews.",
+      "description": "Simulate growth of fast plants.",
       "width": 400,
       "height": 250,
       "path": "/FastPlants/FastPlants.html",
@@ -214,10 +215,10 @@
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
-      "visible": false,
+      "visible": true,
       "aegis": "Terra-Pop",
       "categories": [
-        "Utilities"
+        "Partners"
       ]
     },
     {
@@ -364,7 +365,7 @@
       "width": 600,
       "height": 400,
       "path": "/AttributeStacker/index.html",
-      "visible": true,
+      "visible": false,
       "categories": [
         "Utilities"
       ]
@@ -393,11 +394,11 @@
     },
     {
       "title": "Data Interactive API Tester",
-      "description": "",
+      "description": "Exercise the CODAP Plugin API and see the results",
       "width": 600,
       "height": 400,
       "path": "/DataInteractiveAPITester/index.html",
-      "visible": false,
+      "visible": true,
       "categories": [
         "Utilities"
       ]
@@ -570,6 +571,7 @@
       "path": "/DrawTool/index.html",
       "icon": "/DrawTool/icon-draw-tool.svg",
       "visible": true,
+      "isStandard": "true",
       "categories": [
         "Utilities"
       ]
@@ -580,9 +582,10 @@
       "path": "/sdlc/plugin/index.html",
       "icon": "/sdlc/plugin/assets/images/icon-microdata-portal.svg",
       "aegis": "SDLC",
-      "visible": "true",
+      "visible": true,
       "width": 380,
       "height": 520,
+      "isStandard": "true",
       "categories": [
         "Partners"
       ]
@@ -726,6 +729,7 @@
       "path": "/NOAA-weather/index.html",
       "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
       "visible": "true",
+      "isStandard": "true",
       "categories": [
         "Partners"
       ]
@@ -749,6 +753,32 @@
       "icon": "/eepsmedia/plugins/Choosy/art/choosy.svg",
       "path": "/eepsmedia/plugins/Choosy/index.html",
       "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Transformers",
+      "description": "Create new datasets in CODAP from existing ones through a collection of powerful transformation tools.",
+      "width": 350,
+      "height": 450,
+      "icon": "/codap-transformers/transformers-icon-small.svg",
+      "path": "/codap-transformers/",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Partners"
+      ]
+    },
+    {
+      "title": "Story Builder",
+      "description": "Create a narrative of your investigation",
+      "width": 800,
+      "height": 130,
+      "path": "/story-builder/",
+      "visible": "true",
+      "isStandard": "true",
       "categories": [
         "Partners"
       ]
