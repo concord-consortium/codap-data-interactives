@@ -62,7 +62,7 @@
  *
  *    * In calling module (e.g. my-module.js)
  *
- *      var iframePhone = require('.../CodapInterface');
+ *      var codapInterface = require('.../CodapInterface');
  *      ...
  *      codapInterface.init({...});
  *
