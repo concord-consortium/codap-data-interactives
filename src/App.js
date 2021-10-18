@@ -1,5 +1,5 @@
 import React from 'react';
-import dataInteractives from "./data_interactive_map.json";
+import dataInteractiveList from "./data_interactive_map.json";
 import { Header } from "./components/header/header";
 import { CardList } from "./components/card-list/card-list";
 import { Footer } from "./components/footer/footer";
@@ -11,7 +11,8 @@ export default class App extends React.PureComponent {
     this.handleCategorySelect = this.handleCategorySelect.bind(this);
     this.handleBranchSelect = this.handleBranchSelect.bind(this);
     this.state = {
-      dataInteractives: dataInteractives.data_interactives,
+      dataInteractives: dataInteractiveList.data_interactives,
+      categories: dataInteractiveList.categories,
       categorySelected: "Partners",
       branchSelected: isDevMode() ? "staging" : "latest",
     }
@@ -20,6 +21,7 @@ export default class App extends React.PureComponent {
   render() {
     const codapBaseUrl = "https://codap.concord.org";
     const plugins = this.state.dataInteractives;
+    const categories = this.state.categories;
     const categorySelected = this.state.categorySelected;
     const branchSelected = this.state.branchSelected;
     let path;
@@ -38,16 +40,18 @@ export default class App extends React.PureComponent {
         break;
     }
     const url = codapBaseUrl+path;
+    let tabIndex = categories.findIndex(entry => entry.category === categorySelected);
 
     return (
       <div className="App">
         <Header plugins={plugins}
+                categories={categories}
                 categorySelected={categorySelected}
                 branchSelected={branchSelected}
                 handleCategorySelect={this.handleCategorySelect}
                 handleBranchSelect={this.handleBranchSelect}
         />
-        <CardList plugins={plugins} categorySelected={categorySelected} url={url}/>
+        <CardList plugins={plugins} categorySelected={categorySelected} url={url} tabIndex={tabIndex}/>
         <Footer />
       </div>
     );

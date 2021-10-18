@@ -4,6 +4,8 @@ export function getCategories(plugins) {
   plugins.forEach(plugin => {
     if (plugin.visible && plugin.visible !== "false"){
       plugin.categories.forEach(category => {
+        // remove subcategory
+        category = category.replace(/\..*$/, '');
         if (!categoryArray.includes(category)) {
           categoryArray.push(category)
         }

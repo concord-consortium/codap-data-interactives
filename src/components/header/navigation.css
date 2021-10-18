@@ -46,56 +46,56 @@
   z-index: 2;
 }
 
-.tab.Partners {
+.tab.theme1 {
   background-color: var(--cc-teal-light5);
 }
 
-.tab.Utilities {
+.tab.theme2 {
   background-color: var(--cc-orange-light4);
 }
 
-.tab.Data.Games {
+.tab.theme3 {
   background-color: var(--support-blue-light2);
 }
 
-.tab.Data.Worlds {
+.tab.theme4 {
 background-color: var(--feedback-green-light4);
 }
 
-.tab.Partners:hover {
+.tab.theme1:hover {
   background-color: var(--cc-teal-light3);
 }
 
-.tab.Utilities:hover {
+.tab.theme2:hover {
   background-color: var(--cc-orange-light2);
 }
 
-.tab.Data.Games:hover {
+.tab.theme3:hover {
   background-color: var(--support-blue-dark1);
 }
 
-.tab.Data.Worlds:hover {
+.tab.theme4:hover {
 background-color: var(--feedback-green-light2);
 }
 
-.tab.Partners.selected {
+.tab.theme1.selected {
     background-color: var(--cc-teal-light3);
     border-bottom: none;
     z-index: 2;
 }
 
-.tab.Utilities.selected {
+.tab.theme2.selected {
     background-color: var(--cc-orange-light2);
     border-bottom: none;
     z-index: 2;
 }
 
-.tab.Data.Games.selected {
+.tab.theme3.selected {
     background-color: var(--support-blue-light3);
     border-bottom: none;
 }
 
-.tab.Data.Worlds.selected {
+.tab.theme4.selected {
   background-color: var(--feedback-green-light2);
   border-bottom: none;
 }
