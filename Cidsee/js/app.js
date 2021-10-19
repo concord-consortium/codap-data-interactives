@@ -121,8 +121,113 @@ const DATASETS = [
     }
   },
   {
+    id: 'VaccinesCountySnapshot',
+    name: 'CDC COVID-19 Snapshot of Vaccinations by State and County',
+    endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
+    documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
+    parentAttributes: ['recip_state'/*, 'population'*/],
+    omittedAttributeNames: [
+      'fips',
+      'mmwr_week',
+      'completeness_pct'
+    ],
+    additionalAttributes: [
+      {
+        name: 'full-county',
+        formula: 'toLower(replaceString(replaceString(recip_county, \' County\', \'\'), \' Parish\', \'\') + \', \' + recip_state)'
+      },
+      {
+        name: 'boundary',
+        formula: 'lookupBoundary(US_county_boundaries,  `full-county`)'
+      }
+    ],
+    overriddenAttributes: [
+      {
+        name: 'date',
+        type: 'date'
+      }
+    ],
+    renamedAttributes: [
+      {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
+      {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
+      {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
+      {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
+      {old: 'series_complete_yes', new: 'total count fully vaccinated'},
+      {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
+      {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
+      {old: 'series_complete_65plus', new: 'count 65 and older fully vaccinated'},
+    ],
+    uiComponents: [
+      {
+        type: 'select',
+        name: 'stateCode',
+        apiName: 'state',
+        label: 'Select State',
+        lister: function () {
+          return STATE_POPULATION_DATA.map(function (st) {
+            return st["USPS Code"];
+          });
+        }
+      },
+      {
+        type: 'select',
+        name: 'countyName',
+        apiName: 'county',
+        label: 'Select County',
+        dependsUpon: 'stateCode',
+        default: 'AL',
+        lister: function () { return []; },
+        updater: function(parentEl, stateCode) {
+          let el = parentEl.querySelector('[name=countyName]');
+          let stateRecord = STATE_POPULATION_DATA.find(function (st) {return st["USPS Code"] === stateCode;});
+          let stateName = stateRecord && stateRecord["State or territory"];
+          let nameList = stateName? COUNTY_POPULATION_DATA
+                  .filter(function (item) {return item.STNAME === stateName && item.COUNTY !== "000";})
+                  .map(function (co) {return co.CTYNAME;})
+              : [];
+          el.innerHTML = '';
+          nameList.forEach(function (name) {
+            el.append(createElement('option', [], [name]));
+          });
+        },
+      }
+    ],
+    uiCreate: function (parentEl) {
+      let stateCtlDef = this.uiComponents[0];
+      // let countyCtlDef = this.uiComponents[1];
+      let ctlState = createUIControl(stateCtlDef);
+      // let ctlCounty = createUIControl(countyCtlDef);
+      parentEl.append(ctlState);
+      // parentEl.append(ctlCounty);
+      // countyCtlDef.updater(parentEl, 'AL');
+      let stateInputEl = ctlState.querySelector('[name=stateCode]');
+      // if (stateInputEl) {
+      //   stateInputEl.addEventListener('change', function (ev) {countyCtlDef.updater(parentEl, ev.target.value);});
+      // }
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} [name=stateCode]`).value;
+      // let county = document.querySelector(`#${this.id} [name=countyName]`).value;
+      let limitPhrase = `$limit=100000`;
+      let datePhrase = `date=2021-10-11`;
+      let stateCodePhrase = stateCode? `recip_state=${stateCode.toUpperCase()}&`: '';
+      // let countyPhrase = county? `recip_county=${county}&`: '';
+      if (stateCode) {
+        return this.endpoint + `?${[stateCodePhrase, datePhrase, /*countyPhrase, */limitPhrase].join('&')}`;
+      } else {
+        message('Please enter two character state code');
+      }
+    },
+    preprocess: function (data) {
+      // data = mergeCountyPopulation(data, 'recip_state', 'recip_county', 'STCODE', 'CTYNAME');
+      // data = sortOnDateAttr(data, 'date');
+      return data;
+    }
+  },
+  {
     id: 'VaccinesHistorical',
-    name: 'CDC COVID-19 Vaccinations in the United States, County',
+    name: 'CDC COVID-19 Historical Vaccinations in the United States, County',
     endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
