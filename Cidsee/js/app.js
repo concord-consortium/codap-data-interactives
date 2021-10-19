@@ -126,11 +126,29 @@ const DATASETS = [
     endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
-    parentAttributes: ['recip_state'/*, 'population'*/],
+    parentAttributes: ['recip_state', 'date'],
     omittedAttributeNames: [
       'fips',
       'mmwr_week',
-      'completeness_pct'
+      'completeness_pct',
+      'administered_dose1_recip',
+      'administered_dose1_pop_pct',
+      'administered_dose1_recip_12plus',
+      'administered_dose1_recip_12pluspop_pct',
+      'administered_dose1_recip_18plus',
+      'administered_dose1_recip_18pluspop_pct',
+      'administered_dose1_recip_65plus',
+      'administered_dose1_recip_65pluspop_pct',
+      'svi_ctgy',
+      'series_complete_pop_pct_svi',
+      'series_complete_12pluspop_pct_svi',
+      'series_complete_18pluspop_pct_svi',
+      'series_complete_65pluspop_pct_svi',
+      'metro_status',
+      'series_complete_pop_pct_ur_equity',
+      'series_complete_12pluspop_pct_ur_equity',
+      'series_complete_18pluspop_pct_ur_equity',
+      'series_complete_65pluspop_pct_ur_equity',
     ],
     additionalAttributes: [
       {
@@ -207,10 +225,17 @@ const DATASETS = [
       // }
     },
     makeURL: function () {
+      function zeroPrefixFormat(n) {
+        let x = '00' + n;
+        return x.substring(x.length - 2);
+      }
       let stateCode = document.querySelector(`#${this.id} [name=stateCode]`).value;
       // let county = document.querySelector(`#${this.id} [name=countyName]`).value;
       let limitPhrase = `$limit=100000`;
-      let datePhrase = `date=2021-10-11`;
+      const dateOffset = 7 * 24 * 60 * 60 * 1000;
+      let date = new Date(new Date() - dateOffset)
+      let dateString = `${date.getFullYear()}-${zeroPrefixFormat(date.getMonth()+1)}-${zeroPrefixFormat(date.getDate())}`
+      let datePhrase = `date=${dateString}`;
       let stateCodePhrase = stateCode? `recip_state=${stateCode.toUpperCase()}&`: '';
       // let countyPhrase = county? `recip_county=${county}&`: '';
       if (stateCode) {
@@ -663,7 +688,7 @@ const DATASETS = [
   }
 ]
 
-const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'VaccinesCountySnapshot'];
 const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
