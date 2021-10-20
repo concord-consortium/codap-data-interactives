@@ -22,7 +22,7 @@ import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
-let today = dayjs();
+let today = dayjs(new Date().toLocaleDateString());
 
 // noinspection SpellCheckingInspection
 let constants = {
@@ -40,6 +40,8 @@ let constants = {
     "isdID":"72613014755,72613099999",
     "ghcndID": 'USW00014755'
   },
+  defaultStationTimezoneOffset: -5,
+  defaultStationTimezoneName: 'EST',
   defaultDates: {
     'hourly': {
       start: today.subtract(1, 'week').toDate(),
@@ -63,21 +65,21 @@ let constants = {
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
   geonamesUser: 'codap',
-  StationDSName: 'US-Weather-Stations',
-  StationDSTitle: 'US Weather Stations',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC', // may be obsolescent
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
   recordCountLimit: 1000, // may be obsolescent
-  stationDatasetURL: './assets/data/weather-stations.json',
-  version: 'v0013',
   reportTypeMap: {
     'daily-summaries': 'daily',
     'global-summary-of-the-month': 'monthly',
     'global-hourly': 'hourly',
     'global-summary-of-the-day': 'daily'
-  }
-
+  },
+  stationDatasetURL: './assets/data/weather-stations.json',
+  StationDSName: 'US-Weather-Stations',
+  StationDSTitle: 'US Weather Stations',
+  timezoneServiceURL: 'https://secure.geonames.org/timezoneJSON',
+  version: 'v0013',
 }
 
 let state = {
@@ -86,6 +88,8 @@ let state = {
   sampleFrequency: null,
   selectedDataTypes: null,
   selectedStation: constants.defaultStation,
+  stationTimezoneOffset: constants.defaultStationTimezoneOffset,
+  stationTimezoneName: constants.defaultStationTimezoneName,
   userSelectedDate: null,
   startDate: null,
   endDate: null,
@@ -125,6 +129,7 @@ function adjustStationDataset(dataset) {
     })
   }
 }
+
 /**
  *
  * @return {Promise<{latitude,longitude}>}
@@ -218,7 +223,7 @@ async function initialize() {
         function (coords) {
           ui.setTransferStatus('success', 'Centering map');
           coordsResolved = true;
-          codapConnect.centerAndZoomMap([coords.latitude, coords.longitude], 7)
+          codapConnect.centerAndZoomMap('Map', [coords.latitude, coords.longitude], 7)
           ui.setTransferStatus('success', 'Looking up nearest weather station');
           setNearestStation(coords);
           ui.setTransferStatus('success', 'Ready');
@@ -340,20 +345,44 @@ async function noaaWeatherSelectionHandler(req) {
   }
 }
 
+function updateTimezone(station) {
+  const offsetMap = {
+    "-4": 'AST',
+    "-5": 'EST',
+    "-6": 'CST',
+    "-7": 'MST',
+    "-8": 'PST',
+    "-9": 'AKST',
+    "-10": 'HST'
+  }
+  fetchTimezone(station.latitude, station.longitude).then(
+      function (data) {
+        state.stationTimezoneOffset = data.gmtOffset;
+        state.stationTimezoneName = offsetMap[data.gmtOffset];
+        console.log(`Timezone data for station ${station.name}: ${JSON.stringify(data)}`);
+      },
+      function (msg) {
+        console.log(`Failure fetching timezone: ${msg}`);
+      }
+  )
+}
+
 async function stationSelectionHandler(req) {
   if (req.values.operation === 'selectCases') {
     let result = req.values.result;
     let myCase = result && result.cases && result.cases[0];
     if (myCase) {
+      let station = myCase.values;
       state.selectedStation = myCase.values;
       ui.setTransferStatus('inactive', 'Selected new weather station');
       updateView();
+      updateTimezone(station);
     }
   }
 }
 
 /**
- * Converts the data values according to unit systsm
+ * Converts the data values according to unit system
  * @param fromUnitSystem {'metric'|'standard'}
  * @param toUnitSystem {'metric'|'standard'}
  * @param data {[object]}
@@ -450,6 +479,7 @@ async function findNearestStation(lat, long) {
       `greatCircleDistance(latitude, longitude, ${lat}, ${long})=min(greatCircleDistance(latitude, longitude, ${lat}, ${long}))`);
   if (result.success) {
     if (Array.isArray(result.values)) {
+      // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
       return result.values[0];
     } else {
       return result.values;
@@ -465,16 +495,58 @@ async function setNearestStation (location) {
   let nearestStation = await findNearestStation(location.latitude,
       location.longitude);
   if (nearestStation) {
-    state.selectedStation = nearestStation.values;
+    let station = nearestStation.values;
+    state.selectedStation = station;
     await codapConnect.selectStations([state.selectedStation.name]);
     await codapConnect.centerAndZoomMap('Map',
         [location.latitude, location.longitude], 9);
     updateView();
+    updateTimezone(station);
   }
 }
 
 async function stationLocationHandler (location) {
     await setNearestStation(location);
+}
+
+/**
+ * Retrieves timezone information from the geonames service.
+ * The response object looks like this:
+ *    {
+ *      "sunrise": "2021-10-20 07:16",
+ *      "lng": -121,
+ *      "countryCode": "US",
+ *      "gmtOffset": -8,
+ *      "rawOffset": -8,
+ *      "sunset": "2021-10-20 18:20",
+ *      "timezoneId": "America/Los_Angeles",
+ *      "dstOffset": -7,
+ *      "countryName": "United States",
+ *      "time": "2021-10-19 15:40",
+ *      "lat": 37
+ *    }
+ * @param lat {number}
+ * @param long {number}
+ * @return {Promise<Object>}
+ */
+function fetchTimezone (lat, long) {
+  return new Promise(function (resolve, reject) {
+    let basicUrl = constants.timezoneServiceURL;
+    let user = constants.geonamesUser;
+    let url = `${basicUrl}?lat=${lat}&lng=${long}&username=${user}`;
+    fetch(url).then(
+      function (result) {
+        if (result.ok) {
+          resolve(result.json());
+        } else {
+          reject(result.statusText);
+        }
+      },
+      function (msg) {
+        reject(msg);
+      }
+    );
+  });
 }
 
 /**
@@ -492,21 +564,41 @@ function dateRangeSubmitHandler(values) {
   updateView();
 }
 
+function getSelectedDataTypes () {
+  return state.selectedDataTypes.filter(function (dt) {
+    let noaaType = dataTypeStore.findByName(dt);
+    return noaaType && noaaType.isInDataSet(state.database);
+  }).map(function (typeName) {
+    return dataTypeStore.findByName(typeName);
+  });
+}
+
+/**
+ * Called before weather data is fetched.
+ */
 function beforeFetchHandler() {
   ui.setWaitCursor(true);
   ui.setTransferStatus('retrieving',
       'Fetching weather records from NOAA');
 }
 
+/**
+ * Called with results from successful fetch of weather data.
+ * @param data {{}}
+ */
 function fetchSuccessHandler(data) {
   let reportType = constants.reportTypeMap[state.database];
   let unitSystem = state.unitSystem;
+  let utcOffset = state.stationTimezoneOffset;
+  let timezoneName = state.stationTimezoneName;
   let dataRecords = [];
   if (data) {
     data.forEach((r) => {
       const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
       aValue.latitude = aValue.station.latitude;
       aValue.longitude = aValue.station.longitude;
+      aValue['utc offset'] = utcOffset;
+      aValue['timezone'] = timezoneName;
       aValue.elevation = aValue.station.elevation;
       aValue['report type'] = reportType;
       dataRecords.push(aValue);
@@ -532,15 +624,11 @@ function fetchSuccessHandler(data) {
   }
 }
 
-function getSelectedDataTypes () {
-  return state.selectedDataTypes.filter(function (dt) {
-    let noaaType = dataTypeStore.findByName(dt);
-    return noaaType && noaaType.isInDataSet(state.database);
-  }).map(function (typeName) {
-    return dataTypeStore.findByName(typeName);
-  });
-}
-
+/**
+ * Called in the event of an error fetching weather data
+ * @param statusMessage {string} End user description of failure
+ * @param resultText {string} Full text of error reply, often XML.
+ */
 function fetchErrorHandler(statusMessage, resultText) {
   if (resultText && resultText.length && (resultText[0] === '<')) {
     try {

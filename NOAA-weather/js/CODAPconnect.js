@@ -91,7 +91,7 @@ async function getInteractiveState() {
  * @param datasetName {string}
  * @param collectionName {string}
  * @param dataType {object}
- * @param unitSystem {'metric'|'standard}
+ * @param unitSystem {'metric'|'standard'}
  * @return Promise of result
  */
 function createAttribute(datasetName, collectionName, dataType, unitSystem) {
@@ -453,6 +453,8 @@ function getNoaaDataContextSetupObject(dsName) {
                 {name: "where", type: 'categorical', description: "weather station"},
                 {name: "latitude", type: 'numeric', description: "Latitude of weather station"},
                 {name: "longitude", type: 'numeric', description: "Longitude of weather station"},
+                {name: "utc offset", type: 'numeric', description: "Station standard time offset from UTC"},
+                {name: "timezone", type: 'categorical', description: "Timezone of weather station"},
                 {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "meters"},
                 {name: "report type", type: 'categorical', description: 'Daily summary or monthly summary'}
             ]
@@ -465,7 +467,19 @@ function getNoaaDataContextSetupObject(dsName) {
                 pluralCase: "observations",
                 setOfCasesWithArticle: "a group of records"
             },
-            attrs: [{name: "when", type: 'date', description: "what day"}]
+            attrs: [
+                {
+                    name: 'when',
+                    type: 'date',
+                    description: "When the observation occurred in weather station's standard time",
+                    formula: 'if(`report type`="hourly",date(utc + (`utc offset`*3600)), utc)'
+                },
+                {
+                    name: 'utc',
+                    type: 'date',
+                    description: "When the observation occurred in UTC"
+                },
+            ]
         }]
     };
 }

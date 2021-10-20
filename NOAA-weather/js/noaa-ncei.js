@@ -47,15 +47,23 @@ const noaaNCEIConnect = {
     },
 
     composeURL: function() {
-        const format = 'YYYY-MM-DD';
+        const format = 'YYYY-MM-DDThh:mm:ss';
 
         // noinspection JSPotentiallyInvalidConstructorUsage
-        const startDate = new dayjs(this.state.startDate).format(
+        let startDate = this.state.startDate;
+        let endDate = this.state.endDate;
+        // adjust for local station time
+        if (this.state.database === 'global-hourly') {
+            let offset = this.state.stationTimezoneOffset;
+            startDate = dayjs(startDate).subtract(offset, 'hour');
+            endDate = dayjs(endDate).subtract(offset, 'hour').add(1, 'day');
+        }
+        const startDateString = dayjs(startDate).format(
             format);
         // noinspection JSPotentiallyInvalidConstructorUsage
-        const endDate = new dayjs(this.state.endDate).format(
+        const endDateString = dayjs(endDate).format(
             format);
-        if (new Date(startDate) <= new Date(endDate)) {
+        if (new Date(startDateString) <= new Date(endDateString)) {
             // const typeNames = this.getSelectedDataTypes().map(function (dataType) {
             //     return dataType.name;
             // })
@@ -68,17 +76,18 @@ const noaaNCEIConnect = {
                     return dataTypeStore.findByName(name).sourceName;
                 });
             const tDataTypeIDClause = `dataTypes=${dataTypes.join()}`;
-            const tstartDateClause = `startDate=${startDate}`;
-            const tEndDateClause = `endDate=${endDate}`;
+            const tStartDateClause = `startDate=${startDateString}`;
+            const tEndDateClause = `endDate=${endDateString}`;
             const tUnitClause = `units=metric`;
             const tFormatClause = 'format=json';
 
-            let tURL = [this.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tstartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
+            let tURL = [this.constants.nceiBaseURL, [tDatasetIDClause, tStationIDClause, tStartDateClause, tEndDateClause, tFormatClause, tDataTypeIDClause, tUnitClause].join(
                 '&')].join('?');
             console.log(`Fetching: ${tURL}`);
             return tURL
         }
     },
+
     doGetHandler: async function (ev) {
 
         noaaNCEIConnect.beforeFetchHandler();
@@ -118,7 +127,7 @@ const noaaNCEIConnect = {
             let dataTypeName;
             switch (key) {
                 case 'DATE':
-                    out.when = value;
+                    out.utc = value;
                     break;
                 case 'STATION':
                     out.station = this.state.selectedStation;
@@ -145,7 +154,6 @@ const noaaNCEIConnect = {
         }).map(function (typeName) {
             return dataTypeStore.findByName(typeName);
         });
-
     },
 
     decodeData: function (iField, iValue) {

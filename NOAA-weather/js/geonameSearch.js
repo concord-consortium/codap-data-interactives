@@ -30,6 +30,7 @@ const kClassSelectOption = 'geoname-selector-option';
 const kClassHidden = 'geoname-hidden';
 const kClassCandidate = 'geoname-candidate';
 
+// noinspection JSIgnoredPromiseFromCall
 class GeonameSearch {
   myGeonamesUser;
   selectionHandler;
@@ -57,8 +58,8 @@ class GeonameSearch {
     const userClause = `username=${this.myGeonamesUser}`;
     const countryClause = 'country=US';
     const maxRowsClause = `maxRows=${maxRows || kDefaultMaxRows}`;
-    const featureClassClause = 'featureClass=P'; // populated places
-    const orderByClause = 'orderby=relevance'
+    // const featureClassClause = 'featureClass=P'; // populated places
+    // const orderByClause = 'orderby=relevance'
     const languageClause = 'lang=en';
     const typeClause = 'type=json';
     const nameRequiredClause = 'isNameRequired=true';
@@ -113,12 +114,11 @@ class GeonameSearch {
         containerEl.append(optionEl);
       }
       optionEl.innerText = place.name;
-      optionEl.setAttribute('dataix', ix);
+      optionEl.setAttribute('dataix', String(ix));
       if (ix === 0) {
         optionEl.classList.add(kClassCandidate);
       }
     });
-
   }
 
   /**
@@ -148,6 +148,7 @@ class GeonameSearch {
 
     function handleTimeout(/*ev*/) {
       _this.timer = null;
+      // noinspection JSIgnoredPromiseFromCall
       _this.autoComplete();
     }
 
