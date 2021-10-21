@@ -361,7 +361,8 @@ async function createNOAAItems (props, iValues, dataTypes, unitSystem) {
         "resource": "component",
         "values": {
             "type": "caseTable",
-            "dataContext": props.DSName
+            "dataContext": props.DSName,
+            "horizontalScrollOffset": 500
         }
     });
 }
@@ -451,9 +452,9 @@ function getNoaaDataContextSetupObject(dsName) {
             },
             attrs: [
                 {name: "where", type: 'categorical', description: "weather station"},
-                {name: "latitude", type: 'numeric', description: "Latitude of weather station"},
-                {name: "longitude", type: 'numeric', description: "Longitude of weather station"},
-                {name: "utc offset", type: 'numeric', description: "Station standard time offset from UTC"},
+                {name: "latitude", type: 'numeric', unit: 'º', description: "Latitude of weather station"},
+                {name: "longitude", type: 'numeric', unit: 'º', description: "Longitude of weather station"},
+                {name: "UTC offset", type: 'numeric', unit: 'hours', description: "Station standard time offset from UTC"},
                 {name: "timezone", type: 'categorical', description: "Timezone of weather station"},
                 {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "meters"},
                 {name: "report type", type: 'categorical', description: 'Daily summary or monthly summary'}
@@ -472,15 +473,22 @@ function getNoaaDataContextSetupObject(dsName) {
                     name: 'when',
                     type: 'date',
                     description: "When the observation occurred in weather station's standard time",
-                    formula: 'if(`report type`="hourly",date(utc + (`utc offset`*3600)), utc)'
+                    formula: 'if(`report type`="hourly",date(utc + (`UTC offset`*3600)), utc)'
                 },
                 {
                     name: 'utc',
                     type: 'date',
+                    hidden: true,
                     description: "When the observation occurred in UTC"
                 },
             ]
-        }]
+        }],
+        metadata: {
+            source: 'https://www.ncei.noaa.gov/access/services/data/v1',
+            'import date': new Date().toLocaleString(),
+            description: 'Historical weather data fetched from NOAA. Note that ' +
+                'the attribute "utc" has been hidden.'
+        }
     };
 }
 

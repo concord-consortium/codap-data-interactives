@@ -597,7 +597,7 @@ function fetchSuccessHandler(data) {
       const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
       aValue.latitude = aValue.station.latitude;
       aValue.longitude = aValue.station.longitude;
-      aValue['utc offset'] = utcOffset;
+      aValue['UTC offset'] = utcOffset;
       aValue['timezone'] = timezoneName;
       aValue.elevation = aValue.station.elevation;
       aValue['report type'] = reportType;
