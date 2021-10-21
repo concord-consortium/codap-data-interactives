@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { getCategories } from "../../utils/util";
 import "./navigation.css"
 
@@ -25,4 +26,11 @@ export const NavigationTabs = (props) => {
       }
     </>
   );
+}
+
+NavigationTabs.propTypes = {
+  handleCategorySelect: PropTypes.func,
+  plugins: PropTypes.array,
+  categories: PropTypes.any,
+  categorySelected: PropTypes.string,
 }

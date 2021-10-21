@@ -1,6 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NavigationTabs } from "./navigation";
 import { DropdownSelect } from "./dropdown-select";
+import { SearchPanel } from "./search-panel";
 
 import "./header.css"
 
@@ -29,10 +31,21 @@ export class Header extends React.Component {
           <span className="title">CODAP Data Interactive Plugins</span>
         </div>
         <div className="headerRight">
-          <DropdownSelect branchSelected={this.props.branchSelected} handleBranchSelect={this.props.handleBranchSelect}/>
+          <SearchPanel handleSearch={this.props.onSearch} searchString={this.props.searchString}/>
+          <DropdownSelect branchSelected={this.props.branchSelected} handleBranchSelect={this.props.onBranchSelect}/>
         </div>
       </div>
 
     )
   }
+}
+Header.propTypes = {
+  plugins: PropTypes.array,
+  categories: PropTypes.any,
+  categorySelected: PropTypes.string,
+  onCategorySelect: PropTypes.func,
+  onSearch: PropTypes.func,
+  searchString: PropTypes.string,
+  branchSelected: PropTypes.string,
+  onBranchSelect: PropTypes.func
 }

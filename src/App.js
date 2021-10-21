@@ -10,12 +10,14 @@ export default class App extends React.PureComponent {
     super();
     this.handleCategorySelect = this.handleCategorySelect.bind(this);
     this.handleBranchSelect = this.handleBranchSelect.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
     this.state = {
       dataInteractives: dataInteractiveList.data_interactives,
       categories: dataInteractiveList.categories,
       categorySelected: "Partners",
       branchSelected: isDevMode() ? "staging" : "latest",
-    }
+      searchString: ''
+    };
   }
 
   render() {
@@ -24,6 +26,7 @@ export default class App extends React.PureComponent {
     const categories = this.state.categories;
     const categorySelected = this.state.categorySelected;
     const branchSelected = this.state.branchSelected;
+    const searchString = this.state.searchString;
     let path;
     switch (branchSelected) {
       case "latest":
@@ -48,8 +51,10 @@ export default class App extends React.PureComponent {
                 categories={categories}
                 categorySelected={categorySelected}
                 branchSelected={branchSelected}
-                handleCategorySelect={this.handleCategorySelect}
-                handleBranchSelect={this.handleBranchSelect}
+                onCategorySelect={this.handleCategorySelect}
+                onBranchSelect={this.handleBranchSelect}
+                onSearch= {this.handleSearch}
+                searchString = {searchString}
         />
         <CardList plugins={plugins} categorySelected={categorySelected} url={url} tabIndex={tabIndex}/>
         <Footer />
@@ -62,6 +67,27 @@ export default class App extends React.PureComponent {
   }
   handleBranchSelect(event) {
     this.setState({ branchSelected: event.target.value});
+  }
+  handleSearch (searchString) {
+    let found = false;
+    this.setState({searchString: searchString});
+    this.state.plugins.forEach(plugin => {
+      let ix = plugin.categories.indexOf('search');
+      if (ix >= 0) {
+        plugin.categories.splice(ix, 1);
+      }
+      if (plugin.description.includes(searchString)) {
+        plugin.categories.append('search');
+        found = true;
+      }
+    });
+    if (found && this.state.categorySelected !== 'search') {
+      this.priorSelected = this.state.categorySelected;
+      this.setState({categorySelected: 'search'})
+    } else if (!found && this.state.categorySelected === 'search') {
+      this.setState({categorySelected: this.priorSelected});
+      this.priorSelected = null;
+    }
   }
 }
 
