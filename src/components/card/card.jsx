@@ -3,20 +3,26 @@ import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 
 import "./card.css"
+import PropTypes from "prop-types";
 
 function getURLRoot() {
   let urlRoot = window.location.origin+window.location.pathname;
   return urlRoot.replace(/index.html$/, '').replace(/\/build\//, '');
 }
+
 export class Card extends React.PureComponent{
+  copyToClipboard() {
+    navigator.clipboard.writeText(this.cleanPath());
+  }
+
   render(){
     let cardClassNames = `card`
     return (
       <div className={cardClassNames}>
         {this.renderPluginTitleAndDescription()}
-        <a className="embeddableLink" href={this.cleanPath()} target="_blank" rel="noopener noreferrer">
-          Embeddable Link
-        </a>
+        <div className="embeddableLink" onClick={() => this.copyToClipboard()}>
+          copy link to clipboard<span>&#x1F4CB;</span>
+        </div>
     </div>
     );
   }
@@ -39,12 +45,14 @@ export class Card extends React.PureComponent{
     }
 
     return (
-      <a href={`${url}?di=${pluginPath}`} className="pluginTitle" target="_blank" rel="noopener noreferrer">
-        {plugin.title}
+      <div>
+        <a href={`${url}?di=${pluginPath}`} className="pluginTitle" target="_blank" rel="noopener noreferrer">
+          {plugin.title}</a>
         <p className="pluginDescription">{this.renderHTML(plugin.description)}</p>
-      </a>
+      </div>
     );
   }
+
   renderHTML(description) {
     return parse(DOMPurify.sanitize(description || ""));
   }
@@ -72,3 +80,7 @@ export class Card extends React.PureComponent{
   }
 }
 
+Card.propTypes = {
+  plugin: PropTypes.object,
+  url: PropTypes.string
+}

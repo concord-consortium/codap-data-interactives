@@ -5,6 +5,23 @@ import { CardList } from "./components/card-list/card-list";
 import { Footer } from "./components/footer/footer";
 import { isDevMode } from "./utils/util";
 
+/**
+ *
+ * @param plugin {
+ *      {description: string},
+ *      {title: string},
+ *      {aegis: string}
+ *    }
+ * @param searchString {string}
+ * @return {boolean}
+ */
+function pluginSearch(plugin, searchString) {
+  searchString = searchString.toLowerCase();
+  return (plugin.description && plugin.description.toLowerCase().includes(searchString)) ||
+      (plugin.title && plugin.title.toLowerCase().includes(searchString)) ||
+      (plugin.aegis && plugin.aegis.toLowerCase().includes(searchString));
+}
+
 export default class App extends React.PureComponent {
   constructor() {
     super();
@@ -65,26 +82,32 @@ export default class App extends React.PureComponent {
   handleCategorySelect(category) {
     this.setState({ categorySelected: category });
   }
+
   handleBranchSelect(event) {
     this.setState({ branchSelected: event.target.value});
   }
+
   handleSearch (searchString) {
     let found = false;
     this.setState({searchString: searchString});
-    this.state.plugins.forEach(plugin => {
-      let ix = plugin.categories.indexOf('search');
+    this.state.dataInteractives.forEach(plugin => {
+      let ix = plugin.categories.indexOf('Search');
       if (ix >= 0) {
         plugin.categories.splice(ix, 1);
       }
-      if (plugin.description.includes(searchString)) {
-        plugin.categories.append('search');
-        found = true;
-      }
     });
-    if (found && this.state.categorySelected !== 'search') {
+    if (searchString.length >= 3) {
+      this.state.dataInteractives.forEach(plugin => {
+        if (pluginSearch(plugin, searchString)) {
+          plugin.categories.push('Search');
+          found = true;
+        }
+      });
+    }
+    if (found && this.state.categorySelected !== 'Search') {
       this.priorSelected = this.state.categorySelected;
-      this.setState({categorySelected: 'search'})
-    } else if (!found && this.state.categorySelected === 'search') {
+      this.setState({categorySelected: 'Search'})
+    } else if (!found && this.state.categorySelected === 'Search') {
       this.setState({categorySelected: this.priorSelected});
       this.priorSelected = null;
     }

@@ -2,27 +2,30 @@
   "categories": [
     {
       "category": "Partners",
-      "tooltip": "Plugins developed by and with other groups"
+      "tooltip": "Plugins developed by and with other groups."
     },
     {
       "category": "Portals",
-      "tooltip": "Plugins that fetch data from external sources"
+      "tooltip": "Plugins that fetch data from external sources."
     },
     {
       "category": "Simulations",
-      "tooltip": "Plugins that create data with interactive simulations of phenomena"
+      "tooltip": "Plugins that create data with interactive simulations of phenomena."
     },
     {
       "category": "Generators",
-      "tooltip": "Plugins that generate data from abstract statistical models"
+      "tooltip": "Plugins that generate data from abstract statistical models."
     },
     {
       "category": "Tools",
-      "tooltip": "Useful plugins that work with datasets in CODAP"
+      "tooltip": "Useful plugins that work with datasets in CODAP."
     },
     {
       "category": "Dev",
-      "tooltip": "Useful plugins for plugin developers"
+      "tooltip": "Useful plugins for plugin developers."
+    },
+    {
+      "category": "Search"
     }
   ],
   "data_interactives": [

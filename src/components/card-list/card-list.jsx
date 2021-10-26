@@ -1,11 +1,12 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { Card } from "../card/card";
 
 import "./card-list.css";
 
 export const CardList = props => {
   let { plugins, categorySelected, url, tabIndex } = props;
-  let cardlistWrapperClassNames = `cardlistWrapper theme${tabIndex%4+1}`
+  let cardListWrapperClassNames = `card-list-wrapper theme${tabIndex%4+1}`
   let pluginsToShow = plugins.filter(plugin =>
           plugin.visible &&
           plugin.visible!=='false' &&
@@ -18,7 +19,7 @@ export const CardList = props => {
         return 0;
       });
   return (
-    <div className={cardlistWrapperClassNames}>
+    <div className={cardListWrapperClassNames}>
       <div className="card-list">
         {pluginsToShow.map((plugin, index) =>
           <Card key={index} plugin={plugin} url={url}/>
@@ -26,4 +27,11 @@ export const CardList = props => {
       </div>
     </div>
   )
+}
+
+CardList.propTypes = {
+  plugins: PropTypes.array,
+  categorySelected: PropTypes.string,
+  url: PropTypes.string,
+  tabIndex: PropTypes.number
 }

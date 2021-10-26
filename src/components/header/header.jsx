@@ -14,7 +14,7 @@ export class Header extends React.Component {
         <NavigationTabs plugins={this.props.plugins}
                         categories={this.props.categories}
                         categorySelected={this.props.categorySelected}
-                        handleCategorySelect={this.props.handleCategorySelect} />
+                        handleCategorySelect={this.props.onCategorySelect} />
       </div>
     );
   }
@@ -31,7 +31,7 @@ export class Header extends React.Component {
           <span className="title">CODAP Data Interactive Plugins</span>
         </div>
         <div className="headerRight">
-          <SearchPanel handleSearch={this.props.onSearch} searchString={this.props.searchString}/>
+          <SearchPanel onSearch={this.props.onSearch} searchString={this.props.searchString}/>
           <DropdownSelect branchSelected={this.props.branchSelected} handleBranchSelect={this.props.onBranchSelect}/>
         </div>
       </div>

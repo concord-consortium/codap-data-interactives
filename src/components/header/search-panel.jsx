@@ -9,13 +9,13 @@ export class SearchPanel extends React.Component {
     this.state = {value: ''};
   }
 
-  handleClear() {
-    this.props.handleSearch('');
+  handleClear(/*ev*/) {
+    this.props.onSearch('');
   }
 
   handleChange(ev) {
     let searchString = ev.target.value;
-    this.props.handleSearch(searchString);
+    this.props.onSearch(searchString);
   }
 
   render() {
@@ -25,13 +25,13 @@ export class SearchPanel extends React.Component {
     return (
         <div className='search-panel' >
           <input type={'text'} placeholder={placeholder} onChange={ev => this.handleChange(ev)} value={value} />
-          <button className={'search-panel-clear'} onClick={() => this.handleClear}>x</button>
+          <button className={'search-panel-clear'} onClick={ev => this.handleClear(ev)}>x</button>
         </div>
     )
   }
 }
 
 SearchPanel.propTypes = {
-  handleSearch: PropTypes.func,
+  onSearch: PropTypes.func,
   searchString: PropTypes.string,
 }
