@@ -22,7 +22,8 @@ import * as ui from './noaa.ui.js';
 import * as codapConnect from './CODAPconnect.js';
 import {noaaNCEIConnect} from './noaa-ncei.js';
 
-let today = dayjs(new Date().toLocaleDateString());
+// get the date part of the current date/time
+let today = dayjs(dayjs().format('MM/DD/YYYY'));
 
 // noinspection SpellCheckingInspection
 let constants = {
