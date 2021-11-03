@@ -1,4 +1,8 @@
 {
+  "projects": [
+    {"name": "Ocean Tracks", "url": "https://oceantracks.org/"},
+    {"name": "ESTEEM", "url": "http://hirise.fi.ncsu.edu/projects/esteem/"}
+  ],
   "categories": [
     {
       "category": "Partners",
@@ -9,7 +13,7 @@
       "tooltip": "Plugins that fetch data from external sources."
     },
     {
-      "category": "Simulations",
+      "category": "Simulators",
       "tooltip": "Plugins that create data with interactive simulations of phenomena."
     },
     {
@@ -25,7 +29,8 @@
       "tooltip": "Useful plugins for plugin developers."
     },
     {
-      "category": "Search"
+      "category": "Search",
+      "tooltip": "Search results"
     }
   ],
   "data_interactives": [

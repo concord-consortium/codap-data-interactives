@@ -25,7 +25,7 @@ export class SearchPanel extends React.Component {
     return (
         <div className='search-panel' >
           <input type={'text'} placeholder={placeholder} onChange={ev => this.handleChange(ev)} value={value} />
-          <button className={'search-panel-clear'} onClick={ev => this.handleClear(ev)}>x</button>
+          <button className={'search-panel-clear'} onClick={ev => this.handleClear(ev)}>&#x24E7;</button>
         </div>
     )
   }

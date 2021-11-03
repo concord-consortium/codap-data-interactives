@@ -1,6 +1,7 @@
 import React from "react";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
+import logo from "./codap.ico";
 
 import "./card.css"
 import PropTypes from "prop-types";
@@ -21,7 +22,8 @@ export class Card extends React.PureComponent{
       <div className={cardClassNames}>
         {this.renderPluginTitleAndDescription()}
         <div className="embeddableLink" onClick={() => this.copyToClipboard()}>
-          copy link to clipboard<span>&#x1F4CB;</span>
+          copy link to clipboard
+          <span role={"img"} aria-label={"Image of a clipboard"}>&#x1F4CB;</span>
         </div>
     </div>
     );
@@ -45,10 +47,16 @@ export class Card extends React.PureComponent{
     }
 
     return (
-      <div>
-        <a href={`${url}?di=${pluginPath}`} className="pluginTitle" target="_blank" rel="noopener noreferrer">
-          {plugin.title}</a>
+      <div >
+        <div title={"Open in CODAP"}>
+          <a href={`${url}?di=${pluginPath}`} className="pluginTitle"
+             target="_blank" rel="noopener noreferrer">
+            <img src={logo}  alt={"CODAP Logo"}/>&nbsp;
+            {plugin.title}
+          </a>
+        </div>
         <p className="pluginDescription">{this.renderHTML(plugin.description)}</p>
+
       </div>
     );
   }
@@ -82,5 +90,6 @@ export class Card extends React.PureComponent{
 
 Card.propTypes = {
   plugin: PropTypes.object,
+  project: PropTypes.object,
   url: PropTypes.string
 }
