@@ -750,8 +750,8 @@
       "description": "A utility to help organize how the data in a dataset is presented in CODAP",
       "width": 400,
       "height": 600,
-      "icon": "/eepsmedia/plugins/Choosy/art/choosy.svg",
-      "path": "/eepsmedia/plugins/Choosy/index.html",
+      "icon": "/eepsmedia/plugins/choosy/art/choosy.svg",
+      "path": "/eepsmedia/plugins/choosy/index.html",
       "visible": "true",
       "isStandard": "true",
       "categories": [
@@ -763,8 +763,8 @@
       "description": "Create new datasets in CODAP from existing ones through a collection of powerful transformation tools.",
       "width": 350,
       "height": 450,
-      "icon": "/codap-transformers/transformers-icon-small.svg",
-      "path": "/codap-transformers/",
+      "icon": "https://codap.concord.org/app/extn/plugins/codap-transformers/transformers-icon-small.svg",
+      "path": "https://codap.concord.org/app/extn/plugins/codap-transformers/",
       "visible": "true",
       "isStandard": "true",
       "categories": [
@@ -776,7 +776,7 @@
       "description": "Create a narrative of your investigation",
       "width": 800,
       "height": 130,
-      "path": "/story-builder/",
+      "path": "https://codap.concord.org/app/extn/plugins/story-builder/",
       "visible": "true",
       "isStandard": "true",
       "categories": [
