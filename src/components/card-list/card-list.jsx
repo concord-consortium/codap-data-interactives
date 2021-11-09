@@ -6,7 +6,7 @@ import "./card-list.css";
 
 export const CardList = props => {
   let { plugins, categorySelected, url, tabIndex } = props;
-  let cardListWrapperClassNames = `card-list-wrapper theme${tabIndex%4+1}`
+  let cardListWrapperClassNames = `card-list-wrapper theme${(tabIndex % 4) + 1}`
   let pluginsToShow = plugins.filter(plugin =>
           plugin.visible &&
           plugin.visible!=='false' &&

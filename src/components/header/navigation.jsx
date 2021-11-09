@@ -15,7 +15,8 @@ export const NavigationTabs = (props) => {
           {categories.map((category, index) => {
             const tip = (categoryDefinitions.filter(c => c.category === category))[0];
             return (
-              <div key={`${index}`} className={`tab theme${(index%4)+1} ${props.categorySelected === category ? "selected" : ""}`} value={category}
+              <div key={`${index}`}
+                   className={`tab theme${(index%4)+1} ${props.categorySelected === category ? "selected" : ""}`}
                 onClick={() => props.handleCategorySelect(category)} title={tip? tip.tooltip : "" }>
                 {category}
               </div>

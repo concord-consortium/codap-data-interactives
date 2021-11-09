@@ -1,7 +1,7 @@
 {
   "projects": [
     {"name": "Ocean Tracks", "url": "https://oceantracks.org/"},
-    {"name": "ESTEEM", "url": "http://hirise.fi.ncsu.edu/projects/esteem/"}
+    {"name": "ESTEEM", "url": "https://hirise.fi.ncsu.edu/projects/esteem/"}
   ],
   "categories": [
     {
@@ -49,7 +49,7 @@
     },
     {
       "title": "Sampler",
-      "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"http:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
+      "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"https:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
       "width": 232,
       "height": 400,
       "path": "/TP-Sampler/index.html",
@@ -64,7 +64,7 @@
     },
     {
       "title": "SRRI Ship Odyssey Data Game",
-      "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
       "height": 304,
       "path": "/ShipOdyssey/index.html",
@@ -76,7 +76,7 @@
     },
     {
       "title": "SRRI Chainsaw Data Game",
-      "description": "Fire up a chainsaw and see how many logs you can cut to the right length. <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "description": "Fire up a chainsaw and see how many logs you can cut to the right length. <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
       "height": 304,
       "path": "/Chainsaw/index.html",
@@ -88,7 +88,7 @@
     },
     {
       "title": "SRRI Inference Data Game",
-      "description": "Another <a target=\"_blank\" href=\"http://www.srri.umass.edu/\">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.",
+      "description": "Another <a target=\"_blank\" href=\"https://www.srri.umass.edu/\">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.",
       "width": 290,
       "height": 304,
       "path": "/Inference/index.html",
@@ -107,7 +107,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -119,7 +119,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -131,7 +131,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -143,7 +143,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -155,7 +155,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -167,7 +167,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -179,7 +179,7 @@
       "visible": false,
       "aegis": "Data Games",
       "categories": [
-        "Partners.Data Games"
+        "Partners"
       ]
     },
     {
@@ -216,7 +216,7 @@
       "aegis": "CODAP",
       "categories": [
         "Utilities",
-        "Simulations"
+        "Simulators"
       ]
     },
     {
@@ -247,7 +247,7 @@
     },
     {
       "title": "TerraPop Plugin",
-      "description": "Plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
+      "description": "Plugin for importing <a target=\"_blank\" href=\"https://www.terrapop.org/\">TerraPop</a> data sets.",
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
@@ -279,8 +279,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Partners.NetLogo",
-        "Simulations"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -292,8 +292,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Partners.NetLogo",
-        "Simulations"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -306,7 +306,7 @@
       "aegis": "CODAP",
       "categories": [
         "Partners",
-        "Simulations"
+        "Simulators"
       ]
     },
     {
@@ -319,7 +319,7 @@
       "aegis": "Building Models",
       "categories": [
         "Partners",
-        "Simulations"
+        "Simulators"
       ]
     },
     {
@@ -365,7 +365,7 @@
       "visible": true,
       "categories": [
         "Partners",
-        "Simulations"
+        "Simulators"
       ]
     },
     {
@@ -562,7 +562,7 @@
       "visible": false,
       "categories": [
         "Partners",
-        "Simulations"
+        "Simulators"
       ]
     },
     {
@@ -648,7 +648,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -660,7 +660,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -672,7 +672,7 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds",
+        "Partners",
         "Portals"
       ]
     },
@@ -685,7 +685,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -697,7 +697,7 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -709,7 +709,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -721,7 +721,7 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds",
+        "Partners",
         "Portals"
       ]
     },
@@ -734,7 +734,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -746,8 +746,8 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds",
-        "Simulations"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -759,7 +759,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Partners.Data Worlds"
+        "Partners"
       ]
     },
     {
