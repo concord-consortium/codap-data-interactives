@@ -1,6 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NavigationTabs } from "./navigation";
 import { DropdownSelect } from "./dropdown-select";
+import { SearchPanel } from "./search-panel";
 
 import "./header.css"
 
@@ -10,8 +12,9 @@ export class Header extends React.Component {
       <div className="header">
         {this.renderHeaderTitle()}
         <NavigationTabs plugins={this.props.plugins}
+                        categories={this.props.categories}
                         categorySelected={this.props.categorySelected}
-                        handleCategorySelect={this.props.handleCategorySelect} />
+                        handleCategorySelect={this.props.onCategorySelect} />
       </div>
     );
   }
@@ -28,10 +31,21 @@ export class Header extends React.Component {
           <span className="title">CODAP Data Interactive Plugins</span>
         </div>
         <div className="headerRight">
-          <DropdownSelect branchSelected={this.props.branchSelected} handleBranchSelect={this.props.handleBranchSelect}/>
+          <SearchPanel onSearch={this.props.onSearch} searchString={this.props.searchString}/>
+          <DropdownSelect branchSelected={this.props.branchSelected} handleBranchSelect={this.props.onBranchSelect}/>
         </div>
       </div>
 
     )
   }
+}
+Header.propTypes = {
+  plugins: PropTypes.array,
+  categories: PropTypes.any,
+  categorySelected: PropTypes.string,
+  onCategorySelect: PropTypes.func,
+  onSearch: PropTypes.func,
+  searchString: PropTypes.string,
+  branchSelected: PropTypes.string,
+  onBranchSelect: PropTypes.func
 }

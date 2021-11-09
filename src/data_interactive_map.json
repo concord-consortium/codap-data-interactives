@@ -1,4 +1,38 @@
 {
+  "projects": [
+    {"name": "Ocean Tracks", "url": "https://oceantracks.org/"},
+    {"name": "ESTEEM", "url": "https://hirise.fi.ncsu.edu/projects/esteem/"}
+  ],
+  "categories": [
+    {
+      "category": "Partners",
+      "tooltip": "Plugins developed by and with other groups."
+    },
+    {
+      "category": "Portals",
+      "tooltip": "Plugins that fetch data from external sources."
+    },
+    {
+      "category": "Simulators",
+      "tooltip": "Plugins that create data with interactive simulations of phenomena."
+    },
+    {
+      "category": "Generators",
+      "tooltip": "Plugins that generate data from abstract statistical models."
+    },
+    {
+      "category": "Tools",
+      "tooltip": "Useful plugins that work with datasets in CODAP."
+    },
+    {
+      "category": "Dev",
+      "tooltip": "Useful plugins for plugin developers."
+    },
+    {
+      "category": "Search",
+      "tooltip": "Search results"
+    }
+  ],
   "data_interactives": [
     {
       "title": "Ocean Tracks Selector",
@@ -9,12 +43,13 @@
       "visible": "true",
       "aegis": "Ocean Tracks",
       "categories": [
-        "Partners"
+        "Partners",
+        "Portals"
       ]
     },
     {
       "title": "Sampler",
-      "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"http:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
+      "description": "Has a mixer, a spinner, and a collector for sampling simulation. Modeled on TinkerPlots Sampler and created for the <a target=\"_blank\" href=\"https:\/\/hirise.fi.ncsu.edu\/projects\/esteem\/\">ESTEEM<\/a> project at NCSU.",
       "width": 232,
       "height": 400,
       "path": "/TP-Sampler/index.html",
@@ -23,46 +58,44 @@
       "aegis": "ESTEEM",
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Generators"
       ]
     },
     {
       "title": "SRRI Ship Odyssey Data Game",
-      "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
       "height": 304,
       "path": "/ShipOdyssey/index.html",
       "visible": false,
       "aegis": "SRRI",
       "categories": [
-        "Partners",
-        "Data Games"
+        "Partners"
       ]
     },
     {
       "title": "SRRI Chainsaw Data Game",
-      "description": "Fire up a chainsaw and see how many logs you can cut to the right length. <a target=\"_blank\" href=\"http:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
+      "description": "Fire up a chainsaw and see how many logs you can cut to the right length. <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
       "height": 304,
       "path": "/Chainsaw/index.html",
       "visible": false,
       "aegis": "SRRI",
       "categories": [
-        "Partners",
-        "Data Games"
+        "Partners"
       ]
     },
     {
       "title": "SRRI Inference Data Game",
-      "description": "Another <a target=\"_blank\" href=\"http://www.srri.umass.edu/\">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.",
+      "description": "Another <a target=\"_blank\" href=\"https://www.srri.umass.edu/\">SRRI</a> game. See if you can beat a conservative statistician at his own game -- making good guesses from samples.",
       "width": 290,
       "height": 304,
       "path": "/Inference/index.html",
       "visible": false,
       "aegis": "SRRI",
       "categories": [
-        "Partners",
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -74,7 +107,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -86,7 +119,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -98,7 +131,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -110,7 +143,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -122,7 +155,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -134,7 +167,7 @@
       "visible": true,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -146,7 +179,7 @@
       "visible": false,
       "aegis": "Data Games",
       "categories": [
-        "Data Games"
+        "Partners"
       ]
     },
     {
@@ -182,7 +215,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Simulators"
       ]
     },
     {
@@ -194,7 +228,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Dev"
       ]
     },
     {
@@ -206,19 +241,21 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Generators"
       ]
     },
     {
       "title": "TerraPop Plugin",
-      "description": "Plugin for importing <a target=\"_blank\" href=\"http://www.terrapop.org/\">TerraPop</a> data sets.",
+      "description": "Plugin for importing <a target=\"_blank\" href=\"https://www.terrapop.org/\">TerraPop</a> data sets.",
       "width": 550,
       "height": 500,
       "path": "/TerraPopInteractive/TPI.html",
       "visible": true,
       "aegis": "Terra-Pop",
       "categories": [
-        "Partners"
+        "Partners",
+        "Portals"
       ]
     },
     {
@@ -242,7 +279,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -254,7 +292,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -266,7 +305,8 @@
       "visible": true,
       "aegis": "CODAP",
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -278,10 +318,10 @@
       "visible": true,
       "aegis": "Building Models",
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
-
     {
       "title": "Data Card",
       "description": "Data Card permits the user to browse and modify a data set one case at a time.",
@@ -301,7 +341,8 @@
       "path": "/Movement/Movement.html",
       "visible": true,
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Generators"
       ]
     },
     {
@@ -323,7 +364,8 @@
       "path": "https://lab.concord.org/embeddable.html?codap=true%23interactives/inquiry-space/2-spring.json",
       "visible": true,
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -356,7 +398,8 @@
       "path": "/CollaborationService/CollaborationService.html",
       "visible": true,
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Tools"
       ]
     },
     {
@@ -378,7 +421,8 @@
       "path": "/Charts/index.html",
       "visible": true,
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Tools"
       ]
     },
     {
@@ -393,14 +437,15 @@
       ]
     },
     {
-      "title": "Data Interactive API Tester",
+      "title": "Plugin API Tester",
       "description": "Exercise the CODAP Plugin API and see the results",
       "width": 600,
       "height": 400,
       "path": "/DataInteractiveAPITester/index.html",
       "visible": true,
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Dev"
       ]
     },
     {
@@ -504,7 +549,8 @@
       "path": "https://sensor-interactive.concord.org",
       "visible": false,
       "categories": [
-        "Partners"
+        "Partners",
+        "Generators"
       ]
     },
     {
@@ -515,7 +561,8 @@
       "path": "https://ramp-game.concord.org",
       "visible": false,
       "categories": [
-        "Partners"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -529,7 +576,6 @@
         "Partners"
       ]
     },
-
     {
       "title": "Dataflow",
       "description": "The DataFlow plugin is part of the <a target=\"blank\" href=\"https://concord.org/projects/inspect\">InSPECT</a> project. It collects sensor data collected by the InSPECT Raspbery Pis.",
@@ -560,7 +606,8 @@
       "path": "https://ttsuchiya.github.io/codap/plugins/Sonification/SimpleSpectrum/index.html",
       "visible": false,
       "categories": [
-        "Partners"
+        "Partners",
+        "Tools"
       ]
     },
     {
@@ -573,7 +620,8 @@
       "visible": true,
       "isStandard": "true",
       "categories": [
-        "Utilities"
+        "Utilities",
+        "Tools"
       ]
     },
     {
@@ -587,7 +635,8 @@
       "height": 520,
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Portals"
       ]
     },
     {
@@ -599,7 +648,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -611,7 +660,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -623,7 +672,8 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners",
+        "Portals"
       ]
     },
     {
@@ -635,7 +685,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -647,7 +697,7 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -659,7 +709,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -671,7 +721,8 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners",
+        "Portals"
       ]
     },
     {
@@ -683,7 +734,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -695,7 +746,8 @@
       "visible": true,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners",
+        "Simulators"
       ]
     },
     {
@@ -707,7 +759,7 @@
       "visible": false,
       "aegis": "DSG",
       "categories": [
-        "Data Worlds"
+        "Partners"
       ]
     },
     {
@@ -723,7 +775,7 @@
     },
     {
       "title": "NOAA Weather",
-      "description": "Get weather data from selected US weather stations",
+      "description": "Get weather data from selected US weather stations.",
       "width": 380,
       "height": 490,
       "path": "/NOAA-weather/index.html",
@@ -731,7 +783,8 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Portals"
       ]
     },
     {
@@ -755,7 +808,8 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Tools"
       ]
     },
     {
@@ -768,7 +822,8 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Tools"
       ]
     },
     {
@@ -780,7 +835,8 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Partners"
+        "Partners",
+        "Tools"
       ]
     }
   ]

@@ -10,9 +10,6 @@ export function getCategories(plugins) {
       })
     }
   })
-  if (!isDevMode()) {
-    categoryArray.splice(categoryArray.indexOf("Utilities"),1);
-  }
   return categoryArray;
 }
 

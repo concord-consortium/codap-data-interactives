@@ -11,7 +11,6 @@
     "std:increment-build-number": "bin/increment-build-number",
     "std:build:comment": "echo Builds standard plugins",
     "std:build": "bin/build",
-
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -32,15 +31,16 @@
     "url": "https://github.com/concord-consortium/codap-data-interactives/issues"
   },
   "dependencies": {
-    "simplify-geojson": "^1.0.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "dompurify": "^2.2.7",
     "html-react-parser": "^1.2.4",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.3"
+    "react-scripts": "3.4.3",
+    "simplify-geojson": "^1.0.3"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -1,22 +1,22 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { getCategories } from "../../utils/util";
 import "./navigation.css"
 
 export const NavigationTabs = (props) => {
-  const categories = getCategories(props.plugins);
-  const categoryTooltip = [{ category: "Partners", tooltip: "Plugins developed with other project partners" },
-                           { category: "Utilities", tooltip: "Plugins developed to help developers" },
-                           { category: "Data Games", tooltip: "Plugins developed for Data Games project" },
-                           { category: "Data Worlds", tooltip: "Plugins developed for Data World project" }
-                          ];
+  const categoryDefinitions = props.categories;
+  const categoriesInUse = getCategories(props.plugins);
+  const categories = categoryDefinitions.map(e => e.category)
+      .filter(category=>categoriesInUse.includes(category));
 
   return (
     <>
       { categories && <div className="navigationTabs">
           {categories.map((category, index) => {
-            const tip = (categoryTooltip.filter(c => c.category === category))[0];
+            const tip = (categoryDefinitions.filter(c => c.category === category))[0];
             return (
-              <div key={`${index}`} className={`tab ${category} ${props.categorySelected === category ? "selected" : ""}`} value={category}
+              <div key={`${index}`}
+                   className={`tab theme${(index%4)+1} ${props.categorySelected === category ? "selected" : ""}`}
                 onClick={() => props.handleCategorySelect(category)} title={tip? tip.tooltip : "" }>
                 {category}
               </div>
@@ -27,4 +27,11 @@ export const NavigationTabs = (props) => {
       }
     </>
   );
+}
+
+NavigationTabs.propTypes = {
+  handleCategorySelect: PropTypes.func,
+  plugins: PropTypes.array,
+  categories: PropTypes.any,
+  categorySelected: PropTypes.string,
 }

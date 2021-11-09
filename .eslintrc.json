@@ -1,5 +1,7 @@
 {
   "parserOptions": {
+    "ecmaVersion": 2017,
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
@@ -12,7 +14,8 @@
     "plugin:react/recommended"
   ],
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
   },
   "rules": {
     "no-console": 0,
