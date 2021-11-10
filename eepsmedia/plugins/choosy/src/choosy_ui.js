@@ -480,10 +480,11 @@ const choosy_ui = {
                 if (iAttr.batch && iAttr.batch !== choosy.constants.noBatchString) {
                     theHint += ` (${iAttr.batch})`;
                 }
+                theHint = theHint.replace(/\n/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/'/g, '&apos;');
                 const theImage = `&emsp;<img class="small-button-image" 
                     src="../../common/art/info.png" width="14" title="${theHint}" 
                     alt="press for info"
-                    onclick="choosy_ui.makeSweetAlert('${iAttr.name}', '${theHint}')"      //  todo: should be title
+                    onclick="choosy_ui.makeSweetAlert('${iAttr.name}', '${theHint}')" 
                     alt = "circular information button image"  
                     />`;
                 out += theImage;

@@ -200,7 +200,7 @@ const connect = {
         const theCollection = this.utilities.collectionNameFromAttributeName(iAttName, choosy.datasetInfo);
         let theDescription = this.utilities.descriptionFromAttributeName(iAttName, choosy.datasetInfo);
 
-        theDescription = "{" + iBatch + "}" + theDescription;
+        theDescription = "{" + iBatch + "}" + (theDescription || '');
 
         if (theCollection) {
             const theResource = `dataContext[${iDSName}].collection[${theCollection}].attribute[${iAttName}]`;
