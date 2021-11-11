@@ -228,6 +228,8 @@ async function defineDataSet(config) {
             return Promise.resolve(response);
           }
         } else {
+          let importDate = config.importDate || config.metadata.importDate;
+          let importDateString = importDate? importDate.toISOString(): '';
           return codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
@@ -236,7 +238,7 @@ async function defineDataSet(config) {
               title: config.datasetName,
               metadata: {
                 source: config.metadata.source || config.source,
-                importDate: config.importDate || config.metadata.importDate,
+                importDate: importDateString,
                 description: config.metadata.description
               },
               collections: [
