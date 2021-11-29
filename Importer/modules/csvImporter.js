@@ -23,22 +23,22 @@
  * @return {Promise}
  */
 function fetchAndParseURL(url) {
-  return fetch(url)
-      .then(
-          function (resp) {
-            return new Promise(function (resolve, reject){
-              if (resp.ok) {
-                resp.text().then(function (data) {
-                  resolve(data);
-                });
-              } else {
-                reject(resp.statusText);
-              }
+  return new Promise( function (resolve, reject) {
+    fetch(url).then(
+        function (resp) {
+          if (resp.ok) {
+            resp.text().then(function (data) {
+              resolve(data);
             });
-          },
-          function (msg) {
-            throw new Error(`Network or server configuration: ${msg}`);
-          });
+          } else {
+            reject(resp.statusText);
+          }
+        },
+        function (msg) {
+          reject(`Network error: "${msg}" -- See <a target="_blank" title="I got a networking error trying to load data into CODAP. What do I do?" href="https://codap.concord.org/help/general-questions/i-got-networking-error-trying-to-load-data-codap-what-do-i-do">CODAP help</a>.`);
+        }
+    );
+  });
 }
 
 /**

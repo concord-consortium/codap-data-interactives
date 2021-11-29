@@ -429,15 +429,17 @@ async function handleFileInputs() {
   if (files.length) {
     file = files[0];
   }
-  config.sourceDataset = await retrieveData({url: url, file: file});
+  try {
+    config.sourceDataset = await retrieveData({url: url, file: file});
+  } catch (msg) {
+    uiControl.displayError(msg);
+  }
   let exitingDatasets = await codapHelper.retrieveDatasetList();
   if (config.sourceDataset) {
     let isAuto = await determineIfAutoImportApplies(exitingDatasets);
     if (isAuto) {
       await importDataIntoCODAP();
     }
-  } else {
-    await codapHelper.closeSelf();
   }
 }
 
