@@ -52,7 +52,7 @@ const unitMap = {
     angle: {metric: 'º', standard: 'º'},
     distance: {metric: 'm', standard: 'yd'},
     precipitation: {metric: "mm", standard: "in"},
-    pressure: {metric: 'hPa'},
+    pressure: {metric: 'hPa', standard: 'hPa'},
     speed: {metric: "m/s", standard: "mph"},
     temperature: {metric: "°C", standard: "°F"},
 }
