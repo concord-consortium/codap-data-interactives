@@ -260,7 +260,9 @@ const DATASETS = [
     omittedAttributeNames: [
         'fips',
         'mmwr_week',
-        'completeness_pct'
+        'completeness_pct',
+        'svi_ctgy',
+        'metro_status'
     ],
     overriddenAttributes: [
       {
@@ -270,10 +272,12 @@ const DATASETS = [
     ],
     renamedAttributes: [
       {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
+      {old: 'series_complete_5pluspop_pct', new: '% 5 and older fully vaccinated'},
       {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
       {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
       {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
       {old: 'series_complete_yes', new: 'total count fully vaccinated'},
+      {old: 'series_complete_5plus', new: 'count 5 and older fully vaccinated'},
       {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
       {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
       {old: 'series_complete_65plus', new: 'count 65 and older fully vaccinated'},
@@ -1115,7 +1119,11 @@ function getAttributeNamesFromData(array) {
   if (!Array.isArray(array) || !array[0] || (typeof array[0] !== "object")) {
     return [];
   }
-  return Object.keys(array[0]);
+  var attrMap = {};
+  array.forEach((item) => {
+    Object.keys(item).forEach((key) => {attrMap[key] = true;});
+  });
+  return Object.keys(attrMap);
 }
 
 /**
