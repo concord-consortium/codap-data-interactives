@@ -301,7 +301,7 @@ class TutorialView extends React.Component {
         handleDataContextCountChanged();
         break;
       case 'create':
-        if (iNotification.values.type === 'graph') this.handleAccomplishment('MakeGraph', !this.isAccomplished('Drag'));else if (iNotification.values.type === 'table') this.handleAccomplishment('MakeTable');
+        if (iNotification.values.type === 'graph') this.handleAccomplishment('MakeGraph', !this.isAccomplished('Drag'));else if (iNotification.values.type === 'caseTable', !this.isAccomplished('Drag')) this.handleAccomplishment('MakeTable');
         break;
       case 'move':
         if (iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView') this.handleAccomplishment('MoveComponent');
