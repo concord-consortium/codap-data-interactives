@@ -1,29 +1,29 @@
-hasMouse = !('ontouchstart' in window);
+hasMouse = false;//!('ontouchstart' in window);
 
 taskDescriptions = {
   descriptions: [
-    hasMouse ?
-        {
-          key: 'Drag', label: 'Drag this data file into CODAP', url: './resources/DragCSV.mp4',
-          operation: 'dataContextCountChanged',
-          feedback: <div>
-            <p>You've got data! It appears in a <em>case table</em>.</p>
-            <p>Each row in the table represents a <em>case</em> and each column
-              represents an <em>attribute</em>.</p>
-            <p>This data set contains data about mammals. Each case represents a different
-              mammal. The attributes provide information about lifespan, height, and so on.</p>
-          </div>
-        } :
-        {
-          key: 'MakeTable', label: 'Make a table showing Mammals data', url: './resources/MakeTable.mp4',
-          feedback: <div>
-            <p>You made a <em>case table</em> showing the pre-loaded data.</p>
-            <p>Each row in the table represents a <em>case</em> and each column
-              represents an <em>attribute</em>.</p>
-            <p>This data set contains data about mammals. Each case represents a different
-              mammal. The attributes provide information about lifespan, height, and so on.</p>
-          </div>
-        },
+    // hasMouse ?
+    //     {
+    //       key: 'Drag', label: 'Drag this data file into CODAP', url: './resources/DragCSV.mp4',
+    //       operation: 'dataContextCountChanged',
+    //       feedback: <div>
+    //         <p>You've got data! It appears in a <em>case table</em>.</p>
+    //         <p>Each row in the table represents a <em>case</em> and each column
+    //           represents an <em>attribute</em>.</p>
+    //         <p>This data set contains data about mammals. Each case represents a different
+    //           mammal. The attributes provide information about lifespan, height, and so on.</p>
+    //       </div>
+    //     } :
+    //     {
+    //       key: 'MakeTable', label: 'Make a table showing Mammals data', url: './resources/MakeTable.mp4',
+    //       feedback: <div>
+    //         <p>You made a <em>case table</em> showing the pre-loaded data.</p>
+    //         <p>Each row in the table represents a <em>case</em> and each column
+    //           represents an <em>attribute</em>.</p>
+    //         <p>This data set contains data about mammals. Each case represents a different
+    //           mammal. The attributes provide information about lifespan, height, and so on.</p>
+    //       </div>
+    //     },
     {
       key: 'MakeGraph', label: 'Make a graph', url: './resources/MakeGraph.mp4',
       feedback: <div>
