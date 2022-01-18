@@ -222,12 +222,14 @@ function renderGeoJSONToSVG(geojson) {
   var imgH = bBox.yMax-bBox.yMin;
   var delta = (imgW - imgH) / 2;
   var x,y,w,h;
+  // image is taller than wide
   if (delta < 0) {
-    x = bBox.xMin - delta;
+    x = bBox.xMin + delta;
     y = bBox.yMin;
-    w = imgW + (delta * 2);
+    w = imgW - (delta * 2);
     h = imgH;
   } else {
+    // image is wider than tall
     x = bBox.xMin;
     y = bBox.yMin - delta;
     w = imgW;

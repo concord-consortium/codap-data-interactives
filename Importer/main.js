@@ -351,21 +351,28 @@ async function updateDataSetInCODAP(config, isReplace) {
   }
   return await codapHelper.defineDataSet(tableConfig);
 }
+
+let extensionMap = {
+  '.csv': 'text/csv',
+  '.txt': 'text/csv',
+  '.geojson': 'application/geo+json'
+};
 function recognizeURLMime(urlString) {
   let parsedURL = new URL(urlString);
   let path = parsedURL && parsedURL.pathname;
   let suffixMatch = path && path.match(/\.[^\.]*$/);
   let suffix = suffixMatch && suffixMatch[0];
-  return {
-    '.csv': 'text/csv',
-    '.txt': 'text/csv',
-    '.geojson': 'application/geo+json'
-  }[suffix];
+  return extensionMap[suffix];
 }
 
 function inferContentType(file, url) {
-  if (file && file.type) {
-    return file.type;
+  if (file) {
+    if (file.type) {
+      return file.type;
+    } else {
+      let suffix = file.name.replace(/.*\./g,'.');
+      return extensionMap[suffix];
+    }
   } else if (url) {
     return recognizeURLMime(url);
   }
