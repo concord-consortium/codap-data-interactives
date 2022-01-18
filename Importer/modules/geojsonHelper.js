@@ -19,11 +19,11 @@
 
 /*global topojson:true */
 
-var merc = (function () {
-  var TILE_SIZE = 256;
-  var pixelOrigin_ = {x: TILE_SIZE / 2, y: TILE_SIZE / 2};
-  var pixelsPerLonDegree_ = TILE_SIZE / 360;
-  var pixelsPerLonRadian_ = TILE_SIZE / (2 * Math.PI);
+let merc = (function () {
+  const TILE_SIZE = 256;
+  const pixelOrigin_ = {x: TILE_SIZE / 2, y: TILE_SIZE / 2};
+  const pixelsPerLonDegree_ = TILE_SIZE / 360;
+  const pixelsPerLonRadian_ = TILE_SIZE / (2 * Math.PI);
 
   function _bound(value, opt_min, opt_max) {
     if (opt_min != null) value = Math.max(value, opt_min);
@@ -40,24 +40,24 @@ var merc = (function () {
   }
 
   function fromLatLngToPoint(latLng/*, opt_point*/) {
-    var point = {x: null, y: null};
-    var origin = pixelOrigin_;
+    let point = {x: null, y: null};
+    let origin = pixelOrigin_;
 
     point.x = origin.x + latLng.lng * pixelsPerLonDegree_;
 
     // Truncating to 0.9999 effectively limits latitude to 89.189. This is
     // about a third of a tile past the edge of the world tile.
-    var siny = _bound(Math.sin(_degreesToRadians(latLng.lat)), -0.9999, 0.9999);
+    let siny = _bound(Math.sin(_degreesToRadians(latLng.lat)), -0.9999, 0.9999);
     point.y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) * -pixelsPerLonRadian_;
 
     return point;
   }
 
   function fromPointToLatLng(point) {
-    var origin = pixelOrigin_;
-    var lng = (point.x - origin.x) / pixelsPerLonDegree_;
-    var latRadians = (point.y - origin.y) / -pixelsPerLonRadian_;
-    var lat = _radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
+    let origin = pixelOrigin_;
+    let lng = (point.x - origin.x) / pixelsPerLonDegree_;
+    let latRadians = (point.y - origin.y) / -pixelsPerLonRadian_;
+    let lat = _radiansToDegrees(2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2);
 
     return {lat: lat, lng: lng};
   }
@@ -68,7 +68,7 @@ var merc = (function () {
   };
 }());
 
-var kGeometryTypes = {
+let kGeometryTypes = {
   Point:true,
   MultiPoint:true,
   LineString:true,
@@ -79,8 +79,8 @@ var kGeometryTypes = {
 };
 
 function renderGeoJSONToSVG(geojson) {
-  var refLng = null;
-  var bBox = {
+  let refLng = null;
+  let bBox = {
     xMin: Number.MAX_VALUE,
     yMin: Number.MAX_VALUE,
     xMax: -Number.MAX_VALUE,
@@ -104,22 +104,21 @@ function renderGeoJSONToSVG(geojson) {
     }
   }
   function renderLine(coords) {
-    var start = coords.shift();
-    var pathDef = 'M' + start.x + ',' + start.y + ' L' + coords.map(function (pt/*, ix*/){
+    let start = coords.shift();
+    let pathDef = 'M' + start.x + ',' + start.y + ' L' + coords.map(function (pt/*, ix*/){
       return pt.x + ' ' + pt.y + ' ';
     }).join();
     return '<path stroke-width="1" stroke="blue" d="' + pathDef + '" />';
   }
   function renderPolygon(coords) {
-    var pathDef = coords.map(function (linearRing) {
-      var start = linearRing.shift();
-      var pathDef = 'M' + start.x + ',' + start.y + ' L' + linearRing.map(function (pt/*, ix*/){
-        return pt.x + ' ' + pt.y + ' ';
-      }).join();
-      return pathDef;
+    let pathDefs = coords.map(function (linearRing) {
+      let start = linearRing.shift();
+      return 'M' + start.x + ',' + start.y + ' L' + linearRing.map(
+          function (pt/*, ix*/) {
+            return pt.x + ' ' + pt.y + ' ';
+          }).join();
     }).join();
-    var svg = '<path stroke-width="0" fill="blue" d="' + pathDef + '"/>';
-    return svg;
+    return '<path stroke-width="0" fill="blue" d="' + pathDefs + '"/>';
   }
   function adjustForAntimeridian(coord) {
     if (!coord) {
@@ -132,61 +131,57 @@ function renderGeoJSONToSVG(geojson) {
     }
     return coord;
   }
-  var renderers = {
+  let renderers = {
     Point: function (geojson) {
-      var coord = latLongToXY(geojson.coordinates);
+      let coord = latLongToXY(geojson.coordinates);
       adjustBBox(coord);
       return renderPoint(coord);
     },
     MultiPoint: function (geojson) {
-      var coords = geojson.coordinates;
-      var dots = coords.map(function (coord) {
-        var xyCoord = latLongToXY(coord);
+      let coords = geojson.coordinates;
+      let dots = coords.map(function (coord) {
+        let xyCoord = latLongToXY(coord);
         adjustBBox(coord);
         return renderPoint(xyCoord);
       });
       return dots.join('');
     },
     LineString: function (geojson) {
-      var coords = geojson.coordinates;
-      var xys = coords.map(function(coord) {
-        var xy = latLongToXY(coord);
+      let coords = geojson.coordinates;
+      let xys = coords.map(function(coord) {
+        let xy = latLongToXY(coord);
         adjustBBox(xy);
         return xy;
       });
-      var svg = renderLine(xys);
-      return svg;
+      return renderLine(xys);
     },
     MultiLineString: function (geojson) {
-      var lines = geojson.coordinates;
-      var svg = lines.map(function (line) {
-        return renderers.LineString({coordinates: line });
+      let lines = geojson.coordinates;
+      return lines.map(function (line) {
+        return renderers.LineString({coordinates: line});
       }).join('');
-      return svg;
     },
     Polygon: function (geojson) {
-      var coords = geojson.coordinates;
-      var xys = coords.map(function(lineString) {
+      let coords = geojson.coordinates;
+      let xys = coords.map(function(lineString) {
         return lineString.map(function(coord) {
-          var xy = latLongToXY(coord);
+          let xy = latLongToXY(coord);
           adjustBBox(xy);
           return xy;
         });
       });
-      var svg = renderPolygon(xys);
-      return svg;
+      return renderPolygon(xys);
     },
     MultiPolygon: function(geojson) {
-      var polygons = geojson.coordinates;
-      var svg = polygons.map(function (polygon) {
-        return renderers.Polygon({coordinates: polygon });
+      let polygons = geojson.coordinates;
+      return polygons.map(function (polygon) {
+        return renderers.Polygon({coordinates: polygon});
       }).join('');
-      return svg;
     },
     GeometryCollection: function (geojson) {
-      var geometries = geojson.geometries;
+      let geometries = geojson.geometries;
       geometries.map(function(geometry) {
-        var fn = renderers[geometry.type];
+        let fn = renderers[geometry.type];
         if (!fn) {
           console.log("Unknown type: " + geometry.type);
         }
@@ -194,16 +189,16 @@ function renderGeoJSONToSVG(geojson) {
       }).join('');
     },
     Feature: function (geojson) {
-      var geometry = geojson.geometry;
-      var fn = renderers[geometry.type];
+      let geometry = geojson.geometry;
+      let fn = renderers[geometry.type];
       if (!fn) {
         console.log("Unknown type: " + geometry.type);
       }
       return fn(geometry);
     },
     FeatureCollection: function (geojson) {
-      var features = geojson.features;
-      var svg = features.map(function (feature) {
+      let features = geojson.features;
+      let svg = features.map(function (feature) {
         return renderers.Feature(feature);
       }).join();
       return svg.join('');
@@ -212,16 +207,16 @@ function renderGeoJSONToSVG(geojson) {
   if (!geojson) {
     return;
   }
-  var fn = renderers[geojson.type];
+  let fn = renderers[geojson.type];
   if (!fn) {
     console.log("Unknown type: " + geojson.type);
     return;
   }
-  var svg = fn(geojson);
-  var imgW = bBox.xMax-bBox.xMin;
-  var imgH = bBox.yMax-bBox.yMin;
-  var delta = (imgW - imgH) / 2;
-  var x,y,w,h;
+  let svg = fn(geojson);
+  let imgW = bBox.xMax-bBox.xMin;
+  let imgH = bBox.yMax-bBox.yMin;
+  let delta = (imgW - imgH) / 2;
+  let x,y,w,h;
   // image is taller than wide
   if (delta < 0) {
     x = bBox.xMin + delta;
@@ -242,8 +237,8 @@ function renderGeoJSONToSVG(geojson) {
 }
 
   // function convertSVGtoPNG(svgText) {
-  //   var svg = new Rsvg(svgText);
-  //   var rendering = new Buffer(svg.render({
+  //   let svg = new Rsvg(svgText);
+  //   let rendering = new Buffer(svg.render({
   //     format: 'png',
   //     width: svg.width,
   //     height: svg.height
@@ -252,8 +247,7 @@ function renderGeoJSONToSVG(geojson) {
   // }
 
 function formatAsDataURI(png, mime) {
-  var out = 'data:' + mime + ';base64,' + btoa(png);
-  return out;
+  return 'data:' + mime + ';base64,' + btoa(png);
 }
 
 function injectThumbnailInGeojsonFeature(feature) {
@@ -269,11 +263,11 @@ function injectThumbnailInGeojsonFeature(feature) {
       geometry: feature
     };
   }
-  var svg = renderGeoJSONToSVG(feature);
+  let svg = renderGeoJSONToSVG(feature);
   // console.log(svg);
-  // var png = svg && convertSVGtoPNG(svg);
-  // var dataURI = png && formatAsDataURI(png, 'image/png');
-  var dataURI = svg && formatAsDataURI(svg, 'image/svg+xml');
+  // let png = svg && convertSVGtoPNG(svg);
+  // let dataURI = png && formatAsDataURI(png, 'image/png');
+  let dataURI = svg && formatAsDataURI(svg, 'image/svg+xml');
   if (dataURI) {
     if (!feature.properties) { feature.properties = {}; }
     feature.properties.THUMB = dataURI;
@@ -288,10 +282,10 @@ function visitProperties(obj, fn, depth) {
   }
   if (depth < 0) return;
 
-  var retval = fn(obj);
+  let retval = fn(obj);
 
   if (!retval && (typeof obj === 'object')) {
-    for (var p in obj) {
+    for (let p in obj) {
       if (obj.hasOwnProperty(p)) {
         retval = visitProperties(obj[p], fn, depth-1);
         if (retval) { break; }
@@ -303,7 +297,7 @@ function visitProperties(obj, fn, depth) {
 
 
 function convertTopoJSONToGeoJSON(topo) {
-  var collection = visitProperties(topo, function (obj) {
+  let collection = visitProperties(topo, function (obj) {
     if (obj && obj.type === 'GeometryCollection') { return obj; }
   });
   if (collection) {
@@ -327,9 +321,9 @@ function prepareGeoJSONObject(geojsonDoc, url) {
 }
 
 function isPropertyAKey(geoJSONObject, propertyName) {
-  var values = {};
+  let values = {};
   return !geoJSONObject.features.some(function (feature) {
-    var value = feature.properties[propertyName];
+    let value = feature.properties[propertyName];
     if (value === null || value === undefined) {
       return true;
     } else if (values[value]) {
@@ -342,8 +336,8 @@ function isPropertyAKey(geoJSONObject, propertyName) {
 }
 
 function determineAttributeSet(geoJSONObject) {
-  var hasShapeData = false;
-  var hasPointData = false;
+  let hasShapeData = false;
+  let hasPointData = false;
 
   // identify all feature properties
   let featureProperties = {};
@@ -379,13 +373,16 @@ function determineAttributeSet(geoJSONObject) {
  * contain the geoJSON features and a list of feature keys. These are keys that
  * are defined and unique for every feature and can be used to identify the feature.
  *
- * @param geoJSONObject
- * @param url
- * @return {{featureKeys: Array, dataset: {collections: Array, meta: {source: *, createDate: Date}, name: string}}}
+ * @param geoJSONObject {object}
+ * @param url {string}
+ * @param datasetName {string}
+ * @param collectionName {string}
+ * @param createKeySubcollection {boolean}
+ * @return {{featureKeys: Array, dataset: {collections: Array, metadata: {source: *, createDate: Date}, name: string}}}
  */
 function defineDataset(geoJSONObject, url, datasetName, collectionName, createKeySubcollection) {
-  var hasShapeData = false;
-  var hasPointData = false;
+  let hasShapeData = false;
+  let hasPointData = false;
 
   // identify all feature properties
   let featureProperties = {};
