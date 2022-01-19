@@ -37,32 +37,53 @@ const DATASETS = [
       'pnew_case',
       'pnew_death',
       'prob_cases',
-      'prob_death',
+      'prob_death'
     ],
     additionalAttributes: [
       {
         name: 'new_cases_per_100000',
         formula: 'new_case*100000/population'
       },
-      {
-        name: 'new_deaths_per_100000',
-        formula: 'new_death*100000/population'
-      },
+      // {
+      //   name: 'new_deaths_per_100000',
+      //   formula: 'new_death*100000/population'
+      // },
       {
         name: 'total_cases_per_100000',
         formula: 'tot_cases*100000/population'
       },
-      {
-        name: 'total_deaths_per_100000',
-        formula: 'tot_death*100000/population'
-      },
+      // {
+      //   name: 'total_deaths_per_100000',
+      //   formula: 'tot_death*100000/population'
+      // },
     ],
     overriddenAttributes: [
         {
-          name: 'submission_date',
-          type: 'date'
+        name: 'date',
+        type: 'date',
+        precision: 'day'
+      },
+      {
+        name:'tot_cases',
+        hidden:true
+      },
+      {
+        name:'new_case',
+        hidden:true
+      },
+      {
+        name:'tot_death',
+        hidden:true
+      },
+      {
+        name:'new_death',
+        hidden:true
         }
     ],
+    renamedAttributes: [
+      {old: 'submission_date', new: 'date'}
+    ],
+    timeSeriesAttribute: 'date',
     parentAttributes: ['state', 'population'],
     uiComponents: [
       {
@@ -86,8 +107,11 @@ const DATASETS = [
     },
     preprocess: function (data) {
       data = mergePopulation(data, 'state', 'USPS Code');
-      data = sortOnDateAttr(data, 'submission_date');
+      data = sortOnDateAttr(data, 'date');
       return data;
+    },
+    postprocess: function () {
+      return createTimeSeriesGraph(this.name, this.timeSeriesAttribute);
     }
   },
   {
@@ -127,6 +151,7 @@ const DATASETS = [
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
     parentAttributes: ['recip_state', 'date'],
+    childCollectionName: 'vaccinations',
     omittedAttributeNames: [
       'fips',
       'mmwr_week',
@@ -248,6 +273,9 @@ const DATASETS = [
       // data = mergeCountyPopulation(data, 'recip_state', 'recip_county', 'STCODE', 'CTYNAME');
       // data = sortOnDateAttr(data, 'date');
       return data;
+    },
+    postprocess: function () {
+      return createMap();
     }
   },
   {
@@ -256,21 +284,54 @@ const DATASETS = [
     endpoint: 'https://data.cdc.gov/resource/8xkx-amqh.json',
     apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
-    parentAttributes: ['recip_state', 'recip_county', 'population'],
+    parentAttributes: ['state', 'county', 'population'],
+    childCollectionName: 'vaccinations',
     omittedAttributeNames: [
         'fips',
         'mmwr_week',
         'completeness_pct',
         'svi_ctgy',
-        'metro_status'
+        'metro_status',
+        'administered_dose1_recip',
+        'administered_dose1_pop_pct',
+        'administered_dose1_recip_12plus',
+        'administered_dose1_recip_12pluspop_pct',
+        'administered_dose1_recip_18plus',
+        'administered_dose1_recip_18pluspop_pct',
+        'administered_dose1_recip_65plus',
+        'administered_dose1_recip_65pluspop_pct',
+        'administered_dose1_recip_5plus',
+        'administered_dose1_recip_5pluspop_pct',
+        'total count fully vaccinated',
+        'count 5 and older fully vaccinated',
+        'count 12 and older fully vaccinated',
+        'count 18 and older fully vaccinated',
+        'count 65 and older fully vaccinated',
+        'series_complete_pop_pct_svi',
+        'series_complete_12pluspop_pct_svi',
+        'series_complete_18pluspop_pct_svi',
+        'series_complete_65pluspop_pct_svi',
+        'series_complete_pop_pct_ur_equity',
+        'series_complete_12pluspop_pct_ur_equity',
+        'series_complete_18pluspop_pct_ur_equity',
+        'series_complete_65pluspop_pct_ur_equity',
+        'series_complete_5pluspop_pct_svi',
+        'series_complete_5pluspop_pct_ur_equity',
+        'booster_doses',
+        'booster_doses_18plus',
+        'booster_doses_50plus',
+        'booster_doses_65plus'
     ],
     overriddenAttributes: [
       {
         name: 'date',
-        type: 'date'
+        type: 'date',
+        precision: 'day'
       }
     ],
     renamedAttributes: [
+      {old: 'recip_county', new: 'county'},
+      {old: 'recip_state', new: 'state'},
       {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
       {old: 'series_complete_5pluspop_pct', new: '% 5 and older fully vaccinated'},
       {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
@@ -281,7 +342,12 @@ const DATASETS = [
       {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
       {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
       {old: 'series_complete_65plus', new: 'count 65 and older fully vaccinated'},
+      {old: 'booster_doses_vax_pct', new: '% pop boosted'},
+      {old: 'booster_doses_18plus_vax_pct', new: '% 18 and older boosted'},
+      {old: 'booster_doses_50plus_vax_pct', new: '% 50 and older boosted'},
+      {old: 'booster_doses_65plus_vax_pct', new: '% 65 and older boosted'},
     ],
+    timeSeriesAttribute: 'date',
     uiComponents: [
       {
         type: 'select',
@@ -343,9 +409,12 @@ const DATASETS = [
       }
     },
     preprocess: function (data) {
-      data = mergeCountyPopulation(data, 'recip_state', 'recip_county', 'STCODE', 'CTYNAME');
+      data = mergeCountyPopulation(data, 'state', 'county', 'STCODE', 'CTYNAME');
       data = sortOnDateAttr(data, 'date');
       return data;
+    },
+    postprocess: function () {
+      return createTimeSeriesGraph(this.name, this.timeSeriesAttribute);
     }
   },
   {
@@ -692,7 +761,7 @@ const DATASETS = [
   }
 ]
 
-const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'VaccinesCountySnapshot'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical'];
 const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
@@ -942,6 +1011,51 @@ function guaranteeDataset(datasetName, collectionList) {
       })
 }
 
+function createTimeSeriesGraph(datasetName, tsAttributeName) {
+  codapInterface.sendRequest({
+    action: 'get',
+    resource: 'componentList'
+  }).then(function (result) {
+    if (result && result.values && !result.values.find(function (v) {return v.type === 'graph';})) {
+      return codapInterface.sendRequest({
+        action: 'create', resource: `component`, values: {
+          type: "graph",
+          dataContext: datasetName,
+          xAttributeName: tsAttributeName
+        }
+      });
+    } else {
+      return Promise.resolve(result);
+    }
+  });
+}
+function createMap() {
+  codapInterface.sendRequest({
+    action: 'get',
+    resource: 'componentList'
+  }).then(function (result) {
+    if (result && result.values && !result.values.find(function (v) {return v.type === 'map';})) {
+      return codapInterface.sendRequest({
+        action: 'create', resource: `component`, values: {
+          type: "map"
+        }
+      });
+    } else {
+      return Promise.resolve(result);
+    }
+  }).then(function (result) {
+    if (result.success) {
+      let componentID = result.values.id;
+      if (componentID != null) {
+        return codapInterface.sendRequest({
+          action: 'notify',
+          resource: `component[${componentID}]`,
+          values: {request: 'autoScale'}
+        })
+      }
+    }
+  });
+}
 /**
  * Create an autoscaled Case Table Component in CODAP
  * @param datasetName
@@ -1204,7 +1318,7 @@ function resolveCollectionList(datasetSpec, attributeNames) {
   let attributeList = resolveAttributes(datasetSpec, attributeNames);
   let collectionsList = [];
   let childCollection = {
-    name: CHILD_COLLECTION_NAME,
+    name: datasetSpec.childCollectionName || CHILD_COLLECTION_NAME,
     attrs: []
   }
   let parentCollection;
@@ -1294,6 +1408,11 @@ function fetchDataAndProcess() {
               .then(function () {
                 message('creating a case table');
                 return createCaseTable(datasetSpec.name);
+              })
+              .then(function () {
+                if (datasetSpec.postprocess) {
+                  datasetSpec.postprocess(datasetSpec);
+                }
               });
         }
         else {
