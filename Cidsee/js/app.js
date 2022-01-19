@@ -193,9 +193,9 @@ const DATASETS = [
     ],
     renamedAttributes: [
       {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
-      {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
-      {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
-      {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
+      {old: 'series_complete_12pluspop_pct', new: '% 12 and older fully vaccinated'},
+      {old: 'series_complete_18pluspop_pct', new: '% 18 and older fully vaccinated'},
+      {old: 'series_complete_65pluspop_pct', new: '% 65 and older fully vaccinated'},
       {old: 'series_complete_yes', new: 'total count fully vaccinated'},
       {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
       {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
@@ -244,7 +244,7 @@ const DATASETS = [
       parentEl.append(ctlState);
       // parentEl.append(ctlCounty);
       // countyCtlDef.updater(parentEl, 'AL');
-      let stateInputEl = ctlState.querySelector('[name=stateCode]');
+      // let stateInputEl = ctlState.querySelector('[name=stateCode]');
       // if (stateInputEl) {
       //   stateInputEl.addEventListener('change', function (ev) {countyCtlDef.updater(parentEl, ev.target.value);});
       // }
@@ -1011,23 +1011,56 @@ function guaranteeDataset(datasetName, collectionList) {
       })
 }
 
-function createTimeSeriesGraph(datasetName, tsAttributeName) {
-  codapInterface.sendRequest({
+/**
+ * Returns whether there is a graph in CODAP displaying the named dataset.
+ * @param datasetName
+ */
+async function getGraphForDataset(datasetName) {
+  let componentListResult = await codapInterface.sendRequest({
     action: 'get',
     resource: 'componentList'
-  }).then(function (result) {
-    if (result && result.values && !result.values.find(function (v) {return v.type === 'graph';})) {
-      return codapInterface.sendRequest({
-        action: 'create', resource: `component`, values: {
-          type: "graph",
-          dataContext: datasetName,
-          xAttributeName: tsAttributeName
+  });
+  let graphSpec = null;
+  let componentList = componentListResult?.success && componentListResult.values;
+  if (componentList) {
+    let graphIds = componentList.filter((c) => c.type === 'graph');
+    if (graphIds && graphIds.length) {
+      let graphRequests = graphIds.map((graphId) => {
+        return {
+          action: 'get', resource: `component[${graphId.id}]`
+        };
+      });
+      let graphSpecResults = await codapInterface.sendRequest(graphRequests);
+      let graphSpecResult = graphSpecResults.find((result) => {
+        return result.success && result.values.dataContext === datasetName
+      });
+      if (graphSpecResult) {
+        graphSpec = graphSpecResult.values;
+      }
+    }
+  }
+  return graphSpec;
+}
+
+async function createTimeSeriesGraph(datasetName, tsAttributeName) {
+  let foundGraph = await getGraphForDataset(datasetName);
+  if (!foundGraph) {
+    let result = await codapInterface.sendRequest({
+      action: 'create', resource: `component`, values: {
+        type: "graph", dataContext: datasetName, xAttributeName: tsAttributeName
+      }
+    });
+    if (result.success) {
+      let id = result.values.id;
+      return await codapInterface.sendRequest({
+        "action": "notify",
+        "resource": `component[${id}]`,
+        "values": {
+          "request": "autoScale"
         }
       });
-    } else {
-      return Promise.resolve(result);
     }
-  });
+  }
 }
 function createMap() {
   codapInterface.sendRequest({
