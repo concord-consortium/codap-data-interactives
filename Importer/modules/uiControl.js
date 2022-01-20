@@ -36,6 +36,11 @@ function displayMessage(message, selector) {
 
 function displayError(message) {
   console.log('Import Plugin: ' + message);
+
+  document.getElementById('cancel').classList.add('hidden');
+  document.getElementById('submit').classList.add('hidden');
+  document.getElementById('dismiss').classList.remove('hidden');
+
   displayMessage('<span class="error">' + message + '</span>')
 }
 

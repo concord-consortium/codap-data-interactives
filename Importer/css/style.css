@@ -74,3 +74,7 @@ input[type=number] {
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
+.hidden {
+  display: none;
+}

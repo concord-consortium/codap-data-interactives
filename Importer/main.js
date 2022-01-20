@@ -689,6 +689,7 @@ function handleSubmitEvent(ev) {
 async function main() {
   // create handlers
   uiControl.installButtonHandler('#cancel', handleCancelEvent);
+  uiControl.installButtonHandler('#dismiss', handleCancelEvent);
   uiControl.installKeystrokeHandler('Escape', handleCancelEvent)
   uiControl.installButtonHandler('#submit', handleSubmitEvent);
   uiControl.installKeystrokeHandler('Enter', handleSubmitEvent);
