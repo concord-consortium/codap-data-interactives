@@ -90,6 +90,7 @@ class DraggableLink extends React.Component {
   handleDragStart(event) {
     let dt = event.dataTransfer,
         tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/mammals.csv";
+    dt.items.clear();
     dt.setData("text/uri-list", tUrl);
     dt.setData('text', tUrl);
     dt.effectAllowed = 'all';
