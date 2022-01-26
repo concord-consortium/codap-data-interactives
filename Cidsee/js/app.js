@@ -18,7 +18,6 @@
 // ==========================================================================
 // import {calendar} from './calendar.js';
 import {STATE_POPULATION_DATA, COUNTY_POPULATION_DATA} from './data.js';
-
 const APP_NAME = 'CDC COVID Data';
 
 const DATASETS = [
@@ -42,7 +41,8 @@ const DATASETS = [
     additionalAttributes: [
       {
         name: 'new_cases_per_100000',
-        formula: 'new_case*100000/population'
+        formula: 'new_case*100000/population',
+        type: 'numeric'
       },
       // {
       //   name: 'new_deaths_per_100000',
@@ -50,7 +50,8 @@ const DATASETS = [
       // },
       {
         name: 'total_cases_per_100000',
-        formula: 'tot_cases*100000/population'
+        formula: 'tot_cases*100000/population',
+        type: 'numeric'
       },
       // {
       //   name: 'total_deaths_per_100000',
@@ -58,7 +59,7 @@ const DATASETS = [
       // },
     ],
     overriddenAttributes: [
-        {
+      {
         name: 'date',
         type: 'date',
         precision: 'day'
@@ -169,7 +170,6 @@ const DATASETS = [
       'series_complete_12pluspop_pct_svi',
       'series_complete_18pluspop_pct_svi',
       'series_complete_65pluspop_pct_svi',
-      'metro_status',
       'series_complete_pop_pct_ur_equity',
       'series_complete_12pluspop_pct_ur_equity',
       'series_complete_18pluspop_pct_ur_equity',
@@ -287,61 +287,58 @@ const DATASETS = [
     parentAttributes: ['state', 'county', 'population'],
     childCollectionName: 'vaccinations',
     omittedAttributeNames: [
-        'fips',
-        'mmwr_week',
-        'completeness_pct',
-        'svi_ctgy',
-        'metro_status',
-        'administered_dose1_recip',
-        'administered_dose1_pop_pct',
-        'administered_dose1_recip_12plus',
-        'administered_dose1_recip_12pluspop_pct',
-        'administered_dose1_recip_18plus',
-        'administered_dose1_recip_18pluspop_pct',
-        'administered_dose1_recip_65plus',
-        'administered_dose1_recip_65pluspop_pct',
-        'administered_dose1_recip_5plus',
-        'administered_dose1_recip_5pluspop_pct',
-        'total count fully vaccinated',
-        'count 5 and older fully vaccinated',
-        'count 12 and older fully vaccinated',
-        'count 18 and older fully vaccinated',
-        'count 65 and older fully vaccinated',
-        'series_complete_pop_pct_svi',
-        'series_complete_12pluspop_pct_svi',
-        'series_complete_18pluspop_pct_svi',
-        'series_complete_65pluspop_pct_svi',
-        'series_complete_pop_pct_ur_equity',
-        'series_complete_12pluspop_pct_ur_equity',
-        'series_complete_18pluspop_pct_ur_equity',
-        'series_complete_65pluspop_pct_ur_equity',
-        'series_complete_5pluspop_pct_svi',
-        'series_complete_5pluspop_pct_ur_equity',
-        'booster_doses',
-        'booster_doses_18plus',
-        'booster_doses_50plus',
-        'booster_doses_65plus'
+      'administered_dose1_recip',
+      'administered_dose1_pop_pct',
+      'administered_dose1_recip_5plus',
+      'administered_dose1_recip_5pluspop_pct',
+      'administered_dose1_recip_12plus',
+      'administered_dose1_recip_12pluspop_pct',
+      'administered_dose1_recip_18plus',
+      'administered_dose1_recip_18pluspop_pct',
+      'administered_dose1_recip_65plus',
+      'administered_dose1_recip_65pluspop_pct',
+      'booster_doses',
+      'booster_doses_18plus',
+      'booster_doses_50plus',
+      'booster_doses_65plus',
+      'census2019',
+      'census2019_5pluspop',
+      'census2019_12pluspop',
+      'census2019_18pluspop',
+      'census2019_65pluspop',
+      'completeness_pct',
+      'fips',
+      'metro_status',
+      'mmwr_week',
+      'series_complete_5plus',
+      'series_complete_12plus',
+      'series_complete_18plus',
+      'series_complete_65plus',
+      'series_complete_pop_pct_svi',
+      'series_complete_12pluspop_pct_svi',
+      'series_complete_18pluspop_pct_svi',
+      'series_complete_65pluspop_pct_svi',
+      'series_complete_pop_pct_ur_equity',
+      'series_complete_12pluspop_pct_ur_equity',
+      'series_complete_18pluspop_pct_ur_equity',
+      'series_complete_65pluspop_pct_ur_equity',
+      'series_complete_5pluspop_pct_svi',
+      'series_complete_5pluspop_pct_ur_equity',
+      'svi_ctgy',
+      'total count fully vaccinated',
     ],
     overriddenAttributes: [
-      {
-        name: 'date',
-        type: 'date',
-        precision: 'day'
-      }
+      {name: 'date', type: 'date', precision: 'day'}
     ],
     renamedAttributes: [
       {old: 'recip_county', new: 'county'},
       {old: 'recip_state', new: 'state'},
       {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
       {old: 'series_complete_5pluspop_pct', new: '% 5 and older fully vaccinated'},
-      {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
-      {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
-      {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
+      {old: 'series_complete_12pluspop_pct', new: '% 12 and older fully vaccinated'},
+      {old: 'series_complete_18pluspop_pct', new: '% 18 and older fully vaccinated'},
+      {old: 'series_complete_65pluspop_pct', new: '% 65 and older fully vaccinated'},
       {old: 'series_complete_yes', new: 'total count fully vaccinated'},
-      {old: 'series_complete_5plus', new: 'count 5 and older fully vaccinated'},
-      {old: 'series_complete_12plus', new: 'count 12 and older fully vaccinated'},
-      {old: 'series_complete_18plus', new: 'count 18 and older fully vaccinated'},
-      {old: 'series_complete_65plus', new: 'count 65 and older fully vaccinated'},
       {old: 'booster_doses_vax_pct', new: '% pop boosted'},
       {old: 'booster_doses_18plus_vax_pct', new: '% 18 and older boosted'},
       {old: 'booster_doses_50plus_vax_pct', new: '% 50 and older boosted'},
@@ -953,13 +950,18 @@ function toInitialCaps(str) {
  *
  * @param datasetName {string}
  * @param collectionList {[object]}
+ * @param url {string}
  * @return {{collections: [{name: string, attrs: *}], name, title}}
  */
-function specifyDataset(datasetName, collectionList) {
+function specifyDataset(datasetName, collectionList, url) {
   return {
     name: datasetName,
     title: datasetName,
-    collections: collectionList
+    collections: collectionList,
+    metadata: {
+      source: url,
+      importDate: new Date().toLocaleString()
+    }
   };
 }
 
@@ -994,9 +996,10 @@ function guaranteeAttributes(existingDataset, desiredCollectionDefs) {
  * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
  * @param collectionList {[object]}
+ * @param url {string}
  * @return Promise
  */
-function guaranteeDataset(datasetName, collectionList) {
+function guaranteeDataset(datasetName, collectionList, url) {
   return codapInterface.sendRequest({action: 'get', resource: `dataContext[${datasetName}]`})
       .then(function (result) {
         if (result && result.success) {
@@ -1005,7 +1008,7 @@ function guaranteeDataset(datasetName, collectionList) {
           return codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
-            values: specifyDataset(datasetName, collectionList)
+            values: specifyDataset(datasetName, collectionList, url)
           });
         }
       })
@@ -1431,7 +1434,7 @@ function fetchDataAndProcess() {
             data));
         if (collectionList) {
           // create the dataset, if needed.
-          return guaranteeDataset(datasetSpec.name, collectionList)
+          return guaranteeDataset(datasetSpec.name, collectionList, datasetSpec.documentation)
               // send the data
               .then(function () {
                 message('Sending data to CODAP')
