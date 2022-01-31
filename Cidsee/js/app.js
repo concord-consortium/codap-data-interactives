@@ -79,7 +79,11 @@ const DATASETS = [
       {
         name:'new_death',
         hidden:true
-        }
+      },
+      {
+        name: 'population',
+        type: 'numeric'
+      }
     ],
     renamedAttributes: [
       {old: 'submission_date', new: 'date'}
@@ -328,7 +332,8 @@ const DATASETS = [
       'total count fully vaccinated',
     ],
     overriddenAttributes: [
-      {name: 'date', type: 'date', precision: 'day'}
+      {name: 'date', type: 'date', precision: 'day'},
+      {name: 'population', type: 'numeric'}
     ],
     renamedAttributes: [
       {old: 'recip_county', new: 'county'},
