@@ -54,6 +54,9 @@ const notify = {
                 case `deleteAttributes` :
                 case `createAttributes` :
                 case `updateAttributes`:
+                case `hideAttributes`:
+                case `showAttributes`:
+
                     choosy_ui.update();     //  which reads the database structure (cols, atts) from CODAP
                     break;
                 //  todo: alter when JS fixes the bug about not issuing notifications for plugin-initiated changes.

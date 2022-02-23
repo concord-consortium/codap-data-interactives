@@ -460,31 +460,37 @@ const choosy_ui = {
 
         },
 
+        makeAttrDescriptor(iAttr) {
+            let str = `${iAttr.description||''} ${iAttr.unit||''}`;
+            if (iAttr.batch && iAttr.batch !== choosy.constants.noBatchString) {
+                str += ` (${iAttr.batch})`;
+            }
+            return str;
+        },
+
         /**
          * This text appears in a nice dialog if the user clicks the info button.
          * @param iAttr
          * @returns {string}
          */
         makeAttrInfo(iAttr) {
+            function quote(str) {
+              return str.replace(/\n/g, '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/'/g, '&apos;')
+                    .replace(/"/g, '&quot;')
+            }
             let out = "";
 
             if (iAttr.description || iAttr.unit) {
-                let theHint = ``;
-
-                if (iAttr.description) {
-                    theHint += `${iAttr.description}`;
-                }
-                if (iAttr.unit) {
-                    theHint += ` (${iAttr.unit})`;
-                }
-                if (iAttr.batch && iAttr.batch !== choosy.constants.noBatchString) {
-                    theHint += ` (${iAttr.batch})`;
-                }
-                theHint = theHint.replace(/\n/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/'/g, '&apos;');
+                let theHint = this.makeAttrDescriptor(iAttr);
+                theHint = quote(theHint);
                 const theImage = `&emsp;<img class="small-button-image" 
                     src="../../common/art/info.png" width="14" title="${theHint}" 
                     alt="press for info"
-                    onclick="choosy_ui.makeSweetAlert('${iAttr.name}', '${theHint}')" 
+                    onclick="choosy.makeInfoAlert('${iAttr.id}')" 
                     alt = "circular information button image"  
                     />`;
                 out += theImage;

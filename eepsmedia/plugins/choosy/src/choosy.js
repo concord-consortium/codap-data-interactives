@@ -73,6 +73,18 @@ const choosy = {
         };
     },
 
+    makeInfoAlert(attrId) {
+        let attr = null;
+        this.datasetInfo && this.datasetInfo.collections.forEach(function (col) {
+            attr = attr || col.attrs.find(function (attr) {
+                return String(attr.id) === attrId;
+            });
+        });
+        if (attr) {
+            choosy_ui.makeSweetAlert(attr.name, choosy_ui.attributeControls.makeAttrDescriptor(attr));
+        }
+    },
+
     setUpDatasets: async function () {
         try {
             choosy.log(`ds  choosy --- setUpDatasets --- try`);
