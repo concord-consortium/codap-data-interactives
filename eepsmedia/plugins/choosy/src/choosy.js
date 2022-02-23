@@ -57,6 +57,9 @@ const choosy = {
         await notify.setUpDocumentNotifications();
         document.getElementById("tag-attribute-name-text").value = choosy.tagsAttributeName;
         choosy_ui.update();
+        if (this.datasetList && this.datasetList.length === 1) {
+            $('#tabs').tabs({active: 1})
+        }
     },
 
     /**
