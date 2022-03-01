@@ -424,6 +424,148 @@ const DATASETS = [
     }
   },
   {
+    id: 'VaccinesByStateHistorical',
+    name: 'CDC COVID-19 Vaccinations in the United States by State',
+    endpoint: 'https://data.cdc.gov/resource/unsk-b7fc.json',
+    apiToken: 'CYxytZqW1xHsoBvRkE7C74tUL',
+    documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc',
+    parentAttributes: ['state', 'population'],
+    childCollectionName: 'vaccinations',
+    omittedAttributeNames: [
+      'additional_doses',
+      'additional_doses_12plus',
+      'additional_doses_18plus',
+      'additional_doses_50plus',
+      'additional_doses_65plus',
+      'additional_doses_janssen',
+      'additional_doses_moderna',
+      'additional_doses_pfizer',
+      'additional_doses_unk_manuf',
+      'administered',
+      'administered_janssen',
+      'administered_moderna',
+      'administered_pfizer',
+      'administered_unk_manuf',
+      'administered_5plus',
+      'administered_12plus',
+      'administered_18plus',
+      'administered_65plus',
+      'admin_per_100k',
+      'admin_per_100k_5plus',
+      'admin_per_100k_12plus',
+      'admin_per_100k_18plus',
+      'admin_per_100k_65plus',
+      'administered_dose1_pop_pct',
+      'administered_dose1_recip',
+      'administered_dose1_recip_1',
+      'administered_dose1_recip_2',
+      'administered_dose1_recip_3',
+      'administered_dose1_recip_4',
+      'administered_dose1_recip_5',
+      'administered_dose1_recip_6',
+      'administered_dose1_recip_5plus',
+      'administered_dose1_recip_5pluspop_pct',
+      'distributed',
+      'distributed_janssen',
+      'distributed_moderna',
+      'distributed_pfizer',
+      'distributed_unk_manuf',
+      'dist_per_100k',
+      'distributed_per_100k_5plus',
+      'distributed_per_100k_12plus',
+      'distributed_per_100k_18plus',
+      'distributed_per_100k_65plus',
+      'mmwr_week',
+      'recip_administered',
+      'series_complete_janssen',
+      'series_complete_moderna',
+      'series_complete_pfizer',
+      'series_complete_unk_manuf',
+      'series_complete_janssen_12plus',
+      'series_complete_moderna_12plus',
+      'series_complete_pfizer_12plus',
+      'series_complete_unk_manuf_1',
+      'series_complete_janssen_18plus',
+      'series_complete_moderna_18plus',
+      'series_complete_pfizer_18plus',
+      'series_complete_unk_manuf_2',
+      'series_complete_janssen_65plus',
+      'series_complete_moderna_65plus',
+      'series_complete_pfizer_65plus',
+      'series_complete_unk_manuf_3',
+      'series_complete_janssen_5plus',
+      'series_complete_moderna_5plus',
+      'series_complete_pfizer_5plus',
+      'series_complete_unk_manuf_5plus',
+      'series_complete_5plus',
+      'series_complete_12plus',
+      'series_complete_18plus',
+      'series_complete_65plus',
+      'series_complete_yes',
+    ],
+    overriddenAttributes: [
+      {name: 'date', type: 'date', precision: 'day'},
+      {name: 'population', type: 'numeric'},
+      {name: 'total count fully vaccinated', type: 'numeric'},
+    ],
+    renamedAttributes: [
+      {old: 'location', new: 'state'},
+      {old: 'series_complete_pop_pct', new: '% pop fully vaccinated'},
+      {old: 'series_complete_5pluspop_pct', new: '% 5 and older fully vaccinated'},
+      {old: 'series_complete_12pluspop', new: '% 12 and older fully vaccinated'},
+      {old: 'series_complete_18pluspop', new: '% 18 and older fully vaccinated'},
+      {old: 'series_complete_65pluspop', new: '% 65 and older fully vaccinated'},
+      {old: 'additional_doses_vax_pct', new: '% pop boosted'},
+      {old: 'additional_doses_5plus_vax_pct', new: '% 5 and older boosted'},
+      {old: 'additional_doses_12plus_vax_pct', new: '% 12 and older boosted'},
+      {old: 'additional_doses_18plus_vax_pct', new: '% 18 and older boosted'},
+      {old: 'additional_doses_50plus_vax_pct', new: '% 50 and older boosted'},
+      {old: 'additional_doses_65plus_vax_pct', new: '% 65 and older boosted'},
+    ],
+    timeSeriesAttribute: 'date',
+    uiComponents: [
+      {
+        type: 'select',
+        name: 'stateCode',
+        apiName: 'state',
+        label: 'Select State',
+        lister: function () {
+          return STATE_POPULATION_DATA.map(function (st) {
+            return st["USPS Code"];
+          });
+        }
+      }
+    ],
+    uiCreate: function (parentEl) {
+      let stateCtlDef = this.uiComponents[0];
+      let ctlState = createUIControl(stateCtlDef);
+      parentEl.append(ctlState);
+      let stateInputEl = ctlState.querySelector('[name=stateCode]');
+      if (stateInputEl) {
+        stateInputEl.addEventListener('change', function (ev) {countyCtlDef.updater(parentEl, ev.target.value);});
+      }
+    },
+    makeURL: function () {
+      let stateCode = document.querySelector(`#${this.id} [name=stateCode]`).value;
+      let limitPhrase = `$limit=100000`
+      let stateCodePhrase = stateCode? `Location=${stateCode.toUpperCase()}`: '';
+      if (stateCode) {
+        return this.endpoint + `?${[stateCodePhrase, limitPhrase].join('&')}`;
+      } else {
+        message('Please enter two character state code');
+      }
+    },
+    preprocess: function (data) {
+      // data = mergeCountyPopulation(data, 'state', 'county', 'STCODE', 'CTYNAME');
+      data = mergePopulation(data, 'state', 'USPS Code');
+      data = sortOnDateAttr(data, 'date');
+      return data;
+    },
+    postprocess: function () {
+      return createTimeSeriesGraph(this.name, this.timeSeriesAttribute);
+    }
+  },
+  {
     id: 'DeathConds',
     name: 'CDC COVID Contributing Conditions',
     documentation: 'https://www.splitgraph.com/cdc-gov/conditions-contributing-to-deaths-involving-hk9y-quqm',
@@ -767,7 +909,7 @@ const DATASETS = [
   }
 ]
 
-const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical'];
+const DEFAULT_DISPLAYED_DATASETS = ['StateData', 'VaccinesHistorical', 'VaccinesByStateHistorical'];
 const DEFAULT_DATASET = 'StateData';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
