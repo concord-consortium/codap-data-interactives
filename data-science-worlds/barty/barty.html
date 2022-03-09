@@ -22,16 +22,17 @@ distributed under the License is distributed on an "AS IS" BASIS,
 limitations under the License.
 ==========================================================================
 
-URLs:   http://localhost:8888/barty/barty.html
-
-            local (MAMP):  http://localhost:8888/plugins/barty/barty.html
-            local (tim using cloned Concord repository):  http://localhost:8888/concord-plugins/data-science-worlds/barty/barty.html
-
-            xyz:    https://codap.xyz/plugins/barty/barty.html
-
-            eeps:   https://www.eeps.com/codap/barty/barty.html
+URLs:
+To run from the github.io concord repo:
+https://codap.concord.org/releases/latest/static/dg/en/cert/index.html?di=https://concord-consortium.github.io/codap-data-interactives/data-science-worlds/barty/barty.html
 
 
+local (tim using cloned Concord repository):
+                http://localhost:8888/codap-data-interactives/data-science-worlds/barty/barty.html
+
+Local CODAP, local plugin
+
+http://localhost:8888/codap/static/dg/en/cert/index.html?di=http://localhost:8888/codap-data-interactives/data-science-worlds/barty/barty.html
 -->
 
 <!--
@@ -40,7 +41,7 @@ HOW TO DEPLOY THIS THING
     I (Tim) develop with a local version of the data set (MAMP).
     AFTER UPLOAD, you have to change the base URL to point to eeps or concord for the php.
 
-    You will find relevant material in barty.constants.js (about line 40) and in establishCredentials.php.
+    You will find relevant material in barty.constants.js (about line 45) and in establishCredentials.php.
     Also in the credential file itself, which is not in the reporitory for security reasons.
 
     Another key variable is "whence" in constants.

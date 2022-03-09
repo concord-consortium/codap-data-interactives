@@ -1,0 +1,12 @@
+#!/bin/bash
+# Outputs a list of NOAA Datasets as a JSON object
+# Requires curl and jq.
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+curl -s "$NOAA_URL/${NOAA_ENDPOINT_DATASETS}.json" | 
+  jq "[.results[] | {id:.id,name:.name}]"
+

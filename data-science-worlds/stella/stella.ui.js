@@ -22,7 +22,8 @@
  limitations under the License.
  ==========================================================================
 
-
+LOCAL MAMP, di syntax: https://localhost:8888/codap/static/dg/en/cert/index.html?di=localhost:8888/concord-plugins/data-science-worlds/stella/stella.html
+ LOCAL MAMP testing: localhost:8888/concord-plugins/data-science-worlds/stella/stella.html
  */
 
 /* global $, stella, SpectrumView, Snap, console  */
@@ -43,25 +44,37 @@ stella.ui = {
      */
     fixStellaUITextAndControls : function() {
 
-
         //  below the sky pane
         this.shortStatusField.html(stella.manager.playing ? "game in progress" : "no game");
 
         //  correct title for new/abort game button
         this.newGameButton.html( stella.manager.playing ? "abort game" : "new game");
 
+        //  zoomy button visibility
+
+        if (stella.badges.badgeStatus.position.level < 1) {
+            $('.astrometry1').css('visibility', 'hidden');
+        } else {
+            $('.astrometry1').css('visibility', 'visible');
+        }
+/*
+        [].forEach.call(document.querySelectorAll('.astrometry1'), function (el) {
+            el.style.visibility = 'hidden';
+        });
+*/
+
         //  make focusSystem label and make sure it's got the right spectrum
-        var focusStarText = stella.strings.notPointingText;
+
+        //  Blue bar at the top of the screen
+
+        let focusStarText = stella.strings.notPointingText;
         if (stella.manager.focusSystem) {
             focusStarText = "Pointing at " + stella.manager.focusSystem.sysID +
-                    " • " + stella.state.magnification + "X";
+                " • " + stella.state.magnification + "X";
             this.pointAtStarInputField.val( stella.manager.focusSystem.sysID );
 
             // stella.model.skySpectrum = stella.manager.focusSystem.setUpSpectrum();
         }
-
-        //  Blue bar at the top of the screen
-
         //  last part of the blue bar at the top of the screen
         var tTimeAndScoreText = "Date " + stella.state.now.toFixed(3) + " • score = " + stella.player.stellaScore;
         //  assemble the whole blue bar at the top
@@ -69,8 +82,12 @@ stella.ui = {
 
         //  Spectra tab: spectra labels
 
-        if (stella.spectrumManager.skySpectrumView.spectrum) {
-            this.skySpectrumLabel.text(stella.spectrumManager.skySpectrumView.toString());
+        const tRange = stella.spectrumManager.skySpectrumView.lambdaMin + " &ndash; " + stella.spectrumManager.skySpectrumView.lambdaMax + " nm";
+
+        this.spectrogramHeading.html("Spectrograms " + tRange);
+
+        if (stella.manager.focusSystem) {
+            this.skySpectrumLabel.html(stella.manager.focusSystem.sysID);
         } else {
             this.skySpectrumLabel.text(stella.strings.noSkySpectrum);
         }
@@ -101,7 +118,7 @@ stella.ui = {
         } else {
             tStarResultUnitsText = stella.starResultTypes[ tResultType ].units;
 
-            tStarResultHeadText = stella.manager.focusSystem.id + ": ";
+            tStarResultHeadText = stella.manager.focusSystem.sysID + ": ";
             tStarResultHeadText += tResultName + " = ";
             tStarResultHeadText += stella.ui.starResultValue !== null ? stella.ui.starResultValue : "(enter a value)";
             tStarResultHeadText += " (" + tStarResultUnitsText + ")";
@@ -174,6 +191,12 @@ stella.ui = {
         return oMenu;
     },
 
+    slideBlackbodyTemperature : function() {
+        stella.model.labBlackbodyTemperature = Number( this.labTempSlider.value );
+        $('#labTempDisplay').text(stella.model.labBlackbodyTemperature);
+        stella.spectrumManager.spectrumParametersChanged();
+    },
+
     /**
      * Define members corresponding to many id = "whatever" attributes in the html.
      */
@@ -201,10 +224,12 @@ stella.ui = {
 
         //  spectra tab
 
+        this.spectrogramHeading = $("#spectrogramHeading");
         this.labSpectrumLabel = $("#labSpectrumLabel");
         this.skySpectrumLabel = $("#skySpectrumLabel");
         this.gainSlider = $('#labSpectrographGainSlider');
-        this.labTempSlider = $('#labTempSlider');
+
+        this.labTempSlider =   document.getElementById("labTempSlider");     //  $('#labTempSlider');
 
         this.gainSlider.slider( {
                 min : 1,
@@ -219,6 +244,7 @@ stella.ui = {
             }
         );
 
+/*
         this.labTempSlider.slider( {
                 min : 1000,
                 max : 30000,
@@ -231,6 +257,7 @@ stella.ui = {
                 }
             }
         );
+*/
 
     }
 };

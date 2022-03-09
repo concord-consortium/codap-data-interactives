@@ -33,6 +33,7 @@ $(function () {
       'global',
       'selectionList',
       'undoChangeNotice',
+      'formulaEngine',
       'logMessage',
       'logMessageMonitor'
     ];
@@ -422,18 +423,20 @@ $(function () {
 
   var resourceMap = {
           attributeList: 'attribute',
-          attributeLocation: 'attribute',
           allCases: 'case',
           caseByIndex: 'case',
           caseByID: 'case',
           caseCount: 'case',
           caseSearch: 'case',
+          caseFormulaSearch: 'case',
           collectionList: 'collection',
           componentList: 'component',
           dataContextFromURL: 'dataContext',
           dataContextList: 'dataContext',
           globalList: 'global',
           itemByCaseID: 'item',
+          itemByID: 'item',
+          itemCount: 'item',
           itemSearch: 'item'
         };
 

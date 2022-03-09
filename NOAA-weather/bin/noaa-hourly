@@ -1,0 +1,44 @@
+#!/bin/bash
+# Outputs hourly weather data for a range
+# of dates for a weather station. JSON output.
+# Requires curl.
+#
+# Some Attributes:
+#   DEW  dew point
+#   NAME station name
+#   SLP  sea level pressure
+#   TMP  temperature
+#   VIS  visibility
+#   WND  wind
+#   AA1  precipitation
+
+PROGNAME=$(basename "$0")
+DIRNAME=$(dirname "$0")
+
+# shellcheck source=.noaa_rc
+. "$DIRNAME"/.noaa_rc
+# shellcheck source=~/.noaa_rc
+if [ -e "$HOME"/.noaa_rc ]; then
+# shellcheck source=~/.noaa_rc
+  . "$HOME"/.noaa_rc
+fi
+
+function usage() {
+  echo usage: "$PROGNAME yyyy-mm-dd yyyy-mm-dd station-id [attr-list]" 2>&1
+  exit 1;
+}
+
+[ "$#" -ge 3 ] || usage
+
+START_DATE="$1"
+END_DATE="$2"
+STATIONS="$3"
+ATTR_LIST="$4"
+
+QPS="dataset=global-hourly&format=csv&units=metric"
+QPS="$QPS&stations=$STATIONS"
+QPS="$QPS&startDate=$START_DATE&endDate=$END_DATE"
+[ "$ATTR_LIST" == "" ] || QPS="$QPS&dataTypes=$ATTR_LIST"
+
+curl "$NOAA_URL/$NOAA_ENDPOINT_DATA?$QPS"
+

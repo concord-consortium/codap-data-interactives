@@ -6,6 +6,8 @@
 
 define(function() {
 
+  var collectorCollectionName = '';
+
   function addClass(el, className) {
     if (el.classList)
       el.classList.add(className);
@@ -106,14 +108,16 @@ define(function() {
       show(document.getElementById("remove-variable"));
       show(document.getElementById("add-variable-series"));
       hide(document.getElementById("select-collection"));
-      hide(document.getElementById("refresh-list"));
     } else {
       hide(document.getElementById("add-variable"));
       hide(document.getElementById("remove-variable"));
       hide(document.getElementById("add-variable-series"));
       show(document.getElementById("select-collection"));
-      show(document.getElementById("refresh-list"));
     }
+  }
+
+  function getCollectionName() {
+    var sel = document.getElementById("select-collection");
   }
 
   function populateContextsList(caseVariables, view, codapCom) {
@@ -122,11 +126,11 @@ define(function() {
       sel.innerHTML = "";
       collections.forEach(function (col) {
         if (col.name !== 'Sampler')
-          sel.innerHTML += '<option value="' + col.name + '">' + col.name + "</option>";
+          sel.innerHTML += '<option value="' + col.name + '">' + col.title + "</option>";
       });
 
       if (!sel.innerHTML) {
-        sel.innerHTML += "<option>No collections</option>";
+        sel.innerHTML += "<option>No data sets</option>";
         sel.setAttribute("disabled", "disabled");
         return;
       } else {
@@ -141,20 +145,26 @@ define(function() {
       }
 
       if (sel.childNodes.length === 1) {
-        codapCom.setCasesFromContext(sel.childNodes[0].value, caseVariables)
+        collectorCollectionName = sel.childNodes[0].value;
+        codapCom.setCasesFromContext(collectorCollectionName, caseVariables)
           .then(setVariablesAndRender);
         codapCom.logAction('chooseCollection: %@ (auto)', sel.childNodes[0].value);
       } else {
-        sel.innerHTML = "<option>Select a collection</option>" + sel.innerHTML;
+        sel.innerHTML = "<option>Select a data set</option>" + sel.innerHTML;
         setVariablesAndRender([]);  // empty out mixer
         sel.onchange = function(evt) {
           if(evt.target.value) {
-            codapCom.setCasesFromContext(evt.target.value).then(setVariablesAndRender);
+            collectorCollectionName = evt.target.value;
+            codapCom.setCasesFromContext(collectorCollectionName).then(setVariablesAndRender);
             codapCom.logAction('chooseCollection: %@', evt.target.value);
           }
         };
       }
     };
+  }
+
+  function getCollectorCollectionName() {
+    return collectorCollectionName;
   }
 
   function toggleDevice(oldDevice, newDevice) {
@@ -165,16 +175,30 @@ define(function() {
   function viewSampler() {
     addClass(document.getElementById("tab-sampler"), "active");
     removeClass(document.getElementById("tab-options"), "active");
+    removeClass(document.getElementById("tab-about"), "active");
     show(document.getElementById("sampler"));
     hide(document.getElementById("options"));
+    hide(document.getElementById("about-panel"));
   }
 
   function viewOptions() {
     removeClass(document.getElementById("tab-sampler"), "active");
     addClass(document.getElementById("tab-options"), "active");
+    removeClass(document.getElementById("tab-about"), "active");
     hide(document.getElementById("sampler"));
     show(document.getElementById("options"));
     hide(document.getElementById("password-failed"));
+    hide(document.getElementById("about-panel"));
+  }
+
+  function viewAbout() {
+    removeClass(document.getElementById("tab-sampler"), "active");
+    removeClass(document.getElementById("tab-options"), "active");
+    addClass(document.getElementById("tab-about"), "active");
+    hide(document.getElementById("sampler"));
+    hide(document.getElementById("options"));
+    hide(document.getElementById("password-failed"));
+    show(document.getElementById("about-panel"));
   }
 
   function hideModel(hidden) {
@@ -203,7 +227,6 @@ define(function() {
         disable(spinnerButton);
       if (!hasClass(collectorButton, "active"))
         disable(collectorButton);
-      hide(document.getElementById("refresh-list"));
       show(document.getElementById("password-area"));
     } else {
       hide(mixerCover);
@@ -211,8 +234,6 @@ define(function() {
       enable(mixerButton);
       enable(spinnerButton);
       enable(collectorButton);
-      if (hasClass(collectorButton, "active"))
-        show(document.getElementById("refresh-list"));
       hide(document.getElementById("password-area"));
     }
     setReplacement( withReplacement, device, hidden);
@@ -270,7 +291,7 @@ define(function() {
   function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
             stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
             setNumRuns, setSpeed, speedText, setVariableName, setReplacement, setHidden,
-            setOrCheckPassword, reloadDefaultSettings) {
+            setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
     document.getElementById("add-variable-series").onclick = addVariableSeries;
@@ -280,7 +301,6 @@ define(function() {
     document.getElementById("mixer").onclick = switchState;
     document.getElementById("spinner").onclick = switchState;
     document.getElementById("collector").onclick = switchState;
-    document.getElementById("refresh-list").onclick = refreshCaseList;
     document.getElementById("sample_size").addEventListener('input', function (evt) {
       setSampleSize(this.value);
     });
@@ -302,6 +322,7 @@ define(function() {
     };
     document.getElementById("tab-sampler").onclick = viewSampler;
     document.getElementById("tab-options").onclick = viewOptions;
+    document.getElementById("tab-about").onclick = viewAbout;
 
     document.getElementById("with-replacement").onclick = function(evt) {
       setReplacement(evt.currentTarget.checked);
@@ -331,6 +352,8 @@ define(function() {
       reloadDefaultSettings();
       viewSampler();
     };
+    document.querySelector('body').addEventListener('click',
+        becomeSelected, {capture:true});
   }
 
   // Sets up the UI elements based on the loaded state of the model
@@ -343,6 +366,7 @@ define(function() {
   }
 
   return {
+    getCollectorCollectionName: getCollectorCollectionName,
     appendUIHandlers: appendUIHandlers,
     enableButtons: enableButtons,
     disableButtons: disableButtons,
@@ -352,6 +376,7 @@ define(function() {
     toggleDevice: toggleDevice,
     renderVariableControls: renderVariableControls,
     populateContextsList: populateContextsList,
+    getCollectionName: getCollectionName,
     setRunButtonMode: setRunButtonMode,
     render: render
   };

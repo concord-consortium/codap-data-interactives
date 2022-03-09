@@ -22,32 +22,41 @@
 
 class Attribute {
 
-  constructor(iRecord, iAttributeAssignment) {
+  constructor(iRecord, iAttributeAssignment, attributeMap) {
+    if (iAttributeAssignment) {
+      if (iAttributeAssignment.displayMe == null) iAttributeAssignment.displayMe = true;
+    } else {
+      iAttributeAssignment = {displayMe: false};
+    }
+    if (!iRecord) {iRecord = {};}
     this.name = iRecord.name;
     // Starting position in the data string. Value comes from codebook.
-    this.startPos = Number(iRecord.startPos);
+    this.startPos = (iRecord.startPos != null)?Number(iRecord.startPos):undefined;
     // Width in characters in the data string. Value comes from codebook
     this.width = iRecord.width;
     // Whether categorical or numeric. Codebook value can be overridden
-    this.format = (iAttributeAssignment && iAttributeAssignment.format) || iRecord.format;
+    this.format = iAttributeAssignment.format || iRecord.format;
     // If categorical, mapping of numeric codes to string values.
-    this.categories = (iAttributeAssignment && iAttributeAssignment.categories) || iRecord.categories;
+    this.categories = iAttributeAssignment.categories || iRecord.categories;
     // Attributes are grouped
-    this.groupNumber = iAttributeAssignment && iAttributeAssignment.group;
+    this.groupNumber = iAttributeAssignment.group;
     // Description of attribute
-    this.description = (iAttributeAssignment && iAttributeAssignment.description) || iRecord.description;
+    this.description = iAttributeAssignment.description || iRecord.description;
     // no longer used
-    this.chosen = iAttributeAssignment && iAttributeAssignment.defCheck;
+    this.chosen = iAttributeAssignment.defCheck;
+    // can't be changed
+    this.readonly = iAttributeAssignment.readonly;
 
-    this.displayMe = iAttributeAssignment; //Boolean(iRecord.defshow);
+    this.displayMe = iAttributeAssignment.displayMe; //Boolean(iRecord.defshow);
     this.hasCheckbox = this.displayMe;
     // if the order of attribute is important we can convey the order of categories to CODAP
     this.hasCategoryMap = iAttributeAssignment.hasCategoryMap;
     // remapping of numeric codes to be applied before mapping to a category string
-    this.rangeMap = (iAttributeAssignment && iAttributeAssignment.rangeMap);
+    this.rangeMap = iAttributeAssignment.rangeMap;
+    this.multirangeMap = iAttributeAssignment.multirangeMap;
 
     // title is the CODAP attribute string
-    this.title = (iAttributeAssignment && iAttributeAssignment.title) || iRecord.labl;
+    this.title = iAttributeAssignment.title || iRecord.labl;
     if (!this.title) {
       this.title = this.name;
     }
@@ -59,28 +68,84 @@ class Attribute {
     // a comma delimited list of attributes that must be present in the document
     // along with this attribute
     this.formulaDependents = iAttributeAssignment.formulaDependents;
+
+    this.originalAttr = iAttributeAssignment.originalAttr;
+    this.attributeMap = attributeMap;
   }
 
-  decodeValue(iValue) {
-    let startIndex = this.startPos - 1;
-    let out = iValue.slice(startIndex, startIndex + this.width);
+  getRawValue(dataObject) {
+    return dataObject[this.name];
+  }
 
-    if (this.format === 'categorical') {
-      let nOut = Number(out);
-      if (this.rangeMap) {
-        let x = nOut;
-        let foundRange = this.rangeMap.find(function (range) {
-          return (x >= range.from && x <= range.to);
+  isRecode() {
+    return (this.rangeMap || this.multirangeMap);
+  }
+
+  getAttributesRawValue (attributeName, dataString) {
+    if (this.startPos != null) {
+      return this.getRawValue(dataString);
+    }
+    else {
+      let attribute = this.attributeMap && this.attributeMap[attributeName];
+      return attribute && attribute.getRawValue(dataString);
+    }
+  }
+  recodeValue(dataString) {
+    let result = null;
+    let originalAttr = this.originalAttr;
+    let found = null;
+    if (this.multirangeMap) {
+      if (!Array.isArray(originalAttr)) {originalAttr = [originalAttr];}
+      let rawValues = this.originalAttr.map(function (name) {
+        return this.getAttributesRawValue(name, dataString);
+      }.bind(this));
+      found = this.multirangeMap.find(function (constraint) {
+        return originalAttr.reduce(function(prior, attrName, attrIx) {
+          let value = rawValues[attrIx];
+          let test = constraint.range[attrName];
+          if (!(value && value.trim().length)) {
+            return false;
+          }
+          if (test) {
+            return prior && (test.from <= value && test.to >= value);
+          } else {
+            return prior;
+          }
+        }, true);
+      });
+    }
+    else if (this.rangeMap) {
+      let rawValue = this.getAttributesRawValue(originalAttr, dataString);
+      if (rawValue.trim()) {
+        found = this.rangeMap.find(function(range) {
+          return (range.from<=rawValue && range.to >= rawValue);
         });
-        if (foundRange !== null && foundRange !== undefined) {
-          nOut = foundRange.recodeTo;
-        }
-      }
-      if (this.categories[nOut]) {
-        out = this.categories[Number(nOut)];
       }
     }
-    return out;
+    if (found) {
+      result = found.recodeTo;
+    }
+    return result;
+  }
+
+  decodeValue(dataString) {
+    let result;
+    let rawValue;
+    if (this.isRecode()) {
+      rawValue = this.recodeValue(dataString);
+    } else {
+      rawValue = this.getRawValue(dataString);
+    }
+
+    if (rawValue == null) {
+      result = '';
+    } else if (this.format === 'categorical' && this.categories) {
+      result = this.categories[Number(rawValue)];
+      if (result == null) {result = rawValue;}
+    } else {
+      result = rawValue;
+    }
+    return result;
   }
 
   /**
@@ -106,3 +171,4 @@ class Attribute {
   }
 }
 
+export {Attribute};

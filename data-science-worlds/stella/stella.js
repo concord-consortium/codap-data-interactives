@@ -169,7 +169,7 @@ stella.strings = {
  * @type {{version: string, bigG: number, solarLuminosity: number, solarMass: number, solarTemperature: number, astronomicalUnit: number, msPerDay: number, secPerYear: number, nStars: number, maxStarLogMass: number, minStarLogMass: number, giantTemperature: number, universeWidth: number, universeDistance: number, lambdaU: number, lambdaB: number, lambdaV: number, foo: null}}
  */
 stella.constants = {
-    version: "001q",
+    version: "001s",
     baseURL: "http://localhost:8888/dsg/stella.php",
     minimumBrightnessForDatabase : -1.0,
 
@@ -226,9 +226,8 @@ stella.constants = {
  * @param iMS
  */
 stella.elapse = function (iMS) {
-    //var tMS = stella.state.now.getTime();     //  uncomment if we go back to dateTimes
-    tMS += iMS;
-    //stella.state.now.setTime( tMS );
+    stella.model.stellaElapse(iMS);
+    stella.manager.updateStella();
 };
 
 /**

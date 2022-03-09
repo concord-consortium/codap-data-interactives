@@ -1,0 +1,727 @@
+/*
+==========================================================================
+
+ * Created by tim on 8/28/19.
+ 
+ 
+ ==========================================================================
+noaa-cdo in noaa-cdo
+
+Author:   Tim Erickson
+
+Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==========================================================================
+*/
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap);
+
+@font-face {
+    font-family: 'icomoon';
+    src:    url('../assets/webfonts/icomoon.eot?gbzaou#iefix') format('embedded-opentype'),
+            url('../assets/webfonts/icomoon.ttf?gbzaou') format('truetype'),
+            url('../assets/webfonts/icomoon.woff?gbzaou') format('woff'),
+            url('../assets/webfonts/icomoon.svg?gbzaou#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+/* colors and constants */
+:root {
+    --text: #222222;
+    --teal-dark: #177991;
+    --teal-light: #72bfca;
+    --teal-dark-75: rgba(23, 121, 145, 0.75);
+    --teal-light-25: rgba(114, 191, 202, 0.25);
+    --teal-light-12: rgba(114, 191, 202, 0.12);
+    --warning-color:  #c5b200;
+    --icon-arrow-drop-down: "\e900";
+    --icon-check-box-outline-blank: "\e901";
+    --icon-check-box: "\e902";
+    --icon-date-range: "\e903";
+    --icon-done: "\e904";
+    --icon-info: "\e905";
+    --icon-radio-button-checked: "\e908";
+    --icon-radio-button-unchecked: "\e909";
+    --icon-warning: "\e90b";
+}
+
+/* removes blue halo on Chrome around focused input */
+*:focus {
+    outline: none;
+}
+
+/* basic */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden;
+}
+
+#content {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    height: 100vh;
+    margin: 0;
+    padding: 0 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: stretch;
+    max-width: 600px;
+}
+
+#content #wx-intro-section {
+    flex-basis: 36px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+#wx-date-section {
+    flex-basis: 74px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+#wx-summary-section {
+    flex-basis: 56px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.wx-hide {
+    display: none!important;
+}
+
+.wx-day-range-selector {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    left: 12px;
+    right: 12px;
+    background-color: white;
+}
+
+.wx-day-range-selector input {
+    height: 32px;
+    flex-grow: 10;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: none;
+}
+
+
+/* sections */
+.wx-section-header-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+
+.wx-section-title {
+    font-weight: 600;
+    flex: 125px 0 0;
+}
+
+.wx-fixed-section-divider {
+    /* height: 0; */
+    flex-basis: 1px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    color: #dcdcdc;
+    /* border-width: 5px; */
+    width: 90%;
+    border-style: none;
+    background: #d5d5d5;
+    border-width: 0;
+    margin: 0 auto;
+}
+
+/*.wx-subsection {*/
+/*    margin: 6px 12px;*/
+/*    border-radius: 3px;*/
+/*    border: solid 1px var(--teal-dark-75);*/
+/*    padding: 6px;*/
+/*}*/
+
+/* drop downs */
+.wx-dropdown .wx-dropdown-body {
+    padding: 0 12px;
+    overflow-y: hidden;
+    transition-property: max-height;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-dropdown.wx-down .wx-dropdown-body {
+    max-height: 400px;
+}
+
+.wx-dropdown.wx-up .wx-dropdown-body {
+    max-height: 0;
+}
+
+.wx-dropdown-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.wx-dropdown-indicator::before {
+    font-family: icomoon;
+    font-size: 20px;
+    content: var(--icon-arrow-drop-down);
+    color: var(--teal-dark);
+}
+
+.wx-dropdown.wx-down .wx-dropdown-indicator {
+    transform: rotate(180deg);
+}
+
+.wx-dropdown-header, .wx-pop-over-anchor, .wx-info-button, .wx-button {
+    cursor: pointer;
+}
+
+/*
+ * pop-up: these elements display above a grayed out main page and are modal
+ */
+.wx-pop-up .wx-pop-up-content {
+    position: absolute;
+    max-height: 0;
+    left: 12px;
+    right: 12px;
+    top: 35px;
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    background-color: white;
+
+    border: 0 solid var(--teal-dark);
+    border-radius: 6px;
+
+    transition-property: max-height, border-width;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-pop-up-header {
+    flex: 25px 0 0;
+}
+
+.wx-pop-up-footer {
+    flex: 50px 0 0;
+}
+
+.wx-pop-up.wx-open .wx-pop-up-content {
+    max-height: 372px;
+    border-width: 1px;
+}
+
+.wx-pop-up .wx-cover {
+    position: absolute;
+    background-color: rgba(0,0,0,0.32);
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    visibility: hidden;
+}
+
+.wx-data-type {
+    display: none;
+}
+.wx-data-type.wx-visible {
+    display: table-row;
+}
+
+.wx-pop-up.wx-open .wx-cover {
+    visibility: visible;
+}
+
+.wx-pop-up-header {
+    background-color: var(--teal-dark);
+    height: 25px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    line-height: 25px;
+}
+
+.wx-pop-up-body {
+    background-color: white;
+    padding: 0 12px;
+    flex: 10 10 299px;
+    overflow-y: auto;
+}
+
+/*
+    pop-overs: these elements pop out, but remain attached to their header and
+   are non-modal.
+*/
+.wx-pop-over-placeholder {
+    height: 32px;
+    /*width: 362px;*/
+}
+.wx-pop-over {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    max-height: 32px;
+    border: thin solid var(--teal-dark);
+    border-radius: 6px;
+    background-color: white;
+    overflow-y: hidden;
+
+    transition-property: max-height;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
+
+.wx-pop-over .wx-pop-over-anchor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px;
+    transition: background-color .5s ease-in;
+}
+
+.wx-pop-over .wx-pop-over-body {
+    border-radius: 6px;
+}
+
+.wx-pop-over.wx-open {
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.25);
+    max-height: 400px;
+    z-index: 20;
+}
+
+.wx-pop-over.wx-open .wx-pop-over-anchor{
+    background-color: var(--teal-light-25);
+    border-bottom: thin solid var(--teal-dark-75);
+}
+
+.wx-pop-over.wx-open .wx-pop-over-body {
+    max-height: 600px;
+}
+
+/* selected types */
+.wx-selection-count {
+    padding: 1.5px 5px;
+    border-radius: 3px;
+    background-color: var(--teal-light-25);
+}
+
+.wx-user-selection {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    color: var(--teal-dark);
+    max-width: 164px;
+}
+
+/* buttons */
+.wx-info-button {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.wx-day-range-selector .wx-calendar-button {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    flex-grow: 0;
+}
+
+.wx-button {
+    margin: 6px;
+    padding: 6px;
+    /*width: 82px;*/
+    /*height: 32px;*/
+    border-radius: 3px;
+    border: solid 1px var(--teal-light);
+    background-color: white;
+}
+
+.wx-radio-block {
+    display: flex;
+    align-items: center;
+}
+
+/* inputs */
+input[type=date] {
+    cursor: pointer;
+}
+
+input[type=radio] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+}
+
+input[type=checkbox],input[type=radio] {
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input[type=checkbox]:before {
+    content: var(--icon-check-box-outline-blank);
+    color: var(--teal-dark);
+}
+
+input[type=checkbox]:checked:before {
+    content: var(--icon-check-box);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:before {
+    content: var(--icon-radio-button-unchecked);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:checked:before {
+    content: var(--icon-radio-button-checked);
+    color: var(--teal-dark);
+}
+
+span#wx-dataset-form {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* misc */
+/*.wx-placeholder-text {*/
+/*    opacity: 0.5;*/
+/*    color: var(--text);*/
+/*}*/
+
+/* layout of specific objects */
+.wx-scroll-area {
+    border-top: thin solid var(--teal-light);
+    border-bottom: thin solid var(--teal-light);
+    flex-basis: 300px;
+    flex-grow: 10;
+    flex-shrink: 10;
+    overflow-y: scroll;
+}
+
+#content #wx-main-scroll-area {
+    height: 300px;
+    flex-grow: 10;
+    flex-shrink: 10;
+}
+
+#wx-month-range-selector {
+    padding: 6px;
+}
+
+#wx-month-range-selector input[type=number] {
+    width:49px;
+}
+
+#wx-attribute-section table {
+    width: 100%;
+}
+
+#wx-attribute-section table th {
+    background-color: rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.wx-status-graphic {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    flex: 18px 0 0;
+    margin-right: 6px;
+    font-size: 18px;
+}
+
+/*#wx-double-calendar {*/
+/*    margin: 19px;*/
+/*    width: 274px;*/
+/*    height: 153px;*/
+/*    opacity: 0.5;*/
+/*    border: solid 1px var(--teal-dark);*/
+/*}*/
+
+.wx-control-area {
+    flex: 173px 0 0;
+}
+
+.wx-control-row {
+    text-align: right;
+}
+
+.wx-summary.wx-transfer-in-progress #wx-get-button {
+    background-color: var(--teal-light-25);
+}
+
+.wx-summary .wx-message-area {
+    color: var(--text);
+}
+
+.wx-summary.wx-transfer-success .wx-message-area,
+.wx-summary.wx-transfer-failure .wx-message-area {
+    color: var(--teal-dark);
+}
+
+.wx-summary button:hover {
+    background-color: var(--teal-light-12);
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+.wx-summary .wx-status-graphic {
+    font-family: 'icomoon' !important;
+}
+
+.wx-summary.wx-transfer-in-progress  .wx-status-graphic {
+    background-image: url('../assets/images/progress-indicator.svg');
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+}
+.wx-summary.wx-transfer-success .wx-status-graphic::before {
+    content: var(--icon-done);
+    color: var(--teal-dark-75);
+}
+
+.wx-summary.wx-transfer-failure .wx-status-graphic::before {
+    content: var(--icon-warning);
+    color: var(--warning-color);
+}
+
+/* calendar */
+.container-calendar {
+    background: #ffffff;
+    padding: 15px;
+    max-width: 475px;
+    margin: 0 auto;
+    overflow: auto;
+    font-family: sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.container-calendar .table-calendar th, .container-calendar .table-calendar td {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+}
+.wx-calendar-title {
+    text-align: center;
+}
+
+.table-calendar {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table-calendar td, .table-calendar th {
+    padding: 2px;
+    border: 1px solid /*#e2e2e2*/rgba(225,225,225,.25);
+    text-align: center;
+    vertical-align: top;
+}
+
+.date-picker.selected {
+    background-color: var(--teal-dark-75);
+}
+
+.button-container-calendar {
+    position: relative;
+    margin-bottom: 1em;
+    overflow: hidden;
+    clear: both;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.button-container-calendar button {
+    cursor: pointer;
+    display: inline-block;
+    /* border-radius: 4px; */
+    padding: 1px 2px;
+    border: none;
+    background: none;
+}
+
+.footer-container-calendar select {
+    cursor: pointer;
+    display: inline-block;
+    background: white;
+    border: 1px solid gray;
+    border-radius: 6px;
+}
+
+.date-picker {
+    cursor: pointer;
+}
+
+.cal-shade {
+    background-color: var(--teal-light-25);
+}
+
+input.year-select {
+    border: thin grey solid;
+    height: 18px;
+}
+
+.geoname-selection-list {
+    position: absolute;
+    background-color: white;
+    width: 200px;
+    padding: 0.5em;
+    border: thin solid gray;
+}
+/*.geoname-selection-list .geoname-selector-option:hover, */.geoname-candidate {
+    background-color: lightblue;
+}
+.geoname-hidden {
+    display: none;
+}
+
+
+/*
+ * from font generated by icomoon
+ */
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    font-size: 20px;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/*.icon-arrow-drop-down:before {*/
+/*    content: var(--icon-arrow-drop-down);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+/*.icon-check-box-outline-blank:before {*/
+/*    content: var(--icon-check-box-outline-blank);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+/*.icon-check-box:before {*/
+/*    content: var(--icon-check-box);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+.icon-date-range:before {
+    content: var(--icon-date-range);
+    color: var(--teal-dark-75);
+}
+
+/*.icon-done:before {*/
+/*    content: var(--icon-done);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+.icon-info:before {
+    content: var(--icon-info);
+    color: var(--teal-dark-75);
+}
+
+/*.icon-progress-indicator .path1:before {*/
+/*    content: "\e906";*/
+/*    color: rgb(114, 191, 202);*/
+/*}*/
+
+/*.icon-progress-indicator .path2:before {*/
+/*    content: "\e907";*/
+/*    margin-left: -1em;*/
+/*    color: rgb(23, 121, 145);*/
+/*}*/
+
+/*.icon-radio-button-checked:before {*/
+/*    content: var(--icon-radio-button-checked);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+/*.icon-radio-button-unchecked:before {*/
+/*    content: var(--icon-radio-button-unchecked);*/
+/*    color: var(--teal-dark-75);*/
+/*}*/
+
+/*.icon-warning:before {*/
+/*    content: var(--icon-warning);*/
+/*    color: var(--warning-color);*/
+/*}*/

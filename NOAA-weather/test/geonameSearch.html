@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Geographic Name Search</title>
+  <!--suppress CssUnusedSymbol -->
+  <style>
+    input {
+      width: 200px;
+    }
+    .geoname-selection-list {
+      position: absolute;
+      background-color: white;
+      width: 200px;
+      padding: 0.5em;
+      border: thin solid gray;
+    }
+    .geoname-hidden {
+      visibility: hidden;
+    }
+    .geoname-selection-list .geoname-selector-option:hover {
+      background-color: lightblue;
+    }
+  </style>
+</head>
+<body>
+<h1>Geographic Name Search</h1>
+<div id="attachment-point"></div>
+<div id="message">
+
+</div>
+<!--<script src="js/geonameSearch.js" ></script>-->
+<script type="module">
+  import {GeonameSearch} from "../js/geonameSearch.js";
+  function selectionHandler(place) {
+    document.getElementById('message').innerHTML = `${place.name} (${place.latitude}, ${place.longitude})`;
+  }
+  new GeonameSearch(document.getElementById('attachment-point'), 'jsandoe', selectionHandler);
+</script>
+</body>
+</html>

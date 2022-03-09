@@ -21,7 +21,7 @@
     "consistent-return": "off", // liberal use of inconsistent returns, e.g. SproutCore properties
     "dot-notation": ["warn", { "allowKeywords": false }],
     "eqeqeq": ["error", "allow-null"],
-    "no-alert": "error",
+    "no-alert": "off",
     "no-caller": "error",
     "no-eval": "error",
     "no-extra-bind": "off", // 18 extra binds

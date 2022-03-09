@@ -1,58 +1,73 @@
 #!/usr/bin/env bash
 #
+# Assembles built images of standard plugins whether local to this repo or in another repo.
+#
 # Creates a zip file, "codap-data-interactives-{build-num}.zip" in target
 # containing self-contained versions of each endorsed plugin.
 #
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
-HOMEDIR=$DIRNAME/..
+HOMEDIR="$DIRNAME/.."
 
 # make sure we are in the root directory of the plugin folder
-cd $HOMEDIR
+cd "$HOMEDIR" || exit
 
 # Set env
-TARGET=$PWD/target # Where to put zip.
-WORKING=/tmp/$PROGNAME.$$
+TARGET="$PWD/target" # Where to put zip.
+WORKING="$TARGET/build"
 BUILD_NUM=`cat lib/build-num.txt`
-BUILD_DIR=$WORKING/build_$BUILD_NUM
+BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool"
-HIDDEN_DIRS="Common"
-BUILT_PLUGIN_DIRS="onboarding"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy"
+HIDDEN_DIRS="Common eepsmedia/common"
+BUILT_PLUGIN_DIRS="onboarding
+                   ../codap-transformers
+                   ../story-builder"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 
-PLUGIN_MAP_FILE=${HOMEDIR}/data_interactive_map.json
+PLUGIN_MAP_FILE="${HOMEDIR}/data_interactive_map.json"
 PUBLISHED_PLUGIN_MAP_FILE=published-plugins.json
 
 JSON_PARSER=jq
 
 function makeIndexJSON() {
   tmp=
-  for t in $*; do
+  for t in "$@"; do
     [ "$tmp" != "" ] && tmp="$tmp,"
     tmp="$tmp\"/$t\""
   done
-  cat $PLUGIN_MAP_FILE | $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
+  echo tmp=$tmp
+  cat $PLUGIN_MAP_FILE |
+#    $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
+    $JSON_PARSER '[.data_interactives[] | select(.isStandard=="true")]' > ${PUBLISHED_PLUGIN_MAP_FILE}
 }
 
 function echoPlugins() {
   echo "Plugins:"
-  for plugin in $*; do
+  for plugin in "$@"; do
     echo "  $plugin";
   done
 }
 
 function buildPlugins() {
-  for plugin in $*; do
+  for plugin in "$@"; do
+    PLUGIN_BUILD_DIR=build
+    PLUGIN_NAME=$(basename $plugin)
+    if [ "$plugin" == "onboarding" ] ; then
+      PLUGIN_BUILD_DIR=target
+    fi
     echo Building $plugin
-    ( cd $plugin && npm run clean && npm run build && cp -r target $BUILD_DIR/$plugin )
+    ( cd $plugin && npm install && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
   done
 }
 
 function copyStaticPlugins() {
-  cp -r $* $BUILD_DIR
+  for t in "$@"; do
+    mkdir -p "${BUILD_DIR}/${t}"
+    rsync -av --exclude=node_modules/ --exclude=.idea/ "${t}/" "${BUILD_DIR}/${t}"
+  done
 }
 
 function usage() {
@@ -60,22 +75,24 @@ function usage() {
 }
 
 function error() {
-  echo ${PROGNAME}: error - $* 1>&2
+  echo ${PROGNAME}: error - "$@" 1>&2
   exit 1
 }
 
 # check for needed programs
 which -s $JSON_PARSER || error "Please install $JSON_PARSER."
 
-mkdir -p $TARGET
-mkdir -p $BUILD_DIR
+mkdir -p "$TARGET"
+mkdir -p "$BUILD_DIR"
+rm -rf "$WORKING"
+mkdir -p "$WORKING/plugins"
 echo "Build: $BUILD_NUM"
 echoPlugins $ALL_DIRS
 copyStaticPlugins $COPIED_DIRS
 buildPlugins $BUILT_PLUGIN_DIRS
-makeIndexJSON $STATIC_PLUGIN_DIRS
-cp $PUBLISHED_PLUGIN_MAP_FILE $BUILD_DIR
+makeIndexJSON $ALL_DIRS
+cp "$PUBLISHED_PLUGIN_MAP_FILE" "$BUILD_DIR"
 
- ( cd $WORKING ; zip -rq $TARGET/$ZIP_FILENAME build_$BUILD_NUM )
+ ( cd "$WORKING" ; zip -rq "$TARGET/$ZIP_FILENAME" plugins )
 #rm $BUILD_DIR
 #rm $PUBLISHED_PLUGIN_MAP_FILE

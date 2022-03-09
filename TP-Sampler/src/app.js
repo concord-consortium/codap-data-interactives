@@ -17,6 +17,8 @@ function(Snap, CodapCom, View, ui, utils) {
       device = defaultSettings.device,       // "mixer, "spinner", "collector"
       isCollector = device === "collector",
       withReplacement = true,
+      previousExperimentDescription = '', // Used to tell when user has changed something
+      previousSampleSize = null,  // Also used to help know whether to increment experiment number
 
       running = false,
       paused = false,
@@ -28,7 +30,8 @@ function(Snap, CodapCom, View, ui, utils) {
       hidden = false,
 
       experimentNumber = 0,
-      sentRun = 0,
+      mostRecentRunNumber = 0,  // Gets reset between experiments, but if the parameters haven't changed we keep incrementing
+      runNumberSentInCurrentSequence = 0, // This gets reset when user presses start regardless of whether params have changed
       sequence = [],
 
       numRuns = defaultSettings.repeat,
@@ -50,6 +53,7 @@ function(Snap, CodapCom, View, ui, utils) {
       success: true,
       values: {
         experimentNumber: experimentNumber,
+        mostRecentRunNumber: mostRecentRunNumber,
         variables: variables,
         draw: sampleSize,
         repeat: numRuns,
@@ -58,7 +62,11 @@ function(Snap, CodapCom, View, ui, utils) {
         withReplacement: withReplacement,
         hidden: hidden,
         password: password,
-        dataSetName: dataSetName
+        dataSetName: dataSetName,
+        previousExperimentDescription: previousExperimentDescription,
+        previousSampleSize: previousSampleSize,
+        attrNames: codapCom.attrNames,
+        attrIds: codapCom.attrIds
       }
     };
   }
@@ -66,7 +74,10 @@ function(Snap, CodapCom, View, ui, utils) {
   function loadInteractiveState(state) {
     if (state) {
       dataSetName = state.dataSetName;
+      previousExperimentDescription = state.previousExperimentDescription;
+      previousSampleSize = state.previousSampleSize;
       experimentNumber = state.experimentNumber || experimentNumber;
+      mostRecentRunNumber = state.mostRecentRunNumber || mostRecentRunNumber;
       if (state.variables) {
         // swap contents of sequence into variables without updating variables reference
         variables.length = 0;
@@ -85,6 +96,10 @@ function(Snap, CodapCom, View, ui, utils) {
       if (isCollector) {
         refreshCaseList();
       }
+      if (state.attrNames) {
+        codapCom.attrNames = state.attrNames;
+        codapCom.attrIds = state.attrIds;
+      }
     }
     view.render();
   }
@@ -92,8 +107,6 @@ function(Snap, CodapCom, View, ui, utils) {
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
   codapCom.init()
       .then(setCodapDataSetName)
-      .then(codapCom.findOrCreateDataContext)
-// eslint-disable-next-line dot-notation
       .catch(codapCom.error);
 
   function setCodapDataSetName() {
@@ -157,7 +170,7 @@ function(Snap, CodapCom, View, ui, utils) {
       tMax = variables.reduce(function (iCurrMax, iValue) {
         return (iCurrMax === '' || Number(iCurrMax) < Number(iValue)) ? iValue : iCurrMax;
       }, '');
-      tResult = String(Number(tMax) + 1)
+      tResult = String(Number(tMax) + 1);
     }
     else {
       tMax = variables.reduce(function (iCurrMax, iValue) {
@@ -202,14 +215,14 @@ function(Snap, CodapCom, View, ui, utils) {
 
     var sequenceRequest = showSequencePrompt();
     if (sequenceRequest) {
-      var sequence = utils.parseSequence(sequenceRequest);
+      var sequence = utils.parseSpecifier(sequenceRequest);
       if (sequence) {
         // swap contents of sequence into variables without updating variables reference
         variables.length = 0;
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
         codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
-      else alert('Sorry. Unable to parse that. Here are some valid range expressions: 1-50, -5 to 5, 1.0 to 5.0, or A-Z');
+      else alert('Sorry. Unable to parse that. Here are some valid list and range expressions: "a,b,b,b", "cat,cat,dog", "1-50", "-5 to 5", "1.0 to 5.0", or "A-Z"');
     }
 
     view.render();
@@ -217,7 +230,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function showSequencePrompt() {
     // eslint-disable-next-line no-alert
-    return window.prompt("Enter a range (e.g. 1-50, -5 to 5, 1.0 to 5.0, A-Z)", "a to c");
+    return window.prompt('Enter a list (e.g. "cat, cat, dog") or a range (e.g. "1-50", "-5 to 5", "1.0 to 5.0", "A-Z")', "a to c");
   }
 
   /**
@@ -293,18 +306,22 @@ function(Snap, CodapCom, View, ui, utils) {
   function resetButtonPressed() {
     this.blur();
     experimentNumber = 0;
-    codapCom.deleteAll(device, ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.deleteAll();
+    // we used to delete all attributes, and recreate them if we were a collector.
+    // we don't do that any more because it seems to take a very long time, and the request
+    // can sometimes timeout.
+    // codapCom.deleteAllAttributes(device, ui.populateContextsList(caseVariables, view, codapCom));
     codapCom.logAction("clearData:");
   }
 
   function addNextSequenceRunToCODAP() {
-    if (!sequence[sentRun]) return;
+    if (!sequence[runNumberSentInCurrentSequence]) return;
 
-    var vars = sequence[sentRun].map(function(i) {
+    var vars = sequence[runNumberSentInCurrentSequence].map(function(i) {
       return variables[i];
     });
-    codapCom.addValuesToCODAP(sentRun+1, vars, isCollector);
-    sentRun++;
+    codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector);
+    runNumberSentInCurrentSequence++;
   }
 
   function run() {
@@ -314,13 +331,13 @@ function(Snap, CodapCom, View, ui, utils) {
       var samples = [];
       if (!paused) {
         if (speed === kFastestSpeed) {
-          while (ix < sampleGroupSize && runNumber < sequence.length) {
-            var values = sequence[runNumber].map(
+          while (ix < sampleGroupSize && currRunNumber < sequence.length) {
+            var values = sequence[currRunNumber].map(
               function (v) {
                 return variables[v];
               });
-            var run = runNumber ++;
-            sentRun++;
+            var run = mostRecentRunNumber++;
+            currRunNumber++;
             samples.push({
               run: run+1,
               values: values
@@ -329,7 +346,7 @@ function(Snap, CodapCom, View, ui, utils) {
           }
           codapCom.addMultipleSamplesToCODAP(samples, isCollector);
 
-          if (runNumber >= sequence.length) {
+          if (currRunNumber >= sequence.length) {
             setup();
             return;
           }
@@ -344,23 +361,32 @@ function(Snap, CodapCom, View, ui, utils) {
     }
 
     function selectNext() {
-      var timeout = (speed === kFastestSpeed) ? 0 :
+      var timeout = device === "spinner" ? 1 :
+          (speed === kFastestSpeed) ? 0 :
           // Give "Fast" a little extra
-          (speed === kFastestSpeed - 1 ? 1000 / kFastestSpeed :
-              1000 / speed);
+          (speed === kFastestSpeed - 1 ? 600 / kFastestSpeed :
+              600 / speed);
       if (!paused) {
         if (speed !== kFastestSpeed) {
-          if (sequence[runNumber][draw] === "EMPTY") {
+          if (sequence[currRunNumber][draw] === "EMPTY") {
             // jump to the end. Slots will push out automatically.
-            draw = sequence[runNumber].length - 1;
+            draw = sequence[currRunNumber].length - 1;
           }
-          view.animateSelectNextVariable(sequence[runNumber][draw], draw,
-              addNextSequenceRunToCODAP);
+          function selectionMade() {
+            if (running) {
+              if (sequence[currRunNumber]) {
+                setTimeout(selectNext, timeout);
+              } else {
+                setTimeout(view.endAnimation, timeout);
+              }
+            }
+          }
+          view.animateSelectNextVariable(sequence[currRunNumber][draw], draw, selectionMade, addNextSequenceRunToCODAP);
 
-          if (draw < sequence[runNumber].length - 1) {
+          if (draw < sequence[currRunNumber].length - 1) {
             draw++;
           } else {
-            runNumber++;
+            currRunNumber++;
             draw = 0;
           }
         } else {
@@ -368,46 +394,58 @@ function(Snap, CodapCom, View, ui, utils) {
           return;
         }
       }
-      if (running) {
-        if (sequence[runNumber]) {
-          setTimeout(selectNext, timeout);
-        } else {
-          setTimeout(view.endAnimation, timeout);
-        }
-      }
+
       // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
     }
 
 
-    var runNumber = 0,
+    var runNumber,
+        currRunNumber = 0,
         draw = 0,
         tSampleSize = Math.floor(sampleSize),
         tNumRuns = Math.floor(numRuns),
         // sample group size is the number of samples we will send in one message
-        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1));
+        sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1)),
+        tItems = device === "mixer" ? "items" : (device === "spinner" ? "sections" : "cases"),
+        tReplacement = withReplacement ? " (with replacement)" : " (without replacement)",
+        tUniqueVariables = new Set(variables),
+        tNumItems = device === "spinner" ? tUniqueVariables.size : variables.length,
+        tCollectorDataset = isCollector ? " from " + ui.getCollectorCollectionName() : "",
+        tDescription = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
+            tCollectorDataset + tReplacement,
+        tStringifiedVariables = JSON.stringify(variables);
 
+    if( tDescription + tStringifiedVariables !== previousExperimentDescription ||
+        (previousSampleSize !== null && previousSampleSize !== tSampleSize)) {
+      experimentNumber++;
+      previousExperimentDescription = tDescription + tStringifiedVariables;
+      previousSampleSize = tSampleSize;
+      mostRecentRunNumber = 0;
+    }
+    runNumberSentInCurrentSequence = 0;
+    runNumber = mostRecentRunNumber;
     // this doesn't get written out in array, or change the length
     variables.EMPTY = "";
-    experimentNumber += 1;
-    codapCom.startNewExperimentInCODAP(experimentNumber, tSampleSize);
+    codapCom.findOrCreateDataContext().then(function () {
+      codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
 
-    console.log('sample group size: ' + sampleGroupSize);
-    sentRun = 0;
+      console.log('sample group size: ' + sampleGroupSize);
 
-    sequence = createRandomSequence(tSampleSize, tNumRuns);
+      sequence = createRandomSequence(tSampleSize, tNumRuns);
 
-    if (!hidden && (device === "mixer" || device === "collector")) {
-      view.animateMixer();
-    }
+      if (!hidden && (device === "mixer" || device === "collector")) {
+        view.animateMixer();
+      }
 
-    if (speed === kFastestSpeed) {
-      // send sequence directly to codap
-      addValuesToCODAPNoDelay();
-      return;
-    }
+      if (speed === kFastestSpeed) {
+        // send sequence directly to codap
+        addValuesToCODAPNoDelay();
+        return;
+      }
 
 
-    selectNext();
+      selectNext();
+    });
   }
 
   // permanently sorts variables so identical ones are next to each other
@@ -519,13 +557,23 @@ function(Snap, CodapCom, View, ui, utils) {
     codapCom.logAction("reloadDefaultSettings");
   }
 
+  function registerForCODAPNotices() {
+    codapCom.register('notify', '*', 'titleChange', refreshCaseList);
+    codapCom.register('notify', '*', 'dataContextCountChanged', refreshCaseList);
+  }
+
   function getStarted() {
     view.reset();
     ui.enableButtons();
     ui.render(hidden, password, false, withReplacement, device);
+    registerForCODAPNotices();
     samples = [];
     running = false;
     paused = false;
+  }
+
+  function becomeSelected() {
+    codapCom.selectSelf();
   }
 
   // Set the model up to the initial conditions, reset all buttons and the view
@@ -537,7 +585,7 @@ function(Snap, CodapCom, View, ui, utils) {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
     stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
     setNumRuns, setSpeed, view.speedText, view.setVariableName, setReplacement, setHidden,
-    setOrCheckPassword, reloadDefaultSettings);
+    setOrCheckPassword, reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model
   getStarted();

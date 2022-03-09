@@ -12,6 +12,8 @@ RESOURCE_SOURCE=source/resources
 
 mkdir $TARGET
 npm run build-onboarding
+npm run build-task_descriptions
+npm run build-task_descriptions_2
 
 cp $HTML_SOURCE $TARGET
 cp $CSS_SOURCE $TARGET

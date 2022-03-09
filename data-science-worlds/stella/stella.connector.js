@@ -87,7 +87,8 @@ stella.connector = {
                 type: iStarResult.type,
                 value: iStarResult.enteredValue,
                 units: iStarResult.units,
-                points: iStarResult.points
+                points: iStarResult.points,
+                source: iStarResult.source
             },
             this.starResultsDataSetName,
             iCallback           //  callback
@@ -172,6 +173,20 @@ stella.connector = {
 
     },
 
+    getSelectionListFromCODAP : async function(iDataSetName) {
+        const tMessage = {
+            action : "get",
+            resource : `dataContext[${iDataSetName}].selectionList`,
+        };
+
+        const selectionResult = await codapInterface.sendRequest(tMessage);
+        if (selectionResult.success) {
+            return selectionResult.values;
+        } else {
+            return null;
+        }
+    },
+
     /**
      * constant to initialize the frame structure
      */
@@ -208,7 +223,8 @@ stella.connector = {
                         {name: "type", type: 'categorical', description: "result type"},
                         {name: "value", type: 'numeric', precision: 8, description: "result value"},
                         {name: "units", type: 'categorical', description: "units of the result"},
-                        {name: "points", type: 'numeric', description: "points awarded"}
+                        {name: "points", type: 'numeric', description: "points awarded"},
+                        {name: "source", type: 'categorical', description: "how you got this result"}
                     ]
                 }
             ]

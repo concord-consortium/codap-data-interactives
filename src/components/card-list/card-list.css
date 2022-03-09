@@ -1,0 +1,25 @@
+@import "../../var.css";
+
+.card-list-wrapper {
+  width: 100%;
+}
+.card-list {
+  margin: 15px 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-gap: 20px;
+  padding: 15px 0;
+}
+
+.card-list-wrapper.theme1 {
+  background-color: var(--cc-teal-light4);
+}
+.card-list-wrapper.theme2 {
+  background-color: var(--cc-orange-light3);
+}
+.card-list-wrapper.theme3 {
+  background-color: var(--support-blue-light4);
+}
+.card-list-wrapper.theme4 {
+  background-color: var(--feedback-green-light3);
+}

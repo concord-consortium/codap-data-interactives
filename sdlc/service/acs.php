@@ -56,8 +56,8 @@ function prepareQueries($DBH, $hasStateSelection) {
         $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND state_code=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr_st) order by peeps.accum_yr_st desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     } else {
         $queries["preset0"] = $DBH->prepare("DROP TABLE IF EXISTS xtab");
-        $queries["preset1"] = $DBH->prepare("CREATE TEMPORARY TABLE  xtab AS ( SELECT peeps.id, peeps.sample_data FROM peeps,presets WHERE presets.usage_ct = 0 AND presets.yr = ? AND peeps.id=presets.ref_key LIMIT ?)");
-        $queries["preset2"] = $DBH->prepare("UPDATE presets SET usage_ct = 1 WHERE usage_ct = 0 AND yr=? LIMIT ?");
+        $queries["preset1"] = $DBH->prepare("CREATE TEMPORARY TABLE  xtab AS ( SELECT peeps.id, peeps.sample_data FROM peeps,presets WHERE presets.yr = ? AND peeps.id=presets.ref_key ORDER BY rand() LIMIT ?)");
+        $queries["preset2"] = $DBH->prepare("UPDATE presets SET usage_ct = usage_ct + 1 WHERE yr=? ORDER BY usage_ct LIMIT ?");
         $queries["sumWeights"] = $DBH->prepare("SELECT @sum_weights:=sum_weights FROM stats WHERE year=? AND state_code IS NULL");
         $queries["selectSamples"] = $DBH->prepare("SELECT rand_numbers.number, (SELECT peeps.sample_data FROM peeps WHERE year=? AND (rand_numbers.number * @sum_weights) > (peeps.accum_yr) order by peeps.accum_yr desc limit 1) AS sample_data FROM rand_numbers order by rand_numbers.number desc;");
     }
@@ -68,15 +68,16 @@ function fetchSamplesFromPresetPool($DBH, $num, $yr, $queries) {
     $params = [$yr, $num];
 
     try {
-        $DBH->beginTransaction();
+//        $DBH->beginTransaction();
         CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset0"], array());
         CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset1"], $params);
-        CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset2"], $params);
+//        CODAP_MySQL_doPreparedQueryWithoutResult($queries["preset2"], $params);
         $rslt = CODAP_MySQL_getQueryResult($DBH, "select * from xtab", array());
-        $DBH->commit();
+//        $DBH->commit();
         return $rslt;
     } catch (Exception $e) {
         reportToFile($e);
+        return array();
     }
 }
 
@@ -214,6 +215,12 @@ switch ($command) {
         $query = "SELECT distinct(state_code) FROM peeps order by state_code";
         $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
 
+        break;
+    case 'getPresetState':
+        reportToFile("[$command]......." . date("Y-m-d H:i:s (T)"));
+        $params = array();
+        $query = "SELECT yr,count(*) avail FROM presets WHERE usage_ct = 0 GROUP BY yr";
+        $out = CODAP_MySQL_getQueryResult($DBH, $query, $params);
         break;
 
 }

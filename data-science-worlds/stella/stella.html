@@ -1,13 +1,3 @@
-<!--
-Here is the URL...
-
-http://codap.concord.org/releases/dsg?di=http://www.eeps.com/dsg/stella/stella.html
-
-
-local:
-http://localhost:8888/plugins/stella/stella.html
-
--->
 
 <!--
 ==========================================================================
@@ -36,6 +26,14 @@ distributed under the License is distributed on an "AS IS" BASIS,
 limitations under the License.
 ==========================================================================
 
+Testing URLs
+
+concord/eeps:
+    http://codap.concord.org/releases/dsg?di=http://www.eeps.com/dsg/stella/stella.html
+
+local testing MAMP
+    http://localhost:8888/codap/static/dg/en/cert/index.html?di=http://localhost:8888/codap-data-interactives/data-science-worlds/stella/stella.html
+
 -->
 
 
@@ -49,12 +47,12 @@ limitations under the License.
     <link rel='stylesheet' type='text/css' href='../common/jqueryFolder/jquery-ui.min.css'/>
 
     <!-- These two scripts take care of the communication with CODAP and commons -->
-    <script src="../common/iframe-phone.js" language="javascript"></script>
-    <script src="../common/codapInterface.js" language="javascript"></script>
+    <script src="../common/iframe-phone.js"></script>
+    <script src="../common/codapInterface.js" ></script>
 
-    <script src="../common/pluginHelper.js" language="javascript"></script>
+    <script src="../common/pluginHelper.js" ></script>
 
-    <script src="../common/TEEUtils.js" language="javascript"></script>
+    <script src="../common/TEEUtils.js" ></script>
     <script src="../common/jqueryFolder/jquery.min.js"></script>
     <script src="../common/jqueryFolder/jquery-ui.min.js"></script>
 
@@ -64,30 +62,30 @@ limitations under the License.
     <script src="../common/snap.svg-min.js"></script>
 
     <!--            our game source         -->
-    <script src="stella.js" language="JavaScript"></script>
+    <script src="stella.js" ></script>
 
-    <script src="Line.js" language="JavaScript"></script>
-    <script src="Spectrum.js" language="JavaScript"></script>
-    <script src="SpectrumView.js" language="JavaScript"></script>
-    <script src="System.js" language="JavaScript"></script>
-    <script src="Star.js" language="JavaScript"></script>
-    <script src="Planet.js" language="JavaScript"></script>
-    <script src="elementalSpectra.js" language="JavaScript"></script>
-    <script src="StarResult.js" language="JavaScript"></script>
+    <script src="Line.js" ></script>
+    <script src="Spectrum.js" ></script>
+    <script src="SpectrumView.js" ></script>
+    <script src="System.js" ></script>
+    <script src="Star.js" ></script>
+    <script src="Planet.js" ></script>
+    <script src="elementalSpectra.js" ></script>
+    <script src="StarResult.js" ></script>
 
 
-    <script src="stella.badges.js" language="JavaScript"></script>
-    <script src="stella.player.js" language="JavaScript"></script>
-    <script src="stella.manager.js" language="JavaScript"></script>
-    <script src="stella.spectrumManager.js" language="JavaScript"></script>
-    <script src="stella.photometryManager.js" language="JavaScript"></script>
-    <script src="stella.share.js" language="JavaScript"></script>
-    <script src="stella.model.js" language="JavaScript"></script>
-    <script src="stella.connector.js" language="JavaScript"></script>
-    <script src="stella.ui.js" language="JavaScript"></script>
-    <script src="stella.skyView.js" language="JavaScript"></script>
-    <script src="stella.options.js" language="JavaScript"></script>
-    <script src="staticStars.js" language="JavaScript"></script>
+    <script src="stella.badges.js" ></script>
+    <script src="stella.player.js" ></script>
+    <script src="stella.manager.js" ></script>
+    <script src="stella.spectrumManager.js" ></script>
+    <script src="stella.photometryManager.js" ></script>
+    <script src="stella.share.js" ></script>
+    <script src="stella.model.js" ></script>
+    <script src="stella.connector.js" ></script>
+    <script src="stella.ui.js" ></script>
+    <script src="stella.skyView.js" ></script>
+    <script src="stella.options.js" ></script>
+    <script src="staticStars.js" ></script>
 
 
     <script>
@@ -109,19 +107,19 @@ limitations under the License.
 
     </div>
     <div id="timeAndPointingControlBanner">
-<!--
-        <span id="shortStatus"></span>
-        &nbsp;| &nbsp;
--->
+        <!--
+                <span id="shortStatus"></span>
+                &nbsp;| &nbsp;
+        -->
         <label for="pointAtStar">point at </label>
         <input id="pointAtStar" class="textIO" width="40px"
                onblur="stella.ui.keypressInStarPointingBox(event)"
                onkeypress="stella.ui.keypressInStarPointingBox(event)"
         />
         <span> • wait</span>
-        <span class="buttonText" onclick="stella.model.stellaElapse(0.001); stella.manager.updateStella()">0.001</span>&nbsp;
-        <span class="buttonText" onclick="stella.model.stellaElapse(0.01); stella.manager.updateStella()">0.01</span>&nbsp;
-        <span class="buttonText" onclick="stella.model.stellaElapse(0.1); stella.manager.updateStella()">0.1</span>&nbsp;
+        <button class="zoomyButton" onclick="stella.elapse(0.001)"><span class="non-click-text">0.001</span></button>&nbsp;
+        <button class="zoomyButton" onclick="stella.elapse(0.01)"><span class="non-click-text">0.01</span></button>&nbsp;
+        <button class="zoomyButton" onclick="stella.elapse(0.1)"><span class="non-click-text">0.1</span></button>&nbsp;
         <span>(years)</span>
 
     </div>
@@ -136,7 +134,9 @@ limitations under the License.
         <li><a href="#starResultTab">Results</a></li>
         <li><a href="#instructionsTab">How To</a></li>
         <li><a href="#badgesTab">Badges</a></li>
+<!--
         <li><a href="#optionsTab">Options</a></li>
+-->
         <!--<li><a href="#debugTab">Debug</a></li> -->
     </ul>
 
@@ -156,11 +156,12 @@ limitations under the License.
             <text id="telescopeStatusText" x="8" y="12" fill="#8f8">Sample text</text>
         </svg>
         <br>
-        <span class="buttonText" onclick="stella.manager.changeMagnificationTo(1)">1x</span>&nbsp;
-        <span class="buttonText" onclick="stella.manager.changeMagnificationTo(5)">5x</span>&nbsp;
-        <span class="buttonText" onclick="stella.manager.changeMagnificationTo(20)">20x</span>&nbsp;
-        <span class="buttonText" onclick="stella.manager.changeMagnificationTo(100)">100x</span>&nbsp;
-        <span class="buttonText" onclick="stella.manager.changeMagnificationTo(10000)">10000x</span>&nbsp;
+        magnification:
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(1)">1x</button>&nbsp;
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(5)">5x</button>&nbsp;
+        <button class="zoomyButton" onclick="stella.manager.changeMagnificationTo(30)">30x</button>&nbsp;
+        <button class="zoomyButton astrometry1" onclick="stella.manager.changeMagnificationTo(500)">500x</button>&nbsp;
+        <button class="zoomyButton astrometry1" onclick="stella.manager.changeMagnificationTo(10000)">10000x</button>&nbsp;
     </div>
 
     <!--        "PHOTOMETRY"     -->
@@ -190,10 +191,11 @@ limitations under the License.
             </div>
         </div>
         <br>
-        <button id="photoButton" onclick="stella.photometryManager.expose(1)">1 sec</button>
-        <button id="photoButton" onclick="stella.photometryManager.expose(10)">10 sec</button>
-        <button id="photoButton" onclick="stella.photometryManager.expose(60)">60 sec</button>
-        <button id="photoButton" onclick="stella.photometryManager.expose(600)">10 min</button>
+        <span>exposure: </span>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(1)">1 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(10)">10 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(60)">60 sec</button>
+        <button class="zoomyButton" onclick="stella.photometryManager.expose(600)">10 min</button>
         <br>
         Filter:
         <select name="source" id="filterMenu" onchange="stella.manager.filterChanged();">
@@ -219,7 +221,8 @@ limitations under the License.
                    onblur="stella.spectrumManager.spectrumParametersChanged();">
         </label>
 
-        <h2 id="skySpectrumLabel">From a Star</h2>
+        <h2 id="spectrogramHeading">Spectrograms</h2>
+        <h3 id="skySpectrumLabel">From a Star</h3>
         <div class="hBox">
             <svg id="skySpectrumDisplay" width="300" height="64">
                 <rect width="100" height="100" fill="dodgerblue"></rect>
@@ -227,15 +230,23 @@ limitations under the License.
             <button id="saveSkySpectrumButton" onclick="stella.spectrumManager.saveSpectrumToCODAP('sky')">save</button>
         </div>
 
+        <hr>
+
+        <h3 id="labSpectrumLabel">From the Lab</h3>
+        <div class="hBox">
+            <svg id="labSpectrumDisplay" width="300" height="64"></svg>
+            <button id="saveLabSpectrumButton" onclick="stella.spectrumManager.saveSpectrumToCODAP('lab')">save</button>
+        </div>
+
         <div class="vBox">
 
-            <h2>Lab settings</h2>
             <fieldset>
-                <legend>Source</legend>
+                <legend>Lab settings: Source</legend>
                 <div class="hBox">
                     <input type="radio" name="sourceType" value="discharge"
                            onchange="stella.spectrumManager.spectrumParametersChanged();" checked>
-                    Discharge tube:
+                    <label for="dischargeTubeMenu">Discharge tube:</label>
+
                     <select name="source" id="dischargeTubeMenu"
                             onchange="stella.spectrumManager.spectrumParametersChanged();">
                         <option value="H">Hydrogen</option>
@@ -251,29 +262,28 @@ limitations under the License.
                     <input type="radio" name="sourceType" value="blackbody"
                            onchange="stella.spectrumManager.spectrumParametersChanged();">
                     <label for="labTempSlider">
-                        Blackbody spectrum at <span id="labTempDisplay">5800</span>
-                        K:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp;
-                        <div id="labTempSlider" class="ui-slider"></div>
-
+                        Blackbody spectrum at <span id="labTempDisplay">5800</span> K:&nbsp;&nbsp;
                     </label>
+                    <input
+                            id="labTempSlider" type="range" width="200px"
+                            min="1000" max="30000" step="100" value="5800"
+                            oninput="stella.ui.slideBlackbodyTemperature()"
+                    >
+                    </input>
+
 
                 </div>
             </fieldset>
 
-
+            <!--
             <label>
                 Gain:
                 <div id="labSpectrographGainSlider" class="ui-slider"></div>
                 <div id="gainDisplay" class="sliderLabel"></div>
             </label>
+            -->
         </div>
-        <br>
 
-        <h2 id="labSpectrumLabel">From the Lab</h2>
-        <div class="hBox">
-            <svg id="labSpectrumDisplay" width="300" height="64"></svg>
-            <button id="saveLabSpectrumButton" onclick="stella.spectrumManager.saveSpectrumToCODAP('lab')">save</button>
-        </div>
     </div>
 
 
@@ -329,6 +339,7 @@ limitations under the License.
 
     <!--        OPTIONS tab      -->
 
+<!--
     <div id="optionsTab">
         <p>Use these options to simplify (or complexicate) the game.</p>
         <div class="vBox options" id="gameOptions" onclick="stella.options.optionChange()">
@@ -338,12 +349,13 @@ limitations under the License.
             <label><input type="checkbox" id="properMotion" checked>star locations show proper motion</label>
         </div>
     </div>
+-->
 
 
-   <!-- <div id="debugTab">
-        <span id="debugText"></span>
-    </div>
-    -->
+    <!-- <div id="debugTab">
+         <span id="debugText"></span>
+     </div>
+     -->
 
 </div>
 

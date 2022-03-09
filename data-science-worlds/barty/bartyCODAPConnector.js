@@ -65,7 +65,7 @@ barty.connector = {
     },
 
     outputDataItems : function( iValArray ) {
-        pluginHelper.createItems(iValArray, barty.connector.kBARTYDataSetName);
+        pluginHelper.createItems(iValArray, barty.constants.kBARTYDataSetName);
     },
 
     bartyDataContextSetupObject : {

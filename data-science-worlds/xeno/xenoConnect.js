@@ -78,9 +78,9 @@ var xenoConnect = {
         var theOperation = iCommand.values.operation;
         var theResult = iCommand.values.result;
         if (theResult.success) {
-            console.log("xenoConnect <" + theOperation + "> case IDs: [" + theResult.caseIDs + "]");
+            console.log("xenoConnect <" + theOperation + "> case IDs: [" + (theResult.caseIDs?theResult.caseIDs.join():'') + "]");
             var theCases = theResult.cases;
-            theCases.forEach(function (bigCase) {
+            theCases && theCases.forEach(function (bigCase) {
                 var c = bigCase.values;
 
                 xeno.scoreFromPerformance(c.analysis);

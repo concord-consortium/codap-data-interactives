@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# NCEI Data API
+#
+# Documentation about NCEI Data API: 
+# https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation
+# NCEI URL
+NOAA_URL=https://www.ncei.noaa.gov
+# NCEI Data Access Endpoint
+NOAA_ENDPOINT_DATA=access/services/data/v1
+NOAA_ENDPOINT_DATASETS=access/services/support/v3/datasets
+
+#
+# HOMR API
+#
+# Documention about HOMR API (Historical Observing Metadata Repository)
+# NCEI's integrated station history database 
+# URL: https://www.ncdc.noaa.gov/homr/api
+
+# Base URL
+HOMR_URL=https://www.ncdc.noaa.gov/homr/services/station
+# Search Endpoint
+HOMR_SEARCH_ENDPOINT=search
+
+#
+# CDO API
+#
+# Requires registration for CDO_TOKEN
+CDO_URL=https://www.ncdc.noaa.gov/cdo-web/api/v2/
+CDO_ENDPOINT_STATIONS=stations
+
+#
+# ISD History
+#
+ISD_HISTORY_URL=https://www1.ncdc.noaa.gov/pub/data/noaa/isd-history.csv

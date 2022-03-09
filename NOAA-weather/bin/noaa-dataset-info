@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Outputs JSON Object describing a NOAA Dataset.
+# Requires curl.
+#
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+function usage() {
+  echo usage: $PROGNAME dataset 2>&1
+  exit 1
+}
+
+[ "$1" == "" ] && usage;
+
+curl -s "$NOAA_URL/$NOAA_ENDPOINT_DATASETS/${1}.json" 

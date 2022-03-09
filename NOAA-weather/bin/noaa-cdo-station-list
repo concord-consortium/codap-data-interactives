@@ -1,0 +1,35 @@
+#!/bin/bash
+# Outputs a list of stations within one degree of
+# lat/long point with identifiers suitable for GSOM and Daily Summary datasets.
+# Requires curl.
+# Requires a CDO Token obtainable through the CDO website.
+# CDO Token should be placed in ~/.noaa_rc
+#
+PROGNAME=$(basename $0)
+DIRNAME=$(dirname $0)
+
+USAGE="$PROGNAME lat long"
+
+. $DIRNAME/.noaa_rc
+. ~/.noaa_rc
+
+if [ $# != 2 ]; then
+  echo usage: $USAGE
+  exit 1
+fi
+
+LAT=$1
+LONG=$2
+
+TOKEN_PHRASE="token: $CDO_TOKEN"
+URL="$CDO_URL$CDO_ENDPOINT_STATIONS"
+C1=$(echo "$LAT-1" | bc)
+C2=$(echo "$LONG-1" | bc)
+C3=$(echo "$LAT+1" | bc)
+C4=$(echo "$LONG+1" | bc)
+RECT="$C1,$C2,$C3,$C4"
+DATE1=$(date -v-1m +%Y-%m-%d)
+DATE2=$(date -v-1d +%Y-%m-%d)
+
+curl -H "$TOKEN_PHRASE" "$URL?limit=300&datasetid=GHCND&startdate=$DATE1&enddate=$DATE2&sortfield=name&extent=$RECT"
+echo

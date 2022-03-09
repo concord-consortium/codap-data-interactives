@@ -1,22 +1,26 @@
 DROP TABLE IF EXISTS peeps;
-CREATE TABLE peeps (
-   id INT NOT NULL AUTO_INCREMENT,
-   year SMALLINT,
-   state_code SMALLINT,
-   perwt DECIMAL (10,2),
-   accum_yr DECIMAL (12,2),
-   accum_yr_st DECIMAL (12,2),
-   sample_data VARCHAR(1024),
-   PRIMARY KEY (id)
+CREATE TABLE `peeps` (
+  `id` int(11) NOT NULL,
+  `year` smallint(6) DEFAULT NULL,
+  `state_code` smallint(6) DEFAULT NULL,
+  `perwt` decimal(10,2) DEFAULT NULL,
+  `accum_yr` decimal(12,2) DEFAULT NULL,
+  `accum_yr_st` decimal(12,2) DEFAULT NULL,
+  `sample_data` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_accum_yr` (`year`,`accum_yr`)
  );
 
+CREATE INDEX idx_accum_yr_st ON peeps (state_code, year, accum_yr_st);
+CREATE INDEX idx_accum_yr ON peeps (year, accum_yr);
+
 DROP TABLE IF EXISTS stats;
-CREATE TABLE stats (
-  id INT NOT NULL AUTO_INCREMENT,
-  year SMALLINT,
-  state_code SMALLINT,
-  sum_weights DECIMAL(12,2),
-  PRIMARY KEY (id)
+CREATE TABLE `stats` (
+  `id` int(11) NOT NULL,
+  `year` smallint(6) DEFAULT NULL,
+  `state_code` smallint(6) DEFAULT NULL,
+  `sum_weights` decimal(12,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS pumas;
@@ -53,39 +57,45 @@ CREATE PROCEDURE InsertRandom(IN NumRows INT,
 DELIMITER ;
 
 DROP TABLE IF EXISTS presets;
-CREATE TABLE presets (
-  yr SMALLINT,
-  randnum FLOAT,
-  ref_key INT,
-  usage_ct SMALLINT
+CREATE TABLE `presets` (
+  `yr` smallint(6) DEFAULT NULL,
+  `randnum` float DEFAULT NULL,
+  `ref_key` int(11) DEFAULT NULL,
+  `usage_ct` smallint(6) DEFAULT NULL
 );
+
+DROP TABLE IF EXISTS preset_log;
+CREATE TABLE `preset_log` (
+  `eventtime` datetime DEFAULT NULL,
+  `eventtype` varchar(10) DEFAULT NULL,
+  `update_count` int(11) DEFAULT NULL
+);
+
+DROP PROCEDURE IF EXISTS log_preset;
+DELIMITER $$
+CREATE PROCEDURE log_preset (eventType VARCHAR(10))
+  BEGIN
+    SELECT @count:=count(*) FROM presets WHERE usage_ct>0 OR ref_key IS NULL;
+    INSERT INTO preset_log VALUES (now(), eventType, @count);
+  END $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS populate_preset_year;
+DELIMITER $$
+CREATE PROCEDURE populate_preset_year (num_per_year INT, year INT)
+  BEGIN
+    DECLARE i INT;
+    SET i = 1;
+    WHILE i <= num_per_year DO
+      INSERT INTO presets (yr) VALUES (year);
+      SET i = i+1;
+    END WHILE;
+  END $$
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS populate_presets;
 DELIMITER $$
 CREATE PROCEDURE populate_presets (num_per_year INT)
-  BEGIN
-    DECLARE i INT;
-    DECLARE j SMALLINT;
-    DROP TABLE IF EXISTS years;
-    CREATE TEMPORARY TABLE years AS (SELECT DISTINCT(year) FROM peeps);
-    SELECT @yr_count:=count(*) FROM years;
-    SET j = 0;
-    WHILE j <= @yr_count DO
-      SELECT @yr:=year FROM years limit j, 1;
-      SET i = 1;
-      WHILE i <= num_per_year DO
-        INSERT INTO presets (yr) VALUES (@yr);
-        SET i = i+1;
-      END WHILE;
-      SET j = j + 1;
-    END WHILE;
-    DROP TABLE years;
-  END $$
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS update_presets;
-DELIMITER $$
-CREATE PROCEDURE update_presets ()
   BEGIN
     DECLARE j SMALLINT;
     DROP TABLE IF EXISTS years;
@@ -94,29 +104,76 @@ CREATE PROCEDURE update_presets ()
     SET j = 0;
     WHILE j < @yr_count DO
       SELECT @yr:=year FROM years limit j, 1;
-      SELECT @sum_weights:=sum_weights
-        FROM stats
-        WHERE year=@yr AND state_code IS NULL;
-        START TRANSACTION;
-      UPDATE presets
-        SET randnum=rand()*@sum_weights,
-          ref_key=(SELECT peeps.id
-              FROM peeps
-              WHERE year=@yr
-                    AND randnum > peeps.accum_yr
-              ORDER BY peeps.accum_yr DESC
-              LIMIT 1),
-          usage_ct = 0
-        WHERE yr=@yr AND ((usage_ct > 0) OR (ref_key IS NULL));
-      COMMIT;
+      CALL populate_preset_year(num_per_year, @yr);
       SET j = j + 1;
     END WHILE;
     DROP TABLE years;
+    CALL populate_preset_year(num_per_year, 2017);
+    CALL populate_preset_year(num_per_year, 2017);
   END $$
 DELIMITER ;
 
-DROP EVENT IF EXISTS update_presets_event;
-CREATE EVENT update_presets_event ON SCHEDULE EVERY 20 MINUTE DO CALL update_presets();
+DROP PROCEDURE IF EXISTS update_presets;
+DELIMITER $$
+CREATE PROCEDURE update_presets ()
+  BEGIN
+    CALL log_preset('begin');
+    UPDATE presets, stats
+      SET presets.randnum=rand()*stats.sum_weights
+      WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
+            AND stats.year = presets.yr
+            AND stats.state_code IS NULL;
+    UPDATE presets
+      SET presets.ref_key=(SELECT peeps.id
+            FROM peeps
+            WHERE peeps.year=presets.yr
+                  AND presets.randnum > peeps.accum_yr
+            ORDER BY peeps.accum_yr DESC
+            LIMIT 1),
+        presets.usage_ct = 0
+      WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL));
+    CALL log_preset('end');
+  END $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS update_presets1;
+DELIMITER $$
+CREATE PROCEDURE update_presets1 (lim INT)
+BEGIN
+  CALL log_preset('begin');
+  UPDATE presets, stats
+  SET presets.randnum=rand()*stats.sum_weights
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL))
+    AND stats.year = presets.yr
+    AND stats.state_code IS NULL;
+  UPDATE presets
+  SET presets.ref_key=(SELECT peeps.id
+                       FROM peeps
+                       WHERE peeps.year=presets.yr
+                         AND presets.randnum > peeps.accum_yr
+                       ORDER BY peeps.accum_yr DESC
+                       LIMIT 1),
+      presets.usage_ct = 0
+  WHERE ((presets.usage_ct > 0) OR (presets.ref_key IS NULL)) LIMIT lim;
+  CALL log_preset('end');
+END $$
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS make_presets;
+DELIMITER $
+CREATE PROCEDURE make_presets (iters INT)
+  BEGIN
+    DECLARE i INT;
+    SET i = 0;
+    WHILE (i < iters) DO
+      CALL populate_presets(500);
+      CALL update_presets;
+      SET i = i + 1;
+    END WHILE ;
+  END $
+DELIMITER ;
+# DROP EVENT IF EXISTS update_presets_event;
+# CREATE EVENT update_presets_event ON SCHEDULE EVERY 20 MINUTE DO CALL update_presets();
 
 # DROP PROCEDURE IF EXISTS get_samples;
 # DELIMITER $$

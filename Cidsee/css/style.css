@@ -1,0 +1,40 @@
+body {
+  background-color: #eeffff;
+  font-size: smaller;
+}
+body.busy {
+  cursor: progress;
+}
+
+.datasource div {
+  /*display: none;*/
+  max-height: 0;
+  transition: max-height 1s ease-out;
+  overflow-y: hidden;
+}
+
+.datasource.selected-source div {
+  /*display: block;*/
+  max-height: 200px;
+  transition: max-height 1s ease-in;
+  overflow-y: hidden;
+}
+
+.datasource h3 {
+  margin-top: .25em;
+  margin-bottom: .25em;
+}
+
+.datasource input[type='text'] {
+  padding: 0;
+}
+
+.datasource div {
+  margin-left: 1em;
+}
+
+body.busy button.fetch-button {
+  background-color: darkgray;
+  border: thin darkgray;
+  border-radius: initial;
+}

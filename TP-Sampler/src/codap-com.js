@@ -22,11 +22,33 @@ define([
       this.openTable = this.openTable.bind(this);
       this.setDataSetName = this.setDataSetName.bind(this);
       this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
+      this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
 
       this.drawAttributes = null;
       this.collectionAttributes = null;
 
+      // list of attribute names. We will listen for changes on these and update as needed
+      this.attrNames = {
+        experiment: "experiment",
+        experiment_description: "description",
+        sample_size: "sample_size",
+        sample: "sample",
+        value: "value"
+      }
+      this.attrIds = {};
+
       codapInterface.on('get', 'interactiveState', getStateFunc);
+
+      const _this = this;
+      // listen for changes to attribute names, and update internal names accordingly
+      codapInterface.on('notify', 'dataContextChangeNotice[' + targetDataSetName + ']', function(msg) {
+        if (msg.values.operation === "updateAttributes") {
+          msg.values.result.attrIDs.forEach((id, i) => {
+            const attrKey = _this.attrIds[id];
+            _this.attrNames[attrKey] = msg.values.result.attrs[i].name;
+          });
+        }
+      });
 
       // this.init();
     };
@@ -45,9 +67,19 @@ define([
         return codapInterface.init({
           name: appName,
           title: appName,
-          dimensions: {width: 235, height: 400},
-          version: 'v0.4 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.7 (#' + window.codapPluginConfig.buildNumber + ')',
+          preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
+        }).then( function( iInitialState) {
+          if (!iInitialState) { // set default dimensions, if no initial state
+            return codapInterface.sendRequest({
+              action: 'update',
+              resource: 'interactiveFrame',
+              values: {
+                dimensions: {width: 235, height: 400},
+              }
+            })
+          }
         });
       },
 
@@ -56,14 +88,36 @@ define([
       },
 
       findOrCreateDataContext: function () {
+        const _this = this;
+        const attrNames = this.attrNames;
+
         this.codapConnected = true;
         // Determine if CODAP already has the Data Context we need.
         // If not, create it.
         return codapInterface.sendRequest({
-            action:'get',
-            resource: getTargetDataSetPhrase()
-            }, function (result) {
-            if (result && !result.success) {
+              action:'get',
+              resource: getTargetDataSetPhrase()
+            }).then( function (getDatasetResult) {
+
+            function getAttributeIds() {
+              // need to get all the ids of the newly-created attributes, so we can notice if they change.
+              // we will set these ids on the attrIds object
+              const allAttrs = [["experiments", attrNames.experiment],["description", attrNames.experiment_description],
+                                ["experiments", attrNames.sample_size], ["samples", attrNames.sample], ["items", attrNames.value]];
+              const reqs = allAttrs.map(collectionAttr => ({
+                  "action": "get",
+                  "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
+              }));
+              codapInterface.sendRequest(reqs, function(getAttrsResult) {
+                getAttrsResult.forEach(res => {
+                  if (res.success) {
+                    _this.attrIds[res.values.id] = res.values.title;
+                  }
+                });
+              });
+            }
+
+            if (getDatasetResult && !getDatasetResult.success) {
               codapInterface.sendRequest({
                 action: 'create',
                 resource: 'dataContext',
@@ -73,8 +127,9 @@ define([
                     {
                       name: 'experiments',
                       attrs: [
-                        {name: "experiment", type: 'categorical'},
-                        {name: "sample_size", type: 'categorical'}
+                        {name: attrNames.experiment, type: 'categorical'},
+                        {name: attrNames.experiment_description, type: 'categorical', description: 'Feel free to edit!'},
+                        {name: attrNames.sample_size, type: 'categorical'}
                       ],
                       childAttrName: "experiment"
                     },
@@ -82,7 +137,7 @@ define([
                       name: 'samples',
                       parent: 'experiments',
                       // The parent collection has just one attribute
-                      attrs: [{name: "sample", type: 'categorical'}],
+                      attrs: [{name: attrNames.sample, type: 'categorical'}],
                       childAttrName: "sample"
                     },
                     {
@@ -93,11 +148,22 @@ define([
                         setOfCasesWithArticle: "an item"
                       },
                       // The child collection also has just one attribute
-                      attrs: [{name: "value"}]
+                      attrs: [{name: attrNames.value}]
                     }
                   ]
                 }
-              }, function(result) { console.log(result); });
+              }, getAttributeIds).then(
+                  _this.openTable,
+                  function (e) {
+                    console.log('Sampler: findOrCreateDataContext failed: ' + e);
+                  });
+            } else if (getDatasetResult.success) {
+              // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
+              // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
+              // already updated attribute names, this won't work.
+              if (Object.keys(_this.attrIds).length === 0) {
+                getAttributeIds();
+              }
             }
           }
         );
@@ -108,16 +174,16 @@ define([
         this.codapConnected = false;
       },
 
-      startNewExperimentInCODAP: function(experimentNumber, sampleSize) {
+      startNewExperimentInCODAP: function(experimentNumber, description, sampleSize) {
         var _this = this;
         if (!_this.codapConnected) {
           console.log('Not in CODAP');
           return;
         }
-        _this.openTable();
 
         this.itemProto = {
           experiment: experimentNumber,
+          experiment_description: description,
           sample_size: sampleSize
         };
       },
@@ -127,11 +193,13 @@ define([
           return;
         }
 
-        codapInterface.sendRequest({
+        return codapInterface.sendRequest({
           action: 'create',
           resource: 'component',
           values: {
-            type: 'caseTable'
+            type: 'caseTable',
+            dataContext: targetDataSetName,
+            isIndexHidden: true
           }
         });
       },
@@ -151,6 +219,17 @@ define([
             items.push(item);
           });
         });
+        // rename all the attributes to any new names that the user has changed them to.
+        // easiest to do this all in one place here.
+        items.forEach(function(item) {
+          const attrs = Object.keys(item);
+          attrs.forEach(function (attr) {
+            if (_this.attrNames[attr] && _this.attrNames[attr] !== attr) {
+              item[_this.attrNames[attr]] = item[attr];
+              delete item[attr];
+            }
+          });
+        });
         codapInterface.sendRequest({
           action: 'create',
           resource: getTargetDataSetPhrase() + '.item',
@@ -161,46 +240,47 @@ define([
         this.addMultipleSamplesToCODAP([{run: run, values: vals}], isCollector);
       },
 
-      deleteAll: function(device, populateContextsList) {
-        var _this = this;
+      deleteAll: function() {
         codapInterface.sendRequest({
           action: 'delete',
           resource: getTargetDataSetPhrase() + '.collection[experiments].allCases'
         });
-        var structure = { items: ['value']};
-        Object.keys( structure).forEach( function( key) {
-          var tValidAttrs = structure[ key];
-          codapInterface.sendRequest( {
-            action: 'get',
-            resource: getTargetDataSetPhrase() + '.collection[' + key + '].attributeList'
-          }).then( function( iResult) {
-            var tMsgList = [];
-            if( iResult.success) {
-              iResult.values.forEach( function( iAttribute) {
-                if( tValidAttrs.indexOf( iAttribute.name) < 0) {
-                  tMsgList.push( {
-                    action: 'delete',
-                    resource: getTargetDataSetPhrase() + '.collection[' + key + '].attribute[' + iAttribute.name + ']'
-                  });
-                }
-              });
-              if( tMsgList.length > 0)
-                codapInterface.sendRequest( tMsgList).then( function( iResult) {
-                  if( iResult.success || (iResult.every( function(iItem) {
-                        return iItem.success;
-                      }))) {
-                    if (device === "collector") {
-                      return _this.getContexts().then(populateContextsList);
-                    }
-                  }
-                  else {
-                    return Promise.reject( "Failure to remove attributes");
-                  }
-                }).then( null, function( iMsg) {
-                  console.log( iMsg);
+      },
+
+      // not used any more, kept for record-keeping
+      deleteAllAttributes: function(device, populateContextsList) {
+        var _this = this;
+        codapInterface.sendRequest( {
+          action: 'get',
+          resource: getTargetDataSetPhrase() + '.collection[items].attributeList'
+        }).then( function( iResult) {
+          var tMsgList = [];
+          if( iResult.success) {
+            iResult.values.forEach( function( iAttribute) {
+              if(iAttribute.name !== "value") {
+                tMsgList.push( {
+                  action: 'delete',
+                  resource: getTargetDataSetPhrase() + '.collection[items].attribute[' + iAttribute.name + ']'
                 });
+              }
+            });
+            if( tMsgList.length > 0) {
+              codapInterface.sendRequest( tMsgList).then( function( iResult) {
+                if( iResult.success || (iResult.every( function(iItem) {
+                      return iItem.success;
+                    }))) {
+                  if (device === "collector") {
+                    return _this.getContexts().then(populateContextsList);
+                  }
+                }
+                else {
+                  return Promise.reject( "Failure to remove attributes");
+                }
+              }).then( null, function( iMsg) {
+                console.log( iMsg);
+              });
             }
-          });
+          }
         });
       },
 
@@ -234,17 +314,12 @@ define([
             if (results.success) {
               caseVariables = [];
 
-              var count = results.values,
-                  reqs = [];
-              for (var i = 0; i < count; i++) {
-                reqs.push({
-                  action: 'get',
-                  resource: _this.collectionResourceName + '.caseByIndex['+i+']'
-                });
-              }
-              codapInterface.sendRequest(reqs).then(function(results) {
-                results.forEach(function(res) {
-                  caseVariables.push(res.values['case'].values);
+              codapInterface.sendRequest({
+                action: 'get',
+                resource: _this.collectionResourceName + '.allCases'
+              }).then(function(results) {
+                caseVariables = results.values.cases.map(function(_case) {
+                  return _case.case.values;
                 });
                 resolve(caseVariables);
              });
@@ -252,19 +327,19 @@ define([
           }
 
           function addAttributes() {
+            const requests = []
             _this.collectionAttributes.forEach(function (attr) {
               if (_this.drawAttributes.indexOf(attr) < 0) {
-                codapInterface.sendRequest({
+                requests.push({
                   action: 'create',
                   resource: getTargetDataSetPhrase() + '.collection[items].attribute',
-                  values: [
-                    {
-                      name: attr
-                    }
-                  ]
+                  values: [attr]
                 });
               }
             });
+
+
+            codapInterface.sendRequest(requests);
           }
 
           function setCollection (result) {
@@ -278,7 +353,7 @@ define([
                 },
                 {     // get the columns we'll be needing
                   action: 'get',
-                  resource: _this.collectionResourceName + '.attributeList'
+                  resource: _this.collectionResourceName
                 },
                 {     // get the number of cases
                   action: 'get',
@@ -288,8 +363,10 @@ define([
                 _this.drawAttributes = results[0].values.map(function (res) {
                   return res.name;
                 });
-                _this.collectionAttributes = results[1].values.map(function (res) {
-                  return res.name;
+                _this.collectionAttributes = results[1].values.attrs.map(function (attr) {
+                  // we will use the attribute definitions to create new attributes
+                  // so we take the precaution of removing identifiers.
+                  delete attr.id; delete attr.guid; return attr;
                 });
                 addAttributes();    // throw this over the wall
                 return results[2];
@@ -297,9 +374,11 @@ define([
             }
           }
 
-          codapInterface.sendRequest({
-            action: 'get',
-            resource: 'dataContext[' + contextName + '].collectionList'
+          _this.findOrCreateDataContext().then(function () {
+            return codapInterface.sendRequest({
+              action: 'get',
+              resource: 'dataContext[' + contextName + '].collectionList'
+            })
           }).then(setCollection);
         });
       },
@@ -313,6 +392,32 @@ define([
             replaceArgs: iReplaceArgs
           }
         });
+      },
+
+      myCODAPIDd: null,
+      selectSelf: function () {
+        function selectSelf(id) {
+            return codapInterface.sendRequest({
+              action: 'notify',
+              resource: `component[${id}]`,
+              values: {
+                request: 'select'
+              }
+            });
+        }
+        if (this.myCODAPId == null) {
+          codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'}).then(function (resp) {
+            if (resp.success) {
+              this.myCODAPId = resp.values.id;
+              selectSelf(this.myCODAPId);
+            }
+          }.bind(this));
+        } else {
+          selectSelf(this.myCODAPId);
+        }
+      },
+      register: function (action, resource, operation, callback) {
+        codapInterface.on(action, resource, operation, callback);
       }
     };
 

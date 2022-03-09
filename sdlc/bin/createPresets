@@ -1,0 +1,252 @@
+#!/usr/bin/env node --max-old-space-size=30000
+// ==========================================================================
+//  
+//  Author:   jsandoe
+//
+//  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ==========================================================================
+/**
+ * Node program to read in a CSV file and print some statistics
+ */
+const fs = require('fs');
+const console = require('console');
+const readline = require('readline');
+const xml2js = require('xml-js');
+const papa = require('papaparse');
+
+let configuration = null;
+
+function printWarning(message) {
+  console.warn(message)
+}
+
+function printErrorAndExit(message) {
+  console.error(message);
+  process.exit(2);
+}
+
+function configure() {
+  let progName = process.argv[1].replace(/.*\//, '');
+
+  configuration = {
+    codeBook: process.argv[3],
+    csvFilename: process.argv[2],
+    dataDictionary: {},
+    filenamePrefix: 'preset-',
+    filenameSuffix: '.csv',
+    outputDir: process.argv[4],
+    numPresetsPerGroup: 100,
+    presetSize: 1000,
+    progname: progName,
+    status: true,
+    statusMessage: 'ok',
+    tempFilename: `/tmp/${progName}_${process.pid}`,
+    threshold: 3000,
+  };
+
+  if (!configuration.codeBook || !configuration.csvFilename || !configuration.outputDir) {
+    configuration.status = false;
+    configuration.statusMessage = `usage: ${configuration.progname} csvFile codebookFile outputDir`
+  } else {
+    let codebook = fs.readFileSync(configuration.codeBook, {encoding: 'utf8'});
+    configuration.dataDictionary = getDataDictionary(codebook);
+  }
+
+  return configuration;
+}
+
+/**
+ * IPUMS files are described in an XML Codebook. We extract the relevant parts...
+ *
+ * @param codebook {string}
+ * @return {{name: string | number, width, format: string, description, categories, labl, startPos: *}[]}
+ */
+function getDataDictionary (codebook) {
+  const kSpecialNumeric = ['FAMSIZE', 'AGE'];
+  let tCbkObject = xml2js.xml2js(codebook, {}),
+      tDescriptions = tCbkObject.elements[1].elements[3];
+  return tDescriptions.elements.map(function (iDesc) {
+    let tCats = {};
+    iDesc.elements.forEach(function (iElement) {
+      if (iElement.name === 'catgry') {
+        let key = Number(iElement.elements[0].elements[0].text);
+        tCats[key] = iElement.elements[1].elements[0].text;
+      }
+    });
+    return {
+      name: iDesc.attributes.name,
+      startPos: iDesc.elements[0].attributes.StartPos,
+      width: Number(iDesc.elements[0].attributes.width),
+      labl: iDesc.elements[1].elements[0].text,
+      description: iDesc.elements[2].elements[0].cdata,
+      format: (Object.keys(tCats).length === 0 || kSpecialNumeric.indexOf(
+          iDesc.attributes.name) >= 0) ? 'numeric' : 'categorical',
+      categories: tCats
+    }
+  });
+}
+
+function getCSVFromFile(file) {
+  return new Promise(function (resolve, reject) {
+    var data = [];
+    var errors = [];
+    papa.parse(file, {
+      // dynamicTyping: true,
+      skipEmptyLines: true,
+      encoding: 'utf8',
+      step: function (stepResult) {
+        data.push(stepResult.data);
+        if (stepResult.errors.length) {
+          stepResult.errors.forEach(function (e) { errors.push(e); } )
+        }
+        if (!(data.length % 10000)) {
+          console.log(data.length);
+        }
+      },
+      complete: function(results) {
+        results.completionResults = results.results;
+        results.data = data;
+        results.completionErrors = results.errors;
+        results.errors = errors;
+        resolve(results);
+      },
+      error: function(error) {
+        reject(error);
+      }
+    });
+  });
+}
+
+function getCSV(csv) {
+  return papa.parse(csv, {/*dynamicTyping: true, */skipEmptyLines: true});
+}
+
+function getStateCodesMap (configuration) {
+  let dict = configuration.dataDictionary;
+  // configuration.dataDictionary is derived from the CodeBook.
+  // It is an array of objects with properties, name, labl, description,
+  // and categories. Categories maps the numerical encoding found in the
+  // data file to a string.
+  let statesDef = dict.find(function (entry) {
+    return entry.name === 'STATEFIP';
+  });
+  return statesDef && statesDef.categories;
+}
+
+function createPresetArray(dataset, size, headerLine, perwtIndex, population) {
+  let selectors = [];
+  let presetArray = [];
+  // make a sorted array of random numbers 0<=x<pop
+  for (let ix = 0; ix < size; ix += 1) {
+    selectors[ix] = Math.floor(Math.random() * population);
+  }
+  selectors.sort(function (a, b) {return a-b;});
+
+  // loop through dataset accumulating perwt values. When the sum passes
+  // the selector at the current index we add that row to the presetArray.
+  presetArray.push(headerLine)
+  let ix = 0;
+  let accumPerwt = 0;
+  dataset.forEach(function (row) {
+    accumPerwt += Number(row[perwtIndex]);
+    while (ix < size && selectors[ix] < accumPerwt) {
+      presetArray.push(row);
+      ix++;
+    }
+  });
+
+  return presetArray;
+}
+
+function createPreset(dataset, configuration, population, outputDirectory, presetNumber) {
+  let preset = createPresetArray(dataset, configuration.presetSize,
+      configuration.headerLine, configuration.perwtIndex, population);
+  let presetCSV = papa.unparse(preset);
+  let presetFN = `${outputDirectory}/${configuration.filenamePrefix}${presetNumber}${configuration.filenameSuffix}`;
+  fs.writeFileSync(presetFN, presetCSV, {encoding: 'utf8', flag: 'w'});
+}
+
+function createPresetsForGroup(dataset, configuration, population, outputDir, groupName) {
+  let groupDirName = `${outputDir}/${groupName}`;
+  fs.mkdirSync(groupDirName, {recursive: true});
+  console.log(`Creating presets sampling from population of ${population} in "${outputDir}" for "${groupName}"`)
+  for (let ctr = 0; ctr < configuration.numPresetsPerGroup; ctr += 1) {
+    createPreset(dataset, configuration, population, groupDirName, ctr);
+  }
+}
+
+function computeDatasetPopulation(dataset, perwtIndex) {
+  return dataset.reduce(function(sum, row)  {
+    return sum + (Number(row[perwtIndex]) || 0);
+  }, 0);
+}
+
+function createPresets(dataset, configuration) {
+  let population = computeDatasetPopulation(dataset, configuration.perwtIndex);
+  // make presets for all states
+  createPresetsForGroup(dataset, configuration, population,
+      configuration.outputDir, "all");
+
+  // make presets for each state with population above threshold
+  let stateColumnIndex = configuration.headerLine.indexOf('STATEFIP');
+  let stateCodeToNameMap = getStateCodesMap(configuration);
+  Object.entries(stateCodeToNameMap).forEach(function (entry) {
+    let stateCode = Number(entry[0]);
+    let stateName = entry[1];
+    let stateDataset = dataset.filter(function(item) {
+      return stateCode === Number(item[stateColumnIndex]);
+    })
+    let statePopulation = computeDatasetPopulation(stateDataset, configuration.perwtIndex);
+    if (statePopulation > configuration.threshold) {
+      createPresetsForGroup(stateDataset, configuration, statePopulation,
+          configuration.outputDir, stateName);
+    } else {
+      console.log(`Omitting "${stateName}: population, ${statePopulation}, below threshold.`)
+    }
+  });
+}
+
+function main() {
+  try {
+    // set up from command line arguments
+    let configuration = configure();
+    if (!configuration.status) {
+      printErrorAndExit(configuration.statusMessage);
+    }
+    // console.log(`configuration = ${JSON.stringify(configuration, null, '  ')}`);
+    // let fileContents = fs.readFileSync(configuration.csvFilename, {encoding: 'utf8'});
+    // console.log(`read file, "${configuration.csvFilename}" length: ${fileContents.length}`);
+    // let result = getCSV(fileContents);
+    // console.log(`converted, errors: ${result?result.errors.length:''}`);
+    // configuration.headerLine = result.data.shift();
+    // configuration.perwtIndex = configuration.headerLine.indexOf('PERWT');
+    // createPresets(result.data, configuration);
+    getCSVFromFile(fs.createReadStream(configuration.csvFilename, {flags: 'r', encoding: 'utf8'}))
+        .then(function (result) {
+              console.log(`read file, "${configuration.csvFilename}": ${result.data.length}`);
+              configuration.headerLine = result.data.shift();
+              configuration.perwtIndex = configuration.headerLine.indexOf('PERWT');
+              createPresets(result.data, configuration);
+            },
+            function(error) {
+              console.log(error);
+            }
+          );
+  } catch (e) {
+    printErrorAndExit(e);
+  }
+}
+
+main();

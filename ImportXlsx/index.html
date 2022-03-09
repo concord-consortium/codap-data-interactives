@@ -1,0 +1,50 @@
+<html lang="en" >
+<head>
+  <title>Import CSV to CODAP</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css" >
+  <script src="lib/iframe-phone.js"></script>
+  <script src="lib/CodapInterface.js"></script>
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="main.js" type="module"></script>
+</head>
+<body>
+  <form action="#">
+    <div id="content">
+
+      <div id="message-area" class="panel" hidden></div>
+
+      <div id="source-input" class="panel" hidden>
+        <div><label>Enter url: <input type="url" name="source-input-url"></label></div>
+        or
+        <div><input type="file" accept="application/json,application/geo+json,application/vnd.geo+json,text/json" name="source-input-file"></div>
+      </div>
+
+      <div id="downsample-options" class="panel" hidden>
+        <div class="section-title">Downsample Options</div>
+        <div class="option-list">
+          <label><input type="radio" name="downsample" value="all" checked="checked">Don't downsample</label>
+          <label><input type="radio" name="downsample" value="random" >Randomly select <input type="number" name="random-sample-size" min="0" max="99999"/> rows</label>
+          <label><input type="radio" name="downsample" value="every-nth" >Select every nth where 'n' is <input type="number" name="pick-interval" min="1" max="999"/></label>
+    <!--      <label><input type="radio" name="downsample" value="last-n" >Select last n</label>-->
+    <!--      <label><input type="radio" name="downsample" value="first-n" >Select first n</label>-->
+        </div>
+      </div>
+
+      <div id="target-options" class="panel" hidden>
+        <div class="section-title">Target Options</div>
+        <div class="option-list">
+          <label><input type="radio" name="target-operation" value="replace">Replace existing data set</label>
+          <label><input type="radio" name="target-operation" value="append">Append to existing data set</label>
+          <label><input type="radio" name="target-operation" value="new" checked="checked">Create new data set</label>
+        </div>
+      </div>
+
+      <div id="submit-area" class="panel">
+        <button id="cancel">Cancel</button>
+        <button id="submit">Submit</button>
+      </div>
+
+    </div>
+  </form>
+</body>
+</html>

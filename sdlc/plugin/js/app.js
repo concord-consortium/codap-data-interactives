@@ -20,42 +20,49 @@
  */
 /* global: xml2js */
 
-let app = {
+import * as attributeConfig from './attributeConfig.js';
+import {ui} from './app.ui.js';
+import {userActions} from "./app.userActions.js";
+import {CODAPconnect} from "./app.CODAPconnect.js";
+import {DBconnect} from "./app.DBconnect.js";
+import {Attribute} from "./Attribute.js"
+import {constants} from "./app.constants.js";
+
+window.app = {
   state: null,
-  whence: "concord",
   allAttributes: {},     //  object containing all Attributes (a class), keyed by NAME.
-  decoder: {},
-  ancestries: {},
-  map: null,
 
   freshState: {
     sampleNumber: 1,
     sampleSize: 16,
-    selectedYears: [2017],
-    selectedStates: [],
-    selectedAttributes: ['Sex', 'Age', 'Year', 'State'],
-    keepExistingData: false
+    selectedYears: constants.defaultSelectedYears,
+    selectedStates: constants.defaultSelectedStates,
+    selectedAttributes: constants.defaultSelectedAttributes,
+    keepExistingData: false,
+    activityLog: []
+  },
+
+  logConnectionInfo: function () {
+    let info = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (info) {
+      this.addLog('Connection: ' + [info.type, info.effectiveType,
+        info.saveData, info.rtt, info.downlink, info.downlinkMax].join('/') );
+      ui.updateWholeUI();
+    }
   },
 
   initialize: async function () {
-    app.years = await app.DBconnect.getDBInfo("getYears");
-    app.states = await app.DBconnect.getDBInfo('getStates');
+    // function handleError(message) {
+    //   console.warn("Initializing Microdata Portal: " + message);
+    // }
+    ui.displayStatus('initializing', "Initializing");
+    await CODAPconnect.initialize(null);
+    app.logConnectionInfo();
     await app.getAllAttributes();
-    await app.CODAPconnect.initialize(null);
-
-    //      Make sure the correct tab panel comes to the front when the text link is clicked
-
-    $('#linkToAttributePanel').click(
-      () => {
-          $('#tabs').tabs("option", "active", 1);     //  1 is the index of the attribute panel
-      });
-    $('#chooseStatesDiv').html(app.ui.makeStateListHTML());
-    $('#chooseSampleYearsDiv').html(app.ui.makeYearListHTML());
-
-    $('#chooseStatesDiv input').on('change', app.userActions.changeSampleStateCheckbox);
-    $('#chooseSampleYearsDiv input').on('change', app.userActions.changeSampleYearsCheckbox);
-    $('#chooseAttributeDiv input').on('change', app.userActions.changeAttributeCheckbox);
-    app.ui.updateWholeUI();
+    app.years = await DBconnect.getDBInfo("getYears", constants.metadataURL);
+    app.states = await DBconnect.getDBInfo('getStates', constants.metadataURL);
+    ui.init();
+    ui.displayStatus('success', "Ready");
   },
 
   updateStateFromDOM: function (logMessage) {
@@ -63,14 +70,24 @@ let app = {
       // initialize state from CODAP, then update state
     }
     else {
-      this.state.selectedYears = app.userActions.getSelectedYears();
-      this.state.selectedStates = app.userActions.getSelectedStates();
-      this.state.selectedAttributes = app.userActions.getSelectedAttrs();
+      this.state.selectedYears = userActions.getSelectedYears();
+      this.state.selectedStates = userActions.getSelectedStates();
+      this.state.selectedAttributes = userActions.getSelectedAttrs();
+      this.state.requestedSampleSize = userActions.getRequestedSampleSize();
       if (logMessage) {
-        this.CODAPconnect.logAction(logMessage);
+        CODAPconnect.logAction(logMessage);
       }
     }
-    this.ui.updateWholeUI();
+    ui.updateWholeUI();
+  },
+
+  addLog: function (logMessage) {
+    if (this.state) {
+      if (!this.state.activityLog) {
+        this.state.activityLog = [];
+      }
+      this.state.activityLog.push({time:new Date().toLocaleString(), message: logMessage});
+    }
   },
 
   getDataDictionary: function (codebook) {
@@ -105,19 +122,25 @@ let app = {
   },
 
   getAllAttributes: async function () {
-    let codeBook = await $.ajax('../data/codebook.xml', {dataType: 'text'});
-    let dataDictionary = this.getDataDictionary(codeBook);
-    app.config.attributeAssignment.forEach(function (configAttr) {
-      let codebookDef = dataDictionary.find(function (def) {
-        return def.name === configAttr.ipumsName;
-      });
-      if (codebookDef) {
-        let tA = new Attribute(codebookDef, configAttr);
+    let result = await fetch('./assets/data/codebook.xml');
+    if (result.ok) {
+      let codeBook = await result.text();
+      let dataDictionary = this.getDataDictionary(codeBook);
+      attributeConfig.attributeAssignment.forEach(function (configAttr) {
+        let codebookDef = dataDictionary.find(function (def) {
+          return def.name === configAttr.ipumsName;
+        });
+        let tA = new Attribute(codebookDef, configAttr, app.allAttributes);
         app.allAttributes[tA.title] = tA;
-      }
-    });
+      });
 
-    $("#chooseAttributeDiv").html(app.ui.makeBasicCheckboxesHTML());
+      $("#chooseAttributeDiv").html(ui.makeAttributeListHTML());
+      return app.allAttributes;
+    } else {
+      console.log('CodeBook fetch failed');
+    }
   }
 
 };
+
+app.initialize();

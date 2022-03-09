@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Gets alternate id's for a station given one.
+# Requires curl, jq
+PROGNAME=`basename $0`
+DIRNAME=`dirname $0`
+
+. $DIRNAME/.noaa_rc
+. $HOME/.noaa_rc
+
+function usage() {
+  echo usage: $PROGNAME id-type id 2>&1
+  echo id-types: COOP, FAA, GHCND, GHCNMLT, ICAO, IGRA, NCDCSTNID, NWSLI, TRANS, WBAN, WMO 2>&1
+  exit 1
+}
+
+[ "$2" == "" ] && usage
+STD_QPS='date=all&definitions=false'
+
+curl ${HOMR_URL}/${HOMR_SEARCH_ENDPOINT}?${STD_QPS}\&qid=${1}:${2} |
+  jq '.'

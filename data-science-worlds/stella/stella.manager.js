@@ -35,7 +35,7 @@
 stella.manager = {
 
     playing: false,
-    focusSystem: null,       //  what star are we pointing at?
+    focusSystem: null,       //  what system are we pointing at?
 
     starResultIsAuto: false,   //  did we get this latest result via the Auto button?
 
@@ -57,8 +57,9 @@ stella.manager = {
      * Often called when the user has changed something.
      */
     updateStella: function () {
-        stella.spectrumManager.displayAllSpectra();
+        stella.spectrumManager.displayAllSpectra(); //  fix the spectra
         stella.ui.fixStellaUITextAndControls();      //  fix the text
+        stella.skyView.updateAllStars();            //  fix all the stars
     },
 
     filterChanged : function() {
@@ -67,8 +68,8 @@ stella.manager = {
     },
 
     /**
-     * Called to make the given star the one we're working on.
-     * We get here by pointing, called from `pointAtStar( iStar )`.
+     * Called to make the given system the one we're working on.
+     * We get here by pointing, called from `pointAtSystem( iSys )`.
      * We get here by selection,
      * We can also focus by panning. See up().
      * @param iStar
@@ -81,8 +82,8 @@ stella.manager = {
     },
 
     /**
-     * Point at the given star.
-     * @param iStar     The star. Pass `null` to be not pointing at anything.
+     * Point at the given system.
+     * @param iSys     The system. Pass `null` to be not pointing at anything.
      */
     pointAtSystem: function (iSys) {
         if (iSys) {
@@ -153,11 +154,13 @@ stella.manager = {
 
     /**
      * When CODAP tells us there's one selection in the Catalog, point the telescope there.
-     * @param iCasesFromCODAP   An array. Each one's .id is the case ID.
+     * @param iCasesFromCODAP   An array. Each one's .id is the star text ID (e.g., "S123").
      */
     //  todo: make this a lookup rather than caseID
     processSelectionFromCODAP: function (iCasesFromCODAP) {
+        if (iCasesFromCODAP !== undefined) {
         if (iCasesFromCODAP.length > 0) {
+                console.log(`    selecting ${iCasesFromCODAP.length} cases`);
             if (iCasesFromCODAP.length === 1) {
                 var tSysID = iCasesFromCODAP[0].values.id;
                 var tStar = stella.model.systemFromTextID(tSysID);
@@ -167,6 +170,27 @@ stella.manager = {
         } else {
             console.log('Failed to retrieve selected system IDs.');
         }
+        } else {
+            console.log(`    undefined selection`);
+        }
+    },
+
+    focusOnStarByCODAPCaseID : function(iCaseID) {
+        console.log(`due to selection in CODAP, focusing on case ID ${iCaseID}`);
+        const tMessage = {
+            action : "get",
+            resource : `dataContext[${stella.connector.catalogDataSetName}].itemByCaseID[${iCaseID}]`,
+        };
+
+        codapInterface.sendRequest(tMessage).then( (res) => {
+            if (res.success) {
+                const tStarTextID = res.values.values.id;
+                var tStar = stella.model.systemFromTextID(tStarTextID);
+                stella.manager.pointAtSystem(tStar);
+                stella.manager.updateStella();
+            }
+        });
+
     },
 
 
@@ -189,7 +213,7 @@ stella.manager = {
     starResultValueChanged: function (iAuto) {
         stella.manager.starResultIsAuto = iAuto;
         stella.ui.starResultValue = Number($("#starResultValue").val());
-        stella.manager.updateStella();
+        //  stella.manager.updateStella();      //  no need to change stars or spectra
     },
 
     /**
@@ -310,7 +334,16 @@ stella.manager = {
                      */
                     case "selectCases":
                         // todo: Note that this is set up to work only with the star catalog data set. Expand!
+/*
                         stella.manager.processSelectionFromCODAP(tValues[0].result.cases);   //  array of cases, case.id is the caseID.
+*/
+                        stella.connector.getSelectionListFromCODAP(stella.connector.catalogDataSetName)
+                            .then( (values) => {
+                                if (values && values.length === 1) {
+                                    const aValue = values[0];
+                                    stella.manager.focusOnStarByCODAPCaseID(aValue.caseID);
+                                }
+                            });
                         break;
 
                     default:

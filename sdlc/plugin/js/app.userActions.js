@@ -16,52 +16,70 @@
  *
  */
 
-app.userActions = {
+import {constants} from './app.constants.js';
+import {CODAPconnect} from "./app.CODAPconnect.js";
+import {DBconnect} from "./app.DBconnect.js";
+import {ui} from "./app.ui.js"
+
+let userActions = {
 
   pressGetCasesButton : async function() {
     try {
       console.log("get cases!");
       let oData = [];
-      app.ui.displayStatus('Fetching data...');
-      let tData = await app.DBconnect.getCasesFromDB(app.state.selectedAttributes,
-        app.state.selectedStates, app.state.selectedYears);
+      ui.displayStatus('retrieving', 'Fetching data...');
+      let tData = await DBconnect.getCasesFromDB(app.state.selectedAttributes,
+        app.state.selectedStates, app.state.selectedYears, app.allAttributes);
 
+      // If tData is empty, there must have been an error. We are relying on
+      // lower layers to log the failure.
+      if (!tData) {
+        ui.displayStatus('failure', 'Fetch Error. Please retry.');
+        ui.updateWholeUI();
+        return;
+      }
+
+      tData = tData.flat(1);
+
+      let counter = 0;
       //  okay, tData is an Array of objects whose keys are the variable names.
       //  now we have to translate names and values...
-      app.ui.displayStatus('Formatting data...');
-
-      tData.forEach( c => {
+      ui.displayStatus('transferring', 'Formatting data...');
+      tData.forEach( function(c) {
           //  c is a case object
-        let sampleData = c.sample_data;
+        let sampleData = c;
+        if (!sampleData) { return; }
         let o = { sample : app.state.sampleNumber };
         app.state.selectedAttributes.forEach(function (attrTitle) {
           let attr = app.allAttributes[attrTitle];
           o[attr.title] = attr.decodeValue(sampleData);
         });
         oData.push(o);
+        counter ++;
       });
 
+      await CODAPconnect.guaranteeDataset();
+
       //     make sure the case table is showing
+      ui.displayStatus('transferring', 'Opening case table...');
+      let id = await CODAPconnect.makeCaseTableAppear();
 
-      app.ui.displayStatus('Opening case table...');
-      await app.CODAPconnect.makeCaseTableAppear();
-
-      // console.log("the cases: " + JSON.stringify(oData));
-
-      app.ui.displayStatus('Sending data to codap...');
+      ui.displayStatus('transferring', 'Sending data to codap...');
       if (!app.state.keepExistingData) {
-        await app.CODAPconnect.deleteAllCases();
+        await CODAPconnect.deleteAllCases();
       }
-      await app.CODAPconnect.saveCasesToCODAP( oData );
-      app.ui.displayStatus('');
+      await CODAPconnect.saveCasesToCODAP( oData );
+      ui.displayStatus('success', `Selected a random sample of ${counter} people`);
+      setTimeout(function () {CODAPconnect.autoscaleComponent(id);}, 1000);
       app.state.sampleNumber++;
     } catch (ex) {
       console.log(ex);
-      app.ui.displayStatus('Error...');
+      ui.displayStatus('failure', 'Fetch Error. Please retry.');
     }
+    ui.updateWholeUI();
   },
 
-  changeAttributeCheckbox : function(iAttName) {
+  changeAttributeCheckbox : function(/*iAttName*/) {
     // const tAtt = app.allAttributes[iAttName];
     //
     // tAtt.chosen = !tAtt.chosen;
@@ -112,15 +130,32 @@ app.userActions = {
     return rslt;
   },
 
+  /**
+   * This is the raw request, not the quantity we will actually return
+   */
+  getRequestedSampleSize: function () {
+    return $("#sampleSizeInput")[0].value;
+  },
+
   getSelectedSampleSize: function () {
     let requestedSize = $("#sampleSizeInput")[0].value;
     let numPartitions = app.getPartitionCount();
-    let constrainedSize = Math.max(app.constants.kMinCases, Math.min(app.constants.kMaxCases, requestedSize));
+    let constrainedSize = Math.max(constants.kMinCases, Math.min(constants.kMaxCases, requestedSize));
     let partitionSize = Math.round(constrainedSize/numPartitions) || 1;
     return partitionSize * numPartitions;
   },
 
   getKeepExistingDataOption: function () {
     app.state.keepExistingData = $('#keepExistingDataCheckbox').is(':checked');
+  },
+  updateRequestedSampleSize: function () {
+    app.state.requestedSampleSize = $("#sampleSizeInput")[0].value;
+    ui.updateWholeUI();
+  },
+  selectHandler: function () {
+    CODAPconnect.selectSelf();
   }
+
 };
+
+export {userActions};

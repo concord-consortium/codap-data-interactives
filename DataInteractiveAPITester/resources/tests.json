@@ -8,12 +8,15 @@
         "name": "Tester",
         "title": "DI-API Test",
         "version": "0.1",
-        "preventBringToFront": false,
-        "preventDataContextReorg": false,
         "dimensions": {
           "width": 600,
           "height": 500
-        }
+        },
+        "preventBringToFront": false,
+        "preventDataContextReorg": false,
+        "externalUndoAvailable": false,
+        "standaloneUndoModeAvailable": false,
+        "cannotClose": false
       }
     },
     "expect": {
@@ -61,6 +64,20 @@
       "resource": "interactiveFrame",
       "values": {
         "image": "data:image/png;base64,sdkfalsdjf=="
+      }
+    },
+    "expect": {
+      "success": true
+    }
+  },
+
+  {
+    "name": "Request guide configuration menu",
+    "message": {
+      "action": "notify",
+      "resource": "interactiveFrame",
+      "values": {
+        "request": "openGuideConfiguration"
       }
     },
     "expect": {
@@ -149,14 +166,14 @@
       "action": "create",
       "resource": "dataContext",
       "values": {
-        "name": "DataContext1",
-        "title": "My Data Context",
-        "description": "Toons"
+        "name": "Mammals",
+        "title": "Mammals",
+        "description": "Information about Mammals"
       }
     },
     "expect": {
       "id": "%%",
-      "name": "DataContext1"
+      "name": "Mammals"
     }
   },
 
@@ -175,9 +192,13 @@
     "name": "Update Data Context",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1]",
+      "resource": "dataContext[Mammals]",
       "values": {
-        "title": "A new title for the data set"
+        "title": "Mammalia",
+        "preventReorg": true,
+        "metadata": {
+          "description": "Some factoids about some mammals."
+        }
       }
     }
   },
@@ -186,7 +207,7 @@
     "name": "Get Data Context",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1]"
+      "resource": "dataContext[Mammals]"
     },
     "expect": {
       "success": true,
@@ -215,7 +236,28 @@
     "name": "Delete Data Context",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1]"
+      "resource": "dataContext[Mammals]"
+    }
+  },
+  {
+    "name": "Set Aside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "setAside",
+        "caseIDs": [13, 14]
+      }
+    }
+  },
+  {
+    "name": "Restore Setaside Cases",
+    "message": {
+      "action": "notify",
+      "resource": "dataContext[Mammals]",
+      "values": {
+        "request": "restoreSetasides"
+      }
     }
   },
 
@@ -224,16 +266,17 @@
     "message":
     {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection",
+      "resource": "dataContext[Mammals].collection",
       "values": [
         {
-          "parent": "ROOT",
-          "name": "People",
-          "title": "Data about People",
-          "labels": {
-            "singleCase": "person",
-            "pluralCase": "people"
-          }
+          "parent": "_root_",
+          "name": "Top",
+          "title": "Top",
+          "attrs": [
+            {
+              "name": "version"
+            }
+          ]
         }
       ]
     },
@@ -251,17 +294,17 @@
     "name": "Create Child Collection w/ Attributes",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection",
+      "resource": "dataContext[Mammals].collection",
       "values": {
-        "name": "Movies",
-        "parent": "People",
+        "name": "Sightings",
+        "parent": "Cases",
         "attributes": [
           {
-            "name": "Release_Date",
+            "name": "When",
             "type": "date"
           },
           {
-            "name": "Movie"
+            "name": "Witness"
           }
         ]
       }
@@ -280,9 +323,9 @@
     "name": "Update Collection",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].collection[Toons]",
+      "resource": "dataContext[Mammals].collection[Mammals]",
       "values": {
-        "title": "People"
+        "title": "Mammalia"
       }
     }
   },
@@ -290,13 +333,13 @@
     "name": "Get Collection",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons]"
+      "resource": "dataContext[Mammals].collection[Mammals]"
     },
     "expect": {
       "success": true,
       "values": {
         "id": "%%",
-        "name": "Toons",
+        "name": "Mammals",
         "title": "%%"
       }
 
@@ -306,7 +349,7 @@
     "name": "Get Collection List",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collectionList"
+      "resource": "dataContext[Mammals].collectionList"
     },
     "expect": {
       "success": true,
@@ -322,7 +365,7 @@
     "name": "Delete Collection",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1].collection[Toons]"
+      "resource": "dataContext[Mammals].collection[Mammals]"
     }
   },
 
@@ -330,13 +373,13 @@
     "name": "Create Categorical Attribute",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute",
       "values": [
         {
-          "name": "Name",
+          "name": "Resting Heartrate",
           "type": "categorical",
-          "title": "Toon Name",
-          "description": "The full name of the toon",
+          "title": "Heartrate",
+          "description": "The typical resting heartrate",
           "editable": false
         }
       ]
@@ -346,13 +389,13 @@
     "name": "Create Numeric Attribute",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute",
       "values": [
         {
           "name": "Year",
           "type": "numeric",
-          "title": "Year of debut",
-          "description": "First year the toon appeared in a film",
+          "title": "Year of discovery",
+          "description": "Year of discovery",
           "editable": false,
           "precision": 0,
           "unit": "years"
@@ -364,7 +407,7 @@
     "name": "Update Attribute",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]",
+      "resource": "dataContext[Mammals].collection[Toons].attribute[name]",
       "values": {
         "title": "Name"
       }
@@ -374,21 +417,21 @@
     "name": "Get Attribute",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name]"
     }
   },
   {
     "name": "Get Attribute List",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].attributeList"
+      "resource": "dataContext[Mammals].collection[Mammals].attributeList"
     }
   },
   {
     "name": "Delete Attribute",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1].collection[Toons].attribute[name]"
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name]"
     }
   },
   {
@@ -417,17 +460,35 @@
   },
 
   {
-    "name": "Create Parent Case",
+    "name": "Create Parent or Single Collection Case",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection[Toons].case",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
       "values": [
         {
           "values": {
-            "Name": "Mickey",
-            "Species": "Mouse",
-            "Gender": "Male",
-            "Studio": "Disney"
+            "Mammal": "Cartoon Mouse",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.03,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
+          }
+        },
+        {
+          "values": {
+            "Mammal": "Cartoon Duck",
+            "Order": "Toonidae",
+            "Lifespan": 99,
+            "Height": 0.05,
+            "Mass": 0.001,
+            "Sleep": 0,
+            "Speed": 200,
+            "Habitat": "Theme Park, Movies",
+            "Diet": "celluloid"
           }
         }
       ]
@@ -437,13 +498,13 @@
     "name": "Create Child Case",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].collection[Toons].case",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
       "values": [
         {
           "parent": "23",
           "values": {
-            "FilmName": "Steamboat Willie",
-            "Release_Date": "11/18/1928"
+            "Witness": "Steamboat Willie",
+            "When": "11/18/1928"
           }
         }
       ]
@@ -453,54 +514,82 @@
     "name": "Update Case By ID",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].collection[Toons].caseByID[15]",
+      "resource": "dataContext[Mammals].collection[Mammals].caseByID[15]",
       "values": {
         "values": {
-          "Species": "Duck"
+          "Mammal": "Duck"
         }
       }
+    }
+  },
+  {
+    "name": "Update multiple cases",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals].case",
+      "values": [
+        {
+          "id": 13,
+          "values":  {
+            "LifeSpan": 17
+           }
+        },
+        {
+          "id": 14,
+          "values":  {
+            "LifeSpan": 34
+           }
+        }
+      ]
     }
   },
   {
     "name": "Get Case Count",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseCount"
+      "resource": "dataContext[Mammals].collection[Mammals].caseCount"
     }
   },
   {
     "name": "Get Case By Index",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseByIndex[0]"
+      "resource": "dataContext[Mammals].collection[Mammals].caseByIndex[0]"
     }
   },
   {
     "name": "Get Case By ID",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].caseByID[20]"
+      "resource": "dataContext[Mammals].caseByID[20]"
+    }
+  },
+  {
+    "name": "Case formula-based search",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].caseFormulaSearch[Mass=max(Mass)]"
     }
   },
   {
     "name": "Case search",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].collection[Toons].caseSearch[name==Mickey]"
+      "resource": "dataContext[Mammals].collection[Mammals].caseSearch[Mammal==Red Fox]"
     }
   },
   {
     "name": "Delete Case",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataCard].collection[Toons].caseByID[15]"
+      "resource": "dataContext[Mammals].collection[Mammals].caseByID[15]"
     }
   },
   {
     "name": "Delete all cases in dataContext",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1].allCases"
+      "resource": "dataContext[Mammals].allCases"
     }
   },
   {
@@ -544,39 +633,58 @@
     "name": "Create Items",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].item",
+      "resource": "dataContext[Mammals].item",
       "values": [
         {
           "Name": "Daffy Duck",
-          "Species": "Duck",
-          "Gender": "Male",
-          "Studio": "Warner Bros.",
-          "Release_Date": "1937",
-          "Movie": "Porky's Duck Hunt"
+          "Order": "Cartoonae",
+          "Lifespan": 99,
+          "Height": 1,
+          "Weight": 3,
+          "Habitat": "Cinema",
+          "Diet": "plants"
         },
         {
           "Name": "Elmer Fudd",
-          "Species": "Human",
-          "Gender": "Male",
-          "Studio": "Warner Bros.",
-          "Release_Date": "1937",
-          "Movie": "Egghead Rides Again"
+          "Order": "Cartoonae",
+          "Lifespan": 99,
+          "Height": 2,
+          "Weight": 150,
+          "Habitat": "Cinema",
+          "Diet": "plants"
         }
       ]
     }
   },
   {
-    "name": "Get Item",
+    "name": "Get Item By Item ID",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].item[1]"
+      "resource": "dataContext[Mammals].itemByID[123456]"
     }
   },
   {
-    "name": "Update Item",
+    "name": "Get Item By Index",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].item[12]"
+    }
+  },
+  {
+    "name": "Update Item by Item Index",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].item[1]",
+      "resource": "dataContext[Mammals].itemByID[123456]",
+      "values": {
+        "Species": "sapien"
+      }
+    }
+  },
+  {
+    "name": "Update Item by Item ID",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].itemByID[12]",
       "values": {
         "Species": "sapien"
       }
@@ -586,14 +694,21 @@
     "name": "Get Item by Case ID",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].itemByCaseID[23]"
+      "resource": "dataContext[Mammals].itemByCaseID[23]"
+    }
+  },
+  {
+    "name": "Get Item Count",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemCount"
     }
   },
   {
     "name": "Update Item by Case ID",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].itemByCaseID[23]",
+      "resource": "dataContext[Mammals].itemByCaseID[23]",
       "values": {
         "Species": "sapien"
       }
@@ -603,28 +718,36 @@
     "name": "Delete Item by Case ID",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1].itemByCaseID[23]"
+      "resource": "dataContext[Mammals].itemByCaseID[23]"
     }
   },
   {
     "name": "Get Item by Search",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].itemSearch[Species==human]"
+      "resource": "dataContext[Mammals].itemSearch[Species==human]"
+    }
+  },
+  {
+
+    "name": "Get All Items",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].itemSearch[*]"
     }
   },
   {
     "name": "Delete Item by Search",
     "message": {
       "action": "delete",
-      "resource": "dataContext[DataContext1].itemSearch[Age>4]"
+      "resource": "dataContext[Mammals].itemSearch[Age>4]"
     }
   },
   {
     "name": "Create Selection List",
     "message": {
       "action": "create",
-      "resource": "dataContext[DataContext1].selectionList",
+      "resource": "dataContext[Mammals].selectionList",
       "values": [
         9
       ]
@@ -634,7 +757,7 @@
     "name": "Update Selection List",
     "message": {
       "action": "update",
-      "resource": "dataContext[DataContext1].selectionList",
+      "resource": "dataContext[Mammals].selectionList",
       "values": [
         10
       ]
@@ -644,7 +767,7 @@
     "name": "Get Selection List",
     "message": {
       "action": "get",
-      "resource": "dataContext[DataContext1].selectionList"
+      "resource": "dataContext[Mammals].selectionList"
     }
   },
 
@@ -669,7 +792,7 @@
         "type": "map",
         "name": "name-map",
         "title": "title-map",
-        "dataContextName": "DataContext1",
+        "dataContextName": "Mammals",
         "legendAttributeName": "Legend"
       }
     }
@@ -699,12 +822,25 @@
         "title": "title-text",
         "text": "T'was brillig and the slithy toves...",
         "dimensions": {
-          "width": 60,
-          "height": 200
-        },
-        "position": {
-          "left": 300,
-          "top": 100
+          "width": 200,
+          "height": 60
+        }
+      }
+    }
+  },
+  {
+    "name": "Create Plugin",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "game",
+        "name": "Weather",
+        "title": "NOAA Weather",
+        "URL": "//codap-server.concord.org/releases/latest/extn/plugins/NOAA-weather/",
+        "dimensions": {
+          "width": 200,
+          "height": 60
         }
       }
     }
@@ -722,20 +858,33 @@
           "height": 240
         },
         "position": "top",
-        "dataContext": "DataContext1",
+        "dataContext": "Mammals",
         "xAttributeName": "height",
         "yAttributeName": "age"
       }
     }
   },
   {
-    "name": "Create Case Tables",
+    "name": "Create Case Table",
     "message": {
       "action": "create",
       "resource": "component",
       "values": {
         "type": "caseTable",
-        "dataContext": "DataContext1"
+        "dataContext": "Mammals",
+        "horizontalScrollOffset": 500
+      }
+    }
+  },
+  {
+    "name": "Create Case Card",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "caseCard",
+        "dataContext": "Mammals",
+        "position": "bottom"
       }
     }
   },
@@ -754,12 +903,38 @@
     }
   },
   {
-    "name": "Update Component",
+    "name": "Create Image View",
+    "message": {
+      "action": "create",
+      "resource": "component",
+      "values": {
+        "type": "image",
+        "name": "image",
+        "title": "Concord",
+        "URL": "https://codap.concord.org/_assets/img/education-logos.jpg",
+        "dimensions": {"width": 400, "height": 300}
+      }
+    }
+  },
+  {
+    "name": "Update Map Component",
     "message": {
       "action": "update",
       "resource": "component[myMap]",
       "values": {
-        "legendAttribute": "Height"
+	      "legendAttributeName": "Height",
+          "center": [34.75, -114.328],
+          "zoom": 6
+      }
+    }
+  },
+  {
+    "name": "Update Table Component",
+    "message": {
+      "action": "update",
+      "resource": "component[176]",
+      "values": {
+        "isIndexHidden": true
       }
     }
   },
@@ -784,7 +959,26 @@
       "resource": "component[mySlider]"
     }
   },
-
+  {
+    "name": "Select Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[mySlider]",
+      "values": {
+        "request": "select"
+      }
+    }
+  },
+  {
+    "name": "Autoscale Component",
+    "message": {
+      "action": "notify",
+      "resource": "component[myTable]",
+      "values": {
+        "request": "autoScale"
+      }
+    }
+  },
   {
     "name": "Log a Message",
     "message": {
@@ -793,6 +987,36 @@
       "values": {
         "formatStr": "Launched rocket with %@ engine toward %@",
         "replaceArgs": ["red", "satellite"]
+      }
+    }
+  },
+
+  {
+    "name": "Get formula function definitions",
+    "message": {
+      "action": "get",
+      "resource": "formulaEngine"
+    }
+  },
+  {
+    "name":  "Evaluate a formula",
+    "message": {
+      "action": "notify",
+      "resource": "formulaEngine",
+      "values": {
+        "request": "evalExpression",
+        "source": "a + 1",
+        "records": [
+          {
+            "a": 1
+          },
+          {
+            "a": 2
+          },
+          {
+            "a": 3
+          }
+        ]
       }
     }
   },
