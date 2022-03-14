@@ -19,6 +19,7 @@
 /*global codapInterface */
 
 let pluginID = null;
+let connected = false;
 
 
 /**
@@ -31,8 +32,15 @@ function init (codapConfig) {
       .then(_getIDOfSelf);
 }
 
-
+async function sendRequest(request) {
+  if (connected) {
+    return codapInterface.sendRequest(request);
+  } else {
+    return {success: true};
+  }
+}
 function _getIDOfSelf(pluginStatus) {
+  connected = true;
   return codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
       .then(function (result) {
         return new Promise(function(resolve, reject) {
@@ -52,18 +60,14 @@ function _getIDOfSelf(pluginStatus) {
  * @return {Promise<object|void>}
  */
 function adjustHeightOfSelf(height) {
-  if (pluginID == null) {
-    return Promise.reject('Communication not established');
-  }
-
-  let request = {
-    action: 'update',
-    resource: 'component[' + pluginID + "]",
-    values: {
-      dimensions: {height: height}
+  if (pluginID != null) {
+    let request = {
+      action: 'update', resource: 'component[' + pluginID + "]", values: {
+        dimensions: {height: height}
+      }
     }
+    return codapInterface.sendRequest(request);
   }
-  return codapInterface.sendRequest(request);
 }
 
 /**
@@ -75,27 +79,22 @@ function setVisibilityOfSelf(isVisible) {
   if (isVisible == null) {
     isVisible = true;
   }
-  if (pluginID == null) {
-    return Promise.reject('Communication not established');
-  }
-  let request = {
-    action: 'update',
-    resource: `component[${pluginID}]`,
-    values: {
-      isVisible: isVisible
-    }
-  }
-  if (isVisible) {
-    request = [request];
-    request.push({
-      action: 'notify',
-      resource: `component[${pluginID}]`,
-      values: {
-        request: 'select'
+  if (pluginID != null) {
+    let request = {
+      action: 'update', resource: `component[${pluginID}]`, values: {
+        isVisible: isVisible
       }
-    })
+    }
+    if (isVisible) {
+      request = [request];
+      request.push({
+        action: 'notify', resource: `component[${pluginID}]`, values: {
+          request: 'select'
+        }
+      })
+    }
+    return codapInterface.sendRequest(request);
   }
-  return codapInterface.sendRequest(request);
 }
 
 /**
@@ -124,11 +123,12 @@ async function selectComponent(id) {
  */
 function closeSelf() {
   console.log('CSV Importer Plugin: closing self');
-  let request = {
-    action: 'delete',
-    resource: 'component[' + pluginID + ']'
-  };
-  return codapInterface.sendRequest(request);
+  if (pluginID) {
+    let request = {
+      action: 'delete', resource: 'component[' + pluginID + ']'
+    };
+    return codapInterface.sendRequest(request);
+  }
 }
 
 /**
