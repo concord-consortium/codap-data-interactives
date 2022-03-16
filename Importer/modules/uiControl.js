@@ -21,10 +21,10 @@ let messageArea = document.getElementById('message-area');
 /* @property {{keyCode: handler}} */
 let keyMap = {};
 
-function displayMessage(message, selector) {
+function displayMessage(message, selector, myClass) {
   if (selector == null) {
     // noinspection SpellCheckingInspection
-    messageArea.insertAdjacentHTML('beforeend', '<div class="message">' + message + '</div>');
+    messageArea.insertAdjacentHTML('beforeend', `<div class="message ${myClass|''}>${message}</div>`);
     showSection('message-area', true);
   } else {
     let el = document.querySelector(selector);
@@ -41,7 +41,7 @@ function displayError(message) {
   document.getElementById('submit').classList.add('hidden');
   document.getElementById('dismiss').classList.remove('hidden');
 
-  displayMessage('<span class="error">' + message + '</span>')
+  displayMessage( message, null, 'error')
 }
 
 /**

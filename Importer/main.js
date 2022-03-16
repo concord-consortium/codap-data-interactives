@@ -194,9 +194,8 @@ function prepareKnownTargetDatasetDialog() {
       && sourceDataset.attributeNames
       && sourceDataset.attributeNames.length > kAttrListLimit) ? '...': '.';
 
-  uiControl.displayMessage(`Preparing to import into <em>${dsName}</em>, 
-        ${rows} rows from a table with ${attrCount} attributes: ${attrList}${attrListEnd}`
-      , '#target-message');
+  uiControl.displayMessage(localeManager.loc("DG.plugin.Importer.import-message", [
+        rows, dsName, attrCount, attrList, attrListEnd]), '#target-message');
   uiControl.showSection('target-options', true);
   // do not show the new dataset option
   uiControl.showSection('new-dataset-option', false);
@@ -635,7 +634,7 @@ async function importDataIntoCODAP() {
     }
     else {
       uiControl.displayError(
-          (result && result.error) || "Error sending data to CODAP");
+          (result && result.error) || localeManager.loc("DG.plugin.Importer.error-codap-connection"));
       codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
     }
 
@@ -643,7 +642,7 @@ async function importDataIntoCODAP() {
     // return populateFromDataThenExit(data, config);
   }
   catch (ex){
-    uiControl.displayError('Could not import this file -- ' + ex);
+    uiControl.displayError(localeManager.loc('DG.plugin.Importer..error-upload', [ex.toString()]));
   }
 }
 

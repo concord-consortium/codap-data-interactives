@@ -19,7 +19,10 @@ let translation = {
   "DG.plugin.Importer.no-table-error": "Could not find tabular data in a format that can be imported into CODAP",
   "DG.plugin.Importer.duplicate-dataset-msg": "There already exists a dataset like this one. It is named \"%@\".",
   "DG.plugin.Importer.upload-time-msg": "It was uploaded %@",
-  "DG.plugin.Importer.large-file-msg": "The imported file, \"%@\" has %@ rows. With more than %@ rows CODAP performance may be sluggish. You can work with a sample of the data at least at first, replacing it with the full dataset later."
+  "DG.plugin.Importer.large-file-msg": "The imported file, \"%@\" has %@ rows. With more than %@ rows CODAP performance may be sluggish. You can work with a sample of the data at least at first, replacing it with the full dataset later.",
+  "DG.plugin.Importer.error-codap-connection": "Error sending data to CODAP",
+  "DG.plugin.Importer.error-upload": "Could not import this file -- %@",
+  "DG.plugin.Importer.import-message": "Preparing to import %@ rows into \"%@\" from a table with %@ attributes: %@%@"
 };
 
 export default translation;
