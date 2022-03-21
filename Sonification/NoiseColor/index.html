@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Formant</title>
+    <script type="text/javascript" src="../../Common/js/iframe-phone.js"></script>
+    <script type="text/javascript" src="../../Common/js/CodapInterface.js"></script>
+    <script type="text/javascript" src="../lib/CodapPluginHelper.js"></script>
+    <script type="text/javascript" src="../lib/CodapDragHandler.js"></script>
+    <script type="text/javascript" src="../lib/vue.min.js"></script>
+    <script type="text/javascript" src="../lib/dtm.min.js"></script>
+    <script type="text/javascript" src="../lib/pixi.min.js"></script>
+
+    <style type="text/css">
+        #canvas {
+            margin-top: 5px;
+        }
+        #link-icon {
+            width: 8%;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000
+        }
+    </style>
+</head>
+<body>
+<div class="loading-screen">Loading the plugin...</div>
+<div id="app">
+    <div>
+        Context
+        <label>
+            <select v-model="focusedContext" v-on:change="onContextFocused" class="drop-area" id="contextDropArea">
+                <option disabled value="" hidden>Select context</option>
+                <option v-for="context in contexts">{{context}}</option>
+            </select>
+        </label>
+    </div>
+
+    <div>
+        Group by
+        <label>
+            <select v-model="groupCollection" v-on:change="onGroupCollChanged" class="drop-area" id="groupCollDropArea">
+                <option disabled value="" hidden>Select collection</option>
+                <option v-for="collection in collections">{{collection}}</option>
+            </select>
+        </label>
+    </div>
+
+    <div>
+        Pitch
+        <label>
+            <select v-model="pitchAttribute" v-on:change="onPitchAttrChanged" class="drop-area" id="pitchAttrDropArea">
+                <option disabled value="" hidden>Select attribute</option>
+                <option v-for="attribute in attributes">{{attribute}}</option>
+                <option v-if="globals.length" disabled>──────────</option>
+                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+            </select>
+        </label>
+    </div>
+
+    <canvas id="canvas" ref="canvas"></canvas>
+
+    <div id="footer-container">
+        <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" draggable="false" @click="openInfoPage">
+        <img id="draggable-link" src="../images/Simpleicons_Interface_link-interface-symbol-1.svg" draggable="true" ondragstart="(ev => {
+            ev.dataTransfer.setData('text', window.location.href);
+            ev.dataTransfer.setData('url', window.location.href);
+        })(event)">
+    </div>
+</div>
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="../lib/Csound/csound.js"></script>
+</body>
+</html>
