@@ -7520,7 +7520,7 @@ dtm.data.augment({
     },
 
     /**
-     * @function module:data#fileter
+     * @function module:data#filter
      * @param fn
      */
     filter: function (fn) {
@@ -10941,6 +10941,7 @@ function Music() {
         phase: 0.0,
         phasor: {base: null},
         playing: false,
+        paused: false,
 
         data: null,
         wavetable: null,
@@ -11507,7 +11508,9 @@ Music.prototype.play = Music.prototype.p = function (time) {
                 var mntGain = actx.createGain();
                 mntGain.gain.setValueAtTime(that.params.monitor.process ? 1 : 0, 0);
 
-                out.connect(that.nodes.monitor).connect(mntGain).connect(actx.destination);
+                out.connect(that.nodes.monitor);
+                that.nodes.monitor.connect(mntGain);
+                mntGain.connect(actx.destination);
             }
             //===============================
 
@@ -11655,6 +11658,7 @@ Music.prototype.stop = Music.prototype.s = function (time) {
 
     that.params.repeat.current = 0;
     that.params.repeat.resetNext = true;
+    that.params.repeat.nextTime = null;
 
     setTimeout(function () {
         if (!isNumber(time)) {
@@ -11676,9 +11680,9 @@ Music.prototype.stop = Music.prototype.s = function (time) {
             that.nodes.rtSrc.stop(time);
         }
 
-        that.params.monitor.state = false;
+        // that.params.monitor.state = false;
         if (that.nodes.monitor) {
-            that.nodes.monitor.onaudioprocess = null;
+            // that.nodes.monitor.onaudioprocess = null;
             that.nodes.monitor.disconnect();
         }
 
@@ -11687,6 +11691,17 @@ Music.prototype.stop = Music.prototype.s = function (time) {
     }, that.meta.deferIncr);
 
     return that;
+};
+
+Music.prototype.pause = function (pausing) {
+    if (!isBoolean(pausing)) {
+        pausing = true;
+    }
+    if (pausing) {
+        this.params.paused = true;
+    } else {
+        this.params.paused = false;
+    }
 };
 
 /**

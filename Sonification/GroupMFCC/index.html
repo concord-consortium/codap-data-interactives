@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Formant</title>
+    <script type="text/javascript" src="../../Common/js/iframe-phone.js"></script>
+    <script type="text/javascript" src="../../Common/js/CodapInterface.js"></script>
+    <script type="text/javascript" src="../lib/CodapPluginHelper.js"></script>
+    <script type="text/javascript" src="../lib/CodapDragHandler.js"></script>
+    <script type="text/javascript" src="../lib/vue.min.js"></script>
+    <script type="text/javascript" src="../lib/dtm.min.js"></script>
+    <script type="text/javascript" src="../lib/pixi.min.js"></script>
+
+    <style type="text/css">
+        #canvas {
+            margin-top: 5px;
+        }
+        #link-icon {
+            width: 8%;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div>
+        Context
+        <label>
+            <select v-model="focusedContext" v-on:change="onContextFocused" class="drop-area" id="contextDropArea">
+                <option disabled value="" hidden>Select context</option>
+                <option v-for="context in contexts">{{context}}</option>
+            </select>
+        </label>
+    </div>
+
+    <div>
+        Group by
+        <label>
+            <select v-model="groupAttribute" v-on:change="onGroupAttrChanged" class="drop-area" id="groupAttrDropArea">
+                <option disabled value="" hidden>Select attribute</option>
+                <option v-for="attribute in attributes">{{attribute}}</option>
+            </select>
+        </label>
+    </div>
+
+    <div>
+        Pitch
+        <label>
+            <select v-model="pitchAttribute" v-on:change="onPitchAttrChanged" class="drop-area" id="pitchAttrDropArea">
+                <option disabled value="" hidden>Select attribute</option>
+                <option v-for="attribute in attributes">{{attribute}}</option>
+            </select>
+        </label>
+    </div>
+
+    <canvas id="canvas" ref="canvas"></canvas>
+</div>
+<img id="link-icon" src="../images/Simpleicons_Interface_link-interface-symbol-1.svg" draggable="true" ondragstart="(ev => {
+    ev.dataTransfer.setData('text', window.location.href);
+    ev.dataTransfer.setData('url', window.location.href);
+})(event)">
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="../lib/Csound/csound.js"></script>
+</body>
+</html>
