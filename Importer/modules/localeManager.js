@@ -16,38 +16,27 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-import defaultStrings from './strings/strings-en.js';
-const DEFAULT_LOCALE = 'en';
+const DEFAULT_LOCALE = 'en-US';
 const varRegExp = /%@/g
-let locale = DEFAULT_LOCALE;
+let locale;
 let translations = {};
 
 function getQueryParam(s) {
   return new URLSearchParams(window.location.search).get(s);
 }
 
-function importLocale (locale) {
-  translations[locale] = null;
-  return import(`./strings/strings-${locale}.js`).then(
-      (s) => {
-        translations[locale] = s.default;
-      },
-      (msg) => {
-        console.log(`Importing "${locale}": ${msg}`);
-      }
-  )
-}
-
 async function init() {
-  translations[DEFAULT_LOCALE] = defaultStrings;
-  locale = getQueryParam('lang').toLowerCase() || DEFAULT_LOCALE;
-  if (locale && locale !== DEFAULT_LOCALE) {
-    await importLocale(locale)
-    if (!translations[locale]) {
-      locale = DEFAULT_LOCALE;
-    }
-  }
-  localizeDOM(document.body);
+  return fetch('./modules/strings.json')
+      .then((response) => response.json())
+      .then((data) => {
+        translations = data;
+        locale = getQueryParam('lang').toLowerCase() || DEFAULT_LOCALE;
+        if (!(locale && translations[locale])) {
+          locale = DEFAULT_LOCALE;
+        }
+        // localize existing dom
+        localizeDOM(document.body);
+      });
 }
 
 function localizeDOM(node) {
