@@ -16,7 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-const DEFAULT_LOCALE = 'en-US';
+const DEFAULT_LOCALE = 'en-us';
 const varRegExp = /%@/g
 let locale;
 let translations = {};
@@ -30,7 +30,7 @@ async function init() {
       .then((response) => response.json())
       .then((data) => {
         translations = data;
-        locale = getQueryParam('lang').toLowerCase() || DEFAULT_LOCALE;
+        locale = getQueryParam('lang').toLowerCase();
         if (!(locale && translations[locale])) {
           locale = DEFAULT_LOCALE;
         }
@@ -52,10 +52,11 @@ function localizeDOM(node) {
 
 function loc(key, vars, lang) {
   // if lang present convert it to lower case, if not set it to the locale.
-  lang = (lang == null)?locale:lang.toLowerCase();
+  lang = (!lang|| !translations[lang])?locale:lang.toLowerCase();
   if (vars && !Array.isArray(vars)) { vars = [vars];}
-  let translation = translations[lang] != null ? translations[lang][key] : undefined
-  if ((translation == null)) { translation = key }
+  let translation = translations[lang][key]
+      || translations[DEFAULT_LOCALE][key]
+      || key;
   return vars==null?translation:translation.replace(varRegExp, function() {
     return vars.shift();
   })

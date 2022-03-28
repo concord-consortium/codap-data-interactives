@@ -36,7 +36,7 @@ let constants = {
   defaultTargetOperation: 'replace',
   defaultDownsample: 'random',
   name: 'Importer',  // plugin name
-  title: localeManager.loc('DG.plugin.Importer.title'),
+  title: 'Importer',
   ordinal_attribute_name: '_import_index_',
   ordinal_attribute_type: 'categorical',
   thresholdColCount: 40,
@@ -693,7 +693,8 @@ async function main() {
   uiControl.installButtonHandler('#submit', handleSubmitEvent);
   uiControl.installKeystrokeHandler('Enter', handleSubmitEvent);
 
-  localeManager.init()
+  await localeManager.init()
+  constants.title = localeManager.loc('DG.plugin.Importer.title');
   // initialize CODAP connection
   let pluginState;
   try {

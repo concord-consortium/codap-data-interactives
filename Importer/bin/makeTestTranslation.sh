@@ -6,6 +6,6 @@ TEMP_FILE=/tmp/$PROGNAME.$$
 
 cat $STRINGS_FILE |
   jq 'del(.test)' |
-  jq '. + {"test": (."en-US"|with_entries(.value |= "XXX"+.))}' > $TEMP_FILE
+  jq '. + {"test": (."en-us"|with_entries(.value |= "XXX"+.))}' > $TEMP_FILE
 
 mv $TEMP_FILE $STRINGS_FILE
