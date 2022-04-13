@@ -290,55 +290,15 @@ const DATASETS = [
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh',
     parentAttributes: ['state', 'county', 'population'],
     childCollectionName: 'vaccinations',
-    omittedAttributeNames: [
-      'administered_dose1_recip',
-      'administered_dose1_pop_pct',
-      'administered_dose1_recip_5plus',
-      'administered_dose1_recip_5pluspop_pct',
-      'administered_dose1_recip_12plus',
-      'administered_dose1_recip_12pluspop_pct',
-      'administered_dose1_recip_18plus',
-      'administered_dose1_recip_18pluspop_pct',
-      'administered_dose1_recip_65plus',
-      'administered_dose1_recip_65pluspop_pct',
-      'booster_doses',
-      'booster_doses_5plus',
-      'booster_doses_12plus',
-      'booster_doses_18plus',
-      'booster_doses_50plus',
-      'booster_doses_65plus',
-      'census2019',
-      'census2019_5pluspop',
-      'census2019_12pluspop',
-      'census2019_18pluspop',
-      'census2019_65pluspop',
-      'completeness_pct',
-      'fips',
-      'metro_status',
-      'mmwr_week',
-      'series_complete_5plus',
-      'series_complete_12plus',
-      'series_complete_18plus',
-      'series_complete_65plus',
-      'series_complete_pop_pct_svi',
-      'series_complete_12pluspop_pct_svi',
-      'series_complete_18pluspop_pct_svi',
-      'series_complete_65pluspop_pct_svi',
-      'series_complete_pop_pct_ur_equity',
-      'series_complete_12pluspop_pct_ur_equity',
-      'series_complete_18pluspop_pct_ur_equity',
-      'series_complete_65pluspop_pct_ur_equity',
-      'series_complete_5pluspop_pct_svi',
-      'series_complete_5pluspop_pct_ur_equity',
-      'svi_ctgy',
-      'total count fully vaccinated',
-      'series_complete_5pluspop_pct',
-      'series_complete_12pluspop_pct',
-      'series_complete_18pluspop_pct',
-      'booster_doses_5plus_vax_pct',
-      'booster_doses_12plus_vax_pct',
-      'booster_doses_18plus_vax_pct',
-      'booster_doses_50plus_vax_pct',
+    selectedAttributeNames: [
+      "state",
+      "county",
+      "population",
+      "date",
+      "% pop fully vaccinated",
+      "% pop boosted",
+      "% 65 and older fully vaccinated",
+      "% 65 and older boosted",
     ],
     overriddenAttributes: [
       {name: 'date', type: 'date', precision: 'day'},
@@ -428,7 +388,8 @@ const DATASETS = [
     },
     postprocess: function () {
       return createTimeSeriesGraph(this.name, this.timeSeriesAttribute);
-    }
+    },
+    caseTableDimensions: {width: 735, height: 200},
   },
   {
     id: 'VaccinesByStateHistorical',
@@ -438,86 +399,14 @@ const DATASETS = [
     documentation: 'https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-Jurisdi/unsk-b7fc',
     parentAttributes: ['state', 'population'],
     childCollectionName: 'vaccinations',
-    omittedAttributeNames: [
-      'additional_doses',
-      'additional_doses_12plus',
-      'additional_doses_18plus',
-      'additional_doses_50plus',
-      'additional_doses_65plus',
-      'additional_doses_janssen',
-      'additional_doses_moderna',
-      'additional_doses_pfizer',
-      'additional_doses_unk_manuf',
-      'administered',
-      'administered_janssen',
-      'administered_moderna',
-      'administered_pfizer',
-      'administered_unk_manuf',
-      'administered_5plus',
-      'administered_12plus',
-      'administered_18plus',
-      'administered_65plus',
-      'admin_per_100k',
-      'admin_per_100k_5plus',
-      'admin_per_100k_12plus',
-      'admin_per_100k_18plus',
-      'admin_per_100k_65plus',
-      'administered_dose1_pop_pct',
-      'administered_dose1_recip',
-      'administered_dose1_recip_1',
-      'administered_dose1_recip_2',
-      'administered_dose1_recip_3',
-      'administered_dose1_recip_4',
-      'administered_dose1_recip_5',
-      'administered_dose1_recip_6',
-      'administered_dose1_recip_5plus',
-      'administered_dose1_recip_5pluspop_pct',
-      'distributed',
-      'distributed_janssen',
-      'distributed_moderna',
-      'distributed_pfizer',
-      'distributed_unk_manuf',
-      'dist_per_100k',
-      'distributed_per_100k_5plus',
-      'distributed_per_100k_12plus',
-      'distributed_per_100k_18plus',
-      'distributed_per_100k_65plus',
-      'mmwr_week',
-      'recip_administered',
-      'series_complete_janssen',
-      'series_complete_moderna',
-      'series_complete_pfizer',
-      'series_complete_unk_manuf',
-      'series_complete_janssen_12plus',
-      'series_complete_moderna_12plus',
-      'series_complete_pfizer_12plus',
-      'series_complete_unk_manuf_1',
-      'series_complete_janssen_18plus',
-      'series_complete_moderna_18plus',
-      'series_complete_pfizer_18plus',
-      'series_complete_unk_manuf_2',
-      'series_complete_janssen_65plus',
-      'series_complete_moderna_65plus',
-      'series_complete_pfizer_65plus',
-      'series_complete_unk_manuf_3',
-      'series_complete_janssen_5plus',
-      'series_complete_moderna_5plus',
-      'series_complete_pfizer_5plus',
-      'series_complete_unk_manuf_5plus',
-      'series_complete_5plus',
-      'series_complete_12plus',
-      'series_complete_18plus',
-      'series_complete_65plus',
-      'series_complete_yes',
-      'series_complete_5pluspop_pct',
-      'series_complete_12pluspop_pct',
-      'series_complete_18pluspop_pct',
-      'additional_doses_5plus_vax_pct',
-      'additional_doses_12plus_vax_pct',
-      'additional_doses_18plus_vax_pct',
-      'additional_doses_50plus_vax_pct',
-      'series_complete_12pluspop',
-      'series_complete_18pluspop',
+    selectedAttributeNames: [
+      "state",
+      "population",
+      "date",
+      "% pop fully vaccinated",
+      "% pop boosted",
+      "% 65 and older fully vaccinated",
+      "% 65 and older boosted",
     ],
     overriddenAttributes: [
       {name: 'date', type: 'date', precision: 'day'},
@@ -579,7 +468,8 @@ const DATASETS = [
     },
     postprocess: function () {
       return createTimeSeriesGraph(this.name, this.timeSeriesAttribute);
-    }
+    },
+    caseTableDimensions: {width: 680, height: 200},
   },
   {
     id: 'DeathConds',
@@ -1264,13 +1154,14 @@ function createMap() {
  * @param datasetName
  * @return {Promise<object>}
  */
-function createCaseTable(datasetName) {
+function createCaseTable(datasetName, dimensions) {
   return codapInterface.sendRequest({
     action: 'create',
     resource: `component`,
     values: {
       type: "caseTable",
-      dataContext: datasetName
+      dataContext: datasetName,
+      dimensions: dimensions
     }
   })
   .then(function (result) {
@@ -1492,7 +1383,8 @@ function downsampleRandom(data, targetCount, start) {
  */
 function resolveAttributes(datasetSpec, attributeNames) {
   let omittedAttributeNames = datasetSpec.omittedAttributeNames || [];
-  attributeNames = attributeNames.filter(
+  let selectedAttributeNames = datasetSpec.selectedAttributeNames;
+  attributeNames = selectedAttributeNames || attributeNames.filter(
       function (attrName) {
         return !omittedAttributeNames.includes(attrName);
       });
@@ -1610,7 +1502,8 @@ function fetchDataAndProcess() {
               // create a Case Table Component to show the data
               .then(function () {
                 message('creating a case table');
-                return createCaseTable(datasetSpec.name);
+                let dimensions = datasetSpec.caseTableDimensions || undefined;
+                return createCaseTable(datasetSpec.name, dimensions);
               })
               .then(function () {
                 if (datasetSpec.postprocess) {
