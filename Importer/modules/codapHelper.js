@@ -162,10 +162,11 @@ async function defineDataSet(config) {
       unit: attrDef.unit || nameParts.unit,
       type: attrDef.type || ((attr.toLowerCase()==='boundary')? 'boundary': null),
       description: attrDef.description,
+      formula: attrDef.formula,
       precision: attrDef.precision,
     };
-    if (attrDef && attrDef.editable) {
-      record.editable = true;
+    if (attrDef && (attrDef.editable != null)) {
+      record.editable = (attrDef.editable !== 'false');
     }
     return record;
   });
