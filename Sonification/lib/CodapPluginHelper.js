@@ -75,7 +75,20 @@ class CodapPluginHelper {
                     }
                 }
             }).then(() => this.queryAllData());
-        });
+        })
+        .then( () => {return this.getPluginID(); }).then(id=> {this.pluginID = id;})
+    }
+
+    getPluginID() {
+        if (this.pluginID) {
+            return Promise.resolve(this.pluginID);
+        } else {
+            return this.codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
+                .then(result => {
+                    if (result.success) return Promise.resolve(result.values.id);
+                    else return Promise.reject('Plugin id fetch failed');
+                })
+        }
     }
 
     monitorLogMessages(bool) {
@@ -560,9 +573,9 @@ class CodapPluginHelper {
             action: 'get',
             resource: 'globalList'
         }).then(result => {
-            this.globals = result.values.filter(variable => {
+            this.globals = result.values?result.values.filter(variable => {
                 return ['US_state_boundaries', 'country_boundaries', 'US_county_boundaries', 'US_congressional_boundaries', 'US_puma_boundaries'].indexOf(variable.name) === -1;
-            });
+            }):[];
         });
     }
 
@@ -648,5 +661,20 @@ class CodapPluginHelper {
                 cannotClose: false
             }
         });
+    }
+
+
+    selectSelf() {
+        if (this.pluginID) {
+            return this.codapInterface.sendRequest({
+                action: 'notify',
+                resource: `component[${this.pluginID}]`,
+                values: {
+                    request: 'select'
+                }
+            });
+        } else {
+            console.log('No Plugin ID');
+        }
     }
 }

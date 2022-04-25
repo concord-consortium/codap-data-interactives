@@ -218,6 +218,10 @@ const app = new Vue({
                 'Attr Type': this[`${param}AttrIsDate`] ? 'date': 'numeric'
             });
         },
+        onBackgroundSelect() {
+            console.log('onBackgroundSelect');
+          helper.selectSelf();
+        },
         onPitchAttributeSelectedByUI() {
             this.processMappedAttribute('pitch');
             this.recordToMoveRecorder('pitch');

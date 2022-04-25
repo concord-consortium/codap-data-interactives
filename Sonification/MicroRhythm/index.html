@@ -70,7 +70,7 @@
         </label>
     </div>
 
-    <div class="mapper-container">
+    <div class="mapper-container" v-on:click="onBackgroundSelect">
         Pitch
         <label>
             <select v-model="pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
