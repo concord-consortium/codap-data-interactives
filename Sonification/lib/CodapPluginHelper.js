@@ -47,34 +47,34 @@ class CodapPluginHelper {
             name: name,
             title: name,
             version: version ? version : '',
-            dimensions: {
-                width: dimensions.width,
-                height: dimensions.height + 25
-            }
+            preventDataContextReorg: false,
         }).then(savedState => {
             let pluginState = savedState ? savedState : this.codapInterface.getInteractiveState();
+            let hasState = false;
 
             if (Object.keys(pluginState).includes('ID')) {
                 this.ID = pluginState.ID;
+                hasState = true;
             } else {
                 // pluginState['ID'] = `${name}-${new Date().getTime()}`;
                 this.ID = pluginState.ID = new Date().getTime();
             }
 
-            // Allow the attributes to move.
-            return this.codapInterface.sendRequest({
-                action: "update",
-                resource: "interactiveFrame",
-                values: {
-                    preventDataContextReorg: false,
-
-                    // TODO: Is this needed?
-                    dimensions: {
-                        width: dimensions.width,
-                        height: dimensions.height + 25
+            if (!hasState) {
+                return this.codapInterface.sendRequest({
+                    action: "update",
+                    resource: "interactiveFrame",
+                    values: {
+                        dimensions: {
+                            width: dimensions.width,
+                            height: dimensions.height + 25
+                        }
                     }
-                }
-            }).then(() => this.queryAllData());
+                }).then(() => this.queryAllData());
+            } else {
+                return this.queryAllData();
+            }
+            // Allow the attributes to move.
         })
         .then( () => {return this.getPluginID(); }).then(id=> {this.pluginID = id;})
     }

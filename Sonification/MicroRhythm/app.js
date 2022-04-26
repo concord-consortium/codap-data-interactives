@@ -7,8 +7,8 @@ const app = new Vue({
     data: {
         name: 'Micro Rhythm',
         dim: {
-            width: 300,
-            height: 180
+            width: 325,
+            height: 215
         },
         loading: true,
 
