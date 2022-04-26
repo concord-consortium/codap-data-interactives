@@ -61,7 +61,7 @@ let constants = {
     latitude: 44.27,
     longitude: -71.303
   },
-  defaultUnitSystem: 'metric',
+  defaultUnitSystem: 'standard',
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
