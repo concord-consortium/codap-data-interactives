@@ -11,44 +11,46 @@ const app = new Vue({
             height: 215
         },
         loading: true,
-
+        // state managed by CODAP
+        state: {
+            focusedContext: null,
+            pitchAttribute: null,
+            pitchAttrIsDate: false,
+            pitchAttrIsDescending: false,
+            timeAttribute: null,
+            timeAttrIsDate: false,
+            timeAttrIsDescending: false,
+            durationAttribute: null,
+            durationAttrIsDate: false,
+            durationAttrIsDescending: false,
+            loudnessAttribute: null,
+            loudnessAttrIsDate: false,
+            loudnessAttrIsDescending: false,
+            stereoAttribute: null,
+            stereoAttrIsDate: false,
+            stereoAttrIsDescending: false,
+        },
         data: null,
         contexts: null,
         collections: null,
         attributes: null,
-        focusedContext: null,
         focusedCollection: null,
         prevSelectedIDs: [],
         globals: [],
 
-        pitchAttribute: null,
         pitchAttrRange: null,
-        pitchAttrIsDate: false,
-        pitchAttrIsDescending: false,
         pitchArray: [],
 
-        timeAttribute: null,
         timeAttrRange: null,
-        timeAttrIsDate: false,
-        timeAttrIsDescending: false,
         timeArray: [],
 
-        durationAttribute: null,
         durationAttrRange: null,
-        durationAttrIsDate: false,
-        durationAttrIsDescending: false,
         durationArray: [],
 
-        loudnessAttribute: null,
         loudnessAttrRange: null,
-        loudnessAttrIsDate: false,
-        loudnessAttrIsDescending: false,
         loudnessArray: [],
 
-        stereoAttribute: null,
         stereoAttrRange: null,
-        stereoAttrIsDate: false,
-        stereoAttrIsDescending: false,
         stereoArray: [],
 
         click: true,
@@ -71,6 +73,14 @@ const app = new Vue({
 
         speedSlider: null,
         playbackSpeed: 0.5,
+    },
+    watch: {
+        state: {
+            handler(newState/*, oldState*/) {
+                helper.updateState(newState)
+            },
+            deep: true
+        }
     },
     methods: {
         setupUI() {
@@ -134,27 +144,27 @@ const app = new Vue({
             });
 
             dragHandler.on('drop', (data, els) => {
-                if (this.contexts && this.contexts.includes(data.context.name) && this.focusedContext !== data.context.name) {
-                    this.focusedContext = data.context.name;
+                if (this.contexts && this.contexts.includes(data.context.name) && this.state.focusedContext !== data.context.name) {
+                    this.state.focusedContext = data.context.name;
                     this.onContextFocused();
                 }
 
                 els.forEach(el => {
                     if (this.attributes && this.attributes.includes(data.attribute.name)) {
                         if (el.id.startsWith('pitch')) {
-                            this.pitchAttribute = data.attribute.name;
+                            this.state.pitchAttribute = data.attribute.name;
                             this.onPitchAttributeSelectedByUI();
                         } else if (el.id.startsWith('time')) {
-                            this.timeAttribute = data.attribute.name;
+                            this.state.timeAttribute = data.attribute.name;
                             this.onTimeAttributeSelectedByUI();
                         } else if (el.id.startsWith('duration')) {
-                            this.durationAttribute = data.attribute.name;
+                            this.state.durationAttribute = data.attribute.name;
                             this.onDurationAttributeSelectedByUI();
                         } else if (el.id.startsWith('loudness')) {
-                            this.loudnessAttribute = data.attribute.name;
+                            this.state.loudnessAttribute = data.attribute.name;
                             this.onLoudnessAttributeSelectedByUI();
                         } else if (el.id.startsWith('stereo')) {
-                            this.stereoAttribute = data.attribute.name;
+                            this.state.stereoAttribute = data.attribute.name;
                             this.onStereoAttributeSelectedByUI();
                         }
                     }
@@ -175,12 +185,12 @@ const app = new Vue({
             });
         },
         resetPitchTimeMaps() {
-            this.pitchAttribute = this.timeAttribute = null;
-            this.pitchAttrRange = this.timeAttrRange = null;
+            this.state.pitchAttribute = this.state.timeAttribute = null;
+            this.state.pitchAttrRange = this.timeAttrRange = null;
         },
         onContextFocused() {
             // this.attributes = null;
-            this.attributes = helper.getAttributesForContext(this.focusedContext);
+            this.attributes = helper.getAttributesForContext(this.state.focusedContext);
 
             // this.resetPitchTimeMaps();
         },
@@ -188,14 +198,14 @@ const app = new Vue({
          * @param type {string} pitch, time, loudness, or stereo
          **/
         processMappedAttribute(type) {
-            if (this.checkIfGlobal(this[`${type}Attribute`])) {
+            if (this.checkIfGlobal(this.state[`${type}Attribute`])) {
                 this[`${type}AttrRange`] = {
                     len: 1,
                     min: 0,
                     max: 1
                 };
             } else {
-                this[`${type}AttrRange`] = this.calcRange(this[`${type}Attribute`], this[`${type}AttrIsDate`], this[`${type}AttrIsDescending`]);
+                this[`${type}AttrRange`] = this.calcRange(this.state[`${type}Attribute`], this.state[`${type}AttrIsDate`], this.state[`${type}AttrIsDescending`]);
             }
 
             if (this.playing) {
@@ -211,11 +221,11 @@ const app = new Vue({
                 Plugin: this.name,
                 ID: helper.ID, // TODO: Proper plugin ID
                 Type: 'Mapping',
-                Context: this.focusedContext,
-                Attribute: this[`${param}Attribute`],
+                Context: this.state.focusedContext,
+                Attribute: this.state[`${param}Attribute`],
                 Parameter: param.charAt(0).toUpperCase() + param.slice(1),
-                Direction: this[`${param}AttrIsDescending`] ? 'Descending' : 'Ascending',
-                'Attr Type': this[`${param}AttrIsDate`] ? 'date': 'numeric'
+                Direction: this.state[`${param}AttrIsDescending`] ? 'Descending' : 'Ascending',
+                'Attr Type': this.state[`${param}AttrIsDate`] ? 'date': 'numeric'
             });
         },
         onBackgroundSelect() {
@@ -248,7 +258,7 @@ const app = new Vue({
         },
 
         reselectCases() {
-            helper.getSelectedItems(this.focusedContext).then(this.onItemsSelected);
+            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
         onCsdFileSelected() {
 
@@ -256,8 +266,8 @@ const app = new Vue({
         onGetData() {
             this.contexts = helper.getContexts();
 
-            if (this.focusedContext) {
-                this.attributes = helper.getAttributesForContext(this.focusedContext);
+            if (this.state.focusedContext) {
+                this.attributes = helper.getAttributesForContext(this.state.focusedContext);
 
                 if (this.playing) {
                     this.reselectCases();
@@ -272,8 +282,8 @@ const app = new Vue({
             }
         },
         calcRange(attribute, isDateTime, inverted) {
-            // let attrValues = helper.getAttributeValues(this.focusedContext, this.focusedCollection, attribute);
-            let attrValues = helper.getAttrValuesForContext(this.focusedContext, attribute);
+            // let attrValues = helper.getAttributeValues(this.state.focusedContext, this.focusedCollection, attribute);
+            let attrValues = helper.getAttrValuesForContext(this.state.focusedContext, attribute);
 
             if (attrValues) {
                 if (isDateTime) {
@@ -306,8 +316,8 @@ const app = new Vue({
                         return { id: c.id, val: 0.5 };
                     });
                 } else {
-                    if (this.checkIfGlobal(this[`${param}Attribute`])) {
-                        let global = this.globals.find(g => g.name === this[`${param}Attribute`]);
+                    if (this.checkIfGlobal(this.state[`${param}Attribute`])) {
+                        let global = this.globals.find(g => g.name === this.state[`${param}Attribute`]);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
                         this[`${param}Array`] = items.map(c => {
@@ -318,7 +328,7 @@ const app = new Vue({
                         })
                     } else {
                         this[`${param}Array`] = items.map(c => {
-                            let value = this[`${param}AttrIsDate`] ? Date.parse(c.values[this[`${param}Attribute`]]) : c.values[this[`${param}Attribute`]];
+                            let value = this.state[`${param}AttrIsDate`] ? Date.parse(c.values[this.state[`${param}Attribute`]]) : c.values[this.state[`${param}Attribute`]];
 
                             return {
                                 id: c.id,
@@ -339,8 +349,8 @@ const app = new Vue({
                         return { id: c.id, val: 0 };
                     });
                 } else {
-                    if (this.checkIfGlobal(this.timeAttribute)) {
-                        let global = this.globals.find(g => g.name === this.timeAttribute);
+                    if (this.checkIfGlobal(this.state.timeAttribute)) {
+                        let global = this.globals.find(g => g.name === this.state.timeAttribute);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
                         this.timeArray = items.map(c => {
@@ -351,7 +361,7 @@ const app = new Vue({
                         })
                     } else {
                         this.timeArray = items.map(c => {
-                            let value = this.timeAttrIsDate ? Date.parse(c.values[this.timeAttribute]) : c.values[this.timeAttribute];
+                            let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
                             return {
                                 id: c.id,
                                 val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
@@ -436,7 +446,12 @@ const app = new Vue({
 
         helper.init(this.name, this.dim)
             // .then(helper.monitorLogMessages.bind(helper))
-            .then(this.onGetData);
+            .then((state) => {
+                if (state) {
+                    Object.keys(state).forEach(key => this.state[key] = state[key]);
+                }
+                this.onGetData();
+            });
 
         codapInterface.on('notify', '*', notice => {
             if (!helper.checkNoticeIdentity(notice)) {
@@ -475,9 +490,9 @@ const app = new Vue({
                                 if (values.ID === helper.ID) {
                                     let type = values.Parameter && values.Parameter.toLowerCase();
                                     if (type) {
-                                        this[`${type}Attribute`] = values.Attribute;
-                                        this[`${type}AttrIsDescending`] = values.Direction === 'Descending';
-                                        this[`${type}AttrIsDate`] = values['Attr Type'] === 'date';
+                                        this.state[`${type}Attribute`] = values.Attribute;
+                                        this.state[`${type}AttrIsDescending`] = values.Direction === 'Descending';
+                                        this.state[`${type}AttrIsDate`] = values['Attr Type'] === 'date';
                                         this.processMappedAttribute(type);
                                     }
                                 }
@@ -490,8 +505,8 @@ const app = new Vue({
                     helper.queryDataForContext(contextName).then();
                 } else {
                     if (operation === 'selectCases') {
-                        if (contextName === this.focusedContext) {
-                            helper.getSelectedItems(this.focusedContext).then(this.onItemsSelected);
+                        if (contextName === this.state.focusedContext) {
+                            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
                     } else {
                         helper.queryDataForContext(contextName).then(this.onGetData);

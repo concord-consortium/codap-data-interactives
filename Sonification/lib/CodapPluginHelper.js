@@ -48,7 +48,8 @@ class CodapPluginHelper {
             title: name,
             version: version ? version : '',
             preventDataContextReorg: false,
-        }).then(savedState => {
+        })
+        .then(savedState => {
             let pluginState = savedState ? savedState : this.codapInterface.getInteractiveState();
             let hasState = false;
 
@@ -76,7 +77,9 @@ class CodapPluginHelper {
             }
             // Allow the attributes to move.
         })
-        .then( () => {return this.getPluginID(); }).then(id=> {this.pluginID = id;})
+        .then( () => {return this.getPluginID(); })
+        .then(id=> {this.pluginID = id;})
+        .then(() => Promise.resolve(this.codapInterface.getInteractiveState()))
     }
 
     getPluginID() {
@@ -89,6 +92,10 @@ class CodapPluginHelper {
                     else return Promise.reject('Plugin id fetch failed');
                 })
         }
+    }
+
+    updateState(state) {
+        this.codapInterface.updateInteractiveState(state);
     }
 
     monitorLogMessages(bool) {

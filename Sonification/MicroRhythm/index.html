@@ -37,7 +37,7 @@
 </head>
 <body>
 <div class="loading-screen">Loading the plugin...</div>
-<div id="app">
+<div id="app" v-on:click="onBackgroundSelect">
     <div>
         <div style="display: flex; justify-content: left">
             <div class="controller-container" style="width: 40%;">
@@ -63,7 +63,7 @@
     <div class="mapper-container">
         Context
         <label>
-            <select v-model="focusedContext" v-on:change="onContextFocused" class="drop-area" id="contextDropArea">
+            <select v-model="state.focusedContext" v-on:change="onContextFocused" class="drop-area" id="contextDropArea">
                 <option disabled value="" hidden>Select context</option>
                 <option v-for="context in contexts">{{context}}</option>
             </select>
@@ -73,7 +73,7 @@
     <div class="mapper-container" v-on:click="onBackgroundSelect">
         Pitch
         <label>
-            <select v-model="pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
+            <select v-model="state.pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
                 <option disabled value="" hidden>Select context first</option>
                 <option v-for="attribute in attributes">{{attribute}}</option>
                 <option v-if="globals.length" disabled>──────────</option>
@@ -83,10 +83,10 @@
 
         <div>
             <label>
-                <input type="checkbox" v-model="pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
+                <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
             </label>
             <label>
-                <input type="checkbox" v-model="pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
+                <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
             </label>
         </div>
     </div>
@@ -94,7 +94,7 @@
     <div class="mapper-container">
         Time
         <label>
-            <select v-model="timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
+            <select v-model="state.timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
                 <option disabled value="" hidden>Select context first</option>
                 <option v-for="attribute in attributes">{{attribute}}</option>
                 <option v-if="globals.length" disabled>──────────</option>
@@ -104,10 +104,10 @@
 
         <div>
             <label>
-                <input type="checkbox" v-model="timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
+                <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
             </label>
             <label>
-                <input type="checkbox" v-model="timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending
+                <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending
             </label>
         </div>
     </div>
@@ -117,7 +117,7 @@
     <div class="mapper-container">
         Duration
         <label>
-            <select v-model="durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">
+            <select v-model="state.durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">
                 <option disabled value="" hidden>Select context first</option>
                 <option v-for="attribute in attributes">{{attribute}}</option>
                 <option v-if="globals.length" disabled>──────────</option>
@@ -127,10 +127,10 @@
 
         <div>
             <label>
-                <input type="checkbox" v-model="durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime
+                <input type="checkbox" v-model="state.durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime
             </label>
             <label>
-                <input type="checkbox" v-model="durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending
+                <input type="checkbox" v-model="state.durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending
             </label>
         </div>
     </div>
@@ -138,7 +138,7 @@
     <div class="mapper-container">
         Loudness
         <label>
-            <select v-model="loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">
+            <select v-model="state.loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">
                 <option disabled value="" hidden>Select context first</option>
                 <option v-for="attribute in attributes">{{attribute}}</option>
                 <option v-if="globals.length" disabled>──────────</option>
@@ -148,10 +148,10 @@
 
         <div>
             <label>
-                <input type="checkbox" v-model="loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime
+                <input type="checkbox" v-model="state.loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime
             </label>
             <label>
-                <input type="checkbox" v-model="loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending
+                <input type="checkbox" v-model="state.loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending
             </label>
         </div>
     </div>
@@ -159,7 +159,7 @@
     <div class="mapper-container">
         Stereo
         <label>
-            <select v-model="stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">
+            <select v-model="state.stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">
                 <option disabled value="" hidden>Select context first</option>
                 <option v-for="attribute in attributes">{{attribute}}</option>
                 <option v-if="globals.length" disabled>──────────</option>
@@ -169,10 +169,10 @@
 
         <div>
             <label>
-                <input type="checkbox" v-model="stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime
+                <input type="checkbox" v-model="state.stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime
             </label>
             <label>
-                <input type="checkbox" v-model="stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending
+                <input type="checkbox" v-model="state.stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending
             </label>
         </div>
     </div>
