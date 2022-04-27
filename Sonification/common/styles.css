@@ -27,11 +27,12 @@ html, body {
     /*width: 100%;*/
     /*height: 100%;*/
 
-    font-family: Helvetica, sans-serif;
-    font-weight: 200;
+    font-family: MuseoSans-500, Helvetica, sans-serif;
+/*     font-weight: 200; */
+    font-size: smaller;
     line-height: 20px;
     display: block;
-    position: absolute
+    position: absolute;
     flex-direction: column;
     height: auto;
     bottom: 0;
@@ -43,7 +44,7 @@ html, body {
 }
 
 .loading-screen {
-    font-family: Helvetica, sans-serif;
+    font-family: MuseoSans-500, Helvetica, sans-serif;
     background-color: black;
     color: white;
     font-style: italic;
