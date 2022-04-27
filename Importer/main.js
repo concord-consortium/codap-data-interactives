@@ -220,8 +220,9 @@ function prepareFoundTargetDatasetDialog(matchingDataset) {
 
 function prepareSizeAboveThresholdDialog(numRows) {
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
-  uiControl.displayMessage(localeManager.loc("DG.plugin.Importer.large-file-msg",
-      [config.source, numberFormat.format(numRows), numberFormat.format(constants.thresholdRowCount)]));
+  let message = localeManager.loc("DG.plugin.Importer.large-file-msg",
+      [config.source, numberFormat.format(numRows), numberFormat.format(constants.thresholdRowCount)])
+  uiControl.displayMessage(message, '#downsample-message');
   uiControl.showSection('downsample-options', true);
   uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
   uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));

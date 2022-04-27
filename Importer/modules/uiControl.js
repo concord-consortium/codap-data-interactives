@@ -24,7 +24,7 @@ let keyMap = {};
 function displayMessage(message, selector, myClass) {
   if (selector == null) {
     // noinspection SpellCheckingInspection
-    messageArea.insertAdjacentHTML('beforeend', `<div class="message ${myClass|''}>${message}</div>`);
+    messageArea.insertAdjacentHTML('beforeend', `<div class="message ${myClass|''}">${message}</div>`);
     showSection('message-area', true);
   } else {
     let el = document.querySelector(selector);
