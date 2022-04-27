@@ -698,4 +698,8 @@ class CodapPluginHelper {
             console.log('No Plugin ID');
         }
     }
+
+    on(resource, operation, handler) {
+        this.codapInterface.on('notify', resource, operation, handler )
+    }
 }

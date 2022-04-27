@@ -1,5 +1,4 @@
 const helper = new CodapPluginHelper(codapInterface);
-const dragHandler = new CodapDragHandler();
 const moveRecorder = new PluginMovesRecorder(helper);
 
 const app = new Vue({
@@ -131,57 +130,76 @@ const app = new Vue({
             });
         },
         setupDrag() {
-            dragHandler.on('dragenter', (data, els) => {
+            function findElementsUnder(pos) {
+                if (pos) {
+                    return document.elementsFromPoint(pos.x, pos.y)
+                        .filter(el => el.classList.contains('drop-area'));
+                }
+            }
+            helper.on('dragDrop[attribute]', 'dragenter', (data) => {
+                // let els = findElementsUnder(data.values.position);
+                // els.forEach(el => {
+                //     el.style.backgroundColor = 'rgba(255,255,0,0.5)';
+                // });
+            });
+
+            helper.on('dragDrop[attribute]', 'dragleave', (data) => {
+                // let els = findElementsUnder(data.values.position);
+                // els.forEach(el => {
+                //     el.style.backgroundColor = 'transparent';
+                // });
+            });
+
+            helper.on('dragDrop[attribute]', 'drag', (data) => {
+                document.querySelectorAll('.drop-area').forEach(el => {
+                    el.style.backgroundColor = 'transparent';
+                })
+                let els = findElementsUnder(data.values.position);
                 els.forEach(el => {
                     el.style.backgroundColor = 'rgba(255,255,0,0.5)';
                 });
             });
 
-            dragHandler.on('dragleave', (data, els) => {
-                els.forEach(el => {
-                    el.style.backgroundColor = 'transparent';
-                });
-            });
-
-            dragHandler.on('drop', (data, els) => {
-                if (this.contexts && this.contexts.includes(data.context.name) && this.state.focusedContext !== data.context.name) {
-                    this.state.focusedContext = data.context.name;
+            helper.on('dragDrop[attribute]', 'drop', (data) => {
+                let els = findElementsUnder(data.values.position);
+                if (this.contexts && this.contexts.includes(data.values.context.name) && this.state.focusedContext !== data.values.context.name) {
+                    this.state.focusedContext = data.values.context.name;
                     this.onContextFocused();
                 }
 
                 els.forEach(el => {
-                    if (this.attributes && this.attributes.includes(data.attribute.name)) {
+                    if (this.attributes && this.attributes.includes(data.values.attribute.name)) {
                         if (el.id.startsWith('pitch')) {
-                            this.state.pitchAttribute = data.attribute.name;
+                            this.state.pitchAttribute = data.values.attribute.name;
                             this.onPitchAttributeSelectedByUI();
                         } else if (el.id.startsWith('time')) {
-                            this.state.timeAttribute = data.attribute.name;
+                            this.state.timeAttribute = data.values.attribute.name;
                             this.onTimeAttributeSelectedByUI();
                         } else if (el.id.startsWith('duration')) {
-                            this.state.durationAttribute = data.attribute.name;
+                            this.state.durationAttribute = data.values.attribute.name;
                             this.onDurationAttributeSelectedByUI();
                         } else if (el.id.startsWith('loudness')) {
-                            this.state.loudnessAttribute = data.attribute.name;
+                            this.state.loudnessAttribute = data.values.attribute.name;
                             this.onLoudnessAttributeSelectedByUI();
                         } else if (el.id.startsWith('stereo')) {
-                            this.state.stereoAttribute = data.attribute.name;
+                            this.state.stereoAttribute = data.values.attribute.name;
                             this.onStereoAttributeSelectedByUI();
                         }
                     }
                 });
             });
 
-            dragHandler.on('dragstart', (data, els) => {
-                els.forEach(el => {
-                    el.style.outline = '3px solid rgba(0,255,255,0.5)';
-                });
+            helper.on('dragDrop[attribute]', 'dragstart', (data) => {
+                document.querySelectorAll('.drop-area').forEach(el => {
+                    el.style.outline = '3px solid #ffff00';
+                })
             });
 
-            dragHandler.on('dragend', (data, els) => {
-                els.forEach(el => {
-                    el.style.backgroundColor = 'transparent';
+            helper.on('dragDrop[attribute]', 'dragend', (data) => {
+                document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid transparent';
-                });
+                    el.style.backgroundColor = 'transparent';
+                })
             });
         },
         resetPitchTimeMaps() {
