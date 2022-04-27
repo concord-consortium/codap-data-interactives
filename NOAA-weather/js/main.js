@@ -34,7 +34,7 @@ let constants = {
     "latitude":44.27,
     "longitude":-71.303,
     "name":"MT. WASHINGTON OBSERVATORY",
-    "elevation":"+1911.7",
+    "elevation":6272,
     "ICAO":"KMWN",
     "mindate":"1973-01-01",
     "maxdate":"present",

@@ -308,7 +308,7 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
                     { name: 'maxdate', type: 'date'},
                     { name: 'latitude', unit: 'º'},
                     { name: 'longitude', unit: 'º' },
-                    { name: 'elevation', unit: 'm'},
+                    { name: 'elevation', unit: 'ft', precision: 0},
                     { name: 'isdID'},
                     { name: 'ghcndID'}
                 ]
@@ -456,7 +456,7 @@ function getNoaaDataContextSetupObject(dsName) {
                 {name: "longitude", type: 'numeric', unit: 'º', description: "Longitude of weather station"},
                 {name: "UTC offset", type: 'numeric', unit: 'hours', description: "Station standard time offset from UTC"},
                 {name: "timezone", type: 'categorical', description: "Timezone of weather station"},
-                {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "meters"},
+                {name: "elevation", type: 'numeric', description: "Elevation of weather station", unit: "ft", precision: 0},
                 {name: "report type", type: 'categorical', description: 'Daily summary or monthly summary'}
             ]
         },
