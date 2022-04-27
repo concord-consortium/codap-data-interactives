@@ -28,7 +28,7 @@ class CodapPluginHelper {
 
         this.items = null;
         this.itemAttributes = null;
-        this.itemAttrInfo = null;
+        // this.itemAttrInfo = null;
 
         this.attrValueRanges = null;
 
@@ -98,25 +98,25 @@ class CodapPluginHelper {
         this.codapInterface.updateInteractiveState(state);
     }
 
-    monitorLogMessages(bool) {
-        if (typeof(bool) !== 'boolean') {
-            bool = true;
-        }
-
-        if (bool) {
-            return this.codapInterface.sendRequest({
-                action: "register",
-                resource: "logMessageMonitor",
-                values: {
-                    message: "*"
-                }
-            });
-
-            // TODO: Register with a unique client ID.
-        } else {
-            // TODO: Unregister with the set ID.
-        }
-    }
+    // monitorLogMessages(bool) {
+    //     if (typeof(bool) !== 'boolean') {
+    //         bool = true;
+    //     }
+    //
+    //     if (bool) {
+    //         return this.codapInterface.sendRequest({
+    //             action: "register",
+    //             resource: "logMessageMonitor",
+    //             values: {
+    //                 message: "*"
+    //             }
+    //         });
+    //
+    //         // TODO: Register with a unique client ID.
+    //     } else {
+    //         // TODO: Unregister with the set ID.
+    //     }
+    // }
 
     // TODO: Hopefully this can retire soon with the fix to the notificationManager.
     checkNoticeIdentity(notice) {
@@ -547,8 +547,8 @@ class CodapPluginHelper {
         });
     }
 
-    getTreeStructure(context) {
-        let result = {};
+    getTreeStructure(/*context*/) {
+        // let result = {};
 
         // result[]
 
@@ -646,7 +646,21 @@ class CodapPluginHelper {
                 title: title,
                 URL: `${origin}${path}?dir=${directory}&file=${file}`,
                 dimensions: dimensions,
-                position: 'top'
+                position: {right:0}
+            }
+        })
+        .then((rslt) => {
+            if (rslt && rslt.success) {
+                let id = rslt.values.id;
+                if (id) {
+                    this.codapInterface.sendRequest({
+                        action: "notify",
+                        resource: `component[${id}]`,
+                        values: {
+                            request: "select"
+                        }
+                    })
+                }
             }
         });
     }
