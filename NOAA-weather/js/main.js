@@ -226,7 +226,7 @@ async function initialize() {
           coordsResolved = true;
           codapConnect.centerAndZoomMap('Map', [coords.latitude, coords.longitude], 7)
           ui.setTransferStatus('success', 'Looking up nearest weather station');
-          setNearestStation(coords);
+          setNearestActiveStation(coords, state.startDate, state.endDate);
           ui.setTransferStatus('success', 'Ready');
         },
         function (err) {
@@ -487,6 +487,29 @@ async function findNearestStation(lat, long) {
     }
   }
 }
+async function findNearestActiveStation(lat, long, fromDate, toDate) {
+  if (typeof fromDate === 'string') {
+    fromDate = new Date(fromDate);
+  }
+  if (typeof toDate === 'string') {
+    toDate = new Date(toDate);
+  }
+  let fromSecs = fromDate/1000;
+  let toSecs = toDate/1000;
+  let result = await codapConnect.queryCases(constants.StationDSName,
+      constants.StationDSTitle,
+      `greatCircleDistance(latitude, longitude, ${lat}, ${long})=
+      min(greatCircleDistance(latitude, longitude, ${lat}, ${long}), 
+      ((${fromSecs}<maxdate or maxdate='present') and (${toSecs}>mindate)))`);
+  if (result.success) {
+    if (Array.isArray(result.values)) {
+      // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+      return result.values[0];
+    } else {
+      return result.values;
+    }
+  }
+}
 
 async function setNearestStation (location) {
   if (!location) {
@@ -505,9 +528,26 @@ async function setNearestStation (location) {
     updateTimezone(station);
   }
 }
+async function setNearestActiveStation (location, startDate, endDate) {
+  if (!location || !startDate || !endDate) {
+    return;
+  }
+  console.log(`Location: ${JSON.stringify(location)} start: ${startDate}, end: ${endDate}`);
+  let nearestStation = await findNearestActiveStation(location.latitude,
+      location.longitude, startDate, endDate);
+  if (nearestStation) {
+    let station = nearestStation.values;
+    state.selectedStation = station;
+    await codapConnect.selectStations([state.selectedStation.name]);
+    await codapConnect.centerAndZoomMap('Map',
+        [location.latitude, location.longitude], 9);
+    updateView();
+    updateTimezone(station);
+  }
+}
 
 async function stationLocationHandler (location) {
-    await setNearestStation(location);
+    await setNearestActiveStation(location, state.startDate, state.endDate);
 }
 
 /**
