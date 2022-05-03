@@ -30,7 +30,7 @@ const app = new Vue({
             stereoAttrIsDescending: false,
         },
         data: null,
-        contexts: null,
+        contexts: null, // array of context names
         collections: null,
         attributes: null,
         focusedCollection: null,
@@ -283,6 +283,10 @@ const app = new Vue({
         },
         onGetData() {
             this.contexts = helper.getContexts();
+            if (this.contexts && this.contexts.length === 1) {
+                this.state.focusedContext = this.state.focusedContext ||
+                    this.contexts[0];
+            }
 
             if (this.state.focusedContext) {
                 this.attributes = helper.getAttributesForContext(this.state.focusedContext);
