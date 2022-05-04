@@ -63,7 +63,7 @@
     <div class="mapper-container">
         Context
         <label>
-            <select v-model="state.focusedContext" v-on:change="onContextFocused" class="drop-area" id="contextDropArea">
+            <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
                 <option disabled value="" hidden>Select context</option>
                 <option v-for="context in contexts">{{context}}</option>
             </select>
@@ -112,6 +112,7 @@
         </div>
     </div>
 
+<!--
     <hr>
 
     <div class="mapper-container">
@@ -176,6 +177,7 @@
             </label>
         </div>
     </div>
+-->
 
     <hr>
 

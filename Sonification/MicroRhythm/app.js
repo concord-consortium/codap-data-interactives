@@ -131,23 +131,24 @@ const app = new Vue({
         },
         setupDrag() {
             function findElementsUnder(pos) {
+                pos.y += 25;
                 if (pos) {
                     return document.elementsFromPoint(pos.x, pos.y)
                         .filter(el => el.classList.contains('drop-area'));
                 }
             }
             helper.on('dragDrop[attribute]', 'dragenter', (data) => {
-                // let els = findElementsUnder(data.values.position);
-                // els.forEach(el => {
-                //     el.style.backgroundColor = 'rgba(255,255,0,0.5)';
-                // });
+                let els = findElementsUnder(data.values.position);
+                els.forEach(el => {
+                    el.style.backgroundColor = 'rgba(255,255,0,0.5)';
+                });
             });
 
             helper.on('dragDrop[attribute]', 'dragleave', (data) => {
-                // let els = findElementsUnder(data.values.position);
-                // els.forEach(el => {
-                //     el.style.backgroundColor = 'transparent';
-                // });
+                let els = findElementsUnder(data.values.position);
+                els.forEach(el => {
+                    el.style.backgroundColor = 'transparent';
+                });
             });
 
             helper.on('dragDrop[attribute]', 'drag', (data) => {
