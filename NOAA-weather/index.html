@@ -100,8 +100,7 @@
 <div id="wx-date-section">
     <div id="wx-database-selection" class="wx-section-header-line">
         <span class="wx-section-title">Date Range</span>
-        <span id="wx-dataset-form" title="Select monthly or daily weather summaries">
-            <span class="wx-form-label">Data:</span>
+        <span id="wx-dataset-form" class="wx-radiogroup" tabindex="1" title="Select monthly or daily weather summaries">
             <input type="radio" value="global-summary-of-the-month" id="wx-gsom" name="frequencyControl" />
             <label for="wx-gsom">monthly</label>
             <input type="radio" value="daily-summaries"  id="wx-daily" name="frequencyControl" />
@@ -140,16 +139,19 @@
 
     <div id="wx-location-section" class="wx-dropdown wx-down">
         <div class="wx-section-header-line wx-dropdown-header" title="Which weather station from which to fetch data.">
-            <span class="wx-section-title">Station Location</span>
-            <span id="wx-stationName" class="wx-user-selection"></span>
+            <span class="wx-section-header-line-content">
+                <span class="wx-section-title">Station Location</span>
+                <span id="wx-stationName" class="wx-user-selection"></span>
+            </span>
             <span class="wx-dropdown-indicator"></span>
         </div>
         <div class="wx-dropdown-body">
-            <div>
-                <label>Find a weather station near: <div id="geonameContainer"></div></label>
-            </div>
-            <div>
-                Or, choose a station by selecting it on the map.
+            <div class="wx-location-group">
+                <label>Find a weather station
+                    <span id="geonameContainer"></span>
+                </label>
+                <button id="wx-near-me-button" title="find my nearest weather station" class="wx-button">Near Me</button>
+                <button id="wx-open-map-button" title="pick a weather station from a map" class="wx-button">Station Map</button>
             </div>
         </div>
     </div>
@@ -157,10 +159,12 @@
     <hr class="wx-fixed-section-divider"/>
 
     <div id="wx-attribute-section" class="wx-dropdown wx-up">
-        <div class="wx-section-header-line wx-dropdown-header" title="Choose types of weather data to fetch.">
-            <span class="wx-section-title">Attributes</span>
-            <span class="wx-selection-count"></span>
-            <span class="wx-data-type-selection wx-user-selection"></span>
+        <div class="wx-section-header-line wx-dropdown-header" title="Choose attributes of weather data to fetch.">
+            <span class="wx-section-header-line-content">
+                <span class="wx-section-title">Attributes</span>
+                <span class="wx-selection-count"></span>
+                <span class="wx-data-type-selection wx-user-selection"></span>
+            </span>
             <span class="wx-dropdown-indicator"></span>
         </div>
         <div class="wx-dropdown-body">

@@ -132,6 +132,12 @@ body {
     margin: 6px 0;
 }
 
+.wx-section-header-line .wx-section-header-line-content {
+	display:flex;
+	justify-content: space-between;
+	flex: 1
+}
+
 .wx-section-title {
     font-weight: 600;
     flex: 125px 0 0;
@@ -353,6 +359,9 @@ body {
 }
 
 .wx-button {
+    font-family: Montserrat, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
     margin: 6px;
     padding: 6px;
     /*width: 82px;*/
@@ -425,7 +434,7 @@ input[type=radio]:checked:before {
     color: var(--teal-dark);
 }
 
-span#wx-dataset-form {
+.wx-radiogroup {
     display: inline-flex;
     align-items: center;
 }
@@ -507,7 +516,7 @@ span#wx-dataset-form {
     color: var(--teal-dark);
 }
 
-.wx-summary button:hover {
+.wx-button:hover {
     background-color: var(--teal-light-12);
 }
 
