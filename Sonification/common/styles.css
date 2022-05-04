@@ -82,6 +82,7 @@ html, body {
 #footer-container > img {
     height: 100%;
     margin: 3px;
+    margin-right: 20px;
     z-index: 1000;
 }
 
