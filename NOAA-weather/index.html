@@ -55,17 +55,6 @@
                 More Information
             </div>
             <div class="wx-pop-up-body">
-                <div id="wx-settings-section" class="wx-dropdown wx-down">
-                    <div class="wx-section-header-line wx-dropdown-header">
-                        <span class="wx-section-title">Settings</span>
-                        <span class="wx-dropdown-indicator"></span>
-                    </div>
-                    <div class="wx-dropdown-body">
-                        <div>Units</div>
-                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-metric" value="metric" checked /><label for="wx-option-units-metric">Metric</label></div>
-                        <div class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-standard" value="standard"/><label for="wx-option-units-standard">Standard</label></div>
-                    </div>
-                </div>
                 <div id="wx-about-section" class="wx-dropdown wx-down">
                     <div class="wx-section-header-line wx-dropdown-header" title="About this plugin">
                         <div class="wx-section-title">About</div>
@@ -137,6 +126,13 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div id="wx-units-select" title="Select unit system for fetched data: standard or metric">
+        <span class="wx-radiogroup" tabindex="0">
+            <span>Units:</span>
+            <span class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-metric" value="metric" checked /><label for="wx-option-units-metric">Metric</label></span>
+            <span class="wx-radio-block"><input type="radio" name="wx-option-units" id="wx-option-units-standard" value="standard"/><label for="wx-option-units-standard">Standard</label></span>
+        </span>
     </div>
 </div>
 

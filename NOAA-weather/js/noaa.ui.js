@@ -42,8 +42,10 @@ let lastState = null; // save state to be able to refresh view upon cancel
  *      dataTypeSelector/click,
  *      frequencyControl/click,
  *      getData/click,
- *      dataSet/click
- *      stationLocation/enter,blur
+ *      dataSet/click,
+ *      stationLocation/enter,blur,
+ *      nearMe/click,
+ *      mapOpen/click
  *
  *      In all cases, handlers should expect 'this' to be the DOM element and
  *      one argument, the event.
@@ -80,6 +82,9 @@ function initialize(state, dataTypeStore, iEventHandlers) {
     setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
+    });
+
+    setEventHandler('input[name=wx-option-units]', 'change', function (/*ev*/) {
         if (eventHandlers.unitSystem) {
             let unitSystemEl = document.querySelector('input[name=wx-option-units]:checked');
             let unitSystem = unitSystemEl? unitSystemEl.value : null;
@@ -88,7 +93,6 @@ function initialize(state, dataTypeStore, iEventHandlers) {
             }
         }
     });
-
     setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);
 
     setEventHandler('.wx-pop-over-anchor', 'click', function (/*ev*/) {
@@ -206,7 +210,7 @@ function updateView(state, dataTypeStore) {
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
     updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
     updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
-    updateInfoPopup(state.unitSystem);
+    updateUnitSystem(state.unitSystem);
 }
 
 function updateFrequencyControl(databaseName) {
@@ -227,7 +231,7 @@ function updateStationView(selectedStation) {
 }
 
 
-function updateInfoPopup(unitSystem) {
+function updateUnitSystem(unitSystem) {
     let el = document.querySelector('input[name=wx-option-units][value='+unitSystem+']');
     el.checked=true;
 }
