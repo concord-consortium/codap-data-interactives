@@ -369,6 +369,7 @@ body {
     border-radius: 3px;
     border: solid 1px var(--teal-light);
     background-color: white;
+    flex: 0 0 auto;
 }
 
 .wx-radio-block {
@@ -497,6 +498,7 @@ input[type=radio]:checked:before {
 
 .wx-control-area {
     flex: 173px 0 0;
+    display: flex;
 }
 
 .wx-control-row {
@@ -505,6 +507,7 @@ input[type=radio]:checked:before {
 
 .wx-summary.wx-transfer-in-progress #wx-get-button {
     background-color: var(--teal-light-25);
+    color: gray;
 }
 
 .wx-summary .wx-message-area {
