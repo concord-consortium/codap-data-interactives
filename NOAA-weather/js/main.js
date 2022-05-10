@@ -45,15 +45,15 @@ let constants = {
   defaultStationTimezoneName: 'EST',
   defaultDates: {
     'hourly': {
-      start: today.subtract(1, 'week').toDate(),
+      start: today.subtract(4, 'week').toDate(),
       end: today.subtract(1, 'day').toDate()
     },
     'daily': {
-      start: today.subtract(1, 'month').toDate(),
+      start: today.subtract(4, 'month').toDate(),
       end: today.subtract(1, 'day').toDate()
     },
     'monthly': {
-      start: today.subtract(1, 'year').toDate(),
+      start: today.subtract(10, 'year').toDate(),
       end: today.toDate()
     }
   },
