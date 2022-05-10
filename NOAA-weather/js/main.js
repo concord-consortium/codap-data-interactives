@@ -135,21 +135,18 @@ function adjustStationDataset(dataset) {
  *
  * @return {Promise<{latitude,longitude}>}
  */
-async function getGeolocation (defaultCoords) {
-  return new Promise(function (resolve, /*reject*/) {
+async function getGeolocation () {
+  return new Promise(function (resolve, reject) {
     if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-      navigator.geolocation.getCurrentPosition(
-          function(pos) {
-            resolve(pos.coords);
-          },
-          function(err) {
-            console.log(`Weather Plugin.getGeolocation failed: ${err.code}, ${err.message}`);
-            resolve(defaultCoords);
-          }
-      );
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        resolve(pos.coords);
+      }, function (err) {
+        console.warn(
+            `Weather Plugin.getGeolocation failed: ${err.code}, ${err.message}`);
+        reject(err.message);
+      });
     } else {
-      console.log("Geolocation not supported by browser");
-      resolve(defaultCoords);
+      reject('The GeoLocation API is not supported on this browser')
     }
   });
 }
@@ -202,38 +199,10 @@ async function initialize() {
       clearData: clearDataHandler,
       dateRangeSubmit: dateRangeSubmitHandler,
       unitSystem: unitSystemHandler,
-      stationLocation: stationLocationHandler
+      stationLocation: stationLocationHandler,
+      mapOpen: mapOpenHandler,
+      nearMe: nearMeHandler
     });
-
-    if (needMap) {
-      await codapConnect.createMap('Map', {height: 350, width: 500});
-
-      let coords = constants.defaultCoords;
-      let coordsResolved = false;
-
-      // getting geolocation can hang for a long time, so we wait a few seconds
-      // and if we don't have one we make a map at the default coords and go on.
-      // If the user grants permissions late, we can move the center point.
-      setTimeout(function () {
-        if (!coordsResolved) {
-          codapConnect.createMap('Map',
-              {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
-        }
-      }, 5000);
-      getGeolocation(constants.defaultCoords).then(
-        function (coords) {
-          ui.setTransferStatus('success', 'Centering map');
-          coordsResolved = true;
-          codapConnect.centerAndZoomMap('Map', [coords.latitude, coords.longitude], 7)
-          ui.setTransferStatus('success', 'Looking up nearest weather station');
-          setNearestActiveStation(coords, state.startDate, state.endDate);
-          ui.setTransferStatus('success', 'Ready');
-        },
-        function (err) {
-          console.warn(`Error getting geolocation: ${err}`)
-        }
-      );
-    }
 
     noaaNCEIConnect.initialize(state, constants, {
       beforeFetchHandler: beforeFetchHandler,
@@ -249,6 +218,26 @@ async function initialize() {
   }
 }
 
+function mapOpenHandler() {
+  codapConnect.createMap('Map', {height: 350, width: 500});
+}
+
+function nearMeHandler() {
+  ui.setTransferStatus('busy', 'Finding current location');
+  getGeolocation().then(
+      function (coords) {
+        ui.setTransferStatus('busy', 'Looking up nearest weather station');
+        setNearestActiveStation(coords, state.startDate, state.endDate)
+            .then( () => {
+              ui.setTransferStatus('success', 'Found nearest active weather station');
+            });
+      },
+      function (err) {
+        console.warn(`Error getting geolocation: ${err}`);
+        ui.setTransferStatus('failure', err);
+      }
+  );
+}
 /**
  *
  * @param url {string}

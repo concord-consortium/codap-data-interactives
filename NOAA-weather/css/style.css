@@ -745,3 +745,12 @@ span.wx-radiogroup {
 /*    content: var(--icon-warning);*/
 /*    color: var(--warning-color);*/
 /*}*/
+
+.wx-location-group {
+  display: flex;
+}
+
+.wx-location-group label {
+  display: flex;
+  flex-direction: column;
+}

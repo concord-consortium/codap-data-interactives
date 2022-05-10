@@ -57,6 +57,14 @@ async function initialize(iPluginProperties) {
     }
     return result.success;
 }
+async function selectComponent(id) {
+    return await codapInterface.sendRequest({
+        action: 'notify',
+        resource: `component[${id}]`,
+        values: {request: 'select'
+        }
+    });
+}
 
 /**
  * Selects this component. In CODAP this will bring this component to the front.
@@ -72,12 +80,7 @@ async function selectSelf() {
         }
     }
     if (myCODAPId != null) {
-        return await codapInterface.sendRequest({
-            action: 'notify',
-            resource: `component[${myCODAPId}]`,
-            values: {request: 'select'
-            }
-        });
+        return await selectComponent(myCODAPId);
     }
 }
 
@@ -227,6 +230,8 @@ async function createMap(name, dimensions, center, zoom) {
     }
     if (map && center && (zoom != null)) {
         return centerAndZoomMap(map.id, center, zoom)
+    } else {
+        return selectComponent(map.id);
     }
 }
 

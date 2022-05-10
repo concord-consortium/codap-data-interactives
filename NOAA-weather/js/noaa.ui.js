@@ -106,6 +106,9 @@ function initialize(state, dataTypeStore, iEventHandlers) {
         updateView(lastState, dataTypeStore);
     });
 
+    setEventHandler('#wx-near-me-button', 'click', iEventHandlers.nearMe);
+    setEventHandler('#wx-open-map-button', 'click', iEventHandlers.mapOpen);
+
     if (eventHandlers.stationLocation) {
         let el = document.getElementById('geonameContainer');
         new GeonameSearch(el, 'codap', eventHandlers.stationLocation);
@@ -327,14 +330,17 @@ function setMessage(message) {
 
 /**
  * Sets the "transfer status" icon and message.
- * @param status {'disabled', 'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
+ * @param status {'disabled', 'inactive', 'busy', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param message
  */
 function setTransferStatus(status, message) {
     let getButtonIsActive = true;
     let el = document.querySelector('.wx-summary');
     let statusClass = '';
-    if (status === 'retrieving' || status === 'transferring' || status === 'clearing' ) {
+    if (status === 'busy' ||
+        status === 'retrieving' ||
+        status === 'transferring' ||
+        status === 'clearing' ) {
         getButtonIsActive = false;
         statusClass = 'wx-transfer-in-progress';
     } else if (status === 'success') {
