@@ -131,7 +131,6 @@ const app = new Vue({
         },
         setupDrag() {
             function findElementsUnder(pos) {
-                pos.y += 25;
                 if (pos) {
                     return document.elementsFromPoint(pos.x, pos.y)
                         .filter(el => el.classList.contains('drop-area'));
