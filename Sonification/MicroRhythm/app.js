@@ -138,16 +138,20 @@ const app = new Vue({
             }
             helper.on('dragDrop[attribute]', 'dragenter', (data) => {
                 let els = findElementsUnder(data.values.position);
-                els.forEach(el => {
-                    el.style.backgroundColor = 'rgba(255,255,0,0.5)';
-                });
+                if (els) {
+                    els.forEach(el => {
+                        el.style.backgroundColor = 'rgba(255,255,0,0.5)';
+                    });
+                }
             });
 
             helper.on('dragDrop[attribute]', 'dragleave', (data) => {
                 let els = findElementsUnder(data.values.position);
-                els.forEach(el => {
-                    el.style.backgroundColor = 'transparent';
-                });
+                if (els) {
+                    els.forEach(el => {
+                        el.style.backgroundColor = 'transparent';
+                    });
+                }
             });
 
             helper.on('dragDrop[attribute]', 'drag', (data) => {
