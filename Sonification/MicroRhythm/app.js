@@ -72,6 +72,7 @@ const app = new Vue({
 
         speedSlider: null,
         playbackSpeed: 0.5,
+        userMessage: '',
     },
     watch: {
         state: {
@@ -128,6 +129,13 @@ const app = new Vue({
                     csound.SetChannel('playbackSpeed', v);
                 }
             });
+        },
+        setUserMessage(msg) {
+            this.userMessage = msg;
+        },
+        logMessage(msg) {
+            this.setUserMessage(`log: ${msg}`);
+            console.log(`Microrhythm: ${msg}`);
         },
         setupDrag() {
             function findElementsUnder(pos) {
@@ -255,10 +263,12 @@ const app = new Vue({
           helper.selectSelf();
         },
         onPitchAttributeSelectedByUI() {
+            this.setUserMessage("Pitch selected...");
             this.processMappedAttribute('pitch');
             this.recordToMoveRecorder('pitch');
         },
         onTimeAttributeSelectedByUI() {
+            this.setUserMessage("Time selected...");
             this.processMappedAttribute('time');
             this.recordToMoveRecorder('time');
         },
@@ -425,6 +435,12 @@ const app = new Vue({
         },
         play() {
             if (!this.csoundReady) {
+                this.logMessage('Play aborted: csound not ready.');
+                return null;
+            }
+
+            if (!this.state.pitchAttribute || !this.state.timeAttribute) {
+                this.setUserMessage("Please set an attribute for time and pitch");
                 return null;
             }
 
@@ -463,6 +479,7 @@ const app = new Vue({
             this.playing = false;
         },
         openInfoPage() {
+            this.setUserMessage('Opening Info Page');
             helper.openSharedInfoPage();
         }
     },
