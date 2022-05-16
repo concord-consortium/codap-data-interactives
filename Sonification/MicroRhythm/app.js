@@ -245,9 +245,7 @@ const app = new Vue({
                 this[`${type}AttrRange`] = this.calcRange(this.state[`${type}Attribute`], this.state[`${type}AttrIsDate`], this.state[`${type}AttrIsDescending`]);
             }
 
-            if (this.playing) {
-                this.reselectCases();
-            }
+            this.reselectCases();
         },
         recordToMoveRecorder(param) {
             if (!(helper.items[DATAMOVES_CONTROLS_DATA.name] && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Record'])) {
@@ -311,10 +309,7 @@ const app = new Vue({
 
             if (this.state.focusedContext) {
                 this.attributes = helper.getAttributesForContext(this.state.focusedContext);
-
-                if (this.playing) {
-                    this.reselectCases();
-                }
+                this.reselectCases();
             }
         },
         onGetGlobals() {
