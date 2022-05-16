@@ -1,6 +1,13 @@
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
 
+const kAttributeMappedProperties = [
+    'time',
+    'pitch',
+    'duration',
+    'loudness',
+    'stereo'
+];
 const app = new Vue({
     el: '#app',
     data: {
@@ -481,22 +488,21 @@ const app = new Vue({
         openInfoPage() {
             this.setUserMessage('Opening Info Page');
             helper.openSharedInfoPage();
-        }
-    },
-    mounted() {
-        this.setupDrag();
-        this.setupUI();
-
-        helper.init(this.name, this.dim)
-            // .then(helper.monitorLogMessages.bind(helper))
-            .then((state) => {
-                if (state) {
-                    Object.keys(state).forEach(key => this.state[key] = state[key]);
+        },
+        restoreSavedState(state) {
+            Object.keys(state).forEach(key => {
+                this.state[key] = state[key];
+                if (key === 'focusedContext') {
+                    this.onContextFocused();
+                    helper.queryAllData().then(this.onGetData).then(() =>{
+                        if (kAttributeMappedProperties.includes(key)) {
+                            this.processMappedAttribute(key);
+                        }
+                    });
                 }
-                this.onGetData();
             });
-
-        codapInterface.on('notify', '*', notice => {
+        },
+        handleCODAPNotice(notice) {
             if (!helper.checkNoticeIdentity(notice)) {
                 return null;
             }
@@ -573,7 +579,22 @@ const app = new Vue({
                 //     }
                 // }
             }
-        });
+        }
+    },
+    mounted() {
+        this.setupDrag();
+        this.setupUI();
+
+        helper.init(this.name, this.dim)
+            // .then(helper.monitorLogMessages.bind(helper))
+            .then((state) => {
+                if (state) {
+                    this.restoreSavedState(state);
+                }
+                this.onGetData();
+            });
+
+        codapInterface.on('notify', '*', this.handleCODAPNotice);
 
         this.selectedCsd = this.csdFiles[0];
     }
