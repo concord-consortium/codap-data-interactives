@@ -219,7 +219,10 @@ async function initialize() {
 }
 
 function mapOpenHandler() {
-  codapConnect.createMap('Map', {height: 350, width: 500});
+  let station = state.selectedStation;
+  let latLong = station && [station.latitude, station.longitude];
+  codapConnect.createMap('Map', {height: 350, width: 500}, latLong, 7);
+  codapConnect.selectStations([station.name]);
 }
 
 function nearMeHandler() {
