@@ -65,6 +65,8 @@ let constants = {
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
+  DSCollection1: 'NOAA-Weather',
+  DSCollection2: 'Observations',
   geonamesUser: 'codap',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC', // may be obsolescent
@@ -421,7 +423,7 @@ async function clearDataHandler() {
   ui.setTransferStatus('clearing', 'Clearing data')
   let result = await codapConnect.clearData(constants.DSName);
   if (result.success) {
-    result = await codapConnect.deleteAttributes(constants.DSName, constants.DSTitle, state.selectedDataTypes);
+    result = await codapConnect.deleteAttributes(constants.DSName, constants.DSCollection2, state.selectedDataTypes);
   }
   let status = result && result.success? 'success': 'failure';
   let message = result && result.success? `Cleared the ${constants.DSName} dataset`: result.message;

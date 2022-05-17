@@ -151,7 +151,8 @@ async function updateWeatherDataset(dataTypes, unitSystem) {
         result = await codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
-            values: getNoaaDataContextSetupObject(pluginProperties.DSName)
+            values: getNoaaDataContextSetupObject(pluginProperties.DSName,
+                pluginProperties.DSCollection1, pluginProperties.DSCollection2)
         });
         if (result.success) {
             result = await codapInterface.sendRequest(getDatasetMsg);
@@ -445,13 +446,13 @@ function getPluginDescriptor(props) {
  * @param dsName {string}
  * @return {{}}
  */
-function getNoaaDataContextSetupObject(dsName) {
+function getNoaaDataContextSetupObject(dsName, dsCol1, dsCol2) {
     return {
         name: dsName,
         title: dsName,
         description: "Data from NOAA",
         collections: [{
-            name: dsName,
+            name: dsCol1,
             labels: {
                 singleCase: "station", pluralCase: "stations",
             },
@@ -466,8 +467,8 @@ function getNoaaDataContextSetupObject(dsName) {
             ]
         },
         {
-            name: "Observations",
-            parent: dsName,
+            name: dsCol2,
+            parent: dsCol1,
             labels: {
                 singleCase: "observation",
                 pluralCase: "observations",
@@ -534,7 +535,7 @@ async function deleteAttributes(datasetName, collectionName, attributeNames) {
             resource: `dataContext[${datasetName}].collection[${collectionName}].attribute[${attrName}]`
         })
     });
-    return await Promise.allSettled(attrDeletePromises);
+    return await Promise.allSettled(attrDeletePromises).then(() => {return {success: true};});
 }
 
 /**
