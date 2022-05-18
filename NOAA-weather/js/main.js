@@ -68,6 +68,8 @@ let constants = {
   DSCollection1: 'NOAA-Weather',
   DSCollection2: 'Observations',
   geonamesUser: 'codap',
+  globalMinDate: 'wxMinDate',
+  globalMaxDate: 'wxMaxDate',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC', // may be obsolescent
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
@@ -152,6 +154,10 @@ async function getGeolocation () {
     }
   });
 }
+function setRangeGlobals(minDate, maxDate) {
+  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(minDate)/1000);
+  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(maxDate)/1000)
+}
 
 async function initialize() {
   let isConnected = false;
@@ -184,6 +190,8 @@ async function initialize() {
           needMap = true;
         }
       }
+      setRangeGlobals(documentState.startDate, documentState.endDate);
+
       await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
 
@@ -223,7 +231,7 @@ async function initialize() {
 function mapOpenHandler() {
   let station = state.selectedStation;
   let latLong = station && [station.latitude, station.longitude];
-  codapConnect.createMap('Map', {height: 350, width: 500}, latLong, 7);
+  codapConnect.createMap(constants.StationDSName, {height: 350, width: 500}, latLong, 7);
   codapConnect.selectStations([station.name]);
 }
 
@@ -596,6 +604,8 @@ function dateRangeSubmitHandler(values) {
   }
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
+  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(values.startDate)/1000);
+  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(values.endDate)/1000);
   updateView();
 }
 

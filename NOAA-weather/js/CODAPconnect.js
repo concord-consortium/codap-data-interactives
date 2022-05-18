@@ -222,7 +222,11 @@ async function createMap(name, dimensions, center, zoom) {
     if (!map) {
         let result = await codapInterface.sendRequest({
             action: 'create', resource: 'component', values: {
-                type: 'map', name: name, dimensions: dimensions
+                type: 'map',
+                name: name,
+                dimensions: dimensions,
+                dataContextName: name,
+                legendAttributeName: 'isActive'
             }
         });
         if (result.success) {
@@ -309,14 +313,58 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
                 name: collectionName,
                 attrs: [
                     { name: 'name' },
-                    { name: 'ICAO'},
-                    { name: 'mindate', type: 'date' },
-                    { name: 'maxdate', type: 'date'},
-                    { name: 'latitude', unit: 'º'},
-                    { name: 'longitude', unit: 'º' },
-                    { name: 'elevation', unit: 'ft', precision: 0},
+                    {
+                        name: 'ICAO',
+                        description: 'International Civil Aviation Org. Airport Code'
+                    },
+                    {
+                        name: 'mindate',
+                        type: 'date',
+                        precision: 'day',
+                        description: 'Earliest reporting date'
+                    },
+                    {
+                        name: 'maxdate',
+                        type: 'date',
+                        precision: 'day',
+                        description: 'Latest reporting date, or "present" if is an active station'
+                    },
+                    {
+                        name: 'latitude',
+                        unit: 'º'
+                    },
+                    {
+                        name: 'longitude',
+                        unit: 'º'
+                    },
+                    {
+                        name: 'elevation',
+                        unit: 'ft',
+                        precision: 0,
+                        type: 'number'
+                    },
                     { name: 'isdID'},
-                    { name: 'ghcndID'}
+                    {
+                        name: 'ghcndID',
+                        description: 'Global Historical Climatology Network ID'
+                    },
+                    {
+                        name: 'isActive',
+                        formula: "(number(maxdate='present'? " +
+                            "date(): date(split(maxdate,'-',1), split(maxdate, " +
+                            "'-', 2), split(maxdate, '-', 3))) - wxMinDate)>0 " +
+                            "and wxMaxDate-number(date(split(mindate,'-',1), " +
+                            "split(mindate, '-', 2), split(mindate, '-', 3)))>0",
+                        description: "whether the station was active in the Weather Plugin's requested date range",
+                        _categoryMap: {
+                            __order: [
+                                "false",
+                                "true"
+                            ],
+                            false: "#a9a9a9",
+                            true: "#ad2323"
+                        },
+                    }
                 ]
             }]
         }
@@ -575,6 +623,36 @@ async function queryCases(dataset, collection, query) {
     });
 }
 
+async function guaranteeGlobal(name, value) {
+
+    return codapInterface.sendRequest( {
+        action: 'get',
+        resource: `global[${name}]`
+    }).then(result => {
+      if (result.success) {
+          return codapInterface.sendRequest({
+              action: 'update',
+              resource: `global[${name}]`,
+              values: {
+                  value: value
+              }
+          })
+      } else {
+          return codapInterface.sendRequest({
+              action: 'create',
+              resource: 'global',
+              values: {
+                  name: name,
+                  value: value
+              }
+          })
+      }
+
+    },
+    msg => Promise.reject(msg)
+    );
+}
+
 export {
     addNotificationHandler,
     centerAndZoomMap,
@@ -586,6 +664,7 @@ export {
     deleteAttributes,
     getAllItems,
     getInteractiveState,
+    guaranteeGlobal,
     hasDataset,
     hasMap,
     initialize,
