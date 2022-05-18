@@ -335,6 +335,7 @@ function setMessage(message) {
  */
 function setTransferStatus(status, message) {
     let getButtonIsActive = true;
+    let waiting = false;
     let el = document.querySelector('.wx-summary');
     let statusClass = '';
     if (status === 'busy' ||
@@ -342,12 +343,13 @@ function setTransferStatus(status, message) {
         status === 'transferring' ||
         status === 'clearing' ) {
         getButtonIsActive = false;
+        waiting = true;
         statusClass = 'wx-transfer-in-progress';
     } else if (status === 'success') {
         statusClass = 'wx-transfer-success';
     } else if (status === 'failure') {
         statusClass = 'wx-transfer-failure';
-    } else if (status === 'disabled') {
+    } else if (status === 'disabled' || status === 'inactive') {
         statusClass = 'wx-transfer-failure';
         getButtonIsActive = false;
     }
@@ -355,7 +357,7 @@ function setTransferStatus(status, message) {
     if (statusClass) { el.classList.add(statusClass); }
 
     el.querySelector('#wx-get-button').disabled=!getButtonIsActive;
-    setWaitCursor(!getButtonIsActive);
+    setWaitCursor(waiting);
     setMessage(message);
 }
 

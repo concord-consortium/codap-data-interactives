@@ -377,7 +377,7 @@ async function stationSelectionHandler(req) {
     if (myCase) {
       let station = myCase.values;
       state.selectedStation = myCase.values;
-      ui.setTransferStatus('inactive', 'Selected new weather station');
+      ui.setTransferStatus('success', 'Selected new weather station');
       updateView();
       updateTimezone(station);
     }
@@ -452,7 +452,7 @@ function dataTypeSelectAllHandler(el/*, ev*/) {
       selectDataType(noaaType.name, isChecked);
     });
     selectDataType('all-datatypes', isChecked);
-    ui.setTransferStatus('inactive',
+    ui.setTransferStatus('success',
         `${isChecked?'': 'un'}selected all attributes`);
   }
 }
@@ -469,8 +469,10 @@ function dataTypeSelectionHandler(ev) {
 
 function updateView() {
   let isFetchable = areDatesInRangeForStation();
-  if (isFetchable && !state.isFetchable) {
-    ui.setTransferStatus("inactive", "");
+  if (!isFetchable && state.isFetchable) {
+    ui.setTransferStatus("inactive", "Station was inactive for date range");
+  } else if (isFetchable && !state.isFetchable) {
+    ui.setTransferStatus("success", "Station in active in time range")
   }
   state.isFetchable = isFetchable;
   ui.updateView(state, dataTypeStore);
@@ -622,7 +624,6 @@ function getSelectedDataTypes () {
  * Called before weather data is fetched.
  */
 function beforeFetchHandler() {
-  ui.setWaitCursor(true);
   ui.setTransferStatus('retrieving',
       'Fetching weather records from NOAA');
 }
@@ -655,17 +656,14 @@ function fetchSuccessHandler(data) {
         .then(
             function (result) {
               ui.setTransferStatus('success', `Retrieved ${dataRecords.length} cases`);
-              ui.setWaitCursor(false);
               return result;
             },
             function (msg) {
               ui.setTransferStatus('failure', msg);
-              ui.setWaitCursor(false);
             }
         );
   } else {
     ui.setTransferStatus('success', 'No data retrieved');
-    ui.setWaitCursor(false);
   }
 }
 
@@ -687,7 +685,6 @@ function fetchErrorHandler(statusMessage, resultText) {
   console.warn('fetchErrorHandler: ' + resultText);
   console.warn("fetchErrorHandler error: " + statusMessage);
   ui.setTransferStatus("failure", statusMessage);
-  ui.setWaitCursor(false);
 }
 
 export {constants};
