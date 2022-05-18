@@ -1,6 +1,6 @@
 .idea
 node_modules
-target
+/target
 npm-debug.log
 *.iml
 .DS_Store
