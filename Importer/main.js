@@ -24,6 +24,7 @@ import * as csvImporter from './modules/csvImporter.js';
 import * as htmlImporter from './modules/htmlImporter.js';
 import * as geoJSONImporter from './modules/geoJSONImporter.js';
 import * as googleSheetsImporter from './modules/googleSheetsImporter.js';
+import * as localeManager from './modules/localeManager.js';
 
 let constants = {
   chunkSize: 200, // number of items to transmit at a time
@@ -35,6 +36,7 @@ let constants = {
   defaultTargetOperation: 'replace',
   defaultDownsample: 'random',
   name: 'Importer',  // plugin name
+  title: 'Importer',
   ordinal_attribute_name: '_import_index_',
   ordinal_attribute_type: 'categorical',
   thresholdColCount: 40,
@@ -192,9 +194,8 @@ function prepareKnownTargetDatasetDialog() {
       && sourceDataset.attributeNames
       && sourceDataset.attributeNames.length > kAttrListLimit) ? '...': '.';
 
-  uiControl.displayMessage(`Preparing to import into <em>${dsName}</em>, 
-        ${rows} rows from a table with ${attrCount} attributes: ${attrList}${attrListEnd}`
-      , '#target-message');
+  uiControl.displayMessage(localeManager.loc("DG.plugin.Importer.import-message", [
+        rows, dsName, attrCount, attrList, attrListEnd]), '#target-message');
   uiControl.showSection('target-options', true);
   // do not show the new dataset option
   uiControl.showSection('new-dataset-option', false);
@@ -205,11 +206,12 @@ function prepareKnownTargetDatasetDialog() {
 function prepareFoundTargetDatasetDialog(matchingDataset) {
   let matchingMetadata = matchingDataset.metadata || {};
   let uploadTimeSentence = matchingMetadata.importDate
-      ? `It was uploaded ${relTime(matchingMetadata.importDate)}.`
+      ? localeManager.loc("DG.plugin.Importer.upload-time-msg", relTime(matchingMetadata.importDate))
       : '';
 
-  uiControl.displayMessage('There already exists a dataset like this one,' +
-      ` named "${matchingDataset.title}". ${uploadTimeSentence}`,
+  uiControl.displayMessage(
+      localeManager.loc("DG.plugin.Importer.duplicate-dataset-msg", [matchingDataset.title]) +
+      ' ' + uploadTimeSentence,
       '#target-message');
   uiControl.setInputValue('target-operation', constants.defaultTargetOperation);
   uiControl.showSection('target-options', true);
@@ -218,11 +220,9 @@ function prepareFoundTargetDatasetDialog(matchingDataset) {
 
 function prepareSizeAboveThresholdDialog(numRows) {
   let numberFormat = Intl.NumberFormat? new Intl.NumberFormat(): {format: function (n) {return n.toString();}};
-  uiControl.displayMessage(`The imported file, "${config.source}" has ${numberFormat.format(numRows)} rows.` +
-      ` With more than ${numberFormat.format(constants.thresholdRowCount)} rows CODAP performance may be sluggish.` +
-      ' You can work with a sample of the data at least at first, replacing it with the full dataset later.',
-      '#downsample-message'
-  );
+  let message = localeManager.loc("DG.plugin.Importer.large-file-msg",
+      [config.source, numberFormat.format(numRows), numberFormat.format(constants.thresholdRowCount)])
+  uiControl.displayMessage(message, '#downsample-message');
   uiControl.showSection('downsample-options', true);
   uiControl.setInputValue('pick-interval', Math.round((numRows-1)/constants.thresholdRowCount) + 1);
   uiControl.setInputValue('random-sample-size', Math.min(numRows, constants.thresholdRowCount));
@@ -635,7 +635,7 @@ async function importDataIntoCODAP() {
     }
     else {
       uiControl.displayError(
-          (result && result.error) || "Error sending data to CODAP");
+          (result && result.error) || localeManager.loc("DG.plugin.Importer.error-codap-connection"));
       codapHelper.setVisibilityOfSelf(true).then(adjustPluginHeight);
     }
 
@@ -643,7 +643,7 @@ async function importDataIntoCODAP() {
     // return populateFromDataThenExit(data, config);
   }
   catch (ex){
-    uiControl.displayError('Could not import this file -- ' + ex);
+    uiControl.displayError(localeManager.loc('DG.plugin.Importer..error-upload', [ex.toString()]));
   }
 }
 
@@ -694,11 +694,18 @@ async function main() {
   uiControl.installButtonHandler('#submit', handleSubmitEvent);
   uiControl.installKeystrokeHandler('Enter', handleSubmitEvent);
 
+  await localeManager.init()
+  constants.title = localeManager.loc('DG.plugin.Importer.title');
   // initialize CODAP connection
-  let pluginState = await codapHelper.init(codapConfig)
+  let pluginState;
+  try {
+    pluginState = await codapHelper.init(codapConfig);
+    // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
+    config.pluginState = pluginState;
+  } catch(ex) {
+    console.log(ex);
+  }
 
-  // console.log('pluginState: ' + pluginState && JSON.stringify(pluginState));
-  config.pluginState = pluginState;
 
   await codapHelper.setVisibilityOfSelf(false);
 
@@ -717,7 +724,7 @@ async function main() {
       await codapHelper.indicateBusy(true);
       config.sourceDataset = await retrieveData(pluginState);
     } catch (msg) {
-      uiControl.displayError(`There was an error loading this resource: "${config.source}" reason: "${msg.toString()}"`);
+      uiControl.displayError(localeManager.loc("DG.plugin.Importer.load-error", [config.source, msg.toString()]));
       // uiControl.showSection('source-input');
       await codapHelper.setVisibilityOfSelf(true);
       return;
@@ -725,7 +732,7 @@ async function main() {
       await codapHelper.indicateBusy(false);
     }
     if (!config.sourceDataset || !config.sourceDataset.table) {
-      uiControl.displayMessage("Could not find tabular data in a format that can be imported into CODAP");
+      uiControl.displayMessage(localeManager.loc("DG.plugin.Importer.no-table-error"));
       // uiControl.showSection('source-input');
       await codapHelper.setVisibilityOfSelf(true);
     }

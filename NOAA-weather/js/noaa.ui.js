@@ -42,8 +42,10 @@ let lastState = null; // save state to be able to refresh view upon cancel
  *      dataTypeSelector/click,
  *      frequencyControl/click,
  *      getData/click,
- *      dataSet/click
- *      stationLocation/enter,blur
+ *      dataSet/click,
+ *      stationLocation/enter,blur,
+ *      nearMe/click,
+ *      mapOpen/click
  *
  *      In all cases, handlers should expect 'this' to be the DOM element and
  *      one argument, the event.
@@ -80,6 +82,9 @@ function initialize(state, dataTypeStore, iEventHandlers) {
     setEventHandler('.wx-pop-up-anchor,#wx-info-close-button', 'click', function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'wx-pop-up');
         togglePopUp(parentEl);
+    });
+
+    setEventHandler('input[name=wx-option-units]', 'change', function (/*ev*/) {
         if (eventHandlers.unitSystem) {
             let unitSystemEl = document.querySelector('input[name=wx-option-units]:checked');
             let unitSystem = unitSystemEl? unitSystemEl.value : null;
@@ -88,7 +93,6 @@ function initialize(state, dataTypeStore, iEventHandlers) {
             }
         }
     });
-
     setEventHandler('#wx-drs-duration,#wx-drs-end-date', 'change', updateDateRange);
 
     setEventHandler('.wx-pop-over-anchor', 'click', function (/*ev*/) {
@@ -101,6 +105,9 @@ function initialize(state, dataTypeStore, iEventHandlers) {
         togglePopOver(el);
         updateView(lastState, dataTypeStore);
     });
+
+    setEventHandler('#wx-near-me-button', 'click', iEventHandlers.nearMe);
+    setEventHandler('#wx-open-map-button', 'click', iEventHandlers.mapOpen);
 
     if (eventHandlers.stationLocation) {
         let el = document.getElementById('geonameContainer');
@@ -206,7 +213,7 @@ function updateView(state, dataTypeStore) {
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
     updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
     updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
-    updateInfoPopup(state.unitSystem);
+    updateUnitSystem(state.unitSystem);
 }
 
 function updateFrequencyControl(databaseName) {
@@ -227,7 +234,7 @@ function updateStationView(selectedStation) {
 }
 
 
-function updateInfoPopup(unitSystem) {
+function updateUnitSystem(unitSystem) {
     let el = document.querySelector('input[name=wx-option-units][value='+unitSystem+']');
     el.checked=true;
 }
@@ -323,14 +330,17 @@ function setMessage(message) {
 
 /**
  * Sets the "transfer status" icon and message.
- * @param status {'disabled', 'inactive', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
+ * @param status {'disabled', 'inactive', 'busy', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param message
  */
 function setTransferStatus(status, message) {
     let getButtonIsActive = true;
     let el = document.querySelector('.wx-summary');
     let statusClass = '';
-    if (status === 'retrieving' || status === 'transferring' || status === 'clearing' ) {
+    if (status === 'busy' ||
+        status === 'retrieving' ||
+        status === 'transferring' ||
+        status === 'clearing' ) {
         getButtonIsActive = false;
         statusClass = 'wx-transfer-in-progress';
     } else if (status === 'success') {

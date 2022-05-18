@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Takes as input a JSON stream in standard input with weather station data.
+# Converts elevations from meters to feet and writes it to standard output.
+#
+# Expects jq to be available in the path. 
+#
+jq '[.[]|.elevation=(.elevation|tonumber)*3.28084]' 

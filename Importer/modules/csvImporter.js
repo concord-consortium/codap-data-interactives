@@ -146,7 +146,12 @@ async function retrieveData(config) {
     dataSet.rawData = await fetchAndParseURL(config.url);
     dataSet.sourceType = 'url';
   } else if (config.file) {
-    dataSet.resourceDescription = composeResourceDescription(config.datasetName || config.file.name, importDate);
+
+    dataSet.resourceDescription = composeResourceDescription(config.datasetName
+        || config.file.name, importDate);
+    if (!config.datasetName) {
+      dataSet.datasetName = config.file.name.replace(/\.[^.]*$/, '');
+    }
     dataSet.rawData = await readFile(config.file);
     dataSet.sourceType = 'file';
   } else {

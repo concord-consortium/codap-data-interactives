@@ -1,6 +1,6 @@
-<html lang="en" >
+<html >
 <head>
-  <title>Import CSV to CODAP</title>
+  <title><span data-text="DG.plugin.importer.title"></span></title>
   <link rel="stylesheet" type="text/css" href="css/style.css" >
   <script src="lib/iframe-phone.js"></script>
   <script src="lib/CodapInterface.js"></script>
@@ -16,45 +16,45 @@
       <div id="message-area" class="panel" hidden></div>
 
       <div id="source-input" class="panel" hidden>
-        <div><label>Enter url: <input type="url" name="source-input-url"></label></div>
-        or
+        <div><label><span data-text="DG.plugin.Importer.enter-url"></span><input type="url" name="source-input-url"></label></div>
+        <span data-text="DG.plugin.Importer.or"></span>
         <div><input type="file" accept="text/csv,text/plain,application/json,application/geo+json,application/vnd.geo+json,text/json" name="source-input-file"></div>
       </div>
 
       <div id="downsample-options" hidden>
         <div id="downsample-message" class="panel message"></div>
-        <div class="section-title panel">Downsample Options...</div>
+        <div class="section-title panel" data-text="DG.plugin.Importer.downsample-section"></div>
         <div class="option-list">
           <label class="panel">
             <input type="radio" name="downsample" value="random">
-            Randomly select
-            <input type="number" name="random-sample-size" min="0" max="99999" step="500"/> rows
+            <span data-text="DG.plugin.Importer.downsample-random-p1"></span>
+            <input type="number" name="random-sample-size" min="0" max="99999" step="500"/> <span data-text="DG.plugin.Importer.downsample-random-p2"></span>
           </label>
           <label class="panel">
             <input type="radio" name="downsample" value="every-nth" >
-            Select every
-            <input type="number" name="pick-interval" min="1" max="99"/>th row
+            <span data-text="DG.plugin.Importer.downsample-every-nth-p1"></span>
+            <input type="number" name="pick-interval" min="1" max="99"/><span data-text="DG.plugin.Importer.downsample-every-nth-p2"></span>
           </label>
           <label class="panel">
-            <input type="radio" name="downsample" value="all" checked="checked">Import all rows
+            <input type="radio" name="downsample" value="all" checked="checked"> <span data-text="DG.plugin.Importer.downsample-import-all"></span>
           </label>
         </div>
       </div>
 
       <div id="target-options" hidden>
         <div id="target-message" class="panel message"></div>
-        <div class="panel">Target Options...</div>
+        <div class="panel" data-text="DG.plugin.Importer.target-options-title"></div>
         <div class="option-list">
-          <label class="panel"><input type="radio" name="target-operation" value="replace">Replace existing dataset with this one</label>
-          <label class="panel"><input type="radio" name="target-operation" value="append">Append this dataset to the existing one</label>
-          <label id="new-dataset-option" class="panel"><input type="radio" name="target-operation" value="new" checked="checked">Create a new data set</label>
+          <label class="panel"><input type="radio" name="target-operation" value="replace"><span data-text="DG.plugin.Importer.target-options-replace"></span></label>
+          <label class="panel"><input type="radio" name="target-operation" value="append"><span data-text="DG.plugin.Importer.target-options-append"></span></label>
+          <label id="new-dataset-option" class="panel"><input type="radio" name="target-operation" value="new" checked="checked"><span data-text="DG.plugin.Importer.target-options-create-new"></span></label>
         </div>
       </div>
 
       <div id="submit-area" class="panel">
-        <button id="cancel">Cancel</button>
-        <button id="submit">OK</button>
-        <button id="dismiss" class="hidden">Dismiss</button>
+        <button id="cancel" data-text="DG.plugin.Importer.button-cancel"></button>
+        <button id="submit" data-text="DG.plugin.Importer.button-submit"></button>
+        <button id="dismiss" class="hidden" data-text="DG.plugin.Importer.button-dismiss"></button>
       </div>
 
     </div>
