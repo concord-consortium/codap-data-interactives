@@ -27,7 +27,7 @@ let today = dayjs(dayjs().format('MM/DD/YYYY'));
 
 // noinspection SpellCheckingInspection
 let constants = {
-  defaultNoaaDataset: 'global-hourly',
+  defaultNoaaDataset: 'daily-summaries',
   defaultStation:   {
     "country":"US",
     "state":"NH",
