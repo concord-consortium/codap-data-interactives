@@ -1,4 +1,4 @@
-hasMouse = !('ontouchstart' in window);
+hasMouse = true;  // This is a kludge to prevent loading of Mammals on touch devices
 
 taskDescriptions = {
   descriptions: [

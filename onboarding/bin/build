@@ -3,7 +3,7 @@
 # Build the onboarding deployment
 TARGET=./target
 JSX_SOURCE=source/jsx
-HTML_SOURCE=source/index.html
+HTML_SOURCE=source/*.html
 CSS_SOURCE=source/style/onboarding.css
 JS_SOURCE=source/js
 CODAP_INTERFACE_SOURCE=../Common/js/CodapInterface.js
