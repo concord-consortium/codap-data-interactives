@@ -28,7 +28,7 @@ class CodapPluginHelper {
 
         this.items = null;
         this.itemAttributes = null;
-        this.itemAttrInfo = null;
+        // this.itemAttrInfo = null;
 
         this.attrValueRanges = null;
 
@@ -47,56 +47,76 @@ class CodapPluginHelper {
             name: name,
             title: name,
             version: version ? version : '',
-            dimensions: {
-                width: dimensions.width,
-                height: dimensions.height + 25
-            }
-        }).then(savedState => {
+            preventDataContextReorg: false,
+        })
+        .then(savedState => {
             let pluginState = savedState ? savedState : this.codapInterface.getInteractiveState();
+            let hasState = false;
 
             if (Object.keys(pluginState).includes('ID')) {
                 this.ID = pluginState.ID;
+                hasState = true;
             } else {
                 // pluginState['ID'] = `${name}-${new Date().getTime()}`;
                 this.ID = pluginState.ID = new Date().getTime();
             }
 
-            // Allow the attributes to move.
-            return this.codapInterface.sendRequest({
-                action: "update",
-                resource: "interactiveFrame",
-                values: {
-                    preventDataContextReorg: false,
-
-                    // TODO: Is this needed?
-                    dimensions: {
-                        width: dimensions.width,
-                        height: dimensions.height + 25
+            if (!hasState) {
+                return this.codapInterface.sendRequest({
+                    action: "update",
+                    resource: "interactiveFrame",
+                    values: {
+                        dimensions: {
+                            width: dimensions.width,
+                            height: dimensions.height + 25
+                        }
                     }
-                }
-            }).then(() => this.queryAllData());
-        });
+                }).then(() => this.queryAllData());
+            } else {
+                return this.queryAllData();
+            }
+            // Allow the attributes to move.
+        })
+        .then( () => {return this.getPluginID(); })
+        .then(id=> {this.pluginID = id;})
+        .then(() => Promise.resolve(this.codapInterface.getInteractiveState()))
     }
 
-    monitorLogMessages(bool) {
-        if (typeof(bool) !== 'boolean') {
-            bool = true;
-        }
-
-        if (bool) {
-            return this.codapInterface.sendRequest({
-                action: "register",
-                resource: "logMessageMonitor",
-                values: {
-                    message: "*"
-                }
-            });
-
-            // TODO: Register with a unique client ID.
+    getPluginID() {
+        if (this.pluginID) {
+            return Promise.resolve(this.pluginID);
         } else {
-            // TODO: Unregister with the set ID.
+            return this.codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
+                .then(result => {
+                    if (result.success) return Promise.resolve(result.values.id);
+                    else return Promise.reject('Plugin id fetch failed');
+                })
         }
     }
+
+    updateState(state) {
+        this.codapInterface.updateInteractiveState(state);
+    }
+
+    // monitorLogMessages(bool) {
+    //     if (typeof(bool) !== 'boolean') {
+    //         bool = true;
+    //     }
+    //
+    //     if (bool) {
+    //         return this.codapInterface.sendRequest({
+    //             action: "register",
+    //             resource: "logMessageMonitor",
+    //             values: {
+    //                 message: "*"
+    //             }
+    //         });
+    //
+    //         // TODO: Register with a unique client ID.
+    //     } else {
+    //         // TODO: Unregister with the set ID.
+    //     }
+    // }
 
     // TODO: Hopefully this can retire soon with the fix to the notificationManager.
     checkNoticeIdentity(notice) {
@@ -527,8 +547,8 @@ class CodapPluginHelper {
         });
     }
 
-    getTreeStructure(context) {
-        let result = {};
+    getTreeStructure(/*context*/) {
+        // let result = {};
 
         // result[]
 
@@ -560,9 +580,9 @@ class CodapPluginHelper {
             action: 'get',
             resource: 'globalList'
         }).then(result => {
-            this.globals = result.values.filter(variable => {
+            this.globals = result.values?result.values.filter(variable => {
                 return ['US_state_boundaries', 'country_boundaries', 'US_county_boundaries', 'US_congressional_boundaries', 'US_puma_boundaries'].indexOf(variable.name) === -1;
-            });
+            }):[];
         });
     }
 
@@ -626,7 +646,21 @@ class CodapPluginHelper {
                 title: title,
                 URL: `${origin}${path}?dir=${directory}&file=${file}`,
                 dimensions: dimensions,
-                position: 'top'
+                position: {right:0}
+            }
+        })
+        .then((rslt) => {
+            if (rslt && rslt.success) {
+                let id = rslt.values.id;
+                if (id) {
+                    this.codapInterface.sendRequest({
+                        action: "notify",
+                        resource: `component[${id}]`,
+                        values: {
+                            request: "select"
+                        }
+                    })
+                }
             }
         });
     }
@@ -648,5 +682,24 @@ class CodapPluginHelper {
                 cannotClose: false
             }
         });
+    }
+
+
+    selectSelf() {
+        if (this.pluginID) {
+            return this.codapInterface.sendRequest({
+                action: 'notify',
+                resource: `component[${this.pluginID}]`,
+                values: {
+                    request: 'select'
+                }
+            });
+        } else {
+            console.log('No Plugin ID');
+        }
+    }
+
+    on(resource, operation, handler) {
+        this.codapInterface.on('notify', resource, operation, handler )
     }
 }

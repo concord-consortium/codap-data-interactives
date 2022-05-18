@@ -18,6 +18,7 @@
 // ==========================================================================
 
 const kGeonamesService = 'https://secure.geonames.org/search'
+const kGeolocService = 'https://secure.geonames.org/findNearbyPlaceNameJSON'
 const kMinQueryInterval = 800;
 const kDefaultMaxRows = 5;
 const kMinNameLength = 3;
@@ -84,6 +85,23 @@ class GeonameSearch {
     }
   }
 
+  /**
+   * Finds a geo name from lat/long
+   * @param lat {number}
+   * @param long {number}
+   */
+  async geoLocSearch(lat, long) {
+    const userClause = `username=${this.myGeonamesUser}`;
+    const locClause = `lat=${lat}&lon=${long}`;
+    const url = `${kGeolocService}?${[locClause,userClause].join('&')}`;
+    return fetch(url).then((rslt) => {
+      if (rslt.ok) {
+        return rslt.json();
+      } else {
+        return Promise.reject(rslt.statusText);
+      }
+    });
+  }
   /**
    * Populates the selector list with place names.
    *

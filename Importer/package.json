@@ -4,15 +4,22 @@
   "description": "A CODAP Plugin to manage importation of CSV data sets.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "strings:test": "bin/makeTestTranslation.sh",
+    "strings:pull": "node bin/pull-strings.js"
   },
   "author": "Jonathan Sandoe",
   "license": "MIT",
+  "type": "module",
   "eslintConfig": {
     "parserOptions": {
       "ecmaVersion": 2018,
       "sourceType": "module"
     },
-    "env": { "es6": true }
+    "env": {
+      "es6": true
+    }
+  },
+  "devDependencies": {
+    "node-fetch": "^3.2.3"
   }
 }

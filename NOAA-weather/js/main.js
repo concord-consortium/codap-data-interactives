@@ -34,7 +34,7 @@ let constants = {
     "latitude":44.27,
     "longitude":-71.303,
     "name":"MT. WASHINGTON OBSERVATORY",
-    "elevation":"+1911.7",
+    "elevation":6272,
     "ICAO":"KMWN",
     "mindate":"1973-01-01",
     "maxdate":"present",
@@ -45,15 +45,15 @@ let constants = {
   defaultStationTimezoneName: 'EST',
   defaultDates: {
     'hourly': {
-      start: today.subtract(1, 'week').toDate(),
+      start: today.subtract(4, 'week').toDate(),
       end: today.subtract(1, 'day').toDate()
     },
     'daily': {
-      start: today.subtract(1, 'month').toDate(),
+      start: today.subtract(4, 'month').toDate(),
       end: today.subtract(1, 'day').toDate()
     },
     'monthly': {
-      start: today.subtract(1, 'year').toDate(),
+      start: today.subtract(10, 'year').toDate(),
       end: today.toDate()
     }
   },
@@ -61,7 +61,7 @@ let constants = {
     latitude: 44.27,
     longitude: -71.303
   },
-  defaultUnitSystem: 'metric',
+  defaultUnitSystem: 'standard',
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
@@ -135,21 +135,18 @@ function adjustStationDataset(dataset) {
  *
  * @return {Promise<{latitude,longitude}>}
  */
-async function getGeolocation (defaultCoords) {
-  return new Promise(function (resolve, /*reject*/) {
+async function getGeolocation () {
+  return new Promise(function (resolve, reject) {
     if (navigator.geolocation && navigator.geolocation.getCurrentPosition) {
-      navigator.geolocation.getCurrentPosition(
-          function(pos) {
-            resolve(pos.coords);
-          },
-          function(err) {
-            console.log(`Weather Plugin.getGeolocation failed: ${err.code}, ${err.message}`);
-            resolve(defaultCoords);
-          }
-      );
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        resolve(pos.coords);
+      }, function (err) {
+        console.warn(
+            `Weather Plugin.getGeolocation failed: ${err.code}, ${err.message}`);
+        reject(err.message);
+      });
     } else {
-      console.log("Geolocation not supported by browser");
-      resolve(defaultCoords);
+      reject('The GeoLocation API is not supported on this browser')
     }
   });
 }
@@ -202,38 +199,10 @@ async function initialize() {
       clearData: clearDataHandler,
       dateRangeSubmit: dateRangeSubmitHandler,
       unitSystem: unitSystemHandler,
-      stationLocation: stationLocationHandler
+      stationLocation: stationLocationHandler,
+      mapOpen: mapOpenHandler,
+      nearMe: nearMeHandler
     });
-
-    if (needMap) {
-      await codapConnect.createMap('Map', {height: 350, width: 500});
-
-      let coords = constants.defaultCoords;
-      let coordsResolved = false;
-
-      // getting geolocation can hang for a long time, so we wait a few seconds
-      // and if we don't have one we make a map at the default coords and go on.
-      // If the user grants permissions late, we can move the center point.
-      setTimeout(function () {
-        if (!coordsResolved) {
-          codapConnect.createMap('Map',
-              {height: 350, width: 500}, [coords.latitude, coords.longitude], 7);
-        }
-      }, 5000);
-      getGeolocation(constants.defaultCoords).then(
-        function (coords) {
-          ui.setTransferStatus('success', 'Centering map');
-          coordsResolved = true;
-          codapConnect.centerAndZoomMap('Map', [coords.latitude, coords.longitude], 7)
-          ui.setTransferStatus('success', 'Looking up nearest weather station');
-          setNearestStation(coords);
-          ui.setTransferStatus('success', 'Ready');
-        },
-        function (err) {
-          console.warn(`Error getting geolocation: ${err}`)
-        }
-      );
-    }
 
     noaaNCEIConnect.initialize(state, constants, {
       beforeFetchHandler: beforeFetchHandler,
@@ -249,6 +218,26 @@ async function initialize() {
   }
 }
 
+function mapOpenHandler() {
+  codapConnect.createMap('Map', {height: 350, width: 500});
+}
+
+function nearMeHandler() {
+  ui.setTransferStatus('busy', 'Finding current location');
+  getGeolocation().then(
+      function (coords) {
+        ui.setTransferStatus('busy', 'Looking up nearest weather station');
+        setNearestActiveStation(coords, state.startDate, state.endDate)
+            .then( () => {
+              ui.setTransferStatus('success', 'Found nearest active weather station');
+            });
+      },
+      function (err) {
+        console.warn(`Error getting geolocation: ${err}`);
+        ui.setTransferStatus('failure', err);
+      }
+  );
+}
 /**
  *
  * @param url {string}
@@ -487,6 +476,29 @@ async function findNearestStation(lat, long) {
     }
   }
 }
+async function findNearestActiveStation(lat, long, fromDate, toDate) {
+  if (typeof fromDate === 'string') {
+    fromDate = new Date(fromDate);
+  }
+  if (typeof toDate === 'string') {
+    toDate = new Date(toDate);
+  }
+  let fromSecs = fromDate/1000;
+  let toSecs = toDate/1000;
+  let result = await codapConnect.queryCases(constants.StationDSName,
+      constants.StationDSTitle,
+      `greatCircleDistance(latitude, longitude, ${lat}, ${long})=
+      min(greatCircleDistance(latitude, longitude, ${lat}, ${long}), 
+      ((${fromSecs}<maxdate or maxdate='present') and (${toSecs}>mindate)))`);
+  if (result.success) {
+    if (Array.isArray(result.values)) {
+      // noinspection JSPotentiallyInvalidTargetOfIndexedPropertyAccess
+      return result.values[0];
+    } else {
+      return result.values;
+    }
+  }
+}
 
 async function setNearestStation (location) {
   if (!location) {
@@ -505,9 +517,26 @@ async function setNearestStation (location) {
     updateTimezone(station);
   }
 }
+async function setNearestActiveStation (location, startDate, endDate) {
+  if (!location || !startDate || !endDate) {
+    return;
+  }
+  console.log(`Location: ${JSON.stringify(location)} start: ${startDate}, end: ${endDate}`);
+  let nearestStation = await findNearestActiveStation(location.latitude,
+      location.longitude, startDate, endDate);
+  if (nearestStation) {
+    let station = nearestStation.values;
+    state.selectedStation = station;
+    await codapConnect.selectStations([state.selectedStation.name]);
+    await codapConnect.centerAndZoomMap('Map',
+        [location.latitude, location.longitude], 9);
+    updateView();
+    updateTimezone(station);
+  }
+}
 
 async function stationLocationHandler (location) {
-    await setNearestStation(location);
+    await setNearestActiveStation(location, state.startDate, state.endDate);
 }
 
 /**
