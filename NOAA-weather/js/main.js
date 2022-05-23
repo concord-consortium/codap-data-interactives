@@ -27,7 +27,7 @@ let today = dayjs(dayjs().format('MM/DD/YYYY'));
 
 // noinspection SpellCheckingInspection
 let constants = {
-  defaultNoaaDataset: 'global-hourly',
+  defaultNoaaDataset: 'daily-summaries',
   defaultStation:   {
     "country":"US",
     "state":"NH",
@@ -65,7 +65,11 @@ let constants = {
   dimensions: {height: 490, width: 380},
   DSName: 'NOAA-Weather',
   DSTitle: 'NOAA Weather',
+  DSCollection1: 'NOAA-Weather',
+  DSCollection2: 'Observations',
   geonamesUser: 'codap',
+  globalMinDate: 'wxMinDate',
+  globalMaxDate: 'wxMaxDate',
   noaaBaseURL: 'https://www.ncdc.noaa.gov/cdo-web/api/v2/', // may be obsolescent
   noaaToken: 'rOoVmDbneHBSRPVuwNQkoLblqTSkeayC', // may be obsolescent
   nceiBaseURL: 'https://www.ncei.noaa.gov/access/services/data/v1',
@@ -150,6 +154,10 @@ async function getGeolocation () {
     }
   });
 }
+function setRangeGlobals(minDate, maxDate) {
+  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(minDate)/1000);
+  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(maxDate)/1000)
+}
 
 async function initialize() {
   let isConnected = false;
@@ -182,6 +190,8 @@ async function initialize() {
           needMap = true;
         }
       }
+      setRangeGlobals(documentState.startDate, documentState.endDate);
+
       await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
 
@@ -219,7 +229,10 @@ async function initialize() {
 }
 
 function mapOpenHandler() {
-  codapConnect.createMap('Map', {height: 350, width: 500});
+  let station = state.selectedStation;
+  let latLong = station && [station.latitude, station.longitude];
+  codapConnect.createMap(constants.StationDSName, {height: 350, width: 500}, latLong, 7);
+  codapConnect.selectStations([station.name]);
 }
 
 function nearMeHandler() {
@@ -364,7 +377,7 @@ async function stationSelectionHandler(req) {
     if (myCase) {
       let station = myCase.values;
       state.selectedStation = myCase.values;
-      ui.setTransferStatus('inactive', 'Selected new weather station');
+      ui.setTransferStatus('success', 'Selected new weather station');
       updateView();
       updateTimezone(station);
     }
@@ -418,7 +431,7 @@ async function clearDataHandler() {
   ui.setTransferStatus('clearing', 'Clearing data')
   let result = await codapConnect.clearData(constants.DSName);
   if (result.success) {
-    result = await codapConnect.deleteAttributes(constants.DSName, constants.DSTitle, state.selectedDataTypes);
+    result = await codapConnect.deleteAttributes(constants.DSName, constants.DSCollection2, state.selectedDataTypes);
   }
   let status = result && result.success? 'success': 'failure';
   let message = result && result.success? `Cleared the ${constants.DSName} dataset`: result.message;
@@ -439,7 +452,7 @@ function dataTypeSelectAllHandler(el/*, ev*/) {
       selectDataType(noaaType.name, isChecked);
     });
     selectDataType('all-datatypes', isChecked);
-    ui.setTransferStatus('inactive',
+    ui.setTransferStatus('success',
         `${isChecked?'': 'un'}selected all attributes`);
   }
 }
@@ -456,8 +469,10 @@ function dataTypeSelectionHandler(ev) {
 
 function updateView() {
   let isFetchable = areDatesInRangeForStation();
-  if (isFetchable && !state.isFetchable) {
-    ui.setTransferStatus("inactive", "");
+  if (!isFetchable && state.isFetchable) {
+    ui.setTransferStatus("inactive", "Station was inactive for date range");
+  } else if (isFetchable && !state.isFetchable) {
+    ui.setTransferStatus("success", "Station in active in time range")
   }
   state.isFetchable = isFetchable;
   ui.updateView(state, dataTypeStore);
@@ -591,6 +606,8 @@ function dateRangeSubmitHandler(values) {
   }
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
+  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(values.startDate)/1000);
+  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(values.endDate)/1000);
   updateView();
 }
 
@@ -607,7 +624,6 @@ function getSelectedDataTypes () {
  * Called before weather data is fetched.
  */
 function beforeFetchHandler() {
-  ui.setWaitCursor(true);
   ui.setTransferStatus('retrieving',
       'Fetching weather records from NOAA');
 }
@@ -640,17 +656,14 @@ function fetchSuccessHandler(data) {
         .then(
             function (result) {
               ui.setTransferStatus('success', `Retrieved ${dataRecords.length} cases`);
-              ui.setWaitCursor(false);
               return result;
             },
             function (msg) {
               ui.setTransferStatus('failure', msg);
-              ui.setWaitCursor(false);
             }
         );
   } else {
     ui.setTransferStatus('success', 'No data retrieved');
-    ui.setWaitCursor(false);
   }
 }
 
@@ -672,7 +685,6 @@ function fetchErrorHandler(statusMessage, resultText) {
   console.warn('fetchErrorHandler: ' + resultText);
   console.warn("fetchErrorHandler error: " + statusMessage);
   ui.setTransferStatus("failure", statusMessage);
-  ui.setWaitCursor(false);
 }
 
 export {constants};
