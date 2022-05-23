@@ -487,15 +487,15 @@ const app = new Vue({
         restoreSavedState(state) {
             Object.keys(state).forEach(key => {
                 this.state[key] = state[key];
-                if (key === 'focusedContext') {
-                    this.onContextFocused();
-                    helper.queryAllData().then(this.onGetData).then(() =>{
-                        if (kAttributeMappedProperties.includes(key)) {
-                            this.processMappedAttribute(key);
-                        }
-                    });
-                }
             });
+            if (this.state.focusedContext) {
+                this.onContextFocused();
+                helper.queryAllData().then(this.onGetData).then(() =>{
+                    kAttributeMappedProperties.forEach( (p) => {
+                        if (this.state[p + 'Attribute']) {this.processMappedAttribute(p);}
+                    })
+                });
+            }
         },
         handleCODAPNotice(notice) {
             if (!helper.checkNoticeIdentity(notice)) {
@@ -585,8 +585,9 @@ const app = new Vue({
             .then((state) => {
                 if (state) {
                     this.restoreSavedState(state);
+                } else {
+                    this.onGetData();
                 }
-                this.onGetData();
             });
 
         codapInterface.on('notify', '*', this.handleCODAPNotice);
