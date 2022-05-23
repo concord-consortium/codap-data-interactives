@@ -362,7 +362,7 @@ async function createStationsDataset(datasetName, collectionName, stations, sele
                                 "true"
                             ],
                             false: "#a9a9a9",
-                            true: "#ad2323"
+                            true: "#2a4bd7"
                         },
                     }
                 ]
