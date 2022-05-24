@@ -488,14 +488,14 @@ const app = new Vue({
             Object.keys(state).forEach(key => {
                 this.state[key] = state[key];
             });
-            if (this.state.focusedContext) {
-                this.onContextFocused();
-                helper.queryAllData().then(this.onGetData).then(() =>{
-                    kAttributeMappedProperties.forEach( (p) => {
-                        if (this.state[p + 'Attribute']) {this.processMappedAttribute(p);}
-                    })
-                });
-            }
+            helper.queryAllData().then(this.onGetData).then(() =>{
+                if (this.state.focusedContext) {
+                    this.onContextFocused();
+                }
+                kAttributeMappedProperties.forEach( (p) => {
+                    if (this.state[p + 'Attribute']) {this.processMappedAttribute(p);}
+                })
+            });
         },
         handleCODAPNotice(notice) {
             if (!helper.checkNoticeIdentity(notice)) {
