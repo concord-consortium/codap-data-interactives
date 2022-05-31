@@ -25,11 +25,11 @@
 <div id="app" v-on:click="onBackgroundSelect">
     <div class="main-heading">
         <div class="controller-area" >
-            <div class="controller-container">
+            <div class="controller-container" title="Enable sounds">
                 <label for="play-toggle">Play</label>
                 <span id="play-toggle"></span>
             </div>
-            <div class="controller-container">
+            <div class="controller-container" title="Enable periodic click sound">
                 <label for="click-toggle">Click</label>
                 <span id="click-toggle"></span>
             </div>
@@ -37,7 +37,7 @@
 <!--                <label for="click-toggle">Sync</label>-->
 <!--                <span id="sync-toggle"></span>-->
 <!--            </div>-->
-            <div class="controller-container">
+            <div class="controller-container" title="Adjust playback speed">
                 <label for="speed-slider">Speed</label>
                 <span id="speed-slider" title="Control the speed of playback"></span>
             </div>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="main-scroll-container">
-        <div class="mapper-container">
+        <div class="mapper-container" title="Select dataset">
             Dataset
             <label>
                 <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
@@ -60,7 +60,7 @@
 
         <div class="mapper-container" v-on:click="onBackgroundSelect">
             Pitch
-            <label>
+            <label title="Select attribute controlling pitch">
                 <select v-model="state.pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
                     <option selected value="" >-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
@@ -70,10 +70,10 @@
             </label>
 
             <div>
-                <label>
+                <label title="Whether the attribute controlling pitch has date/time values or is numeric">
                     <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
                 </label>
-                <label>
+                <label title="Whether to pitch should descend or ascend when attribute increases">
                     <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
                 </label>
             </div>
@@ -81,7 +81,7 @@
 
         <div class="mapper-container">
             Time
-            <label>
+            <label title="Select the attribute controlling the sequence of samples played">
                 <select v-model="state.timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
                     <option selected value="">-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
@@ -91,10 +91,10 @@
             </label>
 
             <div>
-                <label>
+                <label title="Whether the time attribute has date/time values or numeric values">
                     <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
                 </label>
-                <label>
+                <label title="Whether to reverse the order of sample play">
                     <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending
                 </label>
             </div>
@@ -104,7 +104,7 @@
 
         <div class="mapper-container">
             Duration
-            <label>
+            <label title="Select the attribute controlling the duration of sounds for the samples played">
                 <select v-model="state.durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">
                     <option selected value="" >-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
@@ -114,10 +114,10 @@
             </label>
 
             <div>
-                <label>
+                <label title="Whether the duration attribute has date/time values or numeric values">
                     <input type="checkbox" v-model="state.durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime
                 </label>
-                <label>
+                <label title="Whether to invert the interpretation of this attribute">
                     <input type="checkbox" v-model="state.durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending
                 </label>
             </div>
@@ -125,7 +125,7 @@
 
         <div class="mapper-container">
             Loudness
-            <label>
+            <label title="Select the attribute controlling the loudness of sounds for the samples played">
                 <select v-model="state.loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">
                     <option selected value="">-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
@@ -135,10 +135,10 @@
             </label>
 
             <div>
-                <label>
+                <label title="Whether the loudness attribute has date/time values or numeric values">
                     <input type="checkbox" v-model="state.loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime
                 </label>
-                <label>
+                <label title="Whether to invert the interpretation of this attribute">
                     <input type="checkbox" v-model="state.loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending
                 </label>
             </div>
@@ -146,7 +146,7 @@
 
         <div class="mapper-container">
             Stereo
-            <label>
+            <label title="Select the attribute controlling the stereo balance of sounds for the samples played">
                 <select v-model="state.stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">
                     <option selected value="">-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
@@ -156,10 +156,10 @@
             </label>
 
             <div>
-                <label>
+                <label title="Whether the stereo attribute has date/time values or numeric values">
                     <input type="checkbox" v-model="state.stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime
                 </label>
-                <label>
+                <label title="Whether to invert the interpretation of this attribute">
                     <input type="checkbox" v-model="state.stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending
                 </label>
             </div>
@@ -169,7 +169,7 @@
 
         <div class="mapper-container">
             Synthesis
-            <label>
+            <label title="Select the synthesizer of the sounds played">
                 <select v-model="selectedCsd" v-on:change="onCsdFileSelected">
                     <option disabled value="" hidden>Select context first</option>
                     <option v-for="csdFile in csdFiles">{{csdFile}}</option>
@@ -178,11 +178,7 @@
         </div>
     </div>
     <div id="footer-container">
-        <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" draggable="false" @click="openInfoPage">
-        <img id="draggable-link" src="../images/Simpleicons_Interface_link-interface-symbol-1.svg" draggable="true" ondragstart="(ev => {
-            ev.dataTransfer.setData('text', window.location.href);
-            ev.dataTransfer.setData('url', window.location.href);
-        })(event)">
+        <img id="info-icon" src="../images/Icon-round-Question_mark.svg" title="Information" draggable="false" @click="openInfoPage">
     </div>
 </div>
 <script type="text/javascript" src="app.js"></script>
