@@ -72,7 +72,7 @@ const app = new Vue({
         selectedCsd: null,
         csoundReady: false,
 
-        synchronized: true,
+        synchronized: false,
 
         playToggle: null,
         playing: false,
@@ -113,16 +113,6 @@ const app = new Vue({
                 this.click = v;
                 csound.SetChannel('click', v ? 1 : 0);
             });
-
-            let syncToggle = new Nexus.Toggle('#sync-toggle', {
-                size: [40, 20],
-                state: this.synchronized
-            });
-
-            syncToggle.on('change', v => {
-                this.synchronized = v;
-            });
-
             this.speedSlider = new Nexus.Slider('#speed-slider', {
                 size: [200, 20],
                 mode: 'absolute',
