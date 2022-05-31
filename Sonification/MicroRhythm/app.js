@@ -79,7 +79,7 @@ const app = new Vue({
 
         speedSlider: null,
         playbackSpeed: 0.5,
-        userMessage: 'Select dataset, pitch and time and click Play',
+        userMessage: 'Select a dataset, pitch and time and click Play',
     },
     watch: {
         state: {
