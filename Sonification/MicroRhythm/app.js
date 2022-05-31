@@ -14,25 +14,25 @@ const app = new Vue({
         name: 'Micro Rhythm',
         dim: {
             width: 325,
-            height: 215
+            height: 274
         },
         loading: true,
         // state managed by CODAP
         state: {
-            focusedContext: null,
-            pitchAttribute: null,
+            focusedContext: "",
+            pitchAttribute: "",
             pitchAttrIsDate: false,
             pitchAttrIsDescending: false,
-            timeAttribute: null,
+            timeAttribute: "",
             timeAttrIsDate: false,
             timeAttrIsDescending: false,
-            durationAttribute: null,
+            durationAttribute: "",
             durationAttrIsDate: false,
             durationAttrIsDescending: false,
-            loudnessAttribute: null,
+            loudnessAttribute: "",
             loudnessAttrIsDate: false,
             loudnessAttrIsDescending: false,
-            stereoAttribute: null,
+            stereoAttribute: "",
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
         },
@@ -79,7 +79,7 @@ const app = new Vue({
 
         speedSlider: null,
         playbackSpeed: 0.5,
-        userMessage: '',
+        userMessage: 'Select dataset, pitch and time and click Play',
     },
     watch: {
         state: {
@@ -268,24 +268,27 @@ const app = new Vue({
           helper.selectSelf();
         },
         onPitchAttributeSelectedByUI() {
-            this.setUserMessage("Pitch selected...");
+            this.setUserMessage(this.state.pitchAttribute?"Pitch attribute selected...":"Please select attribute for pitch");
             this.processMappedAttribute('pitch');
             this.recordToMoveRecorder('pitch');
         },
         onTimeAttributeSelectedByUI() {
-            this.setUserMessage("Time selected...");
+            this.setUserMessage(this.state.timeAttribute?"Time attribute selected...":"Please select attribute for time");
             this.processMappedAttribute('time');
             this.recordToMoveRecorder('time');
         },
         onDurationAttributeSelectedByUI() {
+            this.setUserMessage(this.state.durationAttribute?"Duration attribute selected...":"Please select attribute for duration");
             this.processMappedAttribute('duration');
             this.recordToMoveRecorder('duration');
         },
         onLoudnessAttributeSelectedByUI() {
+            this.setUserMessage(this.state.loudnessAttribute?"Loudness attribute selected...":"Please select attribute for loudness");
             this.processMappedAttribute('loudness');
             this.recordToMoveRecorder('loudness');
         },
         onStereoAttributeSelectedByUI() {
+            this.setUserMessage(this.state.stereoAttribute?"Stereo attribute selected...":"Please select attribute for stereo");
             this.processMappedAttribute('stereo');
             this.recordToMoveRecorder('stereo');
         },
@@ -321,7 +324,8 @@ const app = new Vue({
         },
         calcRange(attribute, isDateTime, inverted) {
             // let attrValues = helper.getAttributeValues(this.state.focusedContext, this.focusedCollection, attribute);
-            let attrValues = helper.getAttrValuesForContext(this.state.focusedContext, attribute);
+            let attrValues = attribute?
+                helper.getAttrValuesForContext(this.state.focusedContext, attribute): [];
 
             if (attrValues) {
                 if (isDateTime) {
@@ -337,8 +341,10 @@ const app = new Vue({
                         max: inverted ? Math.min(...attrValues) : Math.max(...attrValues)
                     }
                 } else {
-                    return null;
+                    return {len:0, min:0, max:0};
                 }
+            } else {
+                return {len:0, min:0, max:0};
             }
         },
 
