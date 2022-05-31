@@ -47,126 +47,125 @@
         </div>
     </div>
 
-    <div class="mapper-container">
-        Context
-        <label>
-            <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
-                <option disabled value="" hidden>Select context</option>
-                <option v-for="context in contexts">{{context}}</option>
-            </select>
-        </label>
-    </div>
-
-    <div class="mapper-container" v-on:click="onBackgroundSelect">
-        Pitch
-        <label>
-            <select v-model="state.pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="attribute in attributes">{{attribute}}</option>
-                <option v-if="globals.length" disabled>──────────</option>
-                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
-            </select>
-        </label>
-
-        <div>
+    <div class="main-scroll-container">
+        <div class="mapper-container">
+            Dataset
             <label>
-                <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
-            </label>
-            <label>
-                <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
+                <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
+                    <option disabled value="" hidden>Select context</option>
+                    <option v-for="context in contexts">{{context}}</option>
+                </select>
             </label>
         </div>
-    </div>
 
-    <div class="mapper-container">
-        Time
-        <label>
-            <select v-model="state.timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="attribute in attributes">{{attribute}}</option>
-                <option v-if="globals.length" disabled>──────────</option>
-                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
-            </select>
-        </label>
+        <div class="mapper-container" v-on:click="onBackgroundSelect">
+            Pitch
+            <label>
+                <select v-model="state.pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
+                    <option selected value="" >-----</option>
+                    <option v-for="attribute in attributes">{{attribute}}</option>
+                    <option v-if="globals.length" disabled>──────────</option>
+                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+                </select>
+            </label>
 
-        <div>
-            <label>
-                <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
-            </label>
-            <label>
-                <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending
-            </label>
+            <div>
+                <label>
+                    <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
+                </label>
+            </div>
         </div>
-    </div>
 
-<!--
-    <hr>
-
-    <div class="mapper-container">
-        Duration
-        <label>
-            <select v-model="state.durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="attribute in attributes">{{attribute}}</option>
-                <option v-if="globals.length" disabled>──────────</option>
-                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
-            </select>
-        </label>
-
-        <div>
+        <div class="mapper-container">
+            Time
             <label>
-                <input type="checkbox" v-model="state.durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime
+                <select v-model="state.timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
+                    <option selected value="">-----</option>
+                    <option v-for="attribute in attributes">{{attribute}}</option>
+                    <option v-if="globals.length" disabled>──────────</option>
+                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+                </select>
             </label>
-            <label>
-                <input type="checkbox" v-model="state.durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending
-            </label>
+
+            <div>
+                <label>
+                    <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending
+                </label>
+            </div>
         </div>
-    </div>
 
-    <div class="mapper-container">
-        Loudness
-        <label>
-            <select v-model="state.loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="attribute in attributes">{{attribute}}</option>
-                <option v-if="globals.length" disabled>──────────</option>
-                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
-            </select>
-        </label>
+        <hr>
 
-        <div>
+        <div class="mapper-container">
+            Duration
             <label>
-                <input type="checkbox" v-model="state.loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime
+                <select v-model="state.durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">
+                    <option selected value="" >-----</option>
+                    <option v-for="attribute in attributes">{{attribute}}</option>
+                    <option v-if="globals.length" disabled>──────────</option>
+                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+                </select>
             </label>
-            <label>
-                <input type="checkbox" v-model="state.loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending
-            </label>
+
+            <div>
+                <label>
+                    <input type="checkbox" v-model="state.durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending
+                </label>
+            </div>
         </div>
-    </div>
 
-    <div class="mapper-container">
-        Stereo
-        <label>
-            <select v-model="state.stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="attribute in attributes">{{attribute}}</option>
-                <option v-if="globals.length" disabled>──────────</option>
-                <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
-            </select>
-        </label>
+        <div class="mapper-container">
+            Loudness
+            <label>
+                <select v-model="state.loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">
+                    <option selected value="">-----</option>
+                    <option v-for="attribute in attributes">{{attribute}}</option>
+                    <option v-if="globals.length" disabled>──────────</option>
+                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+                </select>
+            </label>
 
-        <div>
-            <label>
-                <input type="checkbox" v-model="state.stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime
-            </label>
-            <label>
-                <input type="checkbox" v-model="state.stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending
-            </label>
+            <div>
+                <label>
+                    <input type="checkbox" v-model="state.loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending
+                </label>
+            </div>
         </div>
-    </div>
--->
 
-    <hr>
+        <div class="mapper-container">
+            Stereo
+            <label>
+                <select v-model="state.stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">
+                    <option selected value="">-----</option>
+                    <option v-for="attribute in attributes">{{attribute}}</option>
+                    <option v-if="globals.length" disabled>──────────</option>
+                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
+                </select>
+            </label>
+
+            <div>
+                <label>
+                    <input type="checkbox" v-model="state.stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime
+                </label>
+                <label>
+                    <input type="checkbox" v-model="state.stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending
+                </label>
+            </div>
+        </div>
+
+        <hr>
 
         <div class="mapper-container">
             Synthesis
