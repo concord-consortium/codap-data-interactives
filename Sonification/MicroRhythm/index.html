@@ -19,49 +19,32 @@
 
     <link rel="stylesheet" href="../common/styles.css">
 
-    <style type="text/css">
-        .controller-container {
-            display: flex;
-            align-items: center;
-            justify-content: left;
-        }
-
-        .controller-container > label {
-            width: 3em;
-        }
-
-        .mapper-container {
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
 <div class="loading-screen">Loading the plugin...</div>
 <div id="app" v-on:click="onBackgroundSelect">
-    <div>
-        <div style="display: flex; justify-content: left">
-            <div class="controller-container" style="width: 40%;">
+    <div class="main-heading">
+        <div class="controller-area" >
+            <div class="controller-container">
                 <label for="play-toggle">Play</label>
                 <span id="play-toggle"></span>
             </div>
-            <div class="controller-container" style="width: 40%;">
+            <div class="controller-container">
                 <label for="click-toggle">Click</label>
                 <span id="click-toggle"></span>
             </div>
-            <div class="controller-container" style="width: 40%;">
+            <div class="controller-container">
                 <label for="click-toggle">Sync</label>
                 <span id="sync-toggle"></span>
             </div>
+            <div class="controller-container">
+                <label for="speed-slider">Speed</label>
+                <span id="speed-slider" title="Control the speed of playback"></span>
+            </div>
         </div>
-
-        <div class="controller-container">
-            <label for="speed-slider">Speed</label>
-            <span id="speed-slider"></span>
+        <div class="message-area" title="Message area">
+            {{userMessage}}
         </div>
-    </div>
-
-    <div>
-        {{userMessage}}
     </div>
 
     <div class="mapper-container">
@@ -185,16 +168,16 @@
 
     <hr>
 
-    <div class="mapper-container">
-        Synthesis
-        <label>
-            <select v-model="selectedCsd" v-on:change="onCsdFileSelected">
-                <option disabled value="" hidden>Select context first</option>
-                <option v-for="csdFile in csdFiles">{{csdFile}}</option>
-            </select>
-        </label>
+        <div class="mapper-container">
+            Synthesis
+            <label>
+                <select v-model="selectedCsd" v-on:change="onCsdFileSelected">
+                    <option disabled value="" hidden>Select context first</option>
+                    <option v-for="csdFile in csdFiles">{{csdFile}}</option>
+                </select>
+            </label>
+        </div>
     </div>
-
     <div id="footer-container">
         <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" draggable="false" @click="openInfoPage">
         <img id="draggable-link" src="../images/Simpleicons_Interface_link-interface-symbol-1.svg" draggable="true" ondragstart="(ev => {
