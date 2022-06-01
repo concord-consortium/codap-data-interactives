@@ -221,6 +221,18 @@ const app = new Vue({
 
             // this.resetPitchTimeMaps();
         },
+        setIfDateTimeAttribute(type) {
+            let contextName = this.state.focusedContext;
+            let attrName = this.state[`${type}Attribute`];
+            let values = helper.getAttrValuesForContext(contextName, attrName);
+            // an attribute is a Date attribute if none of its values are non-dates
+            let isDateAttribute = !values.some((x) => {
+                let isDate = (x instanceof Date) ||
+                    ((typeof x === 'string') && !isNaN(new Date(x)));
+                return !isDate;
+            });
+            this.state[`${type}AttrIsDate`] = isDateAttribute;
+        },
         /**
          * @param type {string} pitch, time, loudness, or stereo
          **/
@@ -232,6 +244,7 @@ const app = new Vue({
                     max: 1
                 };
             } else {
+                this.setIfDateTimeAttribute(type);
                 this[`${type}AttrRange`] = this.calcRange(this.state[`${type}Attribute`], this.state[`${type}AttrIsDate`], this.state[`${type}AttrIsDescending`]);
             }
 
@@ -254,7 +267,6 @@ const app = new Vue({
             });
         },
         onBackgroundSelect() {
-            console.log('onBackgroundSelect');
           helper.selectSelf();
         },
         onPitchAttributeSelectedByUI() {
@@ -556,7 +568,7 @@ const app = new Vue({
                 // else if (notice.values.operation === 'updateCases' || notice.values.operation === 'dependentCases') {
                 //     helper.queryAllData().then(this.onGetData);
                 // }
-            } else if (notice.resource === 'component' && notice.values.type === 'slider') {
+            } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
                 helper.queryGlobalValues().then(this.onGetGlobals);
             } else if (notice.resource === 'undoChangeNotice') {
                 helper.queryGlobalValues().then(this.onGetGlobals);
