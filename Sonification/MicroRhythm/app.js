@@ -475,6 +475,19 @@ const app = new Vue({
                 }
             });
         },
+        setupSound() {
+            this.stop();
+
+            csound.PlayCsd(this.selectedCsd).then(() => {
+                this.playing = true;
+                csound.SetChannel('playbackSpeed', this.playbackSpeed);
+                csound.SetChannel('click', this.click ? 1 : 0);
+
+                if (this.timeArray.length !== 0) {
+                    this.triggerNotes();
+                }
+            });
+        },
         play() {
             if (!this.csoundReady) {
                 this.logMessage('Play aborted: csound not ready.');
@@ -487,30 +500,8 @@ const app = new Vue({
             }
 
             if (CSOUND_AUDIO_CONTEXT.state !== 'running') {
-                CSOUND_AUDIO_CONTEXT.resume().then(_ => {
-                    this.stop();
-
-                    csound.PlayCsd(this.selectedCsd).then(() => {
-                        this.playing = true;
-                        csound.SetChannel('playbackSpeed', this.playbackSpeed);
-                        csound.SetChannel('click', this.click ? 1 : 0);
-
-                        if (this.timeArray.length !== 0) {
-                            this.triggerNotes();
-                        }
-                    });
-                });
-            } else {
-                csound.PlayCsd(this.selectedCsd).then(() => {
-                    this.playing = true;
-                    csound.SetChannel('playbackSpeed', this.playbackSpeed);
-                    csound.SetChannel('click', this.click ? 1 : 0);
-
-                    if (this.timeArray.length !== 0) {
-                        this.triggerNotes();
-                    }
-                });
-            }
+                CSOUND_AUDIO_CONTEXT.resume().then(this.setupSound);
+            } else { this.setupSound() }
         },
         stop() {
             if (!this.csoundReady) {
