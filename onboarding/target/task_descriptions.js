@@ -283,7 +283,7 @@ allAccomplishedFeedback = React.createElement(
   ),
   React.createElement(
     'button',
-    { onClick: this.startOver },
+    { onClick: () => window.parent.location.reload() },
     'Start Over'
   )
 );
