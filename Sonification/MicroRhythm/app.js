@@ -4,10 +4,10 @@ const moveRecorder = new PluginMovesRecorder(helper);
 
 const kAttributeMappedProperties = [
     'time',
-    'pitch',
-    'duration',
-    'loudness',
-    'stereo'
+    'pitch'//,
+    // 'duration',
+    // 'loudness',
+    // 'stereo'
 ];
 
 /**
