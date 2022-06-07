@@ -1,3 +1,4 @@
+/*global codapInterface:true*/
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
 
@@ -149,7 +150,7 @@ const app = new Vue({
         },
         logMessage(msg) {
             this.setUserMessage(`log: ${msg}`);
-            console.log(`Microrhythm: ${msg}`);
+            console.log(`MicroRhythm: ${msg}`);
         },
         setupDrag() {
             function findElementsUnder(pos) {
@@ -583,7 +584,7 @@ const app = new Vue({
                             });
                         });
                     } else {
-                        helper.queryDataForContext(contextName);
+                        helper.queryDataForContext(contextName).then();
                     }
                 } else if (contextName === DATAMOVES_CONTROLS_DATA.name) {
                     helper.queryDataForContext(contextName).then();
