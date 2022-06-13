@@ -8,6 +8,23 @@ const kAttributeMappedProperties = [
     'loudness',
     'stereo'
 ];
+
+/**
+ * A quarter-step MIDI - voiceEndTime map to prevent notes overlapping more than half of their durations.
+ * Without this trick, multiple notes at close pitches played simultaneously could overflow the
+ * maximum amplitude Csound can handle. Similar voice-limiting / stealing technique could be implemented
+ * in .csd tweaking the schedkwhen, etc. opcode instances or instrument IDs, but I could not get it to work.
+ */
+let pitchTimeMap = {};
+
+const minDur = 0.02;
+const maxDur = 0.5;
+const durRange = maxDur - minDur;
+
+const minPitchMIDI = 55;
+const maxPitchMIDI = 110;
+const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -430,16 +447,30 @@ const app = new Vue({
             ids.forEach(id => csound.Event(`i -1.${id} 0 1`));
         },
         triggerNotes() {
-            this.timeArray.forEach((d,i) => {
-                // let gain = 1-this.timeArray.length/this.timeAttrRange.len;
+            // Reset the map before scheduling new voices.
+            pitchTimeMap = {};
 
+            this.timeArray.forEach((d,i) => {
                 let pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
                 let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
                 let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
                 let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
 
-                if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
-                    csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
+                // Calculate the log-scaled pitch ID that are 4x resolution of MIDI note numbers.
+                const quartPitchMIDI = Math.round((pitch * pitchMIDIRange + minPitchMIDI) * 4) / 4;
+                const pitchID = (quartPitchMIDI * 100).toString().padStart(5, '0');
+
+                if (pitchTimeMap[pitchID] !== undefined && (d.val / this.playbackSpeed) <= pitchTimeMap[pitchID]) {
+                    // Skip scheduling a new voice if it is within half the duration of the previous voice.
+                    return
+                } else {
+                    // Allow overlap of voices in same pitch up to half the duration of the current voice.
+                    const halfDur = (duration * durRange + minDur) / 2;
+                    pitchTimeMap[pitchID] = d.val / this.playbackSpeed + halfDur;
+
+                    if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
+                        csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
+                    }
                 }
             });
         },
@@ -487,6 +518,7 @@ const app = new Vue({
 
             csound.Stop();
             this.playing = false;
+            pitchTimeMap = {};
         },
         openInfoPage() {
             this.setUserMessage('Opening Info Page');

@@ -13,7 +13,7 @@ giverbchL = 1
 giverbchR = 2
 turnon "VERB"
 
-gkfreq init 0
+gkfreq init 1
 gktrig init 0
 turnon "MASTER"
 
