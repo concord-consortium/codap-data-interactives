@@ -839,6 +839,17 @@
         "Partners",
         "Tools"
       ]
+    },
+    {
+      "title": "Sonification",
+      "description": "Listen to your data",
+      "width": 325,
+      "height": 274,
+      "path": "/Sonification/MicroRhythm/",
+      "visible": "true",
+      "categories": [
+        "Tools"
+      ]
     }
   ]
 }
