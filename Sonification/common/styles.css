@@ -31,16 +31,24 @@ html, body {
 /*     font-weight: 200; */
     font-size: smaller;
     line-height: 20px;
-    display: block;
-    position: absolute;
+    display: flex;
     flex-direction: column;
-    height: auto;
+    height: 93vh;
     bottom: 0;
     top: 0;
     left: 0;
     right: 0;
-    margin: 8px;
+    margin: 8px 8px 16px;
     background-color: white;
+}
+.main-heading {
+  flex: 0 0 auto;
+}
+.main-scroll-container {
+  flex: 1 1 auto;
+  overflow-y: scroll;
+  padding: 1em;
+  border: thin gray solid;
 }
 
 .loading-screen {
@@ -69,6 +77,26 @@ html, body {
     padding: 10px;
 }
 
+.controller-area {
+  display: flex;
+  flex-wrap: wrap;
+}
+.controller-container {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	margin: 0.25em;
+}
+
+.controller-container > label {
+	min-width: 3em;
+}
+
+.mapper-container {
+	margin-bottom: 1em;
+	padding: .25em 0;
+}
+
 #footer-container {
     height: 1.5em;
     display: flex;
@@ -88,4 +116,11 @@ html, body {
 
 #draggable-link {
     display: none;
+}
+
+.message-area {
+  height: 2em;
+  background: #eee;
+  margin-bottom: .5em;
+  padding: 3px;
 }

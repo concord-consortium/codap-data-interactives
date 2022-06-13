@@ -542,8 +542,16 @@ class CodapPluginHelper {
             resource: `dataContext[${context}].selectionList`
         }).then(result => {
             let caseIDs = result.values.map(v => v.caseID);
-            return caseIDs.map(id => this.items[context].find(item => item && item.id === id))
-                .filter(item => typeof(item) !== 'undefined'); // item.id is actually the case ID.
+            let selectedItems;
+            if (caseIDs.length) {
+                selectedItems = caseIDs
+                    .map(id => this.items[context]
+                        .find(item => item && item.id === id));// item.id is actually the case ID.
+            } else {
+                selectedItems = this.items[context];
+            }
+            return selectedItems
+                .filter(item => typeof(item) !== 'undefined');
         });
     }
 
