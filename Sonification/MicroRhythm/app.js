@@ -53,6 +53,7 @@ const app = new Vue({
             stereoAttribute: "",
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
+            playbackSpeed: 0.5,
         },
         data: null,
         contexts: null, // array of context names
@@ -96,7 +97,6 @@ const app = new Vue({
         playing: false,
 
         speedSlider: null,
-        playbackSpeed: 0.5,
         userMessage: 'Select a dataset, pitch and time and click Play',
     },
     watch: {
@@ -134,11 +134,11 @@ const app = new Vue({
             this.speedSlider = new Nexus.Slider('#speed-slider', {
                 size: [200, 20],
                 mode: 'absolute',
-                value: this.playbackSpeed
+                value: this.state.playbackSpeed
             });
 
             this.speedSlider.on('change', v => {
-                this.playbackSpeed = v;
+                this.state.playbackSpeed = v;
 
                 if (this.csoundReady) {
                     csound.SetChannel('playbackSpeed', v);
@@ -461,13 +461,13 @@ const app = new Vue({
                 const quartPitchMIDI = Math.round((pitch * pitchMIDIRange + minPitchMIDI) * 4) / 4;
                 const pitchID = (quartPitchMIDI * 100).toString().padStart(5, '0');
 
-                if (pitchTimeMap[pitchID] !== undefined && (d.val / this.playbackSpeed) <= pitchTimeMap[pitchID]) {
+                if (pitchTimeMap[pitchID] !== undefined && (d.val / this.state.playbackSpeed) <= pitchTimeMap[pitchID]) {
                     // Skip scheduling a new voice if it is within half the duration of the previous voice.
                     return
                 } else {
                     // Allow overlap of voices in same pitch up to half the duration of the current voice.
                     const halfDur = (duration * durRange + minDur) / 2;
-                    pitchTimeMap[pitchID] = d.val / this.playbackSpeed + halfDur;
+                    pitchTimeMap[pitchID] = d.val / this.state.playbackSpeed + halfDur;
 
                     if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
                         csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
@@ -480,7 +480,7 @@ const app = new Vue({
 
             csound.PlayCsd(this.selectedCsd).then(() => {
                 this.playing = true;
-                csound.SetChannel('playbackSpeed', this.playbackSpeed);
+                csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
                 csound.SetChannel('click', this.click ? 1 : 0);
 
                 if (this.timeArray.length !== 0) {
@@ -520,6 +520,9 @@ const app = new Vue({
             Object.keys(state).forEach(key => {
                 this.state[key] = state[key];
             });
+            if (this.state.playbackSpeed) {
+                this.speedSlider.value = this.state.playbackSpeed;
+            }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
                     this.onContextFocused();
