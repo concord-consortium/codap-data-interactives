@@ -101,7 +101,7 @@ const noaaNCEIConnect = {
 
         try {
             if (tURL) {
-                const tResult = await fetch(tRequest);
+                const tResult = await fetch(tRequest, {mode: 'cors'});
                 if (tResult.ok) {
                     const theJSON = await tResult.json();
                     noaaNCEIConnect.fetchSuccessHandler(theJSON);
@@ -113,7 +113,14 @@ const noaaNCEIConnect = {
                 noaaNCEIConnect.fetchErrorHandler('End date must be on or after start date');
             }
         } catch (msg) {
-            noaaNCEIConnect.fetchErrorHandler(msg);
+            // If fetch throws an error, this is likely a network error with no
+            // additional information in the message. The error, on Chrome, is of the
+            // form "TypeError: Failed to fetch", but varies with browser. We
+            // substitute a more informative message.
+            let error = (msg && msg.toString().startsWith('TypeError:'))
+                ? 'Network error: The NOAA Server is likely temporarily down'
+                : 'Network error'
+            noaaNCEIConnect.fetchErrorHandler(error, msg);
         }
         ev.preventDefault();
         ev.target && ev.target.blur();
