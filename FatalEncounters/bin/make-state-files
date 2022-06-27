@@ -1,0 +1,6 @@
+#!/bin/sh
+# Requires python and csvkit
+for t in `cat assets/state-codes.txt`; do 
+  csvgrep -c State -m $t  assets/fatal-encounters.csv > assets/fe-$t.csv ; 
+done
+
