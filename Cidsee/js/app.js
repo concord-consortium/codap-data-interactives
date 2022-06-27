@@ -1081,7 +1081,7 @@ async function getGraphForDataset(datasetName) {
     resource: 'componentList'
   });
   let graphSpec = null;
-  let componentList = componentListResult?.success && componentListResult.values;
+  let componentList = componentListResult && componentListResult.success && componentListResult.values;
   if (componentList) {
     let graphIds = componentList.filter((c) => c.type === 'graph');
     if (graphIds && graphIds.length) {
