@@ -3,6 +3,6 @@ PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
 
 cd $DIRNAME/../..
-rsync --exclude=.idea -av --delete --delete-excluded FatalEncounters/ codap-server.concord.org:public_html/FatalEncounters/
+rsync --exclude=.idea --exclude=FatalEncounters.iml --exclude=bin -av --delete --delete-excluded FatalEncounters/ codap-server.concord.org:public_html/FatalEncounters/
 
 
