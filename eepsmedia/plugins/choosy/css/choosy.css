@@ -104,6 +104,11 @@ fieldset {
     align-items: center;
     justify-content: left;
     height: 20px;
+        overflow-x: hidden;
+    	overflow-y: hidden;
+    	white-space: nowrap;
+    	text-overflow: ellipsis;
+
 }
 
 .visible-stripe {
@@ -119,7 +124,6 @@ fieldset {
     font-family: 'IBM Plex Sans Condensed', 'Helvetica Neue Condensed', Verdana, sans-serif;
     font-size: small;
     background-color: #abc;
-
 }
 
 .batch-summary-head {
@@ -134,6 +138,7 @@ fieldset {
 
 .batched-attribute {
     cursor: pointer;
+    flex: 0 1 auto;
 }
 
 .tag-number-box {
