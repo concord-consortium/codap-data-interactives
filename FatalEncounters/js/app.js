@@ -66,18 +66,8 @@ const DATASETS = [
       'Supporting document link',
       'Foreknowledge of mental illness? INTERNAL USE, NOT FOR ANALYSIS',
     ],
-    // omittedAttributeNames: [
-    //   'Imputation probability',
-    //   'URL of image (PLS NO HOTLINKS)',
-    //   'Full Address',
-    //   'UID Temporary',
-    //   'Name Temporary',
-    //   'Description Temp',
-    //   'URL Temp',
-    //   '',
-    //   'Unique ID formula',
-    //   'Unique identifier (redundant)'
-    // ],
+    omittedAttributeNames: [
+    ],
     overriddenAttributes: [
       {
         name: 'Date of injury resulting in death',
@@ -90,17 +80,11 @@ const DATASETS = [
       },
       {
         name: 'Year',
-        formula: 'year(Date)',
         type: 'date',
         precision: 'year'
       },
     ],
     additionalAttributes: [
-      // {
-      //   name: 'Year',
-      //   formula: 'year(Date)',
-      //   type: 'date'
-      // },
     ],
     timeSeriesAttribute: 'Date',
     uiComponents: [
@@ -119,9 +103,19 @@ const DATASETS = [
       return `${this.endpoint}/fe-${stateCode}.csv`;
     },
     parentAttributes: ['State', 'population'],
+    computeYear: function (data, dateAttr, yearAttr) {
+      data.forEach(obj => {
+        let date = new Date(obj[dateAttr]);
+        if (date) {
+          obj[yearAttr] = date.getFullYear();
+        }
+      });
+      return data;
+    },
     preprocess: function (data) {
       data = mergePopulation(data, 'State', 'USPS Code');
       data = sortOnDateAttr(data, 'Date');
+      data = this.computeYear(data, 'Date', 'Year');
       return data;
     },
   },
@@ -362,6 +356,7 @@ function guaranteeAttributes(existingDataset, desiredCollectionDefs) {
     return Promise.resolve({success: true});
   }
 }
+
 /**
  * Creates a dataset in CODAP only if it does not exist.
  * @param datasetName {string}
@@ -435,6 +430,7 @@ async function createTimeSeriesGraph(datasetName, tsAttributeName) {
     }
   }
 }
+
 function createMap() {
   codapInterface.sendRequest({
     action: 'get',
@@ -462,6 +458,7 @@ function createMap() {
     }
   });
 }
+
 /**
  * Create an autoscaled Case Table Component in CODAP
  * @param datasetName
