@@ -18,7 +18,7 @@
 // ==========================================================================
 // import {calendar} from './calendar.js';
 import {STATE_POPULATION_DATA, COUNTY_POPULATION_DATA} from './data.js';
-
+import * as UIControl from './ui.js'
 const APP_NAME = 'Fatal Encounters Datasets';
 
 const DATASETS = [
@@ -27,7 +27,7 @@ const DATASETS = [
     name: 'Fatal Encounters with the Police, By State',
     documentation: 'https://fatalencounters.org/view/person/',
     // endpoint: '/https://fatalencounters.now.sh/api',
-    endpoint: './assets',
+    endpoint: './assets/data',
     renamedAttributes: [
       {
         old: ' Date of injury resulting in death (month/day/year)',
@@ -70,19 +70,112 @@ const DATASETS = [
     ],
     overriddenAttributes: [
       {
-        name: 'Date of injury resulting in death',
-        type: 'date',
-        precision: 'day'
+        name: 'State',
       },
       {
-        name: 'Age',
-        type: 'numeric'
+        name: 'population',
+      },
+      {
+        name: 'Unique ID',
+        description: 'assigned when data was input to Fatal Encounters',
+      },
+      {
+        name: 'Name',
+        description: 'name of person who died as a result of the encounter with law enforcement',
+      },
+      {
+        name: 'Date',
+        type: 'date',
+        precision: 'day',
+        description: 'the full date when the encounter occurred, Month/Day/Year',
       },
       {
         name: 'Year',
         type: 'date',
-        precision: 'year'
+        precision: 'year',
+        description: 'the year when the encounter occurred',
       },
+      {
+        name: 'Age',
+        type: 'numeric',
+        description: 'age at death of person',
+      },
+      {
+        name: 'Gender',
+        description: 'gender as specified in the supporting media source',
+      },
+      {
+        name: 'Race',
+        description: 'race as specified in the supporting media source',
+      },
+      {
+        name: 'Inferred race',
+        description: 'race inferred, not based on what is written in media source. The Race attribute includes many people marked as “uncertain” since the race was not explicitly written. This attribute includes inferred race by the data inputter based on pictures or other evidence.',
+      },
+      {
+        name: 'Location of injury (address)',
+        description: 'location where the injury occured that caused the fatality of the person',
+      },
+      {
+        name: 'Location of death (city)',
+        description: 'location where the person passed away',
+      },
+      {
+        name: 'Location of death (zip code)',
+        description: 'location where the person passed away',
+      },
+      {
+        name: 'Latitude',
+        description: 'Latitude of incident',
+      },
+      {
+        name: 'Longitude',
+        description: 'Longitude of incident',
+      },
+      {
+        name: 'Agency or agencies involved',
+        description: 'The agenc(ies) the law enforcement officer(s) represent',
+      },
+      {
+        name: 'Highest level of force',
+        description: '',
+      },
+      {
+        name: 'Armed/Unarmed',
+        description: '',
+      },
+      {
+        name: 'Alleged weapon',
+        description: '',
+      },
+      {
+        name: 'Aggressive physical movement',
+        description: '',
+      },
+      {
+        name: 'Fleeing/Not fleeing',
+        description: 'whether the person of interest was fleeing or not fleeing from law enforcement',
+      },
+      {
+        name: 'Brief description',
+        description: 'a short description of what happened during the incident',
+      },
+      {
+        name: 'Dispositions/Exclusions INTERNAL USE, NOT FOR ANALYSIS',
+        description: 'contains information about whether the fatality was considered justified or not, criminal, an accident, suicide, or pending investigation',
+      },
+      {
+        name: 'Intended use of force (Developing)',
+        description: 'a description of the the type of force that was used to cause the fatality',
+      },
+      {
+        name: 'Supporting document link',
+        description: 'a URL to the media source where the data for the person was identified',
+      },
+      {
+        name: 'Foreknowledge of mental illness? INTERNAL USE, NOT FOR ANALYSIS',
+        description: 'Yes, No, or Unknown to whether there was a known mental illness at the time of the encounter',
+      }
     ],
     additionalAttributes: [
     ],
@@ -546,6 +639,32 @@ function fetchHandler(/*ev*/) {
 }
 
 /**
+ * When plugin is clicked on, cause it to become the selected component in CODAP.
+ */
+let myCODAPId;
+async function selectHandler() {
+  console.log('select!');
+  if (myCODAPId == null) {
+    let r1 = await codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'});
+    if (r1.success) {
+      myCODAPId = r1.values.id;
+    }
+  }
+  if (myCODAPId != null) {
+    return await selectComponent(myCODAPId);
+  }
+}
+
+async function selectComponent(componentID) {
+  return await codapInterface.sendRequest({
+    action: 'notify',
+    resource: `component[${componentID}]`,
+    values: {request: 'select'
+    }
+  });
+}
+
+/**
  * Creates the plugin UI and associates the correct event handlers.
  */
 function createUI () {
@@ -590,8 +709,9 @@ function createUI () {
           fetchHandler(ev);
         }
       })})
-  let button = document.querySelector('button.fetch-button');
+  let button = document.querySelector('button.fe-fetch-button');
   button.addEventListener('click', fetchHandler);
+  UIControl.initialize({}, {}, {selectHandler: selectHandler});
 }
 
 function init() {
@@ -611,6 +731,7 @@ function init() {
     dimensions:{width: 360, height: 440},
     preventDataContextReorg: false
   }).then(createUI);
+
 }
 
 /**
@@ -618,8 +739,7 @@ function init() {
  *  @param msg {string}
  **/
 function message(msg) {
-  let messageEl = document.querySelector('#msg');
-  messageEl.innerHTML = msg;
+  UIControl.setMessage(msg);
 }
 
 function getLastMessage() {
@@ -828,6 +948,7 @@ function fetchDataAndProcess() {
                 return createCaseTable(datasetSpec.name, dimensions);
               })
               .then(function () {
+                message('');
                 if (datasetSpec.postprocess) {
                   datasetSpec.postprocess(datasetSpec);
                 }

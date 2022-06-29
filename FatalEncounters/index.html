@@ -2,18 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="description"
+        content="A CODAP plugin to retrieve state by state or yearly data about fatal encounters with law enforcement in the United States">
+  <title>Fatal Encounters</title>
   <script src="lib/iframe-phone.js"></script>
   <script src="lib/CodapInterface.js"></script>
   <script src="lib/papaparse.min.js"></script>
-  <link rel="stylesheet" href="css/style.css" />
-  <title>Fatal Encounters</title>
+  <link rel="stylesheet" href="css/style.css" >
 </head>
 <body>
-<section class="contents"></section>
-<p id="msg"></p>
-<p>
-  <button class="fetch-button">Fetch</button>
-</p>
+<main>
+  <section id="fe-intro-section" class="fe-pop-up">
+    <div class="fe-section-header-line">
+      <span>Retrieve data about fatal encounters with police in the US.</span>
+      <span class="fe-info-button fe-pop-up-anchor icon-info" title="Get further information about this CODAP plugin"></span>
+    </div>
+    <div class="fe-cover"></div>
+    <div class="fe-pop-up-container">
+      <div class="fe-pop-up-content">
+        <div class="fe-pop-up-header">
+          Information about the plug-in
+        </div>
+        <div class="fe-pop-up-body">
+          <p>
+            The data from this plug-in was downloaded from the publicly
+            accessible dataset collected by
+            <a href="https://fatalencounters.org/" target="_blank">Fatal Encounters</a>, a non-profit
+            group dedicated to collecting information about police-related
+            deaths going back to January 1, 2000. The data for this plug-in
+            was downloaded in June, 2022. To see the most current and up to
+            date dataset,
+            <a href="https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/edit#gid=0" target="_blank">click here</a>.
+          </p>
+
+          <p>
+            D. Brian Burghart is the executive director of Fatal Encounters.
+            Through his own search, he noted that there is not a comprehensive
+            source of data for those killed during fatal encounters with law
+            enforcement officers (which also includes law enforcement officers).
+            So he started this website as a way to collect data from news
+            sources, with over 34,000 entries to date. It is his hope that this
+            data can be used so that "Americans and decision makers can emulate
+            best practices in training, protocol and procedures to produce the
+            best outcomes: The fewest people killed by police and fewest police
+            killed by people" (<a href="https://fatalencounters.org/on-fatigue-and-government-sleight-of-hand/" target="_blank">fatalencounters.org, 2017</a>).
+          </p>
+
+          <p>
+            This plug-in was developed by
+            <a href="https://concord.org" target="_blank">The Concord Consortium</a>
+            as part of the
+            <a href="https://codap.concord.org" target="_blank">CODAP project</a>.
+            This plug-in was part of a project led by Heather
+            Barker during her Tinker Fellowship in Summer 2022, alongside
+            William Finzer and Jonathan Sandoe.
+          </p>
+        </div>
+        <div id="fe-info-close-section" class="fe-pop-up-footer">
+          <div class="fe-control-row">
+            <span><button id="fe-info-close-button" class="fe-button" title="Hide this section.">Close</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <hr class="fe-fixed-section-divider"/>
+  <section class="contents"></section>
+
+  <hr class="wx-fixed-section-divider"/>
+
+  <div id="fe-summary-section">
+    <div class="fe-section-header-line fe-summary">
+      <span class="fe-status-graphic"></span>
+      <span class="fe-message-area"></span>
+      <span class="fe-control-area">
+        <button class="fe-clear-button fe-button" title="Clear Dataset in CODAP">Clear Data</button>
+        <button class="fe-fetch-button fe-button" title="Get data and send to CODAP">Get Data</button>
+      </span>
+    </div>
+  </div>
+
+  <p>
+
+  </p>
+</main>
 <script src="js/app.js" type="module"></script>
 </body>
 </html>
