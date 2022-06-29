@@ -182,13 +182,6 @@ const DATASETS = [
         lister: function () { return STATE_POPULATION_DATA.map(function (st) { return st["USPS Code"];})}
       }
     ],
-    uiCreate: function (parentEl) {
-      let el = createElement('div');
-      this.uiComponents.forEach(uic => {
-        el.append(createUIControl(uic));
-      });
-      parentEl.append(el);
-    },
     makeURL: function () {
       let stateCode = document.querySelector(`#FatalEncountersByState [name=State]`).value;
       return `${this.endpoint}/fe-${stateCode}.csv`;
@@ -363,13 +356,6 @@ const DATASETS = [
         }
       }
     ],
-    uiCreate: function (parentEl) {
-      let el = createElement('div');
-      this.uiComponents.forEach(uic => {
-        el.append(createUIControl(uic));
-      });
-      parentEl.append(el);
-    },
     makeURL: function () {
       let year = document.querySelector(`#FatalEncountersByYear [name=Year]`).value;
       return `${this.endpoint}/fe-${year}.csv`;
@@ -536,6 +522,15 @@ function createUIControl(def) {
   }
   return el;
 }
+
+function createDatasetUI(parentEl, datasetDef) {
+  let el = createElement('div');
+  datasetDef.uiComponents.forEach(uic => {
+    el.append(createUIControl(uic));
+  });
+  parentEl.append(el);
+}
+
 
 /**
  * A UI utility to create a DOM element with classes and content.
@@ -903,7 +898,11 @@ function createUI () {
         ]),
       ]);
 
-      ds.uiCreate(el);
+      if (ds.uiCreate) {
+        ds.uiCreate(el);
+      } else {
+        createDatasetUI(el, ds);
+      }
       anchor.append(el);
       if (ds.id === DEFAULT_DATASET) {
         let input = el.querySelector('input');
@@ -1147,7 +1146,7 @@ function fetchDataAndProcess() {
   }
   if (!url) { return Promise.reject("fetch failed"); }
   // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
-  setTransferStatus('busy', `Fetching ${datasetSpec.name}...`)
+  setTransferStatus('busy', `Fetching data...`)
   return fetch(url, {headers: headers}).then(function (response) {
 
     if (response.ok) {
