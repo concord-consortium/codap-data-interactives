@@ -31,16 +31,6 @@ const DATASETS = [
     documentation: 'https://fatalencounters.org/view/person/',
     // endpoint: '/https://fatalencounters.now.sh/api',
     endpoint: './assets/data',
-    renamedAttributes: [
-      // {
-      //   old: ' Date of injury resulting in death (month/day/year)',
-      //   new: 'Date'
-      // },
-      // {
-      //   old: 'Race with imputations',
-      //   new: 'Inferred race'
-      // }
-    ],
     selectedAttributeNames: [
       'State',
       'population',
@@ -68,8 +58,6 @@ const DATASETS = [
       'Intended use of force (Developing)',
       'Supporting document link',
       'Foreknowledge of mental illness? INTERNAL USE, NOT FOR ANALYSIS',
-    ],
-    omittedAttributeNames: [
     ],
     overriddenAttributes: [
       {
@@ -180,8 +168,6 @@ const DATASETS = [
         description: 'Yes, No, or Unknown to whether there was a known mental illness at the time of the encounter',
       }
     ],
-    additionalAttributes: [
-    ],
     timeSeriesAttribute: 'Date',
     uiComponents: [
       {
@@ -197,9 +183,11 @@ const DATASETS = [
       }
     ],
     uiCreate: function (parentEl) {
+      let el = createElement('div');
       this.uiComponents.forEach(uic => {
-        parentEl.append(createUIControl(uic));
-      })
+        el.append(createUIControl(uic));
+      });
+      parentEl.append(el);
     },
     makeURL: function () {
       let stateCode = document.querySelector(`#FatalEncountersByState [name=State]`).value;
@@ -213,18 +201,194 @@ const DATASETS = [
       {type: 'sortOnDateAttr', dataKey: 'Date'},
       {type: 'computeYear', dateKey: 'Date', yearKey: 'Year'}
     ]
-/*
-    preprocess: function (data) {
-      data = mergePopulation(data, 'State', 'USPS Code');
-      data = sortOnDateAttr(data, 'Date');
-      data = computeYear(data, 'Date', 'Year');
-      return data;
+  },
+  {
+    id: 'FatalEncountersByYear',
+    name: 'Fatal Encounters with the Police, By Year',
+    documentation: 'https://fatalencounters.org/view/person/',
+    // endpoint: '/https://fatalencounters.now.sh/api',
+    endpoint: './assets/data',
+    selectedAttributeNames: [
+      'State',
+      'population',
+      'Unique ID',
+      'Name',
+      'Date',
+      'Year',
+      'Age',
+      'Gender',
+      'Race',
+      'Inferred race',
+      'Location of injury (address)',
+      'Location of death (city)',
+      'Location of death (zip code)',
+      'Latitude',
+      'Longitude',
+      'Agency or agencies involved',
+      'Highest level of force',
+      'Armed/Unarmed',
+      'Alleged weapon',
+      'Aggressive physical movement',
+      'Fleeing/Not fleeing',
+      'Brief description',
+      'Dispositions/Exclusions INTERNAL USE, NOT FOR ANALYSIS',
+      'Intended use of force (Developing)',
+      'Supporting document link',
+      'Foreknowledge of mental illness? INTERNAL USE, NOT FOR ANALYSIS',
+    ],
+    overriddenAttributes: [
+      {
+        name: 'State',
+      },
+      {
+        name: 'population',
+      },
+      {
+        name: 'Unique ID',
+        description: 'assigned when data was input to Fatal Encounters',
+      },
+      {
+        name: 'Name',
+        description: 'name of person who died as a result of the encounter with law enforcement',
+      },
+      {
+        name: 'Date',
+        type: 'date',
+        precision: 'day',
+        description: 'the full date when the encounter occurred, Month/Day/Year',
+      },
+      {
+        name: 'Year',
+        type: 'date',
+        precision: 'year',
+        description: 'the year when the encounter occurred',
+      },
+      {
+        name: 'Age',
+        type: 'numeric',
+        description: 'age at death of person',
+      },
+      {
+        name: 'Gender',
+        description: 'gender as specified in the supporting media source',
+      },
+      {
+        name: 'Race',
+        description: 'race as specified in the supporting media source',
+      },
+      {
+        name: 'Inferred race',
+        description: 'race inferred, not based on what is written in media source. The Race attribute includes many people marked as “uncertain” since the race was not explicitly written. This attribute includes inferred race by the data inputter based on pictures or other evidence.',
+      },
+      {
+        name: 'Location of injury (address)',
+        description: 'location where the injury occurred that caused the fatality of the person',
+      },
+      {
+        name: 'Location of death (city)',
+        description: 'location where the person passed away',
+      },
+      {
+        name: 'Location of death (zip code)',
+        description: 'location where the person passed away',
+      },
+      {
+        name: 'Latitude',
+        description: 'Latitude of incident',
+      },
+      {
+        name: 'Longitude',
+        description: 'Longitude of incident',
+      },
+      {
+        name: 'Agency or agencies involved',
+        description: 'The agenc(ies) the law enforcement officer(s) represent',
+      },
+      {
+        name: 'Highest level of force',
+        description: '',
+      },
+      {
+        name: 'Armed/Unarmed',
+        description: '',
+      },
+      {
+        name: 'Alleged weapon',
+        description: '',
+      },
+      {
+        name: 'Aggressive physical movement',
+        description: '',
+      },
+      {
+        name: 'Fleeing/Not fleeing',
+        description: 'whether the person of interest was fleeing or not fleeing from law enforcement',
+      },
+      {
+        name: 'Brief description',
+        description: 'a short description of what happened during the incident',
+      },
+      {
+        name: 'Dispositions/Exclusions INTERNAL USE, NOT FOR ANALYSIS',
+        description: 'contains information about whether the fatality was considered justified or not, criminal, an accident, suicide, or pending investigation',
+      },
+      {
+        name: 'Intended use of force (Developing)',
+        description: 'a description of the the type of force that was used to cause the fatality',
+      },
+      {
+        name: 'Supporting document link',
+        description: 'a URL to the media source where the data for the person was identified',
+      },
+      {
+        name: 'Foreknowledge of mental illness? INTERNAL USE, NOT FOR ANALYSIS',
+        description: 'Yes, No, or Unknown to whether there was a known mental illness at the time of the encounter',
+      }
+    ],
+    timeSeriesAttribute: 'Date',
+    uiComponents: [
+      {
+        type: 'instruction',
+        text: "Select a year below to retrieve data from the Fatal Encounters" +
+            " dataset. You may choose more than one year."
+      },
+      {
+        type: 'select',
+        name: 'Year',
+        label: 'Select Year',
+        lister: function () {
+          let a = [];
+          for (let i = 2000; i < 2022; i++) {a.push(i);}
+          return a;
+        }
+      }
+    ],
+    uiCreate: function (parentEl) {
+      let el = createElement('div');
+      this.uiComponents.forEach(uic => {
+        el.append(createUIControl(uic));
+      });
+      parentEl.append(el);
     },
-*/
+    makeURL: function () {
+      let year = document.querySelector(`#FatalEncountersByYear [name=Year]`).value;
+      return `${this.endpoint}/fe-${year}.csv`;
+    },
+    parentAttributes: ['Year'],
+    preprocess: [
+      {type: 'rename', oldKey: ' Date of injury resulting in death (month/day/year)', newKey: 'Date'},
+      {type: 'rename', oldKey: 'Race with imputations', newKey: 'Inferred race'},
+      {type: 'mergePopulation', dataKey: 'State', mergeKey: 'USPS Code'},
+      {type: 'sortOnDateAttr', dataKey: 'Date'},
+      {type: 'computeYear', dateKey: 'Date', yearKey: 'Year'}
+    ]
   },
 ]
 
-const DEFAULT_DISPLAYED_DATASETS = ['FatalEncountersByState'];
+const DEFAULT_DISPLAYED_DATASETS = [
+  'FatalEncountersByState',
+  'FatalEncountersByYear'
+];
 const DEFAULT_DATASET = 'FatalEncountersByState';
 const DOWNSAMPLE_GOAL_DEFAULT = 500;
 const DOWNSAMPLE_GOAL_MAX = 1000;
