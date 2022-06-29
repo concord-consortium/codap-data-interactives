@@ -32,14 +32,14 @@ const DATASETS = [
     // endpoint: '/https://fatalencounters.now.sh/api',
     endpoint: './assets/data',
     renamedAttributes: [
-      {
-        old: ' Date of injury resulting in death (month/day/year)',
-        new: 'Date'
-      },
-      {
-        old: 'Race with imputations',
-        new: 'Inferred race'
-      }
+      // {
+      //   old: ' Date of injury resulting in death (month/day/year)',
+      //   new: 'Date'
+      // },
+      // {
+      //   old: 'Race with imputations',
+      //   new: 'Inferred race'
+      // }
     ],
     selectedAttributeNames: [
       'State',
@@ -206,12 +206,21 @@ const DATASETS = [
       return `${this.endpoint}/fe-${stateCode}.csv`;
     },
     parentAttributes: ['State', 'population'],
+    preprocess: [
+      {type: 'rename', oldKey: ' Date of injury resulting in death (month/day/year)', newKey: 'Date'},
+      {type: 'rename', oldKey: 'Race with imputations', newKey: 'Inferred race'},
+      {type: 'mergePopulation', dataKey: 'State', mergeKey: 'USPS Code'},
+      {type: 'sortOnDateAttr', dataKey: 'Date'},
+      {type: 'computeYear', dateKey: 'Date', yearKey: 'Year'}
+    ]
+/*
     preprocess: function (data) {
       data = mergePopulation(data, 'State', 'USPS Code');
       data = sortOnDateAttr(data, 'Date');
       data = computeYear(data, 'Date', 'Year');
       return data;
     },
+*/
   },
 ]
 
@@ -691,7 +700,6 @@ async function clearData (datasetName) {
   }
 }
 
-
 async function clearDataHandler() {
   let currDatasetSpec = getCurrentDatasetSpec();
   if (!currDatasetSpec) {
@@ -775,14 +783,6 @@ function init() {
     preventDataContextReorg: false
   }).then(createUI);
 
-}
-
-/**
- *  Displays a message in the message area
- *  @param msg {string}
- **/
-function message(msg) {
-  UIControl.setMessage(msg);
 }
 
 /**
@@ -913,12 +913,10 @@ function resolveCollectionList(datasetSpec, attributeNames) {
   return collectionsList;
 }
 
-function renameAttributes(data, renames) {
+function renameAttribute(data, oldKey, newKey) {
   data.forEach(function (item) {
-    renames.forEach(function (rename) {
-      item[rename.new] = item[rename.old];
-      delete item[rename.old];
-    })
+    item[newKey] = item[oldKey];
+    delete item[oldKey];
   });
   return data;
 }
@@ -941,6 +939,30 @@ function getCurrentDatasetSpec() {
   }
   let sourceIX = Number(sourceSelect.value);
   return DATASETS[sourceIX];
+}
+
+function preprocessData(data, preprocessActions) {
+  if (Array.isArray(preprocessActions)) {
+    preprocessActions.forEach(action => {
+      switch (action.type) {
+        case 'rename':
+          renameAttribute(data, action.oldKey, action.newKey);
+          break;
+        case 'mergePopulation':
+          mergePopulation(data, action.dataKey, action.mergeKey);
+          break;
+        case 'sortOnDateAttr':
+          sortOnDateAttr(data, action.dataKey);
+          break;
+        case 'computeYear':
+          computeYear(data, action.dateKey, action.yearKey);
+          break;
+      }
+    });
+  } else if (typeof preprocessActions === "function") {
+    preprocessActions(data);
+  }
+  return data;
 }
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
@@ -969,14 +991,10 @@ function fetchDataAndProcess() {
       return response.text().then(function (data) {
         let dataSet = Papa.parse(data, {skipEmptyLines: true});
         let nData = csvToJSON(dataSet.data);
-        // rename attributes in the data
-        if (datasetSpec.renamedAttributes) {
-          nData = renameAttributes(nData, datasetSpec.renamedAttributes);
-        }
         // preprocess the data: this is guided by the datasetSpec and may include,
         // for example sorting and filtering
         if (datasetSpec.preprocess) {
-          nData = datasetSpec.preprocess(nData);
+          nData = preprocessData(nData, datasetSpec.preprocess);
         }
         // downsample the data, if necessary
         if (datasetSpec.downsample && downsampleGoal) {
