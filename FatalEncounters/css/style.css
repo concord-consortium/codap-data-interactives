@@ -190,6 +190,10 @@ main {
     text-align: right;
 }
 
+.fe-control-area {
+  flex: 0 0 auto;
+}
+
 .fe-pop-up .fe-cover {
     position: absolute;
     background-color: rgba(0,0,0,0.32);

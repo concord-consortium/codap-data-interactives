@@ -1,5 +1,5 @@
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2021 by The Concord Consortium, Inc. All rights reserved.
@@ -17,10 +17,13 @@
 //  limitations under the License.
 // ==========================================================================
 // import {calendar} from './calendar.js';
-import {STATE_POPULATION_DATA, COUNTY_POPULATION_DATA} from './data.js';
+/*global Papa:true*/
+import {COUNTY_POPULATION_DATA, STATE_POPULATION_DATA} from './data.js';
 import * as UIControl from './ui.js'
+
 const APP_NAME = 'Fatal Encounters Datasets';
 
+// noinspection SqlResolve
 const DATASETS = [
   {
     id: 'FatalEncountersByState',
@@ -114,7 +117,7 @@ const DATASETS = [
       },
       {
         name: 'Location of injury (address)',
-        description: 'location where the injury occured that caused the fatality of the person',
+        description: 'location where the injury occurred that caused the fatality of the person',
       },
       {
         name: 'Location of death (city)',
@@ -182,6 +185,11 @@ const DATASETS = [
     timeSeriesAttribute: 'Date',
     uiComponents: [
       {
+        type: 'instruction',
+        text: "Select a state below to retrieve data from the Fatal Encounters" +
+            " dataset. You may choose more than one state."
+      },
+      {
         type: 'select',
         name: 'State',
         label: 'Select State',
@@ -189,26 +197,19 @@ const DATASETS = [
       }
     ],
     uiCreate: function (parentEl) {
-      parentEl.append(createUIControl(this.uiComponents[0]));
+      this.uiComponents.forEach(uic => {
+        parentEl.append(createUIControl(uic));
+      })
     },
     makeURL: function () {
       let stateCode = document.querySelector(`#FatalEncountersByState [name=State]`).value;
       return `${this.endpoint}/fe-${stateCode}.csv`;
     },
     parentAttributes: ['State', 'population'],
-    computeYear: function (data, dateAttr, yearAttr) {
-      data.forEach(obj => {
-        let date = new Date(obj[dateAttr]);
-        if (date) {
-          obj[yearAttr] = date.getFullYear();
-        }
-      });
-      return data;
-    },
     preprocess: function (data) {
       data = mergePopulation(data, 'State', 'USPS Code');
       data = sortOnDateAttr(data, 'Date');
-      data = this.computeYear(data, 'Date', 'Year');
+      data = computeYear(data, 'Date', 'Year');
       return data;
     },
   },
@@ -224,6 +225,16 @@ const PARENT_COLLECTION_NAME = 'groups';
 let displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
 let isInFetch = false;
+
+function computeYear(data, dateAttr, yearAttr) {
+  data.forEach(obj => {
+    let date = new Date(obj[dateAttr]);
+    if (date) {
+      obj[yearAttr] = date.getFullYear();
+    }
+  });
+  return data;
+}
 
 /**
  * A utility to merge state population stats with a dataset.
@@ -335,6 +346,9 @@ function createTextControl(def) {
 function createUIControl(def) {
   let el;
   switch (def.type) {
+    case 'instruction':
+      el = createElement('p', [], def.text);
+      break;
     case 'text':
       el = createTextControl(def);
       break;
@@ -569,7 +583,7 @@ function createCaseTable(datasetName, dimensions) {
   })
   .then(function (result) {
     if (result.success) {
-      let componentID = result.values.id;
+      // let componentID = result.values.id;
       // if (componentID) {
       //   return codapInterface.sendRequest({
       //     action: 'notify',
@@ -625,14 +639,14 @@ function fetchHandler(/*ev*/) {
   fetchDataAndProcess().then(
       function (result) {
         if (result && !result.success) {
-          message(`Import to CODAP failed. ${result.values.error}`)
+          setTransferStatus('failure', `Import to CODAP failed. ${result.values.error}`)
         } else if (result && result.success) {
-          message('');
+          setTransferStatus('success', 'Ready');
         }
         setBusy(false)
       },
       function (err) {
-        message(err);
+        setTransferStatus('failure', err);
         setBusy(false)
       }
   );
@@ -653,6 +667,38 @@ async function selectHandler() {
   if (myCODAPId != null) {
     return await selectComponent(myCODAPId);
   }
+}
+
+/**
+ * Deletes all cases from the named dataset.
+ * @param datasetName {string}
+ * @return {Promise<*|{success: boolean}>}
+ */
+async function clearData (datasetName) {
+  let result = await codapInterface.sendRequest({
+    action: 'get', resource: `dataContext[${datasetName}]`
+  });
+
+  if (result.success) {
+    let dc = result.values;
+    let lastCollection = dc.collections[dc.collections.length-1];
+    return await codapInterface.sendRequest({
+      action: 'delete',
+      resource: `dataContext[${datasetName}].collection[${lastCollection.name}].allCases`
+    });
+  } else {
+    return Promise.resolve({success: true});
+  }
+}
+
+
+async function clearDataHandler() {
+  let currDatasetSpec = getCurrentDatasetSpec();
+  if (!currDatasetSpec) {
+    setTransferStatus('inactive', 'Pick a source');
+    return Promise.reject('No source selected');
+  }
+  clearData(currDatasetSpec.name);
 }
 
 async function selectComponent(componentID) {
@@ -683,13 +729,6 @@ function createUI () {
           ]),
           ds.name
         ]),
-        createElement('div', [], [
-          createElement('a', [], [
-            createAttribute('href', ds.documentation),
-            createAttribute('target', '_blank'),
-            'dataset documentation'
-          ])
-        ])
       ]);
 
       ds.uiCreate(el);
@@ -711,7 +750,11 @@ function createUI () {
       })})
   let button = document.querySelector('button.fe-fetch-button');
   button.addEventListener('click', fetchHandler);
-  UIControl.initialize({}, {}, {selectHandler: selectHandler});
+  UIControl.initialize({
+    selectHandler: selectHandler,
+    clearData: clearDataHandler
+  });
+  setTransferStatus("success", "Ready")
 }
 
 function init() {
@@ -742,9 +785,12 @@ function message(msg) {
   UIControl.setMessage(msg);
 }
 
-function getLastMessage() {
-  let messageEl = document.querySelector('#msg');
-  return messageEl.innerText;
+/**
+ * @param status {'disabled', 'inactive', 'busy', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
+ * @param msg
+*/
+function setTransferStatus(status, msg) {
+  UIControl.setTransferStatus(status, msg)
 }
 
 /**
@@ -757,7 +803,7 @@ function getAttributeNamesFromData(array) {
   if (!Array.isArray(array) || !array[0] || (typeof array[0] !== "object")) {
     return [];
   }
-  var attrMap = {};
+  let attrMap = {};
   array.forEach((item) => {
     Object.keys(item).forEach((key) => {attrMap[key] = true;});
   });
@@ -879,27 +925,33 @@ function renameAttributes(data, renames) {
 
 function csvToJSON(data) {
   let headers = data.shift();
-  let newData = data.map(d => {
+  return data.map(d => {
     let out = {}
-    d.forEach((v,ix) => {out[headers[ix]] = v; });
+    d.forEach((v, ix) => {
+      out[headers[ix]] = v;
+    });
     return out;
   });
-  return newData;
 }
 
+function getCurrentDatasetSpec() {
+  let sourceSelect = document.querySelector('input[name=source]:checked');
+  if (!sourceSelect) {
+    return;
+  }
+  let sourceIX = Number(sourceSelect.value);
+  return DATASETS[sourceIX];
+}
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
  * @return {Promise<Response>}
  */
 function fetchDataAndProcess() {
-  // determine what datasource we are fetching
-  let sourceSelect = document.querySelector('input[name=source]:checked');
-  if (!sourceSelect) {
-    message('Pick a source');
+  let datasetSpec = getCurrentDatasetSpec();
+  if (!datasetSpec) {
+    setTransferStatus('inactive', 'Pick a source');
     return Promise.reject('No source selected');
   }
-  let sourceIX = Number(sourceSelect.value);
-  let datasetSpec = DATASETS[sourceIX];
 
   // fetch the data
   let url = datasetSpec.makeURL();
@@ -907,13 +959,13 @@ function fetchDataAndProcess() {
   if (datasetSpec.apiToken) {
     headers.append('X-App-Token', datasetSpec.apiToken);
   }
-  if (!url) { return Promise.reject(getLastMessage()); }
+  if (!url) { return Promise.reject("fetch failed"); }
   // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
-  message(`Fetching ${datasetSpec.name}...`)
+  setTransferStatus('busy', `Fetching ${datasetSpec.name}...`)
   return fetch(url, {headers: headers}).then(function (response) {
 
     if (response.ok) {
-      message('Converting...')
+      setTransferStatus('busy', 'Converting...')
       return response.text().then(function (data) {
         let dataSet = Papa.parse(data, {skipEmptyLines: true});
         let nData = csvToJSON(dataSet.data);
@@ -938,17 +990,17 @@ function fetchDataAndProcess() {
           return guaranteeDataset(datasetSpec.name, collectionList, datasetSpec.documentation)
               // send the data
               .then(function () {
-                message('Sending data to CODAP')
+                setTransferStatus('busy', 'Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, nData);
               })
               // create a Case Table Component to show the data
               .then(function () {
-                message('creating a case table');
+                setTransferStatus('busy', 'creating a case table');
                 let dimensions = datasetSpec.caseTableDimensions || undefined;
                 return createCaseTable(datasetSpec.name, dimensions);
               })
               .then(function () {
-                message('');
+                setTransferStatus('success', 'Ready');
                 if (datasetSpec.postprocess) {
                   datasetSpec.postprocess(datasetSpec);
                 }

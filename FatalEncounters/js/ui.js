@@ -16,20 +16,11 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
-function initialize(state, dataTypeStore, iEventHandlers) {
+function initialize(iEventHandlers) {
   let eventHandlers = iEventHandlers;
 
-  // renderDataTypes(dataTypeStore.findAll(state.database), state.unitSystem);
-  // updateView(state, dataTypeStore);
-
   setEventHandler('html', 'click', iEventHandlers.selectHandler, true);
-  // setEventHandler('#fe-get-button', 'click', function (ev) {
-  //   closeDateRangeSelector();
-  //   if (eventHandlers.getData) {
-  //     eventHandlers.getData(ev);
-  //   }
-  // });
-  setEventHandler('#fe-clear-button', 'click', eventHandlers.clearData);
+  setEventHandler('.fe-clear-button', 'click', eventHandlers.clearData);
   setEventHandler('.fe-pop-up-anchor,#fe-info-close-button', 'click',
       function (/*ev*/) {
         let parentEl = findAncestorElementWithClass(this, 'fe-pop-up');
@@ -79,7 +70,7 @@ function setTransferStatus(status, message) {
   el.classList.remove('fe-transfer-in-progress', 'fe-transfer-success', 'fe-transfer-failure');
   if (statusClass) { el.classList.add(statusClass); }
 
-  el.querySelector('#fe-get-button').disabled=!getButtonIsActive;
+  el.querySelector('.fe-fetch-button').disabled=!getButtonIsActive;
   setWaitCursor(waiting);
   setMessage(message);
 }
