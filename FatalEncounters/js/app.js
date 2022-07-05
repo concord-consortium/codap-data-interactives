@@ -792,7 +792,7 @@ function createMap() {
  * @param datasetName
  * @return {Promise<object>}
  */
-function createCaseTable(datasetName, dimensions) {
+function createCaseTable(datasetName, dimensions, autoscale) {
   return codapInterface.sendRequest({
     action: 'create',
     resource: `component`,
@@ -804,14 +804,19 @@ function createCaseTable(datasetName, dimensions) {
   })
   .then(function (result) {
     if (result.success) {
-      // let componentID = result.values.id;
-      // if (componentID) {
-      //   return codapInterface.sendRequest({
-      //     action: 'notify',
-      //     resource: `component[${componentID}]`,
-      //     values: {request: 'autoScale'}
-      //   })
-      // }
+      if (autoscale) {
+        let componentID = result.values.id;
+        if (componentID) {
+          return codapInterface.sendRequest({
+            action: 'notify',
+            resource: `component[${componentID}]`,
+            values: {request: 'autoScale'}
+          })
+        }
+      }
+      else {
+        return Promise.resolve(result);
+      }
     }
   });
 }
