@@ -385,6 +385,14 @@ let displayedDatasets = DEFAULT_DISPLAYED_DATASETS;
 let downsampleGoal = DOWNSAMPLE_GOAL_DEFAULT;
 let isInFetch = false;
 
+/**
+ * Data transform to create an additional property, being the year extracted
+ * from a date string.
+ * @param data [{object}]
+ * @param dateAttr
+ * @param yearAttr
+ * @return {*}
+ */
 function computeYear(data, dateAttr, yearAttr) {
   data.forEach(obj => {
     let date = new Date(obj[dateAttr]);
@@ -396,7 +404,7 @@ function computeYear(data, dateAttr, yearAttr) {
 }
 
 /**
- * A utility to merge state population stats with a dataset.
+ * A data transform to merge state population stats with a dataset.
  * @param data {[object]} attribute keyed data
  * @param referenceKeyAttr {string} the name of the attribute in the merged into dataset that
  *                         is a foreign key into the population dataset.
@@ -421,7 +429,7 @@ function mergePopulation(data, referenceKeyAttr, correlatedKey) {
 }
 
 /**
- * A utility to merge state and county population stats with a dataset.
+ * A data transform to merge state and county population stats with a dataset.
  * @param data {[object]} attribute keyed dataset
  * @param referenceState {string} the name of the attribute in the dataset that identifies the state.
  * @param referenceCty {string} the name of the attribute in the dataset that identifies the county.
@@ -447,7 +455,7 @@ function mergeCountyPopulation(data, referenceState, referenceCty, correlatedSta
 }
 
 /**
- * A utility to sort a dataset on a date attribute.
+ * A data transform to sort a dataset on a date attribute.
  * @param data {[object]}
  * @param attr {string}
  * @return {[object]} 'data' sorted
@@ -456,6 +464,21 @@ function sortOnDateAttr(data, attr) {
   return data.sort(function (a, b) {
     return (new Date(a[attr])) - (new Date(b[attr]));
   })
+}
+
+/**
+ * A data transform: copy's value of old property to new, then deletes old.
+ * @param data
+ * @param oldKey
+ * @param newKey
+ * @return {*}
+ */
+function renameAttribute(data, oldKey, newKey) {
+  data.forEach(function (item) {
+    item[newKey] = item[oldKey];
+    delete item[oldKey];
+  });
+  return data;
 }
 
 function _csc(def, optionList) {
@@ -477,7 +500,7 @@ function _csc(def, optionList) {
 }
 
 /**
- * A select box ui generator.
+ * UI generator: select box
  *
  * @param def {{
  *     type: {'select'},
@@ -492,6 +515,11 @@ function createSelectControl(def) {
   return _csc(def, def.lister());
 }
 
+/**
+ * UI generator: Text input control
+  * @param def
+ * @return {Element}
+ */
 function createTextControl(def) {
   let w = def.width || 10;
   let l = def.label || '';
@@ -502,6 +530,9 @@ function createTextControl(def) {
               n), createAttribute('style', `width: ${w}em;`)])])]);
 }
 
+/**
+ * UI generator
+ */
 function createUIControl(def) {
   let el;
   switch (def.type) {
@@ -523,6 +554,13 @@ function createUIControl(def) {
   return el;
 }
 
+/**
+ * UI generation: figures out whether to invoke a function for the dataset or
+ * generate from declarative specs.
+ *
+ * @param parentEl
+ * @param datasetDef
+ */
 function createDatasetUI(parentEl, datasetDef) {
   let el = createElement('div');
   datasetDef.uiComponents.forEach(uic => {
@@ -530,7 +568,6 @@ function createDatasetUI(parentEl, datasetDef) {
   });
   parentEl.append(el);
 }
-
 
 /**
  * A UI utility to create a DOM element with classes and content.
@@ -585,7 +622,7 @@ function toInitialCaps(str) {
 }
 
 /**
- * Creates a dataset in CODAP.
+ * CODAP API Helper: Creates a dataset
  *
  * @param datasetName {string}
  * @param collectionList {[object]}
@@ -604,6 +641,12 @@ function specifyDataset(datasetName, collectionList, url) {
   };
 }
 
+/**
+ * CODAP API Helper: Creates or updates dataset attributes
+ * @param existingDataset
+ * @param desiredCollectionDefs
+ * @return {Promise|Promise<{success: boolean}>}
+ */
 function guaranteeAttributes(existingDataset, desiredCollectionDefs) {
   let datasetName = existingDataset.name;
   let existingCollections = existingDataset.collections;
@@ -633,7 +676,7 @@ function guaranteeAttributes(existingDataset, desiredCollectionDefs) {
 }
 
 /**
- * Creates a dataset in CODAP only if it does not exist.
+ * CODAP API Helper: Creates a dataset only if it does not exist.
  * @param datasetName {string}
  * @param collectionList {[object]}
  * @param url {string}
@@ -655,7 +698,8 @@ function guaranteeDataset(datasetName, collectionList, url) {
 }
 
 /**
- * Returns whether there is a graph in CODAP displaying the named dataset.
+ * CODAP API Helper: Returns whether there is a graph in CODAP displaying
+ * the named dataset.
  * @param datasetName
  */
 async function getGraphForDataset(datasetName) {
@@ -685,6 +729,12 @@ async function getGraphForDataset(datasetName) {
   return graphSpec;
 }
 
+/**
+ * CODAP API Helper: Create graph, initializes x-axis
+ * @param datasetName
+ * @param tsAttributeName
+ * @return {Promise<*>}
+ */
 async function createTimeSeriesGraph(datasetName, tsAttributeName) {
   let foundGraph = await getGraphForDataset(datasetName);
   if (!foundGraph) {
@@ -706,6 +756,9 @@ async function createTimeSeriesGraph(datasetName, tsAttributeName) {
   }
 }
 
+/**
+ * CODAP API Helper: Create a Map component
+ */
 function createMap() {
   codapInterface.sendRequest({
     action: 'get',
@@ -735,7 +788,7 @@ function createMap() {
 }
 
 /**
- * Create an autoscaled Case Table Component in CODAP
+ * CODAP API Helper: Create an (optionally) autoscaled Case Table Component in CODAP
  * @param datasetName
  * @return {Promise<object>}
  */
@@ -764,7 +817,7 @@ function createCaseTable(datasetName, dimensions) {
 }
 
 /**
- * Send an array of data items to CODAP
+ * CODAP API Helper: Send an array of data items to CODAP
  * @param datasetName {string}
  * @param data {[object]}
  * @return {Promise}
@@ -777,14 +830,17 @@ function sendItemsToCODAP(datasetName, data) {
   });
 }
 
-function selectSource(/*ev*/) {
+/**
+ * UI Utility: determine checked dataset option
+ */
+function selectDatasetHandler(/*ev*/) {
   // this is the selected event
   document.querySelectorAll('.datasource').forEach((el) => el.classList.remove('selected-source'));
   this.parentElement.parentElement.classList.add('selected-source');
 }
 
 /**
- * Sets and removes 'busy' class at the 'body' level.
+ * UI Utility: Sets and removes 'busy' class at the 'body' level.
  * @param isBusy
  */
 function setBusy(isBusy) {
@@ -797,7 +853,7 @@ function setBusy(isBusy) {
 }
 
 /**
- * Responds to a 'fetch' button press. Normally, of course, this would initiate
+ * UI Handler: Responds to a 'fetch' button press. Normally, of course, this would initiate
  * a fetch of the selected data from the selected data source and its transfer to
  * CODAP.
  */
@@ -821,7 +877,7 @@ function fetchHandler(/*ev*/) {
 }
 
 /**
- * When plugin is clicked on, cause it to become the selected component in CODAP.
+ * UI Handler: When plugin is clicked on, cause it to become the selected component in CODAP.
  */
 let myCODAPId;
 async function selectHandler() {
@@ -838,7 +894,7 @@ async function selectHandler() {
 }
 
 /**
- * Deletes all cases from the named dataset.
+ * CODAP Helper: Deletes all cases from the named dataset.
  * @param datasetName {string}
  * @return {Promise<*|{success: boolean}>}
  */
@@ -859,6 +915,10 @@ async function clearData (datasetName) {
   }
 }
 
+/**
+ * UI Handler: clear data button
+ * @return {Promise<never>}
+ */
 async function clearDataHandler() {
   let currDatasetSpec = getCurrentDatasetSpec();
   if (!currDatasetSpec) {
@@ -868,6 +928,11 @@ async function clearDataHandler() {
   clearData(currDatasetSpec.name);
 }
 
+/**
+ * CODAP Helper: Select (bring forward) a component
+ * @param componentID
+ * @return {Promise<*>}
+ */
 async function selectComponent(componentID) {
   return await codapInterface.sendRequest({
     action: 'notify',
@@ -912,7 +977,7 @@ function createUI () {
     }
   })
   document.querySelectorAll('input[type=radio][name=source]')
-      .forEach((el) => el.addEventListener('click', selectSource))
+      .forEach((el) => el.addEventListener('click', selectDatasetHandler))
   document.querySelectorAll('input[type=text]')
       .forEach(function (el) { el.addEventListener('keydown', function (ev) {
         if (ev.key === 'Enter') {
@@ -928,6 +993,11 @@ function createUI () {
   setTransferStatus("success", "Ready")
 }
 
+/**
+ * Initializes the web application
+ *   * Connects with CODAP
+ *   * Creates UI
+ */
 function init() {
   let datasets = (new URL(document.location)).searchParams.get('datasets');
   if (datasets) {
@@ -949,6 +1019,7 @@ function init() {
 }
 
 /**
+ * UI Helper: sets the status display icon and message
  * @param status {'disabled', 'inactive', 'busy', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
  * @param msg
 */
@@ -957,7 +1028,7 @@ function setTransferStatus(status, msg) {
 }
 
 /**
- * Is passed an array of objects. Returns the keys for the first object
+ * Utility: Is passed an array of objects. Returns the keys for the first object
  * in the array. Assumes all other objects have identical keys.
  * @param array {object[]}
  * @return {string[]}
@@ -974,7 +1045,8 @@ function getAttributeNamesFromData(array) {
 }
 
 /**
- * A utility to downsample a dataset by selecting a random subset.
+ * A utility to downsample a dataset by selecting a random subset without
+ * replacement.
  * @param data
  * @param targetCount
  * @param start
@@ -1048,6 +1120,12 @@ function resolveAttributes(datasetSpec, attributeNames) {
   }
 }
 
+/**
+ * CODAP API Utility to construct a collection list
+ * @param datasetSpec
+ * @param attributeNames
+ * @return {*[]}
+ */
 function resolveCollectionList(datasetSpec, attributeNames) {
   let attributeList = resolveAttributes(datasetSpec, attributeNames);
   let collectionsList = [];
@@ -1076,14 +1154,12 @@ function resolveCollectionList(datasetSpec, attributeNames) {
   return collectionsList;
 }
 
-function renameAttribute(data, oldKey, newKey) {
-  data.forEach(function (item) {
-    item[newKey] = item[oldKey];
-    delete item[oldKey];
-  });
-  return data;
-}
-
+/**
+ * A utility to convert and array of arrays (e.g. from CSV) to an equivalent
+ * array of objects. Property names taken from first row.
+ * @param data
+ * @return {*}
+ */
 function csvToJSON(data) {
   let headers = data.shift();
   return data.map(d => {
@@ -1095,6 +1171,10 @@ function csvToJSON(data) {
   });
 }
 
+/**
+ * UI/model Utility: determine selected dataset and look it up
+ * @return {{selectedAttributeNames: string[], makeURL: (function(): string), endpoint: string, preprocess: [{oldKey: string, newKey: string, type: string}, {oldKey: string, newKey: string, type: string}, {dataKey: string, type: string, mergeKey: string}, {dataKey: string, type: string}, {yearKey: string, dateKey: string, type: string}], documentation: string, name: string, id: string, overriddenAttributes: [{name: string}, {name: string}, {name: string, description: string}, {name: string, description: string}, {precision: string, name: string, description: string, type: string}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], timeSeriesAttribute: string, uiComponents: [{text: string, type: string}, {lister: (function(): (string)[]), name: string, label: string, type: string}], parentAttributes: string[]}|{selectedAttributeNames: string[], makeURL: (function(): string), endpoint: string, preprocess: [{oldKey: string, newKey: string, type: string}, {oldKey: string, newKey: string, type: string}, {dataKey: string, type: string, mergeKey: string}, {dataKey: string, type: string}, {yearKey: string, dateKey: string, type: string}], documentation: string, name: string, id: string, overriddenAttributes: [{name: string}, {name: string}, {name: string, description: string}, {name: string, description: string}, {precision: string, name: string, description: string, type: string}, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], timeSeriesAttribute: string, uiComponents: [{text: string, type: string}, {lister: (function(): *[]), name: string, label: string, type: string}], parentAttributes: string[]}}
+ */
 function getCurrentDatasetSpec() {
   let sourceSelect = document.querySelector('input[name=source]:checked');
   if (!sourceSelect) {
@@ -1104,6 +1184,12 @@ function getCurrentDatasetSpec() {
   return DATASETS[sourceIX];
 }
 
+/**
+ * Preprocesses dataset before converting to CODAP format.
+ * @param data
+ * @param preprocessActions
+ * @return {*}
+ */
 function preprocessData(data, preprocessActions) {
   if (Array.isArray(preprocessActions)) {
     preprocessActions.forEach(action => {
@@ -1127,6 +1213,7 @@ function preprocessData(data, preprocessActions) {
   }
   return data;
 }
+
 /**
  * Fetches data from the selected dataset and sends it to CODAP.
  * @return {Promise<Response>}
@@ -1197,4 +1284,5 @@ function fetchDataAndProcess() {
   });
 }
 
+// And off we go...
 window.addEventListener('load', init);
