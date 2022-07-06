@@ -49,7 +49,7 @@ function setMessage(message) {
  */
 function setTransferStatus(status, message) {
   let getButtonIsActive = true;
-  let waiting = false;
+  // let waiting = false;
   let el = document.querySelector('.fe-summary');
   let statusClass = '';
   if (status === 'busy' ||
@@ -57,7 +57,7 @@ function setTransferStatus(status, message) {
       status === 'transferring' ||
       status === 'clearing' ) {
     getButtonIsActive = false;
-    waiting = true;
+    // waiting = true;
     statusClass = 'fe-transfer-in-progress';
   } else if (status === 'success') {
     statusClass = 'fe-transfer-success';
@@ -71,17 +71,25 @@ function setTransferStatus(status, message) {
   if (statusClass) { el.classList.add(statusClass); }
 
   el.querySelector('.fe-fetch-button').disabled=!getButtonIsActive;
-  setWaitCursor(waiting);
+  // setWaitCursor(waiting);
   setMessage(message);
 }
 
-function setWaitCursor(isWait) {
-  if (isWait) {
-    document.body.classList.add('fetching');
+function setBusyIndicator(isBusy) {
+  if (isBusy) {
+    document.body.classList.add('busy');
   } else {
-    document.body.classList.remove('fetching');
+    document.body.classList.remove('busy');
   }
 }
+
+// function setWaitCursor(isWait) {
+//   if (isWait) {
+//     document.body.classList.add('fetching');
+//   } else {
+//     document.body.classList.remove('fetching');
+//   }
+// }
 
 function findAncestorElementWithClass(el, myClass) {
   while (el !== null && el.parentElement !== el) {
@@ -101,12 +109,152 @@ function togglePopUp(el) {
   }
 }
 
+function _csc(def, optionList) {
+  let l = def.label || '';
+  let n = def.name || '';
+  let selectEl = createElement('select', null, [createAttribute('name', n)]);
+  optionList.forEach(function (v) {
+    selectEl.append(createElement('option', [], [v]));
+  })
+  return createElement('div', null,
+      [createElement('label', null, [`${l}: `, selectEl,])]);
+
+}
+
+/**
+ * UI generator: select box
+ *
+ * @param def {{
+ *     type: {'select'},
+ *     name: {string},
+ *     apiName: {string},
+ *     label: {string},
+ *     lister: {function}
+ *   }}
+ * @return {Element}
+ */
+function createSelectControl(def) {
+  return _csc(def, def.lister());
+}
+
+/**
+ * UI generator: Text input control
+ * @param def
+ * @return {Element}
+ */
+function createTextControl(def) {
+  let w = def.width || 10;
+  let l = def.label || '';
+  let n = def.name || '';
+  return createElement('div', null, [createElement('label', null,
+      [`${l}: `, createElement('input', null,
+          [createAttribute('type', 'text'), createAttribute('name',
+              n), createAttribute('style', `width: ${w}em;`)])])]);
+}
+
+/**
+ * A UI utility to create a DOM element with classes and content.
+ * @param tag {string}
+ * @param [classList] {[string]}
+ * @param [content] {[Node]}
+ * @return {Element}
+ */
+function createElement(tag, classList, content) {
+  let el = document.createElement(tag);
+  if (classList) {
+    if (typeof classList === 'string') classList = [classList];
+    classList.forEach(function (cl) {
+      el.classList.add(cl);
+    });
+  }
+  if (content) {
+    if (!Array.isArray(content)) {
+      content = [content];
+    }
+    content.forEach(function (c) {
+      if (c instanceof Attr) {
+        el.setAttributeNode(c);
+      } else {
+        el.append(c);
+      }
+    });
+  }
+  return el;
+}
+
+/**
+ * A UI utility to create a DOM attribute node.
+ * @param name {string}
+ * @param value {*}
+ * @return {Attr}
+ */
+function createAttribute(name, value) {
+  let attr = document.createAttribute(name);
+  attr.value = value;
+  return attr;
+}
+
+function createInstruction(text) {
+  return createElement('p', [], text);
+}
+
+/**
+ * UI generator
+ */
+function createUIControl(def) {
+  let el;
+  switch (def.type) {
+    case 'instruction':
+      el = createInstruction(def.text);
+      break;
+    case 'text':
+      el = createTextControl(def);
+      break;
+    case 'select':
+      el = createSelectControl(def);
+      break;
+      // case 'conditionalSelect':
+      //   el = createConditionalSelectControl(def);
+      //   break;
+    default:
+      console.warn(`createUIControl: unknown type: ${def.type}`);
+  }
+  return el;
+}
+
+/**
+ * UI generation: from declarative specs.
+ *
+ * @param parentEl
+ * @param datasetDef
+ */
+function createDatasetUI(parentEl, datasetDef) {
+  let el = createElement('div');
+  datasetDef.uiComponents.forEach(uic => {
+    el.append(createUIControl(uic));
+  });
+  parentEl.append(el);
+}
+
+function createDatasetSelector(datasetId, datasetName, ix) {
+  return createElement('div', ['datasource'],
+      [createAttribute('id', datasetId), createElement('h3', null,
+          [createElement('input', null,
+              [createAttribute('type', 'radio'), createAttribute('name',
+                  'source'), createAttribute('value', ix)]), datasetName]),]);
+}
+
 export {
+  createAttribute,
+  createDatasetUI,
+  createDatasetSelector,
+  createElement,
+  createInstruction,
+  createSelectControl,
+  createTextControl,
   initialize,
+  setBusyIndicator,
   setMessage,
   setTransferStatus,
-  setWaitCursor,
+  // setWaitCursor,
 };
-
-
-

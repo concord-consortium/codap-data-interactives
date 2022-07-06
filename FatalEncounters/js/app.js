@@ -19,7 +19,7 @@
 // import {calendar} from './calendar.js';
 /*global Papa:true*/
 import {COUNTY_POPULATION_DATA, STATE_POPULATION_DATA} from './data.js';
-import * as UIControl from './ui.js'
+import * as ui from './ui.js'
 
 const APP_NAME = 'Fatal Encounters Datasets';
 
@@ -483,132 +483,6 @@ function renameAttribute(data, oldKey, newKey) {
   return data;
 }
 
-function _csc(def, optionList) {
-  let l = def.label || '';
-  let n = def.name || '';
-  let selectEl = createElement('select', null,
-      [createAttribute('name',
-          n)]);
-  optionList.forEach(function (v) {
-    selectEl.append(createElement('option', [], [v]));
-  })
-  return createElement('div', null, [createElement('label', null,
-      [
-        `${l}: `,
-        selectEl,
-      ])
-  ]);
-
-}
-
-/**
- * UI generator: select box
- *
- * @param def {{
- *     type: {'select'},
- *     name: {string},
- *     apiName: {string},
- *     label: {string},
- *     lister: {function}
- *   }}
- * @return {Element}
- */
-function createSelectControl(def) {
-  return _csc(def, def.lister());
-}
-
-/**
- * UI generator: Text input control
-  * @param def
- * @return {Element}
- */
-function createTextControl(def) {
-  let w = def.width || 10;
-  let l = def.label || '';
-  let n = def.name || '';
-  return createElement('div', null, [createElement('label', null,
-      [`${l}: `, createElement('input', null,
-          [createAttribute('type', 'text'), createAttribute('name',
-              n), createAttribute('style', `width: ${w}em;`)])])]);
-}
-
-/**
- * UI generator
- */
-function createUIControl(def) {
-  let el;
-  switch (def.type) {
-    case 'instruction':
-      el = createElement('p', [], def.text);
-      break;
-    case 'text':
-      el = createTextControl(def);
-      break;
-    case 'select':
-      el = createSelectControl(def);
-      break;
-    // case 'conditionalSelect':
-    //   el = createConditionalSelectControl(def);
-    //   break;
-    default:
-      console.warn(`createUIControl: unknown type: ${def.type}`);
-  }
-  return el;
-}
-
-/**
- * UI generation: figures out whether to invoke a function for the dataset or
- * generate from declarative specs.
- *
- * @param parentEl
- * @param datasetDef
- */
-function createDatasetUI(parentEl, datasetDef) {
-  let el = createElement('div');
-  datasetDef.uiComponents.forEach(uic => {
-    el.append(createUIControl(uic));
-  });
-  parentEl.append(el);
-}
-
-/**
- * A UI utility to create a DOM element with classes and content.
- * @param tag {string}
- * @param [classList] {[string]}
- * @param [content] {[Node]}
- * @return {Element}
- */
-function createElement(tag, classList, content) {
-  let el = document.createElement(tag);
-  if (classList) {
-    if (typeof classList === 'string') classList = [classList];
-    classList.forEach( function (cl) {el.classList.add(cl);});
-  }
-  if (content) {
-    if (!Array.isArray(content)) { content = [content];}
-    content.forEach(function(c) {
-      if (c instanceof Attr) {
-        el.setAttributeNode(c);
-      } else {
-        el.append(c);
-      }
-    });
-  }
-  return el;
-}
-
-/**
- * A UI utility to create a DOM attribute node.
- * @param name {string}
- * @param value {*}
- * @return {Attr}
- */
-function createAttribute(name, value) {
-  let attr = document.createAttribute(name);
-  attr.value = value;
-  return attr;
-}
-
 /**
  * A utility to convert a string to capitalize the first letter of each word
  * and lowercase each succeeding letter. A word is considered to be a string
@@ -806,7 +680,9 @@ function createMap() {
 
 /**
  * CODAP API Helper: Create an (optionally) autoscaled Case Table Component in CODAP
- * @param datasetName
+ * @param datasetName {string}
+ * @param dimensions {{x: number, y: number}}
+ * @param autoscale {boolean} whether to autoscale the case table
  * @return {Promise<object>}
  */
 function createCaseTable(datasetName, dimensions, autoscale) {
@@ -853,7 +729,7 @@ function sendItemsToCODAP(datasetName, data) {
 }
 
 /**
- * UI Utility: determine checked dataset option
+ * UI Handler: determine checked dataset option
  */
 function selectDatasetHandler(/*ev*/) {
   // this is the selected event
@@ -862,15 +738,11 @@ function selectDatasetHandler(/*ev*/) {
 }
 
 /**
- * UI Utility: Sets and removes 'busy' class at the 'body' level.
+ * UI Handler: Manages whether buttons are active
  * @param isBusy
  */
 function setBusy(isBusy) {
-  if (isBusy) {
-    document.body.classList.add('busy');
-  } else {
-    document.body.classList.remove('busy');
-  }
+  ui.setBusyIndicator(isBusy);
   isInFetch = isBusy;
 }
 
@@ -885,14 +757,15 @@ function fetchHandler(/*ev*/) {
   fetchDataAndProcess().then(
       function (result) {
         if (result && !result.success) {
-          setTransferStatus('failure', `Import to CODAP failed. ${result.values.error}`)
+          ui.setTransferStatus('failure',
+              `Import to CODAP failed. ${result.values.error}`)
         } else if (result && result.success) {
-          setTransferStatus('success', 'Ready');
+          ui.setTransferStatus('success', 'Ready')
         }
         setBusy(false)
       },
       function (err) {
-        setTransferStatus('failure', err);
+        ui.setTransferStatus('failure', err)
         setBusy(false)
       }
   );
@@ -916,7 +789,7 @@ async function selectHandler() {
 }
 
 /**
- * CODAP Helper: Deletes all cases from the named dataset.
+ * CODAP API Helper: Deletes all cases from the named dataset.
  * @param datasetName {string}
  * @return {Promise<*|{success: boolean}>}
  */
@@ -944,14 +817,14 @@ async function clearData (datasetName) {
 async function clearDataHandler() {
   let currDatasetSpec = getCurrentDatasetSpec();
   if (!currDatasetSpec) {
-    setTransferStatus('inactive', 'Pick a source');
+    ui.setTransferStatus('inactive', 'Pick a source')
     return Promise.reject('No source selected');
   }
   clearData(currDatasetSpec.name);
 }
 
 /**
- * CODAP Helper: Select (bring forward) a component
+ * CODAP API Helper: Select (bring forward) a component
  * @param componentID
  * @return {Promise<*>}
  */
@@ -964,6 +837,7 @@ async function selectComponent(componentID) {
   });
 }
 
+
 /**
  * Creates the plugin UI and associates the correct event handlers.
  */
@@ -973,22 +847,12 @@ function createUI () {
     let ix = DATASETS.findIndex(function (d) {return d.id === dsId});
     if (ix>=0) {
       let ds = DATASETS[ix]
-      let el = createElement('div', ['datasource'], [
-        createAttribute('id', ds.id),
-        createElement('h3', null, [
-          createElement('input', null, [
-            createAttribute('type', 'radio'),
-            createAttribute('name', 'source'),
-            createAttribute('value', ix)
-          ]),
-          ds.name
-        ]),
-      ]);
+      let el = ui.createDatasetSelector(ds.id, ds.name, ix);
 
       if (ds.uiCreate) {
         ds.uiCreate(el);
       } else {
-        createDatasetUI(el, ds);
+        ui.createDatasetUI(el, ds);
       }
       anchor.append(el);
       if (ds.id === DEFAULT_DATASET) {
@@ -1008,11 +872,11 @@ function createUI () {
       })})
   let button = document.querySelector('button.fe-fetch-button');
   button.addEventListener('click', fetchHandler);
-  UIControl.initialize({
+  ui.initialize({
     selectHandler: selectHandler,
     clearData: clearDataHandler
   });
-  setTransferStatus("success", "Ready")
+  ui.setTransferStatus("success", "Ready")
 }
 
 /**
@@ -1041,17 +905,7 @@ function init() {
 }
 
 /**
- * UI Helper: sets the status display icon and message
- * @param status {'disabled', 'inactive', 'busy', 'retrieving', 'transferring', 'clearing', 'success', 'failure'}
- * @param msg
-*/
-function setTransferStatus(status, msg) {
-  UIControl.setTransferStatus(status, msg)
-}
-
-/**
- * Utility: Is passed an array of objects. Returns the keys for the first object
- * in the array. Assumes all other objects have identical keys.
+ * Utility: Is passed an array of objects. Returns the keys of all the objects.
  * @param array {object[]}
  * @return {string[]}
  */
@@ -1107,8 +961,8 @@ function downsampleRandom(data, targetCount, start) {
 }
 
 /**
- * Makes an array of CODAP Attribute Specs from the dataset definition and the
- * attribute names discovered in the data.
+ * CODAP API Utility that makes an array of CODAP Attribute Specs from the
+ * dataset definition and the attribute names discovered in the data.
  *
  * @param datasetSpec
  * @param attributeNames
@@ -1243,7 +1097,7 @@ function preprocessData(data, preprocessActions) {
 function fetchDataAndProcess() {
   let datasetSpec = getCurrentDatasetSpec();
   if (!datasetSpec) {
-    setTransferStatus('inactive', 'Pick a source');
+    ui.setTransferStatus('inactive', 'Pick a source')
     return Promise.reject('No source selected');
   }
 
@@ -1255,11 +1109,11 @@ function fetchDataAndProcess() {
   }
   if (!url) { return Promise.reject("fetch failed"); }
   // console.log(`source: ${sourceIX}:${datasetSpec.name}, url: ${url}`);
-  setTransferStatus('busy', `Fetching data...`)
+  ui.setTransferStatus('busy', `Fetching data...`)
   return fetch(url, {headers: headers}).then(function (response) {
 
     if (response.ok) {
-      setTransferStatus('busy', 'Converting...')
+      ui.setTransferStatus('busy', 'Converting...')
       return response.text().then(function (data) {
         let dataSet = Papa.parse(data, {skipEmptyLines: true});
         let nData = csvToJSON(dataSet.data);
@@ -1287,17 +1141,17 @@ function fetchDataAndProcess() {
                 else return Promise.resolve();
               })
               .then(function () {
-                setTransferStatus('busy', 'Sending data to CODAP')
+                ui.setTransferStatus('busy', 'Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, nData);
               })
               // create a Case Table Component to show the data
               .then(function () {
-                setTransferStatus('busy', 'creating a case table');
+                ui.setTransferStatus('busy', 'creating a case table')
                 let dimensions = datasetSpec.caseTableDimensions || undefined;
                 return createCaseTable(datasetSpec.name, dimensions);
               })
               .then(function () {
-                setTransferStatus('success', 'Ready');
+                ui.setTransferStatus('success', 'Ready')
                 if (datasetSpec.postprocess) {
                   datasetSpec.postprocess(datasetSpec);
                 }
