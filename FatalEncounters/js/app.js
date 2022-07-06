@@ -193,7 +193,8 @@ const DATASETS = [
       {type: 'mergePopulation', dataKey: 'State', mergeKey: 'USPS Code'},
       {type: 'sortOnDateAttr', dataKey: 'Date'},
       {type: 'computeYear', dateKey: 'Date', yearKey: 'Year'}
-    ]
+    ],
+    preclear: {key: 'State', selector: '#FatalEncountersByState [name=State]'}
   },
   {
     id: 'FatalEncountersByYear',
@@ -367,7 +368,8 @@ const DATASETS = [
       {type: 'mergePopulation', dataKey: 'State', mergeKey: 'USPS Code'},
       {type: 'sortOnDateAttr', dataKey: 'Date'},
       {type: 'computeYear', dateKey: 'Date', yearKey: 'Year'}
-    ]
+    ],
+    preclear: {key: 'Year', selector: '#FatalEncountersByYear [name=Year]'}
   },
 ]
 
@@ -619,6 +621,21 @@ function toInitialCaps(str) {
       .map(function (w) {
         return w.toLowerCase().replace(/./, w[0].toUpperCase());
       }).join(' ');
+}
+
+/**
+ * CODAP API Helper: deletes values in dataset matching attribute and value
+ */
+function preclearDataGroup(attributeName, value, collectionSpec, datasetName) {
+  // find collection for attribute
+  let col = collectionSpec.find(collection =>
+      collection.attrs.find(attr => attr.name === attributeName));
+  let resourceName = `dataContext[${datasetName}].itemSearch[${attributeName}==${value}]`;
+  let req = {
+    action: 'delete',
+    resource: resourceName,
+  }
+  return codapInterface.sendRequest(req);
 }
 
 /**
@@ -1262,6 +1279,13 @@ function fetchDataAndProcess() {
           // create the dataset, if needed.
           return guaranteeDataset(datasetSpec.name, collectionList, datasetSpec.documentation)
               // send the data
+              .then(function () {
+                if (datasetSpec.preclear) {
+                  let matchValue = document.querySelector(datasetSpec.preclear.selector).value;
+                  return preclearDataGroup(datasetSpec.preclear.key, matchValue, collectionList, datasetSpec.name);
+                }
+                else return Promise.resolve();
+              })
               .then(function () {
                 setTransferStatus('busy', 'Sending data to CODAP')
                 return sendItemsToCODAP(datasetSpec.name, nData);
