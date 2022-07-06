@@ -850,6 +850,18 @@
       "categories": [
         "Tools"
       ]
+    },
+    {
+      "title": "Day Length",
+      "description": "Computes the day length for a year for any place in the world",
+      "width": 350,
+      "height": 450,
+      "path": "https://codap.concord.org/~bfinzer/day_length/",
+      "visible": "true",
+      "categories": [
+        "Generators",
+        "Tools"
+      ]
     }
   ]
 }
