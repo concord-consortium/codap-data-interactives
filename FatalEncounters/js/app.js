@@ -179,7 +179,14 @@ const DATASETS = [
         type: 'select',
         name: 'State',
         label: 'Select State',
-        lister: function () { return STATE_POPULATION_DATA.map(function (st) { return st["USPS Code"];})}
+        optionList: [
+          'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL',
+          'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA',
+          'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE',
+          'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI',
+          'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV',
+          'WY'
+        ]
       }
     ],
     makeURL: function () {
@@ -350,15 +357,15 @@ const DATASETS = [
         type: 'select',
         name: 'Year',
         label: 'Select Year',
-        lister: function () {
-          let a = [];
-          for (let i = 2000; i < 2022; i++) {a.push(i);}
-          return a;
-        }
+        optionList: [
+          2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+          2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+          2020, 2021
+        ]
       }
     ],
     makeURL: function () {
-      let year = document.querySelector(`#FatalEncountersByYear [name=Year]`).value;
+      let year = document.querySelector('#FatalEncountersByYear [name=Year]').value;
       return `${this.endpoint}/fe-${year}.csv`;
     },
     parentAttributes: ['Year'],

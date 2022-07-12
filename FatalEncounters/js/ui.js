@@ -109,16 +109,13 @@ function togglePopUp(el) {
   }
 }
 
-function _csc(def, optionList) {
-  let l = def.label || '';
-  let n = def.name || '';
-  let selectEl = createElement('select', null, [createAttribute('name', n)]);
+function _csc(name, label, optionList) {
+  let selectEl = createElement('select', null, [createAttribute('name', name || '')]);
   optionList.forEach(function (v) {
     selectEl.append(createElement('option', [], [v]));
   })
   return createElement('div', null,
-      [createElement('label', null, [`${l}: `, selectEl,])]);
-
+      [createElement('label', null, [`${(label || '')}: `, selectEl,])]);
 }
 
 /**
@@ -134,7 +131,10 @@ function _csc(def, optionList) {
  * @return {Element}
  */
 function createSelectControl(def) {
-  return _csc(def, def.lister());
+  if (def.lister) {
+    def.optionList = def.lister();
+  }
+  return _csc(def.name, def.label, def.optionList);
 }
 
 /**
