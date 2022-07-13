@@ -244,6 +244,9 @@ function createDatasetSelector(datasetId, datasetName, ix) {
                   'source'), createAttribute('value', ix)]), datasetName]),]);
 }
 
+function getCheckboxValue(selector) {
+  return !!document.querySelector(`${selector}:checked`)
+}
 export {
   createAttribute,
   createDatasetUI,
@@ -257,4 +260,5 @@ export {
   setMessage,
   setTransferStatus,
   // setWaitCursor,
+  getCheckboxValue,
 };

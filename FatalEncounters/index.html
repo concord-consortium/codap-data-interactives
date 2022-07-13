@@ -76,8 +76,15 @@
       <span class="fe-status-graphic"></span>
       <span class="fe-message-area"></span>
       <span class="fe-control-area">
-        <button class="fe-clear-button fe-button" title="Clear Dataset in CODAP">Clear Data</button>
-        <button class="fe-fetch-button fe-button" title="Get data and send to CODAP">Get Data</button>
+        <div class="fe-control-row">
+          <label title="Whether to downsample results (CODAP will slow if dataset is too big)" >
+            <input type="checkbox" checked id="fe-downsample" />downsample if over 1000
+          </label>
+        </div>
+        <div class="fe-control-row">
+          <button class="fe-clear-button fe-button" title="Clear Dataset in CODAP">Clear Data</button>
+          <button class="fe-fetch-button fe-button" title="Get data and send to CODAP">Get Data</button>
+        </div>
       </span>
     </div>
   </div>

@@ -389,7 +389,7 @@ const DEFAULT_DISPLAYED_DATASETS = [
   'FatalEncountersByYear'
 ];
 const DEFAULT_DATASET = 'FatalEncountersByState';
-const DOWNSAMPLE_GOAL_DEFAULT = 500;
+const DOWNSAMPLE_GOAL_DEFAULT = 1000;
 const DOWNSAMPLE_GOAL_MAX = 1000;
 const CHILD_COLLECTION_NAME = 'cases';
 const PARENT_COLLECTION_NAME = 'groups';
@@ -1134,7 +1134,7 @@ function fetchDataAndProcess() {
           nData = preprocessData(nData, datasetSpec.preprocess);
         }
         // downsample the data, if necessary
-        if (datasetSpec.downsample && downsampleGoal) {
+        if (ui.getCheckboxValue('#fe-downsample') && downsampleGoal) {
           nData = downsampleRandom(nData, downsampleGoal, 0);
         }
         // create the specification of the CODAP collections
