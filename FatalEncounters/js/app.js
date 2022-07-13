@@ -194,6 +194,8 @@ const DATASETS = [
       return `${this.endpoint}/fe-${stateCode}.csv`;
     },
     parentAttributes: ['State', 'population'],
+    parentCollectionName: 'States',
+    childCollectionName: 'Encounters',
     preprocess: [
       {type: 'rename', oldKey: ' Date of injury resulting in death (month/day/year)', newKey: 'Date'},
       {type: 'rename', oldKey: 'Race with imputations', newKey: 'Inferred race'},
@@ -369,6 +371,8 @@ const DATASETS = [
       return `${this.endpoint}/fe-${year}.csv`;
     },
     parentAttributes: ['Year'],
+    parentCollectionName: 'Years',
+    childCollectionName: 'Encounters',
     preprocess: [
       {type: 'rename', oldKey: ' Date of injury resulting in death (month/day/year)', newKey: 'Date'},
       {type: 'rename', oldKey: 'Race with imputations', newKey: 'Inferred race'},
@@ -1019,11 +1023,11 @@ function resolveCollectionList(datasetSpec, attributeNames) {
   let parentCollection;
   if (datasetSpec.parentAttributes) {
     parentCollection = {
-      name: PARENT_COLLECTION_NAME,
+      name: datasetSpec.parentCollectionName || PARENT_COLLECTION_NAME,
       attrs: []
     }
     collectionsList.push(parentCollection);
-    childCollection.parent = PARENT_COLLECTION_NAME;
+    childCollection.parent = datasetSpec.parentCollectionName || PARENT_COLLECTION_NAME;
   }
   collectionsList.push(childCollection);
 
