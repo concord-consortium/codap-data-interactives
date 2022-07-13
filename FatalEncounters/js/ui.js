@@ -39,7 +39,9 @@ function setEventHandler (selector, event, handler, capture) {
 
 
 function setMessage(message) {
-  document.querySelector(".fe-message-area").innerHTML = message;
+  let messageEl = document.querySelector(".fe-message-area");
+  messageEl.innerHTML = message;
+  messageEl.title = message; // set the title, if the message is clipped.
 }
 
 /**

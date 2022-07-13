@@ -229,6 +229,12 @@ main {
 
 .fe-summary .fe-message-area {
     color: var(--text);
+    flex: 1 1 auto;
+    /* limit the growth of the message area. there is also a tooltip, if
+    things overflow */
+    max-height: 5em;
+    text-overflow: ellipsis;
+    overflow-y: hidden;
 }
 
 .fe-summary.fe-transfer-success .fe-message-area,

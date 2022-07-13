@@ -327,7 +327,9 @@
         function handleResponse (request, response, callback) {
           if (response === undefined) {
             console.warn('handleResponse: CODAP request timed out');
-            reject('handleResponse: CODAP request timed out: ' + JSON.stringify(request));
+            // timeouts, generally are not the last word on a request in IFramePhone.
+            // Due to a bug there will be another response.
+            // reject('handleResponse: CODAP request timed out: ' + JSON.stringify(request));
             stats.countDiRplTimeout++;
           } else {
             connectionState = 'active';
