@@ -322,3 +322,57 @@ body.busy button.fetch-button {
   border: thin darkgray;
   border-radius: initial;
 }
+
+input[type=radio] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+input[type=checkbox] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    vertical-align: sub;
+}
+
+input[type=checkbox],input[type=radio] {
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input[type=checkbox]:before {
+    content: var(--icon-check-box-outline-blank);
+    color: var(--teal-dark);
+}
+
+input[type=checkbox]:checked:before {
+    content: var(--icon-check-box);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:before {
+    content: var(--icon-radio-button-unchecked);
+    color: var(--teal-dark);
+}
+
+input[type=radio]:checked:before {
+    content: var(--icon-radio-button-checked);
+    color: var(--teal-dark);
+}
