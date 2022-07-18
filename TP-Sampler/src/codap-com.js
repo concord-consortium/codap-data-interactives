@@ -394,7 +394,7 @@ define([
         });
       },
 
-      myCODAPIDd: null,
+      myCODAPId: null,
       selectSelf: function () {
         function selectSelf(id) {
             return codapInterface.sendRequest({
