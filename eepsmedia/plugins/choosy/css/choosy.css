@@ -93,7 +93,7 @@ fieldset {
 .attribute-batch {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+/*     align-items: flex-start; */
 }
 
 .attribute-control-stripe, tag-button-cluster {
@@ -104,11 +104,15 @@ fieldset {
     align-items: center;
     justify-content: left;
     height: 20px;
-        overflow-x: hidden;
-    	overflow-y: hidden;
-    	white-space: nowrap;
-    	text-overflow: ellipsis;
-
+}
+.attribute-control-stripe .small-button-image {
+  flex: 0 0 auto;
+}
+.attribute-control-stripe .batched-attribute {
+  flex: 0 1 auto;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .visible-stripe {
