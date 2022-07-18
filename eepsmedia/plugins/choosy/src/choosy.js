@@ -60,6 +60,10 @@ const choosy = {
         if (this.datasetList && this.datasetList.length === 1) {
             $('#tabs').tabs({active: 1})
         }
+        // on background click, become selected
+        document.querySelector('body').addEventListener('click',
+            connect.selectSelf, {capture:true});
+
     },
 
     /**
