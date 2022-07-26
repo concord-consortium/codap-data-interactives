@@ -90,11 +90,19 @@ function findOrCreateAttributeNames(dataSet) {
   dataSet.attributeNames = attrs.map(function (attr) { return attr?attr.trim():'';});
 }
 
+/*
+ * from: https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
+ */
+function htmlDecode(str) {
+  let doc = new DOMParser().parseFromString(str, "text/html");
+  return doc.documentElement.textContent;
+}
+
 function extractMetadataFromCommentString(commentStrings) {
   let metadata = {};
   commentStrings.forEach(function (str) {
     let match = /^# (\w*): (.*)$/.exec(str);
-    if (match) { metadata[match[1]] = match[2]; }
+    if (match) { metadata[match[1]] = htmlDecode(match[2]); }
   });
   return metadata;
 }
@@ -110,7 +118,7 @@ function extractAttributeDefsFromCommentStrings(commentStrings) {
           props.forEach(function (prop) {
             let propsMatch = /^\s*(\w+): (.+)\s*$/.exec(prop);
             if (propsMatch) {
-              attrDefs[propsMatch[1]] = propsMatch[2];
+              attrDefs[propsMatch[1]] = htmlDecode(propsMatch[2]);
             }
           })
           return attrDefs;
