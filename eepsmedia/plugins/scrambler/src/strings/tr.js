@@ -1,9 +1,3 @@
-let strings={
-  a:'this',
-  b: 'this string has sequential subs: %@, %@',
-  c: 'this string has positional subs: %@1, %@2, %@1, %@3'
-}
-
 function lookupString(stringID) {
   return strings[stringID] || stringID;
 }
@@ -40,21 +34,21 @@ function tr(stringID, args) {
   return s.replace(/%@[0-9]?/g, replacer);
 }
 
-console.assert(tr('a') === 'this', 'simple trans');
-console.assert(tr('b', ['seq1', 'seq2']) === 'this string has sequential subs: seq1, seq2',
-    'sequential subs');
-console.assert(tr('b', 'seq1', 'seq2') === 'this string has sequential subs: seq1, seq2',
-    'sequential subs from varargs');
-console.assert(tr('c', ['pos1', 'pos2', 'pos3']) === 'this string has positional subs: pos1, pos2, pos1, pos3',
-    'positional subs');
-console.assert(tr('c', 'pos1', 'pos2', 'pos3') === 'this string has positional subs: pos1, pos2, pos1, pos3',
-    'positional subs from varargs');
-// test an unmatched string ID
-console.assert(tr('d') === 'd', 'Unfound stringID returns stringID');
-console.assert(tr('%@, %@, %@', 'one', 'two', 'three') === 'one, two, three', 'sequential replacement');
-console.assert(tr('%@1, %@1, %@2', 'baa', 'black sheep') === 'baa, baa, black sheep', 'Positional replacement');
-console.assert(tr('%@1, %@1, %@2') === '%@1, %@1, %@2', 'Missing properties are not replace');
-console.assert(tr('%@1, %@1, %@2', 'baa') === 'baa, baa, %@2',
-    'Missing properties are not replaced');
-console.log('done');
-
+// console.assert(tr('a') === 'this', 'simple trans');
+// console.assert(tr('b', ['seq1', 'seq2']) === 'this string has sequential subs: seq1, seq2',
+//     'sequential subs');
+// console.assert(tr('b', 'seq1', 'seq2') === 'this string has sequential subs: seq1, seq2',
+//     'sequential subs from varargs');
+// console.assert(tr('c', ['pos1', 'pos2', 'pos3']) === 'this string has positional subs: pos1, pos2, pos1, pos3',
+//     'positional subs');
+// console.assert(tr('c', 'pos1', 'pos2', 'pos3') === 'this string has positional subs: pos1, pos2, pos1, pos3',
+//     'positional subs from varargs');
+// // test an unmatched string ID
+// console.assert(tr('d') === 'd', 'Unfound stringID returns stringID');
+// console.assert(tr('%@, %@, %@', 'one', 'two', 'three') === 'one, two, three', 'sequential replacement');
+// console.assert(tr('%@1, %@1, %@2', 'baa', 'black sheep') === 'baa, baa, black sheep', 'Positional replacement');
+// console.assert(tr('%@1, %@1, %@2') === '%@1, %@1, %@2', 'Missing properties are not replace');
+// console.assert(tr('%@1, %@1, %@2', 'baa') === 'baa, baa, %@2',
+//     'Missing properties are not replaced');
+// console.log('done');
+//

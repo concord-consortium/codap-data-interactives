@@ -2,7 +2,7 @@
 PROGNAME=`basename $0`
 DIRNAME=`dirname $0`
 
-STRINGS_FILE="./src/utilities/strings.json"
+STRINGS_FILE="./src/strings.json"
 TEMP_FILE=/tmp/$PROGNAME.$$
 JQ=${DIRNAME}/../node_modules/node-jq/bin/jq
 

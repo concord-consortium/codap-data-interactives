@@ -23,9 +23,7 @@
  * @type {{doScramble: ((function(*): Promise<null>)|*), setSourceDataset: (function(*): Promise<null>), showProgress: scrambler.showProgress, refreshAllData: ((function(): Promise<void>)|*), openHelp: ((function(): Promise<void>)|*), doAlert: scrambler.doAlert, matchUItoState: scrambler.matchUItoState, datasetExists: boolean, handleBigRefresh: ((function(): Promise<void>)|*), scrattributeExists: boolean, strings: null, state: {}, constants: {scrambledPrefix: string, defaultState: {scrambleAttributeName: null, dirtyMeasures: boolean, lastDatasetName: null, iteration: number, numberOfScrambles: number, lang: string}, measuresPrefix: string, pluginName: string, scrambleSetName: string, version: string, dimensions: {width: number, height: number}}, setUpLocalScrambledDataset: (function(): Promise<*>), measuresDataset: null, copeWithAttributeDrop: ((function(*, *): Promise<void>)|*), setUpLocalMeasuresDataset: (function(): Promise<*>), currentlyScrambling: boolean, refreshScramblerStatus: scrambler.refreshScramblerStatus, refreshUIDisplay: scrambler.refreshUIDisplay, changeLanguage: ((function(): Promise<void>)|*), scrattributeIsLeaf: boolean, currentlyDraggingAnAttribute: boolean, scrambledDataset: null, pickAFlag: (function(): *), handleUIChoice: scrambler.handleUIChoice, handleSourceDatasetChange: ((function(*): Promise<void>)|*), sourceDataset: null, datasetHasMeasure: boolean, nDatasets: number, initialize: ((function(): Promise<void>)|*)}}
  */
 
-let DG = {
-    plugins : null,
-};
+let myStrings = null;
 
 const scrambler = {
     sourceDataset: null,        //      a CODAPDataset.
@@ -65,7 +63,7 @@ const scrambler = {
 
         //  set up the language
         this.state.lang = pluginLang.figureOutLanguage('en', scramblerStrings.languages);
-        DG.plugins = await scramblerStrings.initializeStrings(this.state.lang);
+        myStrings = await scramblerStrings.initializeStrings(this.state.lang);
         scramblerStrings.setStrings();
 
         await this.refreshAllData();
@@ -79,37 +77,37 @@ const scrambler = {
             const tAttName = scrambler.state.scrambleAttributeName;
 
             const attReport = (this.scrattributeExists)
-                ? tr(DG.plugins.scrambler.sfScrambledAttribute, tAttName) //    `${scrambler.strings.sScramble} ${tAttName}`
-                : DG.plugins.scrambler.sNoAttribute;
+                ? tr(myStrings.sfScrambledAttribute, tAttName) //    `${scrambler.strings.sScramble} ${tAttName}`
+                : myStrings.sNoAttribute;
 
             document.getElementById("attributeReport").innerHTML = attReport;
 
             if (this.datasetHasMeasure) {
                 if (this.scrattributeExists) {
                     if (this.scrattributeIsLeaf) {
-                        theHTML = tr(DG.plugins.scrambler.sfOKtoScramble, tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
+                        theHTML = tr(myStrings.sfOKtoScramble, tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
                     } else {
                         const possibles = scrambler.sourceDataset.possibleScrambleAttributeNames(tAttName); //  this is an object
                         const suchAs = (possibles.array.length == 1)    //  possibles.array is the list of suitable attributes
                             ? `${possibles.array[0]}`
-                            : `${possibles.array[0]}</code> ${DG.plugins.scrambler.sOr} <code>${possibles.array[1]}`;
+                            : `${possibles.array[0]}</code> ${myStrings.sOr} <code>${possibles.array[1]}`;
                         const colls = scrambler.sourceDataset.structure.collections;
                         const lastCollName = colls[colls.length - 1].name;
                         if (possibles.hasFormula) { //  remember: if it has a formula it will not be listed among the leaves
-                            theHTML = tr(DG.plugins.scrambler.sfFormulaProblem, tAttName, lastCollName, suchAs);
+                            theHTML = tr(myStrings.sfFormulaProblem, tAttName, lastCollName, suchAs);
                         } else {
-                            theHTML = tr(DG.plugins.scrambler.sfNotALeafProblem, tAttName, lastCollName, suchAs);
+                            theHTML = tr(myStrings.sfNotALeafProblem, tAttName, lastCollName, suchAs);
                         }
                     }
 
                 } else {
-                    theHTML = DG.plugins.scrambler.sNoScrambleAttribute;
+                    theHTML = myStrings.sNoScrambleAttribute;
                 }
             } else {
-                theHTML = tr(DG.plugins.scrambler.sfNoMeasure, tDSTitle);
+                theHTML = tr(myStrings.sfNoMeasure, tDSTitle);
             }
         } else {
-            theHTML = DG.plugins.scrambler.sNoDataset;
+            theHTML = myStrings.sNoDataset;
         }
 
         document.getElementById(`scramblerStatus`).innerHTML = theHTML;
@@ -415,7 +413,7 @@ const scrambler = {
         cantDoScrambleStripe.style.display = canScramble ? "none" : "flex";
         showScrambled.style.display = canScramble ? "flex" : "none";
 
-        document.getElementById("languageControl").innerHTML = scrambler.pickAFlag();        //  theFlag;
+       // document.getElementById("languageControl").innerHTML = scrambler.pickAFlag();        //  theFlag;
 
         this.refreshScramblerStatus();
     },
@@ -454,7 +452,7 @@ const scrambler = {
      * @returns {*}
      */
     pickAFlag: function () {
-        const theRawFlags = DG.plugins.scrambler.flags;
+        const theRawFlags = myStrings.flags;
         const theFlags = theRawFlags.split(",");
         const theIndex = Math.floor(Math.random() * theFlags.length);
         return theFlags[theIndex];
