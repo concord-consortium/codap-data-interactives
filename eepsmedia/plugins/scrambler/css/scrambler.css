@@ -1,0 +1,99 @@
+
+/*
+    define variables for css!
+ */
+:root {
+    --codap-color : #72bfca;
+    --bg-top-color : #678;        /* #eef;    */
+    --bg-bottom-color : #234;
+    --main-text-color : #cde;
+    --main-bg-color : #bcd;
+    --code-bg-color : #567;
+    --code-font-color : #eff;
+    --drag-bg-color : #def;
+}
+
+body {
+    margin : 0;
+    padding : 0;
+    color : #333;
+    font-family: "Sirin Stencil",sans-serif;
+    font-size: small;
+    min-height: 100vh;      /* make <body> fill the plugin */
+    /*background: linear-gradient(#dde, #aab );*/
+}
+
+code {
+    color : var(--code-font-color);
+    font-family: "Sirin Stencil",sans-serif;
+    background-color: var(--code-bg-color);
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    border-radius: 0.2em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#languageControl {
+    font-size: larger;
+}
+
+.body-no-drag {
+    background-color: var(--main-bg-color);
+
+}
+
+.body-drag {
+    background-color: var(--drag-bg-color);;
+}
+
+html {
+    background-color: var(--main-bg-color);;
+}
+
+h1 {
+    font-size: large;
+    font-family : Verdana, sans-serif;
+}
+
+button {
+    cursor : pointer;
+    color : white;
+    background-color: #468;
+    border-radius: 0.5em;
+}
+
+.scrambler-stripe {
+    padding: .3em 1em .3em 1em;
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    /*background-color: #dcb;*/
+}
+
+.stripe-element {
+    margin-right: 1em;
+    cursor: default;
+}
+
+.flag-element {
+    margin-right: 0;
+    font-size: large;
+    cursor: pointer;
+}
+
+.scrambler-swal {
+    height : 100%;
+}
+
+#howManyBox {
+    width : 3em;
+}
+
+.roundButton  {
+    width:  16px;
+    height: 16px;
+    cursor: pointer;
+
+}

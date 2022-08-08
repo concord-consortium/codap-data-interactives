@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scrambler Help</title>
+
+    <link rel='stylesheet' type='text/css' href='scrambler-help.css'/>
+
+</head>
+<body>
+
+<h1>Scrambler Help</h1>
+
+<img src="art/scrambler-plugin-basic.png" alt="scrambler screenshot" width="400">
+
+<p>2022-07-28</p>
+
+<p>Here we describe the current version of the <b>scrambler</b> plugin.</p>
+
+<ul>
+    <li> Choose <b>scrambler</b> from the <b>Plugins</b> menu in CODAP.
+    <li> Prepare your dataset for scrambling:
+        <ul>
+            <li>Make a <i>measure</i> (a new attribute with a formula) that describes the effect you're studying.
+            <li>Drag it left in the table (or up in the case card) so that it's at a higher level in the hierarchy.
+        </ul>
+    <li>If there is anything wrong with the way you have prepared the table, you'll get a message with help.</li>
+    <li>To specify the dataset and the attribute you want to scramble,
+        <i>drag the attribute into the <b>scrambler</b> plugin</i>.
+        (We're set up to scramble <code>Gender</code> in the <code>heights</code> dataset).</li>
+    <li> Adjust the number and then click the buttons to create as many "scrambles" as you wish, up to 1000.
+        (Usually, 400 is plenty.)
+    <li>A table of measures from the scrambling appears.
+    Analyze these to see if your original data seem unusual compared to the scrambled data.</li>
+</ul>
+
+<p>You can try all this yourself in
+    <a href="https://codap.concord.org/releases/latest/static/dg/en/cert/index.html#shared=https%3A%2F%2Fcfm-shared.concord.org%2FjEeBNIbK29v5XwtZdmhy%2Ffile.json"
+       target="_blank">this sample document</a>
+</p>
+
+<p>(Want a task? That document is set up to compare 13-year-olds.
+    Make it compare 10-year-olds!)</p>
+
+<h2>Background and an Example</h2>
+
+<p>The point of scrambling is to create a <i>sampling distribution</i> of some <i>measure</i>.
+    For example, suppose that in your dataset it appears
+    that 13-year-old boys are taller than 13-year-old girls.
+    You want to assess whether it's <i>plausible</i>
+    that the difference in means that you see could happen by chance.</p>
+
+<p>To do that, you will make the "null hypothesis" real:
+    you will break any association between <code>Gender</code> and <code>Height</code>
+    by scrambling the values for one of those attributes.
+    Then you look to see how different the boys and girls seem to be
+    when the difference <i>is</i> just chance.</p>
+
+<p>But one trial is not enough.
+    Furthermore, you have to decide what, specifically,
+    to look at to say that the boys are taller.
+    In this situation, that means coming up with a number
+    that represents how much taller the boys are.</p>
+
+<p>This is very important, and bears highlighting:</p>
+
+<p style="margin-left: 2.0em">
+    <b>You must create a <i>measure</i> of the effect you're seeing.
+    It's not enough to say that boys are taller than girls;
+    you have to say <i>how much</i> taller.</b>
+</p>
+
+<img src="art/scrambler-data-table.png" alt="scrambler screen shot">
+
+<p>In our example, we used the difference of means
+    and called it <code>dMeanHeights</code> &mdash;
+    and dragged it leftwards in the table.
+    The CODAP formula looks like this:</p>
+
+<code style="margin-left: 2.0em">
+    mean(Height, Gender="Male") - mean(Height, Gender="Female")
+</code>
+
+<p>We see how much taller boys are in the actual data (in our case, 5.87 cm in the mean).
+    Then we will see how much taller they are when the data have been all scrambled.
+    Because the data are randomly assigned, sometimes the difference will be positive,
+    sometimes negative (the "girls" will be taller).</p>
+
+<p>But is it plausible that 5.87 could appear by chance?</p>
+
+<p>Repeat this process a few hundred times and see.
+    In this case, no: even though it's <i>possible</i> that the data could be that extreme
+    (after all, the real data <i>could</i> come up when you scramble),
+    it doesn't happen very often.</p>
+
+<h3>Seeing the scrambled data</h3>
+
+<p>
+    If you want to see what one of these scrambled datasets looks like, click the <b>show scrambled</b> button.
+    You can make a graph and see how the "male" and "female"
+    height distributions are more similar (but not identical).
+    The graph will update as you scramble.
+</p>
+
+<h2> Analyzing your results</h2>
+
+<p>Make a graph of the measure from the "measures" table.
+    You'll see the sampling distribution.
+    The picture shows the results from 200 scrambles.</p>
+
+<img src="art/scrambler-measures.png" alt="scrambler measures screen shot">
+
+<p>You want to know what proportion of those measures
+    are more extreme than your "test statistic"
+    (which in our case is 5.87, the difference in mean heights).</p>
+
+<p>Here's the trick:</p>
+
+<ul>
+    <li> In the graph, go to the "ruler" palette and press the <b>Movable Value</b> button.
+    <li> Click <b>Add</b>. A movable line appears on the plot.
+    <li> in the "ruler" palette again, click <b>percent</b>.
+</ul>
+<p>Now you can see what percentage are on each side of the line.</p>
+
+<p>Set the line to 5.87 (you might need to rescale) to see how unusual it is!
+    (Chances are, very few of your measures, positive or negative, are that large.)</p>
+
+<h2> Why do things disappear?</h2>
+
+<p>
+    If you change the structure of your dataset (for example, by making a new measure),
+    it might change what gets scrambled or collected.
+In that case, the scrambler deletes your scrambled and measures datasets.
+This seems alarming, but of course it does not take long to re-collect
+any measures you might have taken...and besides, now you know they
+refer to the current version of the data.</p>
+
+<p>If you change languages, that also happens, because the names of the "top"
+attributes in the measures dataset change.</p>
+
+<hr>
+<p>Designed and written by Tim Erickson, Senior Scientist, Epistemological Engineering.
+    Thanks to Bill Finzer and the whole CODAP team at Concord.
+    Additional thanks to Susanne Podworny and other colleagues at the University of Paderborn in Germany.
+    Visit <a href="https://codap.xyz">codap.xyz</a> to see what else might be coming this way.</p>
+</body>
+</html>

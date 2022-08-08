@@ -1,0 +1,120 @@
+<!--
+    local just this: http://localhost/plugins/scrambler/
+    local in local codap :
+        http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/plugins/scrambler
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scrambler 2021</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Sirin+Stencil:400' rel='stylesheet'>
+
+    <link rel='stylesheet' type='text/css' href='css/scrambler.css'/>
+
+    <!-- These scripts take care of the communication with CODAP  -->
+
+    <script src="../../common/src/iframe-phone.js"></script>
+    <script src="../../common/src/codapInterface.js"></script>
+    <script src="../../common/src/pluginHelper.js"></script>
+<!--
+    <script src="../../common/src/pluginLang.js"></script>
+-->
+
+    <script src="src/scrambler.js"></script>
+    <script src="src/connect.js"></script>
+    <script src="src/CODAPDataset.js"></script>
+    <script src="src/notifications.js"></script>
+    <script src="src/strings/strings.js"></script>
+
+    <script src="src/strings/strings.en.js"></script>
+    <script src="src/strings/strings.es.js"></script>
+    <script src="src/strings/strings.de.js"></script>
+
+    <script src="src/strings/pluginLang.js"></script>
+    <script src="src/strings/tr.js"></script>
+
+<!--
+    <script src="../../common/sweetalert2/dist/sweetalert2.all.min.js"></script>
+-->
+
+</head>
+
+
+<body id="entire-scrambler" class="body-no-drag">
+<div class="scrambler-stripe">
+    <div class="stripe-element" ><h1 id="scramblerTitle">scrambler</h1></div>
+    <!--
+        <div>
+            <img class="stripe-element roundButton"
+                 src="../../common/art/refresh-empty.png"
+                 onclick="alert('Sorry, this button is not working properly :(')"
+                 title="Click to refresh the data"
+                 alt="refresh icon"
+            >
+    </div>
+-->
+
+    <div class="stripe-element" >
+        <img src="../../common/art/info.png"
+             alt="help button" title="Click for detailed help"
+             class="roundButton" onclick="scrambler.openHelp()">
+    </div>
+
+    <div class="stripe-element" id="attributeReport"></div>
+    <div class="stripe-element flag-element" id="languageControl" onclick="scrambler.changeLanguage()"></div>
+
+</div>
+
+<div class="scrambler-stripe" id="scramblerStatus">
+</div>
+
+<div class="scrambler-stripe" id="how-many-stripe">
+    <label class="stripe-element" for="howManyBox" id="howManyLabel">how many? </label>
+    <input type="number"
+           class="stripe-element"
+           id="howManyBox"
+           value="10"
+           min="1"
+           max="1000"
+           oninput="scrambler.handleUIChoice()">
+
+    <div class="stripe-element" id="scramble-buttons-stripe-element">
+        <button class="stripe-element" id="howManyButton"
+                onclick="scrambler.doScramble()">🚫
+        </button>
+
+        <button class="stripe-element"
+                onclick="scrambler.doScramble(1)">1x
+        </button>
+
+    </div>
+
+    <div id="progress"></div>
+
+</div>
+
+<div class="scrambler-stripe" id="cantScrambleStripe">
+
+</div>
+
+<div class="scrambler-stripe" id="showScrambledDIV">
+    <button class="stripe-element" id="scrambledDataButtonName"
+            onclick="connect.showScrambled()">show scrambled
+    </button>
+
+</div>
+
+</body>
+
+<script>
+    window.onload = function () {
+        scrambler.initialize();
+    }
+</script>
+
+</html>

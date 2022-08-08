@@ -1,0 +1,79 @@
+
+/*
+    define variables for css!
+ */
+:root {
+    --codap-color : #72bfca;
+    --bg-top-color : #678;        /* #eef;    */
+    --bg-bottom-color : #234;
+    --main-text-color : #cde;
+    --main-bg-color : #bcd;
+    --light-bg-color : #cde;
+
+}
+
+body {
+    margin : 0;
+    padding : 1.5em;
+    width: 45.0em;
+    color : #333;
+    font-family: "Helvetica Neue", Verdana, sans-serif;
+    font-size: small;
+    background-color: var(--light-bg-color);;
+
+}
+
+html {
+    background-color: var(--main-bg-color);;
+}
+
+code {
+    font-family: Consolas, Menlo, monospace;
+    font-weight: bold;
+    color: darkblue;
+}
+li {
+    margin-bottom: 0.5em;
+}
+
+p, li {
+    line-height: 1.5;
+    font-family: Georgia, serif;
+}
+h1 {
+    font-size: large;
+}
+
+button {
+    cursor : pointer;
+    color : white;
+    background-color: #468;
+    border-radius: 0.5em;
+}
+
+.scrambler-stripe {
+    padding: .3em 0 .3em 1em;
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    /*background-color: #dcb;*/
+}
+
+.stripe-element {
+    margin-right: 1em;
+}
+
+.scrambler-swal {
+    height : 100%;
+}
+
+#howManyBox {
+    width : 3em;
+}
+
+.roundButton  {
+    width:  16px;
+    height: 16px;
+    cursor: pointer;
+
+}
