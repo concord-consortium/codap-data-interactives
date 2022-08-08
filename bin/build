@@ -19,7 +19,7 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy"
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy eepsmedia/plugins/scrambler"
 HIDDEN_DIRS="Common eepsmedia/common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
@@ -38,7 +38,7 @@ function makeIndexJSON() {
     [ "$tmp" != "" ] && tmp="$tmp,"
     tmp="$tmp\"/$t\""
   done
-  echo tmp=$tmp
+  # echo tmp=$tmp
   cat $PLUGIN_MAP_FILE |
 #    $JSON_PARSER --argjson paths "[$tmp]" '[$paths[] as $t | .data_interactives[] | select(.path|startswith($t))]' > ${PUBLISHED_PLUGIN_MAP_FILE}
     $JSON_PARSER '[.data_interactives[] | select(.isStandard=="true")]' > ${PUBLISHED_PLUGIN_MAP_FILE}

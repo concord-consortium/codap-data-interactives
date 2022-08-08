@@ -862,6 +862,18 @@
         "Generators",
         "Tools"
       ]
+    },
+    {
+      "title": "Scrambler",
+      "description": "Investigate a hypothesis by messing up the data",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/scrambler/index.html",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Tools"
+      ]
     }
   ]
 }
