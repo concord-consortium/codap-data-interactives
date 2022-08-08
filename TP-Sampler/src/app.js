@@ -1,6 +1,6 @@
 require(
-['lib/snap-plugins', './codap-com', './view', './ui', './utils'],
-function(Snap, CodapCom, View, ui, utils) {
+['lib/snap-plugins', './codap-com', './view', './ui', './utils', './localeManager'],
+function(Snap, CodapCom, View, ui, utils, localeMgr) {
 
   var s = Snap("#model svg"),
 
@@ -222,7 +222,7 @@ function(Snap, CodapCom, View, ui, utils) {
         Array.prototype.splice.apply(variables, [0, sequence.length].concat(sequence));
         codapCom.logAction("RequestedItemSequence: %@", sequenceRequest);
       }
-      else alert('Sorry. Unable to parse that. Here are some valid list and range expressions: "a,b,b,b", "cat,cat,dog", "1-50", "-5 to 5", "1.0 to 5.0", or "A-Z"');
+      else alert(localeMgr.tr('DG.plugin.Sampler.sample-list.parse-error'));
     }
 
     view.render();
@@ -230,7 +230,7 @@ function(Snap, CodapCom, View, ui, utils) {
 
   function showSequencePrompt() {
     // eslint-disable-next-line no-alert
-    return window.prompt('Enter a list (e.g. "cat, cat, dog") or a range (e.g. "1-50", "-5 to 5", "1.0 to 5.0", "A-Z")', "a to c");
+    return window.prompt(localeMgr.tr('DG.plugin.Sampler.sample-list.prompt'), localeMgr.tr(DG.plugin.Sampler.sample-list.initial-value));
   }
 
   /**
@@ -391,7 +391,6 @@ function(Snap, CodapCom, View, ui, utils) {
           }
         } else {
           addValuesToCODAPNoDelay();
-          return;
         }
       }
 
@@ -589,4 +588,5 @@ function(Snap, CodapCom, View, ui, utils) {
 
   // initialize and render the model
   getStarted();
+  localeMgr.init();
 });

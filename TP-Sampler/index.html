@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<title>Sampler</title>
 <html lang="en">
   <head>
-    <title>TP-Sampler</title>
+    <meta charset="utf-8">
+    <title data-text="DG.plugin.Sampler.title"></title>
     <link rel="stylesheet" type="text/css" href="tp-sampler.css" />
   </head>
   <body>
     <div id="tabs">
-      <div id="tab-sampler" class="active">Sampler</div>
-      <div id="tab-options">Options</div>
-      <div id="tab-about">About</div>
+      <div id="tab-sampler" class="active" data-text="DG.plugin.Sampler.tab.sampler"></div>
+      <div id="tab-options" data-text="DG.plugin.Sampler.tab.options"></div>
+      <div id="tab-about" data-text="DG.plugin.Sampler.tab.about"></div>
     </div>
     <div id="sampler">
       <div id="top-bar">
-        <button id="run">START</button>
-        <button id="stop">STOP</button>
+        <button id="run" data-text="DG.plugin.Sampler.top-bar.run"></button>
+        <button id="stop" data-text="DG.plugin.Sampler.top-bar.stop"></button>
         <input id="speed" type="range" min="0" max="3" value="1" list="speedsettings">
         <datalist id="speedsettings">
           <option>0</option>
@@ -23,84 +22,78 @@
           <option>2</option>
           <option>3</option>
         </datalist>
-        <span id="speed-text">Medium</span>
+        <span id="speed-text" data-text="DG.plugin.Sampler.top-bar.medium-speed"></span>
       </div>
       <div id="draw-settings">
         <div>
-          <span>Select</span>
+          <span data-text="DG.plugin.Sampler.draw-settings.select-items-p1"></span>
           <input id="sample_size" />
-          <span>items</span>
+          <span data-text="DG.plugin.Sampler.draw-settings.select-items-p2"></span>
         </div>
         <div>
-          <span>Collect&nbsp;</span>
+          <span data-text="DG.plugin.Sampler.draw-settings.collect-samples-p1"></span>
           <input id="repeat" />
-          <span>samples</span>
+          <span data-text="DG.plugin.Sampler.draw-settings.collect-samples-p2"></span>
         </div>
       </div>
       <div id="model">
         <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
       </div>
       <div id="model-controls">
-        <button id="add-variable" title="Add the next item to the mixer">+</button>
-        <button id="remove-variable" title="Remove the last item from the mixer">-</button>
-        <button id="add-variable-series" title="Specify a series of labels for items">...</button>
+        <button id="add-variable" data-title="DG.plugin.Sampler.model-controls.add-variable-title">+</button>
+        <button id="remove-variable" data-title="DG.plugin.Sampler.model-controls.remove-variable-title">-</button>
+        <button id="add-variable-series" data-title="DG.plugin.Sampler.model-controls.add-series-title">...</button>
         <select id="select-collection" class="hidden" name="select">
-          <option selected>Loading collections...</option>
+          <option selected data-text="DG.plugin.Sampler.model-controls.select-collection-loading"></option>
         </select>
       </div>
       <div>
-        <button id="reset" title="Delete all data and extra item-level attributes">CLEAR DATA</button>
+        <button id="reset" data-title="DG.plugin.Sampler.reset-title" data-text="DG.plugin.Sampler.reset-text"></button>
       </div>
       <div id="device-selection">
-        <button id="mixer" class="active">Mixer</button>
-        <button id="spinner">Spinner</button>
-        <button id="collector">Collector</button>
+        <button id="mixer" class="active" data-text="DG.plugin.Sampler.device-selection.mixer"></button>
+        <button id="spinner" data-text="DG.plugin.Sampler.device-selection.spinner"></button>
+        <button id="collector" data-text="DG.plugin.Sampler.device-selection.collector"></button>
       </div>
       <input id="variable-name-change" type="text" />
       <div id="model-cover" class="hidden">?</div>
-      <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="transparent cover"></div>
+      <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="" data-alt="DG.plugin.Sampler.spinner-cover-alt"></div>
     </div>
     <div id="options" class="hidden">
       <div id="selection-options" class="disablable">
-        <div id="select-cases">Select cases</div>
+        <div id="select-cases" data-text="DG.plugin.Sampler.selection-options.select-cases"></div>
         <input type="radio" id="with-replacement" name="replacement-group" value="with-replacement">
-        <label for="with-replacement">with replacement</label>
+        <label for="with-replacement" data-text="DG.plugin.Sampler.selection-options.with-replacement"></label>
         <br>
         <input type="radio" id="without-replacement" name="replacement-group" value="without-replacement">
-        <label for="without-replacement">without replacement</label>
+        <label for="without-replacement" data-text="DG.plugin.Sampler.selection-options.without-replacement"></label>
       </div>
       <div id="hide-options" class="disablable">
         <input type="checkbox" id="hideModel" name="hideModel" value="hideModel">
-        <label for="hideModel">Hide model</label>
+        <label for="hideModel" data-text="DG.plugin.Sampler.hide-options.hide"></label>
       </div>
       <div id="password-area">
-        <label for="password" id="pass-text">Lock settings with password:</label>
+        <label for="password" id="pass-text" data-text="DG.plugin.Sampler.password-options.title"></label>
         <div>
           <input id="password" type="text" />
-          <button id="pass-lock">Lock</button>
+          <button id="pass-lock" data-text="DG.plugin.Sampler.password-options.lock"></button>
         </div>
-        <div id="password-failed" class="hidden">
-          Password is incorrect.
+        <div id="password-failed" class="hidden" data-text="DG.plugin.Sampler.password-options.password-failed">
         </div>
       </div>
       <div>
-        <button id="reload-settings">Reload default settings</button>
+        <button id="reload-settings" data-text="DG.plugin.Sampler.options.reload"></button>
       </div>
     </div>
     <div id="about-panel" class="hidden">
       <div>
-        <p>
-          The CODAP Sampler plugin can randomly choose items placed in a mixer,
-          choose items based on sector sizes of a spinner, or choose cases
-          from a collection of data.
+        <p data-text="DG.plugin.Sampler.about.paragraph1">
         </p>
         <ul>
-          <li><b>Select &lt;n&gt; items</b> determines the sample size,
-            while</li>
-          <li><b>Collect &lt;n&gt; samples</b> controls how many
-            samples to repeat in a given experiment.</li>
+          <li data-text="DG.plugin.Sampler.about.item1"></li>
+          <li data-text="DG.plugin.Sampler.about.item2"></li>
         </ul>
-        <p>
+        <p data-text="DG.plugin.Sampler.about.paragraph2">
           The speed of sampling can be controlled, as well as whether to
           sample with or without replacement (in Options tab).
           The data generated from the Sampler will appear in a hierarchical
@@ -113,22 +106,18 @@
           The items level shows each individual value drawn from the Sampler.
           This
           <a href="https://www.youtube.com/watch?v=aPibzv3goJY&list=PLq_mgFaS8OGYF1cKF4IrBl_0RwB_SWQk1&index=2"
-             target="_blank" rel="noreferrer noopener">video tutorial</a>
+             target="_blank" rel="noreferrer noopener" data-text="DG.plugin.Sampler.about.tutorial-link-text">video tutorial</a>
           explains Sampler basics.
         </p>
-        <p>
+        <p data-text="DG.plugin.Sampler.about.paragraph3">
           The Sampler in CODAP was inspired by the Sampler in
-          <a href="http://www.tinkerplots.com/" target="_blank" rel="noreferrer noopener">TinkerPlots</a>.
+          <a href="http://www.tinkerplots.com/" target="_blank" rel="noreferrer noopener" data-text="DG.plugin.Sampler.about.tinkerPlots-link-text">TinkerPlots</a>.
           It was developed by the <a href="https://concord.org" target="_blank" rel="noreferrer noopener">Concord Consortium</a> as part of the
           <a href="https://hirise.fi.ncsu.edu/projects/esteem/" target="_blank" rel="noreferrer noopener">ESTEEM project</a>
           with support by the National Science Foundation
           under Grant No. DUE <span style="color:red;">1625713</span> awarded to North Carolina State
           University.
           <img src="esteem-logo.jpg" alt="Esteem logo" style="float:right; width:100px;margin-left:1em;"/>
-          Any opinions, findings, and conclusions or recommendations in
-          this material are those of the principal investigators and do
-          not necessarily reflect the views of the National Science
-          Foundation.
         </p>
       </div>
     </div>
