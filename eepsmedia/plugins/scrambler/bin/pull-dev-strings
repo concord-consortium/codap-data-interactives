@@ -1,0 +1,17 @@
+#!/bin/sh
+PROGNAME=$(basename $0)
+DIRNAME=$(dirname $0)
+
+STRIP_COMMENTS=${DIRNAME}/../node_modules/.bin/strip-json-comments
+JQ=${DIRNAME}/../node_modules/node-jq/bin/jq
+MASTER_STRINGS_FILE=${DIRNAME}/../../codap/lang/strings/en-US.json
+
+PREFIX=$1
+
+if [ "$PREFIX" == "" ] ; then
+  echo usage $PROGNAME prefix
+  exit 1
+fi
+
+$STRIP_COMMENTS $MASTER_STRINGS_FILE | 
+  $JQ 'to_entries | map(select(.key | startswith("'$PREFIX'"))) | {"en-US": from_entries}'

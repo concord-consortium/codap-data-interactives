@@ -1,0 +1,11 @@
+{
+  "name": "scrambler",
+  "version": "1.5.0",
+  "description": "A CODAP plugin to test hypotheses by randomizing cases.",
+  "main": "src/scrambler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tim Erickson",
+  "license": "ISC"
+}
