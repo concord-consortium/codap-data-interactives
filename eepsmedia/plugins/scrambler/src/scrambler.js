@@ -62,9 +62,9 @@ const scrambler = {
         }
 
         //  set up the language
-        this.state.lang = pluginLang.figureOutLanguage('en', scramblerStrings.languages);
-        myStrings = await scramblerStrings.initializeStrings(this.state.lang);
-        scramblerStrings.setStrings();
+        this.state.lang = pluginLang.figureOutLanguage('en', stringUtility.languages);
+        myStrings = await stringUtility.initializeStrings(this.state.lang);
+        stringUtility.setStrings();
 
         await this.refreshAllData();
     },
@@ -77,37 +77,37 @@ const scrambler = {
             const tAttName = scrambler.state.scrambleAttributeName;
 
             const attReport = (this.scrattributeExists)
-                ? tr(myStrings.sfScrambledAttribute, tAttName) //    `${scrambler.strings.sScramble} ${tAttName}`
-                : myStrings.sNoAttribute;
+                ? stringUtility.tr('sfScrambledAttribute', tAttName) //    `${scrambler.strings.sScramble} ${tAttName}`
+                : stringUtility.tr('sNoAttribute');
 
             document.getElementById("attributeReport").innerHTML = attReport;
 
             if (this.datasetHasMeasure) {
                 if (this.scrattributeExists) {
                     if (this.scrattributeIsLeaf) {
-                        theHTML = tr(myStrings.sfOKtoScramble, tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
+                        theHTML = tr('sfOKtoScramble', tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
                     } else {
                         const possibles = scrambler.sourceDataset.possibleScrambleAttributeNames(tAttName); //  this is an object
                         const suchAs = (possibles.array.length == 1)    //  possibles.array is the list of suitable attributes
                             ? `${possibles.array[0]}`
-                            : `${possibles.array[0]}</code> ${myStrings.sOr} <code>${possibles.array[1]}`;
+                            : `${possibles.array[0]}</code> ${stringUtility.tr('sOr')} <code>${possibles.array[1]}`;
                         const colls = scrambler.sourceDataset.structure.collections;
                         const lastCollName = colls[colls.length - 1].name;
                         if (possibles.hasFormula) { //  remember: if it has a formula it will not be listed among the leaves
-                            theHTML = tr(myStrings.sfFormulaProblem, tAttName, lastCollName, suchAs);
+                            theHTML = stringUtility.tr('sfFormulaProblem', tAttName, lastCollName, suchAs);
                         } else {
-                            theHTML = tr(myStrings.sfNotALeafProblem, tAttName, lastCollName, suchAs);
+                            theHTML = stringUtility.tr('sfNotALeafProblem', tAttName, lastCollName, suchAs);
                         }
                     }
 
                 } else {
-                    theHTML = myStrings.sNoScrambleAttribute;
+                    theHTML = stringUtility.tr('sNoScrambleAttribute');
                 }
             } else {
-                theHTML = tr(myStrings.sfNoMeasure, tDSTitle);
+                theHTML = stringUtility.tr('sfNoMeasure', tDSTitle);
             }
         } else {
-            theHTML = myStrings.sNoDataset;
+            theHTML = stringUtility.tr('sNoDataset');
         }
 
         document.getElementById(`scramblerStatus`).innerHTML = theHTML;
@@ -425,38 +425,38 @@ const scrambler = {
      *
      * @returns {Promise<void>}
      */
-    changeLanguage: async function () {
-
-        //  cycle to the next language in the list (no menu, just cycle...)
-
-        const theLanguages = scramblerStrings.languages;
-        const nLanguages = theLanguages.length;
-        let theIndex = theLanguages.indexOf(scrambler.state.lang) + 1;
-
-        if (theIndex >= nLanguages) {
-            theIndex = 0;
-        }
-
-        scrambler.state.lang = theLanguages[theIndex];
-        //  scrambler.strings = await scramblerStrings.initializeStrings(this.state.lang);
-        DG.plugins = await scramblerStrings.initializeStrings(this.state.lang);
-        scramblerStrings.setStrings();
-        scrambler.state.dirtyMeasures = true;
-
-        scrambler.refreshUIDisplay();
-    },
+    // changeLanguage: async function () {
+    //
+    //     //  cycle to the next language in the list (no menu, just cycle...)
+    //
+    //     const theLanguages = stringUtility.languages;
+    //     const nLanguages = theLanguages.length;
+    //     let theIndex = theLanguages.indexOf(scrambler.state.lang) + 1;
+    //
+    //     if (theIndex >= nLanguages) {
+    //         theIndex = 0;
+    //     }
+    //
+    //     scrambler.state.lang = theLanguages[theIndex];
+    //     //  scrambler.strings = await scramblerStrings.initializeStrings(this.state.lang);
+    //     DG.plugins = await stringUtility.initializeStrings(this.state.lang);
+    //     stringUtility.setStrings();
+    //     scrambler.state.dirtyMeasures = true;
+    //
+    //     scrambler.refreshUIDisplay();
+    // },
 
     /**
      * Pick a flag at random for the set of flags for a language
      *
      * @returns {*}
      */
-    pickAFlag: function () {
-        const theRawFlags = myStrings.flags;
-        const theFlags = theRawFlags.split(",");
-        const theIndex = Math.floor(Math.random() * theFlags.length);
-        return theFlags[theIndex];
-    },
+    // pickAFlag: function () {
+    //     const theRawFlags = myStrings.flags;
+    //     const theFlags = theRawFlags.split(",");
+    //     const theIndex = Math.floor(Math.random() * theFlags.length);
+    //     return theFlags[theIndex];
+    // },
 
     /**
      * Open the relevant help html (by language) in a new tab.

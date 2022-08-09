@@ -39,32 +39,11 @@ const pluginLang = {
      * Get a two-letter language code from a variety of sources.
      *
      * @param iDefaultLanguage  the default laguage in case none of the following work
-     * @param iSupportedLanguages an array of two-letter codes for the languages the plugin supports
      * @returns {*}     resulting two-letter code
      */
-    figureOutLanguage:  function (iDefaultLanguage, iSupportedLanguages) {
+    figureOutLanguage:  function (iDefaultLanguage) {
 
-        let lOut = iDefaultLanguage;
-
-        //  find the user's favorite language that's actually in our list
-
-        const userLanguages = Array.from(navigator.languages).reverse();
-        const pluginLanguages = iSupportedLanguages;
-
-        userLanguages.forEach((L) => {
-            console.log(`user has lang ${L}`);
-            const twoLetter = L.slice(0, 2).toLowerCase();
-            if (pluginLanguages.includes(twoLetter)) {
-                if (lOut !== twoLetter) {
-                    lOut = twoLetter;
-                    console.log(`    change lang to ${lOut} from user preferences`);
-                }
-            }
-        })
-
-        lOut = this.getLangFromURL() || lOut;   //  lang from URL has priority
-
-        return lOut;
+        return this.getLangFromURL() || iDefaultLanguage;
     },
 
     /**
