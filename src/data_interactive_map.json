@@ -865,10 +865,11 @@
     },
     {
       "title": "Scrambler",
-      "description": "Investigate a hypothesis by messing up the data",
+      "description": "Use the scrambler to understand and to perform randomization tests.",
       "width": 400,
       "height": 600,
       "path": "/eepsmedia/plugins/scrambler/index.html",
+      "icon": "/eepsmedia/plugins/scrambler/images/scrambler 123.png",
       "visible": "true",
       "isStandard": "true",
       "categories": [
