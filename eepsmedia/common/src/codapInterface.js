@@ -113,13 +113,14 @@
      * initiated by the init method if CODAP was started from a previously saved
      * document.
      */
-    var interactiveState = {};
+    let interactiveState = {};
 
     /**
      * A list of subscribers to messages from CODAP
      * @param {[{actionSpec: {RegExp}, resourceSpec: {RegExp}, handler: {function}}]}
      */
-    var notificationSubscribers = [];
+    let notificationSubscribers = [];
+    let nextNotificationIndex = 0;
 
     function matchResource(resourceName, resourceSpec) {
         return resourceSpec === '*' || resourceName === resourceSpec;
@@ -127,6 +128,7 @@
 
     function emptyNotifications() {
         notificationSubscribers = [];
+        nextNotificationIndex = 0;
     }
 
     function notificationHandler (request, callback) {
@@ -173,16 +175,22 @@
         } else if (action === 'notify') {
             requestValues.forEach(function (value) {
                 notificationSubscribers.forEach(function (subscription) {
-                    // pass this notification to matching subscriptions
-                    handled = false;
-                    if ((subscription.actionSpec === action) && matchResource(resource,
+                    if (subscription) {     //  it could be null if it has been removed, so avoid any trouble here...
+                        // pass this notification to matching subscriptions
+                        handled = false;
+                        if ((subscription.actionSpec === action) && matchResource(resource,
                             subscription.resourceSpec) && (!subscription.operation ||
-                        (subscription.operation === value.operation) && subscription.handler)) {
-                        var rtn = subscription.handler(
-                            {action: action, resource: resource, values: value});
-                        if (rtn && rtn.success) { stats.countCodapRplSuccess++; } else{ stats.countCodapRplFail++; }
-                        success = (success && (rtn ? rtn.success : false));
-                        handled = true;
+                            (subscription.operation === value.operation) && subscription.handler)) {
+                            var rtn = subscription.handler(
+                                {action: action, resource: resource, values: value});
+                            if (rtn && rtn.success) {
+                                stats.countCodapRplSuccess++;
+                            } else {
+                                stats.countCodapRplFail++;
+                            }
+                            success = (success && (rtn ? rtn.success : false));
+                            handled = true;
+                        }
                     }
                 });
                 if (!handled) {
@@ -391,12 +399,29 @@
             }
             hn = args.shift();
 
-            notificationSubscribers.push({
+            notificationSubscribers[nextNotificationIndex] = {
                 actionSpec: as,
                 resourceSpec: rs,
                 operation: os,
                 handler: hn
-            });
+            };
+
+            nextNotificationIndex++;
+            return nextNotificationIndex - 1;  //  index of the new subscriber
+        },
+
+        /**
+         * Created by Tim (help from Bill) 2021-06-08
+         * Turn off the notification at the given index.
+         *
+         * Note: really `codapInterface` should have `on()` supply a `latestIndex` and have this routine
+         * "off" it. Then any notification loops should skip the nulls.
+         *
+         * @param iSubscriberIndex
+         */
+        off: function(iSubscriberIndex) {
+            notificationSubscribers[iSubscriberIndex] = null;
+            // notificationSubscribers.splice(iSubscriberIndex,1);
         },
 
         /**

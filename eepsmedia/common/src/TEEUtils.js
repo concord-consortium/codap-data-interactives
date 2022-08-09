@@ -30,6 +30,57 @@
 
 var     TEEUtils = {
 
+
+    pluralize: function (iSingular = "noun", iArticle = "") {
+        const specialNouns = [
+            "fish", "deer", "series", "offspring", "sheep", "bison", "cod",
+        ]
+
+        let thePlural = iSingular;
+        const theLength = thePlural.length;
+        const lower = iSingular.toLocaleLowerCase();
+
+        if (!specialNouns.includes(lower)) {
+            const lastOne = lower.slice(-1);
+            const lastTwo = lower.slice(-2);
+
+            if (lower.slice(-5) === "craft") {
+                thePlural = iSingular;
+            } else if (thePlural === "man") {
+                thePlural = "men";
+            } else if (thePlural === 'woman') {
+                thePlural = 'women';
+            } else if (thePlural === 'child') {
+                thePlural = 'children';
+            } else if (thePlural === 'radius') {
+                thePlural = 'radii';
+            } else if (thePlural === 'die') {
+                thePlural = 'dice';
+                /*
+                            } else if (lastTwo === 'um') {
+                                thePlural = thePlural.slice(0, theLength - 2) + "a";
+                            } else if (lastTwo === 'us') {
+                                thePlural = thePlural.slice(0,theLength-2) + "i";
+                */
+            } else if (lastTwo === 'zz') {
+                thePlural = thePlural + "es";
+            } else if (lastOne === 's') {
+                thePlural = thePlural + "es";
+            } else if (lastOne === 'z') {
+                thePlural = thePlural + "zes";
+            } else if (lastOne === 'y' &&
+                lastTwo === 'ly' || lastTwo === 'ty' || lastTwo === 'dy' || lastTwo === 'cy' ||
+                lastTwo === 'fy' || lastTwo === 'gy' || lastTwo === 'zy' || lastTwo === 'ry' ||
+                lastTwo === 'my' || lastTwo === 'ny' || lastTwo === 'py' || lastTwo === 'sy') {
+                thePlural = thePlural.slice(0, theLength - 1) + "ies";
+            } else {
+                thePlural = thePlural + "s";
+            }
+        }
+
+        return thePlural;
+    },
+
     getListOfOneFieldInArrayOfObjects: function (iList, what) {
         var out = [];
         iList.forEach(function (o) {
@@ -172,6 +223,12 @@ var     TEEUtils = {
         return tDay;
     },
 
+    dateNumberToDayOfWeek: function (iMilliseconds) {
+        const tTempDate = new Date(iMilliseconds);
+        const tDay = tTempDate.getDay();      //  day of week, Sunday = 0, etc.
+        return tDay;
+    },
+
     newtonsMethod : function( iExpression, iStartValue, iTolerance ) {
         var maxIterations = 50;
         var nIterations = 0;
@@ -203,6 +260,18 @@ var     TEEUtils = {
 
         return { success : (nIterations < maxIterations), x : xCurrentValue, y : yCurrentValue , iterations : nIterations};
     },
+
+    zeroPad: function (num, numZeros) {
+        const n = Math.abs(num);
+        const zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+        let zeroString = Math.pow(10, zeros).toString().substr(1);
+        if (num < 0) {
+            zeroString = '-' + zeroString;
+        }
+
+        return zeroString + n;
+    },
+
 
     /**
      * Assumes a flat earth, where difference in longitude is scaled to the cosine of the latitude.
