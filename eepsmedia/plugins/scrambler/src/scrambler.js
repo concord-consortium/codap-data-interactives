@@ -85,7 +85,7 @@ const scrambler = {
             if (this.datasetHasMeasure) {
                 if (this.scrattributeExists) {
                     if (this.scrattributeIsLeaf) {
-                        theHTML = tr('sfOKtoScramble', tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
+                        theHTML = stringUtility.tr('sfOKtoScramble', tAttName, tDSTitle); //   `OK to scramble "${tAttName}" in dataset "${tDSTitle}"`;
                     } else {
                         const possibles = scrambler.sourceDataset.possibleScrambleAttributeNames(tAttName); //  this is an object
                         const suchAs = (possibles.array.length == 1)    //  possibles.array is the list of suitable attributes
