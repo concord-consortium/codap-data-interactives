@@ -1,11 +1,23 @@
 {
   "name": "scrambler",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A CODAP plugin to test hypotheses by randomizing cases.",
   "main": "src/scrambler.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Tim Erickson",
-  "license": "ISC"
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "node-fetch": "^3.2.10",
+    "node-jq": "^2.3.3",
+    "strip-json-comments": "^5.0.0"
+  },
+  "scripts": {
+    "strings:pull:prod:comment": "echo Pull strings from the po editor",
+    "strings:pull:prod": "node bin/pull-strings.js --prefix=DG.plugin.Scrambler > ./src/strings/strings.json",
+    "strings:pull:dev:comment": "echo overwrite strings file from CODAP src",
+    "strings:pull:dev": "bin/pull-dev-strings DG.plugin.Scrambler > ./src/strings/strings.json",
+    "strings:test-trans:comment": "echo Add test translation to strings file",
+    "strings:test-trans": "bin/makeTestTranslation",
+    "strings:pull": "npm run strings:pull:prod"
+  }
 }

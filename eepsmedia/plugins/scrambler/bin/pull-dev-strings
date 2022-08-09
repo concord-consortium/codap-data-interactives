@@ -1,15 +1,20 @@
 #!/bin/sh
-PROGNAME=$(basename $0)
-DIRNAME=$(dirname $0)
+# A utility to filter the master strings file by a prefix
+# and print the filtered results to standard out as a JSON object.
+# This is useful to create an english only strings file that may
+# have strings that are in CODAP but not yet published to the po
+# editor.
+PROGNAME="$(basename $0)"
+DIRNAME="$(dirname $0)"
 
-STRIP_COMMENTS=${DIRNAME}/../node_modules/.bin/strip-json-comments
-JQ=${DIRNAME}/../node_modules/node-jq/bin/jq
-MASTER_STRINGS_FILE=${DIRNAME}/../../codap/lang/strings/en-US.json
+STRIP_COMMENTS="${DIRNAME}/../node_modules/.bin/strip-json-comments"
+JQ="${DIRNAME}/../node_modules/node-jq/bin/jq"
+MASTER_STRINGS_FILE="${DIRNAME}/../../codap/lang/strings/en-US.json"
 
 PREFIX=$1
 
-if [ "$PREFIX" == "" ] ; then
-  echo usage $PROGNAME prefix
+if [ "$PREFIX" = "" ] ; then
+  echo "usage: $PROGNAME prefix"
   exit 1
 fi
 
