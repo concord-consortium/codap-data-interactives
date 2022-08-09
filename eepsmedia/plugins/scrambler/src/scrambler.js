@@ -265,7 +265,7 @@ const scrambler = {
 
         let theScrambledOne = this.sourceDataset.clone(scrambler.constants.scrambledPrefix);
 
-        if (connect.datasetExistsOnCODAP(theScrambledOne.datasetName)) {
+        if (await connect.datasetExistsOnCODAP(theScrambledOne.datasetName)) {
             if (scrambler.state.dirtyMeasures) {
                 await connect.deleteDatasetOnCODAP(theScrambledOne.datasetName);
                 await theScrambledOne.emitDatasetStructureOnly();
@@ -296,7 +296,7 @@ const scrambler = {
         let theMeasures = this.sourceDataset.clone(scrambler.constants.measuresPrefix);
         theMeasures.makeIntoMeasuresDataset();     //  strips out the "leaf" collection
 
-        if (connect.datasetExistsOnCODAP(theMeasures.datasetName)) {
+        if (await connect.datasetExistsOnCODAP(theMeasures.datasetName)) {
             if (scrambler.state.dirtyMeasures) {
                 //  empty the whole measures dataset
                 await connect.deleteDatasetOnCODAP(theMeasures.datasetName);
