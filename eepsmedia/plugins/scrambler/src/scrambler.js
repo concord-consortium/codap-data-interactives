@@ -488,7 +488,7 @@ const scrambler = {
 
     constants: {
         pluginName: "scrambler",
-        version: "1.5",
+        version: "1.6",
         dimensions: {height: 200, width: 366},      //      dimensions,
         defaultState: {
             lastDatasetName: null,
