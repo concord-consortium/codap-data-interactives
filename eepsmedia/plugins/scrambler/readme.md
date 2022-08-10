@@ -79,3 +79,41 @@ can correctly construct the measures dataset.
 
 This is where the "ID dictionary" comes in.
 You'll come across it in the code. 
+
+## Building
+
+This is an as is app. No build required.
+
+## Translating
+
+This app is a standard CODAP plugin, and as such, the authoritative source 
+for the ids of strings requiring translations is the following CODAP sourcefile:
+`lang/strings/en-US.json`. 
+The repository of translated strings is the Concord Consortium CODAP project on
+the Po Editor site: https://poeditor.com/.
+String ids for this plugin are distinguished in these repository by bearing a 
+prefix of `DG.plugin.Scrambler`.
+
+There are a couple of scripts that can help with managing translations.
+They have corresponding npm targets.
+The npm targets are: `strings:pull:prod` and `strings:pull:dev`.
+
+If a new CODAP translation is performed or a translation is updated, then
+the new strings can be incorporated by the following:
+```shell
+npm i
+npm run strings:pull:prod
+```
+This script will update the file `src/strings/strings.json` with the latest 
+values in the Po Editor repository.
+You will need administrative access to the CODAP project on the Po Editor to 
+perform this operation.
+
+If changes are being made to this plugin and the changes involve new or modified 
+strings, you should make the changes in the CODAP file mentioned above, 
+`lang/strings/en-US.json`. You can, of course, then push the changes to the 
+Po Editor and pull them down with the above script. If that is not an option, 
+the `strings:pull:dev` process will pull the English language strings from 
+CODAP. This will temporarily overwrite the strings file. When development has 
+completed, you can push the CODAP strings and pull as described above to create 
+and updated strings file with all languages.
