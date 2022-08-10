@@ -43,6 +43,12 @@ stringUtility = (function () {
         initializeStrings: async function (iLang = "en") {
 
             const allStrings = await this.fetchStrings();
+            Object.keys(allStrings).forEach(lang => {
+                let baseLang = lang.replace(/-.*/, '');
+                if (lang !== baseLang && !allStrings[baseLang]) {
+                    allStrings[baseLang] = allStrings[lang];
+                }
+            })
             let theStrings = allStrings[iLang] || allStrings['en'];     //   scramblerStrings[iLang];
             Object.keys(theStrings)
                     .forEach(key => theStrings[key.replace(stringIDPrefix, '')] = theStrings[key]);

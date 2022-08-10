@@ -263,7 +263,8 @@ const scrambler = {
      */
     setUpLocalScrambledDataset: async function () {
 
-        let theScrambledOne = this.sourceDataset.clone(scrambler.constants.scrambledPrefix);
+        let theScrambledOne = this.sourceDataset.clone(
+            stringUtility.tr(scrambler.constants.scrambledPrefixStringID));
 
         if (await connect.datasetExistsOnCODAP(theScrambledOne.datasetName)) {
             if (scrambler.state.dirtyMeasures) {
@@ -293,7 +294,7 @@ const scrambler = {
      */
     setUpLocalMeasuresDataset: async function () {
 
-        let theMeasures = this.sourceDataset.clone(scrambler.constants.measuresPrefix);
+        let theMeasures = this.sourceDataset.clone(stringUtility.tr(scrambler.constants.measuresPrefixStringID));
         theMeasures.makeIntoMeasuresDataset();     //  strips out the "leaf" collection
 
         if (await connect.datasetExistsOnCODAP(theMeasures.datasetName)) {
@@ -498,8 +499,8 @@ const scrambler = {
             iteration: 0,
             lang: `en`,
         },
-        measuresPrefix: "measures_",
-        scrambledPrefix: "scrambled_",
+        measuresPrefixStringID: "sMeasureDatasetPrefix",
+        scrambledPrefixStringID: "sScrambledDatasetPrefix",
         scrambleSetName: "scrset",
     },
 }

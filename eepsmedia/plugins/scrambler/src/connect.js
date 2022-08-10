@@ -49,9 +49,8 @@ connect = {
             tListResult.values.forEach((ds) => {
                 const theName = ds.name
                 //  measures and scrambled datasets are unsuitable
-                if (theName.startsWith(scrambler.constants.measuresPrefix) || theName.startsWith(scrambler.constants.scrambledPrefix)) {
-
-                } else {
+                if (!(theName.startsWith(stringUtility.tr(scrambler.constants.measuresPrefixStringID)) ||
+                    theName.startsWith(stringUtility.tr(scrambler.constants.scrambledPrefixStringID)))) {
                     tDSNameList.push(theName);
                 }
             });
