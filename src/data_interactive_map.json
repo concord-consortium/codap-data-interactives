@@ -63,6 +63,19 @@
       ]
     },
     {
+      "title": "Scrambler",
+      "description": "Use the scrambler to understand and to perform randomization tests.",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/scrambler/index.html",
+      "icon": "/eepsmedia/plugins/scrambler/images/scrambler 123.png",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Tools"
+      ]
+    },
+    {
       "title": "SRRI Ship Odyssey Data Game",
       "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
@@ -860,19 +873,6 @@
       "visible": "true",
       "categories": [
         "Generators",
-        "Tools"
-      ]
-    },
-    {
-      "title": "Scrambler",
-      "description": "Use the scrambler to understand and to perform randomization tests.",
-      "width": 400,
-      "height": 600,
-      "path": "/eepsmedia/plugins/scrambler/index.html",
-      "icon": "/eepsmedia/plugins/scrambler/images/scrambler 123.png",
-      "visible": "true",
-      "isStandard": "true",
-      "categories": [
         "Tools"
       ]
     }
