@@ -420,46 +420,6 @@ const scrambler = {
     },
 
     /**
-     * Change the language.
-     * Requires resetting the strings in the UI.
-     * Called when user clicks on the flag.
-     *
-     * @returns {Promise<void>}
-     */
-    // changeLanguage: async function () {
-    //
-    //     //  cycle to the next language in the list (no menu, just cycle...)
-    //
-    //     const theLanguages = stringUtility.languages;
-    //     const nLanguages = theLanguages.length;
-    //     let theIndex = theLanguages.indexOf(scrambler.state.lang) + 1;
-    //
-    //     if (theIndex >= nLanguages) {
-    //         theIndex = 0;
-    //     }
-    //
-    //     scrambler.state.lang = theLanguages[theIndex];
-    //     //  scrambler.strings = await scramblerStrings.initializeStrings(this.state.lang);
-    //     DG.plugins = await stringUtility.initializeStrings(this.state.lang);
-    //     stringUtility.setStrings();
-    //     scrambler.state.dirtyMeasures = true;
-    //
-    //     scrambler.refreshUIDisplay();
-    // },
-
-    /**
-     * Pick a flag at random for the set of flags for a language
-     *
-     * @returns {*}
-     */
-    // pickAFlag: function () {
-    //     const theRawFlags = myStrings.flags;
-    //     const theFlags = theRawFlags.split(",");
-    //     const theIndex = Math.floor(Math.random() * theFlags.length);
-    //     return theFlags[theIndex];
-    // },
-
-    /**
      * Open the relevant help html (by language) in a new tab.
      *
      * @returns {Promise<void>}
