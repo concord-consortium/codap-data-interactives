@@ -44,6 +44,14 @@ define(function() {
   }
 
   function localizeDOM(node) {
+    function convertToText(elCollection) {
+      let out = [];
+      let i, el;
+      for (i = 0; i<elCollection.length; i+=1) {
+        out.push(elCollection[i].outerHTML);
+      }
+      return out;
+    }
     // translate title attributes
     // translate free text
     var textNodes = node.querySelectorAll('[data-text]');
@@ -64,18 +72,57 @@ define(function() {
   }
 
 
-  function tr(key, vars, lang) {
-    // if lang present convert it to lower case, if not set it to the locale.
-    lang = (!lang || !translations[lang]) ? locale : lang.toLowerCase();
-    if (vars && !Array.isArray(vars)) {
-      vars = [vars];
-    }
-    var translation = translations[lang][key] || translations[DEFAULT_LOCALE][key] || key;
-    return vars == null ? translation : translation.replace(varRegExp,
-        function () {
-          return vars.shift();
-        });
+  function resolve(stringID) {
+
+    return translations[locale]?translations[locale][stringID] || stringID: stringID;
   }
+  // function tr(key, vars, lang) {
+  //   // if lang present convert it to lower case, if not set it to the locale.
+  //   lang = (!lang || !translations[lang]) ? locale : lang.toLowerCase();
+  //   if (vars && !Array.isArray(vars)) {
+  //     vars = [vars];
+  //   }
+  //   var translation = translations[lang][key] || translations[DEFAULT_LOCALE][key] || key;
+  //   return vars == null ? translation : translation.replace(varRegExp,
+  //       function () {
+  //         return vars.shift();
+  //       });
+  // }
+  /**
+   * Translates a string by referencing a hash of translated strings.
+   * If the lookup fails, the string ID is used.
+   * Arguments after the String ID are substituted for substitution tokens in
+   * the looked up string.
+   * Substitution tokens can have the form "%@" or "%@" followed by a single digit.
+   * Substitution parameters with no digit are substituted sequentially.
+   * So, tr('%@, %@, %@', 'one', 'two', 'three') returns 'one, two, three'.
+   * Substitution parameters followed by a digit are substituted positionally.
+   * So, tr('%@1, %@1, %@2', 'baa', 'black sheep') returns 'baa, baa, black sheep'.
+   * If there are not substitution parameters, or not one for the expected position,
+   * then the string is not modified.
+   *
+   * @param sID {{string}} a string id
+   * @param args an array of strings or variable sequence of strings
+   * @returns {string}
+   */
+  function tr(sID, args) {
+    function replacer(match) {
+      if (match.length===2) {
+        return (args && args[ix++]) || match;
+      } else {
+        return (args && args[Number(match[2])-1]) || match;
+      }
+    }
+
+    if (typeof args === "string") {
+      args = [args];
+    }
+
+    let s = resolve(sID);
+    let ix = 0;
+    return s.replace(/%@[0-9]?/g, replacer);
+  }
+
   return {
     init: init,
     tr: tr

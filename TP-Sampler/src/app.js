@@ -104,7 +104,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     view.render();
   }
 
-  codapCom = new CodapCom(getInteractiveState, loadInteractiveState);
+  codapCom = new CodapCom(getInteractiveState, loadInteractiveState, localeMgr);
   codapCom.init()
       .then(setCodapDataSetName)
       .catch(codapCom.error);
@@ -158,7 +158,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     return paused;
   }
 
-  view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom);
+  view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom, localeMgr);
 
   function getNextVariable() {
     var tResult = 'a',
@@ -583,7 +583,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
     stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-    setNumRuns, setSpeed, view.speedText, view.setVariableName, setReplacement, setHidden,
+    setNumRuns, setSpeed, view, view.setVariableName, setReplacement, setHidden,
     setOrCheckPassword, reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model

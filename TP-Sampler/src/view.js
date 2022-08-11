@@ -20,7 +20,6 @@ define(function() {
       spinnerX = containerX + (containerWidth/2),
       spinnerY = containerY + (containerHeight/2),
 
-      speedText = ["Slow", "Medium", "Fast", "Fastest"],
 
       variableNameInput = document.getElementById("variable-name-change"),
 
@@ -110,17 +109,26 @@ define(function() {
 
 
 
-  var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codapCom) {
+  var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codapCom, localeMgr) {
     this.getProps = getProps;
     this.isRunning = isRunning;
     this.setRunning = setRunning;
     this.isPaused = isPaused;
     this.modelReset = modelReset;
     this.codapCom = codapCom;
+    this.localeMgr = localeMgr;
 
-    this.speedText = speedText;
+    this.getSpeedText = function(index) {
+      var speedIds = [
+        "DG.plugin.sampler.speed.slow",
+        "DG.plugin.sampler.speed.medium",
+        "DG.plugin.sampler.speed.fast",
+        "DG.plugin.sampler.speed.Fastest"];
+      return this.localeMgr.tr(speedIds[index]);
+    };
 
-    this.animateMixer = this.animateMixer.bind(this);
+
+        this.animateMixer = this.animateMixer.bind(this);
     this.moveLetterToSlot = this.moveLetterToSlot.bind(this);
     this.endAnimation = this.endAnimation.bind(this);
     this.setVariableName = this.setVariableName.bind(this);
@@ -146,7 +154,7 @@ define(function() {
       document.getElementById("repeat").value = numRuns;
       var sliderSpeed = speed > 0.5 ? speed : 0;
       document.getElementById("speed").value = sliderSpeed;
-      document.getElementById("speed-text").innerHTML = speedText[sliderSpeed];
+      document.getElementById("speed-text").innerHTML = this.getSpeedText(sliderSpeed);
 
       this.createSampleSlots();
       if (device === "mixer" || device === "collector") {

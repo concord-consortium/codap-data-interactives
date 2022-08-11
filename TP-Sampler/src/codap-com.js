@@ -7,9 +7,9 @@
 
 define([
     './lib/CodapInterface'],
-  function (codapInterface, codapPluginConfig) {
+  function (codapInterface) {
 
-    var CodapCom = function(getStateFunc, loadStateFunc) {
+    var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
       this.codapConnected = false;
       this.itemProto = {};
       this.loadStateFunc = loadStateFunc;

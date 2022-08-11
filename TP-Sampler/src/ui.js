@@ -290,7 +290,7 @@ define(function() {
 
   function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
             stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-            setNumRuns, setSpeed, speedText, setVariableName, setReplacement, setHidden,
+            setNumRuns, setSpeed, view, setVariableName, setReplacement, setHidden,
             setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
     document.getElementById("add-variable").onclick = addVariable;
     document.getElementById("remove-variable").onclick = removeVariable;
@@ -310,7 +310,7 @@ define(function() {
     document.getElementById("speed").addEventListener('input', function (evt) {
       var val = (this.value * 1),
           speed = val || 0.5;
-      document.getElementById("speed-text").innerHTML = speedText[val];
+      document.getElementById("speed-text").innerHTML = view.getSpeedText(val);
       setSpeed(speed);
     });
     document.getElementById("variable-name-change").onblur = setVariableName;
