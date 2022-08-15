@@ -17,10 +17,10 @@ define(function() {
     }
   }
 
-  function parseSequence(seq) {
+  function parseSequence(seq, rangeWord) {
     // strip all spaces
     seq = seq.replace(/ /g, "");
-    var m = /^(-?[\d.]+|\w)(-|to)(-?[\d.]+|\w)$/g.exec(seq);
+    var m = new RegExp(`^(-?[\\d.]+|\\w)(-|${rangeWord})(-?[\\d.]+|\\w)$`,'g').exec(seq);
     if (!m || m.length < 4) {
       return null;
     }
@@ -67,13 +67,14 @@ define(function() {
     return isCaps1 === isCaps2;
   }
 
-  function parseSpecifier(spec) {
+  function parseSpecifier(spec, rangeWord) {
+    rangeWord = rangeWord || 'to';
     var list = spec.split(',');
     var arr = [];
     var seq;
     list.forEach(function (item) {
-      if (/^.+(-| to ).+/.test(item)) {
-        seq = parseSequence(item);
+      if (new RegExp(`^.+(-| ${rangeWord} ).+`).test(item)) {
+        seq = parseSequence(item, rangeWord);
         if (seq) {
           arr = arr.concat(seq);
         }

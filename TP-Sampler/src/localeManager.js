@@ -108,9 +108,9 @@ define(function() {
   function tr(sID, args) {
     function replacer(match) {
       if (match.length===2) {
-        return (args && args[ix++]) || match;
+        return (args && (args[ix] != null))? args[ix++]: match;
       } else {
-        return (args && args[Number(match[2])-1]) || match;
+        return (args && (args[Number(match[2])-1] != null))? args[Number(match[2])-1]: match;
       }
     }
 
