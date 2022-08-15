@@ -120,7 +120,7 @@ define(function() {
     var sel = document.getElementById("select-collection");
   }
 
-  function populateContextsList(caseVariables, view, codapCom) {
+  function populateContextsList(caseVariables, view, codapCom, localeMgr) {
     return function (collections) {
       var sel = document.getElementById("select-collection");
       sel.innerHTML = "";
@@ -130,7 +130,8 @@ define(function() {
       });
 
       if (!sel.innerHTML) {
-        sel.innerHTML += "<option>No data sets</option>";
+        sel.innerHTML += "<option>" +
+            localeMgr.tr("DG.plugin.sampler.collector.noDatasets") + "</option>";
         sel.setAttribute("disabled", "disabled");
         return;
       } else {
@@ -241,22 +242,22 @@ define(function() {
 
   function lockOptions(lock) {
     var passwordField = document.getElementById("password");
+    show(document.getElementById('pass-text-lock'), !lock)
+    show(document.getElementById('pass-text-unlock'), lock)
+    show(document.getElementById('pass-lock'), !lock)
+    show(document.getElementById('pass-unlock'), lock)
     if (lock) {
       passwordField.value = "";
       passwordField.type = "password";
       disable("hide-options");
       disable("hideModel");
       disable("reload-settings");
-      document.getElementById("pass-lock").innerHTML = "Unlock";
-      document.getElementById("pass-text").innerHTML = "Unlock settings with password:";
     } else {
       passwordField.value = "";
       passwordField.type = "text";
       enable("hide-options");
       enable("hideModel");
       enable("reload-settings");
-      document.getElementById("pass-lock").innerHTML = "Lock";
-      document.getElementById("pass-text").innerHTML = "Lock settings with password:";
     }
   }
 
@@ -343,6 +344,12 @@ define(function() {
       passwordField.type = "text";
     };
     document.getElementById("pass-lock").onclick = function() {
+      var password = document.getElementById("password").value;
+      if (password.length > 0) {
+        setOrCheckPassword(password);
+      }
+    };
+    document.getElementById("pass-unlock").onclick = function() {
       var password = document.getElementById("password").value;
       if (password.length > 0) {
         setOrCheckPassword(password);

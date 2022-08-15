@@ -23,18 +23,22 @@ define([
       this.setDataSetName = this.setDataSetName.bind(this);
       this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
       this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
+      this.localeMgr = localeMgr;
+      targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
       this.drawAttributes = null;
       this.collectionAttributes = null;
 
       // list of attribute names. We will listen for changes on these and update as needed
-      this.attrNames = {
-        experiment: "experiment",
-        experiment_description: "description",
-        sample_size: "sample_size",
-        sample: "sample",
-        value: "value"
-      }
+      this.getAttrNames = function () {
+        return this.attrNames || {
+          experiment: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment"),
+          experiment_description: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description"),
+          sample_size: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size"),
+          sample: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample"),
+          value: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")
+        }
+      };
       this.attrIds = {};
 
       codapInterface.on('get', 'interactiveState', getStateFunc);
@@ -43,6 +47,7 @@ define([
       // listen for changes to attribute names, and update internal names accordingly
       codapInterface.on('notify', 'dataContextChangeNotice[' + targetDataSetName + ']', function(msg) {
         if (msg.values.operation === "updateAttributes") {
+          _this.attrNames = _this.attrNames || [];
           msg.values.result.attrIDs.forEach((id, i) => {
             const attrKey = _this.attrIds[id];
             _this.attrNames[attrKey] = msg.values.result.attrs[i].name;
@@ -53,8 +58,8 @@ define([
       // this.init();
     };
 
-    var appName = 'Sampler';
     var targetDataSetName = 'Sampler';
+
     function getTargetDataSetPhrase() { return  'dataContext[' + targetDataSetName + ']'; }
 
     CodapCom.prototype = {
@@ -65,8 +70,8 @@ define([
       init: function() {
         // initialize the codapInterface
         return codapInterface.init({
-          name: appName,
-          title: appName,
+          name: this.localeMgr.tr('DG.plugin.Sampler.title'),
+          title: this.localeMgr.tr('DG.plugin.Sampler.title'),
           version: 'v0.7 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
@@ -89,7 +94,7 @@ define([
 
       findOrCreateDataContext: function () {
         const _this = this;
-        const attrNames = this.attrNames;
+        const attrNames = this.getAttrNames();
 
         this.codapConnected = true;
         // Determine if CODAP already has the Data Context we need.
@@ -223,9 +228,10 @@ define([
         // easiest to do this all in one place here.
         items.forEach(function(item) {
           const attrs = Object.keys(item);
+          let attrNames = _this.getAttrNames();
           attrs.forEach(function (attr) {
-            if (_this.attrNames[attr] && _this.attrNames[attr] !== attr) {
-              item[_this.attrNames[attr]] = item[attr];
+            if (attrNames[attr] && attrNames[attr] !== attr) {
+              item[attrNames[attr]] = item[attr];
               delete item[attr];
             }
           });

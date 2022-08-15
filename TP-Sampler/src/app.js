@@ -104,10 +104,13 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     view.render();
   }
 
-  codapCom = new CodapCom(getInteractiveState, loadInteractiveState, localeMgr);
-  codapCom.init()
-      .then(setCodapDataSetName)
-      .catch(codapCom.error);
+  localeMgr.init().then(() => {
+    codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
+        localeMgr);
+    codapCom.init()
+        .then(setCodapDataSetName)
+        .catch(codapCom.error);
+  });
 
   function setCodapDataSetName() {
     return new Promise(function (resolve, reject) {
@@ -230,7 +233,11 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
 
   function showSequencePrompt() {
     // eslint-disable-next-line no-alert
-    return window.prompt(localeMgr.tr('DG.plugin.Sampler.sample-list.prompt'), localeMgr.tr(DG.plugin.Sampler.sample-list.initial-value));
+    return window.prompt(
+        localeMgr.tr('DG.plugin.Sampler.sample-list.prompt',
+            [localeMgr.tr('DG.plugin.Sampler.range-word')]),
+        localeMgr.tr('DG.plugin.Sampler.sample-list.initial-value',
+            [localeMgr.tr('DG.plugin.Sampler.range-word')]));
   }
 
   /**
@@ -397,6 +404,23 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
       // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
     }
 
+    function lookupDeviceName(device) {
+      var deviceNameMap = {
+        mixer: "DG.plugin.Sampler.device-selection.mixer",
+        spinner: "DG.plugin.Sampler.device-selection.spinner",
+        collector: "DG.plugin.Sampler.device-selection.collector"
+      }
+      return localeMgr.tr(deviceNameMap[device]);
+    }
+
+    function lookupItemName(device) {
+      var deviceNameMap = {
+        mixer: "DG.plugin.sampler.experiment.description-mixer-item-kind",
+        spinner: "DG.plugin.sampler.experiment.description-spinner-item-kind",
+        collector: "DG.plugin.sampler.experiment.description-collector-item-kind"
+      }
+      return localeMgr.tr(deviceNameMap[device]);
+    }
 
     var runNumber,
         currRunNumber = 0,
@@ -405,14 +429,34 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
         tNumRuns = Math.floor(numRuns),
         // sample group size is the number of samples we will send in one message
         sampleGroupSize = Math.ceil(kFastestItemGroupSize/(tSampleSize||1)),
-        tItems = device === "mixer" ? "items" : (device === "spinner" ? "sections" : "cases"),
-        tReplacement = withReplacement ? " (with replacement)" : " (without replacement)",
+        tItems = lookupItemName(device),//device === "mixer" ? "items" : (device === "spinner" ? "sections" : "cases"),
+        tReplacementID = withReplacement ?
+            "DG.plugin.Sampler.selection-options.with-replacement" :
+            "DG.plugin.Sampler.selection-options.without-replacement",
+        tReplacement = localeMgr.tr(tReplacementID),
         tUniqueVariables = new Set(variables),
         tNumItems = device === "spinner" ? tUniqueVariables.size : variables.length,
-        tCollectorDataset = isCollector ? " from " + ui.getCollectorCollectionName() : "",
-        tDescription = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
-            tCollectorDataset + tReplacement,
+        tCollectorDataset = isCollector ?
+            localeMgr.tr("DG.plugin.sampler.experiment.description-collector-phrase",
+                [ui.getCollectorCollectionName()]) :
+            " ",
+        deviceName = lookupDeviceName(device),
+        tDescription, // = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
+            //tCollectorDataset + tReplacement,
         tStringifiedVariables = JSON.stringify(variables);
+
+    if (hidden) {
+      tDescription = localeMgr.tr("DG.plugin.sampler.experiment.no-description");
+    }
+    else {
+      tDescription = localeMgr.tr("DG.plugin.sampler.experiment.description", [
+        deviceName,
+        tNumItems,
+        tItems,
+        tCollectorDataset,
+        tReplacement
+      ])
+    }
 
     if( tDescription + tStringifiedVariables !== previousExperimentDescription ||
         (previousSampleSize !== null && previousSampleSize !== tSampleSize)) {
@@ -485,7 +529,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
       }
       ui.renderVariableControls(device);
       if (isCollector) {
-        codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
+        codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom, localeMgr));
       }
       setup();
       view.render();
@@ -493,7 +537,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
   }
 
   function refreshCaseList() {
-    codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom));
+    codapCom.getContexts().then(ui.populateContextsList(caseVariables, view, codapCom, localeMgr));
     codapCom.logAction('refreshList');
   }
 
@@ -581,12 +625,11 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     view.render();
   }
 
-  ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
-    stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-    setNumRuns, setSpeed, view, view.setVariableName, setReplacement, setHidden,
-    setOrCheckPassword, reloadDefaultSettings, becomeSelected);
+   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
+      stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
+      setNumRuns, setSpeed, view, view.setVariableName, setReplacement, setHidden,
+      setOrCheckPassword, reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model
   getStarted();
-  localeMgr.init();
 });
