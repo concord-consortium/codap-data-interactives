@@ -104,14 +104,6 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     view.render();
   }
 
-  localeMgr.init().then(() => {
-    codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
-        localeMgr);
-    codapCom.init()
-        .then(setCodapDataSetName)
-        .catch(codapCom.error);
-  });
-
   function setCodapDataSetName() {
     return new Promise(function (resolve, reject) {
       if (dataSetName) {
@@ -160,8 +152,6 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
   function isPaused() {
     return paused;
   }
-
-  view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom, localeMgr);
 
   function getNextVariable() {
     var tResult = 'a',
@@ -218,7 +208,7 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
 
     var sequenceRequest = showSequencePrompt();
     if (sequenceRequest) {
-      var sequence = utils.parseSpecifier(sequenceRequest);
+      var sequence = utils.parseSpecifier(sequenceRequest, localeMgr.tr("DG.plugin.Sampler.range-word"));
       if (sequence) {
         // swap contents of sequence into variables without updating variables reference
         variables.length = 0;
@@ -625,11 +615,20 @@ function(Snap, CodapCom, View, ui, utils, localeMgr) {
     view.render();
   }
 
-   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
-      stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-      setNumRuns, setSpeed, view, view.setVariableName, setReplacement, setHidden,
-      setOrCheckPassword, reloadDefaultSettings, becomeSelected);
+  localeMgr.init().then(() => {
+    codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
+        localeMgr);
+    codapCom.init()
+        .then(setCodapDataSetName)
+        .catch(codapCom.error);
+    view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom, localeMgr);
 
-  // initialize and render the model
-  getStarted();
+    ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
+        stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
+        setNumRuns, setSpeed, view, view.setVariableName, setReplacement, setHidden,
+        setOrCheckPassword, reloadDefaultSettings, becomeSelected);
+
+    // initialize and render the model
+    getStarted();
+  });
 });
