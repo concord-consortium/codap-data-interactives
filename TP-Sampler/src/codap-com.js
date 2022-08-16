@@ -38,13 +38,16 @@ define([
       };
       // list of attribute names. We will listen for changes on these and update as needed
       this.getAttrNames = function () {
-        return this.attrNames || {
-          experiment: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment"),
-          experiment_description: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description"),
-          sample_size: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size"),
-          sample: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample"),
-          value: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")
+        if (!this.attrNames) {
+          this.attrNames = {
+            experiment: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment"),
+            experiment_description: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description"),
+            sample_size: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size"),
+            sample: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample"),
+            value: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")
+          }
         }
+        return this.attrNames;
       };
       this.attrIds = {};
 
