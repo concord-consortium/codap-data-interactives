@@ -79,7 +79,7 @@ define([
         return codapInterface.init({
           name: this.localeMgr.tr('DG.plugin.Sampler.title'),
           title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-          version: 'v0.7 (#' + window.codapPluginConfig.buildNumber + ')',
+          version: 'v0.8 (#' + window.codapPluginConfig.buildNumber + ')',
           preventDataContextReorg: false,
           stateHandler: this.loadStateFunc
         }).then( function( iInitialState) {
