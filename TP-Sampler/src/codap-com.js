@@ -29,6 +29,13 @@ define([
       this.drawAttributes = null;
       this.collectionAttributes = null;
 
+      this.getCollectionNames = function () {
+        return {
+          experiments: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments"),
+          samples: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples"),
+          values: localeMgr.tr("DG.plugin.Sampler.dataset.col-values")
+        }
+      };
       // list of attribute names. We will listen for changes on these and update as needed
       this.getAttrNames = function () {
         return this.attrNames || {
@@ -95,6 +102,7 @@ define([
       findOrCreateDataContext: function () {
         const _this = this;
         const attrNames = this.getAttrNames();
+        const collectionNames = this.getCollectionNames();
 
         this.codapConnected = true;
         // Determine if CODAP already has the Data Context we need.
@@ -107,7 +115,7 @@ define([
             function getAttributeIds() {
               // need to get all the ids of the newly-created attributes, so we can notice if they change.
               // we will set these ids on the attrIds object
-              const allAttrs = [["experiments", attrNames.experiment],["description", attrNames.experiment_description],
+              const allAttrs = [["experiments", attrNames.experiment],["experiments", attrNames.experiment_description],
                                 ["experiments", attrNames.sample_size], ["samples", attrNames.sample], ["items", attrNames.value]];
               const reqs = allAttrs.map(collectionAttr => ({
                   "action": "get",
@@ -130,28 +138,27 @@ define([
                   name: targetDataSetName,
                   collections: [
                     {
-                      name: 'experiments',
+                      name: collectionNames.experiments,
                       attrs: [
                         {name: attrNames.experiment, type: 'categorical'},
-                        {name: attrNames.experiment_description, type: 'categorical', description: 'Feel free to edit!'},
+                        {name: attrNames.experiment_description, type: 'categorical'},
                         {name: attrNames.sample_size, type: 'categorical'}
                       ],
-                      childAttrName: "experiment"
+                      // childAttrName: "experiment"
                     },
                     {
-                      name: 'samples',
-                      parent: 'experiments',
+                      name: collectionNames.samples,
+                      parent: collectionNames.experiments,
                       // The parent collection has just one attribute
                       attrs: [{name: attrNames.sample, type: 'categorical'}],
-                      childAttrName: "sample"
+                      // childAttrName: "sample"
                     },
                     {
-                      name: 'items',
-                      parent: 'samples',
-                      labels: {
-                        pluralCase: "items",
-                        setOfCasesWithArticle: "an item"
-                      },
+                      name: collectionNames.values,
+                      parent: collectionNames.samples,
+                      // labels: {
+                      //   pluralCase: "items"
+                      // },
                       // The child collection also has just one attribute
                       attrs: [{name: attrNames.value}]
                     }
