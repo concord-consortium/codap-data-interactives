@@ -34,7 +34,7 @@ define(function() {
         .then(function (response) { return response.json();})
         .then(function (data) {
           translations = data;
-          locale = getQueryParam('lang').toLowerCase();
+          locale = (getQueryParam('lang') || 'en').toLowerCase();
           if (!(locale && translations[locale])) {
             locale = DEFAULT_LOCALE;
           }
