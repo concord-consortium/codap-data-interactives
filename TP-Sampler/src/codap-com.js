@@ -33,7 +33,7 @@ define([
         return {
           experiments: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments"),
           samples: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples"),
-          values: localeMgr.tr("DG.plugin.Sampler.dataset.col-values")
+          items: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")
         }
       };
       // list of attribute names. We will listen for changes on these and update as needed
@@ -157,7 +157,7 @@ define([
                       // childAttrName: "sample"
                     },
                     {
-                      name: collectionNames.values,
+                      name: collectionNames.items,
                       parent: collectionNames.samples,
                       // labels: {
                       //   pluralCase: "items"
@@ -266,9 +266,11 @@ define([
       // not used any more, kept for record-keeping
       deleteAllAttributes: function(device, populateContextsList) {
         var _this = this;
+        var collectionNames = this.getCollectionNames()
         codapInterface.sendRequest( {
           action: 'get',
-          resource: getTargetDataSetPhrase() + '.collection[items].attributeList'
+          resource: getTargetDataSetPhrase() + '.collection[' +
+              collectionNames.items + '].attributeList'
         }).then( function( iResult) {
           var tMsgList = [];
           if( iResult.success) {
@@ -276,7 +278,9 @@ define([
               if(iAttribute.name !== "value") {
                 tMsgList.push( {
                   action: 'delete',
-                  resource: getTargetDataSetPhrase() + '.collection[items].attribute[' + iAttribute.name + ']'
+                  resource: getTargetDataSetPhrase() +
+                      '.collection[' + collectionNames.items +
+                      '].attribute[' + iAttribute.name + ']'
                 });
               }
             });
@@ -348,7 +352,8 @@ define([
               if (_this.drawAttributes.indexOf(attr) < 0) {
                 requests.push({
                   action: 'create',
-                  resource: getTargetDataSetPhrase() + '.collection[items].attribute',
+                  resource: getTargetDataSetPhrase() + '.collection[' +
+                      _this.getCollectionNames().items + '].attribute',
                   values: [attr]
                 });
               }
@@ -359,13 +364,15 @@ define([
           }
 
           function setCollection (result) {
+
             if (result.success) {
               _this.collectionResourceName = "dataContext[" + contextName + "].collection[" +
                   result.values[0].name + "]";
               codapInterface.sendRequest([
                 {     // get the existing columns in the draw table
                   action: 'get',
-                  resource: getTargetDataSetPhrase() + '.collection[items].attributeList'
+                  resource: getTargetDataSetPhrase() + '.collection[' +
+                      _this.getCollectionNames().items + '].attributeList'
                 },
                 {     // get the columns we'll be needing
                   action: 'get',
