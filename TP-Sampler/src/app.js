@@ -507,7 +507,7 @@ function sortVariablesForSpinner() {
 }
 
 function switchState(evt, state) {
-  if (this.blur) this.blur();
+  if (this && this.blur) this.blur();
   var selectedDevice = state || this.id;
   if (selectedDevice !== device) {
     if( device)
