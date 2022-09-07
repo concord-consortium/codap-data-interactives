@@ -28,6 +28,9 @@ function fetchAndParseURL(url) {
         function (resp) {
           if (resp.ok) {
             resp.text().then(function (data) {
+              if (/\uFFFD/.test(data)) {
+                console.warn(`Invalid utf8 characters in stream: ${url}`);
+              }
               resolve(data);
             });
           } else {
@@ -47,7 +50,11 @@ function fetchAndParseURL(url) {
  * @return {Promise}
  */
 function readFile(file) {
-  return file.text();
+  let text = file.text();
+  if (/\uFFFD/.test(text)) {
+    console.warn(`Invalid utf8 characters in file: ${file.name}`);
+  }
+  return text;
 }
 
 /**
@@ -141,6 +148,9 @@ async function retrieveData(config) {
   if (config.text) {
     dataSet.resourceDescription = composeResourceDescription('local file -- ' +
         config.source, importDate);
+    if (/\uFFFD/.test(config.text)) {
+      console.warn(`Invalid utf8 characters in stream: ${config.filename || config.datasetName}`);
+    }
     dataSet.rawData = config.text;
     dataSet.sourceType = 'text';
   } else if (config.url) {
