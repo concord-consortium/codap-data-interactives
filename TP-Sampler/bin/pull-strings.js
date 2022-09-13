@@ -28,19 +28,19 @@
 // prefix is "DG.plugin"
 //
 import fetch from 'node-fetch';
-import {readFile, writeFile} from 'fs/promises';
+import {readFile} from 'fs/promises';
 
 const progname = process.argv[1].replace(/^.*\//, '');
 const usage = `usage: node ${progname} {--APIToken=api-token}`
 
 let apiToken;
 const projectCode = 125447;
-const stringIDPrefix = 'DG.plugin';
+var stringIDPrefix = 'DG.plugin';
 const defaultLocale = 'en-us';
 const poAPIBase = 'https://api.poeditor.com/v2';
 const poAPILanguageListEndpoint = '/languages/list';
 const poAPITranslationRequestEndpoint = '/projects/export';
-const targetFilePath = `${process.cwd()}/modules/strings.json`;
+//const targetFilePath = `${process.cwd()}/modules/strings.json`;
 
 function makeAPITokenPhrase(token) { return `api_token=${token}`;}
 function makeProjectPhrase(id) { return `id=${id}`;}
@@ -83,6 +83,10 @@ function configure(args) {
       if (arg.startsWith('--APIToken=')) {
         let [,value] = arg.split('=');
         apiToken = value;
+      }
+      if (arg.startsWith('--prefix=')) {
+        let [,value] = arg.split('=');
+        stringIDPrefix = value;
       }
     }
 
@@ -215,11 +219,8 @@ function main(args) {
         .then((translations) => {
           let filteredTranslations = filterTranslations(translations,
               stringIDPrefix, defaultLocale);
-          let output = JSON.stringify(filteredTranslations, null, '  ');
-          return writeFile(targetFilePath, output, {encoding: 'utf8'})
-          .then(
-              () => {stderr(`Wrote ${output.length} characters to ${targetFilePath}`);}
-          );
+          let output = JSON.stringify(filteredTranslations, null, '  ') + '\n';
+          return process.stdout.write(output)
         })
         .catch(msg => {
           stderr(msg);
