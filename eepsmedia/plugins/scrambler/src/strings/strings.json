@@ -2,7 +2,7 @@
   "en-us": {
     "DG.plugin.Scrambler.name": "scrambler",
     "DG.plugin.Scrambler.language": "English",
-    "DG.plugin.Scrambler.static.scramblerTitle": "scrambler",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Scrambler",
     "DG.plugin.Scrambler.static.cantScrambleStripe": "Fix that to proceed.",
     "DG.plugin.Scrambler.static.howManyLabel": "how many?",
     "DG.plugin.Scrambler.static.scrambledDataButtonName": "show scrambled",
@@ -22,7 +22,8 @@
     "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Scrambling <code>%@1</code> won't work because it's not in the last collection (<code>%@2</code>). Drop an attribute here from <code>%@2</code>, such as <code>%@3</code>.</span>",
     "DG.plugin.Scrambler.sOr": "or",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "scrambled_",
-    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_",
+    "DG.plugin.Scrambler.description": "Test hypotheses by randomly varying an attribute."
   },
   "de": {
     "DG.plugin.Scrambler.name": "Mischmaschine",
@@ -48,6 +49,14 @@
     "DG.plugin.Scrambler.sOr": "oder",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "gemischte_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "Merkmale_von_"
+  },
+  "pt-br": {
+    "DG.plugin.Scrambler.language": "Inglês",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Arrume isso para continuar",
+    "DG.plugin.Scrambler.static.howManyLabel": "quantos?",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>Seus dados, <code>%@1</code>, precisam de uma medida, provavelmente uma variável com uma fórmula. Arraste a variável para a esquerda para você ter algo para coletar!</span>",
+    "DG.plugin.Scrambler.sOr": "ou",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidas_from_"
   },
   "es": {
     "DG.plugin.Scrambler.name": "mezcladora",
