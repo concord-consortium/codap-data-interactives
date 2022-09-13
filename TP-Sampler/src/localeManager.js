@@ -16,6 +16,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 // ==========================================================================
+
 var DEFAULT_LOCALE = 'en-us';
 var stringFileURL = './src/strings.json';
 
@@ -71,8 +72,10 @@ function localizeDOM(node) {
 
 
 function resolve(stringID) {
-
-  return translations[locale]?translations[locale][stringID] || stringID: stringID;
+  return translations[locale][stringID]?
+      translations[locale][stringID]:
+      (translations[DEFAULT_LOCALE][stringID]?
+            translations[DEFAULT_LOCALE][stringID]:stringID);
 }
 /**
  * Translates a string by referencing a hash of translated strings.
