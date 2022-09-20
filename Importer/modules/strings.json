@@ -331,9 +331,11 @@
     "DG.plugin.MicrodataPortal.description": "Bevölkerungsgruppen des US Zensus untersuchen",
     "DG.plugin.NOAA-weather.title": "NOAA Wetter (USA)",
     "DG.plugin.NOAA-weather.description": "Historische Wetterdaten untersuchen",
+    "DG.plugin.Choosy.title": "Merkmal-O-Mat",
     "DG.plugin.Choosy.description": "Einen Datensatz mit vielen Merkmalen strukturieren und vereinfachen.",
     "DG.plugin.Transformers.title": "Umwandler",
-    "DG.plugin.Transformers.description": "Datensätze umwandeln mit leistungsfähigen Werkzeugen."
+    "DG.plugin.Transformers.description": "Datensätze umwandeln mit leistungsfähigen Werkzeugen.",
+    "DG.plugin.Sampler.top-bar.pause": "Pause"
   },
   "pt-br": {
     "DG.plugin.Importer.title": "Importar CSV",
@@ -496,7 +498,8 @@
     "DG.plugin.Choosy.title": "Seletor",
     "DG.plugin.Choosy.description": "Organiza e simplifica bases de dados com muitas variáveis.",
     "DG.plugin.Transformers.title": "Transformador",
-    "DG.plugin.Transformers.description": "Transforme conjuntos de dados com ferramentas poderosas."
+    "DG.plugin.Transformers.description": "Transforme conjuntos de dados com ferramentas poderosas.",
+    "DG.plugin.Sampler.top-bar.pause": "PAUSAR"
   },
   "es": {
     "DG.plugin.Scrambler.name": "mezcladora",
