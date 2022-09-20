@@ -4,8 +4,8 @@
 # and that this file has a run target named "strings:pull".
 PROGNAME=`basename $0`
 TRANSLATED_PLUGIN_ROOTS="./Importer ./TP-sampler ./eepsmedia/plugins/scrambler"
-
+ARGS=$*
 for t in `echo $TRANSLATED_PLUGIN_ROOTS`; do
   echo Pulling $t ...
-  (cd $t && npm run strings:pull)
+  ( cd $t && npm run strings:pull -- $ARGS )
 done
