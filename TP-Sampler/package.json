@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "strings:pull": "node bin/pull-strings.js --prefix=DG.plugin > ./src/strings.json"
+    "strings:pull": "node bin/pull-strings.js --prefix=DG.plugin --out=./src/strings.json"
   },
   "author": "",
   "license": "ISC"

@@ -27,20 +27,31 @@
 // tool is intended to provide translations for CODAP plugins, so the default
 // prefix is "DG.plugin"
 //
+
+/**
+ * This program reads all the available translation strings from the Po Editor
+ * for a given project in all languages, filters the strings by a String ID prefix
+ * and removing strings which have identical values as the default language and
+ * writes a single file. The file is a two level hash with language id the top level keys
+ * and string IDs the secondary keys.
+ */
+/*globals process:true */
 import fetch from 'node-fetch';
-import {readFile} from 'fs/promises';
+import {readFile, writeFile} from 'fs/promises';
 
 const progname = process.argv[1].replace(/^.*\//, '');
-const usage = `usage: node ${progname} {--APIToken=api-token}`
+const usage = `usage: node ${progname} {--APIToken=api-token} {--out=outfile} {--prefix=stringIDPrefix}`;
 
-let apiToken;
 const projectCode = 125447;
-var stringIDPrefix = 'DG.plugin';
 const defaultLocale = 'en-us';
+
 const poAPIBase = 'https://api.poeditor.com/v2';
 const poAPILanguageListEndpoint = '/languages/list';
 const poAPITranslationRequestEndpoint = '/projects/export';
 //const targetFilePath = `${process.cwd()}/modules/strings.json`;
+let apiToken;
+let stringIDPrefix = 'DG.plugin';
+let outFile;
 
 function makeAPITokenPhrase(token) { return `api_token=${token}`;}
 function makeProjectPhrase(id) { return `id=${id}`;}
@@ -52,18 +63,18 @@ function stderr(msg) {
 }
 /**
  * Readies the program for execution. Determines the API Token from
- * either the command line or the po.rc, if found. Throws and exception
+ * either the command line or the .porc, if found. Throws and exception
  * if none found.
  */
 function configure(args) {
-  return readFile(`${process.env.HOME}/.po.rc`, {encoding:'utf8'}).then((result) => {
+  return readFile(`${process.env.HOME}/.porc`, {encoding:'utf8'}).then((result) => {
       let lines = result.split('\n');
       lines.forEach(line => {
         if (line.startsWith('APIToken=') || line.startsWith('API_TOKEN=')) {
           let [,value] = line.split('=');
           apiToken = value;
         }
-      })
+      });
       return Promise.resolve();
     },
     (msg) => {
@@ -71,33 +82,35 @@ function configure(args) {
       return Promise.resolve();
     }
   ).then( ()=> {
-    if (args.length > 3) {
-      return Promise.reject(usage);
-    }
 
     args.shift();
     args.shift();
 
-    let arg;
-    while (arg = args.shift()) {
+    let arg = args.shift();
+    while (arg) {
       if (arg.startsWith('--APIToken=')) {
         let [,value] = arg.split('=');
         apiToken = value;
-      }
-      if (arg.startsWith('--prefix=')) {
+      } else if (arg === '-a') {
+        apiToken = args.shift();
+      } else if (arg.startsWith('--prefix=')) {
         let [,value] = arg.split('=');
         stringIDPrefix = value;
+      } else if (arg.startsWith('--out=')) {
+        let [,value] = arg.split('=');
+        outFile = value;
+      } else {
+        return Promise.reject(usage);
       }
+      arg = args.shift();
     }
 
     if (apiToken == null) {
-      return Promise.reject(`${progname}: No API Token. You must define an API token either on the command line or in $HOME/.po.rc`);
+      return Promise.reject(`${progname}: No API Token. You must define an API token either on the command line or in $HOME/.porc`);
     }
-
   });
 
 }
-
 /**
  *
  * @param endpoint
@@ -105,7 +118,7 @@ function configure(args) {
  * @return {Promise<Object>} Returns the contents of the reply as a json object
  */
 function fetchFromPo(endpoint, body) {
-  const headers = {"Content-Type": "application/x-www-form-urlencoded"}
+  const headers = {"Content-Type": "application/x-www-form-urlencoded"};
   return fetch(`${poAPIBase}${endpoint}`, {method: 'POST', headers: headers, body: body})
       .then(response => response.json());
 }
@@ -117,7 +130,7 @@ function fetchFromPo(endpoint, body) {
 function fetchTranslationList() {
   const tokenPhrase = makeAPITokenPhrase(apiToken);
   const idPhrase = makeProjectPhrase(projectCode);
-  let languageListRequest = `${poAPIBase}${poAPILanguageListEndpoint}`
+  let languageListRequest = `${poAPIBase}${poAPILanguageListEndpoint}`;
   stderr(`Fetching list of translations from ${languageListRequest}`);
   return fetchFromPo(poAPILanguageListEndpoint, [tokenPhrase, idPhrase].join('&'))
       .then((data) => {
@@ -126,7 +139,7 @@ function fetchTranslationList() {
         } else {
           return Promise.resolve(data.result);
         }
-      })
+      });
 }
 
 /**
@@ -142,12 +155,12 @@ function requestTranslationStrings(languageDef) {
       makeLanguagePhrase(languageDef.code),
       makeTypePhrase()
   ].join('&');
-  stderr(`Requesting translation for ${languageDef.code} from ${poAPITranslationRequestEndpoint}`)
+  stderr(`Requesting translation for ${languageDef.code} from ${poAPITranslationRequestEndpoint}`);
   return fetchFromPo(poAPITranslationRequestEndpoint, body)
       .then(reply => fetch(reply.result.url))
       .then(reply => reply.json())
       .then(json => {
-        stderr(`Received translation for ${languageDef.code}`)
+        stderr(`Received translation for ${languageDef.code}`);
         return Promise.resolve([languageDef.code, json]);
       });
 }
@@ -168,7 +181,7 @@ function requestAllTranslationStrings(translationList) {
 }
 
 /**
- * Filters strings to select only those who's key starts with the specified
+ * Filters strings to select only those whose key starts with the specified
  * prefix and whose value does not exactly match the value in the default
  * translation.
  * @param translation
@@ -200,6 +213,8 @@ function filterTranslations(translations, prefix, defaultLang) {
         (langID!==defaultLang)?defaultTrans:null);
     if (Object.keys(filteredTranslation).length > 0) {
       return [langID, filteredTranslation];
+    } else {
+      return null;
     }
   }).filter((entry) => entry));
 }
@@ -220,11 +235,15 @@ function main(args) {
           let filteredTranslations = filterTranslations(translations,
               stringIDPrefix, defaultLocale);
           let output = JSON.stringify(filteredTranslations, null, '  ') + '\n';
-          return process.stdout.write(output)
+          if (outFile) {
+            return writeFile(outFile, output);
+          } else {
+            return process.stdout.write(output);
+          }
         })
         .catch(msg => {
           stderr(msg);
-        })
+        });
 
   } catch (ex) {
     stderr(`${ex.message}\n` );

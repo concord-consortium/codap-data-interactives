@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "strings:test": "bin/makeTestTranslation.sh",
-    "strings:pull": "node bin/pull-strings.js"
+    "strings:pull": "node bin/pull-strings.js --prefix=DG.plugin --out=./modules/strings.json"
   },
   "author": "Jonathan Sandoe",
   "license": "MIT",
