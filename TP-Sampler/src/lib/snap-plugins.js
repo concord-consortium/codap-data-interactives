@@ -1,4 +1,4 @@
-define(['./snap.svg-min'], function (Snap) {
+// define(['./snap.svg-min'], function (Snap) {
 
   Snap.plugin(function (Snap, Element) {
 
@@ -18,6 +18,6 @@ define(['./snap.svg-min'], function (Snap) {
     };
 
   });
-
-  return Snap;
-});
+//
+//   return Snap;
+// });
