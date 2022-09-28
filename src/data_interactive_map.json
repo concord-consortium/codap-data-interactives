@@ -891,6 +891,17 @@
         "Generators",
         "Tools"
       ]
+    },
+    {
+      "title": "Fatal Encounters",
+      "description": "Explore data from the <a target=\"_blank\" href=\"https://fatalencounters.org/\">Fatal Encounters</a> website; a database created to document people in the United Stated who were killed during interactions with the police.",
+      "width": 350,
+      "height": 450,
+      "path": "/FatalEncounters/",
+      "visible": "true",
+      "categories": [
+        "Portals"
+      ]
     }
   ]
 }
