@@ -502,6 +502,21 @@
     "DG.plugin.Sampler.top-bar.pause": "PAUSAR"
   },
   "es": {
+    "DG.plugin.Importer.button-cancel": "Cancelar",
+    "DG.plugin.Importer.button-dismiss": "Desestimar",
+    "DG.plugin.Importer.load-error": "Hubo un error al cargar este recurso:  \"%@\" reason: \"%@\"",
+    "DG.plugin.Importer.no-table-error": "No se encontraron datos en formato tabular para importar en CODAP",
+    "DG.plugin.Importer.duplicate-dataset-msg": "Ya existe un dataset como este. Se llama \"%@\".",
+    "DG.plugin.Importer.upload-time-msg": "Fue subido %@",
+    "DG.plugin.Importer.large-file-msg": "El archivo importado, \"%@\" tiene %@ filas. Con más de %@ filas, el rendimiento de CODAP puede ser lento. Puede trabajar con una muestra de los datos al menos al principio, reemplazándola con el conjunto de datos completo más adelante.",
+    "DG.plugin.Importer.error-codap-connection": "Error al enviar datos a CODAP",
+    "DG.plugin.Importer.error-upload": "No se pudo importar el archivo -- %@",
+    "DG.plugin.StoryBuilder.pluginName": "Creador de historias",
+    "DG.plugin.StoryBuilder.controlArea.discardAlt": "Descartar cambios",
+    "DG.plugin.StoryBuilder.controlArea.saveAlt": "Guardar",
+    "DG.plugin.StoryBuilder.controlArea.saveTooltip": "Guardar este momento",
+    "DG.plugin.StoryBuilder.controlArea.newAlt": "Crear un nuevo momento",
+    "DG.plugin.StoryBuilder.controlArea.newTooltip": "Agregar un nuevo momento a la derecha",
     "DG.plugin.Scrambler.name": "mezcladora",
     "DG.plugin.Scrambler.language": "español",
     "DG.plugin.Scrambler.static.scramblerTitle": "mezcladora",
@@ -524,6 +539,9 @@
     "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Mezclar <code>%@1</code> no funcionará porque no está en la última colección (<code>%@2</code>). Arrastra un atributo aquí de <code>%@2</code>, como <code>%@3</code>.</span>",
     "DG.plugin.Scrambler.sOr": "o",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "mezclado_",
-    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidas_de_"
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidas_de_",
+    "DG.plugin.Sampler.tab.options": "Opciones",
+    "DG.plugin.Sampler.tab.about": "Acerca de",
+    "DG.plugin.Sampler.top-bar.run": "INICIO"
   }
 }
