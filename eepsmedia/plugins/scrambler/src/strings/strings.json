@@ -24,5 +24,31 @@
     "DG.plugin.Scrambler.sOr": "or",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "scrambled_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
+  },
+  "es": {
+    "DG.plugin.Scrambler.name": "mezclador",
+    "DG.plugin.Scrambler.description": "Testar hipótesis variando un atributo al azar.",
+    "DG.plugin.Scrambler.language": "Inglés",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Mezclador",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Arreglar para proceder.",
+    "DG.plugin.Scrambler.static.howManyLabel": "¿cuántos?",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "mostrar mezclados",
+    "DG.plugin.Scrambler.sScramble": "mezclar",
+    "DG.plugin.Scrambler.sNoAttribute": "sin atributo 😕",
+    "DG.plugin.Scrambler.sIterationAttName": "conjunto",
+    "DG.plugin.Scrambler.sIterationAttDescription": "Qué \"conjunto\" de datos. Aumenta cada vez que se mezcla.",
+    "DG.plugin.Scrambler.sScrambledAttName": "atributo mezclado",
+    "DG.plugin.Scrambler.sScrambledAttDescription": "Qué atributo fue mezclado.",
+    "DG.plugin.Scrambler.sNoDataset": "Buscar un dataset y arrastrar el atributo que se desea mezclar!",
+    "DG.plugin.Scrambler.sNoScrambleAttribute": "¿Qué atributo desea mezclar? Arrastrarlo aquí.",
+    "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "Mostrar un dataset mezclado",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span>mezclar <code>%@1</code></span>",
+    "DG.plugin.Scrambler.sfOKtoScramble": "<span>OK a mezclar <code>%@1</code> en dataset <code>%@2</code></span>",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>Su conjunto de datos, <code>%@1</code>, necesita una medida, que probablemente sea un atributo con una fórmula. ¡Arrastra ese atributo a la izquierda para que tengas algo que recolectar!</span>",
+    "DG.plugin.Scrambler.sfFormulaProblem": "<span>Mezclar <code>%@1</code> no funcionará porque tiene una fórmula. Arrastre un atributo diferente de la última colección (%@2), como <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Mezclar <code>%@1</code> no funcionará porque no está en la última colección (<code>%@2</code>). Colocar aquí un atributo de <code>%@2</code>, como <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sOr": "o",
+    "DG.plugin.Scrambler.sScrambledDatasetPrefix": "mezclado_",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidos_de_"
   }
 }
