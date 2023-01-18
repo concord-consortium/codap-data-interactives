@@ -30,7 +30,7 @@ ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 PLUGIN_MAP_FILE="${HOMEDIR}/data_interactive_map.json"
 PUBLISHED_PLUGIN_MAP_FILE=published-plugins.json
 
-JSON_PARSER=jq
+JSON_PARSER=./node_modules/node-jq/bin/jq
 
 function makeIndexJSON() {
   tmp=

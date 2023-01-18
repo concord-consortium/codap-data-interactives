@@ -11,6 +11,7 @@
     "std:increment-build-number": "bin/increment-build-number",
     "std:build:comment": "echo Builds standard plugins",
     "std:build": "bin/build",
+    "strings:pull": "bin/update-strings",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -56,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "node-jq": "^2.3.3"
   }
 }

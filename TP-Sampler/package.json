@@ -1,0 +1,18 @@
+{
+  "name": "tp-sampler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "node-fetch": "^3.2.10",
+    "node-jq": "^2.3.3",
+    "strip-json-comments": "^5.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "strings:pull": "node bin/pull-strings.js --prefix=DG.plugin --out=./src/strings.json"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -3,7 +3,7 @@
  *
  * Adds listeners to DOM elements, and helpers for updating their state
  */
-
+import * as localeMgr from './localeManager.js';
 var collectorCollectionName = '';
 
 function addClass(el, className) {
@@ -69,9 +69,9 @@ function enable(classNameOrEl) {
 
 function setRunButton(showRun) {
   if (showRun) {
-    document.getElementById("run").innerHTML = "START";
+    document.getElementById("run").innerHTML = localeMgr.tr("DG.plugin.Sampler.top-bar.run");
   } else {
-    document.getElementById("run").innerHTML = "PAUSE";
+    document.getElementById("run").innerHTML = localeMgr.tr("DG.plugin.Sampler.top-bar.pause");
   }
 }
 

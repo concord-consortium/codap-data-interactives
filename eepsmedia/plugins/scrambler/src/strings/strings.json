@@ -2,7 +2,7 @@
   "en-us": {
     "DG.plugin.Scrambler.name": "scrambler",
     "DG.plugin.Scrambler.language": "English",
-    "DG.plugin.Scrambler.static.scramblerTitle": "scrambler",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Scrambler",
     "DG.plugin.Scrambler.static.cantScrambleStripe": "Fix that to proceed.",
     "DG.plugin.Scrambler.static.howManyLabel": "how many?",
     "DG.plugin.Scrambler.static.scrambledDataButtonName": "show scrambled",
@@ -22,7 +22,8 @@
     "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Scrambling <code>%@1</code> won't work because it's not in the last collection (<code>%@2</code>). Drop an attribute here from <code>%@2</code>, such as <code>%@3</code>.</span>",
     "DG.plugin.Scrambler.sOr": "or",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "scrambled_",
-    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_",
+    "DG.plugin.Scrambler.description": "Test hypotheses by randomly varying an attribute."
   },
   "de": {
     "DG.plugin.Scrambler.name": "Mischmaschine",
@@ -47,7 +48,34 @@
     "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Das Mischen von <code>%@1</code> wird nicht funktionieren, weil es sich nicht in der unteren Tabellenebene (<code>%@2</code>) befindet. Ziehen Sie ein Merkmal aus <code>%@2</code> hierher, wie <code>%@3</code>.</span>",
     "DG.plugin.Scrambler.sOr": "oder",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "gemischte_",
-    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "Merkmale_von_"
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "Merkmale_von_",
+    "DG.plugin.Scrambler.description": "Teste Deine Hypothese durch zufälliges Mischen eines Merkmals."
+  },
+  "pt-br": {
+    "DG.plugin.Scrambler.name": "misturador",
+    "DG.plugin.Scrambler.language": "Inglês",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Misturador",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Arrume isso para continuar",
+    "DG.plugin.Scrambler.static.howManyLabel": "quantos?",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "Mostrar mistura",
+    "DG.plugin.Scrambler.sScramble": "misturador",
+    "DG.plugin.Scrambler.sNoAttribute": "Sem variáveis 😕",
+    "DG.plugin.Scrambler.sIterationAttName": "lote",
+    "DG.plugin.Scrambler.sIterationAttDescription": "O \"lote\" dos dados aumenta cada vez que são misturados.",
+    "DG.plugin.Scrambler.sScrambledAttName": "misturar var",
+    "DG.plugin.Scrambler.sScrambledAttDescription": "Qual variável foi misturada.",
+    "DG.plugin.Scrambler.sNoDataset": "Em uma base de dados, arraste uma variável para cá para ser misturada!",
+    "DG.plugin.Scrambler.sNoScrambleAttribute": "Qual variável você quer misturar? Arraste-a para cá.",
+    "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "Mostre um conjunto de dados misturado",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span> misturar <code>%@1</code></span>",
+    "DG.plugin.Scrambler.sfOKtoScramble": "<span>Pronto para misturar <code>%@1</code> no conjunto de dados <code>%@2</code></span>",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>Seus dados, <code>%@1</code>, precisam de uma medida, provavelmente uma variável com uma fórmula. Arraste a variável para a esquerda para você ter algo para coletar!</span>",
+    "DG.plugin.Scrambler.sfFormulaProblem": "<span>O misturador <code>%@1</code> não funciona, porque há uma fórmula. Arraste para cá uma variável diferente do seu último conjunto (%@2), assim como <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sfNotALeafProblem": "<span>O Misturador <code>%@1</code> não funciona, porque não é o último conjunto (<code>%@2</code>). Do <code>%@2</code> arraste uma variável para cá, assim como <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sOr": "ou",
+    "DG.plugin.Scrambler.sScrambledDatasetPrefix": "misturado_",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidas_from_",
+    "DG.plugin.Scrambler.description": "Teste hipóteses variando randomicamente uma variável."
   },
   "es": {
     "DG.plugin.Scrambler.name": "mezcladora",

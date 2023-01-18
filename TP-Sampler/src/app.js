@@ -391,6 +391,8 @@ function run() {
       } else {
         addValuesToCODAPNoDelay();
       }
+    } else {
+      setTimeout(selectNext, timeout);
     }
 
     // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);

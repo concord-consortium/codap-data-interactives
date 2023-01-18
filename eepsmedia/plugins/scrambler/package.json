@@ -12,12 +12,11 @@
     "strip-json-comments": "^5.0.0"
   },
   "scripts": {
-    "strings:pull:prod:comment": "echo Pull strings from the po editor",
-    "strings:pull:prod": "node bin/pull-strings.js --prefix=DG.plugin.Scrambler > ./src/strings/strings.json",
+    "strings:pull:comment": "echo Pull strings from the po editor",
+    "strings:pull": "node bin/pull-strings.js --prefix=DG.plugin.Scrambler --out=./src/strings/strings.json",
     "strings:pull:dev:comment": "echo overwrite strings file from CODAP src",
     "strings:pull:dev": "bin/pull-dev-strings DG.plugin.Scrambler > ./src/strings/strings.json",
     "strings:test-trans:comment": "echo Add test translation to strings file",
-    "strings:test-trans": "bin/makeTestTranslation",
-    "strings:pull": "npm run strings:pull:prod"
+    "strings:test-trans": "bin/makeTestTranslation"
   }
 }
