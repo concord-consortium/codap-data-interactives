@@ -154,9 +154,9 @@ async function getGeolocation () {
     }
   });
 }
-function setRangeGlobals(minDate, maxDate) {
-  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(minDate)/1000);
-  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(maxDate)/1000)
+async function setRangeGlobals(minDate, maxDate) {
+  await codapConnect.guaranteeGlobal(constants.globalMinDate, Number(minDate)/1000);
+  await codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(maxDate)/1000)
 }
 
 async function initialize() {
@@ -190,7 +190,7 @@ async function initialize() {
           needMap = true;
         }
       }
-      setRangeGlobals(documentState.startDate, documentState.endDate);
+      await setRangeGlobals(documentState.startDate, documentState.endDate);
 
       await codapConnect.addNotificationHandler('notify',
           `dataContextChangeNotice[${constants.StationDSName}]`, stationSelectionHandler)
@@ -599,15 +599,15 @@ function fetchTimezone (lat, long) {
  * state.startDate and state.endDate and update the view.
  * @param values {{startDate,endDate}}
  */
-function dateRangeSubmitHandler(values) {
+async function dateRangeSubmitHandler(values) {
   if (values.startDate !== state.startDate ||
       values.endDate !== state.endDate) {
     state.userSelectedDate = true;
   }
   state.startDate = values.startDate;
   state.endDate = values.endDate || values.startDate;
-  codapConnect.guaranteeGlobal(constants.globalMinDate, Number(values.startDate)/1000);
-  codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(values.endDate)/1000);
+  await codapConnect.guaranteeGlobal(constants.globalMinDate, Number(values.startDate)/1000);
+  await codapConnect.guaranteeGlobal(constants.globalMaxDate, Number(values.endDate)/1000);
   updateView();
 }
 
