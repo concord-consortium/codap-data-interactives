@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!--
+
+http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/plugins/lotti
+http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/plugins/lotti?lang=de
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lotti</title>
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans+Condensed" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Rokkitt:300,700' rel='stylesheet'>
+
+    <link rel='stylesheet' type='text/css' href='css/lotti.css'/>
+
+    <!--    D3 setup     -->
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!--    CODAP setup     -->
+
+    <script src="../common/iframe-phone.js"></script>
+    <script src="../common/codapInterface.js"></script>
+    <script src="../common/pluginHelper.js"></script>
+
+    <!-- plugin-specific        -->
+
+    <script src="src/lotti.js?000"></script>
+    <script src="src/scenarios.js?000"></script>
+    <script src="src/ui.js?000"></script>
+    <script src="src/lotti.connect.js?000"></script>
+    <script src="strings/lotti.strings.js?000"></script>
+    <script src="strings/localizePlugin.js?000"></script>
+
+
+    <script src="strings/strings.en.js?000"></script>
+    <script src="strings/strings.es.js?000"></script>
+    <script src="strings/strings.de.js?000"></script>
+    <script src="strings/strings.it.js?000"></script>
+    <script src="strings/strings.fr.js?000"></script>
+
+</head>
+
+
+<body onload="lotti.initialize()">
+
+<div id="header" class="hBox">
+    Lotti
+    <div id="optionsButton">
+        <span id="optionsIcon" onclick="ui.toggleOptions()">⚙️</span>
+    </div>
+</div>
+
+<div id="story">The story goes here</div>
+
+<div id="game">
+    <svg id="choices">
+    </svg>
+</div>
+
+<div id="results" class="hBox">
+    <button id="resetButton" onclick="lotti.resetResults()">reset</button>
+    <div id="resultsText">results, if any, go here</div>
+</div>
+
+<div id="options">
+    <label for="scenarioMenu" id="scenarioMenuLabel">Pick a scenario</label>
+    <select id="scenarioMenu" onchange="ui.changeScenario(this)"></select>
+
+    <br><br>
+
+    <input id="showResultsCheckbox" onchange="lotti.rememberShowResultsOption()" type="checkbox">
+    <label for="showResultsCheckbox" id="showResultsCheckboxLabel">show results option</label>
+    <br>
+    <input id="showAllScenariosCheckbox" type="checkbox" onchange="lotti.rememberShowAllScenariosOption()">
+    <label for="showAllScenariosCheckbox" id="showAllScenariosCheckboxLabel">show all scenarios option</label>
+    <br>
+    <input id="emittingCheckbox" type="checkbox" onchange="lotti.rememberEmitCODAPOption()">
+    <label for="emittingCheckbox" id="emittingCheckboxLabel">emit option</label>
+</div>
+
+</body>
+</html>

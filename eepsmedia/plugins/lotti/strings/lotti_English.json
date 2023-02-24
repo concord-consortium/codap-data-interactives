@@ -1,0 +1,111 @@
+{
+    "lotti" : {
+        "language" : "English",
+        "flags": "🇬🇧,🇺🇸",
+        "frameTitle" : "Lottery Explorer",
+        "left" : "left",
+        "right" : "right",
+
+        "staticStrings" : {
+            "scenarioMenuLabel"    : "which scenario? ",
+            "emittingCheckboxLabel"   : "emit data into CODAP? ",
+            "showResultsCheckboxLabel"   : "show results on main page? ",
+            "showAllScenariosCheckboxLabel"   : "show all scenarios? "
+
+        },
+
+        "attributeNames" : {
+            "scenario" : "scenario",
+            "result" : "result",
+            "choice" : "choice",
+            "units" : "units"
+        },
+        "attributeDescriptions" : {
+            "scenario" : "the scenario you are playing",
+            "result" : "the result from one round of the game",
+            "choice" : "the choice you made that turn",
+            "units" : "the units of the result"
+        },
+
+        "scenarioStrings" : {
+            "allowance_AB" : {
+                "label"         : "allowance AB",
+                "dsTitle"       : "allowance data",
+                "dsDescription" : "a record of your experience in this game",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : "€",
+                "resultUnitPlural"      : "€",
+                "turnUnitSingular"      : " week",
+                "turnUnitPlural"        : " weeks",
+                "story"     : "Choose a weekly allowance plan",
+                "leftLabel" : "plan A",
+                "rightLabel" : "plan B"
+            },
+            "allowance_CD" : {
+                "label"         : "allowance CD",
+                "dsTitle"       : "allowance data",
+                "dsDescription" : "a record of your experience in this game",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : "€",
+                "resultUnitPlural"      : "€",
+                "turnUnitSingular"      : " week",
+                "turnUnitPlural"        : " weeks",
+                "story"     : "Choose a weekly allowance plan",
+                "leftLabel" : "plan C",
+                "rightLabel" : "plan D"
+            },
+            "allowance_EF" : {
+                "label"         : "allowance EF",
+                "dsTitle"       : "allowance data",
+                "dsDescription" : "a record of your experience in this game",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : "€",
+                "resultUnitPlural"      : "€",
+                "turnUnitSingular"      : " week",
+                "turnUnitPlural"        : " weeks",
+                "story"     : "Choose a weekly allowance plan",
+                "leftLabel" : "plan E",
+                "rightLabel" : "plan F"
+            },
+            "allowance_GH" : {
+                "label"         : "allowance GH",
+                "dsTitle"       : "allowance data",
+                "dsDescription" : "a record of your experience in this game",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : "€",
+                "resultUnitPlural"      : "€",
+                "turnUnitSingular"      : " week",
+                "turnUnitPlural"        : " weeks",
+                "story"     : "Choose a weekly allowance plan",
+                "leftLabel" : "plan G",
+                "rightLabel" : "plan H"
+            },
+            "fbola" : {
+                "label"         : "Fbola vaccine",
+                "dsTitle"       : "days sick",
+                "dsDescription" : "a record of how many days people were sick",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : " sick day",
+                "resultUnitPlural"      : " sick days",
+                "turnUnitSingular"      : " citizen",
+                "turnUnitPlural"        : " citizens",
+                "story": "Will you be vaccinated? How many days do you lose?",
+                "leftLabel" : "yes",
+                "rightLabel" : "no"
+            },
+            "hunters" : {
+                "label"         : "Viking hunters",
+                "dsTitle"       : "days of food",
+                "dsDescription" : "a record of how much food the hunters caught",
+                "collTitle"     : "results",
+                "resultUnitSingular"    : " day food",
+                "resultUnitPlural"      : " days food",
+                "turnUnitSingular"      : " day",
+                "turnUnitPlural"        : " days",
+                "story": "Who should be the hunter? How many days of food do they bring back?",
+                "leftLabel" : "Sven",
+                "rightLabel" : "Freya"
+            }
+        }
+    }
+}
