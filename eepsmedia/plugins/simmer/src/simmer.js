@@ -108,7 +108,9 @@ const simmer = {
         const theName = document.getElementById("newVariableNameBox").value;
         console.log(`handle new variable: ${theName}`);
 
-        if (theName.length > 0) {
+        if (theName.length === 0) {
+            simmer.closeNewVariableModal();     //   no name, no variable
+        } else {
             const newVarResult = await this.workspace.createVariable(theName);
 
             //      make a "set" block appear in the workspace
@@ -208,7 +210,7 @@ title="${DG.plugins.simmer.newVariableButtonTooltip}">
     },
 
     constants: {
-        version: '2023c',
+        version: '2023d',
         dsName: `simmerDataset`,
         freshState: {
             theVariables: [],
