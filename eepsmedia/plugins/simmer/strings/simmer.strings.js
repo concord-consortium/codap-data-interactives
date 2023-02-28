@@ -4,8 +4,6 @@ let DG = {
 
 let simmerStrings = {};
 
-
-
 simmer.strings = {
 
     language: null,
@@ -19,7 +17,7 @@ simmer.strings = {
         this.language = iLang;
         DG.plugins = simmerStrings[iLang];
         this.setStaticStrings();
-        this.setButtonNames();
+        this.setToolTipTexts();
         //  this.setupCODAPDataset();
     },
 
@@ -31,8 +29,7 @@ simmer.strings = {
             if (theStaticStrings.hasOwnProperty(theID)) {
                 const theValue = theStaticStrings[theID];
                 try {
-                    document.getElementById(theID).innerHTML = theValue;
-                    //  console.log(`Set string for ${theID} in ${iLang}`);
+                    document.getElementById(theID).textContent = theValue;
                 } catch (msg) {
                     console.log(msg + ` on ID = ${theID}`);
                 }
@@ -41,8 +38,18 @@ simmer.strings = {
 
     },
 
-    setButtonNames : async function() {
-
+    setToolTipTexts : async function() {
+        const theToolTips = DG.plugins.simmer.toolTips;
+        for (const theID in theToolTips) {
+            if (theToolTips.hasOwnProperty(theID)) {
+                const theValue = theToolTips[theID];
+                try {
+                    document.getElementById(theID).title = theValue;
+                } catch (msg) {
+                    console.log(msg + ` on ID = ${theID}`);
+                }
+            }
+        }
     },
 
 }

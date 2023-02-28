@@ -136,7 +136,7 @@ const simmer = {
         let otherPills = ``;
         const theButton = `
 <div id="addVariableButton" onclick="simmer.openNewVariableModal()" 
-title="${DG.plugins.simmer.newVariableButtonTooltip}">
+title="${DG.plugins.simmer.toolTips.addVariableButton}">
 <span id="addVariablePlusSign">➕</span>
 </div>
 `;
