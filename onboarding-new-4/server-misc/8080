@@ -1,0 +1,3 @@
+"127.0.0.1" - - [10/Jan/2023:20:43:47 +0000] "GET /react.js HTTP/1.1" 200 656686 "http://127.0.0.1:8080/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+"127.0.0.1" - - [10/Jan/2023:21:26:05 +0000] "GET / HTTP/1.1" 200 1104 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+"127.0.0.1" - - [10/Jan/2023:21:28:24 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
