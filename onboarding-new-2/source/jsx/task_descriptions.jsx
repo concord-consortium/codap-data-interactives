@@ -114,7 +114,7 @@ allAccomplishedFeedback = <div>
     <li>Added a title to a graph</li>
     <li>Opened a graph in the Draw Tool</li>
   </ul>
-  <p>You can do a <em>lot</em> with just those seven skills!</p>
+  <p>You can do a <em>lot</em> with just those skills!</p>
   <p>For more information about how to work with CODAP, visit
     the <a href="https://codap.concord.org/help/" target="_blank">CODAP Help</a> page. </p>
 </div>;
