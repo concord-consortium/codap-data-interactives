@@ -46,6 +46,7 @@ taskDescriptions = {
     operation: 'attributeChange', type: 'DG.GraphView',
     constraints: [{ property: 'attributeName', value: 'Internet Users' }],
     prereq: 'AddDoctors',
+    requiresSpecialHandling: true,
     feedback: React.createElement(
       'div',
       null,
