@@ -30,6 +30,7 @@ taskDescriptions = {
       operation: 'attributeChange', type:'DG.GraphView',
       constraints: [{property: 'attributeName', value:'Internet Users'}],
       prereq: 'AddDoctors',
+      requiresSpecialHandling: true,
       feedback: <div>
         <p>Great work. In a later step you will drag another attribute into the middle of the graph to get a sense of the relationship between the two attributes.</p>
       </div>,
