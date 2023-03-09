@@ -18,7 +18,21 @@ const bEvents = {
             case `var_delete`:
                 simmer.updateVariableStrip();
                 break;
+
+            case `create`:
+                console.log(`    ∫   create: ${event.json.type}`);
+                switch (event.json.type) {
+                    case `procedures_defnoreturn`:
+                        const newFunctionName = event.json.fields.NAME;
+                        const newFunctionID = event.json.id;
+                        console.log(`    ∫       new function: ${newFunctionName}`);
+                        simmer.makeAutoFunctionCallBlock(newFunctionName, newFunctionID);
+                        break;
+
+                }
+                break;
         }
     },
+
 
 }

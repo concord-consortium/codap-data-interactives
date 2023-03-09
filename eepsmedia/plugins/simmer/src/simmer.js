@@ -160,6 +160,24 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
         document.getElementById(`variableDisplayStrip`).innerHTML = theHTML;
     },
 
+    makeAutoFunctionCallBlock : function(theName, theID) {
+        console.log(`handle new function: ${theName}`);
+
+        const blockSpec = {
+            'type': 'procedures_callnoreturn',
+            //  todo: implement Beka's ideas about position....
+            'x': 30 + 100 * Math.random(), 'y': 10 + 20 * Math.random(),
+            'fields': {
+                'VAR': {
+                    'id': theID,
+                }
+            }
+        }
+
+        const newlyCreatedBlock = Blockly.serialization.blocks.append(blockSpec, this.workspace);
+
+    },
+
     shrink: function () {
         simmer.state.shrunken = !simmer.state.shrunken;
 
