@@ -200,7 +200,7 @@ allAccomplishedFeedback = React.createElement(
       null,
       'lot'
     ),
-    ' with just those seven skills!'
+    ' with just those skills!'
   ),
   React.createElement(
     'p',
@@ -211,7 +211,7 @@ allAccomplishedFeedback = React.createElement(
       { href: 'https://codap.concord.org/help/', target: '_blank' },
       'CODAP Help'
     ),
-    ' page. '
+    ' page.'
   )
 );
 
