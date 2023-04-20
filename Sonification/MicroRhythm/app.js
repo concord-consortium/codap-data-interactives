@@ -4,9 +4,10 @@ const moveRecorder = new PluginMovesRecorder(helper);
 
 /**
  * Replicates the csound scale function.
- * scales a number between zero and one to the given range.
+ * Scales a number between zero and one to the given range.
+ * Note the inversion of max and min in the argument list.
  **/
-function scale(v, min, max) {
+function scale(v, max, min) {
     return (v * (max - min)) + min;
 }
 
@@ -259,7 +260,7 @@ const app = new Vue({
         updateTracker() {
             if (this.playing) {
                 let cyclePos = csound.RequestChannel('phase');
-                let dataTime = scale(cyclePos, this.timeAttrRange.min, this.timeAttrRange.max);
+                let dataTime = scale(cyclePos, this.timeAttrRange.max, this.timeAttrRange.min);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
         },
@@ -495,13 +496,16 @@ const app = new Vue({
                 const quartPitchMIDI = Math.round((pitch * pitchMIDIRange + minPitchMIDI) * 4) / 4;
                 const pitchID = (quartPitchMIDI * 100).toString().padStart(5, '0');
 
-                if (pitchTimeMap[pitchID] !== undefined && (d.val / this.state.playbackSpeed) <= pitchTimeMap[pitchID]) {
+                let gkfreq = expcurve(this.state.playbackSpeed, 50);
+                gkfreq = expcurve(gkfreq, 50);
+                gkfreq = scale(gkfreq, 5, 0.05);
+                if (pitchTimeMap[pitchID] !== undefined && (d.val / gkfreq) <= pitchTimeMap[pitchID]) {
                     // Skip scheduling a new voice if it is within half the duration of the previous voice.
                     return
                 } else {
                     // Allow overlap of voices in same pitch up to half the duration of the current voice.
                     const halfDur = (duration * durRange + minDur) / 2;
-                    pitchTimeMap[pitchID] = d.val / this.state.playbackSpeed + halfDur;
+                    pitchTimeMap[pitchID] = (d.val / gkfreq) + halfDur;
 
                     if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
                         csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
