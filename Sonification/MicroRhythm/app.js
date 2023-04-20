@@ -2,6 +2,10 @@
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
 
+/* scales a number between zero and one to the given range. */
+function scale(v, min, max) {
+    return (v * (max - min)) + min;
+}
 const kAttributeMappedProperties = [
     'time',
     'pitch'//,
@@ -18,6 +22,7 @@ const kAttributeMappedProperties = [
  */
 let pitchTimeMap = {};
 
+const trackingGlobalName = 'sonificationTracker';
 const minDur = 0.02;
 const maxDur = 0.5;
 const durRange = maxDur - minDur;
@@ -116,8 +121,10 @@ const app = new Vue({
 
             this.playToggle.on('change', v => {
                 if (v) {
+                    this.setUserMessage('Playing sounds')
                     this.play();
                 } else {
+                    this.setUserMessage("Stopping play")
                     this.stop();
                 }
             });
@@ -228,6 +235,24 @@ const app = new Vue({
                     el.style.backgroundColor = 'transparent';
                 })
             });
+        },
+        updateTracker() {
+            function expcurve(x,y) {
+                return (Math.exp(x * Math.log(y)) - 1) / (y-1)
+            }
+            // console.log("updateTracker")
+            if (this.playing) {
+                let startTime = this.startTime;
+                let cycleTime = 1/scale(expcurve(expcurve(this.state.playbackSpeed, 50), 50), .05, 5); // must match .csd
+                let now = Date.now();
+                let cyclePos = ((now - startTime) / (1000 * cycleTime)) ;
+                cyclePos = cyclePos - Math.floor(cyclePos);
+                let dataTime = scale(cyclePos, this.timeAttrRange.min, this.timeAttrRange.max);
+                console.log(`Cycle startTime/now/position/cycleTime/dataTime ${[startTime,now,cyclePos,cycleTime,dataTime].join('/')}`);
+                helper.setGlobal(trackingGlobalName, dataTime);
+                setTimeout(() => this.updateTracker(), 1000/30);
+            }
+            //     console.log(`scoreTime: ${csound.getScoreTime()}`);
         },
         resetPitchTimeMaps() {
             this.state.pitchAttribute = this.state.timeAttribute = null;
@@ -480,6 +505,8 @@ const app = new Vue({
 
             csound.PlayCsd(this.selectedCsd).then(() => {
                 this.playing = true;
+                this.startTime = Date.now();
+                this.updateTracker();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
                 csound.SetChannel('click', this.click ? 1 : 0);
 
@@ -490,7 +517,7 @@ const app = new Vue({
         },
         play() {
             if (!this.csoundReady) {
-                this.logMessage('Play aborted: csound not ready.');
+                this.setUserMessage('Play aborted: csound not ready.');
                 return null;
             }
 
@@ -623,9 +650,11 @@ const app = new Vue({
                 } else {
                     this.onGetData();
                 }
-            });
+            }).then(
+                () => helper.guaranteeGlobal(trackingGlobalName)
+            );
 
-        codapInterface.on('notify', '*', this.handleCODAPNotice);
+        codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
     }

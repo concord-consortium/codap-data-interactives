@@ -594,6 +594,36 @@ class CodapPluginHelper {
         });
     }
 
+    guaranteeGlobal(name) {
+        return this.codapInterface.sendRequest({
+            action: 'get',
+            resource: `global[${name}]`
+        }).then (result => {
+            if (!result.success) {
+                return this.codapInterface.sendRequest({
+                    action: 'create',
+                    resource: 'global',
+                    values: {
+                        name: name,
+                        value: 0
+                    }
+                });
+            } else {
+                return result;
+            }
+        })
+    }
+
+    setGlobal(name, value) {
+        return this.codapInterface.sendRequest({
+            action: 'update',
+            resource: `global[${name}]`,
+            values: {
+                value: value
+            }
+        });
+    }
+
     findCollectionForAttribute() {
 
     }
