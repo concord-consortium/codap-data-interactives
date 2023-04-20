@@ -30,6 +30,9 @@ gkclick chnget "click" ; click is set by app and is either 0 or 1
 if gkclick == 1 then
     schedkwhen gktrig, 0, 0, "CLICK", 0, 0.05
 endif
+
+kphase phasor gkfreq, 0
+chnset kphase, "phase"
 endin
 
 ; The TRIG Instrument schedules GRAIN instrument events.

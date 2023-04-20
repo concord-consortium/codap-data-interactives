@@ -2,10 +2,24 @@
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
 
-/* scales a number between zero and one to the given range. */
+/**
+ * Replicates the csound scale function.
+ * scales a number between zero and one to the given range.
+ **/
 function scale(v, min, max) {
     return (v * (max - min)) + min;
 }
+
+/**
+ * Replicates csound expcurve function.
+ * @param x
+ * @param y
+ * @returns {number}
+ */
+function expcurve(x,y) {
+    return (Math.exp(x * Math.log(y)) - 1) / (y-1)
+}
+
 const kAttributeMappedProperties = [
     'time',
     'pitch'//,
@@ -103,6 +117,8 @@ const app = new Vue({
 
         speedSlider: null,
         userMessage: 'Select a dataset, pitch and time and click Play',
+        timerId: null,
+        phase: 0,
     },
     watch: {
         state: {
@@ -236,23 +252,16 @@ const app = new Vue({
                 })
             });
         },
+        /**
+         * Updates the CODAP Global Value with the current time offset within
+         * the current score.
+         */
         updateTracker() {
-            function expcurve(x,y) {
-                return (Math.exp(x * Math.log(y)) - 1) / (y-1)
-            }
-            // console.log("updateTracker")
             if (this.playing) {
-                let startTime = this.startTime;
-                let cycleTime = 1/scale(expcurve(expcurve(this.state.playbackSpeed, 50), 50), .05, 5); // must match .csd
-                let now = Date.now();
-                let cyclePos = ((now - startTime) / (1000 * cycleTime)) ;
-                cyclePos = cyclePos - Math.floor(cyclePos);
+                let cyclePos = csound.RequestChannel('phase');
                 let dataTime = scale(cyclePos, this.timeAttrRange.min, this.timeAttrRange.max);
-                console.log(`Cycle startTime/now/position/cycleTime/dataTime ${[startTime,now,cyclePos,cycleTime,dataTime].join('/')}`);
                 helper.setGlobal(trackingGlobalName, dataTime);
-                setTimeout(() => this.updateTracker(), 1000/30);
             }
-            //     console.log(`scoreTime: ${csound.getScoreTime()}`);
         },
         resetPitchTimeMaps() {
             this.state.pitchAttribute = this.state.timeAttribute = null;
@@ -506,9 +515,12 @@ const app = new Vue({
             csound.PlayCsd(this.selectedCsd).then(() => {
                 this.playing = true;
                 this.startTime = Date.now();
-                this.updateTracker();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
                 csound.SetChannel('click', this.click ? 1 : 0);
+
+                this.timerId = setInterval(() => {
+                    this.updateTracker();
+                }, 33); // 30 FPS
 
                 if (this.timeArray.length !== 0) {
                     this.triggerNotes();
@@ -535,6 +547,7 @@ const app = new Vue({
                 return null;
             }
 
+            this.timerId && clearInterval(this.timerId);
             csound.Stop();
             this.playing = false;
             pitchTimeMap = {};
