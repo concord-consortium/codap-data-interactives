@@ -1,0 +1,19 @@
+{
+  "simmer": {
+    "frameTitle": "simmer",
+    "language": "English",
+    "flags": "🇬🇧,🇺🇸,🇳🇿,🇨🇦",
+    "staticStrings": {
+      "newVariableNameBoxLabel": "newvariablename:",
+      "variableChangeReminderText": "If you change,the variables,the entire dataset will refresh.",
+      "newVariableButton": "make new variable"
+    },
+    "dsTitle": "resultsdataset",
+    "dsDescription": "simulationresults",
+    "collectionName": "results",
+    "simmerRunName": "simmerRun",
+    "simmerRunDescription": "the run number",
+    "shrinkButtonDescription": "shrink",
+    "expandButtonDescription": "expand"
+  }
+}
