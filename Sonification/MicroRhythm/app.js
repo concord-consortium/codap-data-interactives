@@ -507,8 +507,13 @@ const app = new Vue({
                     const halfDur = (duration * durRange + minDur) / 2;
                     pitchTimeMap[pitchID] = (d.val / gkfreq) + halfDur;
 
+                    // Prepend with zeros to prevent overlapping note IDs.
+                    // Instead of, e.g., 1.1, 1.2, ..., 1.10 (a duplicate ID),
+                    // we will have 1.00001, 1.00002, ..., 1.00010, etc.
+                    const noteID = d.id.toString().padStart(5, 0) // Max 10^5 data points.
+
                     if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
-                        csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
+                        csound.Event(`i 1.${noteID} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
                     }
                 }
             });
@@ -553,6 +558,7 @@ const app = new Vue({
 
             this.timerId && clearInterval(this.timerId);
             csound.Stop();
+            csound.Csound.reset(); // Ensure the playback position, etc. are reset.
             this.playing = false;
             pitchTimeMap = {};
         },
