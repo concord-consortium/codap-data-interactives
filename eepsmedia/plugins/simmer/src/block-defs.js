@@ -15,27 +15,27 @@ Blockly.common.defineBlocksWithJsonArray([
     },
 
     //  with input...
-/*
-    {
-        "type": "codap_emit",
-        "message0": "emit in CODAP: %1",
-        "args0": [
-            {
-                "type": "input_value",
-                "name": "VARIABLES",
-                "check": [
-                    "Array",
-                    "String"
-                ]
-            }
-        ],
-        "previousStatement": null,
-        "nextStatement": null,
-        "colour": 230,
-        "tooltip": "plug in a list of variables to emit",
-        "helpUrl": ""
-    },
-*/
+    /*
+        {
+            "type": "codap_emit",
+            "message0": "emit in CODAP: %1",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "VARIABLES",
+                    "check": [
+                        "Array",
+                        "String"
+                    ]
+                }
+            ],
+            "previousStatement": null,
+            "nextStatement": null,
+            "colour": 230,
+            "tooltip": "plug in a list of variables to emit",
+            "helpUrl": ""
+        },
+    */
 
     //      random integer
 
@@ -44,23 +44,19 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "random integer in [%1, %2]",
         "args0": [
             {
-                "type": "field_number",
+                "type": "input_value",
                 "name": "LOWER",
-                "check" : "Number",
-                "value" : 1,
-                "precision" : 1,
+                "check": "Number"
             },
             {
-                "type": "field_number",
+                "type": "input_value",
                 "name": "UPPER",
-                "check" : "Number",
-                "value" : 6,
-                "precision" : 1,
+                "check": "Number"
             },
 
         ],
-        "output" : "String",
-        "tooltip" : "random integer between the two values, inclusive",
+        "output": "String",
+        "tooltip": "random integer between the two values, inclusive",
         "colour": 888
     },
 
@@ -68,24 +64,22 @@ Blockly.common.defineBlocksWithJsonArray([
 
     {
         "type": "random_normal",
-        "message0": "random Normal µ = %1 σ = %2",
+        "message0": "random Normal (µ, σ) = (%1, %2)",
         "args0": [
             {
-                "type": "field_number",
+                "type": "input_value",
                 "name": "MU",
-                "check" : "Number",
-                "value" : 0,
+                "check": "Number"
             },
             {
-                "type": "field_number",
+                "type": "input_value",
                 "name": "SIGMA",
-                "check" : "Number",
-                "value" : 1,
+                "check": "Number"
             },
 
         ],
-        "output" : "String",
-        "tooltip" : "random value, normally distributed, mean = μ, SD = σ.",
+        "output": "String",
+        "tooltip": "random value, normally distributed, mean = μ, SD = σ.",
         "colour": 888
     },
 
@@ -98,17 +92,17 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "field_input",
                 "name": "ONE",
-                "text" : "heads",
+                "text": "heads",
             },
             {
                 "type": "field_input",
                 "name": "TWO",
-                "text" : "tails",
+                "text": "tails",
             },
 
         ],
-        "output" : "String",
-        "tooltip" : "gives you a 50-50 choice",
+        "output": "String",
+        "tooltip": "gives you a 50-50 choice",
         "colour": 888
     },
 
@@ -143,24 +137,32 @@ Blockly.common.defineBlocksWithJsonArray([
         "message0": "P = %1 to pick %2, otherwise %3",
         "args0": [
             {
+                "type": "input_value",
+                "name": "PROP",
+                "check": "String"
+            },
+
+/*
+            {
                 "type": "field_input",
                 "name": "PROP",
                 "text": "1/2",
             },
+*/
             {
                 "type": "field_input",
                 "name": "ONE",
-                "text" : "heads",
+                "text": "heads",
             },
             {
                 "type": "field_input",
                 "name": "TWO",
-                "text" : "tails",
+                "text": "tails",
             },
 
         ],
-        "output" : "String",
-        "tooltip" : "Pick between 2 options; enter a probability as a fraction, decimal, or percentage.",
+        "output": "String",
+        "tooltip": "Pick between 2 options; enter a probability as a fraction, decimal, or percentage.",
         "colour": 888
     },
 
@@ -183,18 +185,18 @@ Blockly.common.defineBlocksWithJsonArray([
     }
 ]);
 
-Blockly.JavaScript['codap_emit'] = function(block) {
+Blockly.JavaScript['codap_emit'] = function (block) {
 
     const theVariables = Blockly.getMainWorkspace().getAllVariables();  //  gets variables AND VALUES
 
     //  initialize with the "count" attribute, `simmerRun`
     const simmerRunVar = {
-        "name" : "simmerRun",
-        "value" : simmer.state.simmerRun,
+        "name": "simmerRun",
+        "value": simmer.state.simmerRun,
     };
     let code = `\n//  codap emit \n\nlet theValues = { "simmerRun" : ${simmer.state.simmerRun}}; // 'run' value \n`;
     code += "let oneVar = {}; let oneVal;\n";
-    theVariables.forEach( v => {
+    theVariables.forEach(v => {
         const vName = v.name;
 
         code += `if (typeof ${vName} !== 'undefined') `;
@@ -212,29 +214,40 @@ Blockly.JavaScript['codap_emit'] = function(block) {
     return code;
 };
 
-Blockly.JavaScript['random_integer'] = function(block) {
-    let lower = block.getFieldValue('LOWER');
-    let upper = block.getFieldValue('UPPER');
+Blockly.JavaScript['random_integer'] = function (block) {
+    // when it was fields, was:   let lower = block.getFieldValue('LOWER');
+    let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
+        Blockly.JavaScript.ORDER_ADDITION) || 1;
+    let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
+        Blockly.JavaScript.ORDER_ADDITION) || 6;
 
     return [`random_functions.integer(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
 };
 
-Blockly.JavaScript['random_normal'] = function(block) {
+Blockly.JavaScript['random_normal'] = function (block) {
+    let mu = Blockly.JavaScript.valueToCode(block, 'MU',
+        Blockly.JavaScript.ORDER_ADDITION) || 0;
+    let sigma = Blockly.JavaScript.valueToCode(block, 'SIGMA',
+        Blockly.JavaScript.ORDER_ADDITION) || 1;
+/*
     let mu = block.getFieldValue('MU');
     let sigma = block.getFieldValue('SIGMA');
+*/
 
     return [`random_functions.randomNormal(${mu}, ${sigma})`, Blockly.JavaScript.ORDER_ADDITION];
 };
 
-Blockly.JavaScript['random_pick_from_two'] = function(block) {
+Blockly.JavaScript['random_pick_from_two'] = function (block) {
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
     const code = `Math.random() < 0.5 ? "${one}" : "${two}"`;
-    return [code , Blockly.JavaScript.ORDER_ADDITION];
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
 };
 
-Blockly.JavaScript['random_pick_from_two_advanced'] = function(block) {
-    let prop = block.getFieldValue('PROP');
+Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
+    let prop = Blockly.JavaScript.valueToCode(block, 'PROP',
+        Blockly.JavaScript.ORDER_ATOMIC) || "0.5";
+    //  let prop = block.getFieldValue('PROP');
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
 
@@ -248,17 +261,17 @@ Blockly.JavaScript['random_pick_from_two_advanced'] = function(block) {
         code = `"bad input [${prop}]"`;
         console.log("Your entry [${prop}] doesn't look like a number.");
     }
-    return [code , Blockly.JavaScript.ORDER_ADDITION];
+    return [code, Blockly.JavaScript.ORDER_ADDITION];
 };
 
-Blockly.JavaScript['random_pick'] = function(block) {
+Blockly.JavaScript['random_pick'] = function (block) {
     const value_list = Blockly.JavaScript.valueToCode(block, 'LIST', Blockly.JavaScript.ORDER_ATOMIC);
     const code = `random_functions.pickFrom(${value_list})`;
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
-Blockly.JavaScript['text_print'] = function(block) {
+Blockly.JavaScript['text_print'] = function (block) {
     const msg = Blockly.JavaScript.valueToCode(
         block, 'TEXT',
         Blockly.JavaScript.ORDER_NONE) || "''";
@@ -266,7 +279,7 @@ Blockly.JavaScript['text_print'] = function(block) {
     return `console.log(${msg});\n`;
 };
 
-Blockly.JavaScript['lists_push'] = function(block) {
+Blockly.JavaScript['lists_push'] = function (block) {
     const value_newItem = Blockly.JavaScript.valueToCode(block, 'NEWITEM', Blockly.JavaScript.ORDER_ATOMIC);
     let value_array = Blockly.JavaScript.valueToCode(block, 'ARRAY', Blockly.JavaScript.ORDER_ATOMIC);
 
@@ -275,7 +288,7 @@ Blockly.JavaScript['lists_push'] = function(block) {
 };
 
 
-const utilities =  {
+const utilities = {
     stringFractionDecimalOrPercentToNumber: function (iString) {
         let theNumber;
         let theString;

@@ -1,105 +1,120 @@
 simmer.toolbox = {
-    "kind": "categoryToolbox",
-    "contents": [
+    "kind": "categoryToolbox", "contents": [
 
         //      CODAP
 
         {
-            "kind": "category",
-            "name": "CODAP",
-            "contents": [
-                {
-                    "kind": "block",
-                    "type": "codap_emit"
-                }
-                ]
+            "kind": "category", "name": "CODAP", "contents": [{
+                "kind": "block", "type": "codap_emit"
+            }]
         },
 
         //      variables
 
         {
-            "kind": "category",
-            "name": "Variables",
-            "contents": [
-                {
-                    "kind": "block",
-                    "type": "variables_set"
-                },
-                {
-                    "kind": "block",
-                    "type": "variables_get"
-                },
-            ]
+            "kind": "category", "name": "Variables", "contents": [{
+                "kind": "block", "type": "variables_set"
+            }, {
+                "kind": "block", "type": "variables_get"
+            },]
         },
 
         //      numbers and values
 
         {
-            "kind": "category",
-            "name": "Numbers and values",
-            "contents": [
-                {
-                    "kind": "block",
-                    "type": "math_number"
-                },
-                {
-                    "kind": "block",
-                    "type": "math_arithmetic"
-                },
-                {
-                    "kind": "block",
-                    "type": "text"
-                },
-            ]
+            "kind": "category", "name": "Numbers and values", "contents": [{
+                "kind": "block", "type": "math_number"
+            }, {
+                "kind": "block", "type": "math_arithmetic"
+            }, {
+                "kind": "block", "type": "text"
+            },]
         },
 
         //      random
 
         {
-            "kind": "category",
-            "name": "Random",
-            "contents": [
+            "kind": "category", "name": "Random", "contents": [
                 {
                     'kind': 'block',
-                    'type': 'random_integer'
+                    'type': 'random_integer',
+                    "inputs": {
+                        "LOWER": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 1
+                                }
+                            }
+                        },
+                        "UPPER": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 6
+                                }
+                            }
+                        }
+                    }
                 },
                 {
                     'kind': 'block',
                     'type': 'random_pick'
                 },
+
                 {
                     'kind': 'block',
-                    'type': 'random_pick_from_two_advanced'
+                    'type': 'random_pick_from_two_advanced',
+                    "inputs": {
+                        "PROP": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "1/2"
+                                }
+                            }
+                        }
+                    }
                 },
+
                 {
                     'kind': 'block',
                     'type': 'random_normal',
-                },
+                    "inputs": {
+                        "MU": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 0
+                                }
+                            }
+                        },
+                        "SIGMA": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 1.0
+                                }
+                            }
+                        }
+                    }
+                }
             ]
         },
 
         //      loops & Logic
 
         {
-            "kind": "category",
-            "name": "Control and Loops",
-            "contents": [
-                {
-                    "kind": "block",
-                    "type": "logic_boolean"
-                },
-                {
-                    "kind": "block",
-                    "type": "logic_compare"
-                },
-                {
-                    "kind": "block",
-                    "type": "logic_operation",
-                },
+            "kind": "category", "name": "Control and Loops", "contents": [{
+                "kind": "block", "type": "logic_boolean"
+            }, {
+                "kind": "block", "type": "logic_compare"
+            }, {
+                "kind": "block", "type": "logic_operation",
+            },
 
                 {
-                    "kind": "block",
-                    "type": "controls_if"
+                    "kind": "block", "type": "controls_if"
                 },
 
 
@@ -108,28 +123,27 @@ simmer.toolbox = {
                     "type": "controls_repeat_ext",
                     "inputs": {
                         "TIMES": {
-                            "block": {
+                            "shadow": {
                                 "type": "math_number",
                                 "fields": {
                                     "NUM": 10
                                 }
+
                             }
                         }
                     }
                 },
                 {
                     "kind": "block",
-                    "type": "controls_whileUntil",
-                },
+                    "type": "controls_whileUntil"
+                }
             ]
         },
 
         //  functions
 
         {
-            "kind": "category",
-            "name": "Functions",
-            "contents": [
+            "kind": "category", "name": "Functions", "contents": [
                 {
                     "kind": "block",
                     "type": "procedures_defnoreturn"
@@ -145,14 +159,11 @@ simmer.toolbox = {
         //  arrays and lists
 
         {
-            "kind": "category",
-            "name": "Arrays and lists",
-            "contents": [
+            "kind": "category", "name": "Arrays and lists", "contents": [
                 {
                     "kind": "block",
                     "type": "lists_create_with",
-                    "message0": "empty list",
-                    "extraState": {
+                    "message0": "empty list", "extraState": {
                         "itemCount": 0 // or whatever the count is
                     }
                 },
@@ -164,9 +175,38 @@ simmer.toolbox = {
                         "itemCount": 2 // or whatever the count is
                     }
                 },
+
                 {
-                    'kind': 'block',
-                    'type': 'lists_push',
+                    "kind": "block",
+                    "type": "lists_split",
+                    "fields": {
+                        "MODE": "SPLIT"
+                    },
+                    "inputs": {
+/*
+                        "STRING": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "a, b, c, c"
+                                }
+                            }
+                        },
+*/
+                        "DELIM": {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": ","
+                                }
+                            }
+                        }
+                    }
+
+                },
+
+                {
+                    'kind': 'block', 'type': 'lists_push',
                 },
 
             ]
@@ -175,13 +215,10 @@ simmer.toolbox = {
         //      other
 
         {
-            "kind": "category",
-            "name": "Misc",
-            "contents": [
+            "kind": "category", "name": "Misc", "contents": [
 
                 {
-                    "kind": "block",
-                    "type": "text_print"
+                    "kind": "block", "type": "text_print"
                 },
 
             ]

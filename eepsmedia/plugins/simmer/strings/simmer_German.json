@@ -14,6 +14,12 @@
         "simmerRunName": "Durchlauf",
         "simmerRunDescription": "die Laufnummer",
         "shrinkButtonDescription": "schrumpfen",
-        "expandButtonDescription": "erweitern"
+        "expandButtonDescription": "erweitern",
+        "toolTips": {
+            "addVariableButton": "eine neue Variable erstellen",
+            "trashButtonContainer": "den CODAP-Datensatz löschen",
+            "shrinkButton": "dieses Fenster verkleinern, um mehr Platz zu erhalten",
+            "expandButton": "dieses Fenster erweitern, damit Sie Ihr Programm sehen und bearbeiten können"
+        }
     }
 }
