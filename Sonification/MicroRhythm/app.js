@@ -29,14 +29,6 @@ const kAttributeMappedProperties = [
     // 'stereo'
 ];
 
-/**
- * A quarter-step MIDI - voiceEndTime map to prevent notes overlapping more than half of their durations.
- * Without this trick, multiple notes at close pitches played simultaneously could overflow the
- * maximum amplitude Csound can handle. Similar voice-limiting / stealing technique could be implemented
- * in .csd tweaking the schedkwhen, etc. opcode instances or instrument IDs, but I could not get it to work.
- */
-let pitchTimeMap = {};
-
 const trackingGlobalName = 'sonificationTracker';
 const minDur = 0.02;
 const maxDur = 0.5;
@@ -98,10 +90,11 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
-        click: true,
+        click: false,
 
         // TODO: Consolidate into a single file.
         csdFiles: [
+            'StableGrains.csd',
             'SinusoidalGrains.csd',
             'SawTooth.csd',
             'PitchedNoise.csd',
@@ -120,6 +113,7 @@ const app = new Vue({
         userMessage: 'Select a dataset, pitch and time and click Play',
         timerId: null,
         phase: 0,
+        repeatTimerId: null,
     },
     watch: {
         state: {
@@ -143,12 +137,14 @@ const app = new Vue({
                 } else {
                     this.setUserMessage("Stopping play")
                     this.stop();
+                    this.phase = 0;
+                    helper.setGlobal(trackingGlobalName, 0);
                 }
             });
 
             let clickToggle = new Nexus.Toggle('#click-toggle', {
                 size: [40, 20],
-                state: true
+                state: false
             });
 
             clickToggle.on('change', v => {
@@ -161,11 +157,17 @@ const app = new Vue({
                 value: this.state.playbackSpeed
             });
 
-            this.speedSlider.on('change', v => {
-                this.state.playbackSpeed = v;
+            this.speedSlider.on('release', (v) => {
+                this.state.playbackSpeed = this.speedSlider._value.value;
 
                 if (this.csoundReady) {
                     csound.SetChannel('playbackSpeed', v);
+
+                    if (this.playing) {
+                        this.phase = csound.RequestChannel('phase');
+                        this.stopNotes();
+                        this.play();
+                    }
                 }
             });
         },
@@ -326,11 +328,23 @@ const app = new Vue({
             this.setUserMessage(this.state.pitchAttribute?"Pitch attribute selected...":"Please select attribute for pitch");
             this.processMappedAttribute('pitch');
             this.recordToMoveRecorder('pitch');
+
+            if (this.playing) {
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
+            }
         },
         onTimeAttributeSelectedByUI() {
             this.setUserMessage(this.state.timeAttribute?"Time attribute selected...":"Please select attribute for time");
             this.processMappedAttribute('time');
             this.recordToMoveRecorder('time');
+
+            if (this.playing) {
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
+            }
         },
         onDurationAttributeSelectedByUI() {
             this.setUserMessage(this.state.durationAttribute?"Duration attribute selected...":"Please select attribute for duration");
@@ -473,18 +487,22 @@ const app = new Vue({
             ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: items }));
 
             if (this.playing) {
-                this.stopNotes(this.prevSelectedIDs);
-                this.triggerNotes();
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
             }
 
             this.prevSelectedIDs = items.map(c => c.id);
         },
-        stopNotes(ids) {
-            ids.forEach(id => csound.Event(`i -1.${id} 0 1`));
+        stopNotes() {
+            csound.Event('e');
         },
-        triggerNotes() {
-            // Reset the map before scheduling new voices.
-            pitchTimeMap = {};
+        triggerNotes(phase) {
+            let gkfreq = expcurve(this.state.playbackSpeed, 50);
+            gkfreq = expcurve(gkfreq, 50);
+            gkfreq = scale(gkfreq, 5, 0.05);
+
+            this.repeatTimerId = setTimeout(() => this.triggerNotes(0), (1 - phase) / gkfreq * 1000);
 
             this.timeArray.forEach((d,i) => {
                 let pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
@@ -492,47 +510,27 @@ const app = new Vue({
                 let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
                 let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
 
-                // Calculate the log-scaled pitch ID that are 4x resolution of MIDI note numbers.
-                const quartPitchMIDI = Math.round((pitch * pitchMIDIRange + minPitchMIDI) * 4) / 4;
-                const pitchID = (quartPitchMIDI * 100).toString().padStart(5, '0');
-
-                let gkfreq = expcurve(this.state.playbackSpeed, 50);
-                gkfreq = expcurve(gkfreq, 50);
-                gkfreq = scale(gkfreq, 5, 0.05);
-                if (pitchTimeMap[pitchID] !== undefined && (d.val / gkfreq) <= pitchTimeMap[pitchID]) {
-                    // Skip scheduling a new voice if it is within half the duration of the previous voice.
-                    return
-                } else {
-                    // Allow overlap of voices in same pitch up to half the duration of the current voice.
-                    const halfDur = (duration * durRange + minDur) / 2;
-                    pitchTimeMap[pitchID] = (d.val / gkfreq) + halfDur;
-
-                    // Prepend with zeros to prevent overlapping note IDs.
-                    // Instead of, e.g., 1.1, 1.2, ..., 1.10 (a duplicate ID),
-                    // we will have 1.00001, 1.00002, ..., 1.00010, etc.
-                    const noteID = d.id.toString().padStart(5, 0) // Max 10^5 data points.
-
-                    if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
-                        csound.Event(`i 1.${noteID} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
-                    }
+                if (d.val >= phase && ![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
+                    csound.Event(`i2 ${(d.val - phase) / gkfreq} 0.2 ${pitch} ${loudness} ${stereo}`);
                 }
             });
         },
         setupSound() {
             this.stop();
 
-            csound.PlayCsd(this.selectedCsd).then(() => {
+            return csound.PlayCsd(this.selectedCsd).then(() => {
                 this.playing = true;
                 this.startTime = Date.now();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
                 csound.SetChannel('click', this.click ? 1 : 0);
+                csound.Event(`i1 0 -1 ${this.phase}`)
 
                 this.timerId = setInterval(() => {
                     this.updateTracker();
                 }, 33); // 30 FPS
 
                 if (this.timeArray.length !== 0) {
-                    this.triggerNotes();
+                    this.triggerNotes(this.phase);
                 }
             });
         },
@@ -548,8 +546,10 @@ const app = new Vue({
             }
 
             if (CSOUND_AUDIO_CONTEXT.state !== 'running') {
-                CSOUND_AUDIO_CONTEXT.resume().then(this.setupSound);
-            } else { this.setupSound() }
+                return CSOUND_AUDIO_CONTEXT.resume().then(this.setupSound);
+            } else {
+                return this.setupSound();
+            }
         },
         stop() {
             if (!this.csoundReady) {
@@ -560,7 +560,9 @@ const app = new Vue({
             csound.Stop();
             csound.Csound.reset(); // Ensure the playback position, etc. are reset.
             this.playing = false;
-            pitchTimeMap = {};
+
+            this.repeatTimerId && clearTimeout(this.repeatTimerId);
+            this.repeatTimerId = null;
         },
         openInfoPage() {
             this.setUserMessage('Opening Info Page');
