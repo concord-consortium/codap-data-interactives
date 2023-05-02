@@ -341,7 +341,7 @@
     "DG.plugin.Sampler.about.esteem-logo-text": "ESTEEM 로고",
     "DG.plugin.Sampler.sample-list.parse-error": "구문 분석을 할 수 없습니다. 유효한 목록 및 범위 표현식은. 'a,b,b,b', 'cat,cat,dog', '1-50', '-5 to 5', '1.0 to 5.0', 또는 'A-Z' 입니다.",
     "DG.plugin.Sampler.sample-list.prompt": "목록 (예. 'cat, cat, dog') 또는 범위를 (예.. '1-50', '-5 %@1 5', '1.0 %@1 5.0', 'A-Z') 입력하세요.",
-    "DG.plugin.Sampler.range-word": "에게",
+    "DG.plugin.Sampler.range-word": "부터",
     "DG.plugin.Sampler.dataset.name": "샘플러",
     "DG.plugin.Sampler.dataset.experiment-collection-name": "실험",
     "DG.plugin.Sampler.dataset.sample-collection-name": "샘플",
