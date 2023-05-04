@@ -90,17 +90,10 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
+        loop: false,
         click: false,
 
-        // TODO: Consolidate into a single file.
-        csdFiles: [
-            'StableGrains.csd',
-            'SinusoidalGrains.csd',
-            'SawTooth.csd',
-            'PitchedNoise.csd',
-            'ContDrums.csd',
-            'FMGranular.csd'
-        ],
+        csdFiles: ['StableGrains.csd'],
         selectedCsd: null,
         csoundReady: false,
 
@@ -113,7 +106,7 @@ const app = new Vue({
         userMessage: 'Select a dataset, pitch and time and click Play',
         timerId: null,
         phase: 0,
-        repeatTimerId: null,
+        cycleEndTimerId: null,
     },
     watch: {
         state: {
@@ -139,6 +132,36 @@ const app = new Vue({
                     this.stop();
                     this.phase = 0;
                     helper.setGlobal(trackingGlobalName, 0);
+                }
+            });
+
+            const loopToggle = new Nexus.Toggle('#loop-toggle', {
+                size: [40, 20],
+                state: false,
+            });
+
+            loopToggle.on('change', v => {
+                this.loop = v;
+
+                this.cycleEndTimerId && clearTimeout(this.cycleEndTimerId);
+
+                if (this.playing) {
+                    const phase = csound.RequestChannel('phase');
+                    let gkfreq = expcurve(this.state.playbackSpeed, 50);
+                    gkfreq = expcurve(gkfreq, 50);
+                    gkfreq = scale(gkfreq, 5, 0.05);
+                    const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
+
+                    if (this.loop) {
+                        this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
+                    } else {
+                        this.cycleEndTimerId = setTimeout(() => {
+                            this.playToggle.flip();
+                            this.stop();
+                            this.phase = 0;
+                            helper.setGlobal(trackingGlobalName, 0);
+                        }, remainingPlaybackTime);
+                    }
                 }
             });
 
@@ -502,7 +525,17 @@ const app = new Vue({
             gkfreq = expcurve(gkfreq, 50);
             gkfreq = scale(gkfreq, 5, 0.05);
 
-            this.repeatTimerId = setTimeout(() => this.triggerNotes(0), (1 - phase) / gkfreq * 1000);
+            const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
+            if (this.loop) {
+                this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
+            } else {
+                this.cycleEndTimerId = setTimeout(() => {
+                    this.playToggle.flip();
+                    this.stop();
+                    this.phase = 0;
+                    helper.setGlobal(trackingGlobalName, 0);
+                }, remainingPlaybackTime);
+            }
 
             this.timeArray.forEach((d,i) => {
                 let pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
@@ -561,8 +594,8 @@ const app = new Vue({
             csound.Csound.reset(); // Ensure the playback position, etc. are reset.
             this.playing = false;
 
-            this.repeatTimerId && clearTimeout(this.repeatTimerId);
-            this.repeatTimerId = null;
+            this.cycleEndTimerId && clearTimeout(this.cycleEndTimerId);
+            this.cycleEndTimerId = null;
         },
         openInfoPage() {
             this.setUserMessage('Opening Info Page');
