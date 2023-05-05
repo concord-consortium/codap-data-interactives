@@ -41,7 +41,8 @@ const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 const app = new Vue({
     el: '#app',
     data: {
-        name: 'Micro Rhythm',
+        name: 'Sonify',
+        version: 'v0.2.0',
         dim: {
             width: 325,
             height: 274
@@ -700,7 +701,7 @@ const app = new Vue({
         this.setupDrag();
         this.setupUI();
 
-        helper.init(this.name, this.dim)
+        helper.init(this.name, this.dim, this.version)
             // .then(helper.monitorLogMessages.bind(helper))
             .then((state) => {
                 if (state) {
