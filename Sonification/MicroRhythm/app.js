@@ -286,7 +286,13 @@ const app = new Vue({
         updateTracker() {
             if (this.playing) {
                 let cyclePos = csound.RequestChannel('phase');
-                let dataTime = scale(cyclePos, this.timeAttrRange.max, this.timeAttrRange.min);
+                // For obscure reasons CODAP Time is measured in seconds,
+                // not milliseconds. Normally this adjustment is automatic.
+                // In order for the sonification tracker to align with the
+                // data we need to take this obscurity into account
+                let timeAdj = this.state.timeAttrIsDate? 1000: 1;
+                let dataTime = scale(cyclePos,
+                    this.timeAttrRange.max/timeAdj, this.timeAttrRange.min/timeAdj);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
         },
