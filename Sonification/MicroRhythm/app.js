@@ -41,7 +41,8 @@ const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 const app = new Vue({
     el: '#app',
     data: {
-        name: 'Micro Rhythm',
+        name: 'Sonify',
+        version: 'v0.2.0',
         dim: {
             width: 325,
             height: 274
@@ -285,7 +286,13 @@ const app = new Vue({
         updateTracker() {
             if (this.playing) {
                 let cyclePos = csound.RequestChannel('phase');
-                let dataTime = scale(cyclePos, this.timeAttrRange.max, this.timeAttrRange.min);
+                // For obscure reasons CODAP Time is measured in seconds,
+                // not milliseconds. Normally this adjustment is automatic.
+                // In order for the sonification tracker to align with the
+                // data we need to take this obscurity into account
+                let timeAdj = this.state.timeAttrIsDate? 1000: 1;
+                let dataTime = scale(cyclePos,
+                    this.timeAttrRange.max/timeAdj, this.timeAttrRange.min/timeAdj);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
         },
@@ -700,7 +707,7 @@ const app = new Vue({
         this.setupDrag();
         this.setupUI();
 
-        helper.init(this.name, this.dim)
+        helper.init(this.name, this.dim, this.version)
             // .then(helper.monitorLogMessages.bind(helper))
             .then((state) => {
                 if (state) {
