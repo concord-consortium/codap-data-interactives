@@ -266,13 +266,13 @@ const app = new Vue({
                 });
             });
 
-            helper.on('dragDrop[attribute]', 'dragstart', (data) => {
+            helper.on('dragDrop[attribute]', 'dragstart', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid #ffff00';
                 })
             });
 
-            helper.on('dragDrop[attribute]', 'dragend', (data) => {
+            helper.on('dragDrop[attribute]', 'dragend', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid transparent';
                     el.style.backgroundColor = 'transparent';
