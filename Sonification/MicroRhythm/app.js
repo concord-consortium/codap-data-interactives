@@ -21,6 +21,9 @@ function expcurve(x,y) {
     return (Math.exp(x * Math.log(y)) - 1) / (y-1)
 }
 
+const PLAY_TOGGLE_IDLE = false;
+const PLAY_TOGGLE_PLAYING = true;
+
 const kAttributeMappedProperties = [
     'time',
     'pitch'//,
@@ -576,11 +579,13 @@ const app = new Vue({
         },
         play() {
             if (!this.csoundReady) {
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
                 this.setUserMessage('Play aborted: csound not ready.');
                 return null;
             }
 
             if (!this.state.pitchAttribute || !this.state.timeAttribute) {
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
                 this.setUserMessage("Please set an attribute for time and pitch");
                 return null;
             }
