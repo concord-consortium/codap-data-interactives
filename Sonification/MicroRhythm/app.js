@@ -415,6 +415,11 @@ const app = new Vue({
             if (this.state.focusedContext) {
                 this.attributes = helper.getAttributesForContext(this.state.focusedContext);
                 this.reselectCases();
+                kAttributeMappedProperties.forEach(p => {
+                    if (this[p + 'AttrRange']) {
+                        this.processMappedAttribute(p);
+                    }
+                })
             }
         },
         onGetGlobals() {
@@ -684,8 +689,10 @@ const app = new Vue({
                         if (contextName === this.state.focusedContext) {
                             helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
-                    } else {
-                        helper.queryDataForContext(contextName).then(this.onGetData);
+                    } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
+                        if (contextName === this.state.focusedContext) {
+                            helper.queryDataForContext(contextName).then(this.onGetData);
+                        }
                     }
                 }
 
