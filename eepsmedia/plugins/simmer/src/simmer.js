@@ -160,6 +160,14 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
         document.getElementById(`variableDisplayStrip`).innerHTML = theHTML;
     },
 
+    /**
+     * No longer necessary?
+     * We do not need to create a new calling block because the default
+     * behavior does what we want!
+     *
+     * @param theName
+     * @param theID
+     */
     makeAutoFunctionCallBlock : function(theName, theID) {
         console.log(`handle new function: ${theName}`);
 
@@ -228,7 +236,7 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
     },
 
     constants: {
-        version: '2023e',
+        version: '2023f',
         dsName: `simmerDataset`,
         freshState: {
             theVariables: [],

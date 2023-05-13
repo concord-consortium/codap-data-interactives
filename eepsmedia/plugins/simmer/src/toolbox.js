@@ -143,6 +143,13 @@ simmer.toolbox = {
         //  functions
 
         {
+            "kind": "category",
+            "name": "Functions",
+            "custom": "PROCEDURE"
+        },
+
+/*
+        {
             "kind": "category", "name": "Functions", "contents": [
                 {
                     "kind": "block",
@@ -155,6 +162,7 @@ simmer.toolbox = {
 
             ]
         },
+*/
 
         //  arrays and lists
 

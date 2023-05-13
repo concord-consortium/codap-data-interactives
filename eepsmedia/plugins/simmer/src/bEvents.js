@@ -24,9 +24,9 @@ const bEvents = {
                 switch (event.json.type) {
                     case `procedures_defnoreturn`:
                         const newFunctionName = event.json.fields.NAME;
-                        const newFunctionID = event.json.id;
                         console.log(`    ∫       new function: ${newFunctionName}`);
-                        simmer.makeAutoFunctionCallBlock(newFunctionName, newFunctionID);
+                        //const newFunctionID = event.json.id;
+                        //simmer.makeAutoFunctionCallBlock(newFunctionName, newFunctionID);
                         break;
 
                 }
