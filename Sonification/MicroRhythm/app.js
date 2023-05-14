@@ -21,6 +21,9 @@ function expcurve(x,y) {
     return (Math.exp(x * Math.log(y)) - 1) / (y-1)
 }
 
+const PLAY_TOGGLE_IDLE = false;
+const PLAY_TOGGLE_PLAYING = true;
+
 const kAttributeMappedProperties = [
     'time',
     'pitch'//,
@@ -266,13 +269,13 @@ const app = new Vue({
                 });
             });
 
-            helper.on('dragDrop[attribute]', 'dragstart', (data) => {
+            helper.on('dragDrop[attribute]', 'dragstart', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid #ffff00';
                 })
             });
 
-            helper.on('dragDrop[attribute]', 'dragend', (data) => {
+            helper.on('dragDrop[attribute]', 'dragend', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid transparent';
                     el.style.backgroundColor = 'transparent';
@@ -412,6 +415,11 @@ const app = new Vue({
             if (this.state.focusedContext) {
                 this.attributes = helper.getAttributesForContext(this.state.focusedContext);
                 this.reselectCases();
+                kAttributeMappedProperties.forEach(p => {
+                    if (this[p + 'AttrRange']) {
+                        this.processMappedAttribute(p);
+                    }
+                })
             }
         },
         onGetGlobals() {
@@ -576,11 +584,13 @@ const app = new Vue({
         },
         play() {
             if (!this.csoundReady) {
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
                 this.setUserMessage('Play aborted: csound not ready.');
                 return null;
             }
 
             if (!this.state.pitchAttribute || !this.state.timeAttribute) {
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
                 this.setUserMessage("Please set an attribute for time and pitch");
                 return null;
             }
@@ -679,8 +689,10 @@ const app = new Vue({
                         if (contextName === this.state.focusedContext) {
                             helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
-                    } else {
-                        helper.queryDataForContext(contextName).then(this.onGetData);
+                    } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
+                        if (contextName === this.state.focusedContext) {
+                            helper.queryDataForContext(contextName).then(this.onGetData);
+                        }
                     }
                 }
 
