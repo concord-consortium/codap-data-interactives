@@ -1,11 +1,7 @@
 /*global codapInterface:true*/
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
-
-/**
- * Replicates the csound scale function.
- * Scales a number between zero and one to the given range.
- * Note the inversion of max and min in the argument list.
+version of max and min in the argument list.
  **/
 function scale(v, max, min) {
     return (v * (max - min)) + min;
@@ -45,7 +41,7 @@ const app = new Vue({
     el: '#app',
     data: {
         name: 'Sonify',
-        version: 'v0.2.0',
+        version: 'v0.2.1',
         dim: {
             width: 325,
             height: 274
