@@ -1,7 +1,10 @@
 /*global codapInterface:true*/
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
-version of max and min in the argument list.
+/**
+ * Replicates the csound scale function.
+ * Scales a number between zero and one to the given range.
+ * Note the inversion of max and min in the argument list.
  **/
 function scale(v, max, min) {
     return (v * (max - min)) + min;
