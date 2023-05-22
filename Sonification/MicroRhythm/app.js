@@ -69,6 +69,8 @@ const app = new Vue({
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
             playbackSpeed: 0.5,
+            loop: false,
+            click: false,
         },
         data: null,
         contexts: null, // array of context names
@@ -93,9 +95,6 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
-        loop: false,
-        click: false,
-
         csdFiles: ['StableGrains.csd'],
         selectedCsd: null,
         csoundReady: false,
@@ -106,6 +105,8 @@ const app = new Vue({
         playing: false,
 
         speedSlider: null,
+        loopToggle: null,
+        clickToggle: null,
         userMessage: 'Select a dataset, pitch and time and click Play',
         timerId: null,
         phase: 0,
@@ -138,13 +139,13 @@ const app = new Vue({
                 }
             });
 
-            const loopToggle = new Nexus.Toggle('#loop-toggle', {
+            this.loopToggle = new Nexus.Toggle('#loop-toggle', {
                 size: [40, 20],
-                state: false,
+                state: this.state.loop,
             });
 
-            loopToggle.on('change', v => {
-                this.loop = v;
+            this.loopToggle.on('change', v => {
+                this.state.loop = v;
 
                 this.cycleEndTimerId && clearTimeout(this.cycleEndTimerId);
 
@@ -155,7 +156,7 @@ const app = new Vue({
                     gkfreq = scale(gkfreq, 5, 0.05);
                     const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
 
-                    if (this.loop) {
+                    if (this.state.loop) {
                         this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
                     } else {
                         this.cycleEndTimerId = setTimeout(() => {
@@ -168,14 +169,16 @@ const app = new Vue({
                 }
             });
 
-            let clickToggle = new Nexus.Toggle('#click-toggle', {
+            this.clickToggle = new Nexus.Toggle('#click-toggle', {
                 size: [40, 20],
-                state: false
+                state: this.state.click
             });
 
-            clickToggle.on('change', v => {
-                this.click = v;
-                csound.SetChannel('click', v ? 1 : 0);
+            this.clickToggle.on('change', v => {
+                this.state.click = v;
+                if (this.csoundReady) {
+                    csound.SetChannel('click', v ? 1 : 0);
+                }
             });
             this.speedSlider = new Nexus.Slider('#speed-slider', {
                 size: [200, 20],
@@ -187,7 +190,7 @@ const app = new Vue({
                 this.state.playbackSpeed = this.speedSlider._value.value;
 
                 if (this.csoundReady) {
-                    csound.SetChannel('playbackSpeed', v);
+                    csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
 
                     if (this.playing) {
                         this.phase = csound.RequestChannel('phase');
@@ -540,7 +543,7 @@ const app = new Vue({
             gkfreq = scale(gkfreq, 5, 0.05);
 
             const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
-            if (this.loop) {
+            if (this.state.loop) {
                 this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
             } else {
                 this.cycleEndTimerId = setTimeout(() => {
@@ -569,7 +572,7 @@ const app = new Vue({
                 this.playing = true;
                 this.startTime = Date.now();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
-                csound.SetChannel('click', this.click ? 1 : 0);
+                csound.SetChannel('click', this.state.click ? 1 : 0);
                 csound.Event(`i1 0 -1 ${this.phase}`)
 
                 this.timerId = setInterval(() => {
@@ -621,8 +624,14 @@ const app = new Vue({
             Object.keys(state).forEach(key => {
                 this.state[key] = state[key];
             });
-            if (this.state.playbackSpeed) {
+            if (this.state.playbackSpeed != null) {
                 this.speedSlider.value = this.state.playbackSpeed;
+            }
+            if (this.state.loop != null) {
+                this.loopToggle.state = this.state.loop;
+            }
+            if (this.state.click != null) {
+                this.clickToggle.state = this.state.click;
             }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
