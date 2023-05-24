@@ -19,16 +19,54 @@ simmer.toolbox = {
             },]
         },
 
-        //      numbers and values
+        //      Math: numbers and values
 
         {
-            "kind": "category", "name": "Numbers and values", "contents": [{
-                "kind": "block", "type": "math_number"
-            }, {
-                "kind": "block", "type": "math_arithmetic"
-            }, {
-                "kind": "block", "type": "text"
-            },]
+            "kind": "category", "name": "Math", "contents": [
+                {
+                    "kind": "block", "type": "math_number"
+                },
+                {
+                    "kind": "block", "type": "math_arithmetic"
+                },
+                {
+                    "kind": "block",
+                    "type": "math_single",
+                    "fields": {
+                        "OP": "ROOT"
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "math_trig",
+                    "fields": {
+                        "OP": "SIN"
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "math_constant",
+                    "fields": {
+                        "CONSTANT": "PI"
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "math_number_property",
+                    "extraState": "<mutation divisor_input=\"false\"></mutation>",
+                    "fields": {
+                        "PROPERTY": "EVEN"
+                    }
+                },
+                {
+                    "kind": "block",
+                    "type": "math_round",
+                    "fields": {
+                        "OP": "ROUND"
+                    }
+                },
+
+            ]
         },
 
         //      random
@@ -52,6 +90,28 @@ simmer.toolbox = {
                                 "type": "math_number",
                                 "fields": {
                                     "NUM": 6
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "kind":"block",
+                    "type":"random_float",
+                    "inputs": {
+                        "LOWER": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 0.0
+                                }
+                            }
+                        },
+                        "UPPER": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 1.0
                                 }
                             }
                         }
@@ -102,16 +162,35 @@ simmer.toolbox = {
             ]
         },
 
-        //      loops & Logic
+        //      Logic & Boolean
 
         {
-            "kind": "category", "name": "Control and Loops", "contents": [{
-                "kind": "block", "type": "logic_boolean"
-            }, {
-                "kind": "block", "type": "logic_compare"
-            }, {
-                "kind": "block", "type": "logic_operation",
-            },
+            "kind": "category", "name": "Logic (Booleans)", "contents": [
+                {
+                    "kind": "block", "type": "logic_boolean"
+                },
+                {
+                    "kind": "block", "type": "logic_compare"
+                },
+                {
+                    "kind": "block", "type": "logic_operation",
+                },
+                {
+                    "kind": "block",
+                    "type": "logic_negate"
+                },
+                {
+                    "kind": "block",
+                    "type": "logic_ternary"
+                },
+
+            ]
+        },
+
+        //      loops & control (if)
+
+        {
+            "kind": "category", "name": "Control and Loops", "contents": [
 
                 {
                     "kind": "block", "type": "controls_if"
@@ -148,21 +227,21 @@ simmer.toolbox = {
             "custom": "PROCEDURE"
         },
 
-/*
-        {
-            "kind": "category", "name": "Functions", "contents": [
+        /*
                 {
-                    "kind": "block",
-                    "type": "procedures_defnoreturn"
-                },
-                {
-                    "kind": "block",
-                    "type": "procedures_callnoreturn"
-                },
+                    "kind": "category", "name": "Functions", "contents": [
+                        {
+                            "kind": "block",
+                            "type": "procedures_defnoreturn"
+                        },
+                        {
+                            "kind": "block",
+                            "type": "procedures_callnoreturn"
+                        },
 
-            ]
-        },
-*/
+                    ]
+                },
+        */
 
         //  arrays and lists
 
@@ -171,7 +250,8 @@ simmer.toolbox = {
                 {
                     "kind": "block",
                     "type": "lists_create_with",
-                    "message0": "empty list", "extraState": {
+                    "message0": "empty list",
+                    "extraState": {
                         "itemCount": 0 // or whatever the count is
                     }
                 },
@@ -184,6 +264,8 @@ simmer.toolbox = {
                     }
                 },
 
+                //  make a list from a string
+
                 {
                     "kind": "block",
                     "type": "lists_split",
@@ -191,8 +273,10 @@ simmer.toolbox = {
                         "MODE": "SPLIT"
                     },
                     "inputs": {
-/*
-                        "STRING": {
+
+                        //  this way of specifying INPUT doesn't work!
+
+                        "INPUT" : {
                             "shadow": {
                                 "type": "text",
                                 "fields": {
@@ -200,7 +284,9 @@ simmer.toolbox = {
                                 }
                             }
                         },
-*/
+
+
+                        //  this DELIM shadow does work!
                         "DELIM": {
                             "shadow": {
                                 "type": "text",
@@ -210,12 +296,30 @@ simmer.toolbox = {
                             }
                         }
                     }
-
                 },
 
                 {
                     'kind': 'block', 'type': 'lists_push',
                 },
+
+                {
+                    "kind":"block",
+                    "type":"lists_length"
+                },
+                {
+                    "kind":"block",
+                    "type":"lists_isEmpty"
+                },
+
+                {
+                    "kind":"block",
+                    "type":"lists_getIndex",
+                    "fields":{
+                        "MODE":"GET",
+                        "WHERE":"FROM_START"
+                    }
+                },
+
 
             ]
         },
@@ -223,7 +327,10 @@ simmer.toolbox = {
         //      other
 
         {
-            "kind": "category", "name": "Misc", "contents": [
+            "kind": "category", "name": "Text", "contents": [
+                {
+                    "kind": "block", "type": "text"
+                },
 
                 {
                     "kind": "block", "type": "text_print"

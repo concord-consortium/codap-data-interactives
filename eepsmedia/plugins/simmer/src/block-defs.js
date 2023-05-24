@@ -60,6 +60,30 @@ Blockly.common.defineBlocksWithJsonArray([
         "colour": 888
     },
 
+    //      random float
+
+    {
+        "type": "random_float",
+        "message0": "random float in [%1, %2)",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "LOWER",
+                "check": "Number"
+            },
+            {
+                "type": "input_value",
+                "name": "UPPER",
+                "check": "Number"
+            },
+
+        ],
+        "output": "String",
+        "tooltip": "random decimal number between the two values, including the lower but not the upper.",
+        "colour": 888
+    },
+
+
     //      random Normal
 
     {
@@ -195,15 +219,15 @@ Blockly.JavaScript['codap_emit'] = function (block) {
         "value": simmer.state.simmerRun,
     };
     let code = `\n//  codap emit \n\nlet theValues = { "simmerRun" : ${simmer.state.simmerRun}}; // 'run' value \n`;
-    code += "let oneVar = {}; let oneVal;\n";
+    //  code += "let oneVar = {}; let oneVal;\n";
     theVariables.forEach(v => {
         const vName = v.name;
 
         code += `if (typeof ${vName} !== 'undefined') `;
         try {
-            //  const functionVersion = `Function("'use strict'; return (${vName})" )()`;
-            //  code += ` { theValues["${vName}"] = ${functionVersion}  };\n`;
-            code += ` { theValues["${vName}"] = eval("${vName}") };\n`;
+            const thisValueCode = `(eval("${vName}"))`;
+            //  code += ` { theValues["${vName}"] = eval("${vName}") };\n`;
+            code += ` { theValues["${vName}"] = ${thisValueCode}};\n`;
         } catch (msg) {
             console.log(`${vName} threw an error...${msg}`);
         }
@@ -222,6 +246,16 @@ Blockly.JavaScript['random_integer'] = function (block) {
         Blockly.JavaScript.ORDER_ADDITION) || 6;
 
     return [`random_functions.integer(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
+};
+
+Blockly.JavaScript['random_float'] = function (block) {
+    // when it was fields, was:   let lower = block.getFieldValue('LOWER');
+    let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
+        Blockly.JavaScript.ORDER_ADDITION) || 1;
+    let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
+        Blockly.JavaScript.ORDER_ADDITION) || 6;
+
+    return [`random_functions.float(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
 };
 
 Blockly.JavaScript['random_normal'] = function (block) {
@@ -283,7 +317,7 @@ Blockly.JavaScript['lists_push'] = function (block) {
     const value_newItem = Blockly.JavaScript.valueToCode(block, 'NEWITEM', Blockly.JavaScript.ORDER_ATOMIC);
     let value_array = Blockly.JavaScript.valueToCode(block, 'ARRAY', Blockly.JavaScript.ORDER_ATOMIC);
 
-    var code = `${value_array}.push(${value_newItem});\n`;
+    const code = `${value_array}.push(${value_newItem});\n`;
     return code;
 };
 
