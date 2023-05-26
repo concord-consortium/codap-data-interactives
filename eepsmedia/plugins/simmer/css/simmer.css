@@ -24,7 +24,7 @@ body {
 }
 
 #variableDisplayStrip {
-    display : flex;
+    display : none;     /* flex;    */
     padding : 0.3em;
     background-color: navajowhite;
     top : 0;

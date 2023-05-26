@@ -196,8 +196,10 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
 
         //  hide/unhide unnecessary controls
 
+/*
         document.getElementById(`variableDisplayStrip`).style.display
             = (simmer.state.shrunken) ? "none" : "flex";
+*/
 
         //  hide/unhide reminder text
 
