@@ -9,14 +9,12 @@ simmer.toolbox = {
             }]
         },
 
-        //      variables
-
+//      magical variables
         {
-            "kind": "category", "name": "Variables", "contents": [{
-                "kind": "block", "type": "variables_set"
-            }, {
-                "kind": "block", "type": "variables_get"
-            },]
+            "kind":"category",
+            "name":"Variables",
+            //  "categorystyle":"variable_category",
+            "custom":"VARIABLE"
         },
 
         //      Math: numbers and values
@@ -123,6 +121,7 @@ simmer.toolbox = {
                 },
 
                 {
+                    "disabled" : true,
                     'kind': 'block',
                     'type': 'random_pick_from_two_advanced',
                     "inputs": {
@@ -218,6 +217,7 @@ simmer.toolbox = {
                 }
             ]
         },
+
 
         //  functions
 

@@ -194,7 +194,7 @@ Blockly.common.defineBlocksWithJsonArray([
 
     {
         "type": "random_pick",
-        "message0": "pick from %1",
+        "message0": "pick from list %1",
         "args0": [
             {
                 "type": "input_value",
@@ -223,11 +223,16 @@ Blockly.JavaScript['codap_emit'] = function (block) {
     theVariables.forEach(v => {
         const vName = v.name;
 
-        code += `if (typeof ${vName} !== 'undefined') `;
+        code += `if ((typeof ${vName} !== 'undefined')  &&  (typeof ${vName} !== 'object'))`;
         try {
             const thisValueCode = `(eval("${vName}"))`;
-            //  code += ` { theValues["${vName}"] = eval("${vName}") };\n`;
-            code += ` { theValues["${vName}"] = ${thisValueCode}};\n`;
+            const thisJSONCode = `JSON.stringify(${vName})`;
+
+            code += "{\n";
+            code += `  theValues["${vName}"] = ${thisValueCode};\n`;
+            //  code += `  const theJSON = ${thisJSONCode};\n`;
+            //  code += `  theValues["${vName}"] = ${thisJSONCode};\n`;
+            code += "}\n";
         } catch (msg) {
             console.log(`${vName} threw an error...${msg}`);
         }
@@ -279,22 +284,41 @@ Blockly.JavaScript['random_pick_from_two'] = function (block) {
 };
 
 Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
+
     let prop = Blockly.JavaScript.valueToCode(block, 'PROP',
         Blockly.JavaScript.ORDER_ATOMIC) || "0.5";
-    //  let prop = block.getFieldValue('PROP');
+    //  this yields something like prop = "'1/2'", which is bad. No idea how that started happening!
+
+    prop = prop.replaceAll("'", "");  //  strip single quotes
+    prop = prop.replaceAll('"', '');  //  strip double quotes
+
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
-
-
-    const propNum = utilities.stringFractionDecimalOrPercentToNumber(prop);
-
+    let propNum = {};
     let code;
+
+    if (typeof prop === 'string') {
+        propNum = utilities.stringFractionDecimalOrPercentToNumber(prop);
+        if (propNum.theString) {
+            code = `Math.random() < ${propNum.theNumber} ? "${one}" : "${two}"`;
+        } else {
+            code = `"bad input string [${prop}]"`;
+        }
+    } else if (typeof prop === 'number') {
+        code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
+    } else {
+        code = `"bad input ${typeof prop} [${prop}]"`;
+    }
+
+
+/*
     if (propNum.theString) {
         code = `Math.random() < ${propNum.theNumber} ? "${one}" : "${two}"`;
     } else {
         code = `"bad input [${prop}]"`;
-        console.log("Your entry [${prop}] doesn't look like a number.");
+        console.log(`Your entry [${prop}] doesn't look like a number.`);
     }
+*/
     return [code, Blockly.JavaScript.ORDER_ADDITION];
 };
 
