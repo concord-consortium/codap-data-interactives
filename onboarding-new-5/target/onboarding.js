@@ -514,7 +514,7 @@ function getStarted() {
     title: "Getting started with CODAP",
     version: "1.03",
     dimensions: {
-      width: 400,
+      width: 690,
       height: 625
     },
     preventDataContextReorg: false
