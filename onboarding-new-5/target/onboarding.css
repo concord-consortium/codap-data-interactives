@@ -22,7 +22,7 @@ button {
     background-color: #222;
     height: 150px;
     padding-bottom: 20px;
-    padding-top: 20px;
+    padding-top: 0px;
 }
 
 .App-header-welcome {
@@ -72,6 +72,8 @@ button {
 
 .App-intro {
     font-size: large;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .App-taskarea {
@@ -85,7 +87,7 @@ button {
 }
 
 .App-list div{
-    margin-bottom: 8px;
+    margin-bottom: 3px;
 }
 
 .App-checkbox {
