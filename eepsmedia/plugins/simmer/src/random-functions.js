@@ -39,5 +39,22 @@ const random_functions = {
         return mean + sd * tZ;
     },
 
+    /**
+     * random binomial, done with brute force!
+     *
+     * @param N     the number of things drawn
+     * @param p     the probability of success
+     * @returns {number}    the number of successes
+     */
+    randomBinomial : function(N, p) {
+
+        let out = 0;
+        for (let i = 0; i < N; i++) {
+            if (Math.random() < p) {
+                out++;
+            }
+        }
+        return out;
+    },
 
 }

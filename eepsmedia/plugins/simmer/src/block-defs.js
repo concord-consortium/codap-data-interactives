@@ -107,6 +107,29 @@ Blockly.common.defineBlocksWithJsonArray([
         "colour": 888
     },
 
+    //      random Binomial
+
+    {
+        "type": "random_binomial",
+        "message0": "random Binomial (N, p) = (%1, %2)",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "SAMPLE_SIZE",
+                "check": "Number"
+            },
+            {
+                "type": "input_value",
+                "name": "PROB",
+                "check": "Number"
+            },
+
+        ],
+        "output": "String",
+        "tooltip": "random value, binomially distributed, sample size = N, probability = p.",
+        "colour": 888
+    },
+
     //      pick from two
 
     {
@@ -163,7 +186,7 @@ Blockly.common.defineBlocksWithJsonArray([
             {
                 "type": "input_value",
                 "name": "PROP",
-                "check": "String"
+                "check": "Number",      //      "String"
             },
 
 /*
@@ -186,7 +209,7 @@ Blockly.common.defineBlocksWithJsonArray([
 
         ],
         "output": "String",
-        "tooltip": "Pick between 2 options; enter a probability as a fraction, decimal, or percentage.",
+        "tooltip": "Pick between 2 options; enter a decimal value for the probability.",
         "colour": 888
     },
 
@@ -268,12 +291,21 @@ Blockly.JavaScript['random_normal'] = function (block) {
         Blockly.JavaScript.ORDER_ADDITION) || 0;
     let sigma = Blockly.JavaScript.valueToCode(block, 'SIGMA',
         Blockly.JavaScript.ORDER_ADDITION) || 1;
-/*
-    let mu = block.getFieldValue('MU');
-    let sigma = block.getFieldValue('SIGMA');
-*/
+    /*
+        let mu = block.getFieldValue('MU');
+        let sigma = block.getFieldValue('SIGMA');
+    */
 
     return [`random_functions.randomNormal(${mu}, ${sigma})`, Blockly.JavaScript.ORDER_ADDITION];
+};
+
+Blockly.JavaScript['random_binomial'] = function (block) {
+    let N = Blockly.JavaScript.valueToCode(block, 'SAMPLE_SIZE',
+        Blockly.JavaScript.ORDER_ADDITION) || 0;
+    let p = Blockly.JavaScript.valueToCode(block, 'PROB',
+        Blockly.JavaScript.ORDER_ADDITION) || 1;
+
+    return [`random_functions.randomBinomial(${N}, ${p})`, Blockly.JavaScript.ORDER_ADDITION];
 };
 
 Blockly.JavaScript['random_pick_from_two'] = function (block) {
@@ -285,18 +317,25 @@ Blockly.JavaScript['random_pick_from_two'] = function (block) {
 
 Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
 
+/*
     let prop = Blockly.JavaScript.valueToCode(block, 'PROP',
         Blockly.JavaScript.ORDER_ATOMIC) || "0.5";
     //  this yields something like prop = "'1/2'", which is bad. No idea how that started happening!
 
     prop = prop.replaceAll("'", "");  //  strip single quotes
     prop = prop.replaceAll('"', '');  //  strip double quotes
+*/
+
+    let prop = Blockly.JavaScript.valueToCode(block, 'PROP',  Blockly.JavaScript.ORDER_ATOMIC);
 
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
     let propNum = {};
     let code;
 
+    code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
+
+/*
     if (typeof prop === 'string') {
         propNum = utilities.stringFractionDecimalOrPercentToNumber(prop);
         if (propNum.theString) {
@@ -309,16 +348,8 @@ Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
     } else {
         code = `"bad input ${typeof prop} [${prop}]"`;
     }
-
-
-/*
-    if (propNum.theString) {
-        code = `Math.random() < ${propNum.theNumber} ? "${one}" : "${two}"`;
-    } else {
-        code = `"bad input [${prop}]"`;
-        console.log(`Your entry [${prop}] doesn't look like a number.`);
-    }
 */
+
     return [code, Blockly.JavaScript.ORDER_ADDITION];
 };
 

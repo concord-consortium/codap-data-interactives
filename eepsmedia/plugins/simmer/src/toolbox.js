@@ -121,6 +121,22 @@ simmer.toolbox = {
                 },
 
                 {
+                    'kind': 'block',
+                    'type': 'random_pick_from_two_advanced',
+                    "inputs": {
+                        "PROP": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 0.50
+                                }
+                            }
+                        }
+                    }
+                },
+
+/*
+                {
                     "disabled" : true,
                     'kind': 'block',
                     'type': 'random_pick_from_two_advanced',
@@ -135,6 +151,7 @@ simmer.toolbox = {
                         }
                     }
                 },
+*/
 
                 {
                     'kind': 'block',
@@ -153,6 +170,29 @@ simmer.toolbox = {
                                 "type": "math_number",
                                 "fields": {
                                     "NUM": 1.0
+                                }
+                            }
+                        }
+                    }
+                },
+
+                {
+                    'kind': 'block',
+                    'type': 'random_binomial',
+                    "inputs": {
+                        "SAMPLE_SIZE": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 10
+                                }
+                            }
+                        },
+                        "PROB": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 0.5
                                 }
                             }
                         }
