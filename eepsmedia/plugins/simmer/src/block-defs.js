@@ -14,28 +14,26 @@ Blockly.common.defineBlocksWithJsonArray([
         "helpUrl": ""
     },
 
-    //  with input...
-    /*
-        {
-            "type": "codap_emit",
-            "message0": "emit in CODAP: %1",
-            "args0": [
-                {
-                    "type": "input_value",
-                    "name": "VARIABLES",
-                    "check": [
-                        "Array",
-                        "String"
-                    ]
-                }
-            ],
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": 230,
-            "tooltip": "plug in a list of variables to emit",
-            "helpUrl": ""
-        },
-    */
+    //      math fraction
+
+    {
+        'type': 'math_number_fraction',
+        'message0': '%1 (fraction)',
+
+        'args0': [
+            {
+                'type': 'field_input',     //      'field_number'
+                'name': 'NUM',
+                'text': "1/2",
+            },
+        ],
+        'output': 'Number',
+        'tooltip' : `enter a number, fraction, or percentage`,
+        //  'helpUrl': '%{BKY_MATH_NUMBER_HELPURL}',
+        'style': 'math_blocks',
+        //  'tooltip': '%{BKY_MATH_NUMBER_TOOLTIP}',
+        //  'extensions': ['parent_tooltip_when_inline'],
+    },
 
     //      random integer
 
@@ -209,7 +207,7 @@ Blockly.common.defineBlocksWithJsonArray([
 
         ],
         "output": "String",
-        "tooltip": "Pick between 2 options; enter a decimal value for the probability.",
+        "tooltip": "Pick between 2 options; enter a number, fraction, or percentage for the probability.",
         "colour": 888
     },
 
@@ -231,181 +229,5 @@ Blockly.common.defineBlocksWithJsonArray([
         "helpUrl": ""
     }
 ]);
-
-Blockly.JavaScript['codap_emit'] = function (block) {
-
-    const theVariables = Blockly.getMainWorkspace().getAllVariables();  //  gets variables AND VALUES
-
-    //  initialize with the "count" attribute, `simmerRun`
-    const simmerRunVar = {
-        "name": "simmerRun",
-        "value": simmer.state.simmerRun,
-    };
-    let code = `\n//  codap emit \n\nlet theValues = { "simmerRun" : ${simmer.state.simmerRun}}; // 'run' value \n`;
-    //  code += "let oneVar = {}; let oneVal;\n";
-    theVariables.forEach(v => {
-        const vName = v.name;
-
-        code += `if ((typeof ${vName} !== 'undefined')  &&  (typeof ${vName} !== 'object'))`;
-        try {
-            const thisValueCode = `(eval("${vName}"))`;
-            const thisJSONCode = `JSON.stringify(${vName})`;
-
-            code += "{\n";
-            code += `  theValues["${vName}"] = ${thisValueCode};\n`;
-            //  code += `  const theJSON = ${thisJSONCode};\n`;
-            //  code += `  theValues["${vName}"] = ${thisJSONCode};\n`;
-            code += "}\n";
-        } catch (msg) {
-            console.log(`${vName} threw an error...${msg}`);
-        }
-    })
-
-    code += `simmer.connect.codap_emit(theValues);\n\n//  end codap emit\n\n`;
-
-    return code;
-};
-
-Blockly.JavaScript['random_integer'] = function (block) {
-    // when it was fields, was:   let lower = block.getFieldValue('LOWER');
-    let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
-    let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
-        Blockly.JavaScript.ORDER_ADDITION) || 6;
-
-    return [`random_functions.integer(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_float'] = function (block) {
-    // when it was fields, was:   let lower = block.getFieldValue('LOWER');
-    let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
-    let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
-        Blockly.JavaScript.ORDER_ADDITION) || 6;
-
-    return [`random_functions.float(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_normal'] = function (block) {
-    let mu = Blockly.JavaScript.valueToCode(block, 'MU',
-        Blockly.JavaScript.ORDER_ADDITION) || 0;
-    let sigma = Blockly.JavaScript.valueToCode(block, 'SIGMA',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
-    /*
-        let mu = block.getFieldValue('MU');
-        let sigma = block.getFieldValue('SIGMA');
-    */
-
-    return [`random_functions.randomNormal(${mu}, ${sigma})`, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_binomial'] = function (block) {
-    let N = Blockly.JavaScript.valueToCode(block, 'SAMPLE_SIZE',
-        Blockly.JavaScript.ORDER_ADDITION) || 0;
-    let p = Blockly.JavaScript.valueToCode(block, 'PROB',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
-
-    return [`random_functions.randomBinomial(${N}, ${p})`, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_pick_from_two'] = function (block) {
-    let one = block.getFieldValue('ONE');
-    let two = block.getFieldValue('TWO');
-    const code = `Math.random() < 0.5 ? "${one}" : "${two}"`;
-    return [code, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
-
-/*
-    let prop = Blockly.JavaScript.valueToCode(block, 'PROP',
-        Blockly.JavaScript.ORDER_ATOMIC) || "0.5";
-    //  this yields something like prop = "'1/2'", which is bad. No idea how that started happening!
-
-    prop = prop.replaceAll("'", "");  //  strip single quotes
-    prop = prop.replaceAll('"', '');  //  strip double quotes
-*/
-
-    let prop = Blockly.JavaScript.valueToCode(block, 'PROP',  Blockly.JavaScript.ORDER_ATOMIC);
-
-    let one = block.getFieldValue('ONE');
-    let two = block.getFieldValue('TWO');
-    let propNum = {};
-    let code;
-
-    code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
-
-/*
-    if (typeof prop === 'string') {
-        propNum = utilities.stringFractionDecimalOrPercentToNumber(prop);
-        if (propNum.theString) {
-            code = `Math.random() < ${propNum.theNumber} ? "${one}" : "${two}"`;
-        } else {
-            code = `"bad input string [${prop}]"`;
-        }
-    } else if (typeof prop === 'number') {
-        code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
-    } else {
-        code = `"bad input ${typeof prop} [${prop}]"`;
-    }
-*/
-
-    return [code, Blockly.JavaScript.ORDER_ADDITION];
-};
-
-Blockly.JavaScript['random_pick'] = function (block) {
-    const value_list = Blockly.JavaScript.valueToCode(block, 'LIST', Blockly.JavaScript.ORDER_ATOMIC);
-    const code = `random_functions.pickFrom(${value_list})`;
-    // TODO: Change ORDER_NONE to the correct strength.
-    return [code, Blockly.JavaScript.ORDER_NONE];
-};
-
-Blockly.JavaScript['text_print'] = function (block) {
-    const msg = Blockly.JavaScript.valueToCode(
-        block, 'TEXT',
-        Blockly.JavaScript.ORDER_NONE) || "''";
-
-    return `console.log(${msg});\n`;
-};
-
-Blockly.JavaScript['lists_push'] = function (block) {
-    const value_newItem = Blockly.JavaScript.valueToCode(block, 'NEWITEM', Blockly.JavaScript.ORDER_ATOMIC);
-    let value_array = Blockly.JavaScript.valueToCode(block, 'ARRAY', Blockly.JavaScript.ORDER_ATOMIC);
-
-    const code = `${value_array}.push(${value_newItem});\n`;
-    return code;
-};
-
-
-const utilities = {
-    stringFractionDecimalOrPercentToNumber: function (iString) {
-        let theNumber;
-        let theString;
-
-        const wherePercent = iString.indexOf("%");
-        const whereSlash = iString.indexOf("/");
-        if (wherePercent !== -1) {
-            const thePercentage = parseFloat(iString.substring(0, wherePercent));
-            theString = `${thePercentage}%`;
-            theNumber = thePercentage / 100.0;
-        } else if (whereSlash !== -1) {
-            const beforeSlash = iString.substring(0, whereSlash);
-            const afterSlash = iString.substring(whereSlash + 1);
-            const theNumerator = parseFloat(beforeSlash);
-            const theDenominator = parseFloat(afterSlash);
-            theNumber = theNumerator / theDenominator;
-            theString = `${theNumerator}/${theDenominator}`;
-        } else {
-            theNumber = parseFloat(iString);
-            theString = `${theNumber}`;
-        }
-
-        if (!isNaN(theNumber)) {
-            return {theNumber: theNumber, theString: theString};
-        } else {
-            return {theNumber: 0, theString: ""};
-        }
-    },
-};
 
 

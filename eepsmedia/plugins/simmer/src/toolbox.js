@@ -25,6 +25,9 @@ simmer.toolbox = {
                     "kind": "block", "type": "math_number"
                 },
                 {
+                    "kind": "block", "type": "math_number_fraction"
+                },
+                {
                     "kind": "block", "type": "math_arithmetic"
                 },
                 {
@@ -126,9 +129,11 @@ simmer.toolbox = {
                     "inputs": {
                         "PROP": {
                             "shadow": {
-                                "type": "math_number",
+                                //  "type": "math_number",
+                                "type": "math_number_fraction",
                                 "fields": {
-                                    "NUM": 0.50
+                                    //  "NUM": 0.50
+                                    "NUM": "1/2"
                                 }
                             }
                         }

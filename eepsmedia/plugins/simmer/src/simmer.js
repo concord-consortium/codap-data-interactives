@@ -238,7 +238,7 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
     },
 
     constants: {
-        version: '2023i',
+        version: '2023j',
         dsName: `simmerDataset`,
         freshState: {
             theVariables: [],
