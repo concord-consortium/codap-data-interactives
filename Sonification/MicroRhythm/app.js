@@ -47,7 +47,7 @@ const app = new Vue({
         version: 'v0.2.1',
         dim: {
             width: 325,
-            height: 274
+            height: 344
         },
         loading: true,
         // state managed by CODAP
@@ -309,7 +309,7 @@ const app = new Vue({
             // this.attributes = null;
             this.attributes = helper.getAttributesForContext(this.state.focusedContext);
 
-            // this.resetPitchTimeMaps();
+            this.resetPitchTimeMaps();
         },
         setIfDateTimeAttribute(type) {
             let contextName = this.state.focusedContext;
@@ -707,11 +707,11 @@ const app = new Vue({
                 // else if (notice.values.operation === 'updateCases' || notice.values.operation === 'dependentCases') {
                 //     helper.queryAllData().then(this.onGetData);
                 // }
-            } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
-                helper.queryGlobalValues().then(this.onGetGlobals);
-            } else if (notice.resource === 'undoChangeNotice') {
-                helper.queryGlobalValues().then(this.onGetGlobals);
-            } else if (notice.resource === 'logMessageNotice') {
+            // } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
+                //helper.queryGlobalValues().then(this.onGetGlobals);
+            // } else if (notice.resource === 'undoChangeNotice') {
+                //helper.queryGlobalValues().then(this.onGetGlobals);
+            // } else if (notice.resource === 'logMessageNotice') {
                 // if (notice.values.message.startsWith('plugin')) {
                 //     let values = JSON.parse(notice.values.message.slice(8));
                 //
@@ -720,6 +720,40 @@ const app = new Vue({
                 //         speedSlider.value = values.values.speed;
                 //     }
                 // }
+            // } else {
+                //console.log(`Unhandled notice: ${notice.resource}`)
+            }
+        },
+        createGraph() {
+            let timeAttr = this.state.timeAttribute;
+            let pitchAttr = this.state.pitchAttribute;
+            if (timeAttr && pitchAttr) {
+                // create the graph object
+                helper.createGraph(this.state.focusedContext,
+                    this.state.timeAttribute, this.state.pitchAttribute).then(
+                    result => {
+                        if (result.success) {
+                            let graphId = result.values.id;
+                            console.log(`created graph: graph id: ${graphId}`)
+                            helper.annotateDocument((doc) => {
+                                let graph = doc.components.find(component => component.id === graphId);
+                                let componentStorage = graph.componentStorage;
+                                let adornments = componentStorage.plotModels[0].plotModelStorage.adornments;
+                                adornments.plottedValue = {
+                                        "isVisible": true,
+                                        "adornmentKey": "plottedValue",
+                                        "expression": "sonificationTracker"
+                                    };
+                                adornments.connectingLine = {isVisible: true};
+
+                                return doc;
+                            })
+                        } else {
+                            console.warn(
+                                `create graph failure: ${result.values? 
+                                    result.values.error: 'unknown error'}`);
+                        }
+                    });
             }
         }
     },
@@ -742,6 +776,13 @@ const app = new Vue({
         codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
+    },
+    computed: {
+        isPlayable: function() {
+            let playable=!!(this.state.timeAttribute && this.state.pitchAttribute);
+            console.log(`playable = ${playable}`);
+            return playable;
+        }
     }
 });
 

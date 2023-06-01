@@ -38,6 +38,8 @@ class CodapPluginHelper {
         // this.createCasesPromise = null; // Somehow reusing the same promise can result in multiple resolve calls.
         this.createCasesResolve = null;
         this.caseTimerDuration = 1000;
+
+        this.documentAnnotator = null;
     }
 
     init(name, dimensions={width:200,height:100}, version) {
@@ -61,11 +63,15 @@ class CodapPluginHelper {
                 this.ID = pluginState.ID = new Date().getTime();
             }
 
+            // set up document listener
+            this.on('document', null, (msg) => { this.handleNewDocumentNotification(msg); });
+
             if (!hasState) {
                 return this.codapInterface.sendRequest({
                     action: "update",
                     resource: "interactiveFrame",
                     values: {
+                        subscribeToDocuments: true,
                         dimensions: {
                             width: dimensions.width,
                             height: dimensions.height + 25
@@ -76,6 +82,7 @@ class CodapPluginHelper {
                 return this.queryAllData();
             }
             // Allow the attributes to move.
+
         })
         .then( () => {return this.getPluginID(); })
         .then(id=> {this.pluginID = id;})
@@ -628,6 +635,37 @@ class CodapPluginHelper {
 
     }
 
+    /**
+     * fetches the CODAP document, calls the annotationHandler, then returns
+     * the changed document as an update. This is obviously a very dangerous
+     * operation and should be used with extreme care.
+     */
+    annotateDocument(annotationHandler) {
+        this.documentAnnotator = annotationHandler;
+        this.codapInterface.sendRequest(
+            {
+                action: 'get',
+                resource: `document`
+            });
+
+    }
+
+    handleNewDocumentNotification(msg) {
+        if (this.documentAnnotator && msg && msg.values) {
+            let doc = this.documentAnnotator(msg.values.state);
+            this.documentAnnotator = null;
+            if (doc) {
+                this.codapInterface.sendRequest({
+                    action: 'update',
+                    resource: 'document',
+                    values: doc
+                })
+            }
+        }
+    }
+
+
+
     // openInfoPage(dimensions, name, file) {
     //     let location = window.location.pathname;
     //     let directory = location.substring(0, location.lastIndexOf('/'));
@@ -722,6 +760,18 @@ class CodapPluginHelper {
         });
     }
 
+    createGraph(dataContext, xAxis, yAxis) {
+        return this.codapInterface.sendRequest({
+            action: 'create',
+            resource: 'component',
+            values: {
+                type: 'graph',
+                dataContext: dataContext,
+                xAttributeName: xAxis,
+                yAttributeName: yAxis
+            }
+        })
+    }
 
     selectSelf() {
         if (this.pluginID) {
