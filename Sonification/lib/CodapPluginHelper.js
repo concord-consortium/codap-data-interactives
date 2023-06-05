@@ -636,11 +636,19 @@ class CodapPluginHelper {
     }
 
     /**
-     * fetches the CODAP document, calls the annotationHandler, then returns
-     * the changed document as an update. This is obviously a very dangerous
-     * operation and should be used with extreme care.
+     * Initiates the "get document" process.
+     *
+     * The get/document API call causes the document to be set, not in the
+     * reply, but in a subsequent notification. We set, in this call the
+     * annotationHandler that will be called by this.handleNewDocumentNotification()
+     * upon receipt of a notification. The handler will be invoked once.
+     * The annotationHandler should return a new version of the document.
+     * If it does so, this will be sent as an update to CODAP.
      */
     annotateDocument(annotationHandler) {
+        if (this.documentAnnotator && annotationHandler) {
+            console.warn(`Unexpected overwrite of CodapPluginHandler.documentHandler`)
+        }
         this.documentAnnotator = annotationHandler;
         this.codapInterface.sendRequest(
             {
