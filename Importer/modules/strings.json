@@ -433,7 +433,7 @@
     "DG.plugin.Scrambler.description": "Testuj hipotezy, losowo zmieniając atrybut.",
     "DG.plugin.Scrambler.language": "angielski",
     "DG.plugin.Scrambler.static.scramblerTitle": "Mieszacz",
-    "DG.plugin.Scrambler.static.cantScrambleStripe": "Napraw to, aby kontynuować.",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Zrób to, aby kontynuować.",
     "DG.plugin.Scrambler.static.howManyLabel": "ile?",
     "DG.plugin.Scrambler.static.scrambledDataButtonName": "pokaż zmieszane",
     "DG.plugin.Scrambler.sScramble": "zmieszaj",
