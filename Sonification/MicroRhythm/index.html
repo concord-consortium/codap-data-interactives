@@ -179,6 +179,9 @@
 <!--                </select>-->
 <!--            </label>-->
 <!--        </div>-->
+        <div class="mapper-container">
+            <button :disabled="!isPlayable" v-on:click="createGraph">create graph</button>
+        </div>
     </div>
     <div id="footer-container">
         <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" title="Information" draggable="false" @click="openInfoPage">
