@@ -46,7 +46,7 @@ const app = new Vue({
     el: '#app',
     data: {
         name: 'Sonify',
-        version: 'v0.2.2',
+        version: 'v0.2.3',
         dim: {
             width: 325,
             height: 344
