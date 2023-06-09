@@ -543,6 +543,10 @@ class CodapPluginHelper {
         return (this.items && Object.keys(this.items).length) ? this.items[context].map(c => c.values[attribute]) : null;
     }
 
+    /**
+     * Returns the items corresponding to the cases selected by the user.
+     * When no cases are selected, all the case are returned as "selected."
+     */
     getSelectedItems(context) {
         return this.codapInterface.sendRequest({
             action: 'get',
@@ -552,13 +556,35 @@ class CodapPluginHelper {
             let selectedItems;
             if (caseIDs.length) {
                 selectedItems = caseIDs
-                    .map(id => this.items[context]
-                        .find(item => item && item.id === id));// item.id is actually the case ID.
+                    .map(id => {
+                        // item.id is actually the case ID.
+                        return this.items[context]
+                            .find(item => item && item.id === id)
+                    });
             } else {
                 selectedItems = this.items[context];
             }
-            return selectedItems
-                .filter(item => typeof(item) !== 'undefined');
+            return selectedItems.filter(item => typeof(item) !== 'undefined');
+        });
+    }
+
+    /**
+     * Return the selected items. When no cases are selected,
+     * return an empty array rather than all the cases.
+     */
+    getStrictlySelectedItems(context) {
+        return this.codapInterface.sendRequest({
+            action: 'get',
+            resource: `dataContext[${context}].selectionList`
+        }).then(result => {
+            let caseIDs = result.values.map(v => v.caseID);
+            return caseIDs
+                .map(id => {
+                    // item.id is actually the case ID.
+                    return this.items[context]
+                        .find(item => item && item.id === id)
+                })
+                .filter(item => item !== 'undefined');
         });
     }
 
