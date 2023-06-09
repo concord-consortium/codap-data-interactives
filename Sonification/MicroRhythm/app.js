@@ -40,6 +40,8 @@ const minPitchMIDI = 55;
 const maxPitchMIDI = 110;
 const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
+const USE_MULTI_TONES = true;
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -77,7 +79,6 @@ const app = new Vue({
         collections: null,
         attributes: null,
         focusedCollection: null,
-        prevSelectedIDs: [],
         globals: [],
 
         pitchAttrRange: null,
@@ -402,7 +403,7 @@ const app = new Vue({
         },
 
         reselectCases() {
-            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+            helper.getStrictlySelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
         onCsdFileSelected() {
 
@@ -494,45 +495,70 @@ const app = new Vue({
         },
 
         onItemsSelected(items) {
+            const allItems = helper.getItemsForContext(this.state.focusedContext)
+
             if (this.timeAttrRange) {
                 let range = this.timeAttrRange.max - this.timeAttrRange.min;
 
                 if (range === 0) {
-                    this.timeArray = items.map(c => {
-                        return { id: c.id, val: 0 };
-                    });
+                    if (USE_MULTI_TONES) {
+                        const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: 0, sel: false }, acc), {});
+                        items.forEach(c => idItemMap[c.id].sel = true);
+                        this.timeArray = Object.values(idItemMap);
+                    } else {
+                        this.timeArray = items.map(c => {
+                            return { id: c.id, val: 0 };
+                        });
+                    }
                 } else {
                     if (this.checkIfGlobal(this.state.timeAttribute)) {
                         let global = this.globals.find(g => g.name === this.state.timeAttribute);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
-                        this.timeArray = items.map(c => {
-                            return {
-                                id: c.id,
-                                val: value
-                            }
-                        })
+                        if (USE_MULTI_TONES) {
+                            const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: value, sel: false }, acc), {});
+                            items.forEach(c => idItemMap[c.id].sel = true);
+                            this.timeArray = Object.values(idItemMap);
+                        } else {
+                            this.timeArray = items.map(c => {
+                                return {
+                                    id: c.id,
+                                    val: value
+                                }
+                            });
+                        }
                     } else {
-                        this.timeArray = items.map(c => {
-                            let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
-                            return {
-                                id: c.id,
-                                val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
-                            }
-                        });
+                        if (USE_MULTI_TONES) {
+                            const idItemMap = allItems.reduce((acc, curr) => {
+                                const value = this.state.timeAttrIsDate ? Date.parse(curr.values[this.state.timeAttribute]) : curr.values[this.state.timeAttribute];
+                                const valueScaled = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
+                                acc[curr.id] = { id: curr.id, val: valueScaled, sel: false };
+                                return acc
+                            }, {});
+
+                            items.forEach(c => idItemMap[c.id].sel = true);
+                            this.timeArray = Object.values(idItemMap);
+                        } else {
+                            this.timeArray = items.map(c => {
+                                let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
+                                return {
+                                    id: c.id,
+                                    val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
+                                }
+                            });
+                        }
                     }
                 }
             }
 
-            ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: items }));
+            // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: USE_MULTI_TONES ? allItems : items }));
+            this.prepMapping({ param: 'pitch', items: USE_MULTI_TONES ? allItems : items });
 
             if (this.playing) {
                 this.phase = csound.RequestChannel('phase');
                 this.stopNotes();
                 this.play();
             }
-
-            this.prevSelectedIDs = items.map(c => c.id);
         },
         stopNotes() {
             csound.Event('e');
@@ -555,13 +581,21 @@ const app = new Vue({
             }
 
             this.timeArray.forEach((d,i) => {
-                let pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
-                let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
-                let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
-                let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
+                const pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
+                // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
+                // let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
+                // let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
 
-                if (d.val >= phase && ![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
-                    csound.Event(`i2 ${(d.val - phase) / gkfreq} 0.2 ${pitch} ${loudness} ${stereo}`);
+                const loudness = 0.5;
+                const duration = 0.2;
+
+                if (d.val >= phase && ![d.val,pitch].some(isNaN)) {
+                    if (USE_MULTI_TONES) {
+                        const instr = d.sel ? 3 : 2;
+                        csound.Event(`i${instr} ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                    } else {
+                        csound.Event(`i2 ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                    }
                 }
             });
         },
@@ -673,7 +707,7 @@ const app = new Vue({
                     }
                 } else if (contextName === DATAMOVES_DATA.name) {
                     if (operation === 'selectCases' && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Replay']) {
-                        helper.getSelectedItems(contextName).then(items => {
+                        helper.getStrictlySelectedItems(contextName).then(items => {
                             items.forEach(item => {
                                 let values = item.values;
                                 if (values.ID === helper.ID) {
@@ -695,7 +729,7 @@ const app = new Vue({
                 } else {
                     if (operation === 'selectCases') {
                         if (contextName === this.state.focusedContext) {
-                            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+                            helper.getStrictlySelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
                     } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
                         if (contextName === this.state.focusedContext) {
