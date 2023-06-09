@@ -8,13 +8,14 @@ ksmps = 200   ; control rate in samples per second
 nchnls = 2    ; number or channels
 0dbfs = 1.0
 
-zakinit 2, 1
-gimixchL = 1
-gimixchR = 2
+zakinit 1, 1
+gimixch = 1
 turnon "MIX"
 
 gkfreq init 1
 gktrig init 0
+
+gisaw ftgen 1, 0, 16384, 7, -1, 16384, 1
 
 ; The MASTER Instrument sets up the metronome and phasor
 instr 1, MASTER
@@ -33,23 +34,26 @@ if gkclick == 1 then
 endif
 endin
 
-; The GRAIN Instrument actually creates sounds
-instr 2, GRAIN
+; The SOFT Instrument actually creates sounds
+instr 2, SOFT
 iatk = 0.002
 igain = p5 * 0.075
-ipan = p6
 aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
 asig oscil aenv, cpsmidinn(scale(p4,110,55))
-asigL, asigR pan2 asig, ipan
-; outs asigL, asigR
+zawm asig, gimixch
+endin
 
-zawm asigL, gimixchL
-zawm asigR, gimixchR
+instr 3, HARD
+iatk = 0.002
+igain = p5 * 0.025
+aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
+asig oscil aenv, cpsmidinn(scale(p4,110,55)), 1
+zawm asig, gimixch
 endin
 
 ; The CLICK instrument creates a click event every time the metronome triggers
 ; a restart
-instr 3, CLICK
+instr 4, CLICK
 aenv = expseg(0.2, p3, 0.001)
 asig noise aenv, 0
 outs asig, asig
@@ -57,16 +61,15 @@ endin
 
 ; The MIX channel aggregates and limits the output volume.
 instr +MIX
-asigL zar gimixchL
-asigR zar gimixchR
-zacl gimixchL, gimixchR
+asig zar gimixch
+zacl 0, gimixch
 
-asigL limit asigL, -1, 1
-asigR limit asigR, -1, 1
-outs asigL, asigR
+asig limit asig, -1, 1
+outs asig, asig
 endin
 
 </CsInstruments>
 <CsScore>
+f0 36000
 </CsScore>
 </CsoundSynthesizer>
