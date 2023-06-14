@@ -87,7 +87,8 @@ const simmer = {
         }
 
         //  actually retrieve the code from Blockly
-        let code = Blockly.JavaScript.workspaceToCode(this.workspace);
+        let code = `let theValues = [];\n\n`;
+        code += Blockly.JavaScript.workspaceToCode(this.workspace);
         console.log(`............................the code: \n${code}............................`);
 
         //  const executed = Function(`"use strict"; return (${code})`);
@@ -238,7 +239,7 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
     },
 
     constants: {
-        version: '2023j',
+        version: '2023k',
         dsName: `simmerDataset`,
         freshState: {
             theVariables: [],

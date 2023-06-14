@@ -1,6 +1,4 @@
-
 /*  global Blockly, Blockly.JavaScript      */
-
 
 
 Blockly.JavaScript['codap_emit'] = function (block) {
@@ -12,38 +10,40 @@ Blockly.JavaScript['codap_emit'] = function (block) {
         "name": "simmerRun",
         "value": simmer.state.simmerRun,
     };
-    let code = `\n//  codap emit \n\nlet theValues = { "simmerRun" : ${simmer.state.simmerRun}}; // 'run' value \n`;
+    let code = `\n//  codap emit \n\n`;
+
+    code += `theValues = { "simmerRun" : ${simmer.state.simmerRun}}; // 'run' value \n`;
     //  code += "let oneVar = {}; let oneVal;\n";
     theVariables.forEach(v => {
         const vName = v.name;
 
-        code += `if ((typeof ${vName} !== 'undefined')  &&  (typeof ${vName} !== 'object'))`;
-        try {
-            const thisValueCode = `(eval("${vName}"))`;
-            const thisJSONCode = `JSON.stringify(${vName})`;
+        code += `if (typeof ${vName} !== 'undefined') {\n`
 
-            code += "{\n";
-            code += `  theValues["${vName}"] = ${thisValueCode};\n`;
-            //  code += `  const theJSON = ${thisJSONCode};\n`;
-            //  code += `  theValues["${vName}"] = ${thisJSONCode};\n`;
-            code += "}\n";
-        } catch (msg) {
-            console.log(`${vName} threw an error...${msg}`);
-        }
+        //  if it's of type object, JSON.stringify it....
+        code += `    if (typeof ${vName} === 'object') {\n`;
+        code += `        theValues["${vName}"] = JSON.stringify(${vName});\n`;
+
+        //  otherwise, eval it.
+        code += `    } else {\n`;
+        code += `        theValues["${vName}"] = eval("${vName}");\n`;
+        code += `    }\n`;
+
+        code += `}  //  close undefined \n`;      //      close if it's not undefined.
     })
+
 
     code += `simmer.connect.codap_emit(theValues);\n\n//  end codap emit\n\n`;
 
     return code;
 };
 
-Blockly.JavaScript['math_number_fraction'] = function(block) {
+Blockly.JavaScript['math_number_fraction'] = function (block) {
 
     function findNumberEvenIfPercentage(inString) {
         let isPercentage = false;
         if (inString.includes("%")) {
             isPercentage = true;
-            inString = inString.replaceAll("%","");
+            inString = inString.replaceAll("%", "");
         }
 
         let theNumber = Number(inString);
@@ -52,7 +52,7 @@ Blockly.JavaScript['math_number_fraction'] = function(block) {
     }
 
     const inString = String(block.getFieldValue('NUM')).trim();
-    inString.replaceAll(" ","");    //  strip all interior spaces
+    inString.replaceAll(" ", "");    //  strip all interior spaces
 
     let numerator;
     let denominator = "1";
@@ -60,7 +60,7 @@ Blockly.JavaScript['math_number_fraction'] = function(block) {
 
     const fracArray = inString.split('/');
 
-    switch(fracArray.length) {
+    switch (fracArray.length) {
         case 0:
             numerator = "NaN";
             denominator = "NaN";
@@ -84,7 +84,7 @@ Blockly.JavaScript['math_number_fraction'] = function(block) {
         return [code, order];
     } catch (msg) {
         console.log(`simmer: number parse error ${err} (${msg})`);
-        return ["NaN",Blockly.JavaScript.ORDER_ATOMIC];
+        return ["NaN", Blockly.JavaScript.ORDER_ATOMIC];
     }
 };
 
@@ -148,7 +148,7 @@ Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
         prop = prop.replaceAll('"', '');  //  strip double quotes
     */
 
-    let prop = Blockly.JavaScript.valueToCode(block, 'PROP',  Blockly.JavaScript.ORDER_ATOMIC);
+    let prop = Blockly.JavaScript.valueToCode(block, 'PROP', Blockly.JavaScript.ORDER_ATOMIC);
 
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
