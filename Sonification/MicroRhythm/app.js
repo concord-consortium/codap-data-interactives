@@ -689,7 +689,7 @@ const app = new Vue({
             }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
-                    this.onContextFocused();
+                    this.attributes = helper.getAttributesForContext(this.state.focusedContext);
                 }
                 kAttributeMappedProperties.forEach( (p) => {
                     if (this.state[p + 'Attribute']) {this.processMappedAttribute(p);}
