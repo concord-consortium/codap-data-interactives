@@ -40,7 +40,8 @@ const minPitchMIDI = 55;
 const maxPitchMIDI = 110;
 const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
-const USE_MULTI_TONES = true;
+const FOCUS_MODE = 'Focus';
+const CONTRAST_MODE = 'Contrast';
 
 const app = new Vue({
     el: '#app',
@@ -48,8 +49,8 @@ const app = new Vue({
         name: 'Sonify',
         version: 'v0.2.3',
         dim: {
-            width: 325,
-            height: 344
+            width: 285,
+            height: 385
         },
         loading: true,
         // state managed by CODAP
@@ -73,6 +74,7 @@ const app = new Vue({
             playbackSpeed: 0.5,
             loop: false,
             click: false,
+            selectionMode: FOCUS_MODE,
         },
         data: null,
         contexts: null, // array of context names
@@ -112,6 +114,7 @@ const app = new Vue({
         timerId: null,
         phase: 0,
         cycleEndTimerId: null,
+        selectionModes: [FOCUS_MODE, CONTRAST_MODE],
     },
     watch: {
         state: {
@@ -358,7 +361,15 @@ const app = new Vue({
             });
         },
         onBackgroundSelect() {
-          helper.selectSelf();
+            helper.selectSelf();
+        },
+        onSelectionModeSelectedByUI() {
+            if (this.state.selectionMode === CONTRAST_MODE) {
+                this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
+            } else {
+                this.getSelectedItems = helper.getSelectedItems.bind(helper);
+            }
+            this.reselectCases();
         },
         onPitchAttributeSelectedByUI() {
             this.setUserMessage(this.state.pitchAttribute?"Pitch attribute selected...":"Please select attribute for pitch");
@@ -403,7 +414,7 @@ const app = new Vue({
         },
 
         reselectCases() {
-            helper.getStrictlySelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+            this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
         onCsdFileSelected() {
 
@@ -501,7 +512,7 @@ const app = new Vue({
                 let range = this.timeAttrRange.max - this.timeAttrRange.min;
 
                 if (range === 0) {
-                    if (USE_MULTI_TONES) {
+                    if (this.state.selectionMode === CONTRAST_MODE) {
                         const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: 0, sel: false }, acc), {});
                         items.forEach(c => idItemMap[c.id].sel = true);
                         this.timeArray = Object.values(idItemMap);
@@ -515,7 +526,7 @@ const app = new Vue({
                         let global = this.globals.find(g => g.name === this.state.timeAttribute);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
-                        if (USE_MULTI_TONES) {
+                        if (this.state.selectionMode === CONTRAST_MODE) {
                             const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: value, sel: false }, acc), {});
                             items.forEach(c => idItemMap[c.id].sel = true);
                             this.timeArray = Object.values(idItemMap);
@@ -528,7 +539,7 @@ const app = new Vue({
                             });
                         }
                     } else {
-                        if (USE_MULTI_TONES) {
+                        if (this.state.selectionMode === CONTRAST_MODE) {
                             const idItemMap = allItems.reduce((acc, curr) => {
                                 const value = this.state.timeAttrIsDate ? Date.parse(curr.values[this.state.timeAttribute]) : curr.values[this.state.timeAttribute];
                                 const valueScaled = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
@@ -551,8 +562,11 @@ const app = new Vue({
                 }
             }
 
-            // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: USE_MULTI_TONES ? allItems : items }));
-            this.prepMapping({ param: 'pitch', items: USE_MULTI_TONES ? allItems : items });
+            // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: CONTRAST_MODE ? allItems : items }));
+            this.prepMapping({
+                param: 'pitch',
+                items: this.state.selectionMode === CONTRAST_MODE ? allItems : items,
+            });
 
             if (this.playing) {
                 this.phase = csound.RequestChannel('phase');
@@ -590,7 +604,7 @@ const app = new Vue({
                 const duration = 0.2;
 
                 if (d.val >= phase && ![d.val,pitch].some(isNaN)) {
-                    if (USE_MULTI_TONES) {
+                    if (this.state.selectionMode === CONTRAST_MODE) {
                         const instr = d.sel ? 3 : 2;
                         csound.Event(`i${instr} ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
                     } else {
@@ -707,7 +721,7 @@ const app = new Vue({
                     }
                 } else if (contextName === DATAMOVES_DATA.name) {
                     if (operation === 'selectCases' && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Replay']) {
-                        helper.getStrictlySelectedItems(contextName).then(items => {
+                        this.getSelectedItems(contextName).then(items => {
                             items.forEach(item => {
                                 let values = item.values;
                                 if (values.ID === helper.ID) {
@@ -729,7 +743,7 @@ const app = new Vue({
                 } else {
                     if (operation === 'selectCases') {
                         if (contextName === this.state.focusedContext) {
-                            helper.getStrictlySelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+                            this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
                     } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
                         if (contextName === this.state.focusedContext) {
@@ -810,7 +824,14 @@ const app = new Vue({
         codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
+
+        if (this.state.selectionMode === CONTRAST_MODE) {
+            this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
+        } else {
+            this.getSelectedItems = helper.getSelectedItems.bind(helper);
+        }
     },
+    getSelectedItems: null,
     computed: {
         isPlayable: function() {
             let playable=!!(this.state.timeAttribute && this.state.pitchAttribute);
