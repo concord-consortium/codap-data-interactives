@@ -179,6 +179,15 @@
 <!--                </select>-->
 <!--            </label>-->
 <!--        </div>-->
+        <div class="mapper-container" title="Select case-selection mode">
+            Case selection mode
+            <label>
+                <select v-model="state.selectionMode" v-on:change="onSelectionModeSelectedByUI">
+                    <option disabled value="" hidden>Select</option>
+                    <option v-for="mode in selectionModes">{{mode}}</option>
+                </select>
+            </label>
+        </div>
         <div class="mapper-container">
             <button :disabled="!isPlayable" v-on:click="createGraph">create graph</button>
         </div>
