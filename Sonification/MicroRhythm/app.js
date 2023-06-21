@@ -133,13 +133,11 @@ const app = new Vue({
 
             this.playToggle.on('change', v => {
                 if (v) {
-                    this.setUserMessage('Playing sounds')
+                    this.setUserMessage('Playing sounds');
                     this.play();
                 } else {
-                    this.setUserMessage("Stopping play")
-                    this.stop();
-                    this.phase = 0;
-                    helper.setGlobal(trackingGlobalName, 0);
+                    this.setUserMessage("Stopping play");
+                    this.resetPlay();
                 }
             });
 
@@ -164,10 +162,7 @@ const app = new Vue({
                         this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
                     } else {
                         this.cycleEndTimerId = setTimeout(() => {
-                            this.playToggle.flip();
-                            this.stop();
-                            this.phase = 0;
-                            helper.setGlobal(trackingGlobalName, 0);
+                            this.resetPlay();
                         }, remainingPlaybackTime);
                     }
                 }
@@ -577,6 +572,20 @@ const app = new Vue({
         stopNotes() {
             csound.Event('e');
         },
+        /**
+         * Sets sound play and related state to its initial condition:
+         *   * sound is stopped
+         *   * the UI Play toggle is stopped
+         *   * the phase and tracking global are at their minimum value
+         */
+        resetPlay() {
+            if (this.playToggle.state !== PLAY_TOGGLE_IDLE) this.playToggle.state = PLAY_TOGGLE_IDLE;
+            this.stop();
+            this.phase = 0;
+            let timeAdj = this.state.timeAttrIsDate? 1000: 1;
+            let trackerMin = this.timeAttrRange? this.timeAttrRange.min/timeAdj: 0;
+            helper.setGlobal(trackingGlobalName, trackerMin);
+        },
         triggerNotes(phase) {
             let gkfreq = expcurve(this.state.playbackSpeed, 50);
             gkfreq = expcurve(gkfreq, 50);
@@ -587,10 +596,7 @@ const app = new Vue({
                 this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
             } else {
                 this.cycleEndTimerId = setTimeout(() => {
-                    this.playToggle.flip();
-                    this.stop();
-                    this.phase = 0;
-                    helper.setGlobal(trackingGlobalName, 0);
+                    this.resetPlay();
                 }, remainingPlaybackTime);
             }
 
@@ -634,13 +640,13 @@ const app = new Vue({
         },
         play() {
             if (!this.csoundReady) {
-                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = PLAY_TOGGLE_IDLE;
                 this.setUserMessage('Play aborted: csound not ready.');
                 return null;
             }
 
             if (!this.state.pitchAttribute || !this.state.timeAttribute) {
-                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = PLAY_TOGGLE_IDLE;
                 this.setUserMessage("Please set an attribute for time and pitch");
                 return null;
             }
