@@ -313,7 +313,7 @@ const app = new Vue({
         setIfDateTimeAttribute(type) {
             let contextName = this.state.focusedContext;
             let attrName = this.state[`${type}Attribute`];
-            let values = helper.getAttrValuesForContext(contextName, attrName);
+            let values = helper.getAttrValuesForContext(contextName, attrName) || [];
             // an attribute is a Date attribute if none of its values are non-dates
             let isDateAttribute = !values.some((x) => {
                 let isDate = (x instanceof Date) ||
