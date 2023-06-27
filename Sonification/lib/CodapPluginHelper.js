@@ -79,7 +79,15 @@ class CodapPluginHelper {
                     }
                 }).then(() => this.queryAllData());
             } else {
-                return this.queryAllData();
+                return this.codapInterface.sendRequest({
+                    action: "update",
+                    resource: "interactiveFrame",
+                    values: {
+                        subscribeToDocuments: true
+                    }
+                }).then(() =>
+                    this.queryAllData()
+                );
             }
             // Allow the attributes to move.
 
