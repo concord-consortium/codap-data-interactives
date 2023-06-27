@@ -796,7 +796,7 @@ const app = new Vue({
                                 adornments.plottedValue = {
                                         "isVisible": true,
                                         "adornmentKey": "plottedValue",
-                                        "expression": "sonificationTracker"
+                                        "expression": trackingGlobalName
                                     };
                                 adornments.connectingLine = {isVisible: true};
 
