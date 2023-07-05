@@ -1,6 +1,27 @@
 /*global codapInterface:true*/
 const helper = new CodapPluginHelper(codapInterface);
 const moveRecorder = new PluginMovesRecorder(helper);
+/**
+ * Replicates the csound scale function.
+ * Scales a number between zero and one to the given range.
+ * Note the inversion of max and min in the argument list.
+ **/
+function scale(v, max, min) {
+    return (v * (max - min)) + min;
+}
+
+/**
+ * Replicates csound expcurve function.
+ * @param x
+ * @param y
+ * @returns {number}
+ */
+function expcurve(x,y) {
+    return (Math.exp(x * Math.log(y)) - 1) / (y-1)
+}
+
+const PLAY_TOGGLE_IDLE = false;
+const PLAY_TOGGLE_PLAYING = true;
 
 const kAttributeMappedProperties = [
     'time',
@@ -10,14 +31,7 @@ const kAttributeMappedProperties = [
     // 'stereo'
 ];
 
-/**
- * A quarter-step MIDI - voiceEndTime map to prevent notes overlapping more than half of their durations.
- * Without this trick, multiple notes at close pitches played simultaneously could overflow the
- * maximum amplitude Csound can handle. Similar voice-limiting / stealing technique could be implemented
- * in .csd tweaking the schedkwhen, etc. opcode instances or instrument IDs, but I could not get it to work.
- */
-let pitchTimeMap = {};
-
+const trackingGlobalName = 'sonificationTracker';
 const minDur = 0.02;
 const maxDur = 0.5;
 const durRange = maxDur - minDur;
@@ -26,13 +40,17 @@ const minPitchMIDI = 55;
 const maxPitchMIDI = 110;
 const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
+const FOCUS_MODE = 'Focus';
+const CONTRAST_MODE = 'Contrast';
+
 const app = new Vue({
     el: '#app',
     data: {
-        name: 'Micro Rhythm',
+        name: 'Sonify',
+        version: 'v0.2.4',
         dim: {
-            width: 325,
-            height: 274
+            width: 285,
+            height: 385
         },
         loading: true,
         // state managed by CODAP
@@ -54,13 +72,15 @@ const app = new Vue({
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
             playbackSpeed: 0.5,
+            loop: false,
+            click: false,
+            selectionMode: FOCUS_MODE,
         },
         data: null,
         contexts: null, // array of context names
         collections: null,
         attributes: null,
         focusedCollection: null,
-        prevSelectedIDs: [],
         globals: [],
 
         pitchAttrRange: null,
@@ -78,16 +98,7 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
-        click: true,
-
-        // TODO: Consolidate into a single file.
-        csdFiles: [
-            'SinusoidalGrains.csd',
-            'SawTooth.csd',
-            'PitchedNoise.csd',
-            'ContDrums.csd',
-            'FMGranular.csd'
-        ],
+        csdFiles: ['StableGrains.csd'],
         selectedCsd: null,
         csoundReady: false,
 
@@ -97,7 +108,13 @@ const app = new Vue({
         playing: false,
 
         speedSlider: null,
+        loopToggle: null,
+        clickToggle: null,
         userMessage: 'Select a dataset, pitch and time and click Play',
+        timerId: null,
+        phase: 0,
+        cycleEndTimerId: null,
+        selectionModes: [FOCUS_MODE, CONTRAST_MODE],
     },
     watch: {
         state: {
@@ -116,20 +133,56 @@ const app = new Vue({
 
             this.playToggle.on('change', v => {
                 if (v) {
+                    this.setUserMessage('Playing sounds')
                     this.play();
                 } else {
+                    this.setUserMessage("Stopping play")
                     this.stop();
+                    this.phase = 0;
+                    helper.setGlobal(trackingGlobalName, 0);
                 }
             });
 
-            let clickToggle = new Nexus.Toggle('#click-toggle', {
+            this.loopToggle = new Nexus.Toggle('#loop-toggle', {
                 size: [40, 20],
-                state: true
+                state: this.state.loop,
             });
 
-            clickToggle.on('change', v => {
-                this.click = v;
-                csound.SetChannel('click', v ? 1 : 0);
+            this.loopToggle.on('change', v => {
+                this.state.loop = v;
+
+                this.cycleEndTimerId && clearTimeout(this.cycleEndTimerId);
+
+                if (this.playing) {
+                    const phase = csound.RequestChannel('phase');
+                    let gkfreq = expcurve(this.state.playbackSpeed, 50);
+                    gkfreq = expcurve(gkfreq, 50);
+                    gkfreq = scale(gkfreq, 5, 0.05);
+                    const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
+
+                    if (this.state.loop) {
+                        this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
+                    } else {
+                        this.cycleEndTimerId = setTimeout(() => {
+                            this.playToggle.flip();
+                            this.stop();
+                            this.phase = 0;
+                            helper.setGlobal(trackingGlobalName, 0);
+                        }, remainingPlaybackTime);
+                    }
+                }
+            });
+
+            this.clickToggle = new Nexus.Toggle('#click-toggle', {
+                size: [40, 20],
+                state: this.state.click
+            });
+
+            this.clickToggle.on('change', v => {
+                this.state.click = v;
+                if (this.csoundReady) {
+                    csound.SetChannel('click', v ? 1 : 0);
+                }
             });
             this.speedSlider = new Nexus.Slider('#speed-slider', {
                 size: [200, 20],
@@ -137,11 +190,17 @@ const app = new Vue({
                 value: this.state.playbackSpeed
             });
 
-            this.speedSlider.on('change', v => {
-                this.state.playbackSpeed = v;
+            this.speedSlider.on('release', (v) => {
+                this.state.playbackSpeed = this.speedSlider._value.value;
 
                 if (this.csoundReady) {
-                    csound.SetChannel('playbackSpeed', v);
+                    csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
+
+                    if (this.playing) {
+                        this.phase = csound.RequestChannel('phase');
+                        this.stopNotes();
+                        this.play();
+                    }
                 }
             });
         },
@@ -216,18 +275,35 @@ const app = new Vue({
                 });
             });
 
-            helper.on('dragDrop[attribute]', 'dragstart', (data) => {
+            helper.on('dragDrop[attribute]', 'dragstart', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid #ffff00';
                 })
             });
 
-            helper.on('dragDrop[attribute]', 'dragend', (data) => {
+            helper.on('dragDrop[attribute]', 'dragend', (/*data*/) => {
                 document.querySelectorAll('.drop-area').forEach(el => {
                     el.style.outline = '3px solid transparent';
                     el.style.backgroundColor = 'transparent';
                 })
             });
+        },
+        /**
+         * Updates the CODAP Global Value with the current time offset within
+         * the current score.
+         */
+        updateTracker() {
+            if (this.playing) {
+                let cyclePos = csound.RequestChannel('phase');
+                // For obscure reasons CODAP Time is measured in seconds,
+                // not milliseconds. Normally this adjustment is automatic.
+                // In order for the sonification tracker to align with the
+                // data we need to take this obscurity into account
+                let timeAdj = this.state.timeAttrIsDate? 1000: 1;
+                let dataTime = scale(cyclePos,
+                    this.timeAttrRange.max/timeAdj, this.timeAttrRange.min/timeAdj);
+                helper.setGlobal(trackingGlobalName, dataTime);
+            }
         },
         resetPitchTimeMaps() {
             this.state.pitchAttribute = this.state.timeAttribute = null;
@@ -237,7 +313,7 @@ const app = new Vue({
             // this.attributes = null;
             this.attributes = helper.getAttributesForContext(this.state.focusedContext);
 
-            // this.resetPitchTimeMaps();
+            this.resetPitchTimeMaps();
         },
         setIfDateTimeAttribute(type) {
             let contextName = this.state.focusedContext;
@@ -285,17 +361,37 @@ const app = new Vue({
             });
         },
         onBackgroundSelect() {
-          helper.selectSelf();
+            helper.selectSelf();
+        },
+        onSelectionModeSelectedByUI() {
+            if (this.state.selectionMode === CONTRAST_MODE) {
+                this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
+            } else {
+                this.getSelectedItems = helper.getSelectedItems.bind(helper);
+            }
+            this.reselectCases();
         },
         onPitchAttributeSelectedByUI() {
             this.setUserMessage(this.state.pitchAttribute?"Pitch attribute selected...":"Please select attribute for pitch");
             this.processMappedAttribute('pitch');
             this.recordToMoveRecorder('pitch');
+
+            if (this.playing) {
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
+            }
         },
         onTimeAttributeSelectedByUI() {
             this.setUserMessage(this.state.timeAttribute?"Time attribute selected...":"Please select attribute for time");
             this.processMappedAttribute('time');
             this.recordToMoveRecorder('time');
+
+            if (this.playing) {
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
+            }
         },
         onDurationAttributeSelectedByUI() {
             this.setUserMessage(this.state.durationAttribute?"Duration attribute selected...":"Please select attribute for duration");
@@ -318,7 +414,7 @@ const app = new Vue({
         },
 
         reselectCases() {
-            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+            this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
         onCsdFileSelected() {
 
@@ -333,6 +429,11 @@ const app = new Vue({
             if (this.state.focusedContext) {
                 this.attributes = helper.getAttributesForContext(this.state.focusedContext);
                 this.reselectCases();
+                kAttributeMappedProperties.forEach(p => {
+                    if (this[p + 'AttrRange']) {
+                        this.processMappedAttribute(p);
+                    }
+                })
             }
         },
         onGetGlobals() {
@@ -405,72 +506,109 @@ const app = new Vue({
         },
 
         onItemsSelected(items) {
+            const allItems = helper.getItemsForContext(this.state.focusedContext)
+
             if (this.timeAttrRange) {
                 let range = this.timeAttrRange.max - this.timeAttrRange.min;
 
                 if (range === 0) {
-                    this.timeArray = items.map(c => {
-                        return { id: c.id, val: 0 };
-                    });
+                    if (this.state.selectionMode === CONTRAST_MODE) {
+                        const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: 0, sel: false }, acc), {});
+                        items.forEach(c => idItemMap[c.id].sel = true);
+                        this.timeArray = Object.values(idItemMap);
+                    } else {
+                        this.timeArray = items.map(c => {
+                            return { id: c.id, val: 0 };
+                        });
+                    }
                 } else {
                     if (this.checkIfGlobal(this.state.timeAttribute)) {
                         let global = this.globals.find(g => g.name === this.state.timeAttribute);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
-                        this.timeArray = items.map(c => {
-                            return {
-                                id: c.id,
-                                val: value
-                            }
-                        })
+                        if (this.state.selectionMode === CONTRAST_MODE) {
+                            const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: value, sel: false }, acc), {});
+                            items.forEach(c => idItemMap[c.id].sel = true);
+                            this.timeArray = Object.values(idItemMap);
+                        } else {
+                            this.timeArray = items.map(c => {
+                                return {
+                                    id: c.id,
+                                    val: value
+                                }
+                            });
+                        }
                     } else {
-                        this.timeArray = items.map(c => {
-                            let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
-                            return {
-                                id: c.id,
-                                val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
-                            }
-                        });
+                        if (this.state.selectionMode === CONTRAST_MODE) {
+                            const idItemMap = allItems.reduce((acc, curr) => {
+                                const value = this.state.timeAttrIsDate ? Date.parse(curr.values[this.state.timeAttribute]) : curr.values[this.state.timeAttribute];
+                                const valueScaled = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
+                                acc[curr.id] = { id: curr.id, val: valueScaled, sel: false };
+                                return acc
+                            }, {});
+
+                            items.forEach(c => idItemMap[c.id].sel = true);
+                            this.timeArray = Object.values(idItemMap);
+                        } else {
+                            this.timeArray = items.map(c => {
+                                let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
+                                return {
+                                    id: c.id,
+                                    val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
+                                }
+                            });
+                        }
                     }
                 }
             }
 
-            ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: items }));
+            // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: CONTRAST_MODE ? allItems : items }));
+            this.prepMapping({
+                param: 'pitch',
+                items: this.state.selectionMode === CONTRAST_MODE ? allItems : items,
+            });
 
             if (this.playing) {
-                this.stopNotes(this.prevSelectedIDs);
-                this.triggerNotes();
+                this.phase = csound.RequestChannel('phase');
+                this.stopNotes();
+                this.play();
+            }
+        },
+        stopNotes() {
+            csound.Event('e');
+        },
+        triggerNotes(phase) {
+            let gkfreq = expcurve(this.state.playbackSpeed, 50);
+            gkfreq = expcurve(gkfreq, 50);
+            gkfreq = scale(gkfreq, 5, 0.05);
+
+            const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
+            if (this.state.loop) {
+                this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
+            } else {
+                this.cycleEndTimerId = setTimeout(() => {
+                    this.playToggle.flip();
+                    this.stop();
+                    this.phase = 0;
+                    helper.setGlobal(trackingGlobalName, 0);
+                }, remainingPlaybackTime);
             }
 
-            this.prevSelectedIDs = items.map(c => c.id);
-        },
-        stopNotes(ids) {
-            ids.forEach(id => csound.Event(`i -1.${id} 0 1`));
-        },
-        triggerNotes() {
-            // Reset the map before scheduling new voices.
-            pitchTimeMap = {};
-
             this.timeArray.forEach((d,i) => {
-                let pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
-                let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
-                let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
-                let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
+                const pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
+                // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
+                // let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
+                // let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
 
-                // Calculate the log-scaled pitch ID that are 4x resolution of MIDI note numbers.
-                const quartPitchMIDI = Math.round((pitch * pitchMIDIRange + minPitchMIDI) * 4) / 4;
-                const pitchID = (quartPitchMIDI * 100).toString().padStart(5, '0');
+                const loudness = 0.5;
+                const duration = 0.2;
 
-                if (pitchTimeMap[pitchID] !== undefined && (d.val / this.state.playbackSpeed) <= pitchTimeMap[pitchID]) {
-                    // Skip scheduling a new voice if it is within half the duration of the previous voice.
-                    return
-                } else {
-                    // Allow overlap of voices in same pitch up to half the duration of the current voice.
-                    const halfDur = (duration * durRange + minDur) / 2;
-                    pitchTimeMap[pitchID] = d.val / this.state.playbackSpeed + halfDur;
-
-                    if (![d.val,pitch,duration,loudness,stereo].some(isNaN)) {
-                        csound.Event(`i 1.${d.id} 0 -1 ${d.val} ${duration} ${pitch} ${loudness} ${stereo}`);
+                if (d.val >= phase && ![d.val,pitch].some(isNaN)) {
+                    if (this.state.selectionMode === CONTRAST_MODE) {
+                        const instr = d.sel ? 3 : 2;
+                        csound.Event(`i${instr} ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                    } else {
+                        csound.Event(`i2 ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
                     }
                 }
             });
@@ -478,39 +616,53 @@ const app = new Vue({
         setupSound() {
             this.stop();
 
-            csound.PlayCsd(this.selectedCsd).then(() => {
+            return csound.PlayCsd(this.selectedCsd).then(() => {
                 this.playing = true;
+                this.startTime = Date.now();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
-                csound.SetChannel('click', this.click ? 1 : 0);
+                csound.SetChannel('click', this.state.click ? 1 : 0);
+                csound.Event(`i1 0 -1 ${this.phase}`)
+
+                this.timerId = setInterval(() => {
+                    this.updateTracker();
+                }, 33); // 30 FPS
 
                 if (this.timeArray.length !== 0) {
-                    this.triggerNotes();
+                    this.triggerNotes(this.phase);
                 }
             });
         },
         play() {
             if (!this.csoundReady) {
-                this.logMessage('Play aborted: csound not ready.');
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
+                this.setUserMessage('Play aborted: csound not ready.');
                 return null;
             }
 
             if (!this.state.pitchAttribute || !this.state.timeAttribute) {
+                if (this.playToggle.state === PLAY_TOGGLE_PLAYING) this.playToggle.state = 0;
                 this.setUserMessage("Please set an attribute for time and pitch");
                 return null;
             }
 
             if (CSOUND_AUDIO_CONTEXT.state !== 'running') {
-                CSOUND_AUDIO_CONTEXT.resume().then(this.setupSound);
-            } else { this.setupSound() }
+                return CSOUND_AUDIO_CONTEXT.resume().then(this.setupSound);
+            } else {
+                return this.setupSound();
+            }
         },
         stop() {
             if (!this.csoundReady) {
                 return null;
             }
 
+            this.timerId && clearInterval(this.timerId);
             csound.Stop();
+            csound.Csound.reset(); // Ensure the playback position, etc. are reset.
             this.playing = false;
-            pitchTimeMap = {};
+
+            this.cycleEndTimerId && clearTimeout(this.cycleEndTimerId);
+            this.cycleEndTimerId = null;
         },
         openInfoPage() {
             this.setUserMessage('Opening Info Page');
@@ -520,8 +672,14 @@ const app = new Vue({
             Object.keys(state).forEach(key => {
                 this.state[key] = state[key];
             });
-            if (this.state.playbackSpeed) {
+            if (this.state.playbackSpeed != null) {
                 this.speedSlider.value = this.state.playbackSpeed;
+            }
+            if (this.state.loop != null) {
+                this.loopToggle.state = this.state.loop;
+            }
+            if (this.state.click != null) {
+                this.clickToggle.state = this.state.click;
             }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
@@ -563,7 +721,7 @@ const app = new Vue({
                     }
                 } else if (contextName === DATAMOVES_DATA.name) {
                     if (operation === 'selectCases' && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Replay']) {
-                        helper.getSelectedItems(contextName).then(items => {
+                        this.getSelectedItems(contextName).then(items => {
                             items.forEach(item => {
                                 let values = item.values;
                                 if (values.ID === helper.ID) {
@@ -585,21 +743,23 @@ const app = new Vue({
                 } else {
                     if (operation === 'selectCases') {
                         if (contextName === this.state.focusedContext) {
-                            helper.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
+                            this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
-                    } else {
-                        helper.queryDataForContext(contextName).then(this.onGetData);
+                    } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
+                        if (contextName === this.state.focusedContext) {
+                            helper.queryDataForContext(contextName).then(this.onGetData);
+                        }
                     }
                 }
 
                 // else if (notice.values.operation === 'updateCases' || notice.values.operation === 'dependentCases') {
                 //     helper.queryAllData().then(this.onGetData);
                 // }
-            } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
-                helper.queryGlobalValues().then(this.onGetGlobals);
-            } else if (notice.resource === 'undoChangeNotice') {
-                helper.queryGlobalValues().then(this.onGetGlobals);
-            } else if (notice.resource === 'logMessageNotice') {
+            // } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
+                //helper.queryGlobalValues().then(this.onGetGlobals);
+            // } else if (notice.resource === 'undoChangeNotice') {
+                //helper.queryGlobalValues().then(this.onGetGlobals);
+            // } else if (notice.resource === 'logMessageNotice') {
                 // if (notice.values.message.startsWith('plugin')) {
                 //     let values = JSON.parse(notice.values.message.slice(8));
                 //
@@ -608,6 +768,40 @@ const app = new Vue({
                 //         speedSlider.value = values.values.speed;
                 //     }
                 // }
+            // } else {
+                //console.log(`Unhandled notice: ${notice.resource}`)
+            }
+        },
+        createGraph() {
+            let timeAttr = this.state.timeAttribute;
+            let pitchAttr = this.state.pitchAttribute;
+            if (timeAttr && pitchAttr) {
+                // create the graph object
+                helper.createGraph(this.state.focusedContext,
+                    this.state.timeAttribute, this.state.pitchAttribute).then(
+                    result => {
+                        if (result.success) {
+                            let graphId = result.values.id;
+                            console.log(`created graph: graph id: ${graphId}`)
+                            helper.annotateDocument((doc) => {
+                                let graph = doc.components.find(component => component.id === graphId);
+                                let componentStorage = graph.componentStorage;
+                                let adornments = componentStorage.plotModels[0].plotModelStorage.adornments;
+                                adornments.plottedValue = {
+                                        "isVisible": true,
+                                        "adornmentKey": "plottedValue",
+                                        "expression": "sonificationTracker"
+                                    };
+                                adornments.connectingLine = {isVisible: true};
+
+                                return doc;
+                            })
+                        } else {
+                            console.warn(
+                                `create graph failure: ${result.values? 
+                                    result.values.error: 'unknown error'}`);
+                        }
+                    });
             }
         }
     },
@@ -615,7 +809,7 @@ const app = new Vue({
         this.setupDrag();
         this.setupUI();
 
-        helper.init(this.name, this.dim)
+        helper.init(this.name, this.dim, this.version)
             // .then(helper.monitorLogMessages.bind(helper))
             .then((state) => {
                 if (state) {
@@ -623,11 +817,27 @@ const app = new Vue({
                 } else {
                     this.onGetData();
                 }
-            });
+            }).then(
+                () => helper.guaranteeGlobal(trackingGlobalName)
+            );
 
-        codapInterface.on('notify', '*', this.handleCODAPNotice);
+        codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
+
+        if (this.state.selectionMode === CONTRAST_MODE) {
+            this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
+        } else {
+            this.getSelectedItems = helper.getSelectedItems.bind(helper);
+        }
+    },
+    getSelectedItems: null,
+    computed: {
+        isPlayable: function() {
+            let playable=!!(this.state.timeAttribute && this.state.pitchAttribute);
+            console.log(`playable = ${playable}`);
+            return playable;
+        }
     }
 });
 
