@@ -288,15 +288,15 @@ const app = new Vue({
          * the current score.
          */
         updateTracker() {
-            if (this.playing) {
-                let cyclePos = csound.RequestChannel('phase');
+            if (this.timeAttrRange) {
+                let cyclePos = csound.RequestChannel('phase') || 0;
                 // For obscure reasons CODAP Time is measured in seconds,
                 // not milliseconds. Normally this adjustment is automatic.
                 // In order for the sonification tracker to align with the
                 // data we need to take this obscurity into account
                 let timeAdj = this.state.timeAttrIsDate? 1000: 1;
-                let dataTime = scale(cyclePos,
-                    this.timeAttrRange.max/timeAdj, this.timeAttrRange.min/timeAdj);
+                let dataTime = scale(cyclePos, this.timeAttrRange.max / timeAdj,
+                    this.timeAttrRange.min / timeAdj);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
         },
@@ -310,16 +310,23 @@ const app = new Vue({
 
             this.resetPitchTimeMaps();
         },
+        getAttributeType(context, attrName) {
+          let attributes = helper.getAttributesForContext(context);
+          return attributes && attributes.find((attr) => attrName === attr.name);
+        },
         setIfDateTimeAttribute(type) {
             let contextName = this.state.focusedContext;
             let attrName = this.state[`${type}Attribute`];
+            let attrType = this.getAttributeType(attrName);
             let values = helper.getAttrValuesForContext(contextName, attrName) || [];
-            // an attribute is a Date attribute if none of its values are non-dates
-            let isDateAttribute = !values.some((x) => {
-                let isDate = (x instanceof Date) ||
-                    ((typeof x === 'string') && !isNaN(new Date(x)));
-                return !isDate;
-            });
+            // an attribute is a Date attribute if attribute type is 'date' or
+            // all of its values are Date objects or date strings
+            let isDateAttribute = attrType === 'date' || !values.some((x) => {
+                    let isDate = (x instanceof Date) ||
+                        ((typeof x === 'string') && !isNaN(new Date(x).valueOf()) &&
+                            (isNaN(x))) ;
+                    return !isDate;
+                });
             this.state[`${type}AttrIsDate`] = isDateAttribute;
         },
         /**
@@ -335,6 +342,7 @@ const app = new Vue({
             } else {
                 this.setIfDateTimeAttribute(type);
                 this[`${type}AttrRange`] = this.calcRange(this.state[`${type}Attribute`], this.state[`${type}AttrIsDate`], this.state[`${type}AttrIsDescending`]);
+                this.updateTracker();
             }
 
             this.reselectCases();
@@ -824,7 +832,7 @@ const app = new Vue({
                     this.onGetData();
                 }
             }).then(
-                () => helper.guaranteeGlobal(trackingGlobalName)
+                () => helper.guaranteeGlobal(trackingGlobalName).then(() => this.updateTracker())
             );
 
         codapInterface.on('notify', '*', this.handleCODAPNotice)
