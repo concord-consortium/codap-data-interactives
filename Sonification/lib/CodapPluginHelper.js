@@ -590,6 +590,7 @@ class CodapPluginHelper {
             action: 'get',
             resource: `dataContext[${context}].selectionList`
         }).then(result => {
+            if (!result.success) return [];
             let caseIDs = result.values.map(v => v.caseID);
             return caseIDs
                 .map(id => {
