@@ -79,7 +79,15 @@ class CodapPluginHelper {
                     }
                 }).then(() => this.queryAllData());
             } else {
-                return this.queryAllData();
+                return this.codapInterface.sendRequest({
+                    action: "update",
+                    resource: "interactiveFrame",
+                    values: {
+                        subscribeToDocuments: true
+                    }
+                }).then(() =>
+                    this.queryAllData()
+                );
             }
             // Allow the attributes to move.
 
@@ -540,7 +548,7 @@ class CodapPluginHelper {
     }
 
     getAttrValuesForContext(context, attribute) {
-        return (this.items && Object.keys(this.items).length) ? this.items[context].map(c => c.values[attribute]) : null;
+        return (this.items && this.items[context] && Object.keys(this.items).length) ? this.items[context].map(c => c.values[attribute]) : null;
     }
 
     /**
@@ -552,17 +560,22 @@ class CodapPluginHelper {
             action: 'get',
             resource: `dataContext[${context}].selectionList`
         }).then(result => {
-            let caseIDs = result.values.map(v => v.caseID);
             let selectedItems;
-            if (caseIDs.length) {
-                selectedItems = caseIDs
-                    .map(id => {
-                        // item.id is actually the case ID.
-                        return this.items[context]
-                            .find(item => item && item.id === id)
-                    });
-            } else {
-                selectedItems = this.items[context];
+            if (result.success) {
+                let caseIDs = result.values.map(v => v.caseID);
+                if (caseIDs.length) {
+                    selectedItems = caseIDs
+                        .map(id => {
+                            // item.id is actually the case ID.
+                            return this.items[context]
+                                .find(item => item && item.id === id)
+                        });
+                } else {
+                    selectedItems = this.items[context];
+                }
+            }
+            else {
+                selectedItems = [];
             }
             return selectedItems.filter(item => typeof(item) !== 'undefined');
         });
@@ -577,6 +590,7 @@ class CodapPluginHelper {
             action: 'get',
             resource: `dataContext[${context}].selectionList`
         }).then(result => {
+            if (!result.success) return [];
             let caseIDs = result.values.map(v => v.caseID);
             return caseIDs
                 .map(id => {

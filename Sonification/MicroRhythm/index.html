@@ -74,7 +74,7 @@
 
             <div>
                 <label title="Whether the attribute controlling pitch has date/time values or is numeric">
-                    <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
+                    <input type="checkbox" v-model="state.pitchAttrIsDate" disabled="true"  v-on:change="onPitchAttributeSelectedByUI"> DateTime
                 </label>
 <!--                <label title="Whether to pitch should descend or ascend when attribute increases">-->
 <!--                    <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending-->
@@ -95,7 +95,7 @@
 
             <div>
                 <label title="Whether the time attribute has date/time values or numeric values">
-                    <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
+                    <input type="checkbox" v-model="state.timeAttrIsDate" disabled="true" v-on:change="onTimeAttributeSelectedByUI"> DateTime
                 </label>
 <!--                <label title="Whether to reverse the order of sample play">-->
 <!--                    <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending-->
