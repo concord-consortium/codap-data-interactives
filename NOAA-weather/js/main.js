@@ -84,7 +84,7 @@ let constants = {
   StationDSName: 'US-Weather-Stations',
   StationDSTitle: 'US Weather Stations',
   timezoneServiceURL: 'https://secure.geonames.org/timezoneJSON',
-  version: 'v0013',
+  version: 'v0013 xtreme proto 2',
 }
 
 let state = {
@@ -99,6 +99,7 @@ let state = {
   startDate: null,
   endDate: null,
   unitSystem: constants.defaultUnitSystem,
+  extremeHeatOnly: false,
   isFetchable: true,
 };
 
@@ -211,7 +212,8 @@ async function initialize() {
       unitSystem: unitSystemHandler,
       stationLocation: stationLocationHandler,
       mapOpen: mapOpenHandler,
-      nearMe: nearMeHandler
+      nearMe: nearMeHandler,
+      extremeHeatOnly: extremeHeatOnlyHandler
     });
 
     noaaNCEIConnect.initialize(state, constants, {
@@ -251,6 +253,11 @@ function nearMeHandler() {
       }
   );
 }
+
+function extremeHeatOnlyHandler() {
+  state.extremeHeatOnly = !state.extremeHeatOnly;
+}
+
 /**
  *
  * @param url {string}
@@ -638,6 +645,8 @@ function fetchSuccessHandler(data) {
   let utcOffset = state.stationTimezoneOffset;
   let timezoneName = state.stationTimezoneName;
   let dataRecords = [];
+  let shouldCheckExtremeHeat = state.extremeHeatOnly && state.database === 'daily-summaries';
+  let thresholdTemp = 35; // degrees C = 95 degrees F
   if (data) {
     data.forEach((r) => {
       const aValue = noaaNCEIConnect.convertNOAARecordToValue(r);
@@ -647,7 +656,9 @@ function fetchSuccessHandler(data) {
       aValue['timezone'] = timezoneName;
       aValue.elevation = aValue.station.elevation;
       aValue['report type'] = reportType;
-      dataRecords.push(aValue);
+      if( !shouldCheckExtremeHeat || Number(aValue.tMax) > thresholdTemp) {
+        dataRecords.push(aValue)
+      }
     });
     convertUnits('metric', unitSystem, dataRecords);
     ui.setMessage('Sending weather records to CODAP')

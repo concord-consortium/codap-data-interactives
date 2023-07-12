@@ -46,6 +46,7 @@ let lastState = null; // save state to be able to refresh view upon cancel
  *      stationLocation/enter,blur,
  *      nearMe/click,
  *      mapOpen/click
+ *      extremeHeatOnly/change
  *
  *      In all cases, handlers should expect 'this' to be the DOM element and
  *      one argument, the event.
@@ -108,6 +109,8 @@ function initialize(state, dataTypeStore, iEventHandlers) {
 
     setEventHandler('#wx-near-me-button', 'click', iEventHandlers.nearMe);
     setEventHandler('#wx-open-map-button', 'click', iEventHandlers.mapOpen);
+
+    setEventHandler('#wx-extreme-heat-checkbox', 'change', iEventHandlers.extremeHeatOnly);
 
     if (eventHandlers.stationLocation) {
         let el = document.getElementById('geonameContainer');
@@ -211,6 +214,7 @@ function updateView(state, dataTypeStore) {
     updateStationView(state.selectedStation);
     updateDateRangeSummary(startDate, endDate, state.sampleFrequency);
     updateDateRangeSelectionPopup(startDate, endDate, state.sampleFrequency);
+    updateExtremeHeatOption(state.database, state.extremeHeatOnly);
     updateDataTypeSummary(dataTypeStore, state.selectedDataTypes, state.database);
     updateDataTypes(dataTypeStore, state.selectedDataTypes, state.unitSystem, state.database);
     updateUnitSystem(state.unitSystem);
@@ -267,6 +271,21 @@ function updateDateRangeSelectionPopup(startDate, endDate/*, sampleFrequency*/) 
     calendars.to.selectedDate = endDate;
     calendars.from.updateCalendar(startDate.getMonth(), startDate.getFullYear());
     calendars.to.updateCalendar(endDate.getMonth(), endDate.getFullYear());
+}
+
+function updateExtremeHeatOption(database, extremeHeatOnly) {
+    let checkboxEl = document.getElementById('wx-extreme-heat-checkbox');
+    let divEl = document.getElementById('wx-filter-section');
+    if (checkboxEl) {
+        checkboxEl.checked = extremeHeatOnly;
+        if(database === 'daily-summaries') {
+            checkboxEl.style.display = 'inline';
+            divEl.style.display = 'inline';
+        } else {
+            checkboxEl.style.display = 'none';
+            divEl.style.display = 'none';
+        }
+    }
 }
 
 function createElementWithProperties(tag, properties) {

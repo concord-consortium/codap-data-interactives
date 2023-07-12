@@ -1,7 +1,35 @@
 MarkovLevels = [
   {
-    "levelName" : "Tethys",
+    "levelName" : "Bloop",
     "startingLevel" : true,
+    "RR" : "PPRRRRS",
+    "PP" : "PPR",
+    "SS" : "RSSS",
+    "RP" : "PPR",
+    "PR" : "PPRRRRS",
+    "PS" : "RSSS",
+    "RS" : "RSSS",
+    "SR" : "PPRRRRS",
+    "SP" : "PPR",
+    "Description" : "Level 1 for M2Studio"
+  },
+  {
+    "levelName" : "Yowza",
+    "startingLevel" : false,
+    "RR" : "PPRRRRS",
+    "PP" : "PPRS",
+    "SS" : "RSSSP",
+    "RP" : "PPRS",
+    "PR" : "PPRRRRS",
+    "PS" : "RSSSP",
+    "RS" : "RSSSP",
+    "SR" : "PPRRRRS",
+    "SP" : "PPRS",
+    "Description" : "Level 2 for M2Studio"
+  },
+  {
+    "levelName" : "Tethys",
+    "startingLevel" : false,
     "RR" : "P",
     "PP" : "S",
     "SS" : "R",

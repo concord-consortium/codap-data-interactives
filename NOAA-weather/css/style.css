@@ -157,6 +157,14 @@ body {
     margin: 0 auto;
 }
 
+.wx-filter-section {
+    display: inline;
+}
+
+.wx-wx-extreme-heat-checkbox {
+    display: inline;
+}
+
 /*.wx-subsection {*/
 /*    margin: 6px 12px;*/
 /*    border-radius: 3px;*/
