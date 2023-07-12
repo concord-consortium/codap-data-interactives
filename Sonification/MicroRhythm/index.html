@@ -28,6 +28,10 @@
                 <label for="play-toggle">Play</label>
                 <span id="play-toggle"></span>
             </div>
+            <div class="controller-container" title="Enable playback looping">
+                <label for="loop-toggle">Loop</label>
+                <span id="loop-toggle"></span>
+            </div>
             <div class="controller-container" title="Enable periodic click sound">
                 <label for="click-toggle">Click</label>
                 <span id="click-toggle"></span>
@@ -70,11 +74,11 @@
 
             <div>
                 <label title="Whether the attribute controlling pitch has date/time values or is numeric">
-                    <input type="checkbox" v-model="state.pitchAttrIsDate" v-on:change="onPitchAttributeSelectedByUI"> DateTime
+                    <input type="checkbox" v-model="state.pitchAttrIsDate" disabled="true"  v-on:change="onPitchAttributeSelectedByUI"> DateTime
                 </label>
-                <label title="Whether to pitch should descend or ascend when attribute increases">
-                    <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending
-                </label>
+<!--                <label title="Whether to pitch should descend or ascend when attribute increases">-->
+<!--                    <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending-->
+<!--                </label>-->
             </div>
         </div>
 
@@ -91,7 +95,7 @@
 
             <div>
                 <label title="Whether the time attribute has date/time values or numeric values">
-                    <input type="checkbox" v-model="state.timeAttrIsDate" v-on:change="onTimeAttributeSelectedByUI"> DateTime
+                    <input type="checkbox" v-model="state.timeAttrIsDate" disabled="true" v-on:change="onTimeAttributeSelectedByUI"> DateTime
                 </label>
 <!--                <label title="Whether to reverse the order of sample play">-->
 <!--                    <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending-->
@@ -175,6 +179,18 @@
 <!--                </select>-->
 <!--            </label>-->
 <!--        </div>-->
+        <div class="mapper-container" title="Select case-selection mode">
+            Case selection mode
+            <label>
+                <select v-model="state.selectionMode" v-on:change="onSelectionModeSelectedByUI">
+                    <option disabled value="" hidden>Select</option>
+                    <option v-for="mode in selectionModes">{{mode}}</option>
+                </select>
+            </label>
+        </div>
+        <div class="mapper-container">
+            <button :disabled="!isPlayable" v-on:click="createGraph">create graph</button>
+        </div>
     </div>
     <div id="footer-container">
         <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" title="Information" draggable="false" @click="openInfoPage">

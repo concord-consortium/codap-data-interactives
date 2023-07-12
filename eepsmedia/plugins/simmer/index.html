@@ -34,6 +34,7 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
     -->
     <script src="https://unpkg.com/blockly/blockly.min.js"></script>
     <script src="src/block-defs.js"></script>
+    <script src="src/block-generators.js"></script>
     <script src="src/bEvents.js"></script>
     <script src="src/toolbox.js"></script>
     <script src="src/random-functions.js"></script>
@@ -46,14 +47,14 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
 
     <script src="strings/strings.en.js"></script>
     <script src="strings/strings.de.js"></script>
-
+    <script src="strings/strings.es.js"></script>
 
 </head>
 
 <body onload="simmer.initialize()">
 
 <div id="simmer">
-<div id="simmerControls">
+<div id="simmerControls" class="noselect">
     <div>
         <img id="runButton" class="roundButton" src="art/play-button.png" onclick="simmer.run()"/>
     </div>
@@ -72,7 +73,7 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
         <span id="trashIcon">🗑️</span>
     </div>
 
-    &emsp;
+    &ensp;
 
     <div>
         <img id="shrinkButton" class="shrinkExpandButton"
@@ -85,7 +86,7 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
     <img id="blocklyLogo" src="art/blockly_logo_built_on.svg">
 </div>
 
-<div id="variableDisplayStrip" >
+<div id="variableDisplayStrip" class="noselect">
     <p>the variable display strip</p>
 </div>
 

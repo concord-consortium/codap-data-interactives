@@ -1,0 +1,91 @@
+# name: Height-data
+# source: Activity 8.1 Class Data on Height (Responses) - Form Responses 1 (1).csv
+# importDate: 2023-05-25T17:23:16.054Z
+# description: undefined
+# attribute -- name: Class, description: Class section or period, precision: 2, editable: true
+# attribute -- name: Age, description: Students reported their age in year and months. , precision: 2, editable: true
+# attribute -- name: Gender, description: Self-identified gender&comma; reported as female&comma; male&comma; non-binary&comma; or prefer not to say., precision: 2, editable: true
+# attribute -- name: Height, description: Students measured each other's height, unit: cm, precision: 2, editable: true
+Class,Age,Gender,Height
+Core 1,14 11/12,Female,147
+Core 1,14  2/12,Non-binary,150
+Core 1,14  2/12,Female,159
+Core 1,13  8/12,Male,160
+Core 1,13 11/12,Male,162
+Core 1,13 10/12,Female,165
+Core 1,14,Female,165
+Core 1,14  5/12,Female,165
+Core 1,14  1/12,Female,166
+Core 1,13  7/12,Female,166
+Core 1,14  5/12,Male,169
+Core 1,14  5/12,Male,170
+Core 1,14  5/12,Male,172
+Core 1,13  9/12,Female,175
+Core 1,14  9/12,Male,175
+Core 1,14  9/12,Male,176
+Core 1,14  1/12,Male,179
+Core 1,14  5/12,Male,180
+Core 1,14  5/12,Male,185
+Core 2,13  6/12,Female,152
+Core 2,14,Female,155
+Core 2,14  8/12,Female,155
+Core 2,14  6/12,Female,157
+Core 2,13  7/12,Female,157
+Core 2,14,Female,160
+Core 2,14  1/12,Female,160
+Core 2,14  2/12,Male,162
+Core 2,14  3/12,Female,162
+Core 2,14  1/12,Male,163
+Core 2,14  5/12,Female,168
+Core 2,13  6/12,Male,169
+Core 2,14  1/12,Female,170
+Core 2,13 10/12,Male,173
+Core 2,14  7/12,Male,176
+Core 2,14  6/12,Male,177
+Core 2,14,Male,177
+Core 2,14  1/12,Female,178
+Core 2,14  9/12,Male,179
+Core 2,13  1/12,Male,183
+Core 2,14  1/12,Female,183
+Core 3,13  6/12,Male,146
+Core 3,14  1/12,Female,155
+Core 3,13  7/12,Female,158
+Core 3,13 11/12,Female,158
+Core 3,13 11/12,Male,163
+Core 3,13  9/12,Male,164
+Core 3,14  5/12,Female,165
+Core 3,13 11/12,Female,166
+Core 3,14  1/12,Female,167
+Core 3,13  9/12,Male,168
+Core 3,14  2/12,Female,168
+Core 3,13  9/12,Female,168
+Core 3,14,Male,169
+Core 3,13  6/12,Male,169
+Core 3,13 11/12,Male,170
+Core 3,14 11/12,Female,171
+Core 3,13  7/12,Female,172
+Core 3,13 10/12,Male,173
+Core 3,14  4/12,Male,173
+Core 3,14  5/12,Male,173
+Core 3,14,Male,173
+Core 3,13 11/12,Male,174
+Core 3,13  4/12,Male,178
+Core 4,13  9/12,Male,150
+Core 4,13 10/12,Female,151
+Core 4,14,Female,155
+Core 4,13  3/12,Female,155
+Core 4,13 11/12,Female,157
+Core 4,13,Male,159
+Core 4,13 11/12,Male,161
+Core 4,14,Female,165
+Core 4,14  1/12,Female,167
+Core 4,14  3/12,Female,167
+Core 4,14  4/12,Male,169
+Core 4,13 11/12,Female,171
+Core 4,14  4/12,Male,172
+Core 4,13,Male,174
+Core 4,14  4/12,Male,176
+Core 4,13  8/12,Female,178
+Core 4,14  3/12,Male,179
+Core 4,14  3/12,Male,179
+Core 4,14  3/12,Male,180

@@ -24,7 +24,7 @@ body {
 }
 
 #variableDisplayStrip {
-    display : flex;
+    display : none;     /* flex;    */
     padding : 0.3em;
     background-color: navajowhite;
     top : 0;
@@ -137,3 +137,14 @@ body {
     margin-left: auto;
 }
 
+.noselect {
+    /*
+    cursor: default;
+    */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

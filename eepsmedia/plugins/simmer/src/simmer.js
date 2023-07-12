@@ -87,7 +87,8 @@ const simmer = {
         }
 
         //  actually retrieve the code from Blockly
-        let code = Blockly.JavaScript.workspaceToCode(this.workspace);
+        let code = `let theValues = [];\n\n`;
+        code += Blockly.JavaScript.workspaceToCode(this.workspace);
         console.log(`............................the code: \n${code}............................`);
 
         //  const executed = Function(`"use strict"; return (${code})`);
@@ -160,6 +161,32 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
         document.getElementById(`variableDisplayStrip`).innerHTML = theHTML;
     },
 
+    /**
+     * No longer necessary?
+     * We do not need to create a new calling block because the default
+     * behavior does what we want!
+     *
+     * @param theName
+     * @param theID
+     */
+    makeAutoFunctionCallBlock : function(theName, theID) {
+        console.log(`handle new function: ${theName}`);
+
+        const blockSpec = {
+            'type': 'procedures_callnoreturn',
+            //  todo: implement Beka's ideas about position....
+            'x': 30 + 100 * Math.random(), 'y': 10 + 20 * Math.random(),
+            'fields': {
+                'VAR': {
+                    'id': theID,
+                }
+            }
+        }
+
+        const newlyCreatedBlock = Blockly.serialization.blocks.append(blockSpec, this.workspace);
+
+    },
+
     shrink: function () {
         simmer.state.shrunken = !simmer.state.shrunken;
 
@@ -170,8 +197,10 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
 
         //  hide/unhide unnecessary controls
 
+/*
         document.getElementById(`variableDisplayStrip`).style.display
             = (simmer.state.shrunken) ? "none" : "flex";
+*/
 
         //  hide/unhide reminder text
 
@@ -210,7 +239,7 @@ title="${DG.plugins.simmer.toolTips.addVariableButton}">
     },
 
     constants: {
-        version: '2023d',
+        version: '2023k',
         dsName: `simmerDataset`,
         freshState: {
             theVariables: [],
