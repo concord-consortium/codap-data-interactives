@@ -10,6 +10,7 @@ class CodapPluginHelper {
 
         // TODO: collections are unordered.
         this.data = null;
+        this.contextTitles = null;
         this.structure = null;
 
         this.globals = null;
@@ -201,6 +202,7 @@ class CodapPluginHelper {
             } else {
                 this.queryInProgress = true;
                 this.data = {};
+                this.contextTitles = {};
                 this.queryContextList().then(() => {
                     this.queryCollectionList().then(() => {
                         this.queryAllCases().then(() => {
@@ -252,6 +254,7 @@ class CodapPluginHelper {
         }).then(result => {
             result.values.forEach(context => {
                 this.data[context.name] = {};
+                this.contextTitles[context.name] = context.title || context.name;
             });
         });
     }
@@ -545,6 +548,10 @@ class CodapPluginHelper {
 
     getItemsForContext(context) {
         return this.items && this.items[context];
+    }
+
+    getContextTitle(context) {
+        return this.contextTitles && this.contextTitles[context] ;
     }
 
     getAttrValuesForContext(context, attribute) {

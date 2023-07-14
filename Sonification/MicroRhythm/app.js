@@ -817,6 +817,9 @@ const app = new Vue({
                         }
                     });
             }
+        },
+        getContextTitle(contextName) {
+          return helper.getContextTitle(contextName);
         }
     },
     mounted() {
