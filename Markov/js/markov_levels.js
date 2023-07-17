@@ -1,4 +1,5 @@
 MarkovLevels = [
+/*
   {
     "levelName" : "Bloop",
     "startingLevel" : true,
@@ -27,6 +28,7 @@ MarkovLevels = [
     "SP" : "PPRS",
     "Description" : "Level 2 for M2Studio"
   },
+*/
   {
     "levelName" : "Tethys",
     "startingLevel" : false,
