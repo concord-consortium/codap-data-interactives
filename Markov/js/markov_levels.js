@@ -31,7 +31,7 @@ MarkovLevels = [
 */
   {
     "levelName" : "Tethys",
-    "startingLevel" : false,
+    "startingLevel" : true,
     "RR" : "P",
     "PP" : "S",
     "SS" : "R",
