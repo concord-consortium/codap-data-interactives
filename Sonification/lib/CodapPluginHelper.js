@@ -542,8 +542,25 @@ class CodapPluginHelper {
         return (this.data && Object.keys(this.data).length) ? this.data[context][collection].map(c => c.values[attribute]) : null;
     }
 
-    getAttributesForContext(context) {
-        return this.itemAttributes ? this.itemAttributes[context] : null;
+    getAttributesForContext(contextName) {
+        return this.itemAttributes ? this.itemAttributes[contextName] : null;
+    }
+
+    getAttributeNamesForContext(contextName) {
+        return this.codapInterface.sendRequest({action: 'get', resource: `dataContext[${contextName}]`})
+            .then((result) => {
+                if (result.success) {
+                    let collections = result.values.collections;
+                    let attributeNames = [];
+                    collections && collections.forEach((col) => {
+                           col.attrs.forEach((attr) => {attributeNames.push(attr.name)});
+                        }
+                    )
+                    return Promise.resolve(attributeNames);
+                } else {
+                    return Promise.reject('failure');
+                }
+            })
     }
 
     getItemsForContext(context) {
