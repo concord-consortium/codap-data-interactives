@@ -56,7 +56,9 @@
             <label>
                 <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
                     <option disabled value="" hidden>Select context</option>
-                    <option v-for="context in contexts">{{context}}</option>
+                    <option v-for="context in contexts" :value="context">
+                        {{getContextTitle(context)}}
+                    </option>
                 </select>
             </label>
         </div>

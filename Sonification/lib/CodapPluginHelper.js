@@ -10,6 +10,7 @@ class CodapPluginHelper {
 
         // TODO: collections are unordered.
         this.data = null;
+        this.contextTitles = null;
         this.structure = null;
 
         this.globals = null;
@@ -201,6 +202,7 @@ class CodapPluginHelper {
             } else {
                 this.queryInProgress = true;
                 this.data = {};
+                this.contextTitles = {};
                 this.queryContextList().then(() => {
                     this.queryCollectionList().then(() => {
                         this.queryAllCases().then(() => {
@@ -252,6 +254,7 @@ class CodapPluginHelper {
         }).then(result => {
             result.values.forEach(context => {
                 this.data[context.name] = {};
+                this.contextTitles[context.name] = context.title || context.name;
             });
         });
     }
@@ -539,12 +542,33 @@ class CodapPluginHelper {
         return (this.data && Object.keys(this.data).length) ? this.data[context][collection].map(c => c.values[attribute]) : null;
     }
 
-    getAttributesForContext(context) {
-        return this.itemAttributes ? this.itemAttributes[context] : null;
+    getAttributesForContext(contextName) {
+        return this.itemAttributes ? this.itemAttributes[contextName] : null;
+    }
+
+    getAttributeNamesForContext(contextName) {
+        return this.codapInterface.sendRequest({action: 'get', resource: `dataContext[${contextName}]`})
+            .then((result) => {
+                if (result.success) {
+                    let collections = result.values.collections;
+                    let attributeNames = [];
+                    collections && collections.forEach((col) => {
+                           col.attrs.forEach((attr) => {attributeNames.push(attr.name)});
+                        }
+                    )
+                    return Promise.resolve(attributeNames);
+                } else {
+                    return Promise.reject('failure');
+                }
+            })
     }
 
     getItemsForContext(context) {
         return this.items && this.items[context];
+    }
+
+    getContextTitle(context) {
+        return this.contextTitles && this.contextTitles[context] ;
     }
 
     getAttrValuesForContext(context, attribute) {

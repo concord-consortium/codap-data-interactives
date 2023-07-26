@@ -185,7 +185,7 @@ const app = new Vue({
                 value: this.state.playbackSpeed
             });
 
-            this.speedSlider.on('release', (v) => {
+            this.speedSlider.on('release', (/*v*/) => {
                 this.state.playbackSpeed = this.speedSlider._value.value;
 
                 if (this.csoundReady) {
@@ -430,13 +430,15 @@ const app = new Vue({
             }
 
             if (this.state.focusedContext) {
-                this.attributes = helper.getAttributesForContext(this.state.focusedContext);
-                this.reselectCases();
-                kAttributeMappedProperties.forEach(p => {
-                    if (this[p + 'AttrRange']) {
-                        this.processMappedAttribute(p);
-                    }
-                })
+                helper.getAttributeNamesForContext(this.state.focusedContext).then((attrs) => {
+                    this.attributes = attrs;
+                    this.reselectCases();
+                    kAttributeMappedProperties.forEach(p => {
+                        if (this[p + 'AttrRange']) {
+                            this.processMappedAttribute(p);
+                        }
+                    })
+                });
             }
         },
         onGetGlobals() {
@@ -754,6 +756,12 @@ const app = new Vue({
                     }
                 } else if (contextName === DATAMOVES_CONTROLS_DATA.name) {
                     helper.queryDataForContext(contextName).then();
+                } else if (operation === 'updateDataContext') {
+                    helper.queryContextList()
+                        .then(() => {this.contexts = helper.getContexts();});
+                } else if (operation === 'updateAttributes') {
+                    this.resetPlay();
+                    this.onGetData();
                 } else {
                     if (operation === 'selectCases') {
                         if (contextName === this.state.focusedContext) {
@@ -817,6 +825,9 @@ const app = new Vue({
                         }
                     });
             }
+        },
+        getContextTitle(contextName) {
+          return helper.getContextTitle(contextName);
         }
     },
     mounted() {
