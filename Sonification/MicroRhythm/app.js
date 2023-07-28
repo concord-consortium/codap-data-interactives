@@ -289,7 +289,12 @@ const app = new Vue({
          */
         updateTracker() {
             if (this.timeAttrRange) {
-                let cyclePos = csound.RequestChannel('phase') || 0;
+                let cyclePos = 0;
+                try {
+                    cyclePos = csound.RequestChannel('phase') || 0;
+                } catch (ex) {
+                    console.warn("CSound phase undefined. Assuming 0.")
+                }
                 // For obscure reasons CODAP Time is measured in seconds,
                 // not milliseconds. Normally this adjustment is automatic.
                 // In order for the sonification tracker to align with the
@@ -610,6 +615,9 @@ const app = new Vue({
                 }, remainingPlaybackTime);
             }
 
+            if (this.pitchArray.length !== this.timeArray.length) {
+                console.warn(`pitch not rendered: [pitchArray length, timeArray length]: [${[this.pitchArray.length, this.timeArray.length].join()}]`);
+            }
             this.timeArray.forEach((d,i) => {
                 const pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
                 // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
