@@ -634,12 +634,17 @@ View.prototype = {
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
 
+        // Click handler for detected if user has selected a wedge.
+        s.click(this.handleSpinnerClick());
 
         // wedge color
         var wedge = s.path(slice.path).attr({
           fill: getVariableColor((i - offsetDueToMerge), uniqueVariables),
-          stroke: "none"
+          stroke: "none",
+          class: `wedge ${variables[i]}`,
+          cursor: "pointer"
         });
+
         var percentString = (100*(mergeCount+1)*slicePercent).toPrecision(2);
         var hint = Snap.parse('<title>'+ percentString + '%</title>');
         wedge.append(hint);
@@ -647,7 +652,7 @@ View.prototype = {
         // label
         labelClipping = s.path(slice.path);
         label = this.createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
-                      labelClipping, Math.max(1, 10 - variables.length), wedge);
+                      labelClipping, Math.max(1, 10 - variables.length));
         wedges.push(label);
 
         // white stroke on top of label
@@ -660,7 +665,7 @@ View.prototype = {
     }
   },
 
-  createSpinnerLabel: function (variable, uniqueVariable, x, y, fontSize, clipping, maxLength, parent) {
+  createSpinnerLabel: function (variable, uniqueVariable, x, y, fontSize, clipping, maxLength) {
     var _this = this,
         text = variables[variable],
         label = s.text(x, y, text).attr({
@@ -668,19 +673,44 @@ View.prototype = {
           textAnchor: "middle",
           dy: ".25em",
           dx: getTextShift(text, maxLength),
-          clipPath: clipping
+          clipPath: clipping,
+          class: `label ${variable}`
         });
 
     label.click(this.showVariableNameInput(variable));
     label.hover(function() {
       if (_this.isRunning()) return;
       this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-      parent.attr({ fill: getVariableColor(uniqueVariable, uniqueVariables, true) });
     }, function() {
       this.attr({ fontSize: fontSize, dy: ".25em", });
-      parent.attr({ fill: getVariableColor(uniqueVariable, uniqueVariables) });
     });
     return label;
+  },
+
+  handleSpinnerClick: function () {
+    var _this = this;
+
+    return function (e) {
+      if (_this.isRunning()) return;
+
+      const wedges = document.getElementsByClassName("wedge");
+      const labels = document.getElementsByClassName("label");
+
+      const clickedWedge = e.target.classList?.contains("wedge");
+      const clickedLabel = e.target.classList?.contains("label");
+
+      const elsToCheck = clickedWedge? wedges : clickedLabel ? labels: null;
+
+      for (let i = 0; i < wedges.length; i ++) {
+        const originalFill = wedges[i].getAttribute("fill");
+        let isSelectedWedge = elsToCheck ? elsToCheck[i].classList.value === e.target.classList.value : false;
+        if (isSelectedWedge) {
+          wedges[i].style.fill = "red";
+        } else {
+          wedges[i].style.fill = originalFill;
+        }
+      }
+    }
   },
 
   animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
@@ -742,7 +772,7 @@ View.prototype = {
         editingVariable = [];
         for (var j = 0, jj = variables.length; j < jj; j++) {
           if (variables[j] === v) {
-            variables[j] = " ";
+            // variables[j] = " ";
             editingVariable.push(j);
           }
         }
