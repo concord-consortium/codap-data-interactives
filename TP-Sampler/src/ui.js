@@ -316,7 +316,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     }
   };
 
-  // document.getElementById("variable-percentage-change").onblur = setPercentage;
+  document.getElementById("variable-percentage-change").onblur = () => document.getElementById("variable-percentage-change").style.display = "none";
   document.getElementById("variable-percentage-change").onkeydown = function(e) {
     if (e.keyCode === 13) {
       setPercentage();

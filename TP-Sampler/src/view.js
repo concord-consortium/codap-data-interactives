@@ -872,52 +872,55 @@ View.prototype = {
   setPercentage: function () {
     const {calcPct, findCommonDenominator, findEquivNumerator} = utils;
 
-    // get name of selected variable
+    // get selected variable
     var selectedVar = Array.isArray(editingVariable) ? variables[editingVariable[0]] : variables[editingVariable];
 
-    // get user-generated new percentage and current percentage of selected variable
-    var newPct = Number(variablePercentageInput.value.trim());
-    var currentPct = Array.isArray(editingVariable) ?
+    // get new percentage and old percentage of selected variable
+    var newPct = Math.round(variablePercentageInput.value.trim());
+    var oldPct = Array.isArray(editingVariable) ?
       calcPct(editingVariable.length, variables.length) :
       calcPct(1, variables.length);
 
     // find difference to distribute to other variables
     var numOfOtherUniqueVariables = uniqueVariables - 1;
-    var diffOfPcts = newPct - currentPct;
+    var diffOfPcts = newPct - oldPct;
     var pctToDistribute = diffOfPcts / numOfOtherUniqueVariables;
 
-    // get pcts of other variables
-    var otherUniqueVars = [...new Set(variables.filter(v => v !== selectedVar))];
-    var otherPcts = [];
-    for (let i = 0; i < otherUniqueVars.length; i++) {
-      const numOfVar = (variables.filter(v => v === otherUniqueVars[i])).length;
-      const pctOfVar = calcPct(numOfVar, variables.length);
-      otherPcts.push(pctOfVar);
-    }
+    // find old pcts of other variables
+    var uniqueVars = [...new Set(variables)];
+    var findPct = function (variable) {
+      var numOfVar = (variables.filter(v => v === variable)).length;
+      return calcPct(numOfVar, variables.length);
+    };
+    var otherPcts = uniqueVars.filter(v => v !== selectedVar).map(v => findPct(v));
 
     // find new common denominator to distribute whole numbers of mixer balls to each variable
-    var commonDenom = findCommonDenominator([newPct, currentPct, pctToDistribute, ...otherPcts]);
+    var commonDenom = findCommonDenominator([newPct, oldPct, pctToDistribute, ...otherPcts]);
 
-    let newDataset = [];
+    // create new array
+    let newVariables = [];
 
-    var newNumOfSelectedVar = findEquivNumerator([newPct, 100], commonDenom);
-    for (let i = 0; i < newNumOfSelectedVar; i++) {
-      newDataset.push(selectedVar);
-    };
-
-    for (let i = 0; i < otherUniqueVars.length; i++) {
-      var oldNum = findEquivNumerator([otherPcts[i], 100], commonDenom);
-      var amtToSubtract = findEquivNumerator([pctToDistribute, 100], commonDenom);
-      var newNum = oldNum - amtToSubtract;
-      for (let j = 0; j < newNum; j++) {
-        newDataset.push(otherUniqueVars[i]);
+    // add new amounts of variables to new array following order of variables in original array
+    for (let i = 0; i < uniqueVars.length; i++) {
+      if (uniqueVars[i] === selectedVar) {
+        var newNum = findEquivNumerator([newPct, 100], commonDenom);
+        for (let j = 0; j < newNum; j++) {
+          newVariables.push(selectedVar);
+        }
+      } else {
+        const pctOfVar = findPct(uniqueVars[i]);
+        var oldNum = findEquivNumerator([pctOfVar, 100], commonDenom);
+        var diff = findEquivNumerator([pctToDistribute, 100], commonDenom);
+        var newNum = oldNum - diff;
+        for (let j = 0; j < newNum; j++) {
+          newVariables.push(uniqueVars[i]);
+        }
       }
     };
 
+    // clear original array and add new one
     variables.splice(0, variables.length);
-    for (let i = 0; i < newDataset.length; i++) {
-      variables.push(newDataset[i]);
-    }
+    variables.push(...newVariables);
 
     variablePercentageInput.style.display = "none";
     this.render();
