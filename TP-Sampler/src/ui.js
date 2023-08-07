@@ -285,7 +285,7 @@ function setReplacement(withReplacement, device, hidden) {
 
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
           stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-          setNumRuns, setSpeed, view, setVariableName, setReplacement, setHidden,
+          setNumRuns, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
           setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
@@ -315,6 +315,15 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       return false;
     }
   };
+
+  // document.getElementById("variable-percentage-change").onblur = setPercentage;
+  document.getElementById("variable-percentage-change").onkeydown = function(e) {
+    if (e.keyCode === 13) {
+      setPercentage();
+      return false;
+    }
+  };
+
   document.getElementById("tab-sampler").onclick = viewSampler;
   document.getElementById("tab-options").onclick = viewOptions;
   document.getElementById("tab-about").onclick = viewAbout;

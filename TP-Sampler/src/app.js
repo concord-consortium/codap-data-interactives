@@ -631,7 +631,7 @@ localeMgr.init().then(() => {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
       refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
-      view.setVariableName, setReplacement, setHidden, setOrCheckPassword,
+      view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
       reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model

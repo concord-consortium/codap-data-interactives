@@ -1,3 +1,5 @@
+import * as utils from './utils.js';
+
 /* globals mina */
 
 /**
@@ -20,6 +22,7 @@ var width = 205,            // svg units
 
 
     variableNameInput = document.getElementById("variable-name-change"),
+    variablePercentageInput = document.getElementById("variable-percentage-change"),
 
     s,
     speed,
@@ -126,10 +129,11 @@ var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codap
   };
 
 
-      this.animateMixer = this.animateMixer.bind(this);
+  this.animateMixer = this.animateMixer.bind(this);
   this.moveLetterToSlot = this.moveLetterToSlot.bind(this);
   this.endAnimation = this.endAnimation.bind(this);
   this.setVariableName = this.setVariableName.bind(this);
+  this.setPercentage = this.setPercentage.bind(this);
   this.pushAllLettersOut = this.pushAllLettersOut.bind(this);
 };
 
@@ -607,18 +611,18 @@ View.prototype = {
   },
 
   createSpinner: function () {
-    var labelClipping,
-        label;
+    var variableLabel, percentageLabel;
 
     wedges = [];
     if (uniqueVariables === 1) {
       var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
             fill: getVariableColor(0, 0)
           });
-      labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
-      label = this.createSpinnerLabel(0, 0, spinnerX, spinnerY,
+      var labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
+      variableLabel = this.createSpinnerLabel(0, spinnerX, spinnerY,
                     spinnerRadius/2, labelClipping, 9, circle);
-      wedges.push(label);
+      percentageLabel = this.createPercentageLabel("100%", spinnerX, spinnerY - 10, spinnerRadius/2, labelClipping, circle);
+      wedges.push(variableLabel);
     } else {
       var slicePercent = 1 / variables.length,
           lastVariable = "",
@@ -628,8 +632,9 @@ View.prototype = {
       for (var i = 0, ii = variables.length; i < ii; i++) {
         var merge = variables[i] === lastVariable;
         mergeCount = merge ? mergeCount + 1 : 0;
-        var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount),
-            textSize = spinnerRadius / (3 + (ii * 0.1));
+        var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount);
+        var varTextSize = "16px";
+        var pctTextSize = "12px";
 
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
@@ -649,11 +654,15 @@ View.prototype = {
         var hint = Snap.parse('<title>'+ percentString + '%</title>');
         wedge.append(hint);
 
-        // label
-        labelClipping = s.path(slice.path);
-        label = this.createSpinnerLabel(i, i - offsetDueToMerge, slice.center.x, slice.center.y, textSize,
-                      labelClipping, Math.max(1, 10 - variables.length));
-        wedges.push(label);
+        // labels
+        var variableLabelClipping = s.path(slice.path);
+        variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
+          variableLabelClipping, Math.max(1, 10 - variables.length));
+
+        var percentageLabelClipping = s.path(slice.path);
+        percentageLabel = this.createPctLabel(i, slice.center.x, slice.center.y + 20, pctTextSize,
+          percentageLabelClipping, Math.max(1, 10 - variables.length), percentString);
+        percentageLabel.attr({visibility: "hidden"});
 
         // white stroke on top of label
         s.path(slice.path).attr({
@@ -665,27 +674,52 @@ View.prototype = {
     }
   },
 
-  createSpinnerLabel: function (variable, uniqueVariable, x, y, fontSize, clipping, maxLength) {
+  createSpinnerLabel: function (variable, x, y, fontSize, clipping, maxLength) {
     var _this = this,
-        text = variables[variable],
-        label = s.text(x, y, text).attr({
-          fontSize: fontSize,
-          textAnchor: "middle",
-          dy: ".25em",
-          dx: getTextShift(text, maxLength),
-          clipPath: clipping,
-          class: `label ${variable}`
-        });
+      text = variables[variable],
+      label = s.text(x, y, text).attr({
+        fontSize: fontSize,
+        textAnchor: "middle",
+        dy: ".25em",
+        dx: getTextShift(text, maxLength),
+        clipPath: clipping,
+        class: `label ${variables[variable]}`,
+      });
 
-    label.click(this.showVariableNameInput(variable));
-    label.hover(function() {
-      if (_this.isRunning()) return;
-      this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-    }, function() {
-      this.attr({ fontSize: fontSize, dy: ".25em", });
-    });
+      label.click(_this.showVariableNameInput(variable));
+
+      label.hover(function() {
+        if (_this.isRunning()) return;
+        this.attr({ fontSize: fontSize + 2, dy: ".26em", });
+      }, function() {
+        this.attr({ fontSize: fontSize, dy: ".25em", });
+      });
     return label;
   },
+
+  createPctLabel: function (variable, x, y, fontSize, clipping, maxLength, percentString) {
+    var _this = this,
+      text = `${percentString}%`,
+      label = s.text(x, y, text).attr({
+        fontSize: fontSize,
+        textAnchor: "middle",
+        dy: ".25em",
+        dx: getTextShift(text, maxLength),
+        clipPath: clipping,
+        class: `percent ${variables[variable]}`,
+      });
+
+      label.click(_this.showPercentInput(variable, percentString));
+
+      label.hover(function() {
+        if (_this.isRunning()) return;
+        this.attr({ fontSize: fontSize + 2, dy: ".26em", });
+      }, function() {
+        this.attr({ fontSize: fontSize, dy: ".25em", });
+      });
+    return label;
+  },
+
 
   handleSpinnerClick: function () {
     var _this = this;
@@ -694,20 +728,24 @@ View.prototype = {
       if (_this.isRunning()) return;
 
       const wedges = document.getElementsByClassName("wedge");
-      const labels = document.getElementsByClassName("label");
+      const nameLabels = document.getElementsByClassName("label");
+      const pctLabels = document.getElementsByClassName("percent");
 
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
+      const clickedPct = e.target.classList?.contains("percent");
 
-      const elsToCheck = clickedWedge? wedges : clickedLabel ? labels: null;
+      const elsToCheck = clickedWedge ? wedges : clickedLabel ? nameLabels: clickedPct ? pctLabels : null;
 
       for (let i = 0; i < wedges.length; i ++) {
         const originalFill = wedges[i].getAttribute("fill");
         let isSelectedWedge = elsToCheck ? elsToCheck[i].classList.value === e.target.classList.value : false;
         if (isSelectedWedge) {
           wedges[i].style.fill = "red";
+          pctLabels[i].style.visibility = "visible";
         } else {
           wedges[i].style.fill = originalFill;
+          pctLabels[i].style.visibility = "hidden";
         }
       }
     }
@@ -763,8 +801,40 @@ View.prototype = {
       variableNameInput.style.width = width;
       variableNameInput.value = text;
       variableNameInput.focus();
-      editingVariable = i;
 
+      editingVariable = i;
+      if (device == "mixer" || device == "collector") {
+        variables[editingVariable] = "";
+      } else {
+        var v = variables[editingVariable];
+        editingVariable = [];
+        for (var j = 0, jj = variables.length; j < jj; j++) {
+          if (variables[j] === v) {
+            // variables[j] = " ";
+            editingVariable.push(j);
+          }
+        }
+      }
+      _this.render();
+    };
+  },
+
+  showPercentInput: function (i, percentString) {
+    var _this = this;
+    return function() {
+      if (_this.isRunning() || device === "collector") return;
+
+      var loc = this.node.getBoundingClientRect(),
+          text = percentString,
+          width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+      variablePercentageInput.style.display = "block";
+      variablePercentageInput.style.top = (loc.y + loc.height/2) + "px";
+      variablePercentageInput.style.left = (loc.x) + "px";
+      variablePercentageInput.style.width = width;
+      variablePercentageInput.value = text;
+      variablePercentageInput.focus();
+
+      editingVariable = i;
       if (device == "mixer" || device == "collector") {
         variables[editingVariable] = "";
       } else {
@@ -797,6 +867,61 @@ View.prototype = {
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
     }
+  },
+
+  setPercentage: function () {
+    const {calcPct, findCommonDenominator, findEquivNumerator} = utils;
+
+    // get name of selected variable
+    var selectedVar = Array.isArray(editingVariable) ? variables[editingVariable[0]] : variables[editingVariable];
+
+    // get user-generated new percentage and current percentage of selected variable
+    var newPct = Number(variablePercentageInput.value.trim());
+    var currentPct = Array.isArray(editingVariable) ?
+      calcPct(editingVariable.length, variables.length) :
+      calcPct(1, variables.length);
+
+    // find difference to distribute to other variables
+    var numOfOtherUniqueVariables = uniqueVariables - 1;
+    var diffOfPcts = newPct - currentPct;
+    var pctToDistribute = diffOfPcts / numOfOtherUniqueVariables;
+
+    // get pcts of other variables
+    var otherUniqueVars = [...new Set(variables.filter(v => v !== selectedVar))];
+    var otherPcts = [];
+    for (let i = 0; i < otherUniqueVars.length; i++) {
+      const numOfVar = (variables.filter(v => v === otherUniqueVars[i])).length;
+      const pctOfVar = calcPct(numOfVar, variables.length);
+      otherPcts.push(pctOfVar);
+    }
+
+    // find new common denominator to distribute whole numbers of mixer balls to each variable
+    var commonDenom = findCommonDenominator([newPct, currentPct, pctToDistribute, ...otherPcts]);
+
+    let newDataset = [];
+
+    var newNumOfSelectedVar = findEquivNumerator([newPct, 100], commonDenom);
+    for (let i = 0; i < newNumOfSelectedVar; i++) {
+      newDataset.push(selectedVar);
+    };
+
+    for (let i = 0; i < otherUniqueVars.length; i++) {
+      var oldNum = findEquivNumerator([otherPcts[i], 100], commonDenom);
+      var amtToSubtract = findEquivNumerator([pctToDistribute, 100], commonDenom);
+      var newNum = oldNum - amtToSubtract;
+      for (let j = 0; j < newNum; j++) {
+        newDataset.push(otherUniqueVars[i]);
+      }
+    };
+
+    variables.splice(0, variables.length);
+    for (let i = 0; i < newDataset.length; i++) {
+      variables.push(newDataset[i]);
+    }
+
+    variablePercentageInput.style.display = "none";
+    this.render();
+    editingVariable = false;
   },
 
   reset: function () {

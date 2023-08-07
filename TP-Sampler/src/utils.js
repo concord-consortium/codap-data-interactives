@@ -126,9 +126,42 @@ function testParsing() {
 // run assertion test on module load
 //testParsing();
 
+function calcPct(a, b) {
+  return Math.round(100 * (a / b));
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function lcm(a, b) {
+    return (a * b) / gcd(a, b);
+}
+
+function percentageToFraction(percentage) {
+  const numerator = percentage;
+  const denominator = 100;
+  const commonFactor = gcd(numerator, denominator);
+  return [numerator / commonFactor, denominator / commonFactor];
+}
+
+function findCommonDenominator(percentages) {
+  const fractions = percentages.map((p) => percentageToFraction(p));
+  const denominators = fractions.map((f) => { return f[1]});
+  const lcdDenominator = denominators.reduce((accumulator, currentDenominator) => lcm(accumulator, currentDenominator));
+  return lcdDenominator;
+}
+
+function findEquivNumerator(f, lcd) {
+  return (f[0] * (lcd / f[1]));
+}
+
 export {
   fill,
   shuffle,
   parseSequence,
-  parseSpecifier
+  parseSpecifier,
+  calcPct,
+  findCommonDenominator,
+  findEquivNumerator
 };
