@@ -882,20 +882,28 @@ View.prototype = {
       calcPct(1, variables.length);
 
     // find difference to distribute to other variables
-    var numOfOtherUniqueVariables = uniqueVariables - 1;
+    var uniqueVars = [...new Set(variables)];
+    var numOfOtherUniqueVariables = uniqueVars.length - 1;
     var diffOfPcts = newPct - oldPct;
     var pctToDistribute = diffOfPcts / numOfOtherUniqueVariables;
+    var newPcts = [];
+
+    if (!Number.isInteger(pctToDistribute)) {
+      newPcts.push(Math.floor(pctToDistribute));
+      newPcts.push(Math.floor(pctToDistribute) + 1);
+    } else {
+      newPcts.push(pctToDistribute);
+    }
 
     // find old pcts of other variables
-    var uniqueVars = [...new Set(variables)];
     var findPct = function (variable) {
       var numOfVar = (variables.filter(v => v === variable)).length;
       return calcPct(numOfVar, variables.length);
     };
-    var otherPcts = uniqueVars.filter(v => v !== selectedVar).map(v => findPct(v));
+    var oldPcts = uniqueVars.filter(v => v !== selectedVar).map(v => findPct(v));
 
     // find new common denominator to distribute whole numbers of mixer balls to each variable
-    var commonDenom = findCommonDenominator([newPct, oldPct, pctToDistribute, ...otherPcts]);
+    var commonDenom = findCommonDenominator([newPct, oldPct, ...newPcts, ...oldPcts]);
 
     // create new array
     let newVariables = [];
@@ -910,7 +918,17 @@ View.prototype = {
       } else {
         const pctOfVar = findPct(uniqueVars[i]);
         var oldNum = findEquivNumerator([pctOfVar, 100], commonDenom);
-        var diff = findEquivNumerator([pctToDistribute, 100], commonDenom);
+
+        var diff;
+        // check if we have uneven pcts to distribute and if we're the first non-selected variable
+        if (newPcts.length > 1 && uniqueVars.filter(v => v !== selectedVar)[0] === uniqueVars[i]) {
+          diff = findEquivNumerator([newPcts[0], 100], commonDenom);
+        } else if (newPcts.length > 1) {
+          diff = findEquivNumerator([newPcts[1], 100], commonDenom);
+        } else {
+          diff = findEquivNumerator([pctToDistribute, 100], commonDenom);
+        }
+
         var newNum = oldNum - diff;
         for (let j = 0; j < newNum; j++) {
           newVariables.push(uniqueVars[i]);
