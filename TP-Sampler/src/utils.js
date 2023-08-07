@@ -152,8 +152,33 @@ function findCommonDenominator(percentages) {
   return lcdDenominator;
 }
 
-function findEquivNumerator(f, lcd) {
-  return (f[0] * (lcd / f[1]));
+function findEquivNum(n, lcd) {
+  return (n * (lcd / 100));
+}
+
+function fewestNumbersToSum (target, count) {
+
+  const result = [];
+
+  // Distribute the target equally among the count of integers
+  const initialDistribution = Math.floor(target / count);
+
+  // Adjust the initial distribution to ensure the sum matches the target
+  let sum = initialDistribution * count;
+  for (let i = 0; i < count; i++) {
+    result.push(initialDistribution);
+  }
+
+  // Distribute the remaining difference to the numbers
+  let remainder = target - sum;
+  let i = 0;
+  while (remainder > 0) {
+    result[i % count]++;
+    remainder--;
+    i++;
+  }
+
+  return result;
 }
 
 export {
@@ -163,5 +188,6 @@ export {
   parseSpecifier,
   calcPct,
   findCommonDenominator,
-  findEquivNumerator
+  findEquivNum,
+  fewestNumbersToSum
 };

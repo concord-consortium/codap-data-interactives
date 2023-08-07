@@ -870,71 +870,56 @@ View.prototype = {
   },
 
   setPercentage: function () {
-    const {calcPct, findCommonDenominator, findEquivNumerator} = utils;
+    const {calcPct, findCommonDenominator, findEquivNum, fewestNumbersToSum} = utils;
+
+    var getVariableCount = (variable) => variables.filter(v => v === variable).length;
+    var findPct = (variable) => {return calcPct(getVariableCount(variable), variables.length)};
 
     // get selected variable
     var selectedVar = Array.isArray(editingVariable) ? variables[editingVariable[0]] : variables[editingVariable];
 
     // get new percentage and old percentage of selected variable
     var newPct = Math.round(variablePercentageInput.value.trim());
-    var oldPct = Array.isArray(editingVariable) ?
-      calcPct(editingVariable.length, variables.length) :
-      calcPct(1, variables.length);
+    var oldPct = findPct(selectedVar);
 
     // find difference to distribute to other variables
     var uniqueVars = [...new Set(variables)];
-    var numOfOtherUniqueVariables = uniqueVars.length - 1;
+    var unselectedVars = uniqueVars.filter((v) => v !== selectedVar);
+    var numUnselected = unselectedVars.length;
     var diffOfPcts = newPct - oldPct;
-    var pctToDistribute = diffOfPcts / numOfOtherUniqueVariables;
+
     var newPcts = [];
+    let newPctsMap = {};
 
-    if (!Number.isInteger(pctToDistribute)) {
-      newPcts.push(Math.floor(pctToDistribute));
-      newPcts.push(Math.floor(pctToDistribute) + 1);
-    } else {
-      newPcts.push(pctToDistribute);
-    }
+    // handle if we need to distribute remaining percentage unevenly
+    var fewestNumbers = fewestNumbersToSum(diffOfPcts, numUnselected);
+    fewestNumbers.forEach((n, i) => {
+      newPcts.push(n);
+      newPctsMap[unselectedVars[i]] = n;
+    });
 
-    // find old pcts of other variables
-    var findPct = function (variable) {
-      var numOfVar = (variables.filter(v => v === variable)).length;
-      return calcPct(numOfVar, variables.length);
-    };
-    var oldPcts = uniqueVars.filter(v => v !== selectedVar).map(v => findPct(v));
+    // find old pcts of other variables to pass to common denom function
+    var oldPcts = unselectedVars.map(v => findPct(v));
 
-    // find new common denominator to distribute whole numbers of mixer balls to each variable
+    // find new common denominator to distribute whole number of mixer balls to each variable
     var commonDenom = findCommonDenominator([newPct, oldPct, ...newPcts, ...oldPcts]);
 
     // create new array
     let newVariables = [];
 
     // add new amounts of variables to new array following order of variables in original array
-    for (let i = 0; i < uniqueVars.length; i++) {
-      if (uniqueVars[i] === selectedVar) {
-        var newNum = findEquivNumerator([newPct, 100], commonDenom);
-        for (let j = 0; j < newNum; j++) {
-          newVariables.push(selectedVar);
-        }
+    uniqueVars.forEach(varName => {
+      if (varName === selectedVar) {
+        var newNum = findEquivNum(newPct, commonDenom);
+        newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
       } else {
-        const pctOfVar = findPct(uniqueVars[i]);
-        var oldNum = findEquivNumerator([pctOfVar, 100], commonDenom);
-
-        var diff;
-        // check if we have uneven pcts to distribute and if we're the first non-selected variable
-        if (newPcts.length > 1 && uniqueVars.filter(v => v !== selectedVar)[0] === uniqueVars[i]) {
-          diff = findEquivNumerator([newPcts[0], 100], commonDenom);
-        } else if (newPcts.length > 1) {
-          diff = findEquivNumerator([newPcts[1], 100], commonDenom);
-        } else {
-          diff = findEquivNumerator([pctToDistribute, 100], commonDenom);
-        }
-
+        var pctOfVar = findPct(varName);
+        var oldNum = findEquivNum(pctOfVar, commonDenom);
+        var diff = findEquivNum(newPctsMap[varName], commonDenom);
         var newNum = oldNum - diff;
-        for (let j = 0; j < newNum; j++) {
-          newVariables.push(uniqueVars[i]);
-        }
+        newVariables.push(...Array.from({ length: newNum }, () => varName));
       }
-    };
+    });
 
     // clear original array and add new one
     variables.splice(0, variables.length);

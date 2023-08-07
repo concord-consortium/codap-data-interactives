@@ -308,16 +308,19 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     document.getElementById("speed-text").innerHTML = view.getSpeedText(val);
     setSpeed(speed);
   });
-  document.getElementById("variable-name-change").onblur = setVariableName;
-  document.getElementById("variable-name-change").onkeypress = function(e) {
+  document.getElementById("variable-name-change").addEventListener("blur", () => setVariableName());
+  document.getElementById("variable-name-change").addEventListener("keypress", (e) => {
     if (e.keyCode === 13) {
       setVariableName();
       return false;
     }
-  };
+  });
 
-  document.getElementById("variable-percentage-change").onblur = () => document.getElementById("variable-percentage-change").style.display = "none";
-  document.getElementById("variable-percentage-change").onkeydown = function(e) {
+  document.getElementById("variable-percentage-change").addEventListener("blur", () => {
+    document.getElementById("variable-percentage-change").style.display = "none"
+  });
+
+  document.getElementById("variable-percentage-change").onkeydown = (e) => {
     if (e.keyCode === 13) {
       setPercentage();
       return false;
