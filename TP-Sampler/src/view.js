@@ -664,7 +664,7 @@ View.prototype = {
         var percentageLabelClipping = s.path(slice.path);
         percentageLabel = this.createPctLabel(i, slice.center.x, slice.center.y + 20, pctTextSize,
           percentageLabelClipping, Math.max(1, 10 - variables.length), percentString);
-        percentageLabel.attr({visibility: "hidden"});
+        percentageLabel.attr({visibility: "hidden", fill: "white", fontWeight: "bold"});
 
         // white stroke on top of label
         s.path(slice.path).attr({
@@ -742,11 +742,15 @@ View.prototype = {
         const originalFill = wedges[i].getAttribute("fill");
         if (!elsToCheck) {
           wedges[i].style.fill = originalFill;
+          nameLabels[i].style.fill = "black";
+          nameLabels[i].style.fontWeight = "normal";
           pctLabels[i].style.visibility = "hidden";
           _this.hideDeleteButton();
         } else {
           let isSelectedWedge = elsToCheck[i].classList.value === e.target.classList.value;
-          wedges[i].style.fill = isSelectedWedge ? "red" : originalFill;
+          wedges[i].style.fill = isSelectedWedge ? "#008cba" : originalFill;
+          nameLabels[i].style.fill = isSelectedWedge ? "white" : "black";
+          nameLabels[i].style.fontWeight = isSelectedWedge ? "bold" : "normal";
           pctLabels[i].style.visibility = isSelectedWedge ? "visible" : "hidden";
           isSelectedWedge && _this.showDeleteButton(i, pctLabels[i]);
         }

@@ -152,7 +152,7 @@ input[disabled="disabled"] {
 
 #delete-variable {
   position: absolute;
-  border: 1px solid #008cba;
+  border: 1px solid black;
   display: none;
   width: 45px;
   height: 45px;
