@@ -625,6 +625,7 @@ View.prototype = {
       variableLabel = this.createSpinnerLabel(0, spinnerX, spinnerY, (spinnerRadius/2), labelClipping, 10);
       var pctLabelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
       percentageLabel = this.createPctLabel(0, spinnerX, (spinnerY + 20), (spinnerRadius/4), pctLabelClipping, 10, '100');
+      wedges.push(variableLabel);
     } else {
       var slicePercent = 1 / variables.length,
           lastVariable = "",
@@ -665,6 +666,8 @@ View.prototype = {
         percentageLabel = this.createPctLabel(i, slice.center.x, slice.center.y + 20, pctTextSize,
           percentageLabelClipping, Math.max(1, 10 - variables.length), percentString);
         percentageLabel.attr({visibility: "hidden", fill: "white", fontWeight: "bold"});
+
+        wedges.push(variableLabel);
 
         // white stroke on top of label
         s.path(slice.path).attr({
@@ -789,6 +792,7 @@ View.prototype = {
         speed = this.getProps().speed;
 
     needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
+      console.log({wedges});
       var letter = wedges[selection] || wedges[0];
       _this.moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback, allSelectionsMadeCallback);
     });
