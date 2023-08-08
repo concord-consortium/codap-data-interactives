@@ -184,6 +184,7 @@ function addVariable() {
   this.blur();
   if (running) return;
   variables.push(getNextVariable());
+  view.hideDeleteButton();
   view.render();
 
   ui.enable("remove-variable");
@@ -195,6 +196,7 @@ function removeVariable() {
   if (running) return;
   if (variables.length === 1) return;
   variables.pop();
+  view.hideDeleteButton();
   view.render();
 
   ui.enable("add-variable");
@@ -219,6 +221,7 @@ function addVariableSeries() {
     }
     else alert(localeMgr.tr('DG.plugin.Sampler.sample-list.parse-error'));
   }
+  view.hideDeleteButton();
 
   view.render();
 }
@@ -631,7 +634,7 @@ localeMgr.init().then(() => {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
       refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
-      view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
+      view.setVariableName, view.setPercentage, view.deleteVariable, setReplacement, setHidden, setOrCheckPassword,
       reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model

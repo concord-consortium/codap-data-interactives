@@ -285,7 +285,7 @@ function setReplacement(withReplacement, device, hidden) {
 
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
           stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-          setNumRuns, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
+          setNumRuns, setSpeed, view, setVariableName, setPercentage, deleteVariable, setReplacement, setHidden,
           setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
@@ -308,7 +308,10 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     document.getElementById("speed-text").innerHTML = view.getSpeedText(val);
     setSpeed(speed);
   });
-  document.getElementById("variable-name-change").addEventListener("blur", () => setVariableName());
+
+  document.getElementById("variable-name-change").addEventListener("blur", () => {
+    document.getElementById("variable-name-change").style.display = "none";
+  });
   document.getElementById("variable-name-change").addEventListener("keypress", (e) => {
     if (e.keyCode === 13) {
       setVariableName();
@@ -317,15 +320,17 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   });
 
   document.getElementById("variable-percentage-change").addEventListener("blur", () => {
-    document.getElementById("variable-percentage-change").style.display = "none"
+    document.getElementById("variable-percentage-change").style.display = "none";
   });
 
-  document.getElementById("variable-percentage-change").onkeydown = (e) => {
+  document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
     if (e.keyCode === 13) {
       setPercentage();
       return false;
     }
-  };
+  });
+
+  document.getElementById("delete-variable").addEventListener("click", () => deleteVariable());
 
   document.getElementById("tab-sampler").onclick = viewSampler;
   document.getElementById("tab-options").onclick = viewOptions;

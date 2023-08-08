@@ -23,6 +23,7 @@ var width = 205,            // svg units
 
     variableNameInput = document.getElementById("variable-name-change"),
     variablePercentageInput = document.getElementById("variable-percentage-change"),
+    deleteVariableButton = document.getElementById("delete-variable"),
 
     s,
     speed,
@@ -134,6 +135,7 @@ var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codap
   this.endAnimation = this.endAnimation.bind(this);
   this.setVariableName = this.setVariableName.bind(this);
   this.setPercentage = this.setPercentage.bind(this);
+  this.deleteVariable = this.deleteVariable.bind(this);
   this.pushAllLettersOut = this.pushAllLettersOut.bind(this);
 };
 
@@ -612,17 +614,17 @@ View.prototype = {
 
   createSpinner: function () {
     var variableLabel, percentageLabel;
-
+    var uniqueVars = [...new Set(variables)];
     wedges = [];
-    if (uniqueVariables === 1) {
+    if (uniqueVars.length === 1) {
+
       var circle = s.circle(spinnerX, spinnerY, spinnerRadius).attr({
             fill: getVariableColor(0, 0)
           });
       var labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
-      variableLabel = this.createSpinnerLabel(0, spinnerX, spinnerY,
-                    spinnerRadius/2, labelClipping, 9, circle);
-      percentageLabel = this.createPercentageLabel("100%", spinnerX, spinnerY - 10, spinnerRadius/2, labelClipping, circle);
-      wedges.push(variableLabel);
+      variableLabel = this.createSpinnerLabel(0, spinnerX, spinnerY, (spinnerRadius/2), labelClipping, 10);
+      var pctLabelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
+      percentageLabel = this.createPctLabel(0, spinnerX, (spinnerY + 20), (spinnerRadius/4), pctLabelClipping, 10, '100');
     } else {
       var slicePercent = 1 / variables.length,
           lastVariable = "",
@@ -674,19 +676,19 @@ View.prototype = {
     }
   },
 
-  createSpinnerLabel: function (variable, x, y, fontSize, clipping, maxLength) {
+  createSpinnerLabel: function (index, x, y, fontSize, clipping, maxLength) {
     var _this = this,
-      text = variables[variable],
+      text = `${variables[index]}`,
       label = s.text(x, y, text).attr({
         fontSize: fontSize,
         textAnchor: "middle",
         dy: ".25em",
         dx: getTextShift(text, maxLength),
         clipPath: clipping,
-        class: `label ${variables[variable]}`,
+        class: `label ${variables[index]}`,
       });
 
-      label.click(_this.showVariableNameInput(variable));
+      label.click(_this.showVariableNameInput(index));
 
       label.hover(function() {
         if (_this.isRunning()) return;
@@ -697,7 +699,7 @@ View.prototype = {
     return label;
   },
 
-  createPctLabel: function (variable, x, y, fontSize, clipping, maxLength, percentString) {
+  createPctLabel: function (index, x, y, fontSize, clipping, maxLength, percentString) {
     var _this = this,
       text = `${percentString}%`,
       label = s.text(x, y, text).attr({
@@ -706,10 +708,10 @@ View.prototype = {
         dy: ".25em",
         dx: getTextShift(text, maxLength),
         clipPath: clipping,
-        class: `percent ${variables[variable]}`,
+        class: `percent ${variables[index]}`,
       });
 
-      label.click(_this.showPercentInput(variable, percentString));
+      label.click(_this.showPercentInput(index, percentString));
 
       label.hover(function() {
         if (_this.isRunning()) return;
@@ -719,7 +721,6 @@ View.prototype = {
       });
     return label;
   },
-
 
   handleSpinnerClick: function () {
     var _this = this;
@@ -739,16 +740,18 @@ View.prototype = {
 
       for (let i = 0; i < wedges.length; i ++) {
         const originalFill = wedges[i].getAttribute("fill");
-        let isSelectedWedge = elsToCheck ? elsToCheck[i].classList.value === e.target.classList.value : false;
-        if (isSelectedWedge) {
-          wedges[i].style.fill = "red";
-          pctLabels[i].style.visibility = "visible";
-        } else {
+        if (!elsToCheck) {
           wedges[i].style.fill = originalFill;
           pctLabels[i].style.visibility = "hidden";
+          _this.hideDeleteButton();
+        } else {
+          let isSelectedWedge = elsToCheck[i].classList.value === e.target.classList.value;
+          wedges[i].style.fill = isSelectedWedge ? "red" : originalFill;
+          pctLabels[i].style.visibility = isSelectedWedge ? "visible" : "hidden";
+          isSelectedWedge && _this.showDeleteButton(i, pctLabels[i]);
         }
       }
-    }
+    };
   },
 
   animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
@@ -851,6 +854,37 @@ View.prototype = {
     };
   },
 
+  hideDeleteButton: function () {
+    deleteVariableButton.style.display = "none";
+  },
+
+  showDeleteButton: function (i, label) {
+    var loc = label.getBoundingClientRect();
+    var buttonWidth = 45;
+    deleteVariableButton.style.display = "block";
+    deleteVariableButton.style.top = (loc.y + loc.height + 10) + "px";
+    deleteVariableButton.style.left = ((loc.left + (loc.width / 2)) - (buttonWidth/2)) + "px";
+    editingVariable = i;
+  },
+
+  deleteVariable: function () {
+    const selectedVariable = variables[editingVariable];
+    const selectedElements = document.getElementsByClassName(selectedVariable);
+
+    for (let i = 0; i < selectedElements.length; i ++) {
+      selectedElements[i].remove();
+    }
+
+    const newArray = variables.filter(v => v !== selectedVariable);
+    variables.splice(0, variables.length);
+    variables.push(...newArray);
+
+    editingVariable = false;
+    deleteVariableButton.style.display = "none";
+    this.render();
+
+  },
+
   setVariableName: function () {
     if (editingVariable !== false) {
       var newName = variableNameInput.value.trim();
@@ -863,6 +897,7 @@ View.prototype = {
         variables[editingVariable] = newName;
       }
       variableNameInput.style.display = "none";
+      this.hideDeleteButton()
       this.render();
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
@@ -894,8 +929,9 @@ View.prototype = {
     // handle if we need to distribute remaining percentage unevenly
     var fewestNumbers = fewestNumbersToSum(diffOfPcts, numUnselected);
     fewestNumbers.forEach((n, i) => {
-      newPcts.push(n);
-      newPctsMap[unselectedVars[i]] = n;
+      var pctOfVar = findPct(unselectedVars[i]);
+      newPcts.push(pctOfVar - n);
+      newPctsMap[unselectedVars[i]] = pctOfVar - n;
     });
 
     // find old pcts of other variables to pass to common denom function
@@ -913,10 +949,7 @@ View.prototype = {
         var newNum = findEquivNum(newPct, commonDenom);
         newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
       } else {
-        var pctOfVar = findPct(varName);
-        var oldNum = findEquivNum(pctOfVar, commonDenom);
-        var diff = findEquivNum(newPctsMap[varName], commonDenom);
-        var newNum = oldNum - diff;
+        var newNum = findEquivNum(newPctsMap[varName], commonDenom);
         newVariables.push(...Array.from({ length: newNum }, () => varName));
       }
     });
@@ -926,6 +959,7 @@ View.prototype = {
     variables.push(...newVariables);
 
     variablePercentageInput.style.display = "none";
+    this.hideDeleteButton()
     this.render();
     editingVariable = false;
   },

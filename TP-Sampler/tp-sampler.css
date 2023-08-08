@@ -150,6 +150,26 @@ input[disabled="disabled"] {
   transform: translate(0%, -50%);
 }
 
+#delete-variable {
+  position: absolute;
+  border: 1px solid #008cba;
+  display: none;
+  width: 45px;
+  height: 45px;
+  padding: 0px;
+  min-width: 45px;
+  margin: 0px;
+  padding: 5px 6px;
+}
+
+#delete-variable>#trash-icon {
+  fill: #008cba;
+}
+
+#delete-variable:hover>#trash-icon {
+  fill: white;
+}
+
 .hidden {
   display: none;
 }
