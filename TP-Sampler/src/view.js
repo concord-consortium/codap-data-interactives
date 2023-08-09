@@ -753,7 +753,7 @@ View.prototype = {
 
   setVariableName: function () {
     if (editingVariable !== false) {
-      var newName = variableNameInput.value;
+      var newName = variableNameInput.value.trim();
       if (!newName) newName = "_";
       if (Array.isArray(editingVariable)) {
         for (var i = 0, ii = editingVariable.length; i < ii; i++) {
