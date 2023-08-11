@@ -24,7 +24,6 @@ var width = 205,            // svg units
 
     variableNameInput = document.getElementById("variable-name-change"),
     variablePercentageInput = document.getElementById("variable-percentage-change"),
-    deleteVariableButton = document.getElementById("delete-variable"),
 
     s,
     speed,
