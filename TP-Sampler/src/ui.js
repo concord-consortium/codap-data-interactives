@@ -297,9 +297,18 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("run").onclick = runButtonPressed;
   document.getElementById("stop").onclick = stopButtonPressed;
   document.getElementById("reset").onclick = resetButtonPressed;
-  document.getElementById("mixer").onclick = switchState;
-  document.getElementById("spinner").onclick = switchState;
-  document.getElementById("collector").onclick = switchState;
+  document.getElementById("mixer").onclick = (e) => {
+    removeClass(document.getElementById("model"), "spinner");
+    switchState(e, "mixer")
+  };
+  document.getElementById("spinner").onclick = (e) => {
+    addClass(document.getElementById("model"), "spinner");
+    switchState(e, "spinner");
+  };
+  document.getElementById("collector").onclick = (e) => {
+    removeClass(document.getElementById("model"), "mixer");
+    switchState(e, "collector")
+  };
   document.getElementById("sample_size").addEventListener('input', function (evt) {
     setSampleSize(this.value);
   });

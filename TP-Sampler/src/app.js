@@ -45,7 +45,7 @@ var s = Snap("#model svg"),
 
     samples = [],
 
-    uniqueVariables,
+    uniqueVariables = [...new Set(variables)],
 
     codapCom,
     view;
@@ -137,7 +137,7 @@ function getProps() {
     device: device,
     withReplacement: withReplacement,
     variables: variables,
-    uniqueVariables: uniqueVariables,
+    uniqueVariables: [...new Set(variables)],
     samples: samples,
     hidden: hidden
   };
@@ -184,6 +184,7 @@ function addVariable() {
   this.blur();
   if (running) return;
   variables.push(getNextVariable());
+  uniqueVariables = [...new Set(variables)];
   view.hideDeleteButton();
   view.render();
 
@@ -197,6 +198,7 @@ function removeVariable() {
   if (variables.length === 1) return;
   variables.pop();
   view.hideDeleteButton();
+  uniqueVariables = [...new Set(variables)];
   view.render();
 
   ui.enable("add-variable");
@@ -491,7 +493,7 @@ function run() {
 // permanently sorts variables so identical ones are next to each other
 function sortVariablesForSpinner() {
   var sortedVariables = [];
-  uniqueVariables = variables.length;
+  uniqueVariables = [...new Set(variables)];
   for (var i = 0, ii = variables.length; i < ii; i++) {
     var v = variables[i],
         inserted = false,
@@ -500,7 +502,6 @@ function sortVariablesForSpinner() {
       if (sortedVariables[j] === v) {
         sortedVariables.splice(j, 0, v);
         inserted = true;
-        uniqueVariables--;
       }
     }
     if (!inserted) {
