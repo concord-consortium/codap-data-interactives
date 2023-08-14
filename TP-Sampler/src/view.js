@@ -97,10 +97,11 @@ var width = 205,            // svg units
           pctLabelLoc = getCoordinatesForPercent(radius * 1.35, labelPerc2),
           deleteBtnLocY;
 
-      if (labelLineP1[1] >= labelLineP2[1]) {
-        deleteBtnLocY = labelLineP1[1] + 15;
+      // check in which direction label line is pointing and position delete button accordingly
+      if (pctLabelLoc[1] >= labelLineP2[1]) {
+        deleteBtnLocY = pctLabelLoc[1] + 15;
       } else {
-        deleteBtnLocY = labelLineP1[1] - 17;
+        deleteBtnLocY = pctLabelLoc[1] - 17;
       }
 
       return {
@@ -111,7 +112,7 @@ var width = 205,            // svg units
         },
         labelLine: `M ${labelLineP1.join(" ")} L ${labelLineP2.join(" ")}`,
         pctLabelLoc: {x: pctLabelLoc[0], y: pctLabelLoc[1]},
-        deleteBtnLoc:  {x: labelLineP1[0], y: deleteBtnLocY}
+        deleteBtnLoc:  {x: pctLabelLoc[0], y: deleteBtnLocY}
       };
     },
 
