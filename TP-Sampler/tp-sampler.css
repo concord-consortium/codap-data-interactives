@@ -270,6 +270,21 @@ text:hover{
   width: 100%;
 }
 
+#measures {
+  position: absolute;
+  top: 8vh;
+  padding: 1vh;
+  height: 100%;
+}
+
+#select-measure, #select-measure-label {
+  margin-top: 5vh;
+}
+
+#add-measure {
+  position: relative;
+}
+
 #options {
   position: absolute;
   top: 8vh;
