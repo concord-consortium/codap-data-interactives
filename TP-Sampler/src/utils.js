@@ -157,19 +157,18 @@ function findEquivNum(n, lcd) {
 }
 
 function fewestNumbersToSum (target, count) {
-
   const result = [];
 
-  // Distribute the target equally among the count of integers
+  // distribute the target equally among the count of integers
   const initialDistribution = Math.floor(target / count);
 
-  // Adjust the initial distribution to ensure the sum matches the target
+  // adjust the initial distribution to ensure the sum matches the target
   let sum = initialDistribution * count;
   for (let i = 0; i < count; i++) {
     result.push(initialDistribution);
   }
 
-  // Distribute the remaining difference to the numbers
+  // distribute the remaining difference to the numbers
   let remainder = target - sum;
   let i = 0;
   while (remainder > 0) {
@@ -181,6 +180,21 @@ function fewestNumbersToSum (target, count) {
   return result;
 }
 
+function degreesToPercentage(angleDegrees) {
+  return (angleDegrees * 100) / 360;
+}
+
+function calculateAngle(x1, y1, x2, y2) {
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  const angleRadians = Math.atan2(deltaY, deltaX);
+
+  // calculate the percentage of the circle
+  const percentage = (angleRadians / (2 * Math.PI)) * 100;
+  return percentage;
+}
+
+
 export {
   fill,
   shuffle,
@@ -189,5 +203,7 @@ export {
   calcPct,
   findCommonDenominator,
   findEquivNum,
-  fewestNumbersToSum
+  fewestNumbersToSum,
+  degreesToPercentage,
+  calculateAngle
 };

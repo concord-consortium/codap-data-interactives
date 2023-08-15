@@ -110,9 +110,13 @@ var width = 205,            // svg units
           x: (spinnerX + centerP[0]) / 2,
           y: (spinnerY + centerP[1]) / 2
         },
+        edge1: `M ${spinnerX} ${spinnerY} L ${p1.join(" ")}`,
+        edge2: `M ${spinnerX} ${spinnerY} L ${p2.join(" ")}`,
+        p1: {x: p1[0], y: p1[1]},
+        p2: {x: p2[0], y: p2[1]},
         labelLine: `M ${labelLineP1.join(" ")} L ${labelLineP2.join(" ")}`,
         pctLabelLoc: {x: pctLabelLoc[0], y: pctLabelLoc[1]},
-        deleteBtnLoc:  {x: pctLabelLoc[0], y: deleteBtnLocY}
+        deleteBtnLoc:  {x: pctLabelLoc[0], y: deleteBtnLocY},
       };
     },
 
@@ -133,6 +137,7 @@ var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codap
   this.modelReset = modelReset;
   this.codapCom = codapCom;
   this.localeMgr = localeMgr;
+  this.isDragging = false;
 
   this.getSpeedText = function(index) {
     var speedIds = [
@@ -639,7 +644,9 @@ View.prototype = {
       var slicePercent = 1 / variables.length,
           lastVariable = "",
           mergeCount = 0,
-          offsetDueToMerge = 0;
+          offsetDueToMerge = 0,
+          edge1Point,
+          edge2Point;
 
       for (var i = 0, ii = variables.length; i < ii; i++) {
         var merge = variables[i] === lastVariable;
@@ -684,6 +691,11 @@ View.prototype = {
 
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
 
+        var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (variables.length > 1 && i === 0) || (merge && (variables[i - 1] !== variables[i]));
+        if (isFirstInstanceOfVar) {
+          edge1Point = slice.p1;
+        }
+
         var isLastInstanceofVar = (variables.filter(v => v === variables[i]).length === 1) || (merge && (variables[i + 1] !== variables[i]));
         if (isLastInstanceofVar) {
           // draw label line and percent label
@@ -694,8 +706,11 @@ View.prototype = {
           percentageLabel.attr({visibility: "hidden"});
 
           var deleteButton = this.createDeleteButton(i, slice.deleteBtnLoc).attr({visibility: "hidden"});
+          var edge2Point = slice.p2;
 
-          wedgeObj.svgObj = {...wedgeObj.svgObj, line, percentageLabel, deleteButton};
+          wedgeObj.svgObj = {...wedgeObj.svgObj, line, percentageLabel, deleteButton, edge1Point, edge2Point};
+
+          // push wedge obj to wedges array only if we are in the last instance of the variable - otherwise we'll have repeats
           wedges.push(wedgeObj);
         }
       }
@@ -776,7 +791,7 @@ View.prototype = {
     var _this = this;
 
     return function (e) {
-      if (_this.isRunning()) return;
+      if (_this.isRunning() || _this.isDragging) return;
 
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
@@ -788,26 +803,91 @@ View.prototype = {
       const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : null;
 
       for (let i = 0; i < wedgeEls.length; i ++) {
-        const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]).svgObj;
-        const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line} = wedgeObj;
-          let isSelectedWedge =  elsToCheck ?  elsToCheck[i].classList.value === e.target.classList.value : false;
-          let isEditingWedge = clickedPct && e.target.classList[1] === wedgeEls[i].classList[1];
-          if (isSelectedWedge || isEditingWedge) {
-            wedge.attr({fill: darkTeal});
-            variableLabel.attr({fill: "white", fontWeight: "bold"});
-            line.attr({stroke: darkTeal});
-            percentageLabel.attr({visibility: "visible"});
-            deleteButton.attr({visibility: "visible"});
-          } else {
-            wedge.attr({fill: wedgeColor});
-            variableLabel.attr({fill: "black", fontWeight: "normal"});
-            line.attr({stroke: "none"});
-            percentageLabel.attr({visibility: "hidden"});
-            deleteButton.attr({visibility: "hidden"});
+        const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]);
+        const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line} = wedgeObj.svgObj;
+        let isSelectedWedge =  elsToCheck ?  elsToCheck[i].classList.value === e.target.classList.value : false;
+        let isEditingWedge = clickedPct && e.target.classList[1] === wedgeEls[i].classList[1];
+        if (isSelectedWedge || isEditingWedge) {
+          wedge.attr({fill: darkTeal});
+          variableLabel.attr({fill: "white", fontWeight: "bold"});
+          line.attr({stroke: darkTeal});
+          percentageLabel.attr({visibility: "visible"});
+          deleteButton.attr({visibility: "visible"});
+          if (!('edge1' in wedgeObj.svgObj)) {
+            _this.createEdges(wedgeObj);
+          }
+        } else {
+          wedge.attr({fill: wedgeColor});
+          variableLabel.attr({fill: "black", fontWeight: "normal"});
+          line.attr({stroke: "none"});
+          percentageLabel.attr({visibility: "hidden"});
+          deleteButton.attr({visibility: "hidden"});
+          if ('edge1' in wedgeObj.svgObj) {
+            _this.removeEdges(wedgeObj);
           }
         }
       }
-    },
+    }
+  },
+
+  createEdges: function (wedge) {
+    const {variable} = wedge;
+    const {edge1Point, edge2Point} = wedge.svgObj;
+    const pct = Math.round(variables.filter((v) => v === variable).length / variables.length * 100);
+
+    // draggable edges
+    var edge1 = s.path(`M ${spinnerX} ${spinnerY} L ${edge1Point.x} ${edge1Point.y}`).attr({
+      stroke: "yellow",
+      class: `edge1 ${variable}`,
+      cusor: "pointer",
+      strokeWidth: "5px",
+    })
+
+    var edge2 = s.path(`M ${spinnerX} ${spinnerY} L ${edge2Point.x} ${edge2Point.y}`).attr({
+      stroke: "yellow",
+      class: `edge2 ${variable}`,
+      cusor: "pointer",
+      strokeWidth: "5px",
+    })
+
+    wedge.svgObj = {...wedge.svgObj, edge1, edge2};
+
+    var edge1Hint = Snap.parse(`<title>Click and drag to change the percentages for ${variable}</title>`);
+    edge1.append(edge1Hint);
+
+    var edge2Hint = Snap.parse(`<title>Click and drag to change the percentages for ${variable}</title>`);
+    edge2.append(edge2Hint);
+
+    edge1.drag((dx, dy, x, y, e) => this.handleDrag(dx, dy, x, y, e, edge2Point, edge1Point), (x, y, e) => this.startDrag(x, y, e), () => this.endDrag());
+    edge2.drag((dx, dy, x, y, e) => this.handleDrag(dx, dy, x, y, e, edge1Point, edge2Point), (x, y, e) => this.startDrag(x, y, e), () => this.endDrag());
+  },
+
+  removeEdges: function (wedge) {
+    const {svgObj} = wedge;
+    if (svgObj.edge1 && svgObj.edge2) {
+      svgObj.edge1.remove();
+      svgObj.edge2.remove();
+      delete svgObj.edge1;
+      delete svgObj.edge2;
+    }
+  },
+
+  startDrag: function (x, y, e) {
+    console.log('drag started');
+  },
+
+  handleDrag: function (dx, dy, x, y, e, otherPoint, originalPoint) {
+    var oldPct = utils.calculateAngle(otherPoint.x, otherPoint.y, originalPoint.x, originalPoint.y);
+    console.log({oldPct});
+    // s.circle(otherPoint.x, otherPoint.y, 5).attr({fill: "red"});
+    // find new angle between lines
+    var newPct = utils.calculateAngle(otherPoint.x, otherPoint.y, x, y);
+    console.log({newPct});
+  },
+
+  endDrag: function () {
+    console.log('you stopped dragging');
+  },
 
   animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
     var _this = this;
