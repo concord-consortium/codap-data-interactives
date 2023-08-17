@@ -173,6 +173,7 @@ View.prototype = {
     wedges = [];
     wedgeLabels = [];
 
+    s.unclick(this.handleSpinnerClick);
     s.clear();
     document.getElementById("sample_size").value = sampleSize;
     document.getElementById("repeat").value = numRuns;
@@ -648,6 +649,11 @@ View.prototype = {
           edge1Point,
           edge2Point;
 
+      // Click handler for detected if user has selected a wedge. Only add it once.
+      if (!s.events) {
+        s.click(this.handleSpinnerClick());
+      }
+
       for (var i = 0, ii = variables.length; i < ii; i++) {
         var merge = variables[i] === lastVariable;
         mergeCount = merge ? mergeCount + 1 : 0;
@@ -657,29 +663,21 @@ View.prototype = {
 
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
-        var wedgeColor = getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
 
-        // Click handler for detected if user has selected a wedge.
-        s.click(this.handleSpinnerClick());
+        var isDraggingVar = this.isDragging === variables[i];
+        var wedgeColor = isDraggingVar ? darkTeal : getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
 
         // wedge color
         var wedge = s.path(slice.path).attr({
           fill:  wedgeColor,
           stroke: "none",
           class: `wedge ${variables[i]}`,
-          cursor: "pointer"
+          cursor: this.isDragging ? "grabbing" : "pointer"
         });
 
         var percentString = (100*(mergeCount+1)*slicePercent).toPrecision(2);
         var hint = Snap.parse('<title>'+ percentString + '%</title>');
         wedge.append(hint);
-
-        // white stroke on top of label
-        s.path(slice.path).attr({
-          fill: "none",
-          stroke: "#fff",
-          strokeWidth: i === ii - 1 ? 0.5 : 1
-        });
 
         var wedgeObj = {variable: variables[i]};
 
@@ -687,28 +685,43 @@ View.prototype = {
         var variableLabelClipping = s.path(slice.path);
         variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
         variableLabelClipping, Math.max(1, 10 - variables.length));
+        variableLabel.attr({
+          fontWeight: isDraggingVar ? "bold" : "normal",
+          fill: isDraggingVar ? "white" : "black"
+        })
         wedgeLabels.push(variableLabel);
 
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
 
-        var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (variables.length > 1 && i === 0) || (merge && (variables[i - 1] !== variables[i]));
+        var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
           edge1Point = slice.p1;
         }
 
         var isLastInstanceofVar = (variables.filter(v => v === variables[i]).length === 1) || (merge && (variables[i + 1] !== variables[i]));
         if (isLastInstanceofVar) {
-          // draw label line and percent label
+          // draw percent label, delete button
           var line = s.path(slice.labelLine);
-          line.attr({stroke: "none", strokeWidth: 2, class: `line ${variables[i]}`});
-
+          line.attr({stroke: isDraggingVar ? darkTeal : "none", strokeWidth: 2, class: `line ${variables[i]}`});
           percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, Math.max(1, 10 - variables.length), percentString);
-          percentageLabel.attr({visibility: "hidden"});
+          percentageLabel.attr({visibility: this.isDragging === variables[i] ? "visible" : "hidden"});
 
           var deleteButton = this.createDeleteButton(i, slice.deleteBtnLoc).attr({visibility: "hidden"});
           var edge2Point = slice.p2;
-
           wedgeObj.svgObj = {...wedgeObj.svgObj, line, percentageLabel, deleteButton, edge1Point, edge2Point};
+
+          // don't let the last edge (i.e. 0 degrees line) be draggable
+          if (variables.length - 1 !== i) {
+            var edge = this.createEdge(wedgeObj, slice.path, variables[i + 1]);
+            wedgeObj.svgObj = {...wedgeObj.svgObj, edge};
+          }
+
+          // white stroke separating wedges
+          s.path(slice.edge2).attr({
+            fill: "none",
+            stroke: "#fff",
+            strokeWidth: i === ii - 1 ? 0.5 : 1,
+          });
 
           // push wedge obj to wedges array only if we are in the last instance of the variable - otherwise we'll have repeats
           wedges.push(wedgeObj);
@@ -771,7 +784,7 @@ View.prototype = {
     var innerShape = s.path(`M ${x - offset} ${y - offset} L ${x + offset} ${y + offset} M ${x + offset} ${y - offset} L ${x - offset} ${y + offset}`).attr({stroke: "black", strokeWidth: "1px"});
     var button = s.group(border, innerShape).attr({cursor: "pointer"});
 
-    var hint = Snap.parse(`<title>Delete variable ${variables[index]}</title>`);
+    var hint = Snap.parse(`<title>Delete ${variables[index]}</title>`);
     button.append(hint);
 
     button.hover(function (){
@@ -787,6 +800,32 @@ View.prototype = {
     return button;
   },
 
+  createEdge: function (wedgeObj, clippingPath, nextVariable) {
+    var _this = this;
+
+    const {variable} = wedgeObj;
+    const {wedgeColor, edge1Point, edge2Point} = wedgeObj.svgObj;
+    var clipping = s.path(clippingPath);
+
+    // draggable edge
+    var edge = s.path(`M ${spinnerX} ${spinnerY} L ${edge2Point.x} ${edge2Point.y}`).attr({
+      stroke: wedgeColor,
+      class: `edge ${variable}`,
+      strokeWidth: "10px",
+      clipPath: clipping,
+    })
+
+    wedgeObj.svgObj = {...wedgeObj.svgObj, edge};
+
+    var edgeHint = Snap.parse(`<title>Click and drag to change the percentages for ${variable} and ${nextVariable}</title>`);
+    edge.append(edgeHint);
+    edge.node.style.cursor = this.isDragging ? "grabbing" : "grab";
+
+    edge.drag((dx, dy, x, y, e) => _this.handleDrag(dx, dy, x, y, e, edge1Point, variable, nextVariable, wedgeObj), () => _this.startDrag(wedgeObj), () => _this.endDrag());
+
+    return edge;
+  },
+
   handleSpinnerClick: function () {
     var _this = this;
 
@@ -799,12 +838,11 @@ View.prototype = {
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
       const clickedPct = e.target.classList?.contains("percent");
-
       const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : null;
 
       for (let i = 0; i < wedgeEls.length; i ++) {
         const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]);
-        const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line} = wedgeObj.svgObj;
+        const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
         let isSelectedWedge =  elsToCheck ?  elsToCheck[i].classList.value === e.target.classList.value : false;
         let isEditingWedge = clickedPct && e.target.classList[1] === wedgeEls[i].classList[1];
         if (isSelectedWedge || isEditingWedge) {
@@ -813,8 +851,8 @@ View.prototype = {
           line.attr({stroke: darkTeal});
           percentageLabel.attr({visibility: "visible"});
           deleteButton.attr({visibility: "visible"});
-          if (!('edge1' in wedgeObj.svgObj)) {
-            _this.createEdges(wedgeObj);
+          if (edge) {
+            edge.attr({stroke: darkTeal});
           }
         } else {
           wedge.attr({fill: wedgeColor});
@@ -822,107 +860,53 @@ View.prototype = {
           line.attr({stroke: "none"});
           percentageLabel.attr({visibility: "hidden"});
           deleteButton.attr({visibility: "hidden"});
-          if ('edge1' in wedgeObj.svgObj) {
-            _this.removeEdges(wedgeObj);
+          if (edge) {
+            edge.attr({stroke: wedgeColor});
           }
         }
       }
     }
   },
 
-  createEdges: function (wedge) {
-    const {variable} = wedge;
-    const {edge1Point, edge2Point} = wedge.svgObj;
-    const pct = Math.round(variables.filter((v) => v === variable).length / variables.length * 100);
-
-    // draggable edges
-    var edge1 = s.path(`M ${spinnerX} ${spinnerY} L ${edge1Point.x} ${edge1Point.y}`).attr({
-      stroke: "yellow",
-      class: `edge1 ${variable}`,
-      cusor: "pointer",
-      strokeWidth: "5px",
-    })
-
-    var edge2 = s.path(`M ${spinnerX} ${spinnerY} L ${edge2Point.x} ${edge2Point.y}`).attr({
-      stroke: "yellow",
-      class: `edge2 ${variable}`,
-      cusor: "pointer",
-      strokeWidth: "5px",
-    })
-
-    wedge.svgObj = {...wedge.svgObj, edge1, edge2};
-
-    var edge1Hint = Snap.parse(`<title>Click and drag to change the percentages for ${variable}</title>`);
-    edge1.append(edge1Hint);
-
-    var edge2Hint = Snap.parse(`<title>Click and drag to change the percentages for ${variable}</title>`);
-    edge2.append(edge2Hint);
-
-    edge1.drag((dx, dy, x, y, e) => this.handleDrag(dx, dy, x, y, e, edge2Point, edge1Point), (x, y, e) => this.startDrag(x, y, e), () => this.endDrag());
-    edge2.drag((dx, dy, x, y, e) => this.handleDrag(dx, dy, x, y, e, edge1Point, edge2Point), (x, y, e) => this.startDrag(x, y, e), () => this.endDrag());
+  startDrag: function ( wedgeObj) {
+    this.isDragging = wedgeObj.variable;
+    var {wedge, variableLabel, line, percentageLabel, deleteButton, edge} = wedgeObj.svgObj;
+    wedge.attr({fill: darkTeal});
+    edge.attr({stroke: darkTeal})
+    variableLabel.attr({fill: "white", fontWeight: "bold"});
+    line.attr({stroke: darkTeal});
+    percentageLabel.attr({visibility: "visible"});
+    deleteButton.attr({visibility: "visible"});
   },
 
-  removeEdges: function (wedge) {
-    const {svgObj} = wedge;
-    if (svgObj.edge1 && svgObj.edge2) {
-      svgObj.edge1.remove();
-      svgObj.edge2.remove();
-      delete svgObj.edge1;
-      delete svgObj.edge2;
+  convertDomCoordsToSvg: function (x, y) {
+    var svgEl = s.node;
+    var svgMatrix = svgEl.getScreenCTM();
+    var svgPt = svgEl.createSVGPoint();
+    svgPt.x = x;
+    svgPt.y = y;
+    var svgCoords = svgPt.matrixTransform(svgMatrix.inverse());
+    var svgX = svgCoords.x;
+    var svgY = svgCoords.y;
+    return {svgX, svgY};
+  },
+
+  handleDrag: function (dx, dy, x, y, e, otherPoint, variable, nextVariable) {
+    var {svgX, svgY} = this.convertDomCoordsToSvg(x, y)
+    var newPct = utils.calculateWedgePercentage(spinnerX, spinnerY, otherPoint.x, otherPoint.y, svgX, svgY);
+    var newNicePct = Math.round(newPct);
+    var isWithinBounds = e.target.classList[1] === variable || e.target.classList[1] === nextVariable;
+
+    if (isWithinBounds && (newNicePct > 1 && newNicePct < 100)) {
+      this.setPercentage(newNicePct, variable, "next");
+    } else {
+      return;
     }
-  },
-
-  startDrag: function (x, y, e) {
-    console.log('drag started');
-  },
-
-  handleDrag: function (dx, dy, x, y, e, otherPoint, originalPoint) {
-    var oldPct = utils.calculateAngle(otherPoint.x, otherPoint.y, originalPoint.x, originalPoint.y);
-    console.log({oldPct});
-    // s.circle(otherPoint.x, otherPoint.y, 5).attr({fill: "red"});
-    // find new angle between lines
-    var newPct = utils.calculateAngle(otherPoint.x, otherPoint.y, x, y);
-    console.log({newPct});
   },
 
   endDrag: function () {
-    console.log('you stopped dragging');
-  },
-
-  animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
-    var _this = this;
-    if (!needle) {
-      // draw initial needle
-      var needleNorthLength = spinnerRadius * 2/3,
-          needleSouthLength = spinnerRadius / 5,
-          needleWidth = spinnerRadius / 15,
-          n = getCoordinatesForPercent(needleNorthLength, 0),
-          e = getCoordinatesForPercent(needleWidth, 0.25),
-          so = getCoordinatesForPercent(needleSouthLength, 0.5),
-          w = getCoordinatesForPercent(needleWidth, 0.75),
-          path = "M "+n.join(" ")+" L "+e.join(" ")+" L "+so.join(" ")+" L "+w.join(" ")+" Z";
-
-      needle = s.group(
-        s.path(path).attr({
-          fill: "#000"
-        }),
-        s.circle(spinnerX, spinnerY, needleWidth/2).attr({
-          fill: "#fff"
-        })
-      );
-    }
-
-    needleTurns += 2;
-
-    var wedgePerc = 0.1 + Math.random() * 0.8,
-        targetPerc = (selection + wedgePerc) / variables.length,
-        targetAngle = (needleTurns * 360) + (360 * targetPerc),
-        speed = this.getProps().speed;
-
-    needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
-      var letter = wedgeLabels[selection] || wedgeLabels[0];
-      _this.moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback, allSelectionsMadeCallback);
-    });
+    this.isDragging = false;
+    this.render();
   },
 
   showVariableNameInput: function (i) {
@@ -989,8 +973,118 @@ View.prototype = {
     };
   },
 
-  hideDeleteButton: function () {
-    deleteVariableButton.style.display = "none";
+  setVariableName: function () {
+    if (editingVariable !== false) {
+      var newName = variableNameInput.value.trim();
+      if (!newName) newName = "_";
+
+      if (Array.isArray(editingVariable)) {
+        for (var i = 0, ii = editingVariable.length; i < ii; i++) {
+          variables[editingVariable[i]] = newName;
+        }
+      } else {
+        variables[editingVariable] = newName;
+      }
+
+      // update uniqueVariables
+      uniqueVariables.splice(0, variables.length);
+      uniqueVariables = [...new Set(variables)];
+
+
+      variableNameInput.style.display = "none";
+      this.render();
+      editingVariable = false;
+      this.codapCom.logAction("changeItemName: %@", newName);
+    }
+  },
+
+  getVariableCount: function (variable) {
+    return variables.filter(v => v === variable).length;
+  },
+
+  getPercentOfVar: function (variable) {
+    return utils.calcPct(this.getVariableCount(variable), variables.length);
+  },
+
+  getFirstAndLastIndexOfVar: function (variable) {
+    var firstIndexOfVar = variables.indexOf(variable);
+    var lastIndexOfVar = (variables.filter(v => v == variable).length - 1) + firstIndexOfVar;
+    return {firstIndexOfVar, lastIndexOfVar}
+  },
+
+  getNewPcts: function (newPct, oldPct, selectedVar, lastOrNext) {
+    var { fewestNumbersToSum } = utils;
+    var diffOfPcts = newPct - oldPct;
+    var unselectedVars = variables.filter(v => v !== selectedVar);
+    var newPctsMap = {};
+    var newPcts = [];
+
+    if (lastOrNext) {
+    // only update adjacent variable (if user is dragging a wedge boundary)
+      var { firstIndexOfVar, lastIndexOfVar } = this.getFirstAndLastIndexOfVar(selectedVar);
+      var adjacentVar = lastOrNext === "last" ? variables.find((v, i) => i === firstIndexOfVar - 1): variables.find((v, i) => i === lastIndexOfVar + 1);
+
+      // update new percents
+      var newPcts = unselectedVars.map((v, i) => {
+        let pctOfVar = this.getPercentOfVar(unselectedVars[i]);
+        if (v === adjacentVar && pctOfVar - diffOfPcts > 0) {
+          pctOfVar = pctOfVar - diffOfPcts;
+        }
+        newPctsMap[unselectedVars[i]] = pctOfVar;
+        return pctOfVar;
+      });
+    } else {
+    // update all variables by distributing difference
+      var unselectedVars = uniqueVariables.filter((v) => v !== selectedVar);
+      var numUnselected = unselectedVars.length;
+      var fewestNumbers = fewestNumbersToSum(diffOfPcts, numUnselected);
+
+      // update new percents
+      fewestNumbers.forEach((n, i) => {
+        var pctOfVar = this.getPercentOfVar(unselectedVars[i]);
+        newPcts.push(pctOfVar - n);
+        newPctsMap[unselectedVars[i]] = pctOfVar - n;
+      });
+    }
+    return {newPcts, newPctsMap};
+  },
+
+  setPercentage: function (newPercentage, selectedVariable, lastOrNext) {
+    const {findCommonDenominator, findEquivNum} = utils;
+
+    // get selected variable
+    var selectedVar = selectedVariable ? selectedVariable : Array.isArray(editingVariable) ? variables[editingVariable[0]] : variables[editingVariable];
+
+    // get new percentage and old percentage of selected variable
+    var newPct = newPercentage ? newPercentage : Math.round(variablePercentageInput.value.trim());
+    var oldPct = this.getPercentOfVar(selectedVar);
+
+    var {newPcts, newPctsMap} = this.getNewPcts(newPct, oldPct, selectedVar, lastOrNext);
+
+    // find new common denominator to distribute whole number of mixer balls to each variable
+    var commonDenom = findCommonDenominator([newPct, ...newPcts]);
+
+    // create new array
+    let newVariables = [];
+
+    // add new amounts of variables to new array following order of variables in original array
+    uniqueVariables.forEach(varName => {
+      if (varName === selectedVar) {
+        var newNum = findEquivNum(newPct, commonDenom);
+        newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
+      } else {
+        var newNum = findEquivNum(newPctsMap[varName], commonDenom);
+        newVariables.push(...Array.from({ length: newNum }, () => varName));
+      }
+    });
+
+    // clear original array and add new one
+    variables.splice(0, variables.length);
+    variables.push(...newVariables);
+
+    variablePercentageInput.style.display = "none";
+    this.render();
+    editingVariable = false;
   },
 
   deleteVariable: function (index) {
@@ -1015,89 +1109,40 @@ View.prototype = {
     }
   },
 
-  setVariableName: function () {
-    if (editingVariable !== false) {
-      var newName = variableNameInput.value.trim();
-      if (!newName) newName = "_";
+  animateSpinnerSelection: function (selection, draw, selectionMadeCallback, allSelectionsMadeCallback) {
+    var _this = this;
+    if (!needle) {
+      // draw initial needle
+      var needleNorthLength = spinnerRadius * 2/3,
+          needleSouthLength = spinnerRadius / 5,
+          needleWidth = spinnerRadius / 15,
+          n = getCoordinatesForPercent(needleNorthLength, 0),
+          e = getCoordinatesForPercent(needleWidth, 0.25),
+          so = getCoordinatesForPercent(needleSouthLength, 0.5),
+          w = getCoordinatesForPercent(needleWidth, 0.75),
+          path = "M "+n.join(" ")+" L "+e.join(" ")+" L "+so.join(" ")+" L "+w.join(" ")+" Z";
 
-      if (Array.isArray(editingVariable)) {
-        for (var i = 0, ii = editingVariable.length; i < ii; i++) {
-          variables[editingVariable[i]] = newName;
-        }
-      } else {
-        variables[editingVariable] = newName;
-      }
-
-      // update uniqueVariables
-      uniqueVariables.splice(0, variables.length);
-      uniqueVariables = [...new Set(variables)];
-
-
-      variableNameInput.style.display = "none";
-      this.hideDeleteButton()
-      this.render();
-      editingVariable = false;
-      this.codapCom.logAction("changeItemName: %@", newName);
+      needle = s.group(
+        s.path(path).attr({
+          fill: "#000"
+        }),
+        s.circle(spinnerX, spinnerY, needleWidth/2).attr({
+          fill: "#fff"
+        })
+      );
     }
-  },
 
-  setPercentage: function () {
-    const {calcPct, findCommonDenominator, findEquivNum, fewestNumbersToSum} = utils;
+    needleTurns += 2;
 
-    var getVariableCount = (variable) => variables.filter(v => v === variable).length;
-    var findPct = (variable) => {return calcPct(getVariableCount(variable), variables.length)};
+    var wedgePerc = 0.1 + Math.random() * 0.8,
+        targetPerc = (selection + wedgePerc) / variables.length,
+        targetAngle = (needleTurns * 360) + (360 * targetPerc),
+        speed = this.getProps().speed;
 
-    // get selected variable
-    var selectedVar = Array.isArray(editingVariable) ? variables[editingVariable[0]] : variables[editingVariable];
-
-    // get new percentage and old percentage of selected variable
-    var newPct = Math.round(variablePercentageInput.value.trim());
-    var oldPct = findPct(selectedVar);
-
-    // find difference to distribute to other variables
-    var unselectedVars = uniqueVariables.filter((v) => v !== selectedVar);
-    var numUnselected = unselectedVars.length;
-    var diffOfPcts = newPct - oldPct;
-
-    var newPcts = [];
-    let newPctsMap = {};
-
-    // handle if we need to distribute remaining percentage unevenly
-    var fewestNumbers = fewestNumbersToSum(diffOfPcts, numUnselected);
-    fewestNumbers.forEach((n, i) => {
-      var pctOfVar = findPct(unselectedVars[i]);
-      newPcts.push(pctOfVar - n);
-      newPctsMap[unselectedVars[i]] = pctOfVar - n;
+    needle.animate({transform: "R"+targetAngle+","+spinnerX+","+spinnerY}, 600/speed, mina.easeinout, function() {
+      var letter = wedgeLabels[selection] || wedgeLabels[0];
+      _this.moveLetterToSlot(draw, letter, letter, null, selectionMadeCallback, allSelectionsMadeCallback);
     });
-
-    // find old pcts of other variables to pass to common denom function
-    var oldPcts = unselectedVars.map(v => findPct(v));
-
-    // find new common denominator to distribute whole number of mixer balls to each variable
-    var commonDenom = findCommonDenominator([newPct, oldPct, ...newPcts, ...oldPcts]);
-
-    // create new array
-    let newVariables = [];
-
-    // add new amounts of variables to new array following order of variables in original array
-    uniqueVariables.forEach(varName => {
-      if (varName === selectedVar) {
-        var newNum = findEquivNum(newPct, commonDenom);
-        newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
-      } else {
-        var newNum = findEquivNum(newPctsMap[varName], commonDenom);
-        newVariables.push(...Array.from({ length: newNum }, () => varName));
-      }
-    });
-
-    // clear original array and add new one
-    variables.splice(0, variables.length);
-    variables.push(...newVariables);
-
-    variablePercentageInput.style.display = "none";
-    this.hideDeleteButton()
-    this.render();
-    editingVariable = false;
   },
 
   reset: function () {

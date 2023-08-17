@@ -180,17 +180,22 @@ function fewestNumbersToSum (target, count) {
   return result;
 }
 
-function degreesToPercentage(angleDegrees) {
-  return (angleDegrees * 100) / 360;
-}
+function calculateWedgePercentage(cx, cy, x1, y1, x2, y2) {
+  // calculate angles in radians
+  var angle1 = Math.atan2(y1 - cy, x1 - cx);
+  var angle2 = Math.atan2(y2 - cy, x2 - cx);
 
-function calculateAngle(x1, y1, x2, y2) {
-  const deltaX = x2 - x1;
-  const deltaY = y2 - y1;
-  const angleRadians = Math.atan2(deltaY, deltaX);
+  // calculate the angle between the two points
+  var angle = angle2 - angle1;
 
-  // calculate the percentage of the circle
-  const percentage = (angleRadians / (2 * Math.PI)) * 100;
+  // handle cases where the angle crosses the boundary between -π and π
+  if (angle < 0) {
+      angle += 2 * Math.PI;
+  }
+
+  // calculate the percentage of the circle's circumference
+  var percentage = (angle / (2 * Math.PI)) * 100;
+
   return percentage;
 }
 
@@ -204,6 +209,5 @@ export {
   findCommonDenominator,
   findEquivNum,
   fewestNumbersToSum,
-  degreesToPercentage,
-  calculateAngle
+  calculateWedgePercentage
 };
