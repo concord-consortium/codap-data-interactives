@@ -126,9 +126,68 @@ function testParsing() {
 // run assertion test on module load
 //testParsing();
 
+function calcPct(a, b) {
+  return Math.round(100 * (a / b));
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function lcm(a, b) {
+    return (a * b) / gcd(a, b);
+}
+
+function percentageToFraction(percentage) {
+  const numerator = percentage;
+  const denominator = 100;
+  const commonFactor = gcd(numerator, denominator);
+  return [numerator / commonFactor, denominator / commonFactor];
+}
+
+function findCommonDenominator(percentages) {
+  const fractions = percentages.map((p) => percentageToFraction(p));
+  const denominators = fractions.map((f) => { return f[1]});
+  const lcdDenominator = denominators.reduce((accumulator, currentDenominator) => lcm(accumulator, currentDenominator));
+  return lcdDenominator;
+}
+
+function findEquivNum(n, lcd) {
+  return (n * (lcd / 100));
+}
+
+function fewestNumbersToSum (target, count) {
+
+  const result = [];
+
+  // Distribute the target equally among the count of integers
+  const initialDistribution = Math.floor(target / count);
+
+  // Adjust the initial distribution to ensure the sum matches the target
+  let sum = initialDistribution * count;
+  for (let i = 0; i < count; i++) {
+    result.push(initialDistribution);
+  }
+
+  // Distribute the remaining difference to the numbers
+  let remainder = target - sum;
+  let i = 0;
+  while (remainder > 0) {
+    result[i % count]++;
+    remainder--;
+    i++;
+  }
+
+  return result;
+}
+
 export {
   fill,
   shuffle,
   parseSequence,
-  parseSpecifier
+  parseSpecifier,
+  calcPct,
+  findCommonDenominator,
+  findEquivNum,
+  fewestNumbersToSum
 };

@@ -13,6 +13,7 @@
   <body>
     <div id="tabs">
       <div id="tab-sampler" class="active" data-text="DG.plugin.Sampler.tab.sampler"></div>
+      <div id="tab-measures" data-text="DG.plugin.Sampler.tab.measures"></div>
       <div id="tab-options" data-text="DG.plugin.Sampler.tab.options"></div>
       <div id="tab-about" data-text="DG.plugin.Sampler.tab.about"></div>
     </div>
@@ -61,8 +62,19 @@
         <button id="collector" data-text="DG.plugin.Sampler.device-selection.collector"></button>
       </div>
       <input id="variable-name-change" type="text" />
+      <input id="variable-percentage-change" type="text"/>
       <div id="model-cover" class="hidden">?</div>
       <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="" data-alt="DG.plugin.Sampler.spinner-cover-alt"></div>
+    </div>
+    <div id="measures" class="hidden">
+      <div class="top">
+        <div id="measures-instructions" data-text="DG.plugin.Sampler.measures-instructions"></div>
+        <label for="select-measure" id="select-measure-label" data-text="DG.plugin.Sampler.select-measure"></label>
+        <select id="select-measure"></select>
+      </div>
+      <div class="bottom">
+        <button id="add-measure" data-text="DG.plugin.Sampler.add-measure" disabled></button>
+      </div>
     </div>
     <div id="options" class="hidden">
       <div id="selection-options" class="disablable">

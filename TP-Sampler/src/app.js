@@ -45,7 +45,7 @@ var s = Snap("#model svg"),
 
     samples = [],
 
-    uniqueVariables,
+    uniqueVariables = [...new Set(variables)],
 
     codapCom,
     view;
@@ -137,7 +137,7 @@ function getProps() {
     device: device,
     withReplacement: withReplacement,
     variables: variables,
-    uniqueVariables: uniqueVariables,
+    uniqueVariables: [...new Set(variables)],
     samples: samples,
     hidden: hidden
   };
@@ -184,8 +184,8 @@ function addVariable() {
   this.blur();
   if (running) return;
   variables.push(getNextVariable());
+  uniqueVariables = [...new Set(variables)];
   view.render();
-
   ui.enable("remove-variable");
   codapCom.logAction("addItem");
 }
@@ -195,6 +195,7 @@ function removeVariable() {
   if (running) return;
   if (variables.length === 1) return;
   variables.pop();
+  uniqueVariables = [...new Set(variables)];
   view.render();
 
   ui.enable("add-variable");
@@ -488,7 +489,7 @@ function run() {
 // permanently sorts variables so identical ones are next to each other
 function sortVariablesForSpinner() {
   var sortedVariables = [];
-  uniqueVariables = variables.length;
+  uniqueVariables = [...new Set(variables)];
   for (var i = 0, ii = variables.length; i < ii; i++) {
     var v = variables[i],
         inserted = false,
@@ -497,7 +498,6 @@ function sortVariablesForSpinner() {
       if (sortedVariables[j] === v) {
         sortedVariables.splice(j, 0, v);
         inserted = true;
-        uniqueVariables--;
       }
     }
     if (!inserted) {
@@ -631,7 +631,7 @@ localeMgr.init().then(() => {
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
       refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
-      view.setVariableName, setReplacement, setHidden, setOrCheckPassword,
+      view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
       reloadDefaultSettings, becomeSelected);
 
   // initialize and render the model

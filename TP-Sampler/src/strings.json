@@ -92,6 +92,7 @@
     "DG.plugin.Sampler.title": "Sampler",
     "DG.plugin.Sampler.description": "Create random datasets from scratch or existing datasets.",
     "DG.plugin.Sampler.tab.sampler": "Sampler",
+    "DG.plugin.Sampler.tab.measures": "Collect Measures",
     "DG.plugin.Sampler.tab.options": "Options",
     "DG.plugin.Sampler.tab.about": "About",
     "DG.plugin.Sampler.top-bar.run": "START",
@@ -175,7 +176,11 @@
     "DG.plugin.Choosy.title": "Choosy",
     "DG.plugin.Choosy.description": "Organize and simplify datasets with many attributes.",
     "DG.plugin.Transformers.title": "Transformers",
-    "DG.plugin.Transformers.description": "Transform datasets with a collection of powerful tools."
+    "DG.plugin.Transformers.description": "Transform datasets with a collection of powerful tools.",
+    "DG.plugin.Sampler.measures-instructions": "Compute values for each sample. This 'wizard' will help you write a formula for a measure.",
+    "DG.plugin.Sampler.select-measure": "Measure: ",
+    "DG.plugin.Sampler.add-measure": "Add Measure"
+
   },
   "de": {
     "DG.plugin.Importer.title": "CSV importieren",

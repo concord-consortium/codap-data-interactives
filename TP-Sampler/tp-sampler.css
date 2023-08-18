@@ -53,6 +53,10 @@ body {
   height: 59vh;
 }
 
+#model.spinner {
+  width: 75vh;
+}
+
 #top-bar {
   position: absolute;
   left: 3.2vh;
@@ -135,6 +139,14 @@ input[disabled="disabled"] {
 }
 
 #variable-name-change {
+  position: absolute;
+  display: none;
+  font-size: 4vh;
+  width: 10vh;
+  transform: translate(0%, -50%);
+}
+
+#variable-percentage-change {
   position: absolute;
   display: none;
   font-size: 4vh;
@@ -256,6 +268,21 @@ text:hover{
 
 #spinner-cover img {
   width: 100%;
+}
+
+#measures {
+  position: absolute;
+  top: 8vh;
+  padding: 1vh;
+  height: 100%;
+}
+
+#select-measure, #select-measure-label {
+  margin-top: 5vh;
+}
+
+#add-measure {
+  position: relative;
 }
 
 #options {

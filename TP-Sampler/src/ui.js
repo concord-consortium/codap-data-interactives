@@ -169,18 +169,34 @@ function toggleDevice(oldDevice, newDevice) {
 
 function viewSampler() {
   addClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
   show(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   hide(document.getElementById("options"));
+  hide(document.getElementById("about-panel"));
+}
+
+function viewMeasures() {
+  removeClass(document.getElementById("tab-sampler"), "active");
+  addClass(document.getElementById("tab-measures"), "active");
+  removeClass(document.getElementById("tab-options"), "active");
+  removeClass(document.getElementById("tab-about"), "active");
+  hide(document.getElementById("sampler"));
+  show(document.getElementById("measures"));
+  hide(document.getElementById("options"));
+  hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
 }
 
 function viewOptions() {
   removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   addClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
   hide(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   show(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
@@ -188,9 +204,11 @@ function viewOptions() {
 
 function viewAbout() {
   removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   addClass(document.getElementById("tab-about"), "active");
   hide(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   hide(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   show(document.getElementById("about-panel"));
@@ -285,7 +303,7 @@ function setReplacement(withReplacement, device, hidden) {
 
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
           stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-          setNumRuns, setSpeed, view, setVariableName, setReplacement, setHidden,
+          setNumRuns, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
           setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
@@ -293,9 +311,18 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("run").onclick = runButtonPressed;
   document.getElementById("stop").onclick = stopButtonPressed;
   document.getElementById("reset").onclick = resetButtonPressed;
-  document.getElementById("mixer").onclick = switchState;
-  document.getElementById("spinner").onclick = switchState;
-  document.getElementById("collector").onclick = switchState;
+  document.getElementById("mixer").onclick = (e) => {
+    removeClass(document.getElementById("model"), "spinner");
+    switchState(e, "mixer")
+  };
+  document.getElementById("spinner").onclick = (e) => {
+    addClass(document.getElementById("model"), "spinner");
+    switchState(e, "spinner");
+  };
+  document.getElementById("collector").onclick = (e) => {
+    removeClass(document.getElementById("model"), "mixer");
+    switchState(e, "collector")
+  };
   document.getElementById("sample_size").addEventListener('input', function (evt) {
     setSampleSize(this.value);
   });
@@ -308,15 +335,31 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     document.getElementById("speed-text").innerHTML = view.getSpeedText(val);
     setSpeed(speed);
   });
-  document.getElementById("variable-name-change").onblur = setVariableName;
-  document.getElementById("variable-name-change").onkeypress = function(e) {
+
+  document.getElementById("variable-name-change").addEventListener("blur", () => {
+    document.getElementById("variable-name-change").style.display = "none";
+  });
+  document.getElementById("variable-name-change").addEventListener("keypress", (e) => {
     if (e.keyCode === 13) {
       setVariableName();
       return false;
     }
-  };
+  });
+
+  document.getElementById("variable-percentage-change").addEventListener("blur", () => {
+    document.getElementById("variable-percentage-change").style.display = "none";
+  });
+
+  document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
+    if (e.keyCode === 13) {
+      setPercentage();
+      return false;
+    }
+  });
+
   document.getElementById("tab-sampler").onclick = viewSampler;
   document.getElementById("tab-options").onclick = viewOptions;
+  document.getElementById("tab-measures").onclick = viewMeasures;
   document.getElementById("tab-about").onclick = viewAbout;
 
   document.getElementById("with-replacement").onclick = function(evt) {
