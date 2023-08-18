@@ -12,7 +12,7 @@
   </head>
   <body>
     <div id="tabs">
-      <div id="tab-sampler" class="active" data-text="DG.plugin.Sampler.tab.sampler"></div>
+      <div id="tab-devices" class="active" data-text="DG.plugin.Sampler.tab.devices"></div>
       <div id="tab-measures" data-text="DG.plugin.Sampler.tab.measures"></div>
       <div id="tab-options" data-text="DG.plugin.Sampler.tab.options"></div>
       <div id="tab-about" data-text="DG.plugin.Sampler.tab.about"></div>
@@ -62,7 +62,7 @@
         <button id="collector" data-text="DG.plugin.Sampler.device-selection.collector"></button>
       </div>
       <input id="variable-name-change" type="text" />
-      <input id="variable-percentage-change" type="text"/>
+      <input id="variable-percentage-change" type="text" />
       <div id="model-cover" class="hidden">?</div>
       <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="" data-alt="DG.plugin.Sampler.spinner-cover-alt"></div>
     </div>
@@ -70,7 +70,15 @@
       <div class="top">
         <div id="measures-instructions" data-text="DG.plugin.Sampler.measures-instructions"></div>
         <label for="select-measure" id="select-measure-label" data-text="DG.plugin.Sampler.select-measure"></label>
-        <select id="select-measure"></select>
+        <select id="select-measure">
+          <option id="count" data-text="DG.plugin.Sampler.count"></option>
+          <option id="conditional-count" data-text="DG.plugin.Sampler.conditional-count"></option>
+          <option id="conditional-percentage" data-text="DG.plugin.Sampler.conditional-percentage"></option>
+          <option id="mean" data-text="DG.plugin.Sampler.mean"></option>
+          <option id="conditional-mean" data-text="DG.plugin.Sampler.conditional-mean"></option>
+          <option id="diff-of-means" data-text="DG.plugin.Sampler.diff-of-means"></option>
+          <option id="sum" data-text="DG.plugin.Sampler.sum"></option>
+        </select>
       </div>
       <div class="bottom">
         <button id="add-measure" data-text="DG.plugin.Sampler.add-measure" disabled></button>

@@ -689,6 +689,8 @@ View.prototype = {
           fontWeight: isDraggingVar ? "bold" : "normal",
           fill: isDraggingVar ? "white" : "black"
         })
+        var variableHint = Snap.parse('<title>'+ percentString + '%</title>');
+        variableLabel.append(variableHint);
         wedgeLabels.push(variableLabel);
 
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};

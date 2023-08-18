@@ -168,7 +168,7 @@ function toggleDevice(oldDevice, newDevice) {
 }
 
 function viewSampler() {
-  addClass(document.getElementById("tab-sampler"), "active");
+  addClass(document.getElementById("tab-devices"), "active");
   removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
@@ -179,7 +179,7 @@ function viewSampler() {
 }
 
 function viewMeasures() {
-  removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-devices"), "active");
   addClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
@@ -191,7 +191,7 @@ function viewMeasures() {
 }
 
 function viewOptions() {
-  removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-devices"), "active");
   removeClass(document.getElementById("tab-measures"), "active");
   addClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
@@ -203,7 +203,7 @@ function viewOptions() {
 }
 
 function viewAbout() {
-  removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-devices"), "active");
   removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   addClass(document.getElementById("tab-about"), "active");
@@ -357,7 +357,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     }
   });
 
-  document.getElementById("tab-sampler").onclick = viewSampler;
+  document.getElementById("tab-devices").onclick = viewSampler;
   document.getElementById("tab-options").onclick = viewOptions;
   document.getElementById("tab-measures").onclick = viewMeasures;
   document.getElementById("tab-about").onclick = viewAbout;
