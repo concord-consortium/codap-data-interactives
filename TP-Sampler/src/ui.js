@@ -346,7 +346,13 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("variable-name-change").addEventListener("blur", () => {
     document.getElementById("variable-name-change").style.display = "none";
   });
-  document.getElementById("variable-name-change").addEventListener("keypress", (e) => {
+
+  document.getElementById("variable-name-change").addEventListener("keydown", (e) => {
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      document.getElementById("variable-name-change").style.display = "none";
+      view.showPercentInputForUI(e.target.className);
+    }
     if (e.keyCode === 13) {
       setVariableName();
       return false;
@@ -358,6 +364,11 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   });
 
   document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      document.getElementById("variable-name-change").style.display = "none";
+      view.showVariableNameInputForUI(e.target.className);
+    }
     if (e.keyCode === 13) {
       setPercentage();
       return false;

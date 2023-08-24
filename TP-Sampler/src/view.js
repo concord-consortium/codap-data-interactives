@@ -709,7 +709,7 @@ View.prototype = {
           var line = s.path(slice.labelLine);
           line.attr({stroke: isDraggingVar ? darkTeal : "none", strokeWidth: 2, class: `line ${variables[i]}`});
           percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, Math.max(1, 10 - variables.length), percentString);
-          percentageLabel.attr({visibility: this.isDragging === variables[i] ? "visible" : "hidden"});
+          percentageLabel.attr({visibility: isDraggingVar ? "visible" : "hidden"});
 
           var deleteButton = this.createDeleteButton(i, slice.deleteBtnLoc).attr({visibility: "hidden"});
           var edge2Point = slice.p2;
@@ -927,6 +927,7 @@ View.prototype = {
       variableNameInput.style.left = (loc.x) + "px";
       variableNameInput.style.width = width;
       variableNameInput.value = text;
+      variableNameInput.className = i,
       variableNameInput.focus();
 
       editingVariable = i;
@@ -946,6 +947,95 @@ View.prototype = {
     };
   },
 
+  showVariableNameInputForUI: function (i) {
+    if (this.isRunning() || device === "collector") return;
+
+    var nameLabels = document.getElementsByClassName(`label ${variables[i]}`);
+    var nameLabel = nameLabels[nameLabels.length - 1];
+
+    console.log({nameLabels});
+
+    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    console.log({wedgeObj});
+    const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
+    wedge.attr({fill: darkTeal});
+    variableLabel.attr({fill: "white", fontWeight: "bold"});
+    line.attr({stroke: darkTeal});
+    percentageLabel.attr({visibility: "visible"});
+    deleteButton.attr({visibility: "visible"});
+    if (edge) {
+      edge.attr({stroke: darkTeal});
+    }
+
+    var loc = nameLabel.getBoundingClientRect(),
+        text = variables[i],
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+    variableNameInput.style.display = "block";
+    variableNameInput.style.top = (loc.y + loc.height/2) + "px";
+    variableNameInput.style.left = (loc.x) + "px";
+    variableNameInput.style.width = width;
+    variableNameInput.value = text;
+    variableNameInput.className = i,
+    variableNameInput.focus();
+
+    editingVariable = i;
+    if (device == "mixer" || device == "collector") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] === v) {
+          // variables[j] = " ";
+          editingVariable.push(j);
+        }
+      }
+    }
+  },
+
+  showPercentInputForUI: function (i) {
+    if (this.isRunning() || device === "collector") return;
+
+    var percentLabel = document.getElementsByClassName(`percent ${variables[i]}`)[0];
+
+    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
+    wedge.attr({fill: darkTeal});
+    variableLabel.attr({fill: "white", fontWeight: "bold"});
+    line.attr({stroke: darkTeal});
+    percentageLabel.attr({visibility: "visible"});
+    deleteButton.attr({visibility: "visible"});
+    if (edge) {
+      edge.attr({stroke: darkTeal});
+    }
+
+    var percentString = this.getPercentOfVar(variables[i]);
+    var loc = percentLabel.getBoundingClientRect(),
+        text = percentString,
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+    variablePercentageInput.style.display = "block";
+    variablePercentageInput.style.top = (loc.y + loc.height/2) + "px";
+    variablePercentageInput.style.left = (loc.x) + "px";
+    variablePercentageInput.style.width = width;
+    variablePercentageInput.value = text;
+    variablePercentageInput.className = i;
+    variablePercentageInput.focus();
+
+    editingVariable = i;
+    if (device == "mixer" || device == "collector") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] === v) {
+          // variables[j] = " ";
+          editingVariable.push(j);
+        }
+      }
+    }
+  },
+
   showPercentInput: function (i, percentString) {
     var _this = this;
     return function() {
@@ -959,6 +1049,7 @@ View.prototype = {
       variablePercentageInput.style.left = (loc.x) + "px";
       variablePercentageInput.style.width = width;
       variablePercentageInput.value = text;
+      variablePercentageInput.className = i;
       variablePercentageInput.focus();
 
       editingVariable = i;
