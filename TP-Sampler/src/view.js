@@ -28,6 +28,7 @@ var width = 205,            // svg units
     s,
     speed,
     sampleSize,
+    deviceName,
     numRuns,
     device,
     withReplacement,
@@ -166,6 +167,7 @@ View.prototype = {
     sampleSize = props.sampleSize;
     numRuns = props.numRuns;
     device = props.device;
+    deviceName = props.deviceName;
     withReplacement = props.withReplacement;
     variables = props.variables;
     uniqueVariables = props.uniqueVariables;
@@ -176,6 +178,7 @@ View.prototype = {
     s.unclick(this.handleSpinnerClick);
     s.clear();
     document.getElementById("sample_size").value = sampleSize;
+    document.getElementById("device_name").value = deviceName;
     document.getElementById("repeat").value = numRuns;
     var sliderSpeed = speed > 0.5 ? speed : 0;
     document.getElementById("speed").value = sliderSpeed;

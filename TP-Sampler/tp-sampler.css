@@ -49,7 +49,7 @@ body {
 #model {
   position: absolute;
   left: -1vh;
-  top: 21.2vh;
+  top: 26.2vh;
   width: 62vh;
   height: 59vh;
 }
@@ -100,6 +100,27 @@ span {
   padding: 0;
 }
 
+#edit-device_name {
+  top: 21vh;
+  position: absolute;
+  display: flex;
+  left: 3.2vh;
+  width: 55vh;
+  align-items: center;
+}
+
+#device_name-label {
+  font-size: 3.4vh;
+}
+
+#device_name {
+  height: 2.2vh;
+  margin-left: 1.5vh;
+  font-size: 2.7vh;
+  margin-top: 0.5vh;
+  width: 20vh;
+}
+
 input[disabled="disabled"] {
   background-color:#fbfbfb;
 }
@@ -107,7 +128,7 @@ input[disabled="disabled"] {
 #model-controls {
   position: absolute;
   left: 3.2vh;
-  bottom: 13.2vh;
+  bottom: 7.2vh;
 }
 
 #model-controls button, #device-selection button {
@@ -123,11 +144,11 @@ input[disabled="disabled"] {
   margin-left: 2.5vh;
 }
 
-#reset {
+/* #reset {
     position: absolute;
     left: 3.2vh;
     bottom: 4vh;
-}
+} */
 
 #device-selection {
   position: absolute;

@@ -301,9 +301,13 @@ function setReplacement(withReplacement, device, hidden) {
   }
 }
 
+function updateUIDeviceName (name) {
+  document.getElementById("device_name").value = name;
+}
+
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
           stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-          setNumRuns, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
+          setNumRuns, setDeviceName, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
           setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
@@ -328,6 +332,9 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   });
   document.getElementById("repeat").addEventListener('input', function (evt) {
     setNumRuns(this.value);
+  });
+  document.getElementById("device_name").addEventListener('input', function (evt) {
+    setDeviceName(this.value);
   });
   document.getElementById("speed").addEventListener('input', function (evt) {
     var val = (this.value * 1),
@@ -421,5 +428,6 @@ export {
   renderVariableControls,
   populateContextsList,
   setRunButtonMode,
-  render
+  render,
+  updateUIDeviceName
 };

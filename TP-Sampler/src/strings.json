@@ -186,7 +186,8 @@
     "DG.plugin.Sampler.mean": "Mean: mean(Age)",
     "DG.plugin.Sampler.conditional-mean": "Conditional mean: mean(Age, Sex = “male”)",
     "DG.plugin.Sampler.diff-of-means": "Difference of means: mean(Age, Sex = “male”) – mean(Age, Sex = “female”)",
-    "DG.plugin.Sampler.sum": "Sum: sum()"
+    "DG.plugin.Sampler.sum": "Sum: sum()",
+    "DG.plugin.Sampler.device_name-label": "Output as:"
   },
   "de": {
     "DG.plugin.Importer.title": "CSV importieren",

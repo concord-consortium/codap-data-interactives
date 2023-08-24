@@ -6,7 +6,7 @@
  */
 
 import {codapInterface} from './lib/CodapInterface.js';
-
+import {updateDeviceName} from './app.js';
 var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.codapConnected = false;
   this.itemProto = {};
@@ -22,6 +22,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
+  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
   targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
   this.drawAttributes = null;
@@ -34,36 +35,40 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
       items: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")
     }
   };
-  // list of attribute names. We will listen for changes on these and update as needed
-  this.getAttrNames = function () {
-    if (!this.attrNames) {
-      this.attrNames = {
-        experiment: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment"),
-        experiment_description: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description"),
-        sample_size: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size"),
-        sample: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample"),
-        value: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")
+
+  this.attrMap = {
+    experiment: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment")},
+    description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
+    sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
+    sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
+    value: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
+  };
+
+  this.findKeyById = function (idToFind) {
+    for (const key in this.attrMap) {
+      if (this.attrMap[key].id === idToFind) {
+        return key;
       }
     }
-    return this.attrNames;
-  };
-  this.attrIds = {};
+  }
 
   codapInterface.on('get', 'interactiveState', getStateFunc);
 
   const _this = this;
   // listen for changes to attribute names, and update internal names accordingly
-  codapInterface.on('notify', 'dataContextChangeNotice[' + targetDataSetName + ']', function(msg) {
+  codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
     if (msg.values.operation === "updateAttributes") {
-      _this.attrNames = _this.attrNames || [];
       msg.values.result.attrIDs.forEach((id, i) => {
-        const attrKey = _this.attrIds[id];
-        _this.attrNames[attrKey] = msg.values.result.attrs[i].name;
+        const attrKey = _this.findKeyById(id);
+        if (attrKey === "value" && _this.attrMap.value.name !== msg.values.result.attrs[i].name) {
+          _this.deviceName = msg.values.result.attrs[i].name;
+          updateDeviceName(msg.values.result.attrs[i].name);
+        }
+        _this.attrMap[attrKey].name = msg.values.result.attrs[i].name;
       });
     }
   });
 
-  // this.init();
 };
 
 var targetDataSetName = 'Sampler';
@@ -100,9 +105,8 @@ CodapCom.prototype = {
     targetDataSetName = name;
   },
 
-  findOrCreateDataContext: function () {
+  findOrCreateDataContext: function (deviceName) {
     const _this = this;
-    const attrNames = this.getAttrNames();
     const collectionNames = this.getCollectionNames();
 
     this.codapConnected = true;
@@ -116,8 +120,8 @@ CodapCom.prototype = {
         function getAttributeIds() {
           // need to get all the ids of the newly-created attributes, so we can notice if they change.
           // we will set these ids on the attrIds object
-          const allAttrs = [["experiments", attrNames.experiment],["experiments", attrNames.experiment_description],
-                            ["experiments", attrNames.sample_size], ["samples", attrNames.sample], ["items", attrNames.value]];
+          const allAttrs = [["experiments", _this.attrMap.experiment.name],["experiments", _this.attrMap.description.name],
+                            ["experiments", _this.attrMap.sample_size.name], ["samples", _this.attrMap.sample.name], ["items", _this.attrMap.value.name]];
           const reqs = allAttrs.map(collectionAttr => ({
               "action": "get",
               "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
@@ -125,13 +129,18 @@ CodapCom.prototype = {
           codapInterface.sendRequest(reqs, function(getAttrsResult) {
             getAttrsResult.forEach(res => {
               if (res.success) {
-                _this.attrIds[res.values.id] = res.values.title;
+                console.log("_this.attrMap", _this.attrMap, "res.values.name", res.values.name);
+                _this.attrMap[res.values.name].id = res.values.id;
               }
             });
           });
         }
 
         if (getDatasetResult && !getDatasetResult.success) {
+          if (deviceName !== _this.attrMap.value.name) {
+            _this.deviceName = deviceName;
+            _this.attrMap.value.name = deviceName;
+          }
           codapInterface.sendRequest({
             action: 'create',
             resource: 'dataContext',
@@ -141,9 +150,9 @@ CodapCom.prototype = {
                 {
                   name: collectionNames.experiments,
                   attrs: [
-                    {name: attrNames.experiment, type: 'categorical'},
-                    {name: attrNames.experiment_description, type: 'categorical'},
-                    {name: attrNames.sample_size, type: 'categorical'}
+                    {name: _this.attrMap.experiment.name, type: 'categorical'},
+                    {name: _this.attrMap.description.name, type: 'categorical'},
+                    {name:  _this.attrMap.sample_size.name, type: 'categorical'}
                   ],
                   // childAttrName: "experiment"
                 },
@@ -151,7 +160,7 @@ CodapCom.prototype = {
                   name: collectionNames.samples,
                   parent: collectionNames.experiments,
                   // The parent collection has just one attribute
-                  attrs: [{name: attrNames.sample, type: 'categorical'}],
+                  attrs: [{name: _this.attrMap.sample.name, type: 'categorical'}],
                   // childAttrName: "sample"
                 },
                 {
@@ -161,7 +170,7 @@ CodapCom.prototype = {
                   //   pluralCase: "items"
                   // },
                   // The child collection also has just one attribute
-                  attrs: [{name: attrNames.value}]
+                  attrs: [{name: _this.attrMap.value.name}]
                 }
               ]
             }
@@ -174,7 +183,11 @@ CodapCom.prototype = {
           // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
           // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
           // already updated attribute names, this won't work.
-          if (Object.keys(_this.attrIds).length === 0) {
+          const onlyIds = [];
+          for (const key in _this.attrMap) {
+            onlyIds.push(_this.attrMap[key].id);
+          }
+          if (onlyIds.indexOf(null) > -1) {
             getAttributeIds();
           }
         }
@@ -196,7 +209,7 @@ CodapCom.prototype = {
 
     this.itemProto = {
       experiment: experimentNumber,
-      experiment_description: description,
+      description: description,
       sample_size: sampleSize
     };
   },
@@ -217,8 +230,12 @@ CodapCom.prototype = {
     });
   },
 
-  addMultipleSamplesToCODAP: function (samples, isCollector) {
+  addMultipleSamplesToCODAP: function (samples, isCollector, deviceName) {
     var _this = this;
+    var oldDeviceName = _this.deviceName;
+    if (deviceName !== _this.attrMap.value.name) {
+      _this.attrMap.value.name = deviceName;
+    };
     var items = [];
     samples.forEach(function (sample) {
       var run = sample.run;
@@ -234,24 +251,41 @@ CodapCom.prototype = {
     });
     // rename all the attributes to any new names that the user has changed them to.
     // easiest to do this all in one place here.
-    items.forEach(function(item) {
-      const attrs = Object.keys(item);
-      let attrNames = _this.getAttrNames();
-      attrs.forEach(function (attr) {
-        if (attrNames[attr] && attrNames[attr] !== attr) {
-          item[attrNames[attr]] = item[attr];
-          delete item[attr];
+    items.forEach(function (item) {
+      const attrKeys = Object.keys(item);
+      attrKeys.forEach(function (attrKey) {
+        if (_this.attrMap[attrKey].name !== attrKey) {
+          item[_this.attrMap[attrKey].name] = item[attrKey];
+          delete item[attrKey];
         }
+      })
+    });
+
+    if (oldDeviceName !== deviceName) {
+      codapInterface.sendRequest({
+        action: "update",
+        resource: `dataContext[${targetDataSetName}].collection[items].attribute[${oldDeviceName}]`,
+        values: {
+          "name": deviceName
+        }
+      }, () => _this.deviceName = deviceName).then(() => {
+        codapInterface.sendRequest({
+          action: 'create',
+          resource: getTargetDataSetPhrase() + '.item',
+          values: items
+        });
       });
-    });
-    codapInterface.sendRequest({
-      action: 'create',
-      resource: getTargetDataSetPhrase() + '.item',
-      values: items
-    });
+    } else {
+      codapInterface.sendRequest({
+        action: 'create',
+        resource: getTargetDataSetPhrase() + '.item',
+        values: items
+      });
+    }
   },
-  addValuesToCODAP: function(run, vals, isCollector) {
-    this.addMultipleSamplesToCODAP([{run: run, values: vals}], isCollector);
+
+  addValuesToCODAP: function(run, vals, isCollector, deviceName) {
+    this.addMultipleSamplesToCODAP([{run: run, values: vals}], isCollector, deviceName);
   },
 
   deleteAll: function() {

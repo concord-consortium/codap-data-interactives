@@ -3,6 +3,7 @@ import * as localeMgr from './localeManager.js';
 import {CodapCom} from './codap-com.js';
 import {View} from './view.js';
 import * as ui from './ui.js';
+
 /* Global Snap:true */
 var s = Snap("#model svg"),
 
@@ -12,7 +13,8 @@ var s = Snap("#model svg"),
       speed: 1,
       variables: ["a", "b", "a"],
       device: "mixer",
-      withReplacement: true
+      withReplacement: true,
+      deviceName: "value"
     },
 
     dataSetName,
@@ -38,6 +40,7 @@ var s = Snap("#model svg"),
 
     numRuns = defaultSettings.repeat,
     sampleSize = defaultSettings.draw,
+    deviceName = defaultSettings.deviceName,
 
     userVariables = defaultSettings.variables.slice(0),   // clone
     caseVariables = [],
@@ -61,6 +64,7 @@ function getInteractiveState() {
       repeat: numRuns,
       speed: speed,
       device: device,
+      deviceName: deviceName,
       withReplacement: withReplacement,
       hidden: hidden,
       password: password,
@@ -88,6 +92,7 @@ function loadInteractiveState(state) {
     sampleSize = state.draw || sampleSize;
     numRuns = state.repeat || numRuns;
     speed = state.speed || speed;
+    deviceName = state.deviceName || deviceName;
     if (state.device) {
       switchState(null, state.device);
     }
@@ -105,6 +110,11 @@ function loadInteractiveState(state) {
   }
   view.render();
 }
+
+export function updateDeviceName (name) {
+  deviceName = name;
+  ui.updateUIDeviceName(name);
+};
 
 function setCodapDataSetName() {
   return new Promise(function (resolve, reject) {
@@ -135,6 +145,7 @@ function getProps() {
     sampleSize: sampleSize,
     numRuns: numRuns,
     device: device,
+    deviceName: deviceName,
     withReplacement: withReplacement,
     variables: variables,
     uniqueVariables: [...new Set(variables)],
@@ -320,7 +331,7 @@ function addNextSequenceRunToCODAP() {
   var vars = sequence[runNumberSentInCurrentSequence].map(function(i) {
     return variables[i];
   });
-  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector);
+  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector, deviceName);
   runNumberSentInCurrentSequence++;
 }
 
@@ -344,7 +355,7 @@ function run() {
           });
           ix ++;
         }
-        codapCom.addMultipleSamplesToCODAP(samples, isCollector);
+        codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
 
         if (currRunNumber >= sequence.length) {
           setup();
@@ -395,26 +406,24 @@ function run() {
     } else {
       setTimeout(selectNext, timeout);
     }
-
-    // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
   }
 
-  function lookupDeviceName(device) {
-    var deviceNameMap = {
+  function lookupDeviceType(device) {
+    var deviceTypeMap = {
       mixer: "DG.plugin.Sampler.device-selection.mixer",
       spinner: "DG.plugin.Sampler.device-selection.spinner",
       collector: "DG.plugin.Sampler.device-selection.collector"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   function lookupItemName(device) {
-    var deviceNameMap = {
+    var deviceTypeMap = {
       mixer: "DG.plugin.sampler.experiment.description-mixer-item-kind",
       spinner: "DG.plugin.sampler.experiment.description-spinner-item-kind",
       collector: "DG.plugin.sampler.experiment.description-collector-item-kind"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   var runNumber,
@@ -435,7 +444,7 @@ function run() {
           localeMgr.tr("DG.plugin.sampler.experiment.description-collector-phrase",
               [ui.getCollectorCollectionName()]) :
           " ",
-      deviceName = lookupDeviceName(device),
+      deviceType = lookupDeviceType(device),
       tDescription, // = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
           //tCollectorDataset + tReplacement,
       tStringifiedVariables = JSON.stringify(variables);
@@ -445,7 +454,7 @@ function run() {
   }
   else {
     tDescription = localeMgr.tr("DG.plugin.sampler.experiment.description", [
-      deviceName,
+      deviceType,
       tNumItems,
       tItems,
       tCollectorDataset,
@@ -464,11 +473,8 @@ function run() {
   runNumber = mostRecentRunNumber;
   // this doesn't get written out in array, or change the length
   variables.EMPTY = "";
-  codapCom.findOrCreateDataContext().then(function () {
+  codapCom.findOrCreateDataContext(deviceName).then(function () {
     codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
-
-    console.log('sample group size: ' + sampleGroupSize);
-
     sequence = createRandomSequence(tSampleSize, tNumRuns);
 
     if (!hidden && (device === "mixer" || device === "collector")) {
@@ -549,6 +555,13 @@ function setNumRuns(n) {
   codapCom.logAction("setNumSamples: %@", n);
 }
 
+function setDeviceName(name) {
+  deviceName = name;
+  view.render();
+  updateRunButtonMode();
+  codapCom.logAction("setDeviceName: %@", name);
+}
+
 function updateRunButtonMode() {
   ui.setRunButtonMode((Math.floor(sampleSize) > 0) && (Math.floor(numRuns) > 0));
 }
@@ -625,12 +638,13 @@ localeMgr.init().then(() => {
   codapCom.init()
       .then(setCodapDataSetName)
       .catch(codapCom.error);
+
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
       localeMgr);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
-      refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
+      refreshCaseList, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
       view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
       reloadDefaultSettings, becomeSelected);
 
