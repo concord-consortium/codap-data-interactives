@@ -102,5 +102,11 @@
     "DG.plugin.Scrambler.sOr": "o",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "mezclado_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidos_de_"
+  },
+  "tr": {
+    "DG.plugin.Scrambler.language": "İngilizce",
+    "DG.plugin.Scrambler.static.howManyLabel": "ne kadar?",
+    "DG.plugin.Scrambler.sNoAttribute": "özellik yok 😕",
+    "DG.plugin.Scrambler.sOr": "veya"
   }
 }
