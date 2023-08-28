@@ -27,27 +27,38 @@ gkfreq = scale(gkfreq, 5, 0.05) ; scales gkfreq to be within .05 and 5
 kphase phasor gkfreq, p4
 chnset kphase, "phase"
 
-gktrig = metro(gkfreq, p4) ; generates a pulse at an interval: 0 0 0 0 1 0 0 0 0 0 1
-gkclick chnget "click" ; click is set by app and is either 0 or 1
-if gkclick == 1 then
-    schedkwhen gktrig, 0, 0, "CLICK", 0, 0.05
+kclick chnget "click" ; The click instrument is enabled by the app and is either 0 or 1.
+iphasesubdiv = 3 ; A playback cycle is equally divided into 3 phase "regions."
+ktrig = trigger((kphase * iphasesubdiv) % 1, 0.5, 1) ; Trigger the click 3 times per cycle.
+knumclicks = floor(kphase * iphasesubdiv) + 1 ; Each time triggered, the click may quickly repeat N times.
+
+if kclick == 1 && (ktrig == 1 || kphase == 0) then
+    kidx = 0
+    loop: ; A for-loop that plays the click 1, 2, or 3 times depending on the current phase region.
+        koffset = kidx * 0.125
+        event "i", "CLICK", koffset, 0.05
+    loop_lt kidx, 1, knumclicks, loop
 endif
 endin
 
 ; The SOFT Instrument actually creates sounds
 instr 2, SOFT
 iatk = 0.002
-igain = p5 * 0.075
+knotenum = scale(p4, 110, 55)
+ilowboost = (110 - i(knotenum)) / 55 * 0.5
+igain = (p5 + ilowboost) * 0.075
 aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
-asig oscil aenv, cpsmidinn(scale(p4,110,55))
+asig oscil aenv, cpsmidinn(knotenum)
 zawm asig, gimixch
 endin
 
 instr 3, HARD
 iatk = 0.002
-igain = p5 * 0.025
+knotenum = scale(p4, 110, 55)
+ilowboost = (110 - i(knotenum)) / 55 * 0.5
+igain = (p5 + ilowboost) * 0.025
 aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
-asig oscil aenv, cpsmidinn(scale(p4,110,55)), 1
+asig oscil aenv, cpsmidinn(knotenum), 1
 zawm asig, gimixch
 endin
 
