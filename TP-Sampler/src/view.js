@@ -667,8 +667,18 @@ View.prototype = {
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
 
-        var isDraggingVar = this.isDragging === variables[i];
-        var wedgeColor = isDraggingVar ? darkTeal : getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
+        let lastUniqueVariable = null;
+        var currentVarIdx = uniqueVariables.indexOf(variables[i]);
+        var lastVarIdx = currentVarIdx - 1;
+        if (lastVarIdx > -1) {
+          var firstIdxOfLastVar = variables.indexOf(uniqueVariables[lastVarIdx]);
+          if (firstIdxOfLastVar > -1 && firstIdxOfLastVar < i) {
+            lastUniqueVariable = variables[firstIdxOfLastVar];
+          }
+        }
+
+        var isDraggingVar = this.isDragging === variables[i] || this.isDragging === lastUniqueVariable;
+        var wedgeColor = getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
 
         // wedge color
         var wedge = s.path(slice.path).attr({
@@ -689,8 +699,8 @@ View.prototype = {
         variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
         variableLabelClipping, Math.max(1, 10 - variables.length));
         variableLabel.attr({
-          fontWeight: isDraggingVar ? "bold" : "normal",
-          fill: isDraggingVar ? "white" : "black"
+          fontWeight: "normal",
+          fill: "black"
         })
         var variableHint = Snap.parse('<title>'+ percentString + '%</title>');
         variableLabel.append(variableHint);
@@ -707,7 +717,7 @@ View.prototype = {
         if (isLastInstanceofVar) {
           // draw percent label, delete button
           var line = s.path(slice.labelLine);
-          line.attr({stroke: isDraggingVar ? darkTeal : "none", strokeWidth: 2, class: `line ${variables[i]}`});
+          line.attr({stroke: isDraggingVar ? wedgeColor : "none", strokeWidth: 2, class: `line ${variables[i]}`});
           percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, Math.max(1, 10 - variables.length), percentString);
           percentageLabel.attr({visibility: isDraggingVar ? "visible" : "hidden"});
 
@@ -875,13 +885,6 @@ View.prototype = {
 
   startDrag: function ( wedgeObj) {
     this.isDragging = wedgeObj.variable;
-    var {wedge, variableLabel, line, percentageLabel, deleteButton, edge} = wedgeObj.svgObj;
-    wedge.attr({fill: darkTeal});
-    edge.attr({stroke: darkTeal})
-    variableLabel.attr({fill: "white", fontWeight: "bold"});
-    line.attr({stroke: darkTeal});
-    percentageLabel.attr({visibility: "visible"});
-    deleteButton.attr({visibility: "visible"});
   },
 
   convertDomCoordsToSvg: function (x, y) {
@@ -953,10 +956,7 @@ View.prototype = {
     var nameLabels = document.getElementsByClassName(`label ${variables[i]}`);
     var nameLabel = nameLabels[nameLabels.length - 1];
 
-    console.log({nameLabels});
-
     const wedgeObj = wedges.find(w => w.variable === variables[i]);
-    console.log({wedgeObj});
     const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
     wedge.attr({fill: darkTeal});
     variableLabel.attr({fill: "white", fontWeight: "bold"});

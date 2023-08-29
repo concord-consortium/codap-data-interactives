@@ -361,7 +361,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("repeat").addEventListener('input', function (evt) {
     setNumRuns(this.value);
   });
-  document.getElementById("device_name").addEventListener('input', function (evt) {
+  document.getElementById("device_name").addEventListener('input', function () {
     setDeviceName(this.value);
   });
   document.getElementById("speed").addEventListener('input', function (evt) {

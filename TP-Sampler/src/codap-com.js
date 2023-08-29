@@ -58,10 +58,9 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   // listen for changes to attribute names, and update internal names accordingly
   codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
     if (msg.values.operation === "updateAttributes") {
-      console.log("i am calling update attributes");
       msg.values.result.attrIDs.forEach((id, i) => {
         const attrKey = _this.findKeyById(id);
-        if (attrKey === "value" && _this.attrMap["output"].name !== msg.values.result.attrs[i].name) {
+        if (attrKey === "output" && _this.attrMap["output"].name !== msg.values.result.attrs[i].name) {
           _this.deviceName = msg.values.result.attrs[i].name;
           updateDeviceName(msg.values.result.attrs[i].name);
         }
@@ -484,25 +483,23 @@ CodapCom.prototype = {
       } else if (measureType === "sum") {
         return `sum(${selections.output})`
       } else if (measureType === "conditional_count") {
-        console.log("${selections.operator}", selections.operator);
-        console.log(`count(${selections.output}${selections.operator}${selections.value})`);
         return `count(${selections.output} ${selections.operator} '${selections.value}')`
       } else if (measureType === "conditional_percentage") {
-        return `100 * count(${selections.output} ${selections.operator}${selections.value}) / count()`
+        return `100 * count(${selections.output} ${selections.operator} '${selections.value}') / count()`
       } else if (measureType === "mean") {
         return `mean(${selections.output})`
       } else if (measureType === "median") {
         return `median(${selections.output})`
       } else if (measureType === "conditional_sum") {
-        return `sum(${selections.output}${selections.operator}${selections.value}, ${selections.output2})`
+        return `sum(${selections.output}${selections.operator}'${selections.value}', ${selections.output2})`
       } else if (measureType === "conditional_mean") {
-        return `mean(${selections.output}, ${selections.output2}${selections.operator}${selections.value})`
+        return `mean(${selections.output}, ${selections.output2}${selections.operator}'${selections.value}')`
       } else if (measureType === "conditional_median") {
-        return `median(${selections.output}, ${selections.output2}${selections.operator}${selections.value})`
+        return `median(${selections.output}, ${selections.output2}${selections.operator}'${selections.value}')`
       } else if (measureType === "difference_of_means") {
-        return `min(mean(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}${selections.valuePt1}), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}${selections.valuePt2}))`
+        return `min(mean(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}'${selections.valuePt1}'), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}'${selections.valuePt2}'))`
       } else if (measureType === "difference_of_medians") {
-        return `min(median(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}${selections.valuePt1}), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}${selections.valuePt2}))`
+        return `min(median(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}'${selections.valuePt1}'), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}'${selections.valuePt2}'))`
       }
     }
 
