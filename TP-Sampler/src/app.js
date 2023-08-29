@@ -14,11 +14,12 @@ var s = Snap("#model svg"),
       variables: ["a", "b", "a"],
       device: "mixer",
       withReplacement: true,
-      deviceName: "value"
+      deviceName: "output"
     },
 
     dataSetName,
     device = defaultSettings.device,       // "mixer, "spinner", "collector"
+    selectedMeasureName = "",
     isCollector = device === "collector",
     withReplacement = true,
     previousExperimentDescription = '', // Used to tell when user has changed something
@@ -562,6 +563,11 @@ function setDeviceName(name) {
   codapCom.logAction("setDeviceName: %@", name);
 }
 
+function setMeasureName(name) {
+  selectedMeasureName = name;
+  view.render();
+}
+
 function updateRunButtonMode() {
   ui.setRunButtonMode((Math.floor(sampleSize) > 0) && (Math.floor(numRuns) > 0));
 }
@@ -632,6 +638,105 @@ function setup() {
   view.render();
 }
 
+function getOptionsForMeasure (measure) {
+  // right now we only ever have one output option because we only have one device.
+  // once we chain multiple devices, we'll have to adjust this approach.
+  function createOutputOption (selectEl) {
+    const outputOption = document.createElement("option");
+    outputOption.value = deviceName;
+    outputOption.textContent = deviceName;
+    outputOption.selected = true;
+    selectEl.append(outputOption);
+  }
+
+  function createValueOptions (selectEl) {
+    const options = [...new Set(variables)].map((v) => {return {value: v, text: v}});
+    options.forEach((option, i) => {
+      const valueOption = document.createElement("option");
+      valueOption.value = option.value;
+      valueOption.textContent = option.text;
+      if (i === 0) {
+        valueOption.selected = true;
+      }
+      selectEl.appendChild(valueOption);
+    });
+  }
+
+  function createOperatorOptions (selectEl) {
+    function isStringNumber(str) {
+      return !isNaN(parseFloat(str)) && isFinite(str);
+    }
+    const anyVariableIsNumber = variables.some((v) => isStringNumber(v));
+    if (anyVariableIsNumber) {
+      const options = ["=", "<", ">", "≤", "≥"]
+      options.forEach((option, i) => {
+        const operatorOpt = document.createElement("option");
+        operatorOpt.value = option;
+        operatorOpt.textContent = option;
+        if (i === 0) {
+          operatorOpt.selected = true;
+        }
+        selectEl.appendChild(operatorOpt);
+      })
+    } else {
+      const operatorOpt = document.createElement("option");
+      operatorOpt.value = "=";
+      operatorOpt.textContent = "=";
+      selectEl.appendChild(operatorOpt);
+    }
+  }
+
+  const selectOutput = document.getElementById(`${measure}-select-output`);
+
+  // sum(output) || mean(output) || median(output)
+  if (measure === "sum" || measure === "mean" || measure === "median") {
+    createOutputOption(selectOutput);
+  // count(output = "value") || 100 * count(output = "a") / count()
+  } else if (measure === "conditional_count" || measure === "conditional_percentage") {
+    createOutputOption(selectOutput);
+    const selectOperator = document.getElementById(`${measure}-select-operator`);
+    createOperatorOptions(selectOperator);
+    const selectValue = document.getElementById(`${measure}-select-value`);
+    createValueOptions(selectValue);
+  // ==
+  } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
+    createOutputOption(selectOutput);
+    const selectOperator = document.getElementById(`${measure}-select-operator`);
+    createOperatorOptions(selectOperator);
+    const selectValue = document.getElementById(`${measure}-select-value`);
+    createValueOptions(selectValue);
+    const selectOutput2 = document.getElementById(`${measure}-select-output-2`);
+    createOutputOption(selectOutput2);
+  //
+  } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
+    const selectOutputPt1 = document.getElementById(`${measure}-select-output-pt-1`);
+    createOutputOption(selectOutputPt1);
+    const selectOutputPt12 = document.getElementById(`${measure}-select-output-pt-1-2`);
+    createOutputOption(selectOutputPt12);
+    const selectOperator1 = document.getElementById(`${measure}-select-operator-pt-1`);
+    createOperatorOptions(selectOperator1);
+    const selectValuePt1 = document.getElementById(`${measure}-select-value-pt-1`);
+    createValueOptions(selectValuePt1);
+    const selectOutputPt2 = document.getElementById(`${measure}-select-output-pt-2`);
+    createOutputOption(selectOutputPt2);
+    const selectOutputPt22 = document.getElementById(`${measure}-select-output-pt-2-2`);
+    createOutputOption(selectOutputPt22);
+    const selectOperator2 = document.getElementById(`${measure}-select-operator-pt-2`);
+    createOperatorOptions(selectOperator2);
+    const selectValuePt2 = document.getElementById(`${measure}-select-value-pt-2`);
+    createValueOptions(selectValuePt2);
+  }
+}
+
+function sendFormulaToCodap (formula, selections) {
+  var measureName = selectedMeasureName ? selectedMeasureName : formula;
+  codapCom.sendFormulaToTable(measureName, formula, selections);
+}
+
+function getRunNumber () {
+  return experimentNumber;
+}
+
 localeMgr.init().then(() => {
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
       localeMgr);
@@ -646,7 +751,8 @@ localeMgr.init().then(() => {
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
       refreshCaseList, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
       view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
-      reloadDefaultSettings, becomeSelected);
+      reloadDefaultSettings, becomeSelected, getOptionsForMeasure, sendFormulaToCodap, setMeasureName,
+      getRunNumber);
 
   // initialize and render the model
   setup();
