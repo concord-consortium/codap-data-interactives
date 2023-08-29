@@ -478,28 +478,26 @@ CodapCom.prototype = {
   sendFormulaToTable: async function (measureName, measureType, selections) {
     var samplesColl = this.getCollectionNames().samples;
     function getFormula () {
-      if (measureType === "count") {
-        return "count()";
-      } else if (measureType === "sum") {
+     if (measureType === "sum") {
         return `sum(${selections.output})`
       } else if (measureType === "conditional_count") {
-        return `count(${selections.output} ${selections.operator} '${selections.value}')`
+        return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`
       } else if (measureType === "conditional_percentage") {
-        return `100 * count(${selections.output} ${selections.operator} '${selections.value}') / count()`
+        return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`
       } else if (measureType === "mean") {
-        return `mean(${selections.output})`
+        return `mean(\`${selections.output}\`)`
       } else if (measureType === "median") {
-        return `median(${selections.output})`
+        return `median(\`${selections.output}\`)`
       } else if (measureType === "conditional_sum") {
-        return `sum(${selections.output}${selections.operator}'${selections.value}', ${selections.output2})`
+        return `sum(\`${selections.output}\`${selections.operator}'${selections.value}', ${selections.output2})`
       } else if (measureType === "conditional_mean") {
-        return `mean(${selections.output}, ${selections.output2}${selections.operator}'${selections.value}')`
+        return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`
       } else if (measureType === "conditional_median") {
-        return `median(${selections.output}, ${selections.output2}${selections.operator}'${selections.value}')`
+        return `median(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`
       } else if (measureType === "difference_of_means") {
-        return `min(mean(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}'${selections.valuePt1}'), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}'${selections.valuePt2}'))`
+        return `min(mean(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`
       } else if (measureType === "difference_of_medians") {
-        return `min(median(${selections.outputPt1}, ${selections.outputPt12}${selections.operatorPt1}'${selections.valuePt1}'), mean(${selections.outputPt2}, ${selections.outputPt22}${selections.operatorPt2}'${selections.valuePt2}'))`
+        return `min(median(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`
       }
     }
 
@@ -508,13 +506,23 @@ CodapCom.prototype = {
       resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attributeList`
     }).then((res) => {
       const attrs = res.values;
-      let newAttributeName;
+      let newAttributeName = measureName ? measureName : measureType;
+
       // check if attr name is already used. user could add "conditional count" twice, for example,
       // but have difference formulas (output = a, output = b)
       const attrNameAlreadyUsed = attrs.find((attr) => attr.name === measureName);
+
         if (!attrNameAlreadyUsed) {
-          newAttributeName = measureName;
-        } else {
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute`,
+            values: [{
+              "name": newAttributeName,
+              "type": "numerical",
+              "formula": getFormula()
+            }]
+          });
+        } else if (attrNameAlreadyUsed && !measureName) {
           const attrsWithSameName = attrs.filter((attr) => attr.name.startsWith(measureName));
           const indexes = attrsWithSameName.map((attr) => Number(attr.name.slice(measureName.length)));
           const highestIndex = Math.max(...indexes);
@@ -532,16 +540,24 @@ CodapCom.prototype = {
               }
             }
           }
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute`,
+            values: [{
+              "name": newAttributeName,
+              "type": "numerical",
+              "formula": getFormula()
+            }]
+          });
+        } else if (attrNameAlreadyUsed && measureName) {
+          codapInterface.sendRequest({
+            action: 'update',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute[${measureName}]`,
+            values: {
+              "formula": getFormula()
+            }
+          });
         }
-        codapInterface.sendRequest({
-          action: 'create',
-          resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute`,
-          values: [{
-            "name": newAttributeName,
-            "type": "numerical",
-            "formula": getFormula()
-          }]
-        }).then(res => console.log({res}));
       })
   },
 };

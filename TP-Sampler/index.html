@@ -74,8 +74,7 @@
         <div id="measures-instructions" data-text="DG.plugin.Sampler.measures-instructions"></div>
         <label for="select-measure" id="select-measure-label" data-text="DG.plugin.Sampler.select-measure"></label>
         <select id="select-measure">
-          <option disabled selected value="">Select a formula</option>
-          <option id="count" value="count" data-text="DG.plugin.Sampler.count"></option>
+          <option id="default" disabled selected value="">Select a formula</option>
           <option id="sum" value="sum" data-text="DG.plugin.Sampler.sum"></option>
           <option id="mean" value="mean" data-text="DG.plugin.Sampler.mean"></option>
           <option id="median" value="median" data-text="DG.plugin.Sampler.median"></option>
@@ -92,9 +91,6 @@
           <input type="text" id="measure-name"></input>
         </div>
         <div id="measure-formulas">
-          <div id="count-formula-container" class="formula hidden">
-            <span id="count-formula" data-text="DG.plugin.Sampler.count-formula"></span>
-          </div>
           <div id="sum-formula-container" class="formula hidden">
             <span id="sum-formula" data-text="DG.plugin.Sampler.sum-formula"></span>
             <span id="formula-paren" >(
