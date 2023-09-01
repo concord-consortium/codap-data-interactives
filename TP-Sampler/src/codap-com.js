@@ -511,10 +511,9 @@ CodapCom.prototype = {
     }).then((res) => {
       const attrs = res.values;
       let newAttributeName = measureName ? measureName : measureType;
-
       // check if attr name is already used. user could add "conditional count" twice, for example,
       // but have difference formulas (output = a, output = b)
-      const attrNameAlreadyUsed = attrs.find((attr) => attr.name === measureName);
+      const attrNameAlreadyUsed = attrs.find((attr) => attr.name === newAttributeName);
 
         if (!attrNameAlreadyUsed) {
           codapInterface.sendRequest({
@@ -527,20 +526,20 @@ CodapCom.prototype = {
             }]
           });
         } else if (attrNameAlreadyUsed && !measureName) {
-          const attrsWithSameName = attrs.filter((attr) => attr.name.startsWith(measureName));
-          const indexes = attrsWithSameName.map((attr) => Number(attr.name.slice(measureName.length)));
+          const attrsWithSameName = attrs.filter((attr) => attr.name.startsWith(newAttributeName));
+          const indexes = attrsWithSameName.map((attr) => Number(attr.name.slice(newAttributeName.length)));
           const highestIndex = Math.max(...indexes);
           if (!highestIndex) {
-            newAttributeName = measureName + 1;
+            newAttributeName = newAttributeName + 1;
           } else {
             for (let i = 1; i <= highestIndex; i++) {
-              const nameWithIndex = measureName + i;
+              const nameWithIndex = newAttributeName + i;
               const isNameWithIndexUsed = attrsWithSameName.find((attr) => attr.name === nameWithIndex);
               if (!isNameWithIndexUsed) {
                 newAttributeName = nameWithIndex;
                 break;
               } else if (i === highestIndex) {
-                newAttributeName = measureName + (highestIndex + 1);
+                newAttributeName = newAttributeName + (highestIndex + 1);
               }
             }
           }
