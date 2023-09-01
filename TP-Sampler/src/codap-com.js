@@ -477,27 +477,31 @@ CodapCom.prototype = {
 
   sendFormulaToTable: async function (measureName, measureType, selections) {
     var samplesColl = this.getCollectionNames().samples;
-    function getFormula () {
-     if (measureType === "sum") {
-        return `sum(${selections.output})`
-      } else if (measureType === "conditional_count") {
-        return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`
-      } else if (measureType === "conditional_percentage") {
-        return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`
-      } else if (measureType === "mean") {
-        return `mean(\`${selections.output}\`)`
-      } else if (measureType === "median") {
-        return `median(\`${selections.output}\`)`
-      } else if (measureType === "conditional_sum") {
-        return `sum(\`${selections.output}\`${selections.operator}'${selections.value}', ${selections.output2})`
-      } else if (measureType === "conditional_mean") {
-        return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`
-      } else if (measureType === "conditional_median") {
-        return `median(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`
-      } else if (measureType === "difference_of_means") {
-        return `min(mean(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`
-      } else if (measureType === "difference_of_medians") {
-        return `min(median(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`
+
+    function getFormula() {
+      switch (measureType) {
+        case "sum":
+          return `sum(${selections.output})`;
+        case "conditional_count":
+          return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`;
+        case "conditional_percentage":
+          return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`;
+        case "mean":
+          return `mean(\`${selections.output}\`)`;
+        case "median":
+          return `median(\`${selections.output}\`)`;
+        case "conditional_sum":
+          return `sum(\`${selections.output}\`${selections.operator}'${selections.value}', ${selections.output2})`;
+        case "conditional_mean":
+          return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+        case "conditional_median":
+          return `median(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+        case "difference_of_means":
+          return `min(mean(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`;
+        case "difference_of_medians":
+          return `min(median(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`;
+        default:
+          return "";
       }
     }
 

@@ -202,7 +202,7 @@ View.prototype = {
   },
 
   createSampleSlots: function(device) {
-    var sSampleSize = sampleSize>=1? Math.floor(sampleSize): 0,
+    var sSampleSize = sampleSize >=1? Math.floor(sampleSize): 0,
         x = containerWidth + ((width - containerWidth)),
         centerY = containerY + (containerHeight/2),
         stroke = border / 2,
