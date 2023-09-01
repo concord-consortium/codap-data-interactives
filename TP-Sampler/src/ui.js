@@ -194,6 +194,18 @@ function viewMeasures() {
   hide(document.getElementById("about-panel"));
 }
 
+function viewMeasures() {
+  removeClass(document.getElementById("tab-devices"), "active");
+  addClass(document.getElementById("tab-measures"), "active");
+  removeClass(document.getElementById("tab-options"), "active");
+  removeClass(document.getElementById("tab-about"), "active");
+  hide(document.getElementById("sampler"));
+  show(document.getElementById("measures"));
+  hide(document.getElementById("options"));
+  hide(document.getElementById("password-failed"));
+  hide(document.getElementById("about-panel"));
+}
+
 function viewOptions() {
   removeClass(document.getElementById("tab-devices"), "active");
   removeClass(document.getElementById("tab-measures"), "active");

@@ -329,8 +329,8 @@ text:hover{
   justify-content: flex-end;
 }
 
-#add-measure {
-  position: relative;
+#select-measure, #select-measure-label {
+  margin-top: 5vh;
 }
 
 #options {
