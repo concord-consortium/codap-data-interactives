@@ -36,6 +36,7 @@ body {
   color: #666;
   background-color: #FAFAFA;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 #tabs div.active {
@@ -49,7 +50,7 @@ body {
   position: absolute;
   left: -1vh;
   top: 21.2vh;
-  width: 62vh;
+  width: 75vh;
   height: 59vh;
 }
 
@@ -97,6 +98,24 @@ span {
   margin-left: 1.5vh;
   font-size: 2.7vh;
   padding: 0;
+}
+
+#edit-device_name {
+  top: 32vh;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  left: 51vh;
+  align-items: center;
+  z-index: 3;
+}
+
+#device_name {
+  height: 2.2vh;
+  margin-left: 1.5vh;
+  font-size: 2.7vh;
+  margin-top: 0.5vh;
+  width: 20vh;
 }
 
 input[disabled="disabled"] {
@@ -268,6 +287,50 @@ text:hover{
 
 #spinner-cover img {
   width: 100%;
+}
+
+#measures {
+  position: absolute;
+  top: 8vh;
+  padding: 1vh;
+  height: 100%;
+  width: 80vh;
+}
+
+#select-measure-container, #measure-name-container {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+#select-measure {
+  margin-top: 6vh;
+  padding: 1px 2px;
+}
+
+#select-measure-label {
+  margin-top: 5vh;
+}
+
+#measure-name-container, #measure-formulas {
+  margin-top: 2vh;
+}
+
+#measure-name {
+  margin-top: .75vh;
+}
+
+#measure-formulas {
+  margin-left: 3.2vh;
+}
+
+#measures-bottom {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#add-measure {
+  position: relative;
 }
 
 #options {

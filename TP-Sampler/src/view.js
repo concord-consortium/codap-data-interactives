@@ -28,6 +28,7 @@ var width = 205,            // svg units
     s,
     speed,
     sampleSize,
+    deviceName,
     numRuns,
     device,
     withReplacement,
@@ -83,6 +84,15 @@ var width = 205,            // svg units
       return [x, y];
     },
 
+    getEllipseCoords = function(majorRadius, minorRadius, percent) {
+      var perc = percent + 0.75,    // rotate 3/4 to start at top
+        angleRadians = 2 * Math.PI * perc,
+        x = spinnerX + (Math.cos(angleRadians) * majorRadius),
+        y = spinnerY + (Math.sin(angleRadians) * minorRadius);
+
+      return [x, y];
+    },
+
     getSpinnerSliceCoords = function (i, slicePercent, radius, mergeCount) {
       var startIndex = i - mergeCount,
           perc1 = startIndex * slicePercent,
@@ -94,12 +104,12 @@ var width = 205,            // svg units
           labelPerc2 = perc1 + ((perc2 - perc1) / 2),
           labelLineP1 = getCoordinatesForPercent(radius, labelPerc2),
           labelLineP2 = getCoordinatesForPercent(radius * 1.2, labelPerc2),
-          pctLabelLoc = getCoordinatesForPercent(radius * 1.35, labelPerc2),
+          pctLabelLoc = getEllipseCoords((radius * 1.35), (radius * 1.3), labelPerc2),
           deleteBtnLocY;
 
       // check in which direction label line is pointing and position delete button accordingly
       if (pctLabelLoc[1] >= labelLineP2[1]) {
-        deleteBtnLocY = pctLabelLoc[1] + 15;
+        deleteBtnLocY = pctLabelLoc[1] + 17;
       } else {
         deleteBtnLocY = pctLabelLoc[1] - 17;
       }
@@ -166,6 +176,7 @@ View.prototype = {
     sampleSize = props.sampleSize;
     numRuns = props.numRuns;
     device = props.device;
+    deviceName = props.deviceName;
     withReplacement = props.withReplacement;
     variables = props.variables;
     uniqueVariables = props.uniqueVariables;
@@ -176,6 +187,7 @@ View.prototype = {
     s.unclick(this.handleSpinnerClick);
     s.clear();
     document.getElementById("sample_size").value = sampleSize;
+    document.getElementById("device_name").value = deviceName;
     document.getElementById("repeat").value = numRuns;
     var sliderSpeed = speed > 0.5 ? speed : 0;
     document.getElementById("speed").value = sliderSpeed;
@@ -190,8 +202,8 @@ View.prototype = {
   },
 
   createSampleSlots: function(device) {
-    var sSampleSize = sampleSize>=1? Math.floor(sampleSize): 0,
-        x = device === "spinner" ? containerWidth + ((width - containerWidth)) : containerWidth + ((width - containerWidth) / 3),
+    var sSampleSize = sampleSize >=1? Math.floor(sampleSize): 0,
+        x = containerWidth + ((width - containerWidth)),
         centerY = containerY + (containerHeight/2),
         stroke = border / 2,
         padding = 2,
@@ -664,8 +676,18 @@ View.prototype = {
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
 
-        var isDraggingVar = this.isDragging === variables[i];
-        var wedgeColor = isDraggingVar ? darkTeal : getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
+        let lastUniqueVariable = null;
+        var currentVarIdx = uniqueVariables.indexOf(variables[i]);
+        var lastVarIdx = currentVarIdx - 1;
+        if (lastVarIdx > -1) {
+          var firstIdxOfLastVar = variables.indexOf(uniqueVariables[lastVarIdx]);
+          if (firstIdxOfLastVar > -1 && firstIdxOfLastVar < i) {
+            lastUniqueVariable = variables[firstIdxOfLastVar];
+          }
+        }
+
+        var isDraggingVar = this.isDragging === variables[i] || this.isDragging === lastUniqueVariable;
+        var wedgeColor = getVariableColor((i - offsetDueToMerge), uniqueVariables.length);
 
         // wedge color
         var wedge = s.path(slice.path).attr({
@@ -686,9 +708,11 @@ View.prototype = {
         variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
         variableLabelClipping, Math.max(1, 10 - variables.length));
         variableLabel.attr({
-          fontWeight: isDraggingVar ? "bold" : "normal",
-          fill: isDraggingVar ? "white" : "black"
+          fontWeight: "normal",
+          fill: "black"
         })
+        var variableHint = Snap.parse('<title>'+ percentString + '%</title>');
+        variableLabel.append(variableHint);
         wedgeLabels.push(variableLabel);
 
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
@@ -702,9 +726,9 @@ View.prototype = {
         if (isLastInstanceofVar) {
           // draw percent label, delete button
           var line = s.path(slice.labelLine);
-          line.attr({stroke: isDraggingVar ? darkTeal : "none", strokeWidth: 2, class: `line ${variables[i]}`});
-          percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, Math.max(1, 10 - variables.length), percentString);
-          percentageLabel.attr({visibility: this.isDragging === variables[i] ? "visible" : "hidden"});
+          line.attr({stroke: isDraggingVar ? wedgeColor : "none", strokeWidth: 2, class: `line ${variables[i]}`});
+          percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, percentString);
+          percentageLabel.attr({visibility: isDraggingVar ? "visible" : "hidden"});
 
           var deleteButton = this.createDeleteButton(i, slice.deleteBtnLoc).attr({visibility: "hidden"});
           var edge2Point = slice.p2;
@@ -753,25 +777,30 @@ View.prototype = {
     return label;
   },
 
-  createPctLabel: function (index, x, y, fontSize, maxLength, percentString) {
-    var _this = this,
-      text = `${percentString}%`,
-      label = s.text(x, y, text).attr({
-        fontSize: fontSize,
-        textAnchor: "middle",
-        dy: ".25em",
-        dx: getTextShift(text, maxLength),
-        class: `percent ${variables[index]}`,
-      });
-
+  createPctLabel: function (index, x, y, fontSize, percentString) {
+    var _this = this;
+    var text = `${percentString}%`;
+    var label = s.text(x, y+5, text).attr({
+      fontSize: fontSize,
+      textAnchor: "middle",
+      class: `percent ${variables[index]}`,
+    });
+    var roundX = Math.round(x);
+    var roundY = Math.round(y);
+      if (roundX > spinnerX && roundY < spinnerY) {
+        label.attr({dx: ".3em"})
+        label.attr({dy: "-.25em"})
+      } else if (roundX > spinnerX && roundY >= spinnerY) {
+        label.attr({dx: ".3em"})
+      } else if (roundX < spinnerX && roundY === spinnerY) {
+        label.attr({dx: "-.25em"})
+      } else if (roundX < spinnerX && roundY < spinnerY) {
+        label.attr({dx: "-.3em"})
+        label.attr({dy: "-.25em"})
+      } else if (roundX < spinnerX) {
+        label.attr({dx: "-.3em"});
+      }
       label.click(_this.showPercentInput(index, percentString));
-
-      label.hover(function() {
-        if (_this.isRunning()) return;
-        this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-      }, function() {
-        this.attr({ fontSize: fontSize, dy: ".25em", });
-      });
     return label;
   },
 
@@ -870,13 +899,6 @@ View.prototype = {
 
   startDrag: function ( wedgeObj) {
     this.isDragging = wedgeObj.variable;
-    var {wedge, variableLabel, line, percentageLabel, deleteButton, edge} = wedgeObj.svgObj;
-    wedge.attr({fill: darkTeal});
-    edge.attr({stroke: darkTeal})
-    variableLabel.attr({fill: "white", fontWeight: "bold"});
-    line.attr({stroke: darkTeal});
-    percentageLabel.attr({visibility: "visible"});
-    deleteButton.attr({visibility: "visible"});
   },
 
   convertDomCoordsToSvg: function (x, y) {
@@ -922,6 +944,7 @@ View.prototype = {
       variableNameInput.style.left = (loc.x) + "px";
       variableNameInput.style.width = width;
       variableNameInput.value = text;
+      variableNameInput.className = i,
       variableNameInput.focus();
 
       editingVariable = i;
@@ -941,6 +964,92 @@ View.prototype = {
     };
   },
 
+  showVariableNameInputForUI: function (i) {
+    if (this.isRunning() || device === "collector") return;
+
+    var nameLabels = document.getElementsByClassName(`label ${variables[i]}`);
+    var nameLabel = nameLabels[nameLabels.length - 1];
+
+    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
+    wedge.attr({fill: darkTeal});
+    variableLabel.attr({fill: "white", fontWeight: "bold"});
+    line.attr({stroke: darkTeal});
+    percentageLabel.attr({visibility: "visible"});
+    deleteButton.attr({visibility: "visible"});
+    if (edge) {
+      edge.attr({stroke: darkTeal});
+    }
+
+    var loc = nameLabel.getBoundingClientRect(),
+        text = variables[i],
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+    variableNameInput.style.display = "block";
+    variableNameInput.style.top = (loc.y + loc.height/2) + "px";
+    variableNameInput.style.left = (loc.x) + "px";
+    variableNameInput.style.width = width;
+    variableNameInput.value = text;
+    variableNameInput.className = i,
+    variableNameInput.focus();
+
+    editingVariable = i;
+    if (device == "mixer" || device == "collector") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] === v) {
+          // variables[j] = " ";
+          editingVariable.push(j);
+        }
+      }
+    }
+  },
+
+  showPercentInputForUI: function (i) {
+    if (this.isRunning() || device === "collector") return;
+
+    var percentLabel = document.getElementsByClassName(`percent ${variables[i]}`)[0];
+
+    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
+    wedge.attr({fill: darkTeal});
+    variableLabel.attr({fill: "white", fontWeight: "bold"});
+    line.attr({stroke: darkTeal});
+    percentageLabel.attr({visibility: "visible"});
+    deleteButton.attr({visibility: "visible"});
+    if (edge) {
+      edge.attr({stroke: darkTeal});
+    }
+
+    var percentString = this.getPercentOfVar(variables[i]);
+    var loc = percentLabel.getBoundingClientRect(),
+        text = percentString,
+        width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+    variablePercentageInput.style.display = "block";
+    variablePercentageInput.style.top = (loc.y + loc.height/2) + "px";
+    variablePercentageInput.style.left = (loc.x) + "px";
+    variablePercentageInput.style.width = width;
+    variablePercentageInput.value = text;
+    variablePercentageInput.className = i;
+    variablePercentageInput.focus();
+
+    editingVariable = i;
+    if (device == "mixer" || device == "collector") {
+      variables[editingVariable] = "";
+    } else {
+      var v = variables[editingVariable];
+      editingVariable = [];
+      for (var j = 0, jj = variables.length; j < jj; j++) {
+        if (variables[j] === v) {
+          // variables[j] = " ";
+          editingVariable.push(j);
+        }
+      }
+    }
+  },
+
   showPercentInput: function (i, percentString) {
     var _this = this;
     return function() {
@@ -954,6 +1063,7 @@ View.prototype = {
       variablePercentageInput.style.left = (loc.x) + "px";
       variablePercentageInput.style.width = width;
       variablePercentageInput.value = text;
+      variablePercentageInput.className = i;
       variablePercentageInput.focus();
 
       editingVariable = i;
@@ -989,7 +1099,6 @@ View.prototype = {
       // update uniqueVariables
       uniqueVariables.splice(0, variables.length);
       uniqueVariables = [...new Set(variables)];
-
 
       variableNameInput.style.display = "none";
       this.render();
