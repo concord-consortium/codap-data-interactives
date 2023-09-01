@@ -3,6 +3,7 @@ import * as localeMgr from './localeManager.js';
 import {CodapCom} from './codap-com.js';
 import {View} from './view.js';
 import * as ui from './ui.js';
+
 /* Global Snap:true */
 var s = Snap("#model svg"),
 
@@ -12,11 +13,13 @@ var s = Snap("#model svg"),
       speed: 1,
       variables: ["a", "b", "a"],
       device: "mixer",
-      withReplacement: true
+      withReplacement: true,
+      deviceName: "output"
     },
 
     dataSetName,
     device = defaultSettings.device,       // "mixer, "spinner", "collector"
+    selectedMeasureName = "",
     isCollector = device === "collector",
     withReplacement = true,
     previousExperimentDescription = '', // Used to tell when user has changed something
@@ -38,6 +41,7 @@ var s = Snap("#model svg"),
 
     numRuns = defaultSettings.repeat,
     sampleSize = defaultSettings.draw,
+    deviceName = defaultSettings.deviceName,
 
     userVariables = defaultSettings.variables.slice(0),   // clone
     caseVariables = [],
@@ -61,6 +65,7 @@ function getInteractiveState() {
       repeat: numRuns,
       speed: speed,
       device: device,
+      deviceName: deviceName,
       withReplacement: withReplacement,
       hidden: hidden,
       password: password,
@@ -88,6 +93,7 @@ function loadInteractiveState(state) {
     sampleSize = state.draw || sampleSize;
     numRuns = state.repeat || numRuns;
     speed = state.speed || speed;
+    deviceName = state.deviceName || deviceName;
     if (state.device) {
       switchState(null, state.device);
     }
@@ -105,6 +111,11 @@ function loadInteractiveState(state) {
   }
   view.render();
 }
+
+export function updateDeviceName (name) {
+  deviceName = name;
+  ui.updateUIDeviceName(name);
+};
 
 function setCodapDataSetName() {
   return new Promise(function (resolve, reject) {
@@ -135,6 +146,7 @@ function getProps() {
     sampleSize: sampleSize,
     numRuns: numRuns,
     device: device,
+    deviceName: deviceName,
     withReplacement: withReplacement,
     variables: variables,
     uniqueVariables: [...new Set(variables)],
@@ -320,7 +332,7 @@ function addNextSequenceRunToCODAP() {
   var vars = sequence[runNumberSentInCurrentSequence].map(function(i) {
     return variables[i];
   });
-  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector);
+  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector, deviceName);
   runNumberSentInCurrentSequence++;
 }
 
@@ -344,7 +356,7 @@ function run() {
           });
           ix ++;
         }
-        codapCom.addMultipleSamplesToCODAP(samples, isCollector);
+        codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
 
         if (currRunNumber >= sequence.length) {
           setup();
@@ -395,26 +407,24 @@ function run() {
     } else {
       setTimeout(selectNext, timeout);
     }
-
-    // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
   }
 
-  function lookupDeviceName(device) {
-    var deviceNameMap = {
+  function lookupDeviceType(device) {
+    var deviceTypeMap = {
       mixer: "DG.plugin.Sampler.device-selection.mixer",
       spinner: "DG.plugin.Sampler.device-selection.spinner",
       collector: "DG.plugin.Sampler.device-selection.collector"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   function lookupItemName(device) {
-    var deviceNameMap = {
+    var deviceTypeMap = {
       mixer: "DG.plugin.sampler.experiment.description-mixer-item-kind",
       spinner: "DG.plugin.sampler.experiment.description-spinner-item-kind",
       collector: "DG.plugin.sampler.experiment.description-collector-item-kind"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   var runNumber,
@@ -435,7 +445,7 @@ function run() {
           localeMgr.tr("DG.plugin.sampler.experiment.description-collector-phrase",
               [ui.getCollectorCollectionName()]) :
           " ",
-      deviceName = lookupDeviceName(device),
+      deviceType = lookupDeviceType(device),
       tDescription, // = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
           //tCollectorDataset + tReplacement,
       tStringifiedVariables = JSON.stringify(variables);
@@ -445,7 +455,7 @@ function run() {
   }
   else {
     tDescription = localeMgr.tr("DG.plugin.sampler.experiment.description", [
-      deviceName,
+      deviceType,
       tNumItems,
       tItems,
       tCollectorDataset,
@@ -464,11 +474,8 @@ function run() {
   runNumber = mostRecentRunNumber;
   // this doesn't get written out in array, or change the length
   variables.EMPTY = "";
-  codapCom.findOrCreateDataContext().then(function () {
+  codapCom.findOrCreateDataContext(deviceName).then(function () {
     codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
-
-    console.log('sample group size: ' + sampleGroupSize);
-
     sequence = createRandomSequence(tSampleSize, tNumRuns);
 
     if (!hidden && (device === "mixer" || device === "collector")) {
@@ -549,6 +556,18 @@ function setNumRuns(n) {
   codapCom.logAction("setNumSamples: %@", n);
 }
 
+function setDeviceName(name) {
+  deviceName = name;
+  view.render();
+  updateRunButtonMode();
+  codapCom.logAction("setDeviceName: %@", name);
+}
+
+function setMeasureName(name) {
+  selectedMeasureName = name;
+  view.render();
+}
+
 function updateRunButtonMode() {
   ui.setRunButtonMode((Math.floor(sampleSize) > 0) && (Math.floor(numRuns) > 0));
 }
@@ -619,20 +638,125 @@ function setup() {
   view.render();
 }
 
+export function getOptionsForMeasure (measure) {
+  // right now we only ever have one output option because we only have one device.
+  // once we chain multiple devices, we'll have to adjust this approach.
+  function createOutputOption (selectEl) {
+    const outputOption = document.createElement("option");
+    outputOption.value = deviceName;
+    outputOption.textContent = deviceName;
+    outputOption.selected = true;
+    selectEl.append(outputOption);
+  }
+
+  function createValueOptions (selectEl) {
+    const options = [...new Set(variables)].map((v) => {return {value: v, text: v}});
+    options.forEach((option, i) => {
+      const valueOption = document.createElement("option");
+      valueOption.value = option.value;
+      valueOption.textContent = option.text;
+      if (i === 0) {
+        valueOption.selected = true;
+      }
+      selectEl.appendChild(valueOption);
+    });
+  }
+
+  function createOperatorOptions (selectEl) {
+    function isStringNumber(str) {
+      return !isNaN(parseFloat(str)) && isFinite(str);
+    }
+    const anyVariableIsNumber = variables.some((v) => isStringNumber(v));
+    if (anyVariableIsNumber) {
+      const options = ["=", "≠", "<", ">", "≤", "≥"]
+      options.forEach((option, i) => {
+        const operatorOpt = document.createElement("option");
+        operatorOpt.value = option;
+        operatorOpt.textContent = option;
+        if (i === 0) {
+          operatorOpt.selected = true;
+        }
+        selectEl.appendChild(operatorOpt);
+      })
+    } else {
+      const equalsOpt = document.createElement("option");
+      equalsOpt.value = "=";
+      equalsOpt.textContent = "=";
+      selectEl.appendChild(equalsOpt);
+      const notEqualsOpt = document.createElement("option");
+      notEqualsOpt.value = "≠";
+      notEqualsOpt.textContent = "≠";
+      selectEl.appendChild(notEqualsOpt);
+    }
+  }
+
+  const selectOutput = document.getElementById(`${measure}-select-output`);
+
+  // sum(output) || mean(output) || median(output)
+  if (measure === "sum" || measure === "mean" || measure === "median") {
+    createOutputOption(selectOutput);
+  // count(output = "value") || 100 * count(output = "value") / count()
+  } else if (measure === "conditional_count" || measure === "conditional_percentage") {
+    createOutputOption(selectOutput);
+    const selectOperator = document.getElementById(`${measure}-select-operator`);
+    createOperatorOptions(selectOperator);
+    const selectValue = document.getElementById(`${measure}-select-value`);
+    createValueOptions(selectValue);
+  // (output="value", output2) || output2, output = “value”) || (output2, output = “value”)
+  } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
+    createOutputOption(selectOutput);
+    const selectOperator = document.getElementById(`${measure}-select-operator`);
+    createOperatorOptions(selectOperator);
+    const selectValue = document.getElementById(`${measure}-select-value`);
+    createValueOptions(selectValue);
+    const selectOutput2 = document.getElementById(`${measure}-select-output-2`);
+    createOutputOption(selectOutput2);
+  // (output1, output2 = “value1”) – mean(output1, output2 = “value2”) || (output1, output2 = “value1”) – median(output1, output2 = “value2”)
+  } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
+    const selectOutputPt1 = document.getElementById(`${measure}-select-output-pt-1`);
+    createOutputOption(selectOutputPt1);
+    const selectOutputPt12 = document.getElementById(`${measure}-select-output-pt-1-2`);
+    createOutputOption(selectOutputPt12);
+    const selectOperator1 = document.getElementById(`${measure}-select-operator-pt-1`);
+    createOperatorOptions(selectOperator1);
+    const selectValuePt1 = document.getElementById(`${measure}-select-value-pt-1`);
+    createValueOptions(selectValuePt1);
+    const selectOutputPt2 = document.getElementById(`${measure}-select-output-pt-2`);
+    createOutputOption(selectOutputPt2);
+    const selectOutputPt22 = document.getElementById(`${measure}-select-output-pt-2-2`);
+    createOutputOption(selectOutputPt22);
+    const selectOperator2 = document.getElementById(`${measure}-select-operator-pt-2`);
+    createOperatorOptions(selectOperator2);
+    const selectValuePt2 = document.getElementById(`${measure}-select-value-pt-2`);
+    createValueOptions(selectValuePt2);
+  }
+}
+
+function sendFormulaToCodap (formula, selections) {
+  var measureName = selectedMeasureName ? selectedMeasureName : null;
+  codapCom.sendFormulaToTable(measureName, formula, selections);
+}
+
+function getRunNumber () {
+  return experimentNumber;
+}
+
 localeMgr.init().then(() => {
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
       localeMgr);
   codapCom.init()
       .then(setCodapDataSetName)
       .catch(codapCom.error);
+
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
       localeMgr);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
-      refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
+      refreshCaseList, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
       view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
-      reloadDefaultSettings, becomeSelected);
+      reloadDefaultSettings, becomeSelected, sendFormulaToCodap, setMeasureName,
+      getRunNumber);
 
   // initialize and render the model
   setup();

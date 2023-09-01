@@ -12,7 +12,7 @@
   </head>
   <body>
     <div id="tabs">
-      <div id="tab-sampler" class="active" data-text="DG.plugin.Sampler.tab.sampler"></div>
+      <div id="tab-devices" class="active" data-text="DG.plugin.Sampler.tab.devices"></div>
       <div id="tab-measures" data-text="DG.plugin.Sampler.tab.measures"></div>
       <div id="tab-options" data-text="DG.plugin.Sampler.tab.options"></div>
       <div id="tab-about" data-text="DG.plugin.Sampler.tab.about"></div>
@@ -42,6 +42,9 @@
           <span data-text="DG.plugin.Sampler.draw-settings.collect-samples-p2"></span>
         </div>
       </div>
+      <div id="edit-device_name">
+        <input id="device_name" type="text"/>
+      </div>
       <div id="model">
         <svg width="100%" height="100%" viewBox="0 0 205 220"></svg>
       </div>
@@ -62,18 +65,169 @@
         <button id="collector" data-text="DG.plugin.Sampler.device-selection.collector"></button>
       </div>
       <input id="variable-name-change" type="text" />
-      <input id="variable-percentage-change" type="text"/>
+      <input id="variable-percentage-change" type="text" />
       <div id="model-cover" class="hidden">?</div>
       <div id="spinner-cover" class="hidden"><img src="spinner-cover.svg" alt="" data-alt="DG.plugin.Sampler.spinner-cover-alt"></div>
     </div>
     <div id="measures" class="hidden">
-      <div class="top">
+      <div id="measures-top">
         <div id="measures-instructions" data-text="DG.plugin.Sampler.measures-instructions"></div>
-        <label for="select-measure" id="select-measure-label" data-text="DG.plugin.Sampler.select-measure"></label>
-        <select id="select-measure"></select>
+        <div id="select-measure-container">
+          <label for="select-measure" id="select-measure-label" data-text="DG.plugin.Sampler.select-measure"></label>
+          <select id="select-measure">
+            <option id="default" disabled selected value="">Select a formula</option>
+            <option id="sum" value="sum" data-text="DG.plugin.Sampler.sum"></option>
+            <option id="mean" value="mean" data-text="DG.plugin.Sampler.mean"></option>
+            <option id="median" value="median" data-text="DG.plugin.Sampler.median"></option>
+            <option id="conditional_count" value="conditional_count" data-text="DG.plugin.Sampler.conditional_count"></option>
+            <option id="conditional_sum" value="conditional_sum" data-text="DG.plugin.Sampler.conditional_sum"></option>
+            <option id="conditional_percentage" value="conditional_percentage" data-text="DG.plugin.Sampler.conditional_percentage"></option>
+            <option id="conditional_mean" value="conditional_mean" data-text="DG.plugin.Sampler.conditional_mean"></option>
+            <option id="conditional_median" value="conditional_median" data-text="DG.plugin.Sampler.conditional_median"></option>
+            <option id="difference_of_means" value="difference_of_means" data-text="DG.plugin.Sampler.difference_of_means"></option>
+            <option id="difference_of_medians" value="difference_of_medians" data-text="DG.plugin.Sampler.difference_of_medians"></option>
+          </select>
+        </div>
+        <div id="measure-name-container">
+          <label for="measure-name" id="measure-name-label" data-text="DG.plugin.Sampler.measure-name-label"></label>
+          <input type="text" id="measure-name"></input>
+        </div>
+        <div id="measure-formulas">
+          <div id="sum-formula-container" class="formula hidden">
+            <span id="sum-formula" data-text="DG.plugin.Sampler.sum-formula"></span>
+            <span class="formula-paren">(
+              <select id="sum-select-output">
+              </select>
+            )</span>
+          </div>
+          <div id="mean-formula-container" class="formula hidden">
+            <span id="mean-formula" data-text="DG.plugin.Sampler.mean-formula"></span>
+            <span class="formula-paren">(
+              <select id="mean-select-output">
+              </select>
+            )</span>
+          </div>
+          <div id="median-formula-container" class="formula hidden">
+            <span id="median-formula" data-text="DG.plugin.Sampler.median-formula"></span>
+            <span class="formula-paren">(
+              <select id="median-select-output">
+              </select>
+            )</span>
+          </div>
+          <div id="conditional_count-formula-container" class="formula hidden">
+            <span id="conditional_count-formula" data-text="DG.plugin.Sampler.conditional_count-formula"></span>
+            <span class="formula-paren">(
+              <select id="conditional_count-select-output">
+              </select>
+              <select id="conditional_count-select-operator">
+              </select>
+              <select id="conditional_count-select-value">
+              </select>
+              )</span>
+          </div>
+          <div id="conditional_sum-formula-container" class="formula hidden">
+            <span id="conditional_sum-formula" data-text="DG.plugin.Sampler.conditional_sum-formula"></span>
+            <span class="formula-paren">(
+              <select id="conditional_sum-select-output">
+              </select>
+              <select id="conditional_sum-select-operator">
+              </select>
+              <select id="conditional_sum-select-value">
+              </select>
+              <select id="conditional_sum-select-output-2">
+              </select>
+              )</span>
+          </div>
+          <div id="conditional_percentage-formula-container" class="formula hidden">
+            <span id="conditional_percentage-formula" data-text="DG.plugin.Sampler.conditional_percentage-formula-pt-1"></span>
+            <span class="formula-paren">(
+              <select id="conditional_percentage-select-output">
+              </select>
+              <select id="conditional_percentage-select-operator">
+              </select>
+              <select id="conditional_percentage-select-value">
+              </select>
+              )</span>
+            <span id="conditional_percentage-formula" data-text="DG.plugin.Sampler.conditional_percentage-formula-pt-2"></span>
+          </div>
+          <div id="conditional_mean-formula-container" class="formula hidden">
+            <span id="conditional_mean-formula" data-text="DG.plugin.Sampler.conditional_mean-formula"></span>
+            <span class="formula-paren">(
+              <select id="conditional_mean-select-output">
+              </select> ,
+              <select id="conditional_mean-select-output-2">
+              </select>
+              <select id="conditional_mean-select-operator">
+              </select>
+              <select id="conditional_mean-select-value">
+              </select>
+              )</span>
+          </div>
+          <div id="conditional_median-formula-container" class="formula hidden">
+            <span id="conditional_median-formula" data-text="DG.plugin.Sampler.conditional_median-formula"></span>
+            <span class="formula-paren">(
+              <select id="conditional_median-select-output">
+              </select> ,
+              <select id="conditional_median-select-output-2">
+              </select>
+              <select id="conditional_median-select-operator">
+              </select>
+              <select id="conditional_median-select-value">
+              </select>
+              )</span>
+          </div>
+          <div id="difference_of_means-formula-container" class="formula hidden">
+            <span id="difference_of_means-formula-pt-1" data-text="DG.plugin.Sampler.difference_of_means-formula-pt-1"></span>
+            <span class="formula-paren">(
+              <select id="difference_of_means-select-output-pt-1">
+              </select> ,
+              <select id="difference_of_means-select-output-pt-1-2">
+              </select>
+              <select id="difference_of_means-select-operator-pt-1">
+              </select>
+              <select id="difference_of_means-select-value-pt-1">
+              </select>
+            )</span>
+            <span id="difference_of_means-formula-pt-2" data-text="DG.plugin.Sampler.difference_of_means-formula-pt-2"></span>
+            <span class="formula-paren">(
+              <select id="difference_of_means-select-output-pt-2">
+              </select> ,
+              <select id="difference_of_means-select-output-pt-2-2">
+              </select>
+              <select id="difference_of_means-select-operator-pt-2">
+              </select>
+              <select id="difference_of_means-select-value-pt-2">
+              </select>
+            )</span>
+          </div>
+          <div id="difference_of_medians-formula-container" class="formula hidden">
+            <span id="difference_of_medians-formula-pt-1" data-text="DG.plugin.Sampler.difference_of_medians-formula-pt-1"></span>
+            <span class="formula-paren">(
+              <select id="difference_of_medians-select-output-pt-1">
+              </select> ,
+              <select id="difference_of_medians-select-output-pt-1-2">
+              </select>
+              <select id="difference_of_medians-select-operator-pt-1">
+              </select>
+              <select id="difference_of_medians-select-value-pt-1">
+              </select>
+            )</span>
+            <span id="difference_of_means-formula-pt-2" data-text="DG.plugin.Sampler.difference_of_medians-formula-pt-2"></span>
+            <span class="formula-paren">(
+              <select id="difference_of_medians-select-output-pt-2">
+              </select> ,
+              <select id="difference_of_medians-select-output-pt-2-2">
+              </select>
+              <select id="difference_of_medians-select-operator-pt-2">
+              </select>
+              <select id="difference_of_medians-select-value-pt-2">
+              </select>
+            )</span>
+          </div>
+        </div>
       </div>
-      <div class="bottom">
-        <button id="add-measure" data-text="DG.plugin.Sampler.add-measure" disabled></button>
+      <div id="measures-bottom">
+        <button id="add-measure" data-text="DG.plugin.Sampler.add-measure" class="disabled"></button>
       </div>
     </div>
     <div id="options" class="hidden">

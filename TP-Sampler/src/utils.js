@@ -141,8 +141,14 @@ function lcm(a, b) {
 function percentageToFraction(percentage) {
   const numerator = percentage;
   const denominator = 100;
-  const commonFactor = gcd(numerator, denominator);
-  return [numerator / commonFactor, denominator / commonFactor];
+  if (numerator === 33) {
+    return [1, 3];
+  } else if (numerator === 67) {
+    return [2, 3];
+  } else {
+    const commonFactor = gcd(numerator, denominator);
+    return [numerator / commonFactor, denominator / commonFactor];
+  }
 }
 
 function findCommonDenominator(percentages) {
@@ -153,23 +159,28 @@ function findCommonDenominator(percentages) {
 }
 
 function findEquivNum(n, lcd) {
-  return (n * (lcd / 100));
+  if (n === 33 && lcd === 3) {
+    return 1;
+  } else if (n === 67 && lcd === 3) {
+    return 2;
+  } else {
+    return (n * (lcd / 100));
+  }
 }
 
 function fewestNumbersToSum (target, count) {
-
   const result = [];
 
-  // Distribute the target equally among the count of integers
+  // distribute the target equally among the count of integers
   const initialDistribution = Math.floor(target / count);
 
-  // Adjust the initial distribution to ensure the sum matches the target
+  // adjust the initial distribution to ensure the sum matches the target
   let sum = initialDistribution * count;
   for (let i = 0; i < count; i++) {
     result.push(initialDistribution);
   }
 
-  // Distribute the remaining difference to the numbers
+  // distribute the remaining difference to the numbers
   let remainder = target - sum;
   let i = 0;
   while (remainder > 0) {
@@ -181,6 +192,26 @@ function fewestNumbersToSum (target, count) {
   return result;
 }
 
+function calculateWedgePercentage(cx, cy, x1, y1, x2, y2) {
+  // calculate angles in radians
+  var angle1 = Math.atan2(y1 - cy, x1 - cx);
+  var angle2 = Math.atan2(y2 - cy, x2 - cx);
+
+  // calculate the angle between the two points
+  var angle = angle2 - angle1;
+
+  // handle cases where the angle crosses the boundary between -π and π
+  if (angle < 0) {
+      angle += 2 * Math.PI;
+  }
+
+  // calculate the percentage of the circle's circumference
+  var percentage = (angle / (2 * Math.PI)) * 100;
+
+  return percentage;
+}
+
+
 export {
   fill,
   shuffle,
@@ -189,5 +220,6 @@ export {
   calcPct,
   findCommonDenominator,
   findEquivNum,
-  fewestNumbersToSum
+  fewestNumbersToSum,
+  calculateWedgePercentage
 };
