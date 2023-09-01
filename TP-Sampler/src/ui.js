@@ -4,6 +4,7 @@
  * Adds listeners to DOM elements, and helpers for updating their state
  */
 import * as localeMgr from './localeManager.js';
+import {getOptionsForMeasure} from './app.js'
 var collectorCollectionName = '';
 
 function addClass(el, className) {
@@ -306,6 +307,15 @@ function setReplacement(withReplacement, device, hidden) {
 
 function updateUIDeviceName (name) {
   document.getElementById("device_name").value = name;
+  if (document.getElementById("select-measure").value) {
+    updateSelectOptions();
+  }
+}
+
+function updateSelectOptions() {
+  const selectedMeasure = document.getElementById("select-measure").value;
+  removeSelectOptions([selectedMeasure]);
+  getOptionsForMeasure(selectedMeasure);
 }
 
 function removeChildren (node) {
@@ -335,7 +345,7 @@ function removeSelectOptions (measures) {
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
           stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
           setNumRuns, setDeviceName, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
-          setOrCheckPassword, reloadDefaultSettings, becomeSelected, getOptionsForMeasure, sendFormulaToCodap,
+          setOrCheckPassword, reloadDefaultSettings, becomeSelected, sendFormulaToCodap,
           setMeasureName, getRunNumber) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
@@ -361,7 +371,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("repeat").addEventListener('input', function (evt) {
     setNumRuns(this.value);
   });
-  document.getElementById("device_name").addEventListener('input', function (evt) {
+  document.getElementById("device_name").addEventListener('input', function () {
     setDeviceName(this.value);
   });
   document.getElementById("speed").addEventListener('input', function (evt) {
@@ -487,9 +497,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
 
   document.getElementById("add-measure").addEventListener("click", (e) => {
     const measure = document.getElementById("select-measure").value;
-    if (measure === "count") {
-      sendFormulaToCodap("count", null);
-    } else if (measure === "sum" || measure === "mean" || measure === "median") {
+    if (measure === "sum" || measure === "mean" || measure === "median") {
       const selectedOutput = document.getElementById(`${measure}-select-output`).value;
       sendFormulaToCodap(measure, {output: selectedOutput});
     } else if (measure === "conditional_count" || measure === "conditional_percentage") {

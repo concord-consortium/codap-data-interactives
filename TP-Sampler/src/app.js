@@ -638,7 +638,7 @@ function setup() {
   view.render();
 }
 
-function getOptionsForMeasure (measure) {
+export function getOptionsForMeasure (measure) {
   // right now we only ever have one output option because we only have one device.
   // once we chain multiple devices, we'll have to adjust this approach.
   function createOutputOption (selectEl) {
@@ -668,7 +668,7 @@ function getOptionsForMeasure (measure) {
     }
     const anyVariableIsNumber = variables.some((v) => isStringNumber(v));
     if (anyVariableIsNumber) {
-      const options = ["=", "<", ">", "≤", "≥"]
+      const options = ["=", "≠", "<", ">", "≤", "≥"]
       options.forEach((option, i) => {
         const operatorOpt = document.createElement("option");
         operatorOpt.value = option;
@@ -679,10 +679,14 @@ function getOptionsForMeasure (measure) {
         selectEl.appendChild(operatorOpt);
       })
     } else {
-      const operatorOpt = document.createElement("option");
-      operatorOpt.value = "=";
-      operatorOpt.textContent = "=";
-      selectEl.appendChild(operatorOpt);
+      const equalsOpt = document.createElement("option");
+      equalsOpt.value = "=";
+      equalsOpt.textContent = "=";
+      selectEl.appendChild(equalsOpt);
+      const notEqualsOpt = document.createElement("option");
+      notEqualsOpt.value = "≠";
+      notEqualsOpt.textContent = "≠";
+      selectEl.appendChild(notEqualsOpt);
     }
   }
 
@@ -691,14 +695,14 @@ function getOptionsForMeasure (measure) {
   // sum(output) || mean(output) || median(output)
   if (measure === "sum" || measure === "mean" || measure === "median") {
     createOutputOption(selectOutput);
-  // count(output = "value") || 100 * count(output = "a") / count()
+  // count(output = "value") || 100 * count(output = "value") / count()
   } else if (measure === "conditional_count" || measure === "conditional_percentage") {
     createOutputOption(selectOutput);
     const selectOperator = document.getElementById(`${measure}-select-operator`);
     createOperatorOptions(selectOperator);
     const selectValue = document.getElementById(`${measure}-select-value`);
     createValueOptions(selectValue);
-  // ==
+  // (output="value", output2) || output2, output = “value”) || (output2, output = “value”)
   } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
     createOutputOption(selectOutput);
     const selectOperator = document.getElementById(`${measure}-select-operator`);
@@ -707,7 +711,7 @@ function getOptionsForMeasure (measure) {
     createValueOptions(selectValue);
     const selectOutput2 = document.getElementById(`${measure}-select-output-2`);
     createOutputOption(selectOutput2);
-  //
+  // (output1, output2 = “value1”) – mean(output1, output2 = “value2”) || (output1, output2 = “value1”) – median(output1, output2 = “value2”)
   } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
     const selectOutputPt1 = document.getElementById(`${measure}-select-output-pt-1`);
     createOutputOption(selectOutputPt1);
@@ -729,7 +733,7 @@ function getOptionsForMeasure (measure) {
 }
 
 function sendFormulaToCodap (formula, selections) {
-  var measureName = selectedMeasureName ? selectedMeasureName : formula;
+  var measureName = selectedMeasureName ? selectedMeasureName : null;
   codapCom.sendFormulaToTable(measureName, formula, selections);
 }
 
@@ -751,7 +755,7 @@ localeMgr.init().then(() => {
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
       refreshCaseList, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
       view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
-      reloadDefaultSettings, becomeSelected, getOptionsForMeasure, sendFormulaToCodap, setMeasureName,
+      reloadDefaultSettings, becomeSelected, sendFormulaToCodap, setMeasureName,
       getRunNumber);
 
   // initialize and render the model
