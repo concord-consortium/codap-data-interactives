@@ -84,6 +84,15 @@ var width = 205,            // svg units
       return [x, y];
     },
 
+    getEllipseCoords = function(majorRadius, minorRadius, percent) {
+      var perc = percent + 0.75,    // rotate 3/4 to start at top
+        angleRadians = 2 * Math.PI * perc,
+        x = spinnerX + (Math.cos(angleRadians) * majorRadius),
+        y = spinnerY + (Math.sin(angleRadians) * minorRadius);
+
+      return [x, y];
+    },
+
     getSpinnerSliceCoords = function (i, slicePercent, radius, mergeCount) {
       var startIndex = i - mergeCount,
           perc1 = startIndex * slicePercent,
@@ -95,12 +104,12 @@ var width = 205,            // svg units
           labelPerc2 = perc1 + ((perc2 - perc1) / 2),
           labelLineP1 = getCoordinatesForPercent(radius, labelPerc2),
           labelLineP2 = getCoordinatesForPercent(radius * 1.2, labelPerc2),
-          pctLabelLoc = getCoordinatesForPercent(radius * 1.35, labelPerc2),
+          pctLabelLoc = getEllipseCoords((radius * 1.35), (radius * 1.3), labelPerc2),
           deleteBtnLocY;
 
       // check in which direction label line is pointing and position delete button accordingly
       if (pctLabelLoc[1] >= labelLineP2[1]) {
-        deleteBtnLocY = pctLabelLoc[1] + 15;
+        deleteBtnLocY = pctLabelLoc[1] + 17;
       } else {
         deleteBtnLocY = pctLabelLoc[1] - 17;
       }
@@ -718,7 +727,7 @@ View.prototype = {
           // draw percent label, delete button
           var line = s.path(slice.labelLine);
           line.attr({stroke: isDraggingVar ? wedgeColor : "none", strokeWidth: 2, class: `line ${variables[i]}`});
-          percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, Math.max(1, 10 - variables.length), percentString);
+          percentageLabel = this.createPctLabel(i, slice.pctLabelLoc.x, slice.pctLabelLoc.y, pctTextSize, percentString);
           percentageLabel.attr({visibility: isDraggingVar ? "visible" : "hidden"});
 
           var deleteButton = this.createDeleteButton(i, slice.deleteBtnLoc).attr({visibility: "hidden"});
@@ -768,25 +777,30 @@ View.prototype = {
     return label;
   },
 
-  createPctLabel: function (index, x, y, fontSize, maxLength, percentString) {
-    var _this = this,
-      text = `${percentString}%`,
-      label = s.text(x, y, text).attr({
-        fontSize: fontSize,
-        textAnchor: "middle",
-        dy: ".25em",
-        dx: getTextShift(text, maxLength),
-        class: `percent ${variables[index]}`,
-      });
-
+  createPctLabel: function (index, x, y, fontSize, percentString) {
+    var _this = this;
+    var text = `${percentString}%`;
+    var label = s.text(x, y+5, text).attr({
+      fontSize: fontSize,
+      textAnchor: "middle",
+      class: `percent ${variables[index]}`,
+    });
+    var roundX = Math.round(x);
+    var roundY = Math.round(y);
+      if (roundX > spinnerX && roundY < spinnerY) {
+        label.attr({dx: ".3em"})
+        label.attr({dy: "-.25em"})
+      } else if (roundX > spinnerX && roundY >= spinnerY) {
+        label.attr({dx: ".3em"})
+      } else if (roundX < spinnerX && roundY === spinnerY) {
+        label.attr({dx: "-.25em"})
+      } else if (roundX < spinnerX && roundY < spinnerY) {
+        label.attr({dx: "-.3em"})
+        label.attr({dy: "-.25em"})
+      } else if (roundX < spinnerX) {
+        label.attr({dx: "-.3em"});
+      }
       label.click(_this.showPercentInput(index, percentString));
-
-      label.hover(function() {
-        if (_this.isRunning()) return;
-        this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-      }, function() {
-        this.attr({ fontSize: fontSize, dy: ".25em", });
-      });
     return label;
   },
 
