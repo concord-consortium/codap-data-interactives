@@ -22,7 +22,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
-  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
+  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-output");
   targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
   this.drawAttributes = null;
@@ -41,7 +41,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
     sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
     sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
-    value: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
+    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
   };
 
   this.findKeyById = function (idToFind) {
@@ -60,7 +60,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     if (msg.values.operation === "updateAttributes") {
       msg.values.result.attrIDs.forEach((id, i) => {
         const attrKey = _this.findKeyById(id);
-        if (attrKey === "value" && _this.attrMap.value.name !== msg.values.result.attrs[i].name) {
+        if (attrKey === "output" && _this.attrMap["output"].name !== msg.values.result.attrs[i].name) {
           _this.deviceName = msg.values.result.attrs[i].name;
           updateDeviceName(msg.values.result.attrs[i].name);
         }
@@ -85,7 +85,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.20 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.30 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
@@ -121,7 +121,7 @@ CodapCom.prototype = {
           // need to get all the ids of the newly-created attributes, so we can notice if they change.
           // we will set these ids on the attrIds object
           const allAttrs = [["experiments", _this.attrMap.experiment.name],["experiments", _this.attrMap.description.name],
-                            ["experiments", _this.attrMap.sample_size.name], ["samples", _this.attrMap.sample.name], ["items", _this.attrMap.value.name]];
+                            ["experiments", _this.attrMap.sample_size.name], ["samples", _this.attrMap.sample.name], ["items", _this.attrMap["output"].name]];
           const reqs = allAttrs.map(collectionAttr => ({
               "action": "get",
               "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
@@ -129,7 +129,6 @@ CodapCom.prototype = {
           codapInterface.sendRequest(reqs, function(getAttrsResult) {
             getAttrsResult.forEach(res => {
               if (res.success) {
-                console.log("_this.attrMap", _this.attrMap, "res.values.name", res.values.name);
                 _this.attrMap[res.values.name].id = res.values.id;
               }
             });
@@ -137,9 +136,9 @@ CodapCom.prototype = {
         }
 
         if (getDatasetResult && !getDatasetResult.success) {
-          if (deviceName !== _this.attrMap.value.name) {
+          if (deviceName !== _this.attrMap["output"].name) {
             _this.deviceName = deviceName;
-            _this.attrMap.value.name = deviceName;
+            _this.attrMap["output"].name = deviceName;
           }
           codapInterface.sendRequest({
             action: 'create',
@@ -170,7 +169,7 @@ CodapCom.prototype = {
                   //   pluralCase: "items"
                   // },
                   // The child collection also has just one attribute
-                  attrs: [{name: _this.attrMap.value.name}]
+                  attrs: [{name: _this.attrMap["output"].name}]
                 }
               ]
             }
@@ -233,8 +232,8 @@ CodapCom.prototype = {
   addMultipleSamplesToCODAP: function (samples, isCollector, deviceName) {
     var _this = this;
     var oldDeviceName = _this.deviceName;
-    if (deviceName !== _this.attrMap.value.name) {
-      _this.attrMap.value.name = deviceName;
+    if (deviceName !== _this.attrMap["output"].name) {
+      _this.attrMap["output"].name = deviceName;
     };
     var items = [];
     samples.forEach(function (sample) {
@@ -242,7 +241,7 @@ CodapCom.prototype = {
       var item;
       sample.values.forEach(function(v) {
         if (!isCollector) {
-          item = Object.assign({}, {sample: run, value: v}, _this.itemProto);
+          item = Object.assign({}, {sample: run, output: v}, _this.itemProto);
         } else {
           item = Object.assign({}, v, {sample: run}, _this.itemProto);
         }
@@ -471,9 +470,102 @@ CodapCom.prototype = {
       selectSelf(this.myCODAPId);
     }
   },
+
   register: function (action, resource, operation, callback) {
     codapInterface.on(action, resource, operation, callback);
-  }
+  },
+
+  sendFormulaToTable: async function (measureName, measureType, selections) {
+    var samplesColl = this.getCollectionNames().samples;
+
+    function getFormula() {
+      switch (measureType) {
+        case "sum":
+          return `sum(${selections.output})`;
+        case "conditional_count":
+          return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`;
+        case "conditional_percentage":
+          return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`;
+        case "mean":
+          return `mean(\`${selections.output}\`)`;
+        case "median":
+          return `median(\`${selections.output}\`)`;
+        case "conditional_sum":
+          return `sum(\`${selections.output}\`${selections.operator}'${selections.value}', ${selections.output2})`;
+        case "conditional_mean":
+          return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+        case "conditional_median":
+          return `median(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+        case "difference_of_means":
+          return `min(mean(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`;
+        case "difference_of_medians":
+          return `min(median(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`;
+        default:
+          return "";
+      }
+    }
+
+    codapInterface.sendRequest({
+      action: "get",
+      resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attributeList`
+    }).then((res) => {
+      const attrs = res.values;
+      let newAttributeName = measureName ? measureName : measureType;
+
+      // check if attr name is already used. user could add "conditional count" twice, for example,
+      // but have difference formulas (output = a, output = b)
+      const attrNameAlreadyUsed = attrs.find((attr) => attr.name === measureName);
+
+        if (!attrNameAlreadyUsed) {
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute`,
+            values: [{
+              "name": newAttributeName,
+              "type": "numerical",
+              "formula": getFormula()
+            }]
+          });
+        } else if (attrNameAlreadyUsed && !measureName) {
+          const attrsWithSameName = attrs.filter((attr) => attr.name.startsWith(measureName));
+          const indexes = attrsWithSameName.map((attr) => Number(attr.name.slice(measureName.length)));
+          const highestIndex = Math.max(...indexes);
+          if (!highestIndex) {
+            newAttributeName = measureName + 1;
+          } else {
+            for (let i = 1; i <= highestIndex; i++) {
+              const nameWithIndex = measureName + i;
+              const isNameWithIndexUsed = attrsWithSameName.find((attr) => attr.name === nameWithIndex);
+              if (!isNameWithIndexUsed) {
+                newAttributeName = nameWithIndex;
+                break;
+              } else if (i === highestIndex) {
+                newAttributeName = measureName + (highestIndex + 1);
+              }
+            }
+          }
+          codapInterface.sendRequest({
+            action: 'create',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute`,
+            values: [{
+              "name": newAttributeName,
+              "type": "numerical",
+              "formula": getFormula()
+            }]
+          });
+        } else if (attrNameAlreadyUsed && measureName) {
+          codapInterface.sendRequest({
+            action: 'update',
+            resource: `${getTargetDataSetPhrase()}.collection[${samplesColl}].attribute[${measureName}]`,
+            values: {
+              "formula": getFormula()
+            }
+          });
+        }
+      })
+  },
 };
+
+
 
 export { CodapCom };
