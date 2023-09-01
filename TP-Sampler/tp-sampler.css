@@ -294,10 +294,39 @@ text:hover{
   top: 8vh;
   padding: 1vh;
   height: 100%;
+  width: 80vh;
 }
 
-#select-measure, #select-measure-label {
+#select-measure-container, #measure-name-container {
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+}
+
+#select-measure {
+  margin-top: 6vh;
+  padding: 1px 2px;
+}
+
+#select-measure-label {
   margin-top: 5vh;
+}
+
+#measure-name-container, #measure-formulas {
+  margin-top: 2vh;
+}
+
+#measure-name {
+  margin-top: .75vh;
+}
+
+#measure-formulas {
+  margin-left: 3.2vh;
+}
+
+#measures-bottom {
+  display: flex;
+  justify-content: flex-end;
 }
 
 #add-measure {
