@@ -102,5 +102,14 @@
     "DG.plugin.Scrambler.sOr": "o",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "mezclado_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidos_de_"
+  },
+  "tr": {
+    "DG.plugin.Scrambler.description": "Rastgele değişen bir özellikliğe göre hipotezleri test et.",
+    "DG.plugin.Scrambler.language": "İngilizce",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "İlerleyebilmek için düzeltiniz.",
+    "DG.plugin.Scrambler.static.howManyLabel": "ne kadar?",
+    "DG.plugin.Scrambler.sNoAttribute": "özellik yok 😕",
+    "DG.plugin.Scrambler.sOr": "veya",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "_den_ölçer_"
   }
 }
