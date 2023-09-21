@@ -4,4 +4,3 @@ node_modules
 npm-debug.log
 *.iml
 .DS_Store
-published-plugins.json
