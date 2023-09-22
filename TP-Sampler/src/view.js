@@ -944,7 +944,7 @@ View.prototype = {
       variableNameInput.style.left = (loc.x) + "px";
       variableNameInput.style.width = width;
       variableNameInput.value = text;
-      variableNameInput.className = i,
+      variableNameInput.className = variables[i],
       variableNameInput.focus();
 
       editingVariable = i;
@@ -964,13 +964,14 @@ View.prototype = {
     };
   },
 
-  showVariableNameInputForUI: function (i) {
+  showVariableNameInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
+    console.log({variables});
 
-    var nameLabels = document.getElementsByClassName(`label ${variables[i]}`);
+    var nameLabels = document.getElementsByClassName(`label ${variableName}`);
     var nameLabel = nameLabels[nameLabels.length - 1];
 
-    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    const wedgeObj = wedges.find(w => w.variable === variableName);
     const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
     wedge.attr({fill: darkTeal});
     variableLabel.attr({fill: "white", fontWeight: "bold"});
@@ -982,17 +983,17 @@ View.prototype = {
     }
 
     var loc = nameLabel.getBoundingClientRect(),
-        text = variables[i],
+        text = variableName,
         width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
     variableNameInput.style.display = "block";
     variableNameInput.style.top = (loc.y + loc.height/2) + "px";
     variableNameInput.style.left = (loc.x) + "px";
     variableNameInput.style.width = width;
     variableNameInput.value = text;
-    variableNameInput.className = i,
+    variableNameInput.className = variableName,
     variableNameInput.focus();
 
-    editingVariable = i;
+    editingVariable = variables.indexOf(variableName);
     if (device == "mixer" || device == "collector") {
       variables[editingVariable] = "";
     } else {
@@ -1007,12 +1008,12 @@ View.prototype = {
     }
   },
 
-  showPercentInputForUI: function (i) {
+  showPercentInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
 
-    var percentLabel = document.getElementsByClassName(`percent ${variables[i]}`)[0];
+    var percentLabel = document.getElementsByClassName(`percent ${variableName}`)[0];
 
-    const wedgeObj = wedges.find(w => w.variable === variables[i]);
+    const wedgeObj = wedges.find(w => w.variable === variableName);
     const {wedge, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
     wedge.attr({fill: darkTeal});
     variableLabel.attr({fill: "white", fontWeight: "bold"});
@@ -1023,7 +1024,7 @@ View.prototype = {
       edge.attr({stroke: darkTeal});
     }
 
-    var percentString = this.getPercentOfVar(variables[i]);
+    var percentString = this.getPercentOfVar(variableName);
     var loc = percentLabel.getBoundingClientRect(),
         text = percentString,
         width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
@@ -1032,10 +1033,10 @@ View.prototype = {
     variablePercentageInput.style.left = (loc.x) + "px";
     variablePercentageInput.style.width = width;
     variablePercentageInput.value = text;
-    variablePercentageInput.className = i;
+    variablePercentageInput.className = variableName;
     variablePercentageInput.focus();
 
-    editingVariable = i;
+    editingVariable = variables.indexOf(variableName);
     if (device == "mixer" || device == "collector") {
       variables[editingVariable] = "";
     } else {
@@ -1063,7 +1064,7 @@ View.prototype = {
       variablePercentageInput.style.left = (loc.x) + "px";
       variablePercentageInput.style.width = width;
       variablePercentageInput.value = text;
-      variablePercentageInput.className = i;
+      variablePercentageInput.className = variables[i];
       variablePercentageInput.focus();
 
       editingVariable = i;
