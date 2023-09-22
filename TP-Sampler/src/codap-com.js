@@ -94,7 +94,7 @@ CodapCom.prototype = {
           action: 'update',
           resource: 'interactiveFrame',
           values: {
-            dimensions: {width: 235, height: 400},
+            dimensions: {width: 300, height: 400},
           }
         })
       }

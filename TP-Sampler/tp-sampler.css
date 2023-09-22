@@ -294,7 +294,7 @@ text:hover{
   top: 8vh;
   padding: 1vh;
   height: 100%;
-  width: 80vh;
+  width: 80vw;
 }
 
 #select-measure-container, #measure-name-container {
