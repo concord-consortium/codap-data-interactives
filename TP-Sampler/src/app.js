@@ -749,7 +749,7 @@ localeMgr.init().then(() => {
       .catch(codapCom.error);
 
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
-      localeMgr);
+      localeMgr, sortVariablesForSpinner);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,

@@ -139,7 +139,7 @@ var width = 205,            // svg units
       return "hsl("+huePerc+"%, 71%, "+lightPerc+"%)";
     };
 
-var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codapCom, localeMgr) {
+var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codapCom, localeMgr, sortVariablesForSpinner) {
   this.getProps = getProps;
   this.isRunning = isRunning;
   this.setRunning = setRunning;
@@ -148,6 +148,7 @@ var View = function(getProps, isRunning, setRunning, isPaused, modelReset, codap
   this.codapCom = codapCom;
   this.localeMgr = localeMgr;
   this.isDragging = false;
+  this.sortVariables = sortVariablesForSpinner;
 
   this.getSpeedText = function(index) {
     var speedIds = [
@@ -952,6 +953,7 @@ View.prototype = {
         variables[editingVariable] = "";
       } else {
         var v = variables[editingVariable];
+        console.log({v});
         editingVariable = [];
         for (var j = 0, jj = variables.length; j < jj; j++) {
           if (variables[j] === v) {
@@ -959,6 +961,7 @@ View.prototype = {
             editingVariable.push(j);
           }
         }
+        console.log({editingVariable});
       }
       _this.render();
     };
@@ -1088,7 +1091,6 @@ View.prototype = {
     if (editingVariable !== false) {
       var newName = variableNameInput.value.trim();
       if (!newName) newName = "_";
-
       if (Array.isArray(editingVariable)) {
         for (var i = 0, ii = editingVariable.length; i < ii; i++) {
           variables[editingVariable[i]] = newName;
@@ -1096,12 +1098,9 @@ View.prototype = {
       } else {
         variables[editingVariable] = newName;
       }
-
-      // update uniqueVariables
-      uniqueVariables.splice(0, variables.length);
       uniqueVariables = [...new Set(variables)];
-
       variableNameInput.style.display = "none";
+      this.sortVariables();
       this.render();
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
