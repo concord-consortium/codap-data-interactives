@@ -381,35 +381,55 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     setSpeed(speed);
   });
 
-  document.getElementById("variable-name-change").addEventListener("blur", () => {
+  let keyPressed = false;
+
+  document.getElementById("variable-name-change").addEventListener("blur", (e) => {
     document.getElementById("variable-name-change").style.display = "none";
+    // don't do anything if blur event was triggered by user pressing 'enter' or 'tab' keys
+    if (keyPressed) {
+      keyPressed = false;
+      return;
+    } else {
+      setVariableName();
+    }
+  });
+
+  document.getElementById("variable-percentage-change").addEventListener("blur", (e) => {
+    document.getElementById("variable-percentage-change").style.display = "none";
+    if (keyPressed) {
+      keyPressed = false;
+      return;
+    } else {
+      setPercentage();
+    }
   });
 
   document.getElementById("variable-name-change").addEventListener("keydown", (e) => {
     if (e.keyCode === 9) {
+      keyPressed = true;
       e.preventDefault();
       setVariableName();
       document.getElementById("variable-name-change").style.display = "none";
       view.showPercentInputForUI(e.target.value);
     }
     if (e.keyCode === 13) {
+      keyPressed = true;
       setVariableName();
+      document.getElementById("variable-name-change").style.display = "none";
       return false;
     }
   });
 
-  document.getElementById("variable-percentage-change").addEventListener("blur", () => {
-    document.getElementById("variable-percentage-change").style.display = "none";
-  });
-
   document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
     if (e.keyCode === 9) {
+      keyPressed = true;
       e.preventDefault();
       setPercentage();
       document.getElementById("variable-percentage-change").style.display = "none";
       view.showVariableNameInputForUI(e.target.className);
     }
     if (e.keyCode === 13) {
+      keyPressed = true;
       setPercentage();
       return false;
     }

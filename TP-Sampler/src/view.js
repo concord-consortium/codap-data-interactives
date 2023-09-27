@@ -1097,7 +1097,9 @@ View.prototype = {
       }
       uniqueVariables = [...new Set(variables)];
       variableNameInput.style.display = "none";
-      this.sortVariables();
+      if (device === "spinner") {
+        this.sortVariables();
+      }
       this.render();
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
