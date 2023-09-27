@@ -953,7 +953,6 @@ View.prototype = {
         variables[editingVariable] = "";
       } else {
         var v = variables[editingVariable];
-        console.log({v});
         editingVariable = [];
         for (var j = 0, jj = variables.length; j < jj; j++) {
           if (variables[j] === v) {
@@ -961,7 +960,6 @@ View.prototype = {
             editingVariable.push(j);
           }
         }
-        console.log({editingVariable});
       }
       _this.render();
     };
@@ -969,7 +967,6 @@ View.prototype = {
 
   showVariableNameInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
-    console.log({variables});
 
     var nameLabels = document.getElementsByClassName(`label ${variableName}`);
     var nameLabel = nameLabels[nameLabels.length - 1];
