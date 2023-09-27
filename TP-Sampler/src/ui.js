@@ -415,7 +415,6 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     if (e.keyCode === 13) {
       keyPressed = true;
       setVariableName();
-      document.getElementById("variable-name-change").style.display = "none";
       return false;
     }
   });
