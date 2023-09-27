@@ -497,7 +497,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     }
   })
 
-  document.getElementById("add-measure").addEventListener("click", (e) => {
+  document.getElementById("add-measure").addEventListener("click", () => {
     const measure = document.getElementById("select-measure").value;
     if (measure === "sum" || measure === "mean" || measure === "median") {
       const selectedOutput = document.getElementById(`${measure}-select-output`).value;
