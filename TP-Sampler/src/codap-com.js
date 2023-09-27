@@ -136,7 +136,7 @@ CodapCom.prototype = {
         }
 
         if (getDatasetResult && !getDatasetResult.success) {
-          if (deviceName !== _this.attrMap["output"].name) {
+          if (deviceName && deviceName !== _this.attrMap["output"].name) {
             _this.deviceName = deviceName;
             _this.attrMap["output"].name = deviceName;
           }
@@ -253,9 +253,11 @@ CodapCom.prototype = {
     items.forEach(function (item) {
       const attrKeys = Object.keys(item);
       attrKeys.forEach(function (attrKey) {
-        if (_this.attrMap[attrKey].name !== attrKey) {
-          item[_this.attrMap[attrKey].name] = item[attrKey];
-          delete item[attrKey];
+        if (Object.keys(_this.attrMap).includes(attrKey)) {
+          if (_this.attrMap[attrKey].name !== attrKey) {
+            item[_this.attrMap[attrKey].name] = item[attrKey];
+            delete item[attrKey];
+          }
         }
       })
     });
