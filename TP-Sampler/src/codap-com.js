@@ -94,7 +94,7 @@ CodapCom.prototype = {
           action: 'update',
           resource: 'interactiveFrame',
           values: {
-            dimensions: {width: 235, height: 400},
+            dimensions: {width: 300, height: 400},
           }
         })
       }
@@ -491,7 +491,7 @@ CodapCom.prototype = {
         case "median":
           return `median(\`${selections.output}\`)`;
         case "conditional_sum":
-          return `sum(\`${selections.output}\`${selections.operator}'${selections.value}', ${selections.output2})`;
+          return `sum(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
         case "conditional_mean":
           return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
         case "conditional_median":

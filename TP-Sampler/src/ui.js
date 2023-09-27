@@ -388,8 +388,9 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("variable-name-change").addEventListener("keydown", (e) => {
     if (e.keyCode === 9) {
       e.preventDefault();
+      setVariableName();
       document.getElementById("variable-name-change").style.display = "none";
-      view.showPercentInputForUI(e.target.className);
+      view.showPercentInputForUI(e.target.value);
     }
     if (e.keyCode === 13) {
       setVariableName();
@@ -404,7 +405,8 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
     if (e.keyCode === 9) {
       e.preventDefault();
-      document.getElementById("variable-name-change").style.display = "none";
+      setPercentage();
+      document.getElementById("variable-percentage-change").style.display = "none";
       view.showVariableNameInputForUI(e.target.className);
     }
     if (e.keyCode === 13) {
@@ -495,7 +497,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     }
   })
 
-  document.getElementById("add-measure").addEventListener("click", (e) => {
+  document.getElementById("add-measure").addEventListener("click", () => {
     const measure = document.getElementById("select-measure").value;
     if (measure === "sum" || measure === "mean" || measure === "median") {
       const selectedOutput = document.getElementById(`${measure}-select-output`).value;
