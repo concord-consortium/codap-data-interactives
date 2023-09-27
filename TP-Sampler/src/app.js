@@ -318,6 +318,7 @@ function stopButtonPressed() {
 function resetButtonPressed() {
   this.blur();
   experimentNumber = 0;
+  mostRecentRunNumber = 0;
   codapCom.deleteAll();
   // we used to delete all attributes, and recreate them if we were a collector.
   // we don't do that any more because it seems to take a very long time, and the request
@@ -749,7 +750,7 @@ localeMgr.init().then(() => {
       .catch(codapCom.error);
 
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
-      localeMgr);
+      localeMgr, sortVariablesForSpinner);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
