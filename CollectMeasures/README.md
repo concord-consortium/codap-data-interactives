@@ -12,9 +12,9 @@ http://127.0.0.1:8080/static/dg/en/cert/index.html?di=http://localhost:3000
 
 to see the plugin running in CODAP.
 
-# Create React DayLengthPlugin Readme
+# Create React Collect Measures Readme
 
-This project was bootstrapped with [Create React DayLengthPlugin](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React Collect Measures](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
@@ -55,6 +55,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
-You can learn more in the [Create React DayLengthPlugin documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can learn more in the [Create React Collect Measures documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
