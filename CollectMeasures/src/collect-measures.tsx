@@ -206,8 +206,10 @@ const CollectMeasures = observer(class CollectMeasures extends Component<{}, {
 
     if (this.state.hasError) {
       return <h1>Something went wrong!</h1>
+/*
     } else if (!this.state.isLoaded) {
       return <h1>Loading...</h1>
+*/
     } else if (this.state.showingInfo) {
       return (
         <div>
