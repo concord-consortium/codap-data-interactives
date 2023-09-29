@@ -371,9 +371,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("repeat").addEventListener('input', function (evt) {
     setNumRuns(this.value);
   });
-  document.getElementById("device_name").addEventListener('input', function () {
-    setDeviceName(this.value);
-  });
+
   document.getElementById("speed").addEventListener('input', function (evt) {
     var val = (this.value * 1),
         speed = val || 0.5;
@@ -382,6 +380,16 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   });
 
   let keyPressed = false;
+
+  document.getElementById("device_name").addEventListener("blur", function (e) {
+    setDeviceName(e.target.value);
+  });
+
+  document.getElementById("device_name").addEventListener("keydown", function (e) {
+    if (e.keyCode === 13) {
+      this.blur(e);
+    }
+  });
 
   document.getElementById("variable-name-change").addEventListener("blur", (e) => {
     document.getElementById("variable-name-change").style.display = "none";
