@@ -232,6 +232,7 @@ CodapCom.prototype = {
   addMultipleSamplesToCODAP: function (samples, isCollector, deviceName) {
     var _this = this;
     var oldDeviceName = _this.deviceName;
+    var collectionNames = _this.getCollectionNames();
     if (deviceName !== _this.attrMap["output"].name) {
       _this.attrMap["output"].name = deviceName;
     };
@@ -277,11 +278,67 @@ CodapCom.prototype = {
         });
       });
     } else {
+    // user might have deleted all attributes in collection
+    // if so, create a new collection with attribute, and create items
+    // if not, check if attr exists
+    // if attr exusts, update as normal, else create it first
       codapInterface.sendRequest({
-        action: 'create',
-        resource: getTargetDataSetPhrase() + '.item',
-        values: items
-      });
+        action: "get",
+        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}]`,
+      }).then((res) => {
+        if (!res.success) {
+          codapInterface.sendRequest({
+            action: "create",
+            resource: `dataContext[${targetDataSetName}].collection`,
+            values: {
+              name: collectionNames.items,
+              parent: collectionNames.samples,
+              attrs: [{name: deviceName,title: deviceName}]
+            }
+          }).then((res) => {
+            if (res.success) {
+              codapInterface.sendRequest({
+                action: 'create',
+                resource: getTargetDataSetPhrase() + '.item',
+                values: items
+              });
+            }
+          })
+        } else {
+          codapInterface.sendRequest({
+            action: "get",
+            resource: `dataContext[${targetDataSetName}].collection[items].attributeList`,
+          }).then((res) => {
+            const {values} = res;
+            if (!values.length || !values.find((attr) => attr.name === deviceName)) {
+              codapInterface.sendRequest({
+                action: 'create',
+                resource: `dataContext[${targetDataSetName}].collection[items].attribute`,
+                values: [
+                  {
+                    name: deviceName,
+                    title: deviceName
+                  }
+                ]
+              }).then((res) => {
+                if (res.success) {
+                  codapInterface.sendRequest({
+                    action: 'create',
+                    resource: getTargetDataSetPhrase() + '.item',
+                    values: items
+                  });
+                }
+              })
+            } else {
+              codapInterface.sendRequest({
+                action: 'create',
+                resource: getTargetDataSetPhrase() + '.item',
+                values: items
+              });
+            }
+          });
+        }
+      })
     }
   },
 
@@ -299,7 +356,7 @@ CodapCom.prototype = {
   // not used any more, kept for record-keeping
   deleteAllAttributes: function(device, populateContextsList) {
     var _this = this;
-    var collectionNames = this.getCollectionNames()
+    var collectionNames = this.getCollectionNames();
     codapInterface.sendRequest( {
       action: 'get',
       resource: getTargetDataSetPhrase() + '.collection[' +
