@@ -24,6 +24,7 @@ var width = 205,            // svg units
 
     variableNameInput = document.getElementById("variable-name-change"),
     variablePercentageInput = document.getElementById("variable-percentage-change"),
+    deviceNameInput = document.getElementById("edit-device_name"),
 
     s,
     speed,
@@ -202,6 +203,12 @@ View.prototype = {
     }
   },
 
+  convertSvgCoordsToViewportUnits: function(y) {
+    var viewportHeight = window.innerHeight;
+    var yVh = (y / viewportHeight) * 100;
+    return yVh;
+  },
+
   createSampleSlots: function(device) {
     var sSampleSize = sampleSize >=1? Math.floor(sampleSize): 0,
         x = containerWidth + ((width - containerWidth)),
@@ -223,6 +230,11 @@ View.prototype = {
 
     sampleSlotTargets = [];
     sampleSlots = [];
+
+    // position the device name input just above the first slot
+    const yVh = this.convertSvgCoordsToViewportUnits(y + padding);
+    const offSet = 15;
+    deviceNameInput.style.top = `${offSet + yVh}vh`;
 
     for (var i = 0; i < sSampleSize; i++) {
       var my = y + padding + (slotHeight * i),
