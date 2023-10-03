@@ -129,7 +129,11 @@ CodapCom.prototype = {
           codapInterface.sendRequest(reqs, function(getAttrsResult) {
             getAttrsResult.forEach(res => {
               if (res.success) {
-                _this.attrMap[res.values.name].id = res.values.id;
+                if (res.values.name === _this.attrMap["output"].name) {
+                  _this.attrMap["output"].id = res.values.id;
+                } else {
+                  _this.attrMap[res.values.name].id = res.values.id;
+                }
               }
             });
           });
@@ -622,6 +626,33 @@ CodapCom.prototype = {
         }
       })
   },
+
+  updateDeviceNameInTable: function (name) {
+    const _this = this;
+    codapInterface.sendRequest({
+      action: "get",
+      resource: getTargetDataSetPhrase()
+    }).then((res) => {
+      if (res.success) {
+        codapInterface.sendRequest({
+          action: "update",
+          resource: `dataContext[${targetDataSetName}].collection[items].attribute[${_this.deviceName}]`,
+          values: {
+            "name": name
+          }
+        }).then((res) => {
+          if (res.success) {
+            _this.attrMap["output"].name = name;
+            _this.deviceName = name;
+          } else {
+            console.log(`Error: Could not update the CODAP attribute ${_this.deviceName}`);
+          }
+        });
+      } else {
+        console.log("Error: Could not find the CODAP table");
+      }
+    });
+  }
 };
 
 
