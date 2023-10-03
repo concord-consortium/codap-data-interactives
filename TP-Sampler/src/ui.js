@@ -368,7 +368,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("sample_size").addEventListener('input', function (evt) {
     setSampleSize(this.value);
   });
-  document.getElementById("repeat").addEventListener('input', function (evt) {
+  document.getElementById("repeat").addEventListener("input", function (evt) {
     setNumRuns(this.value);
   });
 
