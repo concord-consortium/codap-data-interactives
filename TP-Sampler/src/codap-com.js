@@ -630,7 +630,7 @@ CodapCom.prototype = {
   updateDeviceNameInTable: function (name) {
     const _this = this;
     codapInterface.sendRequest({
-      action:'get',
+      action: "get",
       resource: getTargetDataSetPhrase()
     }).then((res) => {
       if (res.success) {
