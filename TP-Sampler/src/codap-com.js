@@ -285,7 +285,7 @@ CodapCom.prototype = {
     // user might have deleted all attributes in collection
     // if so, create a new collection with attribute, and create items
     // if not, check if attr exists
-    // if attr exusts, update as normal, else create it first
+    // if attr exists, update as normal, else create it first
       codapInterface.sendRequest({
         action: "get",
         resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}]`,
