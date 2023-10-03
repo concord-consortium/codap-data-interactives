@@ -101,7 +101,6 @@ span {
 }
 
 #edit-device_name {
-  top: 32vh;
   position: absolute;
   display: flex;
   flex-direction: column;

@@ -24,6 +24,7 @@ var width = 205,            // svg units
 
     variableNameInput = document.getElementById("variable-name-change"),
     variablePercentageInput = document.getElementById("variable-percentage-change"),
+    deviceNameInput = document.getElementById("edit-device_name"),
 
     s,
     speed,
@@ -202,6 +203,12 @@ View.prototype = {
     }
   },
 
+  convertSvgCoordsToViewportUnits: function(y) {
+    var viewportHeight = window.innerHeight;
+    var yVh = (y / viewportHeight) * 100;
+    return yVh;
+  },
+
   createSampleSlots: function(device) {
     var sSampleSize = sampleSize >=1? Math.floor(sampleSize): 0,
         x = containerWidth + ((width - containerWidth)),
@@ -223,6 +230,11 @@ View.prototype = {
 
     sampleSlotTargets = [];
     sampleSlots = [];
+
+    // position the device name input just above the first slot
+    const yVh = this.convertSvgCoordsToViewportUnits(y + padding);
+    const offSet = 15;
+    deviceNameInput.style.top = `${offSet + yVh}vh`;
 
     for (var i = 0; i < sSampleSize; i++) {
       var my = y + padding + (slotHeight * i),
@@ -649,6 +661,7 @@ View.prototype = {
   createSpinner: function () {
     var variableLabel, percentageLabel;
     wedgeLabels = [];
+    var _this = this;
     if (uniqueVariables.length === 1) {
       s.circle(spinnerX, spinnerY, spinnerRadius).attr({fill: getVariableColor(0, 0)});
       var labelClipping = s.circle(spinnerX, spinnerY, spinnerRadius);
@@ -715,8 +728,9 @@ View.prototype = {
         var variableHint = Snap.parse('<title>'+ percentString + '%</title>');
         variableLabel.append(variableHint);
         wedgeLabels.push(variableLabel);
-
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
+        var group = s.group(wedge, variableLabel);
+        group.click(this.showVariableNameInput(i, isDraggingVar));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
@@ -755,9 +769,9 @@ View.prototype = {
     }
   },
 
+
   createSpinnerLabel: function (index, x, y, fontSize, clipping, maxLength) {
-    var _this = this,
-      text = `${variables[index]}`,
+    var text = `${variables[index]}`,
       label = s.text(x, y, text).attr({
         fontSize: fontSize,
         textAnchor: "middle",
@@ -765,15 +779,6 @@ View.prototype = {
         dx: getTextShift(text, maxLength),
         clipPath: clipping,
         class: `label ${variables[index]}`,
-      });
-
-      label.click(_this.showVariableNameInput(index));
-
-      label.hover(function() {
-        if (_this.isRunning()) return;
-        this.attr({ fontSize: fontSize + 2, dy: ".26em", });
-      }, function() {
-        this.attr({ fontSize: fontSize, dy: ".25em", });
       });
     return label;
   },
@@ -932,36 +937,47 @@ View.prototype = {
     this.render();
   },
 
-  showVariableNameInput: function (i) {
+  showVariableNameInput: function (i, isDraggingVar) {
     var _this = this;
-    return function() {
+
+    // don't display input if user is dragging the wedge
+    if (isDraggingVar) {
+      variableNameInput.style.display = "none";
+    };
+
+    return function(e) {
       if (_this.isRunning() || device === "collector") return;
+      const loc = this.node.childNodes[1].getBoundingClientRect();
+      const text = variables[i];
+      const width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
+      const xIsWithinBounds = e.x <= loc.x + loc.width && e.x >= loc.x;
+      const yIsWithinBounds = e.y <= loc.y + loc.height && e.y >= loc.y;
+      // only display the input if the user actually clicks on the label
+      if (xIsWithinBounds && yIsWithinBounds) {
+        variableNameInput.style.display = "block";
+        variableNameInput.style.top = (loc.y + loc.height/2) + "px";
+        variableNameInput.style.left = (loc.x) + "px";
+        variableNameInput.style.width = width;
+        variableNameInput.value = text;
+        variableNameInput.className = variables[i],
+        variableNameInput.focus();
 
-      var loc = this.node.getBoundingClientRect(),
-          text = variables[i],
-          width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
-      variableNameInput.style.display = "block";
-      variableNameInput.style.top = (loc.y + loc.height/2) + "px";
-      variableNameInput.style.left = (loc.x) + "px";
-      variableNameInput.style.width = width;
-      variableNameInput.value = text;
-      variableNameInput.className = variables[i],
-      variableNameInput.focus();
-
-      editingVariable = i;
-      if (device == "mixer" || device == "collector") {
-        variables[editingVariable] = "";
-      } else {
-        var v = variables[editingVariable];
-        editingVariable = [];
-        for (var j = 0, jj = variables.length; j < jj; j++) {
-          if (variables[j] === v) {
-            // variables[j] = " ";
-            editingVariable.push(j);
+        editingVariable = i;
+        if (device == "mixer" || device == "collector") {
+          variables[editingVariable] = "";
+        } else {
+          var v = variables[editingVariable];
+          editingVariable = [];
+          for (var j = 0, jj = variables.length; j < jj; j++) {
+            if (variables[j] === v) {
+              editingVariable.push(j);
+            }
           }
         }
+        _this.render();
+      } else {
+        return;
       }
-      _this.render();
     };
   },
 
@@ -1001,7 +1017,6 @@ View.prototype = {
       editingVariable = [];
       for (var j = 0, jj = variables.length; j < jj; j++) {
         if (variables[j] === v) {
-          // variables[j] = " ";
           editingVariable.push(j);
         }
       }
@@ -1044,7 +1059,6 @@ View.prototype = {
       editingVariable = [];
       for (var j = 0, jj = variables.length; j < jj; j++) {
         if (variables[j] === v) {
-          // variables[j] = " ";
           editingVariable.push(j);
         }
       }
@@ -1075,7 +1089,6 @@ View.prototype = {
         editingVariable = [];
         for (var j = 0, jj = variables.length; j < jj; j++) {
           if (variables[j] === v) {
-            // variables[j] = " ";
             editingVariable.push(j);
           }
         }
@@ -1097,7 +1110,9 @@ View.prototype = {
       }
       uniqueVariables = [...new Set(variables)];
       variableNameInput.style.display = "none";
-      this.sortVariables();
+      if (device === "spinner") {
+        this.sortVariables();
+      }
       this.render();
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
