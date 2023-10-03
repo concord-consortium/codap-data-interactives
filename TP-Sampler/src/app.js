@@ -558,6 +558,7 @@ function setNumRuns(n) {
 }
 
 function setDeviceName(name) {
+  codapCom.updateDeviceNameInTable(name);
   deviceName = name;
   view.render();
   updateRunButtonMode();
