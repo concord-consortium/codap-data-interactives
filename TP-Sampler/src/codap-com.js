@@ -316,7 +316,7 @@ CodapCom.prototype = {
             const {values} = res;
             if (!values.length || !values.find((attr) => attr.name === deviceName)) {
               codapInterface.sendRequest({
-                action: 'create',
+                action: "create",
                 resource: `dataContext[${targetDataSetName}].collection[items].attribute`,
                 values: [
                   {
