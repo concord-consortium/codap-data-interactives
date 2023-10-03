@@ -327,16 +327,16 @@ CodapCom.prototype = {
               }).then((res) => {
                 if (res.success) {
                   codapInterface.sendRequest({
-                    action: 'create',
-                    resource: getTargetDataSetPhrase() + '.item',
+                    action: "create",
+                    resource: getTargetDataSetPhrase() + ".item",
                     values: items
                   });
                 }
               })
             } else {
               codapInterface.sendRequest({
-                action: 'create',
-                resource: getTargetDataSetPhrase() + '.item',
+                action: "create",
+                resource: getTargetDataSetPhrase() + ".item",
                 values: items
               });
             }
