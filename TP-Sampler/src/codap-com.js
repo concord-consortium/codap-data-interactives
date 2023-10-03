@@ -634,7 +634,6 @@ CodapCom.prototype = {
       resource: getTargetDataSetPhrase()
     }).then((res) => {
       if (res.success) {
-        console.log({res}, name);
         codapInterface.sendRequest({
           action: "update",
           resource: `dataContext[${targetDataSetName}].collection[items].attribute[${_this.deviceName}]`,
