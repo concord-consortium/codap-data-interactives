@@ -302,7 +302,7 @@ CodapCom.prototype = {
           }).then((res) => {
             if (res.success) {
               codapInterface.sendRequest({
-                action: 'create',
+                action: "create",
                 resource: getTargetDataSetPhrase() + '.item',
                 values: items
               });
