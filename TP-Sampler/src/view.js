@@ -970,7 +970,6 @@ View.prototype = {
           editingVariable = [];
           for (var j = 0, jj = variables.length; j < jj; j++) {
             if (variables[j] === v) {
-              // variables[j] = " ";
               editingVariable.push(j);
             }
           }
@@ -1018,7 +1017,6 @@ View.prototype = {
       editingVariable = [];
       for (var j = 0, jj = variables.length; j < jj; j++) {
         if (variables[j] === v) {
-          // variables[j] = " ";
           editingVariable.push(j);
         }
       }
@@ -1061,7 +1059,6 @@ View.prototype = {
       editingVariable = [];
       for (var j = 0, jj = variables.length; j < jj; j++) {
         if (variables[j] === v) {
-          // variables[j] = " ";
           editingVariable.push(j);
         }
       }
@@ -1092,7 +1089,6 @@ View.prototype = {
         editingVariable = [];
         for (var j = 0, jj = variables.length; j < jj; j++) {
           if (variables[j] === v) {
-            // variables[j] = " ";
             editingVariable.push(j);
           }
         }
