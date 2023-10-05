@@ -317,7 +317,7 @@ function stopButtonPressed() {
 
 function resetButtonPressed() {
   this.blur();
-  experimentNumber = 0;
+  experimentNumber = 1;
   mostRecentRunNumber = 0;
   codapCom.deleteAll();
   // we used to delete all attributes, and recreate them if we were a collector.
