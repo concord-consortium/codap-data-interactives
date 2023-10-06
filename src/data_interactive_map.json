@@ -885,7 +885,19 @@
       "description": "Computes the day length for a year for any place in the world",
       "width": 350,
       "height": 450,
-      "path": "https://codap.concord.org/~bfinzer/day_length/",
+      "path": "/DayLength/build/",
+      "visible": "true",
+      "categories": [
+        "Generators",
+        "Tools"
+      ]
+    },
+    {
+      "title": "Collect Measures",
+      "description": "With a data set containing randomly generated values, re-randomize and collect measures repeatedly.",
+      "width": 350,
+      "height": 450,
+      "path": "/CollectMeasures/build/",
       "visible": "true",
       "categories": [
         "Generators",

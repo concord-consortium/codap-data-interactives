@@ -1,0 +1,4 @@
+npm run build
+rm -rf day_length
+mv build day_length
+rsync -av day_length codap-server.concord.org:public_html

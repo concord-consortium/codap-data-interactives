@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cm-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-header > p {
+  margin-block: 5px;
+}
+
+.cm-title-with-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cm-title-with-icon > h2 {
+  margin-block: 5px;
+}
+
+.cm-info {
+  font-size: smaller;
+}
+
+.cm-info > h3 {
+  margin-block: 5px;
+}
+
+.cm-info > p {
+  margin-block: 5px;
+}
+
+.cm-info > ul {
+  margin-block: 5px;
+}
+
+code {
+  font-size: initial;
+}
+
+.cm-info-icon {
+  cursor: pointer;
+}
+
+.collect-measures {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  gap: 5px;
+}
+
+.cm-two-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cm-number-box {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+button {
+  cursor: pointer;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: #666;
+}

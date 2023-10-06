@@ -1,0 +1,4 @@
+npm run build
+rm -rf collect_measures
+mv build collect_measures
+rsync -av collect_measures codap-server.concord.org:public_html
