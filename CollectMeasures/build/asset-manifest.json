@@ -1,0 +1,16 @@
+{
+  "main.css": "./static/css/main.ae58ab1b.chunk.css",
+  "main.js": "./static/js/main.0ef198cc.chunk.js",
+  "main.js.map": "./static/js/main.0ef198cc.chunk.js.map",
+  "runtime~main.js": "./static/js/runtime~main.8c97409f.js",
+  "runtime~main.js.map": "./static/js/runtime~main.8c97409f.js.map",
+  "static/css/2.fee577bf.chunk.css": "./static/css/2.fee577bf.chunk.css",
+  "static/js/2.73e77fe5.chunk.js": "./static/js/2.73e77fe5.chunk.js",
+  "static/js/2.73e77fe5.chunk.js.map": "./static/js/2.73e77fe5.chunk.js.map",
+  "index.html": "./index.html",
+  "precache-manifest.43c6633c4d20d9ed060c55e0bea89e99.js": "./precache-manifest.43c6633c4d20d9ed060c55e0bea89e99.js",
+  "service-worker.js": "./service-worker.js",
+  "static/css/2.fee577bf.chunk.css.map": "./static/css/2.fee577bf.chunk.css.map",
+  "static/css/main.ae58ab1b.chunk.css.map": "./static/css/main.ae58ab1b.chunk.css.map",
+  "static/media/dx.light.compact.css": "./static/media/dxicons.ecaddb09.woff2"
+}
