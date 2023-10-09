@@ -14,7 +14,6 @@
 
     <script type="text/javascript" src="../lib/vue.min.js"></script>
     <script type="text/javascript" src="../lib/NexusUI.js"></script>
-    <script type="text/javascript" src="../lib/dtm.min.js"></script>
 
     <link rel="stylesheet" href="../common/styles.css">
 
@@ -32,14 +31,6 @@
                 <label for="loop-toggle">Loop</label>
                 <span id="loop-toggle"></span>
             </div>
-            <div class="controller-container" title="Enable periodic click sound">
-                <label for="click-toggle">Click</label>
-                <span id="click-toggle"></span>
-            </div>
-<!--            <div class="controller-container">-->
-<!--                <label for="click-toggle">Sync</label>-->
-<!--                <span id="sync-toggle"></span>-->
-<!--            </div>-->
             <div class="controller-container" title="Adjust playback speed">
                 <label for="speed-slider">Speed</label>
                 <span id="speed-slider" title="Control the speed of playback"></span>
@@ -67,7 +58,7 @@
             Pitch
             <label title="Select attribute controlling pitch">
                 <select v-model="state.pitchAttribute" v-on:change="onPitchAttributeSelectedByUI" class="drop-area" id="pitchAttrDropArea">
-                    <option selected value="" >-----</option>
+                    <option selected value="NULL" >-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
                     <option v-if="globals.length" disabled>──────────</option>
                     <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
@@ -88,7 +79,7 @@
             Time
             <label title="Select the attribute controlling the sequence of samples played">
                 <select v-model="state.timeAttribute" v-on:change="onTimeAttributeSelectedByUI" class="drop-area" id="timeAttrDropArea">
-                    <option selected value="">-----</option>
+                    <option selected value="NULL">-----</option>
                     <option v-for="attribute in attributes">{{attribute}}</option>
                     <option v-if="globals.length" disabled>──────────</option>
                     <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>
@@ -181,7 +172,7 @@
 <!--                </select>-->
 <!--            </label>-->
 <!--        </div>-->
-        <div class="mapper-container" title="Select case-selection mode">
+        <!-- <div class="mapper-container" title="Select case-selection mode">
             Case selection mode
             <label>
                 <select v-model="state.selectionMode" v-on:change="onSelectionModeSelectedByUI">
@@ -189,7 +180,18 @@
                     <option v-for="mode in selectionModes">{{mode}}</option>
                 </select>
             </label>
+        </div> -->
+
+        <div class="mapper-container" v-on:click="onBackgroundSelect" v-if="connectByAvailable">
+            Connect cases by
+            <label title="Select collection to connect cases by">
+                <select v-model="state.focusedCollection" v-on:change="onConnectByCollectionSelectedByUI" class="drop-area" id="connectByCollDropArea">
+                    <option selected value="NULL" >-----</option>
+                    <option v-for="collection in collections">{{collection}}</option>
+                </select>
+            </label>
         </div>
+
         <div class="mapper-container">
             <button :disabled="!isPlayable" v-on:click="createGraph">create graph</button>
         </div>

@@ -28,7 +28,7 @@ kphase phasor gkfreq, p4
 chnset kphase, "phase"
 
 kclick chnget "click" ; The click instrument is enabled by the app and is either 0 or 1.
-iphasesubdiv = 3 ; A playback cycle is equally divided into 3 phase "regions."
+iphasesubdiv = 1 ; A playback cycle is equally divided into 3 phase "regions."
 ktrig = trigger((kphase * iphasesubdiv) % 1, 0.5, 1) ; Trigger the click 3 times per cycle.
 knumclicks = floor(kphase * iphasesubdiv) + 1 ; Each time triggered, the click may quickly repeat N times.
 
@@ -41,7 +41,7 @@ if kclick == 1 && (ktrig == 1 || kphase == 0) then
 endif
 endin
 
-; The SOFT Instrument actually creates sounds
+; The SOFT, HARD, etc. instruments actually create sounds
 instr 2, SOFT
 iatk = 0.002
 knotenum = scale(p4, 110, 55)
@@ -62,9 +62,23 @@ asig oscil aenv, cpsmidinn(knotenum), 1
 zawm asig, gimixch
 endin
 
+instr 4, CONTINUOUS
+innmin = 55
+innmax = 110
+innrange = innmax - innmin
+
+innstart = p5 * innrange + innmin
+innend = p6 * innrange + innmin
+knotenum line innstart, p7, innend
+igain = 0.1 * p4
+
+asig oscil igain, cpsmidinn(knotenum), -1, -1
+zawm asig, gimixch
+endin
+
 ; The CLICK instrument creates a click event every time the metronome triggers
 ; a restart
-instr 4, CLICK
+instr 5, CLICK
 aenv = expseg(0.2, p3, 0.001)
 asig noise aenv, 0
 outs asig, asig
