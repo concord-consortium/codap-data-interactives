@@ -21,6 +21,7 @@ var width = 205,            // svg units
     spinnerY = containerY + (containerHeight/2),
     darkTeal = "#008cba",
     lightBlue = "#dbf6ff",
+    viewportHeight = 375,
 
     variableNameInput = document.getElementById("variable-name-change"),
     variablePercentageInput = document.getElementById("variable-percentage-change"),
@@ -195,7 +196,7 @@ View.prototype = {
     document.getElementById("speed").value = sliderSpeed;
     document.getElementById("speed-text").innerHTML = this.getSpeedText(sliderSpeed);
 
-    this.createSampleSlots(device);
+    this.createSampleSlots();
     if (device === "mixer" || device === "collector") {
       this.createMixer();
     } else {
@@ -203,13 +204,7 @@ View.prototype = {
     }
   },
 
-  convertSvgCoordsToViewportUnits: function(y) {
-    var viewportHeight = window.innerHeight;
-    var yVh = (y / viewportHeight) * 100;
-    return yVh;
-  },
-
-  createSampleSlots: function(device) {
+  createSampleSlots: function() {
     var sSampleSize = sampleSize >=1? Math.floor(sampleSize): 0,
         x = containerWidth + ((width - containerWidth)),
         centerY = containerY + (containerHeight/2),
@@ -232,7 +227,7 @@ View.prototype = {
     sampleSlots = [];
 
     // position the device name input just above the first slot
-    const yVh = this.convertSvgCoordsToViewportUnits(y + padding);
+    const yVh = ((y + padding) / viewportHeight) * 100;
     const offSet = 15;
     deviceNameInput.style.top = `${offSet + yVh}vh`;
 
