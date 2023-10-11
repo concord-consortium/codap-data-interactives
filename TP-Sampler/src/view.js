@@ -755,7 +755,7 @@ View.prototype = {
             fill: "none",
             stroke: "#fff",
             strokeWidth: i === ii - 1 ? 0.5 : 1,
-          });
+          }).attr({cursor: isDraggingVar ? "grabbing" : "pointer"});
 
           // push wedge obj to wedges array only if we are in the last instance of the variable - otherwise we'll have repeats
           wedges.push(wedgeObj);
