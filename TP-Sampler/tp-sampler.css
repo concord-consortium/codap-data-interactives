@@ -262,9 +262,9 @@ text:hover{
 
 #model-cover {
   position: absolute;
-  left: 1vh;
+  left: 3vh;
   top: 21.2vh;
-  width: 37.5vh;
+  width: 45vh;
   height: 65.5vh;
   z-index: 2;
   background-color: #F0F0F0;
@@ -277,15 +277,18 @@ text:hover{
 #spinner-cover {
   position: absolute;
   left: 3vh;
-  top: 32.2vh;
-  width: 37.5vh;
-  height: 54.6vh;
+  top: 21.2vh;
+  width: 45vh;
+  height: 65.6vh;
   z-index: 2;
   background-color: white;
 }
 
 #spinner-cover img {
-  width: 100%;
+  width: 37.5vh;
+  position: relative;
+  top: 11vh;
+  left: 4vh;
 }
 
 #measures {
