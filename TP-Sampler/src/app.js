@@ -558,11 +558,13 @@ function setNumRuns(n) {
 }
 
 function setDeviceName(name) {
-  codapCom.updateDeviceNameInTable(name);
-  deviceName = name;
-  view.render();
-  updateRunButtonMode();
-  codapCom.logAction("setDeviceName: %@", name);
+  if (name) {
+    codapCom.updateDeviceNameInTable(name);
+    codapCom.logAction("setDeviceName: %@", name);
+    deviceName = name;
+    view.render();
+    updateRunButtonMode();
+  }
 }
 
 function setMeasureName(name) {
