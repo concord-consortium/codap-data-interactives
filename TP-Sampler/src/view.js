@@ -1177,22 +1177,29 @@ View.prototype = {
 
     var {newPcts, newPctsMap} = this.getNewPcts(newPct, oldPct, selectedVar, lastOrNext);
 
-    // find new common denominator to distribute whole number of mixer balls to each variable
-    var commonDenom = findCommonDenominator([newPct, ...newPcts]);
-
     // create new array
     let newVariables = [];
-
-    // add new amounts of variables to new array following order of variables in original array
-    uniqueVariables.forEach(varName => {
-      if (varName === selectedVar) {
-        var newNum = findEquivNum(newPct, commonDenom);
-        newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
-      } else {
-        var newNum = findEquivNum(newPctsMap[varName], commonDenom);
-        newVariables.push(...Array.from({ length: newNum }, () => varName));
-      }
-    });
+    // special case for dealing with 2 variables and reducing thirds
+    if (uniqueVariables.length === 2 && (newPct === 33 || newPcts.includes(33))) {
+      const otherVar = uniqueVariables.find(v => v !== selectedVar);
+      const varWith33 = newPct === 33 ? selectedVar : otherVar;
+      const varWith67 = newPct === 33 ? otherVar : selectedVar;
+      newVariables.push(...Array.from({ length: 1 }, () => varWith33));
+      newVariables.push(...Array.from({ length: 2 }, () => varWith67));
+    } else {
+      // find new common denominator to distribute whole number of mixer balls to each variable
+      var commonDenom = findCommonDenominator([newPct, ...newPcts]);
+      // add new amounts of variables to new array following order of variables in original array
+      uniqueVariables.forEach(varName => {
+        if (varName === selectedVar) {
+          var newNum = findEquivNum(newPct, commonDenom);
+          newVariables.push(...Array.from({ length: newNum }, () => selectedVar));
+        } else {
+          var newNum = findEquivNum(newPctsMap[varName], commonDenom);
+          newVariables.push(...Array.from({ length: newNum }, () => varName));
+        }
+      });
+    }
 
     // clear original array and add new one
     variables.splice(0, variables.length);

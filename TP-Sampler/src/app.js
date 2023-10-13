@@ -195,7 +195,30 @@ function getNextVariable() {
 function addVariable() {
   this.blur();
   if (running) return;
-  variables.push(getNextVariable());
+  if (device === "spinner") {
+    const newFraction = 1 / (uniqueVariables.length + 1);
+    const pctMap = uniqueVariables.map((v) => {
+      const currentPct = (variables.filter((variable) => variable === v).length / variables.length) * 100;
+      const amtToSubtract = currentPct * newFraction;
+      return {variable: v, pct: Math.round(currentPct - amtToSubtract)};
+    });
+    pctMap.push({variable: getNextVariable(), pct: Math.round(newFraction * 100)});
+    let discrepancy = 100 - pctMap.reduce((sum, v) => sum + v.pct, 0);
+    while (discrepancy !== 0) {
+      const sign = discrepancy > 0 ? 1 : -1;
+      const index = Math.floor(Math.random() * pctMap.length);
+      pctMap[index].pct += sign;
+      discrepancy -= sign;
+    }
+    const lcd = utils.findCommonDenominator(pctMap.map((v) => v.pct));
+    variables.splice(0, variables.length);
+    pctMap.forEach((vPct) => {
+      const newNum = utils.findEquivNum(vPct.pct, lcd);
+      variables.push(...Array.from({ length: newNum }, () => vPct.variable));
+    })
+  } else {
+    variables.push(getNextVariable());
+  }
   uniqueVariables = [...new Set(variables)];
   view.render();
   ui.enable("remove-variable");
