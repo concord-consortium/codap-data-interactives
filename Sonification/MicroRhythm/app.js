@@ -90,7 +90,7 @@ const app = new Vue({
             stereoAttribute: "",
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
-            connectByAttribute: "",
+            connectByCollIds: null,
             playbackSpeed: 0.5,
             loop: false,
             selectionMode: FOCUS_MODE,
@@ -101,7 +101,6 @@ const app = new Vue({
         attributes: null,
 
         connectByAvailable: true,
-        connectByCollIds: null,
 
         globals: [],
 
@@ -309,8 +308,13 @@ const app = new Vue({
                 // not milliseconds. Normally this adjustment is automatic.
                 // In order for the sonification tracker to align with the
                 // data we need to take this obscurity into account
-                let timeAdj = this.state.timeAttrIsDate? 1000: 1;
-                let dataTime = scale(cyclePos, this.timeAttrRange.max / timeAdj,
+                const timeAdj = this.state.timeAttrIsDate? 1000: 1;
+
+                // Except in the CONNECT mode, the note events (time offsets)
+                // are slightly compressed to end the last note event at time=1.
+                const modeAdj = this.state.selectionMode === CONNECT_MODE ? 1 : (this.timeAttrRange.len - 1) / this.timeAttrRange.len;
+
+                const dataTime = scale(cyclePos / modeAdj, this.timeAttrRange.max / timeAdj,
                     this.timeAttrRange.min / timeAdj);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
@@ -435,7 +439,7 @@ const app = new Vue({
                 this.state.selectionMode = CONNECT_MODE
                 const context = helper.data[this.state.focusedContext];
                 const collection = context?.[this.state.focusedCollection];
-                this.connectByCollIds = collection?.map(c => c.id);
+                this.state.connectByCollIds = collection?.map(c => c.id);
             }
 
             this.onSelectionModeSelectedByUI()
@@ -448,9 +452,7 @@ const app = new Vue({
         reselectCases() {
             this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
-        onCsdFileSelected() {
 
-        },
         onGetData() {
             this.contexts = helper.getContexts();
             if (this.contexts && this.contexts.length === 1) {
@@ -589,6 +591,7 @@ const app = new Vue({
                         if (selectionMode === CONTRAST_MODE) {
                             const idItemMap = allItems.reduce((acc, curr) => {
                                 const value = this.state.timeAttrIsDate ? Date.parse(curr.values[timeAttribute]) : curr.values[timeAttribute];
+                                // The last event's time offset should be `(1 - event duration)`.
                                 const valueScaled = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
                                 acc[curr.id] = { id: curr.id, val: valueScaled, sel: false };
                                 return acc;
@@ -599,7 +602,8 @@ const app = new Vue({
                         } else if (selectionMode === CONNECT_MODE) {
                             this.timeArray = allItems.map(c => {
                                 let value = timeAttrIsDate ? Date.parse(c.values[timeAttribute]) : c.values[timeAttribute];
-                                value = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
+                                // The last event's time offset should be 1.
+                                value = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range;
                                 const parent = connectedCasesById?.[c.id].parent;
                                 const selected = selectedItemIdsSet.has(c.id);
                                 return { id: c.id, val: value, parent, selected };
@@ -668,7 +672,7 @@ const app = new Vue({
 
             if (selectionMode === CONNECT_MODE) {
                 const pitchArrayById = this.pitchArray.reduce((res, v) => (res[v.id] = v, res), {});
-                this.connectByCollIds.forEach(id => {
+                this.state.connectByCollIds.forEach(id => {
                     const timeArrayForGroup = this.timeArray.filter(v => v.parent === id);
 
                     for (let i = 0; i < timeArrayForGroup.length - 1; i++) {
@@ -681,8 +685,13 @@ const app = new Vue({
 
                         const unmute = timeArrayForGroup[i].selected ? 1 : 0;
 
+                        // The last event of the group should not "hold" the note
+                        // as there might be other groups (voices) that would play
+                        // past the endTime, resulting in an incorrectly held note.
+                        const hold = (i === timeArrayForGroup.length - 2) ? timeDelta : -1;
+
                         if (![startTime, timeDelta, startPitch, endPitch].some(isNaN)) {
-                            csound.Event(`i 4.${id} ${startTime} -1 ${unmute} ${startPitch} ${endPitch} ${timeDelta}`);
+                            csound.Event(`i 4.${id} ${startTime} ${hold} ${unmute} ${startPitch} ${endPitch} ${timeDelta}`);
                         }
                     }
                 });
@@ -827,10 +836,10 @@ const app = new Vue({
                             });
                         });
                     } else {
-                        helper.queryDataForContext(contextName).then();
+                        helper.queryDataForContext(contextName);
                     }
                 } else if (contextName === DATAMOVES_CONTROLS_DATA.name) {
-                    helper.queryDataForContext(contextName).then();
+                    helper.queryDataForContext(contextName);
                 } else if (operation === 'updateDataContext') {
                     helper.queryContextList()
                         .then(() => {this.contexts = helper.getContexts();});
@@ -906,7 +915,7 @@ const app = new Vue({
         }
     },
     mounted() {
-        // this.setupDrag();
+        this.setupDrag();
         this.setupUI();
 
         helper.init(this.name, this.dim, this.version)
@@ -925,7 +934,7 @@ const app = new Vue({
 
         this.selectedCsd = this.csdFiles[0];
 
-        if (this.state.selectionMode === CONTRAST_MODE) {
+        if ([CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode)) {
             this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
         } else {
             this.getSelectedItems = helper.getSelectedItems.bind(helper);
