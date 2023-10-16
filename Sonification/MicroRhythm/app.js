@@ -20,6 +20,21 @@ function expcurve(x,y) {
     return (Math.exp(x * Math.log(y)) - 1) / (y-1)
 }
 
+function flattenGroupedArrays (data) {
+    if (Array.isArray(data)) {
+        return data;
+    } else {
+        return Object.values(data).flatMap(flattenGroupedArrays);
+    }
+}
+
+function hashMapById (array) {
+    return array.reduce((result, item) => {
+        result[item.id] = item;
+        return result;
+    }, {});
+}
+
 const PLAY_TOGGLE_IDLE = false;
 const PLAY_TOGGLE_PLAYING = true;
 
@@ -42,12 +57,15 @@ const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
 const FOCUS_MODE = 'Focus';
 const CONTRAST_MODE = 'Contrast';
+const CONNECT_MODE = 'Connect';
+
+const UNSELECT_VALUE = 'NULL';
 
 const app = new Vue({
     el: '#app',
     data: {
         name: 'Sonify',
-        version: 'v0.2.8',
+        version: 'v0.3.1',
         dim: {
             width: 285,
             height: 385
@@ -56,6 +74,7 @@ const app = new Vue({
         // state managed by CODAP
         state: {
             focusedContext: "",
+            focusedCollection: "",
             pitchAttribute: "",
             pitchAttrIsDate: false,
             pitchAttrIsDescending: false,
@@ -71,16 +90,18 @@ const app = new Vue({
             stereoAttribute: "",
             stereoAttrIsDate: false,
             stereoAttrIsDescending: false,
+            connectByCollIds: null,
             playbackSpeed: 0.5,
             loop: false,
-            click: false,
             selectionMode: FOCUS_MODE,
         },
         data: null,
         contexts: null, // array of context names
         collections: null,
         attributes: null,
-        focusedCollection: null,
+
+        connectByAvailable: true,
+
         globals: [],
 
         pitchAttrRange: null,
@@ -109,12 +130,11 @@ const app = new Vue({
 
         speedSlider: null,
         loopToggle: null,
-        clickToggle: null,
         userMessage: 'Select a dataset, pitch and time and click Play',
         timerId: null,
         phase: 0,
         cycleEndTimerId: null,
-        selectionModes: [FOCUS_MODE, CONTRAST_MODE],
+        selectionModes: [FOCUS_MODE, CONNECT_MODE],
     },
     watch: {
         state: {
@@ -168,17 +188,6 @@ const app = new Vue({
                 }
             });
 
-            this.clickToggle = new Nexus.Toggle('#click-toggle', {
-                size: [40, 20],
-                state: this.state.click
-            });
-
-            this.clickToggle.on('change', v => {
-                this.state.click = v;
-                if (this.csoundReady) {
-                    csound.SetChannel('click', v ? 1 : 0);
-                }
-            });
             this.speedSlider = new Nexus.Slider('#speed-slider', {
                 size: [200, 20],
                 mode: 'absolute',
@@ -299,8 +308,13 @@ const app = new Vue({
                 // not milliseconds. Normally this adjustment is automatic.
                 // In order for the sonification tracker to align with the
                 // data we need to take this obscurity into account
-                let timeAdj = this.state.timeAttrIsDate? 1000: 1;
-                let dataTime = scale(cyclePos, this.timeAttrRange.max / timeAdj,
+                const timeAdj = this.state.timeAttrIsDate? 1000: 1;
+
+                // Except in the CONNECT mode, the note events (time offsets)
+                // are slightly compressed to end the last note event at time=1.
+                const modeAdj = this.state.selectionMode === CONNECT_MODE ? 1 : (this.timeAttrRange.len - 1) / this.timeAttrRange.len;
+
+                const dataTime = scale(cyclePos / modeAdj, this.timeAttrRange.max / timeAdj,
                     this.timeAttrRange.min / timeAdj);
                 helper.setGlobal(trackingGlobalName, dataTime);
             }
@@ -310,7 +324,7 @@ const app = new Vue({
             this.state.pitchAttrRange = this.timeAttrRange = null;
         },
         onContextFocused() {
-            // this.attributes = null;
+            this.collections = helper.getCollectionsForContext(this.state.focusedContext);
             this.attributes = helper.getAttributesForContext(this.state.focusedContext);
 
             this.resetPitchTimeMaps();
@@ -416,6 +430,20 @@ const app = new Vue({
             this.processMappedAttribute('stereo');
             this.recordToMoveRecorder('stereo');
         },
+        onConnectByCollectionSelectedByUI() {
+            this.setUserMessage(this.state.focusedCollection?"ConnectBy collection selected...":"Please select collection for grouping");
+
+            if (this.state.focusedCollection === UNSELECT_VALUE) {
+                this.state.selectionMode = FOCUS_MODE
+            } else {
+                this.state.selectionMode = CONNECT_MODE
+                const context = helper.data[this.state.focusedContext];
+                const collection = context?.[this.state.focusedCollection];
+                this.state.connectByCollIds = collection?.map(c => c.id);
+            }
+
+            this.onSelectionModeSelectedByUI()
+        },
 
         checkIfGlobal(attr) {
             return this.globals.some(g => g.name === attr);
@@ -424,9 +452,7 @@ const app = new Vue({
         reselectCases() {
             this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
         },
-        onCsdFileSelected() {
 
-        },
         onGetData() {
             this.contexts = helper.getContexts();
             if (this.contexts && this.contexts.length === 1) {
@@ -444,6 +470,17 @@ const app = new Vue({
                         }
                     })
                 });
+
+                // Re-populate the collections dropdown.
+                const collections = helper.getCollectionsForContext(this.state.focusedContext);
+
+
+                // Filter out the collections with the size of items (the leaf nodes).
+                const itemsLength = helper.items[this.state.focusedContext].length;
+                this.collections = collections.filter((collection) => helper.data[this.state.focusedContext][collection]?.length !== itemsLength);
+
+                // Do not show the "connect by" dropdown UI if there are not hierarchies / collections.
+                this.connectByAvailable = !!this.collections?.length;
             }
         },
         onGetGlobals() {
@@ -487,28 +524,18 @@ const app = new Vue({
                 let range = this[`${param}AttrRange`].max - this[`${param}AttrRange`].min;
 
                 if (range === 0) {
-                    this[`${param}Array`] = items.map(c => {
-                        return { id: c.id, val: 0.5 };
-                    });
+                    this[`${param}Array`] = items.map(c => ({ id: c.id, val: 0.5 }));
                 } else {
                     if (this.checkIfGlobal(this.state[`${param}Attribute`])) {
                         let global = this.globals.find(g => g.name === this.state[`${param}Attribute`]);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
-                        this[`${param}Array`] = items.map(c => {
-                            return {
-                                id: c.id,
-                                val: value
-                            }
-                        })
+                        this[`${param}Array`] = items.map(c => ({ id: c.id, val: value }));
                     } else {
                         this[`${param}Array`] = items.map(c => {
                             let value = this.state[`${param}AttrIsDate`] ? Date.parse(c.values[this.state[`${param}Attribute`]]) : c.values[this.state[`${param}Attribute`]];
-
-                            return {
-                                id: c.id,
-                                val: isNaN(parseFloat(value)) ? NaN : (value-this[`${param}AttrRange`].min)/range
-                            };
+                            value = isNaN(parseFloat(value)) ? NaN : (value-this[`${param}AttrRange`].min)/range;
+                            return { id: c.id, val: value };
                         });
                     }
                 }
@@ -516,56 +543,76 @@ const app = new Vue({
         },
 
         onItemsSelected(items) {
-            const allItems = helper.getItemsForContext(this.state.focusedContext)
+            const { selectionMode, timeAttrIsDate, timeAttribute } = this.state;
+
+            // TODO: Does this only include all the leaf nodes or also the grouping nodes? Double check.
+            const allItems = helper.getItemsForContext(this.state.focusedContext);
+
+            let connectedCasesById
+            let selectedItemIdsSet
+
+            if (selectionMode === CONNECT_MODE) {
+                const context = helper.data[this.state.focusedContext];
+                const flattenedGroupedCases = flattenGroupedArrays(context);
+                connectedCasesById = hashMapById(flattenedGroupedCases);
+                selectedItemIdsSet = new Set(items.map(item => item.id));
+
+                if (timeAttrIsDate) {
+                    allItems.sort((a, b) => Date.parse(a.values[timeAttribute]) - Date.parse(b.values[timeAttribute]));
+                } else {
+                    allItems.sort((a, b) => a.values[timeAttribute] - b.values[timeAttribute]);
+                }
+            }
 
             if (this.timeAttrRange) {
                 let range = this.timeAttrRange.max - this.timeAttrRange.min;
 
                 if (range === 0) {
-                    if (this.state.selectionMode === CONTRAST_MODE) {
+                    if (selectionMode === CONTRAST_MODE) {
                         const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: 0, sel: false }, acc), {});
                         items.forEach(c => idItemMap[c.id].sel = true);
                         this.timeArray = Object.values(idItemMap);
                     } else {
-                        this.timeArray = items.map(c => {
-                            return { id: c.id, val: 0 };
-                        });
+                        this.timeArray = items.map(c => ({ id: c.id, val: 0 }));
                     }
                 } else {
-                    if (this.checkIfGlobal(this.state.timeAttribute)) {
-                        let global = this.globals.find(g => g.name === this.state.timeAttribute);
+                    if (this.checkIfGlobal(timeAttribute)) {
+                        let global = this.globals.find(g => g.name === timeAttribute);
                         let value = (global.value > 1) ? 1 : ((global.value < 0) ? 0 : global.value);
 
-                        if (this.state.selectionMode === CONTRAST_MODE) {
+                        if (selectionMode === CONTRAST_MODE) {
                             const idItemMap = allItems.reduce((acc, curr) => (acc[curr.id] = { id: curr.id, val: value, sel: false }, acc), {});
                             items.forEach(c => idItemMap[c.id].sel = true);
                             this.timeArray = Object.values(idItemMap);
                         } else {
-                            this.timeArray = items.map(c => {
-                                return {
-                                    id: c.id,
-                                    val: value
-                                }
-                            });
+                            this.timeArray = items.map(c => ({ id: c.id, val: value }));
                         }
                     } else {
-                        if (this.state.selectionMode === CONTRAST_MODE) {
+                        if (selectionMode === CONTRAST_MODE) {
                             const idItemMap = allItems.reduce((acc, curr) => {
-                                const value = this.state.timeAttrIsDate ? Date.parse(curr.values[this.state.timeAttribute]) : curr.values[this.state.timeAttribute];
+                                const value = this.state.timeAttrIsDate ? Date.parse(curr.values[timeAttribute]) : curr.values[timeAttribute];
+                                // The last event's time offset should be `(1 - event duration)`.
                                 const valueScaled = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
                                 acc[curr.id] = { id: curr.id, val: valueScaled, sel: false };
-                                return acc
+                                return acc;
                             }, {});
 
                             items.forEach(c => idItemMap[c.id].sel = true);
                             this.timeArray = Object.values(idItemMap);
+                        } else if (selectionMode === CONNECT_MODE) {
+                            this.timeArray = allItems.map(c => {
+                                let value = timeAttrIsDate ? Date.parse(c.values[timeAttribute]) : c.values[timeAttribute];
+                                // The last event's time offset should be 1.
+                                value = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range;
+                                const parent = connectedCasesById?.[c.id].parent;
+                                const selected = selectedItemIdsSet.has(c.id);
+                                return { id: c.id, val: value, parent, selected };
+                            });
                         } else {
                             this.timeArray = items.map(c => {
-                                let value = this.state.timeAttrIsDate ? Date.parse(c.values[this.state.timeAttribute]) : c.values[this.state.timeAttribute];
-                                return {
-                                    id: c.id,
-                                    val: isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len)
-                                }
+                                let value = timeAttrIsDate ? Date.parse(c.values[timeAttribute]) : c.values[timeAttribute];
+                                value = isNaN(parseFloat(value)) ? NaN : (value-this.timeAttrRange.min)/range * ((this.timeAttrRange.len-1)/this.timeAttrRange.len);
+                                return { id: c.id, val: value };
                             });
                         }
                     }
@@ -575,7 +622,7 @@ const app = new Vue({
             // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: CONTRAST_MODE ? allItems : items }));
             this.prepMapping({
                 param: 'pitch',
-                items: this.state.selectionMode === CONTRAST_MODE ? allItems : items,
+                items: [CONTRAST_MODE, CONNECT_MODE].includes(selectionMode) ? allItems : items,
             });
 
             if (this.playing) {
@@ -602,40 +649,72 @@ const app = new Vue({
             helper.setGlobal(trackingGlobalName, trackerMin);
         },
         triggerNotes(phase) {
-            let gkfreq = expcurve(this.state.playbackSpeed, 50);
+            const { playbackSpeed, loop, selectionMode } = this.state;
+            const pitchTimeArrayLengthsMatch = this.pitchArray.length === this.timeArray.length;
+
+            let gkfreq = expcurve(playbackSpeed, 50);
             gkfreq = expcurve(gkfreq, 50);
             gkfreq = scale(gkfreq, 5, 0.05);
 
-            const remainingPlaybackTime = (1 - phase) / gkfreq * 1000;
-            if (this.state.loop) {
-                this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime);
+            const remainingPlaybackTime = (1 - phase) / gkfreq;
+
+            if (loop) {
+                this.cycleEndTimerId = setTimeout(() => this.triggerNotes(0), remainingPlaybackTime * 1000);
             } else {
                 this.cycleEndTimerId = setTimeout(() => {
                     this.resetPlay();
-                }, remainingPlaybackTime);
+                }, remainingPlaybackTime * 1000);
             }
 
-            if (this.pitchArray.length !== this.timeArray.length) {
+            if (!pitchTimeArrayLengthsMatch) {
                 console.warn(`pitch not rendered: [pitchArray length, timeArray length]: [${[this.pitchArray.length, this.timeArray.length].join()}]`);
             }
-            this.timeArray.forEach((d,i) => {
-                const pitch = this.pitchArray.length === this.timeArray.length ? this.pitchArray[i].val : 0.5;
-                // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
-                // let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
-                // let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
 
-                const loudness = 0.5;
-                const duration = 0.2;
+            if (selectionMode === CONNECT_MODE) {
+                const pitchArrayById = this.pitchArray.reduce((res, v) => (res[v.id] = v, res), {});
+                this.state.connectByCollIds.forEach(id => {
+                    const timeArrayForGroup = this.timeArray.filter(v => v.parent === id);
 
-                if (d.val >= phase && ![d.val,pitch].some(isNaN)) {
-                    if (this.state.selectionMode === CONTRAST_MODE) {
-                        const instr = d.sel ? 3 : 2;
-                        csound.Event(`i${instr} ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
-                    } else {
-                        csound.Event(`i2 ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                    for (let i = 0; i < timeArrayForGroup.length - 1; i++) {
+                        const startTime = (timeArrayForGroup[i].val - phase) / gkfreq;
+                        const endTime = (timeArrayForGroup[i+1].val - phase) / gkfreq;
+                        const timeDelta = endTime - startTime;
+                        const startPitch = pitchArrayById[timeArrayForGroup[i].id]?.val ?? 0.5;
+                        const endPitch = pitchArrayById[timeArrayForGroup[i+1].id]?.val ?? 0.5;
+                        // const loudness = 0.5;
+
+                        const unmute = timeArrayForGroup[i].selected ? 1 : 0;
+
+                        // The last event of the group should not "hold" the note
+                        // as there might be other groups (voices) that would play
+                        // past the endTime, resulting in an incorrectly held note.
+                        const hold = (i === timeArrayForGroup.length - 2) ? timeDelta : -1;
+
+                        if (![startTime, timeDelta, startPitch, endPitch].some(isNaN)) {
+                            csound.Event(`i 4.${id} ${startTime} ${hold} ${unmute} ${startPitch} ${endPitch} ${timeDelta}`);
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                this.timeArray.forEach((d,i) => {
+                    const pitch = pitchTimeArrayLengthsMatch ? this.pitchArray[i].val : 0.5;
+                    // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
+                    // let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
+                    // let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
+
+                    const loudness = 0.5;
+                    const duration = 0.2;
+
+                    if (d.val >= phase && ![d.val,pitch].some(isNaN)) {
+                        if (selectionMode === CONTRAST_MODE) {
+                            const instr = d.sel ? 3 : 2;
+                            csound.Event(`i${instr} ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                        } else if (selectionMode === FOCUS_MODE) {
+                            csound.Event(`i2 ${(d.val - phase) / gkfreq} ${duration} ${pitch} ${loudness}`);
+                        }
+                    }
+                });
+            }
         },
         setupSound() {
             this.stop();
@@ -644,7 +723,7 @@ const app = new Vue({
                 this.playing = true;
                 this.startTime = Date.now();
                 csound.SetChannel('playbackSpeed', this.state.playbackSpeed);
-                csound.SetChannel('click', this.state.click ? 1 : 0);
+                csound.SetChannel('click', this.state.loop ? 1 : 0); // Loop is now also mapped to click on/off.
                 csound.Event(`i1 0 -1 ${this.phase}`)
 
                 this.timerId = setInterval(() => {
@@ -702,9 +781,6 @@ const app = new Vue({
             if (this.state.loop != null) {
                 this.loopToggle.state = this.state.loop;
             }
-            if (this.state.click != null) {
-                this.clickToggle.state = this.state.click;
-            }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
                     this.attributes = helper.getAttributesForContext(this.state.focusedContext);
@@ -760,10 +836,10 @@ const app = new Vue({
                             });
                         });
                     } else {
-                        helper.queryDataForContext(contextName).then();
+                        helper.queryDataForContext(contextName);
                     }
                 } else if (contextName === DATAMOVES_CONTROLS_DATA.name) {
-                    helper.queryDataForContext(contextName).then();
+                    helper.queryDataForContext(contextName);
                 } else if (operation === 'updateDataContext') {
                     helper.queryContextList()
                         .then(() => {this.contexts = helper.getContexts();});
@@ -775,7 +851,7 @@ const app = new Vue({
                         if (contextName === this.state.focusedContext) {
                             this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
-                    } else if (operation === 'createCases' || operation === 'deleteCases' || operation === 'updateCases') {
+                    } else if (['createCases', 'deleteCases', 'updateCases', 'createCollection', 'deleteCollection', 'moveAttribute'].includes(operation)) {
                         if (contextName === this.state.focusedContext) {
                             helper.queryDataForContext(contextName).then(this.onGetData);
                         }
@@ -858,7 +934,7 @@ const app = new Vue({
 
         this.selectedCsd = this.csdFiles[0];
 
-        if (this.state.selectionMode === CONTRAST_MODE) {
+        if ([CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode)) {
             this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
         } else {
             this.getSelectedItems = helper.getSelectedItems.bind(helper);
