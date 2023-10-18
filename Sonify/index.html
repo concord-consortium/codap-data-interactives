@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <title>Sonify</title>
 
-    <script type="text/javascript" src="../Common/js/iframe-phone.js"></script>
-    <script type="text/javascript" src="../Common/js/CodapInterface.js"></script>
-    <script type="text/javascript" src="./lib/CodapPluginHelper.js"></script>
-
-    <script type="text/javascript" src="./lib/vue.min.js"></script>
-    <script type="text/javascript" src="./lib/NexusUI.js"></script>
 
     <link rel="stylesheet" href="./styles/styles.css">
 
@@ -89,8 +83,8 @@
         <hr>
 
         <div class="mapper-container" v-on:click="onBackgroundSelect" v-if="connectByAvailable">
-            Connect cases by
             <label title="Select collection to connect cases by">
+            Connect cases by
                 <select v-model="state.focusedCollection" v-on:change="onConnectByCollectionSelectedByUI" class="drop-area" id="connectByCollDropArea">
                     <option selected value="NULL" >-----</option>
                     <option v-for="collection in collections">{{collection}}</option>
@@ -106,7 +100,14 @@
         <img id="info-icon" src="./images/Icon-round-Question_mark.svg" alt="Information" title="Information" draggable="false" @click="openInfoPage">
     </div>
 </div>
+<script type="text/javascript" src="./lib/vue.min.js"></script>
+<!--    <script type="text/javascript" src="./lib/NexusUI.js"></script>-->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/nexusui@latest/dist/NexusUI.js"></script>
+<script type="text/javascript" src="../Common/js/iframe-phone.js"></script>
+<script type="text/javascript" src="../Common/js/CodapInterface.js"></script>
+<script type="text/javascript" src="./lib/CodapPluginHelper.js"></script>
+<script defer type="text/javascript" src="./lib/Csound/csound.js"></script>
+
 <script type="text/javascript" src="app.js"></script>
-<script type="text/javascript" src="./lib/Csound/csound.js"></script>
 </body>
 </html>
