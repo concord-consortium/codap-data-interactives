@@ -141,14 +141,8 @@ function lcm(a, b) {
 function percentageToFraction(percentage) {
   const numerator = percentage;
   const denominator = 100;
-  if (numerator === 33) {
-    return [1, 3];
-  } else if (numerator === 67) {
-    return [2, 3];
-  } else {
-    const commonFactor = gcd(numerator, denominator);
-    return [numerator / commonFactor, denominator / commonFactor];
-  }
+  const commonFactor = gcd(numerator, denominator);
+  return [numerator / commonFactor, denominator / commonFactor];
 }
 
 function findCommonDenominator(percentages) {
@@ -159,13 +153,7 @@ function findCommonDenominator(percentages) {
 }
 
 function findEquivNum(n, lcd) {
-  if (n === 33 && lcd === 3) {
-    return 1;
-  } else if (n === 67 && lcd === 3) {
-    return 2;
-  } else {
-    return (n * (lcd / 100));
-  }
+  return (n * (lcd / 100));
 }
 
 function fewestNumbersToSum (target, count) {
