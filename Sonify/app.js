@@ -1,6 +1,5 @@
 /*global codapInterface:true*/
 const helper = new CodapPluginHelper(codapInterface);
-const moveRecorder = new PluginMovesRecorder(helper);
 /**
  * Replicates the csound scale function.
  * Scales a number between zero and one to the given range.
@@ -366,22 +365,6 @@ const app = new Vue({
 
             this.reselectCases();
         },
-        recordToMoveRecorder(param) {
-            if (!(helper.items[DATAMOVES_CONTROLS_DATA.name] && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Record'])) {
-                return null;
-            }
-
-            moveRecorder.record({
-                Plugin: this.name,
-                ID: helper.ID, // TODO: Proper plugin ID
-                Type: 'Mapping',
-                Context: this.state.focusedContext,
-                Attribute: this.state[`${param}Attribute`],
-                Parameter: param.charAt(0).toUpperCase() + param.slice(1),
-                Direction: this.state[`${param}AttrIsDescending`] ? 'Descending' : 'Ascending',
-                'Attr Type': this.state[`${param}AttrIsDate`] ? 'date': 'numeric'
-            });
-        },
         onBackgroundSelect() {
             helper.selectSelf();
         },
@@ -396,7 +379,6 @@ const app = new Vue({
         onPitchAttributeSelectedByUI() {
             this.setUserMessage(this.state.pitchAttribute?"Pitch attribute selected...":"Please select attribute for pitch");
             this.processMappedAttribute('pitch');
-            this.recordToMoveRecorder('pitch');
 
             if (this.playing) {
                 this.phase = csound.RequestChannel('phase');
@@ -407,7 +389,6 @@ const app = new Vue({
         onTimeAttributeSelectedByUI() {
             this.setUserMessage(this.state.timeAttribute?"Time attribute selected...":"Please select attribute for time");
             this.processMappedAttribute('time');
-            this.recordToMoveRecorder('time');
 
             if (this.playing) {
                 this.phase = csound.RequestChannel('phase');
@@ -418,17 +399,14 @@ const app = new Vue({
         onDurationAttributeSelectedByUI() {
             this.setUserMessage(this.state.durationAttribute?"Duration attribute selected...":"Please select attribute for duration");
             this.processMappedAttribute('duration');
-            this.recordToMoveRecorder('duration');
         },
         onLoudnessAttributeSelectedByUI() {
             this.setUserMessage(this.state.loudnessAttribute?"Loudness attribute selected...":"Please select attribute for loudness");
             this.processMappedAttribute('loudness');
-            this.recordToMoveRecorder('loudness');
         },
         onStereoAttributeSelectedByUI() {
             this.setUserMessage(this.state.stereoAttribute?"Stereo attribute selected...":"Please select attribute for stereo");
             this.processMappedAttribute('stereo');
-            this.recordToMoveRecorder('stereo');
         },
         onConnectByCollectionSelectedByUI() {
             this.setUserMessage(this.state.focusedCollection?"ConnectBy collection selected...":"Please select collection for grouping");
@@ -801,46 +779,7 @@ const app = new Vue({
                 let contextName = notice.resource.split('[').pop().split(']')[0];
                 let operation = notice.values.operation;
 
-                if (contextName === TRANSPORT_DATA.name && operation === 'updateCases') {
-                    let firstItem = helper.items['Transport'][0].itemID; // TODO: A little hacky.
-
-                    if (this.synchronized) {
-                        codapInterface.sendRequest({
-                            action: 'get',
-                            resource: `dataContext[${TRANSPORT_DATA.name}].item[${firstItem}]`
-                        }).then(result => {
-                            let values = result.values.values;
-
-                            if (this.playToggle.state !== values.play) {
-                                this.playToggle.state = values.play;
-                            }
-                            if (this.speedSlider.value !== values.speed) {
-                                this.speedSlider.value = values.speed;
-                            }
-                        });
-                    }
-                } else if (contextName === DATAMOVES_DATA.name) {
-                    if (operation === 'selectCases' && helper.items[DATAMOVES_CONTROLS_DATA.name][0].values['Replay']) {
-                        this.getSelectedItems(contextName).then(items => {
-                            items.forEach(item => {
-                                let values = item.values;
-                                if (values.ID === helper.ID) {
-                                    let type = values.Parameter && values.Parameter.toLowerCase();
-                                    if (type) {
-                                        this.state[`${type}Attribute`] = values.Attribute;
-                                        this.state[`${type}AttrIsDescending`] = values.Direction === 'Descending';
-                                        this.state[`${type}AttrIsDate`] = values['Attr Type'] === 'date';
-                                        this.processMappedAttribute(type);
-                                    }
-                                }
-                            });
-                        });
-                    } else {
-                        helper.queryDataForContext(contextName);
-                    }
-                } else if (contextName === DATAMOVES_CONTROLS_DATA.name) {
-                    helper.queryDataForContext(contextName);
-                } else if (operation === 'updateDataContext') {
+                if (operation === 'updateDataContext') {
                     helper.queryContextList()
                         .then(() => {this.contexts = helper.getContexts();});
                 } else if (operation === 'updateAttributes') {
