@@ -69,9 +69,6 @@
                 <label title="Whether the attribute controlling pitch has date/time values or is numeric">
                     <input type="checkbox" v-model="state.pitchAttrIsDate" disabled="true"  v-on:change="onPitchAttributeSelectedByUI"> DateTime
                 </label>
-<!--                <label title="Whether to pitch should descend or ascend when attribute increases">-->
-<!--                    <input type="checkbox" v-model="state.pitchAttrIsDescending" v-on:change="onPitchAttributeSelectedByUI"> Descending-->
-<!--                </label>-->
             </div>
         </div>
 
@@ -90,97 +87,10 @@
                 <label title="Whether the time attribute has date/time values or numeric values">
                     <input type="checkbox" v-model="state.timeAttrIsDate" disabled="true" v-on:change="onTimeAttributeSelectedByUI"> DateTime
                 </label>
-<!--                <label title="Whether to reverse the order of sample play">-->
-<!--                    <input type="checkbox" v-model="state.timeAttrIsDescending" v-on:change="onTimeAttributeSelectedByUI"> Descending-->
-<!--                </label>-->
             </div>
         </div>
 
         <hr>
-
-<!--        <div class="mapper-container">-->
-<!--            Duration-->
-<!--            <label title="Select the attribute controlling the duration of sounds for the samples played">-->
-<!--                <select v-model="state.durationAttribute" v-on:change="onDurationAttributeSelectedByUI" class="drop-area" id="durationAttrDropArea">-->
-<!--                    <option selected value="" >-&#45;&#45;&#45;&#45;</option>-->
-<!--                    <option v-for="attribute in attributes">{{attribute}}</option>-->
-<!--                    <option v-if="globals.length" disabled>──────────</option>-->
-<!--                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>-->
-<!--                </select>-->
-<!--            </label>-->
-
-<!--            <div>-->
-<!--                <label title="Whether the duration attribute has date/time values or numeric values">-->
-<!--                    <input type="checkbox" v-model="state.durationAttrIsDate" v-on:change="onDurationAttributeSelectedByUI"> DateTime-->
-<!--                </label>-->
-<!--                <label title="Whether to invert the interpretation of this attribute">-->
-<!--                    <input type="checkbox" v-model="state.durationAttrIsDescending" v-on:change="onDurationAttributeSelectedByUI"> Descending-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div class="mapper-container">-->
-<!--            Loudness-->
-<!--            <label title="Select the attribute controlling the loudness of sounds for the samples played">-->
-<!--                <select v-model="state.loudnessAttribute" v-on:change="onLoudnessAttributeSelectedByUI" class="drop-area" id="loudnessAttrDropArea">-->
-<!--                    <option selected value="">-&#45;&#45;&#45;&#45;</option>-->
-<!--                    <option v-for="attribute in attributes">{{attribute}}</option>-->
-<!--                    <option v-if="globals.length" disabled>──────────</option>-->
-<!--                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>-->
-<!--                </select>-->
-<!--            </label>-->
-
-<!--            <div>-->
-<!--                <label title="Whether the loudness attribute has date/time values or numeric values">-->
-<!--                    <input type="checkbox" v-model="state.loudnessAttrIsDate" v-on:change="onLoudnessAttributeSelectedByUI"> DateTime-->
-<!--                </label>-->
-<!--                <label title="Whether to invert the interpretation of this attribute">-->
-<!--                    <input type="checkbox" v-model="state.loudnessAttrIsDescending" v-on:change="onLoudnessAttributeSelectedByUI"> Descending-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div class="mapper-container">-->
-<!--            Stereo-->
-<!--            <label title="Select the attribute controlling the stereo balance of sounds for the samples played">-->
-<!--                <select v-model="state.stereoAttribute" v-on:change="onStereoAttributeSelectedByUI" class="drop-area" id="stereoAttrDropArea">-->
-<!--                    <option selected value="">-&#45;&#45;&#45;&#45;</option>-->
-<!--                    <option v-for="attribute in attributes">{{attribute}}</option>-->
-<!--                    <option v-if="globals.length" disabled>──────────</option>-->
-<!--                    <option v-if="globals.length" v-for="global in globals.map(g => g.name)">{{global}}</option>-->
-<!--                </select>-->
-<!--            </label>-->
-
-<!--            <div>-->
-<!--                <label title="Whether the stereo attribute has date/time values or numeric values">-->
-<!--                    <input type="checkbox" v-model="state.stereoAttrIsDate" v-on:change="onStereoAttributeSelectedByUI"> DateTime-->
-<!--                </label>-->
-<!--                <label title="Whether to invert the interpretation of this attribute">-->
-<!--                    <input type="checkbox" v-model="state.stereoAttrIsDescending" v-on:change="onStereoAttributeSelectedByUI"> Descending-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <hr>-->
-
-<!--        <div class="mapper-container">-->
-<!--            Synthesis-->
-<!--            <label title="Select the synthesizer of the sounds played">-->
-<!--                <select v-model="selectedCsd" v-on:change="onCsdFileSelected">-->
-<!--                    <option disabled value="" hidden>Select context first</option>-->
-<!--                    <option v-for="csdFile in csdFiles">{{csdFile}}</option>-->
-<!--                </select>-->
-<!--            </label>-->
-<!--        </div>-->
-        <!-- <div class="mapper-container" title="Select case-selection mode">
-            Case selection mode
-            <label>
-                <select v-model="state.selectionMode" v-on:change="onSelectionModeSelectedByUI">
-                    <option disabled value="" hidden>Select</option>
-                    <option v-for="mode in selectionModes">{{mode}}</option>
-                </select>
-            </label>
-        </div> -->
 
         <div class="mapper-container" v-on:click="onBackgroundSelect" v-if="connectByAvailable">
             Connect cases by
