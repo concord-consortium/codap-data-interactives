@@ -1,7 +1,7 @@
 /**
  * Wrapper for codapInterface (which wraps iframe-phone) with specialized functions for sonification plugins.
  */
-class CodapPluginHelper {
+export default class CodapPluginHelper {
     constructor(codapInterface) {
         this.codapInterface = codapInterface;
 
