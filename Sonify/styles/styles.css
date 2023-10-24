@@ -114,6 +114,12 @@ html, body {
     z-index: 1000;
 }
 
+#info-icon {
+	font-size: x-large;
+    margin: .5em;
+    background: white;
+    cursor: pointer;
+}
 #draggable-link {
     display: none;
 }
