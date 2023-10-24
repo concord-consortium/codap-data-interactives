@@ -118,7 +118,7 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
-        csdFiles: ['StableGrains.csd'],
+        csdFiles: ['Sonify.csd'],
         selectedCsd: null,
         csoundReady: false,
 
