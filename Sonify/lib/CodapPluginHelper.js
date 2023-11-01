@@ -15,31 +15,22 @@ export default class CodapPluginHelper {
 
         this.globals = null;
 
-        // this.lists = {
-        //     context: null,
-        //     collection: null,
-        //     attribute: null,
-        // };
-        // this.focused = {
-        //     context: null,
-        //     collection: null
-        // };
-
         this.tree = null;
 
         this.items = null;
         this.itemAttributes = null;
-        // this.itemAttrInfo = null;
 
         this.attrValueRanges = null;
 
         this.queryInProgress = false;
 
         this.createCasesTimer = null;
-        // this.createCasesPromise = null; // Somehow reusing the same promise can result in multiple resolve calls.
         this.createCasesResolve = null;
         this.caseTimerDuration = 1000;
 
+        // The documentAnnotator is used to create graphs in CODAP.
+        // The normal CODAP API does not have sufficient control of graph
+        // configuration to configure adornments, so we use the Document API
         this.documentAnnotator = null;
     }
 
@@ -111,26 +102,6 @@ export default class CodapPluginHelper {
     updateState(state) {
         this.codapInterface.updateInteractiveState(state);
     }
-
-    // monitorLogMessages(bool) {
-    //     if (typeof(bool) !== 'boolean') {
-    //         bool = true;
-    //     }
-    //
-    //     if (bool) {
-    //         return this.codapInterface.sendRequest({
-    //             action: "register",
-    //             resource: "logMessageMonitor",
-    //             values: {
-    //                 message: "*"
-    //             }
-    //         });
-    //
-    //         // TODO: Register with a unique client ID.
-    //     } else {
-    //         // TODO: Unregister with the set ID.
-    //     }
-    // }
 
     // TODO: Hopefully this can retire soon with the fix to the notificationManager.
     checkNoticeIdentity(notice) {

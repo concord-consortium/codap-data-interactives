@@ -797,25 +797,6 @@ const app = new Vue({
                         }
                     }
                 }
-
-                // else if (notice.values.operation === 'updateCases' || notice.values.operation === 'dependentCases') {
-                //     helper.queryAllData().then(this.onGetData);
-                // }
-            // } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
-                //helper.queryGlobalValues().then(this.onGetGlobals);
-            // } else if (notice.resource === 'undoChangeNotice') {
-                //helper.queryGlobalValues().then(this.onGetGlobals);
-            // } else if (notice.resource === 'logMessageNotice') {
-                // if (notice.values.message.startsWith('plugin')) {
-                //     let values = JSON.parse(notice.values.message.slice(8));
-                //
-                //     if (values.name === 'Transport') {
-                //         playToggle.state = values.values.play;
-                //         speedSlider.value = values.values.speed;
-                //     }
-                // }
-            // } else {
-                //console.log(`Unhandled notice: ${notice.resource}`)
             }
         },
         createGraph() {
