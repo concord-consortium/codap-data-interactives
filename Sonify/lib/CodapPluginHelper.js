@@ -549,30 +549,29 @@ export default class CodapPluginHelper {
      * If noneSelectedMeansAllSelected, then if no cases are selected,
      * all the case are returned as "selected."
      */
-    getSelectedItems(context, noneSelectedMeansAllSelected) {
-        return this.codapInterface.sendRequest({
-            action: 'get',
-            resource: `dataContext[${context}].selectionList`
-        }).then(result => {
-            let selectedItems;
-            if (result.success) {
-                let caseIDs = result.values.map(v => v.caseID);
-                if (caseIDs.length) {
-                    selectedItems = caseIDs
-                        .map(id => {
-                            // item.id is actually the case ID.
-                            return this.items[context]
-                                .find(item => item && item.id === id)
-                        });
-                } else if (noneSelectedMeansAllSelected) {
-                    selectedItems = this.items[context];
-                }
+    async getSelectedItems(context, noneSelectedMeansAllSelected) {
+        let selectedItems;
+        let result = await this.codapInterface.sendRequest({
+                action: 'get',
+                resource: `dataContext[${context}].selectionList`
+            });
+        if (result.success) {
+            let caseIDs = result.values.map(v => v.caseID);
+            if (caseIDs.length) {
+                selectedItems = caseIDs
+                    .map(id => {
+                        // item.id is actually the case ID.
+                        return this.items[context]
+                            .find(item => item && item.id === id)
+                    });
+            } else if (noneSelectedMeansAllSelected) {
+                selectedItems = this.items[context];
             }
-            else {
-                selectedItems = [];
-            }
-            return selectedItems.filter(item => typeof(item) !== 'undefined');
-        });
+        }
+        else {
+            selectedItems = [];
+        }
+        return selectedItems.filter(item => typeof(item) !== 'undefined');
     }
 
     queryAttributeCollections(context) {

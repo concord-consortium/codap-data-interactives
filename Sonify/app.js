@@ -829,9 +829,9 @@ const app = new Vue({
         getContextTitle(contextName) {
           return helper.getContextTitle(contextName);
         },
-        getSelectedItems(context) {
+        async getSelectedItems(context) {
             let isStrict = [CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode);
-            return helper.getSelectedItems(context, !isStrict);
+            return await helper.getSelectedItems(context, !isStrict);
         }
     },
     async mounted() {
