@@ -854,21 +854,19 @@ const app = new Vue({
           return helper.getContextTitle(contextName);
         }
     },
-    mounted() {
+    async mounted() {
         this.setupDrag();
         this.setupUI();
 
-        helper.init(this.name, this.dim, this.version)
-            // .then(helper.monitorLogMessages.bind(helper))
-            .then((state) => {
-                if (state) {
-                    this.restoreSavedState(state);
-                } else {
-                    this.onGetData();
-                }
-            }).then(
-                () => helper.guaranteeGlobal(trackingGlobalName).then(() => this.updateTracker())
-            );
+        let state = await helper.init(this.name, this.dim, this.version);
+        if (state && Object.keys(state).length) {
+            this.restoreSavedState(state);
+        } else {
+            this.onGetData();
+        }
+
+        await helper.guaranteeGlobal(trackingGlobalName)
+        this.updateTracker();
 
         codapInterface.on('notify', '*', this.handleCODAPNotice)
 

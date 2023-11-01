@@ -43,59 +43,54 @@ export default class CodapPluginHelper {
         this.documentAnnotator = null;
     }
 
-    init(name, dimensions={width:200,height:100}, version) {
+    async init(name, dimensions={width:200,height:100}, version) {
         this.name = name;
 
-        return this.codapInterface.init({
-            name: name,
-            title: name,
-            version: version ? version : '',
-            preventDataContextReorg: false,
-        })
-        .then(savedState => {
+        // Initialize connection to CODAP. If CODAP is restoring a document, then
+        // this step will return its saved state. If plugin is being added to
+        // an existing document, then there will be no saved state.
+        let savedState = await this.codapInterface.init({
+                name: name,
+                title: name,
+                version: version ? version : '',
+                preventDataContextReorg: false,
+            });
+
             let pluginState = savedState ? savedState : this.codapInterface.getInteractiveState();
             let hasState = false;
 
             if (Object.keys(pluginState).includes('ID')) {
-                this.ID = pluginState.ID;
                 hasState = true;
-            } else {
-                // pluginState['ID'] = `${name}-${new Date().getTime()}`;
-                this.ID = pluginState.ID = new Date().getTime();
             }
 
             // set up document listener
             this.on('document', null, (msg) => { this.handleNewDocumentNotification(msg); });
 
-            if (!hasState) {
-                return this.codapInterface.sendRequest({
+        // prepare to update plugin properties
+        let updateRequest = {
                     action: "update",
                     resource: "interactiveFrame",
                     values: {
                         subscribeToDocuments: true,
-                        dimensions: {
+            }
+        };
+
+        // we only want to configure the plugin dimensions if we are a new plugin
+        if (!hasState) {
+            updateRequest.values.dimensions = {
                             width: dimensions.width,
                             height: dimensions.height + 25
-                        }
+                };
                     }
-                }).then(() => this.queryAllData());
-            } else {
-                return this.codapInterface.sendRequest({
-                    action: "update",
-                    resource: "interactiveFrame",
-                    values: {
-                        subscribeToDocuments: true
-                    }
-                }).then(() =>
-                    this.queryAllData()
-                );
-            }
-            // Allow the attributes to move.
+        await this.codapInterface.sendRequest(updateRequest);
 
-        })
-        .then( () => {return this.getPluginID(); })
-        .then(id=> {this.pluginID = id;})
-        .then(() => Promise.resolve(this.codapInterface.getInteractiveState()))
+        // initialize data cache
+        await this.queryAllData();
+
+        // get the plugin id.
+        await this.getPluginID();
+
+        return this.codapInterface.getInteractiveState();
     }
 
     getPluginID() {
@@ -104,7 +99,10 @@ export default class CodapPluginHelper {
         } else {
             return this.codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
                 .then(result => {
-                    if (result.success) return Promise.resolve(result.values.id);
+                    if (result.success) {
+                        this.pluginID = result.values.id;
+                        return Promise.resolve(this.pluginID);
+                    }
                     else return Promise.reject('Plugin id fetch failed');
                 })
         }
