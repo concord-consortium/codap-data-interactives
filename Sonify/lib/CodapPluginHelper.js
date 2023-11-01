@@ -546,9 +546,10 @@ export default class CodapPluginHelper {
 
     /**
      * Returns the items corresponding to the cases selected by the user.
-     * When no cases are selected, all the case are returned as "selected."
+     * If noneSelectedMeansAllSelected, then if no cases are selected,
+     * all the case are returned as "selected."
      */
-    getSelectedItems(context) {
+    getSelectedItems(context, noneSelectedMeansAllSelected) {
         return this.codapInterface.sendRequest({
             action: 'get',
             resource: `dataContext[${context}].selectionList`
@@ -563,7 +564,7 @@ export default class CodapPluginHelper {
                             return this.items[context]
                                 .find(item => item && item.id === id)
                         });
-                } else {
+                } else if (noneSelectedMeansAllSelected) {
                     selectedItems = this.items[context];
                 }
             }
@@ -572,37 +573,6 @@ export default class CodapPluginHelper {
             }
             return selectedItems.filter(item => typeof(item) !== 'undefined');
         });
-    }
-
-    /**
-     * Return the selected items. When no cases are selected,
-     * return an empty array rather than all the cases.
-     */
-    getStrictlySelectedItems(context) {
-        return this.codapInterface.sendRequest({
-            action: 'get',
-            resource: `dataContext[${context}].selectionList`
-        }).then(result => {
-            if (!result.success) return [];
-            let caseIDs = result.values.map(v => v.caseID);
-            return caseIDs
-                .map(id => {
-                    // item.id is actually the case ID.
-                    return this.items[context]
-                        .find(item => item && item.id === id)
-                })
-                .filter(item => item !== 'undefined');
-        });
-    }
-
-    getTreeStructure(/*context*/) {
-        // let result = {};
-
-        // result[]
-
-        // for (let i = this.data[context].length-1; i > 0; i--) {
-        //     this.data[context]
-        // }
     }
 
     queryAttributeCollections(context) {

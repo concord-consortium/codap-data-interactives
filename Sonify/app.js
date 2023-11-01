@@ -370,11 +370,6 @@ const app = new Vue({
             helper.selectSelf();
         },
         onSelectionModeSelectedByUI() {
-            if (this.state.selectionMode === CONTRAST_MODE) {
-                this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
-            } else {
-                this.getSelectedItems = helper.getSelectedItems.bind(helper);
-            }
             this.reselectCases();
         },
         onPitchAttributeSelectedByUI() {
@@ -833,6 +828,10 @@ const app = new Vue({
         },
         getContextTitle(contextName) {
           return helper.getContextTitle(contextName);
+        },
+        getSelectedItems(context) {
+            let isStrict = [CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode);
+            return helper.getSelectedItems(context, !isStrict);
         }
     },
     async mounted() {
@@ -853,13 +852,7 @@ const app = new Vue({
 
         this.selectedCsd = this.csdFiles[0];
 
-        if ([CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode)) {
-            this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
-        } else {
-            this.getSelectedItems = helper.getSelectedItems.bind(helper);
-        }
     },
-    getSelectedItems: null,
     computed: {
         isPlayable: function() {
             let playable=!!(this.state.timeAttribute && this.state.pitchAttribute);
