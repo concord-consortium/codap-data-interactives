@@ -162,70 +162,60 @@ export default class CodapPluginHelper {
         });
     }
 
-    queryAllData() {
-        console.log('Querying all data');
+    async queryAllData() {
+        // console.log('Querying all data');
 
-        return new Promise((resolve) => {
-            if (this.queryInProgress) {
-                resolve(null);
-            } else {
-                this.queryInProgress = true;
-                this.data = {};
-                this.contextTitles = {};
-                this.queryContextList().then(() => {
-                    this.queryCollectionList().then(() => {
-                        this.queryAllCases().then(() => {
-                            this.fillStructure();
-                            // this.queryAllItemsSync().then(resolve);
-                            this.queryAllItemsSync().then(result => {
-                                this.calcAttrValueRanges();
-                                resolve(result);
-                            });
-                            this.queryInProgress = false;
-                            this.prevNotice = null;
-                            this.prevDeleteNotice = null;
-                        });
-                    });
-                });
-            }
-        });
+        if (this.queryInProgress) {
+            return null;
+        } else {
+            this.queryInProgress = true;
+            this.data = {};
+            this.contextTitles = {};
+            await this.queryContextList();
+            await this.queryCollectionList();
+            await this.queryAllCases();
+            this.fillStructure();
+            let result = await this.queryAllItemsSync();
+            this.calcAttrValueRanges();
+            this.queryInProgress = false;
+            this.prevNotice = null;
+            this.prevDeleteNotice = null;
+            return result;
+        }
     }
 
-    queryDataForContext(context) {
-        console.log('Querying data for context:', context);
+    async queryDataForContext(context) {
+        //console.log('Querying data for context:', context);
 
-        return new Promise((resolve) => {
-            if (this.queryInProgress) {
-                resolve(null);
-            } else {
-                this.queryInProgress = true;
-                this.data[context] = {};
-                this.queryCollectionList(context).then(() => {
-                    this.queryAllCases(context).then(() => {
-                        this.fillStructure(context);
-                        this.queryAllItemsSync(context).then(result => {
-                            this.calcAttrValueRanges(context);
-                            resolve(result);
-                        });
-                        this.queryInProgress = false;
-                        this.prevNotice = null;
-                        this.prevDeleteNotice = null;
-                    });
-                });
-            }
-        });
+        if (this.queryInProgress) {
+            return null;
+        } else {
+            this.queryInProgress = true;
+            this.data[context] = {};
+            await this.queryCollectionList(context);
+            await this.queryAllCases(context);
+            this.fillStructure(context);
+            let result = await this.queryAllItemsSync(context);
+            this.calcAttrValueRanges(context);
+            this.queryInProgress = false;
+            this.prevNotice = null;
+            this.prevDeleteNotice = null;
+            return result;
+        }
     }
 
-    queryContextList() {
-        return this.codapInterface.sendRequest({
+    async queryContextList() {
+        let contextNames = [];
+        let result = await this.codapInterface.sendRequest({
             action: 'get',
             resource: 'dataContextList'
-        }).then(result => {
-            result.values.forEach(context => {
-                this.data[context.name] = {};
-                this.contextTitles[context.name] = context.title || context.name;
-            });
         });
+        result.values.forEach(context => {
+            this.data[context.name] = {};
+            contextNames.push(context.name);
+            this.contextTitles[context.name] = context.title || context.name;
+        });
+        return contextNames;
     }
 
     queryCollectionList(context) {
