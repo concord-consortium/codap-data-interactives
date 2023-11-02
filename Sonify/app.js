@@ -49,11 +49,11 @@ const kAttributeMappedProperties = [
 const trackingGlobalName = 'sonificationTracker';
 const minDur = 0.02;
 const maxDur = 0.5;
-const durRange = maxDur - minDur;
+// const durRange = maxDur - minDur;
 
 const minPitchMIDI = 55;
 const maxPitchMIDI = 110;
-const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
+// const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
 const FOCUS_MODE = 'Focus';
 const CONTRAST_MODE = 'Contrast';

@@ -623,10 +623,6 @@ export default class CodapPluginHelper {
         });
     }
 
-    findCollectionForAttribute() {
-
-    }
-
     /**
      * Initiates the "get document" process.
      *
