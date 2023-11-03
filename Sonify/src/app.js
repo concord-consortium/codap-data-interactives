@@ -1,5 +1,7 @@
 /*global codapInterface:true*/
-import {default as CodapPluginHelper} from "./lib/CodapPluginHelper.js";
+import Vue from "vue";
+import Nexus from "nexusui";
+import {default as CodapPluginHelper} from "./CodapPluginHelper.js";
 const helper = new CodapPluginHelper(codapInterface);
 /**
  * Replicates the csound scale function.
