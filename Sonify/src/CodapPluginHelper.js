@@ -725,6 +725,9 @@ export default class CodapPluginHelper {
         });
     }
 
+    /**
+     * Creates a simple scatter-plot graph component in CODAP with no adornments.
+     */
     createGraph(dataContext, xAxis, yAxis) {
         return this.codapInterface.sendRequest({
             action: 'create',
