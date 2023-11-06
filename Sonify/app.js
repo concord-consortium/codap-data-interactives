@@ -1,4 +1,5 @@
 /*global codapInterface:true*/
+import {default as CodapPluginHelper} from "./lib/CodapPluginHelper.js";
 const helper = new CodapPluginHelper(codapInterface);
 /**
  * Replicates the csound scale function.
@@ -118,7 +119,7 @@ const app = new Vue({
         stereoAttrRange: null,
         stereoArray: [],
 
-        csdFiles: ['StableGrains.csd'],
+        csdFiles: ['Sonify.csd'],
         selectedCsd: null,
         csoundReady: false,
 
@@ -889,7 +890,7 @@ const app = new Vue({
     }
 });
 
-function moduleDidLoad() {
+window.moduleDidLoad = function () {
     let loadingScreen = document.getElementsByClassName('loading-screen');
     loadingScreen[0].parentNode.removeChild(loadingScreen[0]);
 

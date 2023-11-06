@@ -1,7 +1,7 @@
 /**
  * Wrapper for codapInterface (which wraps iframe-phone) with specialized functions for sonification plugins.
  */
-class CodapPluginHelper {
+export default class CodapPluginHelper {
     constructor(codapInterface) {
         this.codapInterface = codapInterface;
 
@@ -736,41 +736,6 @@ class CodapPluginHelper {
         }
     }
 
-
-
-    // openInfoPage(dimensions, name, file) {
-    //     let location = window.location.pathname;
-    //     let directory = location.substring(0, location.lastIndexOf('/'));
-    //
-    //     if (!dimensions) {
-    //         dimensions = {
-    //             width: 400,
-    //             height: 600
-    //         }
-    //     }
-    //
-    //     if (!name) {
-    //         name = `${this.name} Info`;
-    //     }
-    //
-    //     if (!file) {
-    //         file = 'info.html'
-    //     }
-    //
-    //     return this.codapInterface.sendRequest({
-    //         action: 'create',
-    //         resource: 'component',
-    //         values: {
-    //             type: 'webView',
-    //             name: name,
-    //             title: name,
-    //             URL: `${directory}/${file}`,
-    //             dimensions: dimensions,
-    //             position: 'top'
-    //         }
-    //     });
-    // }
-
     openSharedInfoPage(dimensions={width:400,height:600}, title, directory, file='info.md') {
         let location = window.location.pathname;
         let origin = window.location.origin;
@@ -780,10 +745,14 @@ class CodapPluginHelper {
         }
 
         if (!directory) {
-            directory = location.split('/').slice(-2,-1)[0];
+            directory = '.';
         }
 
-        let path = location.split('/').slice(0,-2).concat('common','info.html').join('/');
+        let path = location
+            .split('/')
+            .slice(0,-1)
+            .concat('info-plugin','info.html')
+            .join('/');
 
         return this.codapInterface.sendRequest({
             action: 'create',
