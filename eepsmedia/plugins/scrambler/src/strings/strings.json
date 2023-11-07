@@ -104,14 +104,29 @@
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidos_de_"
   },
   "tr": {
-    "DG.plugin.Scrambler.description": "Bir özelliği rastgele değiştirerek hipotezler test edin.",
+    "DG.plugin.Scrambler.name": "veri çekme aracı",
+    "DG.plugin.Scrambler.description": "Bu eklentide bir özelliği rastgele değiştirerek hipotezler test edilebilir.",
     "DG.plugin.Scrambler.language": "İngilizce",
-    "DG.plugin.Scrambler.static.cantScrambleStripe": "İlerleyebilmek için düzeltiniz.",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Veri Çekme Aracı",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "İlerleyebilmek için düzenleme yapınız.",
     "DG.plugin.Scrambler.static.howManyLabel": "ne kadar?",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "alınan örneklemi göster",
+    "DG.plugin.Scrambler.sScramble": "örneklem al",
     "DG.plugin.Scrambler.sNoAttribute": "özellik yok 😕",
     "DG.plugin.Scrambler.sIterationAttName": "yığın",
     "DG.plugin.Scrambler.sIterationAttDescription": "Veride hangi \"yığın\". Her ne zaman karıştırıldığında artma olur.",
+    "DG.plugin.Scrambler.sScrambledAttName": "örneklem alma öz",
+    "DG.plugin.Scrambler.sScrambledAttDescription": "Hangi özelliğin örneklemi alındı.",
+    "DG.plugin.Scrambler.sNoDataset": "Bir veri seti bulunuz ve örneklem almak istediğiniz özelliği buraya sürükleyiniz!",
+    "DG.plugin.Scrambler.sNoScrambleAttribute": "Hangi özellikten örneklem almak istiyorsunuz? Özelliği buraya sürükleyiniz.",
+    "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "Örneklemi alınan bir veri seti göster",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span>şuradan örneklem al <code>%@1</code></span>",
+    "DG.plugin.Scrambler.sfOKtoScramble": "<span>Örneklem alınabilir değişken <code>%@1</code> ve değişkeni içeren veri seti <code>%@2</code></span>",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>Kullandığınız <code>%@1</code> adlı veri setinde bir ölçüme veya formüle dayalı özellik bulunmalıdır. Toplanabilecek bir şeyin olması için bu özelliği tabloda sola sürükleyiniz!</span>",
+    "DG.plugin.Scrambler.sfFormulaProblem": "<span>Örneklem almak istediğiniz <code>%@1</code> değişkeninde formül yer aldığından işlem gerçekleştirilemedi. Bir önceki veri setinden başka bir özellik sürükleyiniz (%@2), örneğin <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Örneklem almak istediğiniz <code>%@1</code> değişkeni bir önceki veri setinde yer almadığından işlem gerçekleştirilemedi (<code>%@2</code>). Buraya <code>%@2</code> veri serinden bir özellik sürükleyiniz, örneğin <code>%@3</code>.</span>",
     "DG.plugin.Scrambler.sOr": "veya",
-    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "_den_ölçer_"
+    "DG.plugin.Scrambler.sScrambledDatasetPrefix": "örneklemi alınan_",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "_veri_seti_"
   }
 }
