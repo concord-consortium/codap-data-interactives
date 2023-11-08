@@ -8,11 +8,11 @@ module.exports = {
   },
   entry: [
     './src/app.js',
-    './info-plugin/info_app.js',
   ],
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
-  mode: "production"
+  mode: "production",
+  devtool: "source-map",
 };
