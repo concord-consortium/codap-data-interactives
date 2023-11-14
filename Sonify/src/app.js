@@ -1,5 +1,7 @@
 /*global codapInterface:true*/
-import {default as CodapPluginHelper} from "./lib/CodapPluginHelper.js";
+import Vue from "vue";
+import Nexus from "nexusui";
+import {default as CodapPluginHelper} from "./CodapPluginHelper.js";
 const helper = new CodapPluginHelper(codapInterface);
 /**
  * Replicates the csound scale function.
@@ -49,11 +51,11 @@ const kAttributeMappedProperties = [
 const trackingGlobalName = 'sonificationTracker';
 const minDur = 0.02;
 const maxDur = 0.5;
-const durRange = maxDur - minDur;
+// const durRange = maxDur - minDur;
 
 const minPitchMIDI = 55;
 const maxPitchMIDI = 110;
-const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
+// const pitchMIDIRange = maxPitchMIDI - minPitchMIDI;
 
 const FOCUS_MODE = 'Focus';
 const CONTRAST_MODE = 'Contrast';
@@ -370,11 +372,6 @@ const app = new Vue({
             helper.selectSelf();
         },
         onSelectionModeSelectedByUI() {
-            if (this.state.selectionMode === CONTRAST_MODE) {
-                this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
-            } else {
-                this.getSelectedItems = helper.getSelectedItems.bind(helper);
-            }
             this.reselectCases();
         },
         onPitchAttributeSelectedByUI() {
@@ -797,25 +794,6 @@ const app = new Vue({
                         }
                     }
                 }
-
-                // else if (notice.values.operation === 'updateCases' || notice.values.operation === 'dependentCases') {
-                //     helper.queryAllData().then(this.onGetData);
-                // }
-            // } else if (notice.resource === 'component' && notice.values.type === 'DG.SliderView') {
-                //helper.queryGlobalValues().then(this.onGetGlobals);
-            // } else if (notice.resource === 'undoChangeNotice') {
-                //helper.queryGlobalValues().then(this.onGetGlobals);
-            // } else if (notice.resource === 'logMessageNotice') {
-                // if (notice.values.message.startsWith('plugin')) {
-                //     let values = JSON.parse(notice.values.message.slice(8));
-                //
-                //     if (values.name === 'Transport') {
-                //         playToggle.state = values.values.play;
-                //         speedSlider.value = values.values.speed;
-                //     }
-                // }
-            // } else {
-                //console.log(`Unhandled notice: ${notice.resource}`)
             }
         },
         createGraph() {
@@ -852,35 +830,31 @@ const app = new Vue({
         },
         getContextTitle(contextName) {
           return helper.getContextTitle(contextName);
+        },
+        async getSelectedItems(context) {
+            let isStrict = [CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode);
+            return await helper.getSelectedItems(context, !isStrict);
         }
     },
-    mounted() {
+    async mounted() {
         this.setupDrag();
         this.setupUI();
 
-        helper.init(this.name, this.dim, this.version)
-            // .then(helper.monitorLogMessages.bind(helper))
-            .then((state) => {
-                if (state) {
-                    this.restoreSavedState(state);
-                } else {
-                    this.onGetData();
-                }
-            }).then(
-                () => helper.guaranteeGlobal(trackingGlobalName).then(() => this.updateTracker())
-            );
+        let state = await helper.init(this.name, this.dim, this.version);
+        if (state && Object.keys(state).length) {
+            this.restoreSavedState(state);
+        } else {
+            this.onGetData();
+        }
+
+        await helper.guaranteeGlobal(trackingGlobalName)
+        this.updateTracker();
 
         codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
 
-        if ([CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode)) {
-            this.getSelectedItems = helper.getStrictlySelectedItems.bind(helper);
-        } else {
-            this.getSelectedItems = helper.getSelectedItems.bind(helper);
-        }
     },
-    getSelectedItems: null,
     computed: {
         isPlayable: function() {
             let playable=!!(this.state.timeAttribute && this.state.pitchAttribute);

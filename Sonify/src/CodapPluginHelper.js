@@ -15,87 +15,73 @@ export default class CodapPluginHelper {
 
         this.globals = null;
 
-        // this.lists = {
-        //     context: null,
-        //     collection: null,
-        //     attribute: null,
-        // };
-        // this.focused = {
-        //     context: null,
-        //     collection: null
-        // };
-
         this.tree = null;
 
         this.items = null;
         this.itemAttributes = null;
-        // this.itemAttrInfo = null;
 
         this.attrValueRanges = null;
 
         this.queryInProgress = false;
 
         this.createCasesTimer = null;
-        // this.createCasesPromise = null; // Somehow reusing the same promise can result in multiple resolve calls.
         this.createCasesResolve = null;
         this.caseTimerDuration = 1000;
 
+        // The documentAnnotator is used to create graphs in CODAP.
+        // The normal CODAP API does not have sufficient control of graph
+        // configuration to configure adornments, so we use the Document API
         this.documentAnnotator = null;
     }
 
-    init(name, dimensions={width:200,height:100}, version) {
+    async init(name, dimensions={width:200,height:100}, version) {
         this.name = name;
 
-        return this.codapInterface.init({
-            name: name,
-            title: name,
-            version: version ? version : '',
-            preventDataContextReorg: false,
-        })
-        .then(savedState => {
+        // Initialize connection to CODAP. If CODAP is restoring a document, then
+        // this step will return its saved state. If plugin is being added to
+        // an existing document, then there will be no saved state.
+        let savedState = await this.codapInterface.init({
+                name: name,
+                title: name,
+                version: version ? version : '',
+                preventDataContextReorg: false,
+            });
+
             let pluginState = savedState ? savedState : this.codapInterface.getInteractiveState();
             let hasState = false;
 
             if (Object.keys(pluginState).includes('ID')) {
-                this.ID = pluginState.ID;
                 hasState = true;
-            } else {
-                // pluginState['ID'] = `${name}-${new Date().getTime()}`;
-                this.ID = pluginState.ID = new Date().getTime();
             }
 
             // set up document listener
             this.on('document', null, (msg) => { this.handleNewDocumentNotification(msg); });
 
-            if (!hasState) {
-                return this.codapInterface.sendRequest({
+        // prepare to update plugin properties
+        let updateRequest = {
                     action: "update",
                     resource: "interactiveFrame",
                     values: {
                         subscribeToDocuments: true,
-                        dimensions: {
+            }
+        };
+
+        // we only want to configure the plugin dimensions if we are a new plugin
+        if (!hasState) {
+            updateRequest.values.dimensions = {
                             width: dimensions.width,
                             height: dimensions.height + 25
-                        }
+                };
                     }
-                }).then(() => this.queryAllData());
-            } else {
-                return this.codapInterface.sendRequest({
-                    action: "update",
-                    resource: "interactiveFrame",
-                    values: {
-                        subscribeToDocuments: true
-                    }
-                }).then(() =>
-                    this.queryAllData()
-                );
-            }
-            // Allow the attributes to move.
+        await this.codapInterface.sendRequest(updateRequest);
 
-        })
-        .then( () => {return this.getPluginID(); })
-        .then(id=> {this.pluginID = id;})
-        .then(() => Promise.resolve(this.codapInterface.getInteractiveState()))
+        // initialize data cache
+        await this.queryAllData();
+
+        // get the plugin id.
+        await this.getPluginID();
+
+        return this.codapInterface.getInteractiveState();
     }
 
     getPluginID() {
@@ -104,7 +90,10 @@ export default class CodapPluginHelper {
         } else {
             return this.codapInterface.sendRequest({action: 'get', resource: 'interactiveFrame'})
                 .then(result => {
-                    if (result.success) return Promise.resolve(result.values.id);
+                    if (result.success) {
+                        this.pluginID = result.values.id;
+                        return Promise.resolve(this.pluginID);
+                    }
                     else return Promise.reject('Plugin id fetch failed');
                 })
         }
@@ -113,26 +102,6 @@ export default class CodapPluginHelper {
     updateState(state) {
         this.codapInterface.updateInteractiveState(state);
     }
-
-    // monitorLogMessages(bool) {
-    //     if (typeof(bool) !== 'boolean') {
-    //         bool = true;
-    //     }
-    //
-    //     if (bool) {
-    //         return this.codapInterface.sendRequest({
-    //             action: "register",
-    //             resource: "logMessageMonitor",
-    //             values: {
-    //                 message: "*"
-    //             }
-    //         });
-    //
-    //         // TODO: Register with a unique client ID.
-    //     } else {
-    //         // TODO: Unregister with the set ID.
-    //     }
-    // }
 
     // TODO: Hopefully this can retire soon with the fix to the notificationManager.
     checkNoticeIdentity(notice) {
@@ -193,70 +162,60 @@ export default class CodapPluginHelper {
         });
     }
 
-    queryAllData() {
-        console.log('Querying all data');
+    async queryAllData() {
+        // console.log('Querying all data');
 
-        return new Promise((resolve) => {
-            if (this.queryInProgress) {
-                resolve(null);
-            } else {
-                this.queryInProgress = true;
-                this.data = {};
-                this.contextTitles = {};
-                this.queryContextList().then(() => {
-                    this.queryCollectionList().then(() => {
-                        this.queryAllCases().then(() => {
-                            this.fillStructure();
-                            // this.queryAllItemsSync().then(resolve);
-                            this.queryAllItemsSync().then(result => {
-                                this.calcAttrValueRanges();
-                                resolve(result);
-                            });
-                            this.queryInProgress = false;
-                            this.prevNotice = null;
-                            this.prevDeleteNotice = null;
-                        });
-                    });
-                });
-            }
-        });
+        if (this.queryInProgress) {
+            return null;
+        } else {
+            this.queryInProgress = true;
+            this.data = {};
+            this.contextTitles = {};
+            await this.queryContextList();
+            await this.queryCollectionList();
+            await this.queryAllCases();
+            this.fillStructure();
+            let result = await this.queryAllItemsSync();
+            this.calcAttrValueRanges();
+            this.queryInProgress = false;
+            this.prevNotice = null;
+            this.prevDeleteNotice = null;
+            return result;
+        }
     }
 
-    queryDataForContext(context) {
-        console.log('Querying data for context:', context);
+    async queryDataForContext(context) {
+        //console.log('Querying data for context:', context);
 
-        return new Promise((resolve) => {
-            if (this.queryInProgress) {
-                resolve(null);
-            } else {
-                this.queryInProgress = true;
-                this.data[context] = {};
-                this.queryCollectionList(context).then(() => {
-                    this.queryAllCases(context).then(() => {
-                        this.fillStructure(context);
-                        this.queryAllItemsSync(context).then(result => {
-                            this.calcAttrValueRanges(context);
-                            resolve(result);
-                        });
-                        this.queryInProgress = false;
-                        this.prevNotice = null;
-                        this.prevDeleteNotice = null;
-                    });
-                });
-            }
-        });
+        if (this.queryInProgress) {
+            return null;
+        } else {
+            this.queryInProgress = true;
+            this.data[context] = {};
+            await this.queryCollectionList(context);
+            await this.queryAllCases(context);
+            this.fillStructure(context);
+            let result = await this.queryAllItemsSync(context);
+            this.calcAttrValueRanges(context);
+            this.queryInProgress = false;
+            this.prevNotice = null;
+            this.prevDeleteNotice = null;
+            return result;
+        }
     }
 
-    queryContextList() {
-        return this.codapInterface.sendRequest({
+    async queryContextList() {
+        let contextNames = [];
+        let result = await this.codapInterface.sendRequest({
             action: 'get',
             resource: 'dataContextList'
-        }).then(result => {
-            result.values.forEach(context => {
-                this.data[context.name] = {};
-                this.contextTitles[context.name] = context.title || context.name;
-            });
         });
+        result.values.forEach(context => {
+            this.data[context.name] = {};
+            contextNames.push(context.name);
+            this.contextTitles[context.name] = context.title || context.name;
+        });
+        return contextNames;
     }
 
     queryCollectionList(context) {
@@ -577,63 +536,32 @@ export default class CodapPluginHelper {
 
     /**
      * Returns the items corresponding to the cases selected by the user.
-     * When no cases are selected, all the case are returned as "selected."
+     * If noneSelectedMeansAllSelected, then if no cases are selected,
+     * all the case are returned as "selected."
      */
-    getSelectedItems(context) {
-        return this.codapInterface.sendRequest({
-            action: 'get',
-            resource: `dataContext[${context}].selectionList`
-        }).then(result => {
-            let selectedItems;
-            if (result.success) {
-                let caseIDs = result.values.map(v => v.caseID);
-                if (caseIDs.length) {
-                    selectedItems = caseIDs
-                        .map(id => {
-                            // item.id is actually the case ID.
-                            return this.items[context]
-                                .find(item => item && item.id === id)
-                        });
-                } else {
-                    selectedItems = this.items[context];
-                }
-            }
-            else {
-                selectedItems = [];
-            }
-            return selectedItems.filter(item => typeof(item) !== 'undefined');
-        });
-    }
-
-    /**
-     * Return the selected items. When no cases are selected,
-     * return an empty array rather than all the cases.
-     */
-    getStrictlySelectedItems(context) {
-        return this.codapInterface.sendRequest({
-            action: 'get',
-            resource: `dataContext[${context}].selectionList`
-        }).then(result => {
-            if (!result.success) return [];
+    async getSelectedItems(context, noneSelectedMeansAllSelected) {
+        let selectedItems;
+        let result = await this.codapInterface.sendRequest({
+                action: 'get',
+                resource: `dataContext[${context}].selectionList`
+            });
+        if (result.success) {
             let caseIDs = result.values.map(v => v.caseID);
-            return caseIDs
-                .map(id => {
-                    // item.id is actually the case ID.
-                    return this.items[context]
-                        .find(item => item && item.id === id)
-                })
-                .filter(item => item !== 'undefined');
-        });
-    }
-
-    getTreeStructure(/*context*/) {
-        // let result = {};
-
-        // result[]
-
-        // for (let i = this.data[context].length-1; i > 0; i--) {
-        //     this.data[context]
-        // }
+            if (caseIDs.length) {
+                selectedItems = caseIDs
+                    .map(id => {
+                        // item.id is actually the case ID.
+                        return this.items[context]
+                            .find(item => item && item.id === id)
+                    });
+            } else if (noneSelectedMeansAllSelected) {
+                selectedItems = this.items[context];
+            }
+        }
+        else {
+            selectedItems = [];
+        }
+        return selectedItems.filter(item => typeof(item) !== 'undefined');
     }
 
     queryAttributeCollections(context) {
@@ -693,10 +621,6 @@ export default class CodapPluginHelper {
                 value: value
             }
         });
-    }
-
-    findCollectionForAttribute() {
-
     }
 
     /**
@@ -801,6 +725,9 @@ export default class CodapPluginHelper {
         });
     }
 
+    /**
+     * Creates a simple scatter-plot graph component in CODAP with no adornments.
+     */
     createGraph(dataContext, xAxis, yAxis) {
         return this.codapInterface.sendRequest({
             action: 'create',
