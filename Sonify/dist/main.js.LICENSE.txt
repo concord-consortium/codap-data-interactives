@@ -3,5 +3,3 @@
  * (c) 2014-2023 Evan You
  * Released under the MIT License.
  */
-
-/*! showdown v 2.1.0 - 21-04-2022 */

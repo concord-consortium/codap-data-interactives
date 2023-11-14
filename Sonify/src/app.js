@@ -332,22 +332,23 @@ const app = new Vue({
             this.resetPitchTimeMaps();
         },
         getAttributeType(context, attrName) {
-          let attributes = helper.getAttributesForContext(context);
-          return attributes && attributes.find((attr) => attrName === attr.name);
+          let attributes = helper.getAttributeDefsForContext(context);
+          let attr = attributes && attributes.find((attr) => attrName === attr.name);
+          if (attr) return attr.type;
         },
         setIfDateTimeAttribute(type) {
             let contextName = this.state.focusedContext;
             let attrName = this.state[`${type}Attribute`];
-            let attrType = this.getAttributeType(attrName);
+            let attrType = this.getAttributeType(contextName, attrName);
             let values = helper.getAttrValuesForContext(contextName, attrName) || [];
             // an attribute is a Date attribute if attribute type is 'date' or
             // all of its values are Date objects or date strings
-            let isDateAttribute = attrType === 'date' || !values.some((x) => {
+            let isDateAttribute = attrType === 'date' || ((values.length>0) && !values.some((x) => {
                     let isDate = (x instanceof Date) ||
                         ((typeof x === 'string') && !isNaN(new Date(x).valueOf()) &&
                             (isNaN(x))) ;
                     return !isDate;
-                });
+                }));
             this.state[`${type}AttrIsDate`] = isDateAttribute;
         },
         /**

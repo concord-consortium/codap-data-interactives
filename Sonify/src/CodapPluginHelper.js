@@ -11,6 +11,31 @@ export default class CodapPluginHelper {
         // TODO: collections are unordered.
         this.data = null;
         this.contextTitles = null;
+        /*
+        * @property {
+        *           name:string,
+        *           collections: [
+        *               { name:string, attrs:[{name:string,type:string|null}]}
+        *           ]
+        *       }
+        */
+        this.contextStructures = null;
+        /*
+         * The top level of the structure object is keyed by context name. The
+         * second level is keyed by collection name and its values are an array
+         * of attribute names. e.g.:
+         *    {
+         *      context1: {
+         *        collectionA: [attr1, attr2, attr3],
+         *        collectionB: [attr4, attr5]
+         *      },
+         *      context2: {
+         *        collectionC: [attr6, attr7],
+         *        collectionD: [attr8, attr9, attr10]
+         *      }
+         *    }
+         *
+         */
         this.structure = null;
 
         this.globals = null;
@@ -78,7 +103,7 @@ export default class CodapPluginHelper {
         // initialize data cache
         await this.queryAllData();
 
-        // get the plugin id.
+        // get the plugin id so the plugin can select itself.
         await this.getPluginID();
 
         return this.codapInterface.getInteractiveState();
@@ -171,6 +196,7 @@ export default class CodapPluginHelper {
             this.queryInProgress = true;
             this.data = {};
             this.contextTitles = {};
+            this.contextStructures = {};
             await this.queryContextList();
             await this.queryCollectionList();
             await this.queryAllCases();
@@ -218,19 +244,29 @@ export default class CodapPluginHelper {
         return contextNames;
     }
 
-    queryCollectionList(context) {
+    async queryCollectionList(context) {
         let contexts = context ? [context] : Object.keys(this.data);
 
-        return Promise.all(contexts.map(context => {
-            return this.codapInterface.sendRequest({
-                action: 'get',
-                resource: `dataContext[${context}].collectionList`
-            }).then(result => {
-                result.values.forEach(collection => {
-                    this.data[context][collection.name] = {};
-                });
-            });
-        }));
+        // This await syntax from: https://stackoverflow.com/questions/40140149/use-async-await-with-array-map
+        await Promise.all(
+            contexts.map(async context => {
+                try {
+                    let result = await this.codapInterface.sendRequest({
+                        action: 'get', resource: `dataContext[${context}]`
+                    });
+                    if (result.success) {
+                        this.contextStructures[context] = result.values;
+                        result.values.collections.forEach(collection => {
+                            this.data[context][collection.name] = {};
+                        });
+                    } else {
+                        console.warn(`Error while fetching context info: ${context}: ${result}`);
+                    }
+                } catch (e) {
+                    console.warn(`Error while fetching context info: ${context}: ${e}`);
+                }
+            })
+        )
     }
 
     queryAllCases(context) {
@@ -389,6 +425,14 @@ export default class CodapPluginHelper {
         });
     }
 
+    /**
+     * Sets a structure property of this object either for a single
+     * dataContext or all dataContexts. Uses the data property of this object.
+     *
+     * The structure object is described where it is declared, above.
+     *
+     * @param context {string|null} the name of a dataContext or null
+     */
     fillStructure(context) {
         let contexts = context ? [context] : Object.keys(this.data);
 
@@ -499,6 +543,13 @@ export default class CodapPluginHelper {
 
     getAttributeValues(context, collection, attribute) {
         return (this.data && Object.keys(this.data).length) ? this.data[context][collection].map(c => c.values[attribute]) : null;
+    }
+
+    getAttributeDefsForContext(contextName) {
+        let contextDef = this.contextStructures && this.contextStructures[contextName];
+        if (contextDef) {
+            return contextDef.collections.flatMap(col => col.attrs);
+        }
     }
 
     getAttributesForContext(contextName) {
