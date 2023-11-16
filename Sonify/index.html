@@ -29,11 +29,11 @@
     </div>
 
     <div class="main-scroll-container">
-        <div class="mapper-container" title="Select dataset">
+        <div class="mapper-container" title="Select Dataset">
             Dataset
             <label>
                 <select v-model="state.focusedContext" v-on:change="onContextFocused" id="contextDropArea">
-                    <option disabled value="" hidden>Select context</option>
+                    <option disabled value="" hidden>Select Dataset</option>
                     <option v-for="context in contexts" :value="context">
                         {{getContextTitle(context)}}
                     </option>
