@@ -850,7 +850,7 @@ const app = new Vue({
         await helper.guaranteeGlobal(trackingGlobalName)
         this.updateTracker();
 
-        codapInterface.on('notify', '*', this.handleCODAPNotice)
+        helper.on('*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
     },
