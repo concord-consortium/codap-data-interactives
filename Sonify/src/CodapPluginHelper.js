@@ -643,7 +643,7 @@ export default class CodapPluginHelper {
         });
     }
 
-    guaranteeGlobal(name) {
+    async guaranteeGlobal(name) {
         return this.codapInterface.sendRequest({
             action: 'get',
             resource: `global[${name}]`
@@ -663,7 +663,7 @@ export default class CodapPluginHelper {
         })
     }
 
-    setGlobal(name, value) {
+    async setGlobal(name, value) {
         return this.codapInterface.sendRequest({
             action: 'update',
             resource: `global[${name}]`,
@@ -710,7 +710,7 @@ export default class CodapPluginHelper {
         }
     }
 
-    openSharedInfoPage(dimensions={width:400,height:600}, title, directory, file='info.md') {
+    async openSharedInfoPage(dimensions={width:400,height:600}, title, directory, file='info.md') {
         let location = window.location.pathname;
         let origin = window.location.origin;
 
@@ -778,7 +778,7 @@ export default class CodapPluginHelper {
     /**
      * Creates a simple scatter-plot graph component in CODAP with no adornments.
      */
-    createGraph(dataContext, xAxis, yAxis) {
+    async createGraph(dataContext, xAxis, yAxis) {
         return this.codapInterface.sendRequest({
             action: 'create',
             resource: 'component',
@@ -791,7 +791,7 @@ export default class CodapPluginHelper {
         })
     }
 
-    selectSelf() {
+    async selectSelf() {
         if (this.pluginID) {
             return this.codapInterface.sendRequest({
                 action: 'notify',
