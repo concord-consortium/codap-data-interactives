@@ -11,7 +11,7 @@
     "build": "webpack --config webpack.config.js",
     "test": "echo \"No automated tests at this time. See test/test-cases.md.\" && exit 1"
   },
-  "author": "Takahiko Tsuchiya",
+  "author": "Concord Sonification Team",
   "license": "ISC",
   "dependencies": {
     "nexusui": "^2.1.6",
