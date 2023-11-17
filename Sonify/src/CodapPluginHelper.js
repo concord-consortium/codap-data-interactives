@@ -187,47 +187,60 @@ export default class CodapPluginHelper {
         });
     }
 
+    // adapted from https://codepen.io/eanbowman/pen/jxqKjJ
+    async queryDone() {
+        const timeout = 10000;
+        let start = Date.now();
+        return new Promise(waitForDone.bind(this))
+        function waitForDone(resolve, reject) {
+            if  (this.queryInProgress === false)
+                resolve(this.queryInProgress);
+            else if (timeout && (Date.now() - start) >= timeout)
+                reject(new Error("timeout"));
+            else
+                setTimeout(waitForDone.bind(this, resolve, reject), 30);
+        }
+    }
+
     async queryAllData() {
         // console.log('Querying all data');
 
         if (this.queryInProgress) {
-            return null;
-        } else {
-            this.queryInProgress = true;
-            this.data = {};
-            this.contextTitles = {};
-            this.contextStructures = {};
-            await this.queryContextList();
-            await this.queryCollectionList();
-            await this.queryAllCases();
-            this.fillStructure();
-            let result = await this.queryAllItemsSync();
-            this.calcAttrValueRanges();
-            this.queryInProgress = false;
-            this.prevNotice = null;
-            this.prevDeleteNotice = null;
-            return result;
+            await this.queryDone();
         }
+        this.queryInProgress = true;
+        this.data = {};
+        this.contextTitles = {};
+        this.contextStructures = {};
+        await this.queryContextList();
+        await this.queryCollectionList();
+        await this.queryAllCases();
+        this.fillStructure();
+        let result = await this.queryAllItemsSync();
+        this.calcAttrValueRanges();
+        this.queryInProgress = false;
+        this.prevNotice = null;
+        this.prevDeleteNotice = null;
+        return result;
     }
 
     async queryDataForContext(context) {
         //console.log('Querying data for context:', context);
 
         if (this.queryInProgress) {
-            return null;
-        } else {
-            this.queryInProgress = true;
-            this.data[context] = {};
-            await this.queryCollectionList(context);
-            await this.queryAllCases(context);
-            this.fillStructure(context);
-            let result = await this.queryAllItemsSync(context);
-            this.calcAttrValueRanges(context);
-            this.queryInProgress = false;
-            this.prevNotice = null;
-            this.prevDeleteNotice = null;
-            return result;
+            await this.queryDone();
         }
+        this.queryInProgress = true;
+        this.data[context] = {};
+        await this.queryCollectionList(context);
+        await this.queryAllCases(context);
+        this.fillStructure(context);
+        let result = await this.queryAllItemsSync(context);
+        this.calcAttrValueRanges(context);
+        this.queryInProgress = false;
+        this.prevNotice = null;
+        this.prevDeleteNotice = null;
+        return result;
     }
 
     async queryContextList() {
@@ -519,7 +532,7 @@ export default class CodapPluginHelper {
 
     // TODO: Should be a list of object including ID, name, collection, etc.
     getCollectionsForContext(context) {
-        return this.structure ? Object.keys(this.structure[context]) : null;
+        return (this.structure && this.structure[context]) ? Object.keys(this.structure[context]) : null;
     }
 
     getAttributesForCollection(context, collection) {
@@ -557,20 +570,8 @@ export default class CodapPluginHelper {
     }
 
     getAttributeNamesForContext(contextName) {
-        return this.codapInterface.sendRequest({action: 'get', resource: `dataContext[${contextName}]`})
-            .then((result) => {
-                if (result.success) {
-                    let collections = result.values.collections;
-                    let attributeNames = [];
-                    collections && collections.forEach((col) => {
-                           col.attrs.forEach((attr) => {attributeNames.push(attr.name)});
-                        }
-                    )
-                    return Promise.resolve(attributeNames);
-                } else {
-                    return Promise.reject('failure');
-                }
-            })
+        let attrDefs = this.getAttributeDefsForContext(contextName);
+        return attrDefs && attrDefs.map(def => def.name);
     }
 
     getItemsForContext(context) {
@@ -609,9 +610,7 @@ export default class CodapPluginHelper {
                 selectedItems = this.items[context];
             }
         }
-        else {
-            selectedItems = [];
-        }
+        if (!selectedItems) selectedItems=[];
         return selectedItems.filter(item => typeof(item) !== 'undefined');
     }
 

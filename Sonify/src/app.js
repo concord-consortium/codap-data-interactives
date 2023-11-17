@@ -327,7 +327,7 @@ const app = new Vue({
         },
         onContextFocused() {
             this.collections = helper.getCollectionsForContext(this.state.focusedContext);
-            this.attributes = helper.getAttributesForContext(this.state.focusedContext);
+            this.attributes = helper.getAttributeNamesForContext(this.state.focusedContext);
 
             this.resetPitchTimeMaps();
         },
@@ -438,15 +438,15 @@ const app = new Vue({
             }
 
             if (this.state.focusedContext) {
-                helper.getAttributeNamesForContext(this.state.focusedContext).then((attrs) => {
-                    this.attributes = attrs;
-                    this.reselectCases();
-                    kAttributeMappedProperties.forEach(p => {
-                        if (this[p + 'AttrRange']) {
-                            this.processMappedAttribute(p);
-                        }
-                    })
-                });
+                let attrs = helper.getAttributeNamesForContext(this.state.focusedContext)
+
+                this.attributes = attrs;
+                this.reselectCases();
+                kAttributeMappedProperties.forEach(p => {
+                    if (this[p + 'AttrRange']) {
+                        this.processMappedAttribute(p);
+                    }
+                })
 
                 // Re-populate the collections dropdown.
                 const collections = helper.getCollectionsForContext(this.state.focusedContext);
@@ -760,7 +760,7 @@ const app = new Vue({
             }
             helper.queryAllData().then(this.onGetData).then(() =>{
                 if (this.state.focusedContext) {
-                    this.attributes = helper.getAttributesForContext(this.state.focusedContext);
+                    this.attributes = helper.getAttributeNamesForContext(this.state.focusedContext);
                 }
                 kAttributeMappedProperties.forEach( (p) => {
                     if (this.state[p + 'Attribute']) {this.processMappedAttribute(p);}
@@ -768,6 +768,7 @@ const app = new Vue({
             });
         },
         handleCODAPNotice(notice) {
+            // console.log(`CODAP Notice: ${JSON.stringify(notice)}`)
             if (!helper.checkNoticeIdentity(notice)) {
                 return null;
             }
@@ -790,9 +791,7 @@ const app = new Vue({
                             this.getSelectedItems(this.state.focusedContext).then(this.onItemsSelected);
                         }
                     } else if (['createCases', 'deleteCases', 'updateCases', 'createCollection', 'deleteCollection', 'moveAttribute'].includes(operation)) {
-                        if (contextName === this.state.focusedContext) {
-                            helper.queryDataForContext(contextName).then(this.onGetData);
-                        }
+                        helper.queryDataForContext(contextName).then(this.onGetData);
                     }
                 }
             }
@@ -854,7 +853,6 @@ const app = new Vue({
         codapInterface.on('notify', '*', this.handleCODAPNotice)
 
         this.selectedCsd = this.csdFiles[0];
-
     },
     computed: {
         isPlayable: function() {
