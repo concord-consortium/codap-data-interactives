@@ -1,26 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Sonification Plugin Info</title>
+    <script src="../lib/showdown.min.js"></script>
     <style>
-        html, body {
-            width: 100%;
-            /*height: 100%;*/
-            background-color: white;
-        }
+      html,
+      body {
+        width: 100%;
+        /*height: 100%;*/
+        background-color: white;
+      }
 
-        body {
-            font-family: sans-serif;
-        }
+      body {
+        font-family: sans-serif;
+      }
 
-        #renderTarget {
-            width: 95%;
-        }
+      #renderTarget {
+        width: 95%;
+      }
     </style>
-</head>
-<body>
-<div id='renderTarget'></div>
-<script type="module" src="../dist/info_main.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="renderTarget"></div>
+    <script src="./info_app.js"></script>
+  </body>
 </html>
