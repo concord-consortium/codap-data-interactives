@@ -1,7 +1,9 @@
-/*  global Blockly, Blockly.JavaScript      */
+/*  global Blockly, Blockly.JavaScript, javascript, javascript.javascriptGenerator.forBlock     */
 
+const generator = javascript.javascriptGenerator;
+const order = javascript.Order;
 
-Blockly.JavaScript['codap_emit'] = function (block) {
+generator.forBlock['codap_emit'] = function (block, generator) {
 
     const theVariables = Blockly.getMainWorkspace().getAllVariables();  //  gets variables AND VALUES
 
@@ -37,7 +39,7 @@ Blockly.JavaScript['codap_emit'] = function (block) {
     return code;
 };
 
-Blockly.JavaScript['math_number_fraction'] = function (block) {
+javascript.javascriptGenerator.forBlock['math_number_fraction'] = function (block, generator) {
 
     function findNumberEvenIfPercentage(inString) {
         let isPercentage = false;
@@ -79,76 +81,68 @@ Blockly.JavaScript['math_number_fraction'] = function (block) {
     try {
         const numNum = findNumberEvenIfPercentage(numerator);
         const numDenom = findNumberEvenIfPercentage(denominator);
-        const code = `${numNum / numDenom}`;
-        const order = code >= 0 ? Blockly.JavaScript.ORDER_ATOMIC : Blockly.JavaScript.ORDER_UNARY_NEGATION;
-        return [code, order];
+        const theQuotient = numNum / numDenom;
+        const code = `${theQuotient}`;
+        const oorder = theQuotient >= 0 ? order.ATOMIC : order.UNARY_NEGATION;
+        return [code, oorder];
     } catch (msg) {
         console.log(`simmer: number parse error ${err} (${msg})`);
-        return ["NaN", Blockly.JavaScript.ORDER_ATOMIC];
+        return ["NaN", order.ATOMIC];
     }
 };
 
-Blockly.JavaScript['random_integer'] = function (block) {
+javascript.javascriptGenerator.forBlock['random_integer'] = function (block, generator) {
     // when it was fields, was:   let lower = block.getFieldValue('LOWER');
     let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
+        order.ADDITION) || 1;
     let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
-        Blockly.JavaScript.ORDER_ADDITION) || 6;
+        order.ADDITION) || 6;
 
-    return [`random_functions.integer(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
+    return [`random_functions.integer(${lower}, ${upper})`, order.ADDITION];
 };
 
-Blockly.JavaScript['random_float'] = function (block) {
+javascript.javascriptGenerator.forBlock['random_float'] = function (block, generator) {
     // when it was fields, was:   let lower = block.getFieldValue('LOWER');
     let lower = Blockly.JavaScript.valueToCode(block, 'LOWER',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
+        order.ADDITION) || 1;
     let upper = Blockly.JavaScript.valueToCode(block, 'UPPER',
-        Blockly.JavaScript.ORDER_ADDITION) || 6;
+        order.ADDITION) || 6;
 
-    return [`random_functions.float(${lower}, ${upper})`, Blockly.JavaScript.ORDER_ADDITION];
+    return [`random_functions.float(${lower}, ${upper})`, order.ADDITION];
 };
 
-Blockly.JavaScript['random_normal'] = function (block) {
+javascript.javascriptGenerator.forBlock['random_normal'] = function (block, generator) {
     let mu = Blockly.JavaScript.valueToCode(block, 'MU',
-        Blockly.JavaScript.ORDER_ADDITION) || 0;
+        order.ADDITION) || 0;
     let sigma = Blockly.JavaScript.valueToCode(block, 'SIGMA',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
+        order.ADDITION) || 1;
     /*
         let mu = block.getFieldValue('MU');
         let sigma = block.getFieldValue('SIGMA');
     */
 
-    return [`random_functions.randomNormal(${mu}, ${sigma})`, Blockly.JavaScript.ORDER_ADDITION];
+    return [`random_functions.randomNormal(${mu}, ${sigma})`, order.ADDITION];
 };
 
-Blockly.JavaScript['random_binomial'] = function (block) {
+generator.forBlock['random_binomial'] = function (block, generator) {
     let N = Blockly.JavaScript.valueToCode(block, 'SAMPLE_SIZE',
-        Blockly.JavaScript.ORDER_ADDITION) || 0;
+        order.ADDITION) || 0;
     let p = Blockly.JavaScript.valueToCode(block, 'PROB',
-        Blockly.JavaScript.ORDER_ADDITION) || 1;
+        order.ADDITION) || 1;
 
-    return [`random_functions.randomBinomial(${N}, ${p})`, Blockly.JavaScript.ORDER_ADDITION];
+    return [`random_functions.randomBinomial(${N}, ${p})`, order.ADDITION];
 };
 
-Blockly.JavaScript['random_pick_from_two'] = function (block) {
+javascript.javascriptGenerator.forBlock['random_pick_from_two'] = function (block, generator) {
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
     const code = `Math.random() < 0.5 ? "${one}" : "${two}"`;
-    return [code, Blockly.JavaScript.ORDER_ADDITION];
+    return [code, order.ADDITION];
 };
 
-Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
+javascript.javascriptGenerator.forBlock['random_pick_from_two_advanced'] = function (block, generator) {
 
-    /*
-        let prop = Blockly.JavaScript.valueToCode(block, 'PROP',
-            Blockly.JavaScript.ORDER_ATOMIC) || "0.5";
-        //  this yields something like prop = "'1/2'", which is bad. No idea how that started happening!
-
-        prop = prop.replaceAll("'", "");  //  strip single quotes
-        prop = prop.replaceAll('"', '');  //  strip double quotes
-    */
-
-    let prop = Blockly.JavaScript.valueToCode(block, 'PROP', Blockly.JavaScript.ORDER_ATOMIC);
+    let prop = Blockly.JavaScript.valueToCode(block, 'PROP', order.ATOMIC);
 
     let one = block.getFieldValue('ONE');
     let two = block.getFieldValue('TWO');
@@ -157,42 +151,27 @@ Blockly.JavaScript['random_pick_from_two_advanced'] = function (block) {
 
     code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
 
-    /*
-        if (typeof prop === 'string') {
-            propNum = utilities.stringFractionDecimalOrPercentToNumber(prop);
-            if (propNum.theString) {
-                code = `Math.random() < ${propNum.theNumber} ? "${one}" : "${two}"`;
-            } else {
-                code = `"bad input string [${prop}]"`;
-            }
-        } else if (typeof prop === 'number') {
-            code = `Math.random() < ${prop} ? "${one}" : "${two}"`;
-        } else {
-            code = `"bad input ${typeof prop} [${prop}]"`;
-        }
-    */
-
-    return [code, Blockly.JavaScript.ORDER_ADDITION];
+    return [code, order.ADDITION];
 };
 
-Blockly.JavaScript['random_pick'] = function (block) {
-    const value_list = Blockly.JavaScript.valueToCode(block, 'LIST', Blockly.JavaScript.ORDER_ATOMIC);
+javascript.javascriptGenerator.forBlock['random_pick'] = function (block, generator) {
+    const value_list = Blockly.JavaScript.valueToCode(block, 'LIST', order.ATOMIC);
     const code = `random_functions.pickFrom(${value_list})`;
     // TODO: Change ORDER_NONE to the correct strength.
-    return [code, Blockly.JavaScript.ORDER_NONE];
+    return [code, order.NONE];
 };
 
-Blockly.JavaScript['text_print'] = function (block) {
+javascript.javascriptGenerator.forBlock['text_print'] = function (block, generator) {
     const msg = Blockly.JavaScript.valueToCode(
         block, 'TEXT',
-        Blockly.JavaScript.ORDER_NONE) || "''";
+        order.NONE) || "''";
 
     return `console.log(${msg});\n`;
 };
 
-Blockly.JavaScript['lists_push'] = function (block) {
-    const value_newItem = Blockly.JavaScript.valueToCode(block, 'NEWITEM', Blockly.JavaScript.ORDER_ATOMIC);
-    let value_array = Blockly.JavaScript.valueToCode(block, 'ARRAY', Blockly.JavaScript.ORDER_ATOMIC);
+javascript.javascriptGenerator.forBlock['lists_push'] = function (block, generator) {
+    const value_newItem = Blockly.JavaScript.valueToCode(block, 'NEWITEM', order.ATOMIC);
+    let value_array = Blockly.JavaScript.valueToCode(block, 'ARRAY', order.ATOMIC);
 
     const code = `${value_array}.push(${value_newItem});\n`;
     return code;

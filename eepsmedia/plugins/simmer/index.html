@@ -4,8 +4,9 @@
 <!--
 
 LOCAL, TESTING:     https://localhost/codap-data-interactives/eepsmedia/plugins/simmer/
-http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-data-interactives/eepsmedia/plugins/simmer
+http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/codap-data-interactives/eepsmedia/plugins/simmer
 -->
+
 
 <html lang="en">
 <head>
@@ -56,7 +57,7 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
 <div id="simmer">
 <div id="simmerControls" class="noselect">
     <div>
-        <img id="runButton" class="roundButton" src="art/play-button.png" onclick="simmer.run()"/>
+        <img id="runButton" class="roundButton" src="art/play-button.png" onclick="simmer.run()" alt="run code"/>
     </div>
 
     &emsp;
@@ -77,13 +78,13 @@ http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-d
 
     <div>
         <img id="shrinkButton" class="shrinkExpandButton"
-             src="art/shrink-arrows.png" onclick="simmer.shrink()">
+             src="art/shrink-arrows.png" onclick="simmer.shrink()" alt="shring the panel">
         <img id="expandButton" class="shrinkExpandButton"
-             src="art/expand-arrows.png" onclick="simmer.shrink()"
+             src="art/expand-arrows.png" onclick="simmer.shrink()" alt="expand the panel"
              style="display : none">
     </div>
 
-    <img id="blocklyLogo" src="art/blockly_logo_built_on.svg">
+    <img id="blocklyLogo" src="art/blockly_logo_built_on.svg" alt="powered by Blockly">
 </div>
 
 <div id="variableDisplayStrip" class="noselect">
