@@ -171,8 +171,27 @@ Blockly.common.defineBlocksWithJsonArray([
         "previousStatement": null,
         "nextStatement": null,
         "colour": 230,
-        "tooltip": "",
+        "tooltip": "push an item onto the list",
         "helpUrl": ""
+    },
+
+    //      list pop
+
+    {
+        "type": "lists_pop",
+        "message0": "pop from %1",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "ARRAY",
+                "check": "Array"
+            }
+        ],
+        "inputsInline": true,
+        "colour": 230,
+        "tooltip": "pop one item from the list",
+        "helpUrl": "",
+        "output" : null     //  can be anything
     },
 
     //      pick from two, not 50-50
@@ -226,6 +245,24 @@ Blockly.common.defineBlocksWithJsonArray([
         "output": null,
         "colour": 888,
         "tooltip": "plug in an array to pick from",
+        "helpUrl": ""
+    },
+
+    //      random take (without replacement)
+
+    {
+        "type": "random_take",
+        "message0": "take from list %1 (no replacement!)",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "LIST",
+                "check": "Array"
+            }
+        ],
+        "output": null,     //  can be anything
+        "colour": 888,
+        "tooltip": "plug in an array to take from (without replacement)",
         "helpUrl": ""
     }
 ]);

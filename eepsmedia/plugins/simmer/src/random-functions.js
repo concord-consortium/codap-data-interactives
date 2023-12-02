@@ -36,6 +36,26 @@ const random_functions = {
     },
 
     /**
+     * Pick a random item from the array _and remove it_
+     *
+     * @param iArray
+     * @returns {null}
+     */
+    takeFrom: function (iArray = [1,2,3,4,5,6,7,8]) {
+        out = null;
+        if (Array.isArray(iArray)) {
+            const N = iArray.length;
+            const theIndex = this.integer(0, N - 1);
+            if (theIndex > -1) {
+                const theItem = iArray.splice(theIndex, 1);
+                out = theItem[0];
+                console.log(`takeFrom: ${iArray}, index ${theIndex}, item ${theItem}, out ${out}`);
+            }
+        }
+        return out;
+    },
+
+    /**
      * Random normal, Box-Muller transform. Use only one value.
      * @param mean
      * @param sd

@@ -155,8 +155,15 @@ javascript.javascriptGenerator.forBlock['random_pick_from_two_advanced'] = funct
 };
 
 javascript.javascriptGenerator.forBlock['random_pick'] = function (block, generator) {
-    const value_list = Blockly.JavaScript.valueToCode(block, 'LIST', order.ATOMIC);
-    const code = `random_functions.pickFrom(${value_list})`;
+    const list_name = Blockly.JavaScript.valueToCode(block, 'LIST', order.ATOMIC);
+    const code = `random_functions.pickFrom(${list_name})`;
+    // TODO: Change ORDER_NONE to the correct strength.
+    return [code, order.NONE];
+};
+
+javascript.javascriptGenerator.forBlock['random_take'] = function (block, generator) {
+    const list_name = Blockly.JavaScript.valueToCode(block, 'LIST', order.ATOMIC);
+    const code = `random_functions.takeFrom(${list_name})`;
     // TODO: Change ORDER_NONE to the correct strength.
     return [code, order.NONE];
 };
@@ -175,6 +182,13 @@ javascript.javascriptGenerator.forBlock['lists_push'] = function (block, generat
 
     const code = `${value_array}.push(${value_newItem});\n`;
     return code;
+};
+
+javascript.javascriptGenerator.forBlock['lists_pop'] = function (block, generator) {
+    let array_name = Blockly.JavaScript.valueToCode(block, 'ARRAY', order.ATOMIC);
+
+    const code = `${array_name}.pop();\n`;
+    return [code, order.ATOMIC];
 };
 
 

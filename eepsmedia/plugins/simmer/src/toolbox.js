@@ -122,6 +122,10 @@ simmer.toolbox = {
                     'kind': 'block',
                     'type': 'random_pick'
                 },
+                {
+                    'kind': 'block',
+                    'type': 'random_take'
+                },
 
                 {
                     'kind': 'block',
@@ -325,11 +329,10 @@ simmer.toolbox = {
                             "shadow": {
                                 "type": "text",
                                 "fields": {
-                                    "TEXT": "a, b, c, c"
+                                    "TEXT": "a,b,c,c"
                                 }
                             }
                         },
-
 
                         //  this DELIM shadow does work!
                         "DELIM": {
@@ -345,6 +348,9 @@ simmer.toolbox = {
 
                 {
                     'kind': 'block', 'type': 'lists_push',
+                },
+                {
+                    'kind': 'block', 'type': 'lists_pop',
                 },
 
                 {
