@@ -28,7 +28,7 @@ Blockly.common.defineBlocksWithJsonArray([
             },
         ],
         'output': 'Number',
-        'tooltip' : `enter a number, fraction, or percentage`,
+        'tooltip': `enter a number, fraction, or percentage`,
         //  'helpUrl': '%{BKY_MATH_NUMBER_HELPURL}',
         'style': 'math_blocks',
         //  'tooltip': '%{BKY_MATH_NUMBER_TOOLTIP}',
@@ -191,7 +191,26 @@ Blockly.common.defineBlocksWithJsonArray([
         "colour": 230,
         "tooltip": "pop one item from the list",
         "helpUrl": "",
-        "output" : null     //  can be anything
+        "output": null     //  can be anything
+    },
+
+    //      list simple split
+
+    {
+        "type": "lists_simple_split",
+        "message0": "split %1 into a list at commas",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "TEXT",
+                "check": "String"
+            }
+        ],
+        "inputsInline": true,
+        "colour": 230,
+        "tooltip": "split the input at the commas, put the result into a list",
+        "helpUrl": "",
+        "output": Array     //  can be anything
     },
 
     //      pick from two, not 50-50
@@ -206,13 +225,6 @@ Blockly.common.defineBlocksWithJsonArray([
                 "check": "Number",      //      "String"
             },
 
-/*
-            {
-                "type": "field_input",
-                "name": "PROP",
-                "text": "1/2",
-            },
-*/
             {
                 "type": "field_input",
                 "name": "ONE",
@@ -264,7 +276,40 @@ Blockly.common.defineBlocksWithJsonArray([
         "colour": 888,
         "tooltip": "plug in an array to take from (without replacement)",
         "helpUrl": ""
+    },
+
+    //  LOOPS
+
+    //  loop number or until array is empty
+
+    {
+        "type": "loop_number_or_empty",
+        "message0": "repeat %1 times, or until %2 is empty %3",
+        "args0": [
+            {
+                "type": "input_value",
+                "name": "TIMES",
+                "check": "Number"
+            },
+            {
+                "type": "input_value",
+                "name": "ARRAY",
+                "check": "Array"
+            },
+            {
+                "type": "input_statement",
+                "name": "GUTS"
+            }
+        ],
+        "inputsInline": true,
+        "previousStatement": null,
+        "nextStatement": null,
+        "colour": 135,
+        "tooltip": "repeat a number of times, or until an array is empty",
+        "helpUrl": ""
     }
+
+
 ]);
 
 

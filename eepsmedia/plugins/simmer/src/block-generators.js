@@ -191,6 +191,26 @@ javascript.javascriptGenerator.forBlock['lists_pop'] = function (block, generato
     return [code, order.ATOMIC];
 };
 
+javascript.javascriptGenerator.forBlock['lists_simple_split'] = function (block, generator) {
+    let text_name = Blockly.JavaScript.valueToCode(block, 'TEXT', order.ATOMIC);
+
+    const code = `${text_name}.split(',');\n`;
+    return [code, order.ATOMIC];
+};
+
+javascript.javascriptGenerator.forBlock['loop_number_or_empty'] = function(block, generator) {
+    const times_value = generator.valueToCode(block, 'TIMES', javascript.Order.ATOMIC);
+    const array_name = generator.valueToCode(block, 'ARRAY', javascript.Order.ATOMIC);
+    const guts_name = generator.statementToCode(block, 'GUTS');
+
+    const empty_clause = (array_name.length > 0) ? `&& ${array_name}.length > 0` : "";
+
+    let code = `let ix = ${times_value};\nwhile (ix > 0 ${empty_clause}) {\n
+            ${guts_name}\n ix--;\n}\n`;
+    return code;
+};
+
+
 
 const utilities = {
     stringFractionDecimalOrPercentToNumber: function (iString) {
