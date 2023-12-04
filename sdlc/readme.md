@@ -41,7 +41,10 @@ IPUMS provides harmonized population microdata based on the decennial US Federal
 * Create an extract:
   * Go to https://usa.ipums.org/usa/,
   * click on "Select Data"
-  * ... TBD
+  * Using codebook.xml as a guide, select desired variables from the available options. Note, you will see some attributes that appear to be duplicates of others but with an extra "D" at the end -- these are detailed versions of those attributes, and are auto-generated when you select the first one. Also note, that the SAMPLES variable has replaced the old DATANUM variable.
+  * Select the samples for the desired years.
+  * Go to Create Data Sample, and then under Options, go to Customize Sample Size to reduce the sample size to around 20,000.
+  * Submit extract.
 * Convert to SQL install script: TBD
 
 ### The Database
@@ -98,3 +101,7 @@ This file should be placed ... TBD
 3. Upload data: TBD
 4. Initialize presets: TBD
 5. Start scheduled event: TBD
+
+
+
+1.)
