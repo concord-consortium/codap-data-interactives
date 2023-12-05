@@ -1,6 +1,6 @@
 {
   "name": "sonify",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A CODAP Plugin that plays temporal data as sounds.",
   "private": true,
   "directories": {
