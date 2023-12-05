@@ -283,15 +283,6 @@ const app = new Vue({
             } else if (el.id.startsWith("time")) {
               this.state.timeAttribute = data.values.attribute.name;
               this.onTimeAttributeSelectedByUI();
-            } else if (el.id.startsWith("duration")) {
-              this.state.durationAttribute = data.values.attribute.name;
-              this.onDurationAttributeSelectedByUI();
-            } else if (el.id.startsWith("loudness")) {
-              this.state.loudnessAttribute = data.values.attribute.name;
-              this.onLoudnessAttributeSelectedByUI();
-            } else if (el.id.startsWith("stereo")) {
-              this.state.stereoAttribute = data.values.attribute.name;
-              this.onStereoAttributeSelectedByUI();
             }
           }
         });
@@ -438,30 +429,6 @@ const app = new Vue({
         this.stopNotes();
         this.play();
       }
-    },
-    onDurationAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.durationAttribute
-          ? "Duration attribute selected..."
-          : "Please select attribute for duration",
-      );
-      this.processMappedAttribute("duration");
-    },
-    onLoudnessAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.loudnessAttribute
-          ? "Loudness attribute selected..."
-          : "Please select attribute for loudness",
-      );
-      this.processMappedAttribute("loudness");
-    },
-    onStereoAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.stereoAttribute
-          ? "Stereo attribute selected..."
-          : "Please select attribute for stereo",
-      );
-      this.processMappedAttribute("stereo");
     },
     onConnectByCollectionSelectedByUI() {
       this.setUserMessage(
