@@ -43,9 +43,19 @@ IPUMS provides harmonized population microdata based on the decennial US Federal
   * click on "Select Data"
   * Using codebook.xml as a guide, select desired variables from the available options. Note, you will see some attributes that appear to be duplicates of others but with an extra "D" at the end -- these are detailed versions of those attributes, and are auto-generated when you select the first one. Also note, that the SAMPLES variable has replaced the old DATANUM variable.
   * Select the samples for the desired years.
-  * Go to Create Data Sample, and then under Options, go to Customize Sample Size to reduce the sample size to around 20,000.
+  * Use the full sample size.
   * Submit extract.
-* Convert to SQL install script: TBD
+* Convert the .dat file to CSV
+  * Run the bin/createCSVFromDat script with the following arguments: path_to_datFile, path_to_codebookFile, year, name_of_output_directory
+* Generate presets from CSV file
+  * Run the bin/createPresets script with the following arguments: path_to_generated_csvFile, path_to_codebookFile, `presets/[year]`
+* Upload CSV files to S3
+  * Gzip the preset csv files using the command `gzip -r presets`
+  * Run the s3-sync script: `./bin/s3-sync presets`
+* Update metadata file
+  * Run the createMetadataFile with the following arguments: presets path_for_output_file.json. Note: the path to the output file should be different than the current path to the metadata file, otherwise it will overwrite the current metadata file.
+  * Once the metadata is generated, copy the new data values into the plugin/assets/data/metadata.json.
+  * Delete the newly-generated metadata file.
 
 ### The Database
 
