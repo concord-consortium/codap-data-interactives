@@ -1,4 +1,5 @@
 /*global codapInterface:true*/
+import packageInfo from "../package.json";
 import Vue from "vue";
 import Nexus from "nexusui";
 import { default as CodapPluginHelper } from "./CodapPluginHelper.js";
@@ -67,7 +68,7 @@ const app = new Vue({
   el: "#app",
   data: {
     name: "Sonify",
-    version: "v0.3.3",
+    version: packageInfo.version,
     dim: {
       width: 285,
       height: 385,
