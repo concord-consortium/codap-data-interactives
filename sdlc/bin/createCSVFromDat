@@ -116,25 +116,11 @@ function main() {
       printErrorAndExit(configuration.statusMessage);
     }
 
-    // getCSVFromFile(fs.createReadStream(configuration.csvFilename, {flags: 'r', encoding: 'utf8'}))
-    //     .then(function (result) {
-    //           console.log(`read file, "${configuration.csvFilename}": ${result.data.length}`);
-    //           configuration.headerLine = result.data.shift();
-    //           configuration.perwtIndex = configuration.headerLine.indexOf('PERWT');
-    //           createPresets(result.data, configuration);
-    //         },
-    //         function(error) {
-    //           console.log(error);
-    //         }
-    //       );
-
-    const data = [];
     let outFN = `${configuration.outputDir}/${configuration.year}.csv`;
     let writeStream = fs.createWriteStream(outFN);
 
     let headers = configuration.dataDictionary.map((variable) => variable.name);
     writeStream.write(`${papa.unparse([headers])}\n`);
-    // data.push(headers);
 
     let lineReader = readline.createInterface({
       input: fs.createReadStream(configuration.datFilename)
@@ -155,7 +141,6 @@ function main() {
       });
 
       writeStream.write(`${papa.unparse([values])}\n`);
-      // data.push(values);
     });
   } catch (e) {
     printErrorAndExit(e);
