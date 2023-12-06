@@ -77,11 +77,9 @@ function parseSpecifier(spec, rangeWord) {
         arr = arr.concat(seq);
       }
     } else {
-      item === " " && console.log("UNIT item is space", item);
-
       if (item !== "") {
         if (item !== " ") {
-          arr.push(item);
+          arr.push(item.trim());
         }
       }
     }
