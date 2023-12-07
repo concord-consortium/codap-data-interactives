@@ -28,10 +28,6 @@ const papa = require('papaparse');
 
 let configuration = null;
 
-function printWarning(message) {
-  console.warn(message)
-}
-
 function printErrorAndExit(message) {
   console.error(message);
   process.exit(2);
