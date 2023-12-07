@@ -77,7 +77,11 @@ function parseSpecifier(spec, rangeWord) {
         arr = arr.concat(seq);
       }
     } else {
-      arr.push(item);
+      if (item !== "") {
+        if (item !== " ") {
+          arr.push(item.trim());
+        }
+      }
     }
   });
   return arr.length?arr:null;
