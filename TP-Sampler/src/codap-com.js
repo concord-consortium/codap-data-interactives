@@ -544,7 +544,7 @@ CodapCom.prototype = {
     function getFormula() {
       switch (measureType) {
         case "sum":
-          return `sum(${selections.output})`;
+          return `sum(\`${selections.output}\`)`;
         case "conditional_count":
           return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`;
         case "conditional_percentage":
@@ -554,11 +554,11 @@ CodapCom.prototype = {
         case "median":
           return `median(\`${selections.output}\`)`;
         case "conditional_sum":
-          return `sum(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+          return `sum(\`${selections.output}\`,\` ${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_mean":
-          return `mean(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+          return `mean(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_median":
-          return `median(\`${selections.output}\`, ${selections.output2}${selections.operator}'${selections.value}')`;
+          return `median(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "difference_of_means":
           return `min(mean(\`${selections.outputPt1}\`, \`${selections.outputPt12}\`${selections.operatorPt1}'${selections.valuePt1}'), mean(\`${selections.outputPt2}\`, \`${selections.outputPt22}\`${selections.operatorPt2}'${selections.valuePt2}'))`;
         case "difference_of_medians":
