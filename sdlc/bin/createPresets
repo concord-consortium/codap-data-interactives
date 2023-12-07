@@ -1,6 +1,6 @@
 #!/usr/bin/env node --max-old-space-size=30000
 // ==========================================================================
-//  
+//
 //  Author:   jsandoe
 //
 //  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
@@ -22,15 +22,10 @@
  */
 const fs = require('fs');
 const console = require('console');
-const readline = require('readline');
 const xml2js = require('xml-js');
 const papa = require('papaparse');
 
 let configuration = null;
-
-function printWarning(message) {
-  console.warn(message)
-}
 
 function printErrorAndExit(message) {
   console.error(message);
@@ -129,10 +124,6 @@ function getCSVFromFile(file) {
   });
 }
 
-function getCSV(csv) {
-  return papa.parse(csv, {/*dynamicTyping: true, */skipEmptyLines: true});
-}
-
 function getStateCodesMap (configuration) {
   let dict = configuration.dataDictionary;
   // configuration.dataDictionary is derived from the CodeBook.
@@ -225,14 +216,6 @@ function main() {
     if (!configuration.status) {
       printErrorAndExit(configuration.statusMessage);
     }
-    // console.log(`configuration = ${JSON.stringify(configuration, null, '  ')}`);
-    // let fileContents = fs.readFileSync(configuration.csvFilename, {encoding: 'utf8'});
-    // console.log(`read file, "${configuration.csvFilename}" length: ${fileContents.length}`);
-    // let result = getCSV(fileContents);
-    // console.log(`converted, errors: ${result?result.errors.length:''}`);
-    // configuration.headerLine = result.data.shift();
-    // configuration.perwtIndex = configuration.headerLine.indexOf('PERWT');
-    // createPresets(result.data, configuration);
     getCSVFromFile(fs.createReadStream(configuration.csvFilename, {flags: 'r', encoding: 'utf8'}))
         .then(function (result) {
               console.log(`read file, "${configuration.csvFilename}": ${result.data.length}`);
