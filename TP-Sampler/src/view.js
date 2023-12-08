@@ -88,8 +88,8 @@ var width = 205,            // svg units
 
     getCoordinatesForVariableLabel = function(radius, percent) {
       var perc = percent + 0.75,    // rotate 3/4 to start at top
-          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * 1.5),
-          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * 1.5);
+          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * 1.70),
+          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * 1.70);
 
       return [x, y];
     },
@@ -687,7 +687,9 @@ View.prototype = {
         var merge = variables[i] === lastVariable;
         mergeCount = merge ? mergeCount + 1 : 0;
         var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount);
-        var varTextSize = "16px";
+        var varTextSize = uniqueVariables.length >= 20 ? "6px"
+                                                       : uniqueVariables.length >= 10 ? "10px"
+                                                                                      : "16px";
         var pctTextSize = "12px";
 
         lastVariable = variables[i];
@@ -722,11 +724,8 @@ View.prototype = {
 
         // variable name label
         var variableLabelClipping = s.path(slice.path);
-        // variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
-        //                                           variableLabelClipping, Math.max(1, 10 - variables.length));
-
         variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
-                                                  variableLabelClipping, Math.max(1, 10 - variables.length));
+                                                  variableLabelClipping, Math.max(10, 10 - variables.length));
         variableLabel.attr({
           fontWeight: "normal",
           fill: "black"
