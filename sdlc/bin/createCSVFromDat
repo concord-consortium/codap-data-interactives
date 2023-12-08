@@ -1,0 +1,146 @@
+#!/usr/bin/env node --max-old-space-size=30000
+// ==========================================================================
+//
+//  Author:   jsandoe
+//
+//  Copyright (c) 2018 by The Concord Consortium, Inc. All rights reserved.
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+// ==========================================================================
+/**
+ * Node program to read in a CSV file and print some statistics
+ */
+const fs = require('fs');
+const console = require('console');
+const readline = require('readline');
+const xml2js = require('xml-js');
+const papa = require('papaparse');
+
+let configuration = null;
+
+function printErrorAndExit(message) {
+  console.error(message);
+  process.exit(2);
+}
+
+function configure() {
+  let progName = process.argv[1].replace(/.*\//, '');
+
+  configuration = {
+    codeBook: process.argv[3],
+    datFilename: process.argv[2],
+    dataDictionary: {},
+    outputDir: process.argv[5],
+    progname: progName,
+    status: true,
+    statusMessage: 'ok',
+    tempFilename: `/tmp/${progName}_${process.pid}`,
+    year: process.argv[4]
+  };
+
+  if (!configuration.codeBook || !configuration.datFilename || !configuration.outputDir || !configuration.year) {
+    configuration.status = false;
+    configuration.statusMessage = `usage: ${configuration.progname} datFile codebookFile year outputDir`
+  } else {
+    let codebook = fs.readFileSync(configuration.codeBook, {encoding: 'utf8'});
+    configuration.dataDictionary = getDataDictionary(codebook);
+  }
+
+  return configuration;
+}
+
+/**
+ * IPUMS files are described in an XML Codebook. We extract the relevant parts...
+ *
+ * @param codebook {string}
+ * @return {{name: string | number, width, format: string, description, categories, labl, startPos: *}[]}
+ */
+function getDataDictionary (codebook) {
+  const kSpecialNumeric = ['FAMSIZE', 'AGE'];
+  let tCbkObject = xml2js.xml2js(codebook, {}),
+      tDescriptions = tCbkObject.elements[1].elements[3];
+  return tDescriptions.elements.map(function (iDesc) {
+    let tCats = {};
+    iDesc.elements.forEach(function (iElement) {
+      if (iElement.name === 'catgry') {
+        let key = Number(iElement.elements[0].elements[0].text);
+        tCats[key] = iElement.elements[1].elements[0].text;
+      }
+    });
+    return {
+      name: iDesc.attributes.name,
+      startPos: iDesc.elements[0].attributes.StartPos,
+      width: Number(iDesc.elements[0].attributes.width),
+      labl: iDesc.elements[1].elements[0].text,
+      description: iDesc.elements[2].elements[0].cdata,
+      format: (Object.keys(tCats).length === 0 || kSpecialNumeric.indexOf(
+          iDesc.attributes.name) >= 0) ? 'numeric' : 'categorical',
+      categories: tCats,
+      dcml: Number(iDesc.attributes.dcml)
+    }
+  });
+}
+
+function readAttribute(dataDictionary, line, name) {
+  let def = dataDictionary.find(function (entr) {return entr.name === name;});
+  if (def) {
+    let start = def.startPos - 1;
+    let rawValue = line.slice(start, start + def.width);
+    if (def.dcml > 0) {
+      const rawInt = Number(rawValue) / Math.pow(10, def.dcml);
+      return rawInt.toString();
+    }
+    return rawValue;
+  }
+}
+
+function main() {
+  try {
+    // set up from command line arguments
+    let configuration = configure();
+    if (!configuration.status) {
+      printErrorAndExit(configuration.statusMessage);
+    }
+
+    let outFN = `${configuration.outputDir}/${configuration.year}.csv`;
+    let writeStream = fs.createWriteStream(outFN);
+
+    let headers = configuration.dataDictionary.map((variable) => variable.name);
+    writeStream.write(`${papa.unparse([headers])}\n`);
+
+    let lineReader = readline.createInterface({
+      input: fs.createReadStream(configuration.datFilename)
+    });
+
+    lineReader.on('line', (line) => {
+      if (line.length === 0) {
+        return;
+      }
+
+      const year = readAttribute(configuration.dataDictionary, line, "YEAR");
+      if (year !== configuration.year) {
+        return;
+      }
+
+      const values = headers.map((variableName) => {
+        return readAttribute(configuration.dataDictionary, line, variableName);
+      });
+
+      writeStream.write(`${papa.unparse([values])}\n`);
+    });
+  } catch (e) {
+    printErrorAndExit(e);
+  }
+}
+
+main();
