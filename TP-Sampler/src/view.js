@@ -17,8 +17,8 @@ var width = 205,            // svg units
     capWidth = 40,
     border = 2,
     spinnerRadius = Math.min(containerWidth, containerHeight)/2,
-    spinnerX = containerX + (containerWidth/2),
-    spinnerY = containerY + (containerHeight/2),
+    spinnerX = containerX + (containerWidth/2), //x center of spinner
+    spinnerY = containerY + (containerHeight/2),//y center of spinner
     darkTeal = "#008cba",
     lightBlue = "#dbf6ff",
     viewportHeight = 375,
@@ -86,6 +86,14 @@ var width = 205,            // svg units
       return [x, y];
     },
 
+    getCoordinatesForVariableLabel = function(radius, percent) {
+      var perc = percent + 0.75,    // rotate 3/4 to start at top
+          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * 1.5),
+          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * 1.5);
+
+      return [x, y];
+    },
+
     getEllipseCoords = function(majorRadius, minorRadius, percent) {
       var perc = percent + 0.75,    // rotate 3/4 to start at top
         angleRadians = 2 * Math.PI * perc,
@@ -101,7 +109,7 @@ var width = 205,            // svg units
           perc2 = (i + 1) * slicePercent,
           p1 = getCoordinatesForPercent(radius, perc1),
           p2 = getCoordinatesForPercent(radius, perc2),
-          centerP = getCoordinatesForPercent(radius, (perc1+perc2)/2),
+          varLabelPosition = getCoordinatesForVariableLabel(radius, (perc1+perc2)/2),
           largeArc = perc2 - perc1 > 0.5 ? 1 : 0,
           labelPerc2 = perc1 + ((perc2 - perc1) / 2),
           labelLineP1 = getCoordinatesForPercent(radius, labelPerc2),
@@ -119,8 +127,8 @@ var width = 205,            // svg units
       return {
         path: `M ${p1.join(" ")} A ${radius} ${radius} 0 ${largeArc} 1 ${p2.join(" ")} L ${spinnerX} ${spinnerY} L ${p1.join(" ")}`,
         center: {
-          x: (spinnerX + centerP[0]) / 2,
-          y: (spinnerY + centerP[1]) / 2
+          x: (spinnerX + varLabelPosition[0]) / 2,
+          y: (spinnerY + varLabelPosition[1]) / 2
         },
         edge1: `M ${spinnerX} ${spinnerY} L ${p1.join(" ")}`,
         edge2: `M ${spinnerX} ${spinnerY} L ${p2.join(" ")}`,
@@ -714,8 +722,11 @@ View.prototype = {
 
         // variable name label
         var variableLabelClipping = s.path(slice.path);
+        // variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
+        //                                           variableLabelClipping, Math.max(1, 10 - variables.length));
+
         variableLabel = this.createSpinnerLabel(i, slice.center.x, slice.center.y, varTextSize,
-        variableLabelClipping, Math.max(1, 10 - variables.length));
+                                                  variableLabelClipping, Math.max(1, 10 - variables.length));
         variableLabel.attr({
           fontWeight: "normal",
           fill: "black"
