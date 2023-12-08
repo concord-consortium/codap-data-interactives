@@ -85,7 +85,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.36 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.37 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
