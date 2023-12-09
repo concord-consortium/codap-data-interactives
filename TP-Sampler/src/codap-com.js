@@ -44,27 +44,74 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
   };
 
+  this.itemCollAttrs = {};
+
   this.findKeyById = function (idToFind) {
     for (const key in this.attrMap) {
       if (this.attrMap[key].id === idToFind) {
         return key;
       }
     }
-  }
+  };
 
   codapInterface.on('get', 'interactiveState', getStateFunc);
 
   const _this = this;
+
   // listen for changes to attribute names, and update internal names accordingly
   codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
-    if (msg.values.operation === "updateAttributes") {
+    // if the operation is "createAttributes", we need to get the names of the newly-created attributes
+    // so that the "Measures" options can be updated with all the attributes
+    console.log("msg", msg);
+    if (msg.values.operation === "createAttributes") {
+      const itemCollName = _this.getCollectionNames().items;
       msg.values.result.attrIDs.forEach((id, i) => {
+        const attrName = msg.values.result.attrs[i].name;
+        // only add attributes that are in the bottom-level collection
+        codapInterface.sendRequest({
+          action: "get",
+          resource: `dataContext[${targetDataSetName}].collection[${itemCollName}].attribute[${attrName}]`
+        }).then((res) => {
+          if (res.success) {
+            _this.itemCollAttrs = {..._this.itemCollAttrs, [id]: {name: attrName, values: []}};
+            codapInterface.sendRequest({
+              "action": "get",
+              "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
+            }).then((res) => {
+              // grab all of the truthy values for the new attribute
+              const newAttrVals = res.values.map((item) => item.values[attrName]).filter((val) => val.length > 0);
+              console.log("newAttrVals", newAttrVals);
+              _this.itemCollAttrs[id].values = newAttrVals;
+            });
+        }});
+      });
+    } else if (msg.values.operation === "updateAttributes") {
+      msg.values.result.attrIDs.forEach((id, i) => {
+        const attrName = msg.values.result.attrs[i].name;
         const attrKey = _this.findKeyById(id);
-        if (attrKey === "output" && _this.attrMap["output"].name !== msg.values.result.attrs[i].name) {
-          _this.deviceName = msg.values.result.attrs[i].name;
-          updateDeviceName(msg.values.result.attrs[i].name);
+
+        // check if the user has updated one of the user-created attributes in the table
+        if (!attrKey && _this.itemCollAttrs[id]) {
+          _this.itemCollAttrs[id].name = attrName;
+        } else {
+          // update the device name if the user has changed it in the codap table
+          if (attrKey === "output" && _this.attrMap["output"].name !== attrName) {
+            _this.deviceName = attrName;
+            updateDeviceName(attrName);
+          }
+          _this.attrMap[attrKey].name = attrName;
         }
-        _this.attrMap[attrKey].name = msg.values.result.attrs[i].name;
+      });
+    } else if (msg.values.operation === "updateCases") {
+      codapInterface.sendRequest({
+        "action": "get",
+        "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
+      }).then((res) => {
+        Object.keys(_this.itemCollAttrs).forEach((id) => {
+          const attrName = _this.itemCollAttrs[id].name;
+          const newAttrVals = res.values.map((item) => item.values[attrName]).filter((val) => val.length > 0);
+          _this.itemCollAttrs[id].values = newAttrVals;
+        });
       });
     }
   });
@@ -554,7 +601,7 @@ CodapCom.prototype = {
         case "median":
           return `median(\`${selections.output}\`)`;
         case "conditional_sum":
-          return `sum(\`${selections.output}\`,\` ${selections.output2}\`${selections.operator}'${selections.value}')`;
+          return `sum(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_mean":
           return `mean(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_median":
@@ -652,6 +699,10 @@ CodapCom.prototype = {
         console.log("Error: Could not find the CODAP table");
       }
     });
+  },
+
+  getAttributeList: function () {
+    return Object.keys(this.itemCollAttrs).map((key) => this.itemCollAttrs[key]);
   }
 };
 

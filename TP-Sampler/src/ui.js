@@ -326,18 +326,18 @@ function removeChildren (node) {
 
 function removeSelectOptions (measures) {
   measures.forEach((m) => {
-    removeChildren(document.getElementById(`${m}-select-output`));
+    removeChildren(document.getElementById(`${m}-select-attribute`));
     removeChildren(document.getElementById(`${m}-select-operator`));
     removeChildren(document.getElementById(`${m}-select-value`));
-    removeChildren(document.getElementById(`${m}-select-output-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-2`));
     removeChildren(document.getElementById(`${m}-select-value-2`));
-    removeChildren(document.getElementById(`${m}-select-output-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1`));
     removeChildren(document.getElementById(`${m}-select-operator-pt-1`));
-    removeChildren(document.getElementById(`${m}-select-output-pt-1-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1-2`));
     removeChildren(document.getElementById(`${m}-select-value-pt-1`));
-    removeChildren(document.getElementById(`${m}-select-output-pt-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2`));
     removeChildren(document.getElementById(`${m}-select-operator-pt-2`));
-    removeChildren(document.getElementById(`${m}-select-output-pt-2-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2-2`));
     removeChildren(document.getElementById(`${m}-select-value-pt-2`));
   });
 }
@@ -527,26 +527,26 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
   document.getElementById("add-measure").addEventListener("click", () => {
     const measure = document.getElementById("select-measure").value;
     if (measure === "sum" || measure === "mean" || measure === "median") {
-      const selectedOutput = document.getElementById(`${measure}-select-output`).value;
+      const selectedOutput = document.getElementById(`${measure}-select-attribute`).value;
       sendFormulaToCodap(measure, {output: selectedOutput});
     } else if (measure === "conditional_count" || measure === "conditional_percentage") {
-      const output = document.getElementById(`${measure}-select-output`).value;
+      const output = document.getElementById(`${measure}-select-attribute`).value;
       const operator = document.getElementById(`${measure}-select-operator`).value;
       const value = document.getElementById(`${measure}-select-value`).value;
       sendFormulaToCodap(measure, {output, operator, value});
     } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
-      const output = document.getElementById(`${measure}-select-output`).value;
+      const output = document.getElementById(`${measure}-select-attribute`).value;
       const operator = document.getElementById(`${measure}-select-operator`).value;
       const value = document.getElementById(`${measure}-select-value`).value;
-      const output2 = document.getElementById(`${measure}-select-output-2`).value;
+      const output2 = document.getElementById(`${measure}-select-attribute-2`).value;
       sendFormulaToCodap(measure, {output, operator, value, output2});
     } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
-      const outputPt1 = document.getElementById(`${measure}-select-output-pt-1`).value;
-      const outputPt12 = document.getElementById(`${measure}-select-output-pt-1-2`).value;
+      const outputPt1 = document.getElementById(`${measure}-select-attribute-pt-1`).value;
+      const outputPt12 = document.getElementById(`${measure}-select-attribute-pt-1-2`).value;
       const operatorPt1 = document.getElementById(`${measure}-select-operator-pt-1`).value;
       const valuePt1 = document.getElementById(`${measure}-select-value-pt-1`).value;
-      const outputPt2 = document.getElementById(`${measure}-select-output-pt-2`).value;
-      const outputPt22 = document.getElementById(`${measure}-select-output-pt-2-2`).value;
+      const outputPt2 = document.getElementById(`${measure}-select-attribute-pt-2`).value;
+      const outputPt22 = document.getElementById(`${measure}-select-attribute-pt-2-2`).value;
       const operatorPt2 = document.getElementById(`${measure}-select-operator-pt-2`).value;
       const valuePt2 = document.getElementById(`${measure}-select-value-pt-2`).value;
       sendFormulaToCodap(measure, {outputPt1, outputPt12, operatorPt1, valuePt1, outputPt2, outputPt22, operatorPt2, valuePt2});
