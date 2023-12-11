@@ -34,7 +34,7 @@ let constants = {
   kMinCases: 0,
   kMaxCases: 1000,
   kDefaultSampleSize: 100,
-  defaultSelectedYears: [2017],
+  defaultSelectedYears: [2020],
   defaultSelectedStates: [],
   defaultSelectedAttributes: ['Sex', 'Age', 'Year', 'State', 'Boundaries']
 };
