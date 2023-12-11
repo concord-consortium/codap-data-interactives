@@ -44,8 +44,6 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
   };
 
-  this.itemCollAttrs = {};
-
   this.findKeyById = function (idToFind) {
     for (const key in this.attrMap) {
       if (this.attrMap[key].id === idToFind) {
@@ -54,68 +52,24 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     }
   };
 
-  codapInterface.on('get', 'interactiveState', getStateFunc);
 
   const _this = this;
 
   // listen for changes to attribute names, and update internal names accordingly
   codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
-    // if the operation is "createAttributes", we need to get the names of the newly-created attributes
-    // so that the "Measures" options can be updated with all the attributes
-    console.log("msg", msg);
-    if (msg.values.operation === "createAttributes") {
-      const itemCollName = _this.getCollectionNames().items;
-      msg.values.result.attrIDs.forEach((id, i) => {
-        const attrName = msg.values.result.attrs[i].name;
-        // only add attributes that are in the bottom-level collection
-        codapInterface.sendRequest({
-          action: "get",
-          resource: `dataContext[${targetDataSetName}].collection[${itemCollName}].attribute[${attrName}]`
-        }).then((res) => {
-          if (res.success) {
-            _this.itemCollAttrs = {..._this.itemCollAttrs, [id]: {name: attrName, values: []}};
-            codapInterface.sendRequest({
-              "action": "get",
-              "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
-            }).then((res) => {
-              // grab all of the truthy values for the new attribute
-              const newAttrVals = res.values.map((item) => item.values[attrName]).filter((val) => val.length > 0);
-              console.log("newAttrVals", newAttrVals);
-              _this.itemCollAttrs[id].values = newAttrVals;
-            });
-        }});
-      });
-    } else if (msg.values.operation === "updateAttributes") {
+     if (msg.values.operation === "updateAttributes") {
       msg.values.result.attrIDs.forEach((id, i) => {
         const attrName = msg.values.result.attrs[i].name;
         const attrKey = _this.findKeyById(id);
-
-        // check if the user has updated one of the user-created attributes in the table
-        if (!attrKey && _this.itemCollAttrs[id]) {
-          _this.itemCollAttrs[id].name = attrName;
-        } else {
-          // update the device name if the user has changed it in the codap table
-          if (attrKey === "output" && _this.attrMap["output"].name !== attrName) {
-            _this.deviceName = attrName;
-            updateDeviceName(attrName);
-          }
-          _this.attrMap[attrKey].name = attrName;
+        // update the device name if the user has changed it in the codap table
+        if (attrKey === "output" && _this.attrMap["output"].name !== attrName) {
+          _this.deviceName = attrName;
+          updateDeviceName(attrName);
         }
-      });
-    } else if (msg.values.operation === "updateCases") {
-      codapInterface.sendRequest({
-        "action": "get",
-        "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
-      }).then((res) => {
-        Object.keys(_this.itemCollAttrs).forEach((id) => {
-          const attrName = _this.itemCollAttrs[id].name;
-          const newAttrVals = res.values.map((item) => item.values[attrName]).filter((val) => val.length > 0);
-          _this.itemCollAttrs[id].values = newAttrVals;
-        });
+        _this.attrMap[attrKey].name = attrName;
       });
     }
   });
-
 };
 
 var targetDataSetName = 'Sampler';
@@ -132,7 +86,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.36 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.38 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
@@ -701,11 +655,49 @@ CodapCom.prototype = {
     });
   },
 
-  getAttributeList: function () {
-    return Object.keys(this.itemCollAttrs).map((key) => this.itemCollAttrs[key]);
-  }
+  getAttributesFromTable: function () {
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if (!_this.codapConnected) {
+        // we log that CODAP is not initiated. If we are in CODAP, it will
+        // respond eventually.
+        console.log('Not in CODAP');
+      }
+
+      codapInterface.sendRequest({
+        action: "get",
+        resource: `dataContext[${targetDataSetName}].collection[${_this.getCollectionNames().items}].attributeList`,
+      }, function(result) {
+        if (result && result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+  },
+
+  getAllItems: function () {
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if (!_this.codapConnected) {
+        // we log that CODAP is not initiated. If we are in CODAP, it will
+        // respond eventually.
+        console.log('Not in CODAP');
+      }
+
+      codapInterface.sendRequest({
+        "action": "get",
+        "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
+      }, function (result) {
+        if (result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+  },
 };
-
-
 
 export { CodapCom };

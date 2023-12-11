@@ -204,6 +204,9 @@ function viewOptions() {
   show(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
+  // remove select options from measures so that if user updates variable names formulas re-populate with new names
+  const allMeasures = document.getElementById("select-measure").children;
+  removeSelectOptions([...allMeasures].map(m => m.id));
 }
 
 function viewAbout() {
@@ -216,6 +219,9 @@ function viewAbout() {
   hide(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   show(document.getElementById("about-panel"));
+  // remove select options from measures so that if user updates variable names formulas re-populate with new names
+  const allMeasures = document.getElementById("select-measure").children;
+  removeSelectOptions([...allMeasures].map(m => m.id));
 }
 
 function hideModel(hidden) {
@@ -343,7 +349,7 @@ function removeSelectOptions (measures) {
 }
 
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
-          stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
+          stopButtonPressed, resetButtonPressed, switchState, setSampleSize,
           setNumRuns, setDeviceName, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
           setOrCheckPassword, reloadDefaultSettings, becomeSelected, sendFormulaToCodap,
           setMeasureName, getRunNumber) {
