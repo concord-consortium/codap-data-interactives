@@ -393,6 +393,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
 
   document.getElementById("variable-name-change").addEventListener("blur", (e) => {
     document.getElementById("variable-name-change").style.display = "none";
+    console.log("I am onblur event", e);
     // don't do anything if blur event was triggered by user pressing 'enter' or 'tab' keys
     if (keyPressed) {
       keyPressed = false;

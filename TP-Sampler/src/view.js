@@ -735,6 +735,7 @@ View.prototype = {
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
         var group = s.group(wedge, variableLabel);
+        console.log("variableLabel", variableLabel);
         group.click(this.showVariableNameInput(i, isDraggingVar));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
@@ -870,21 +871,23 @@ View.prototype = {
     var _this = this;
 
     return function (e) {
+      console.log("I am handle spinner click", e);
       if (_this.isRunning() || _this.isDragging) return;
 
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
+      const pctLabels = document.getElementsByClassName("percent");
 
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
       const clickedPct = e.target.classList?.contains("percent");
-      const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : null;
+      const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : clickedPct ? pctLabels : null;
 
       for (let i = 0; i < wedgeEls.length; i ++) {
         const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]);
         const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
-        let isSelectedWedge =  elsToCheck ?  elsToCheck[i].classList.value === e.target.classList.value : false;
-        let isEditingWedge = clickedPct && e.target.classList[1] === wedgeEls[i].classList[1];
+        let isSelectedWedge =  elsToCheck ? elsToCheck[i].classList.value === e.target.classList.value : false;
+        let isEditingWedge = clickedPct;
         if (isSelectedWedge || isEditingWedge) {
           wedge.attr({fill: darkTeal});
           variableLabel.attr({fill: "white", fontWeight: "bold"});
@@ -1118,7 +1121,7 @@ View.prototype = {
       if (device === "spinner") {
         this.sortVariables();
       }
-      this.render();
+      // this.render();
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
     }
@@ -1216,7 +1219,7 @@ View.prototype = {
     variables.push(...newVariables);
 
     variablePercentageInput.style.display = "none";
-    this.render();
+    // this.render();
     editingVariable = false;
   },
 
