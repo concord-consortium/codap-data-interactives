@@ -1,0 +1,1 @@
+rsync -av ../TP-Sampler codap-server.concord.org:public_html
