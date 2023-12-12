@@ -666,97 +666,133 @@ function setup() {
 }
 
 export function getOptionsForMeasure (measure) {
-  // right now we only ever have one output option because we only have one device.
-  // once we chain multiple devices, we'll have to adjust this approach.
-  function createOutputOption (selectEl) {
-    const outputOption = document.createElement("option");
-    outputOption.value = deviceName;
-    outputOption.textContent = deviceName;
-    outputOption.selected = true;
-    selectEl.append(outputOption);
-  }
-
-  function createValueOptions (selectEl) {
-    const options = [...new Set(variables)].map((v) => {return {value: v, text: v}});
-    options.forEach((option, i) => {
-      const valueOption = document.createElement("option");
-      valueOption.value = option.value;
-      valueOption.textContent = option.text;
-      if (i === 0) {
-        valueOption.selected = true;
-      }
-      selectEl.appendChild(valueOption);
-    });
-  }
-
-  function createOperatorOptions (selectEl) {
-    function isStringNumber(str) {
-      return !isNaN(parseFloat(str)) && isFinite(str);
-    }
-    const anyVariableIsNumber = variables.some((v) => isStringNumber(v));
-    if (anyVariableIsNumber) {
-      const options = ["=", "≠", "<", ">", "≤", "≥"]
-      options.forEach((option, i) => {
-        const operatorOpt = document.createElement("option");
-        operatorOpt.value = option;
-        operatorOpt.textContent = option;
-        if (i === 0) {
-          operatorOpt.selected = true;
+  // get list of attributes from CODAP
+  codapCom.getAttributesFromTable().then((attrs) => {
+    const attrNames = attrs.map((attr) => attr.name);
+    codapCom.getAllItems().then((items) => {
+      let attrMap = {};
+      attrNames.forEach((attrName) => {
+        if (attrName === deviceName && !isCollector) {
+          attrMap[attrName] = [...new Set(variables)];
+        } else if (attrName !== deviceName && isCollector) {
+          const variableAttrs = Object.keys(variables[0]);
+          variableAttrs.forEach((variableAttr) => {
+            attrMap[variableAttr] = [...new Set(variables.map((variable) => variable[variableAttr]))];
+          });
+        } else {
+          attrMap[attrName] = [...new Set(items.map((item) => item.values[attrName]).filter((val) => val.length > 0))];
         }
-        selectEl.appendChild(operatorOpt);
-      })
-    } else {
-      const equalsOpt = document.createElement("option");
-      equalsOpt.value = "=";
-      equalsOpt.textContent = "=";
-      selectEl.appendChild(equalsOpt);
-      const notEqualsOpt = document.createElement("option");
-      notEqualsOpt.value = "≠";
-      notEqualsOpt.textContent = "≠";
-      selectEl.appendChild(notEqualsOpt);
-    }
-  }
+      });
 
-  const selectOutput = document.getElementById(`${measure}-select-output`);
+      function createAttrOptions (selectEl) {
+        const attrOptions = Object.keys(attrMap).filter((attrName) => attrMap[attrName].length > 0);
+        attrOptions.forEach((option, i) => {
+          const outputOption = document.createElement("option");
+          outputOption.value = option;
+          outputOption.textContent = option;
+          if (i === 0) {
+            outputOption.selected = true;
+          }
+          selectEl.appendChild(outputOption);
+        });
+      };
 
-  // sum(output) || mean(output) || median(output)
-  if (measure === "sum" || measure === "mean" || measure === "median") {
-    createOutputOption(selectOutput);
-  // count(output = "value") || 100 * count(output = "value") / count()
-  } else if (measure === "conditional_count" || measure === "conditional_percentage") {
-    createOutputOption(selectOutput);
-    const selectOperator = document.getElementById(`${measure}-select-operator`);
-    createOperatorOptions(selectOperator);
-    const selectValue = document.getElementById(`${measure}-select-value`);
-    createValueOptions(selectValue);
-  // (output="value", output2) || output2, output = “value”) || (output2, output = “value”)
-  } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
-    createOutputOption(selectOutput);
-    const selectOperator = document.getElementById(`${measure}-select-operator`);
-    createOperatorOptions(selectOperator);
-    const selectValue = document.getElementById(`${measure}-select-value`);
-    createValueOptions(selectValue);
-    const selectOutput2 = document.getElementById(`${measure}-select-output-2`);
-    createOutputOption(selectOutput2);
-  // (output1, output2 = “value1”) – mean(output1, output2 = “value2”) || (output1, output2 = “value1”) – median(output1, output2 = “value2”)
-  } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
-    const selectOutputPt1 = document.getElementById(`${measure}-select-output-pt-1`);
-    createOutputOption(selectOutputPt1);
-    const selectOutputPt12 = document.getElementById(`${measure}-select-output-pt-1-2`);
-    createOutputOption(selectOutputPt12);
-    const selectOperator1 = document.getElementById(`${measure}-select-operator-pt-1`);
-    createOperatorOptions(selectOperator1);
-    const selectValuePt1 = document.getElementById(`${measure}-select-value-pt-1`);
-    createValueOptions(selectValuePt1);
-    const selectOutputPt2 = document.getElementById(`${measure}-select-output-pt-2`);
-    createOutputOption(selectOutputPt2);
-    const selectOutputPt22 = document.getElementById(`${measure}-select-output-pt-2-2`);
-    createOutputOption(selectOutputPt22);
-    const selectOperator2 = document.getElementById(`${measure}-select-operator-pt-2`);
-    createOperatorOptions(selectOperator2);
-    const selectValuePt2 = document.getElementById(`${measure}-select-value-pt-2`);
-    createValueOptions(selectValuePt2);
-  }
+      function createValueOptions (selectEl, selectedAttribute) {
+        const attrValues = attrMap[selectedAttribute];
+        if (attrValues.length) {
+          const options = attrValues.map((v) => {return {value: v, text: v}});
+          options.forEach((option, i) => {
+            const valueOption = document.createElement("option");
+            valueOption.value = option.value;
+            valueOption.textContent = option.text;
+            if (i === 0) {
+              valueOption.selected = true;
+            }
+            selectEl.appendChild(valueOption);
+          });
+          return options;
+        }
+      };
+
+      function createOperatorOptions (selectEl, values) {
+        function isStringNumber(str) {
+          return !isNaN(parseFloat(str)) && isFinite(str);
+        }
+        const anyVariableIsNumber = values.some((v) => isStringNumber(v.value));
+        if (anyVariableIsNumber) {
+          const options = ["=", "≠", "<", ">", "≤", "≥"]
+          options.forEach((option, i) => {
+            const operatorOpt = document.createElement("option");
+            operatorOpt.value = option;
+            operatorOpt.textContent = option;
+            if (i === 0) {
+              operatorOpt.selected = true;
+            }
+            selectEl.appendChild(operatorOpt);
+          })
+        } else {
+          const equalsOpt = document.createElement("option");
+          equalsOpt.value = "=";
+          equalsOpt.textContent = "=";
+          selectEl.appendChild(equalsOpt);
+          const notEqualsOpt = document.createElement("option");
+          notEqualsOpt.value = "≠";
+          notEqualsOpt.textContent = "≠";
+          selectEl.appendChild(notEqualsOpt);
+        }
+      };
+
+      const selectAttrElement = document.getElementById(`${measure}-select-attribute`);
+
+      const handleSelectAttrChange = (e, selectValueEl, selectOperatorEl) => {
+        while (selectValueEl.firstChild) {
+          selectValueEl.removeChild(selectValueEl.lastChild);
+        }
+        const availableOptions = createValueOptions(selectValueEl, e.target.value);
+        while (selectOperatorEl.firstChild) {
+          selectOperatorEl.removeChild(selectOperatorEl.lastChild);
+        }
+        createOperatorOptions(selectOperatorEl, availableOptions);
+      }
+
+      const setUpOptions = (selectElement, suffix = "") => {
+        createAttrOptions(selectElement);
+        const selectValue = document.getElementById(`${measure}-select-value${suffix}`);
+        const availableValues = createValueOptions(selectValue, selectElement.value);
+        const selectOperator = document.getElementById(`${measure}-select-operator${suffix}`);
+        createOperatorOptions(selectOperator, availableValues);
+        selectElement.onchange = (e) => handleSelectAttrChange(e, selectValue, selectOperator);
+      }
+
+      // if no attributes in attrMap have values, don't show the options
+      if (Object.keys(attrMap).every((attrName) => attrMap[attrName].length === 0)) {
+        return;
+      }
+
+      // sum(output) || mean(output) || median(output)
+      if (measure === "sum" || measure === "mean" || measure === "median") {
+        createAttrOptions(selectAttrElement);
+      // count(output = "value") || 100 * count(output = "value")
+      } else if (measure === "conditional_count" || measure === "conditional_percentage") {
+        setUpOptions(selectAttrElement);
+      // (output="value", output2) || (output2, output = “value”) || (output2, output = “value”)
+      } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
+        createAttrOptions(selectAttrElement);
+        const selectAttrElement2 = document.getElementById(`${measure}-select-attribute-2`);
+        setUpOptions(selectAttrElement2);
+      // (output1, output2 = “value1”) – mean(output1, output2 = “value2”) || (output1, output2 = “value1”) – median(output1, output2 = “value2”)
+      } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
+        const selectAttrElPt1 = document.getElementById(`${measure}-select-attribute-pt-1`);
+        createAttrOptions(selectAttrElPt1);
+        const selectAttrElPt12 = document.getElementById(`${measure}-select-attribute-pt-1-2`);
+        setUpOptions(selectAttrElPt12, "-pt-1");
+        const selectAttrElPt2 = document.getElementById(`${measure}-select-attribute-pt-2`);
+        createAttrOptions(selectAttrElPt2);
+        const selectAttrElPt22 = document.getElementById(`${measure}-select-attribute-pt-2-2`);
+        setUpOptions(selectAttrElPt22, "-pt-2");
+      }
+    });
+  });
 }
 
 function sendFormulaToCodap (formula, selections) {
@@ -779,8 +815,7 @@ localeMgr.init().then(() => {
       localeMgr, sortVariablesForSpinner);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
-      runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
-      refreshCaseList, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
+      runButtonPressed, stopButtonPressed, resetButtonPressed, switchState, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
       view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
       reloadDefaultSettings, becomeSelected, sendFormulaToCodap, setMeasureName,
       getRunNumber);
