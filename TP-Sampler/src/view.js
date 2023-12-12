@@ -88,8 +88,8 @@ var width = 205,            // svg units
 
     getCoordinatesForVariableLabel = function(radius, percent) {
       var perc = percent + 0.75,    // rotate 3/4 to start at top
-          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * 1.70),
-          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * 1.70);
+          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * (1 + (Math.min(.70, uniqueVariables.length * 0.1)))),
+          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * (1 + (Math.min(.70, uniqueVariables.length * 0.1))));
 
       return [x, y];
     },
