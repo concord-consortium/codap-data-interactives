@@ -876,7 +876,7 @@ View.prototype = {
     return function (e) {
       console.log("I am handle spinner click", e);
       if (_this.isRunning() || _this.isDragging) return;
-
+      let isSelectedWedge = false;
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
       const pctLabels = document.getElementsByClassName("percent");
@@ -899,16 +899,29 @@ View.prototype = {
         const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]);
         const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
         // console.log("elsToCheck[i].classList.value", elsToCheck[i].classList.value);
-        console.log("e.target.classList.value", e.target.classList.value);
+        console.log("e.target.classList.value", e.target.classList[1], "lastBlurredElement?.classList[0]", lastBlurredElement?.classList[0]);
         console.log("elsToCheck && e.target", (elsToCheck && (e.target !== undefined)))
-        let isSelectedWedge =  (elsToCheck && e.target)
-                                ? e.target.classList[1] === wedgeObj.variable
-                                : false;
-        console.log("isSelectedWedge", isSelectedWedge, "e.target", e.target, "wedge", wedge );
+        //|| (e.target.classList[1] === lastBlurredElement?.classList[0])
+        isSelectedWedge = () => {
+          if (elsToCheck && e.target !== undefined) {
+            if (e.target.classList[1] === wedgeObj.variable) {
+              return true;
+            } else if (e.target.classList[1] === lastBlurredElement?.classList[0] && wedgeObj.variable === lastBlurredElement?.value) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+                                // ? (e.target.classList[1] === wedgeObj.variable)
+                                // : (e.target.classList[1] === lastBlurredElement?.classList[0])
+                                //   ? (e.target.classList[1] === lastBlurredElement?.classList[0])
+                                //   : false;
+        }
+        console.log("isSelectedWedge", isSelectedWedge(), "e.target", e.target, "wedge", wedge );
 
         let isEditingWedge = clickedPct && e.target.classList[1] === wedgeObj.variable;
         console.log("isEditingWedge", isEditingWedge, "e.target", e.target, "wedge", wedge );
-        if (isSelectedWedge || isEditingWedge) {
+        if (isSelectedWedge() || isEditingWedge) {
           wedge.attr({fill: darkTeal});
           variableLabel.attr({fill: "white", fontWeight: "bold"});
           line.attr({stroke: darkTeal});
