@@ -399,7 +399,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = false;
       return;
     } else {
-      setVariableName();
+      setVariableName(e.target);
     }
   });
 
@@ -409,7 +409,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = false;
       return;
     } else {
-      setPercentage();
+      setPercentage(null, null, null, e.target);
     }
   });
 
