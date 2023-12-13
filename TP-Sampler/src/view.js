@@ -1152,9 +1152,9 @@ View.prototype = {
       }
       uniqueVariables = [...new Set(variables)];
       variableNameInput.style.display = "none";
-      if (device === "spinner") {
-        this.sortVariables();
-      }
+      // if (device === "spinner") {
+      //   this.sortVariables();
+      // }
       // this.render();
       lastBlurredElement = target;
       editingVariable = false;
