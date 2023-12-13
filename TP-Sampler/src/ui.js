@@ -168,6 +168,42 @@ function toggleDevice(oldDevice, newDevice) {
   addClass(document.getElementById(newDevice), "active");
 }
 
+
+function updateSelectOptions() {
+  const selectedMeasure = document.getElementById("select-measure").value;
+  removeSelectOptions([selectedMeasure]);
+  getOptionsForMeasure(selectedMeasure);
+}
+
+function removeChildren (node) {
+  if (node) {
+    [...node.childNodes].forEach(c => c.remove());
+  }
+};
+
+function removeSelectOptions (measures) {
+  measures.forEach((m) => {
+    removeChildren(document.getElementById(`${m}-select-attribute`));
+    removeChildren(document.getElementById(`${m}-select-operator`));
+    removeChildren(document.getElementById(`${m}-select-value`));
+    removeChildren(document.getElementById(`${m}-select-attribute-2`));
+    removeChildren(document.getElementById(`${m}-select-value-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-operator-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1-2`));
+    removeChildren(document.getElementById(`${m}-select-value-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2`));
+    removeChildren(document.getElementById(`${m}-select-operator-pt-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2-2`));
+    removeChildren(document.getElementById(`${m}-select-value-pt-2`));
+  });
+}
+
+function removeAllSelectOptions() {
+  const allMeasures = document.getElementById("select-measure").children;
+  removeSelectOptions([...allMeasures].map(m => m.id));
+}
+
 function viewSampler() {
   addClass(document.getElementById("tab-devices"), "active");
   removeClass(document.getElementById("tab-measures"), "active");
@@ -177,12 +213,11 @@ function viewSampler() {
   hide(document.getElementById("measures"));
   hide(document.getElementById("options"));
   hide(document.getElementById("about-panel"));
-  // remove select options from measures so that if user updates variable names formulas re-populate with new names
-  const allMeasures = document.getElementById("select-measure").children;
-  removeSelectOptions([...allMeasures].map(m => m.id));
+  removeAllSelectOptions();
 }
 
 function viewMeasures() {
+  removeAllSelectOptions();
   removeClass(document.getElementById("tab-devices"), "active");
   addClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
@@ -204,9 +239,7 @@ function viewOptions() {
   show(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
-  // remove select options from measures so that if user updates variable names formulas re-populate with new names
-  const allMeasures = document.getElementById("select-measure").children;
-  removeSelectOptions([...allMeasures].map(m => m.id));
+  removeAllSelectOptions();
 }
 
 function viewAbout() {
@@ -219,9 +252,7 @@ function viewAbout() {
   hide(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   show(document.getElementById("about-panel"));
-  // remove select options from measures so that if user updates variable names formulas re-populate with new names
-  const allMeasures = document.getElementById("select-measure").children;
-  removeSelectOptions([...allMeasures].map(m => m.id));
+  removeAllSelectOptions();
 }
 
 function hideModel(hidden) {
@@ -316,36 +347,6 @@ function updateUIDeviceName (name) {
   if (document.getElementById("select-measure").value) {
     updateSelectOptions();
   }
-}
-
-function updateSelectOptions() {
-  const selectedMeasure = document.getElementById("select-measure").value;
-  removeSelectOptions([selectedMeasure]);
-  getOptionsForMeasure(selectedMeasure);
-}
-
-function removeChildren (node) {
-  if (node) {
-    [...node.childNodes].forEach(c => c.remove());
-  }
-};
-
-function removeSelectOptions (measures) {
-  measures.forEach((m) => {
-    removeChildren(document.getElementById(`${m}-select-attribute`));
-    removeChildren(document.getElementById(`${m}-select-operator`));
-    removeChildren(document.getElementById(`${m}-select-value`));
-    removeChildren(document.getElementById(`${m}-select-attribute-2`));
-    removeChildren(document.getElementById(`${m}-select-value-2`));
-    removeChildren(document.getElementById(`${m}-select-attribute-pt-1`));
-    removeChildren(document.getElementById(`${m}-select-operator-pt-1`));
-    removeChildren(document.getElementById(`${m}-select-attribute-pt-1-2`));
-    removeChildren(document.getElementById(`${m}-select-value-pt-1`));
-    removeChildren(document.getElementById(`${m}-select-attribute-pt-2`));
-    removeChildren(document.getElementById(`${m}-select-operator-pt-2`));
-    removeChildren(document.getElementById(`${m}-select-attribute-pt-2-2`));
-    removeChildren(document.getElementById(`${m}-select-value-pt-2`));
-  });
 }
 
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
