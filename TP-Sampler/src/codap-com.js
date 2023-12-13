@@ -66,7 +66,9 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
           _this.deviceName = attrName;
           updateDeviceName(attrName);
         }
-        _this.attrMap[attrKey].name = attrName;
+        if (_this.attrMap[attrKey]) {
+          _this.attrMap[attrKey].name = attrName;
+        }
       });
     }
   });
@@ -86,7 +88,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.38 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.39 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
