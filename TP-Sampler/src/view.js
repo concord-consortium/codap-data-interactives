@@ -88,8 +88,8 @@ var width = 205,            // svg units
 
     getCoordinatesForVariableLabel = function(radius, percent) {
       var perc = percent + 0.75,    // rotate 3/4 to start at top
-          x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * 1.70),
-          y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * 1.70);
+      x = spinnerX + (Math.cos(2 * Math.PI * perc) * radius * (1 + (Math.min(.70, uniqueVariables.length * 0.1)))),
+      y = spinnerY + (Math.sin(2 * Math.PI * perc) * radius * (1 + (Math.min(.70, uniqueVariables.length * 0.1))));
 
       return [x, y];
     },
@@ -687,10 +687,10 @@ View.prototype = {
         var merge = variables[i] === lastVariable;
         mergeCount = merge ? mergeCount + 1 : 0;
         var slice = getSpinnerSliceCoords(i, slicePercent, spinnerRadius, mergeCount);
-        var varTextSize = uniqueVariables.length >= 20 ? "6px"
-                                                       : uniqueVariables.length >= 10 ? "10px"
-                                                                                      : "16px";
-        var pctTextSize = "12px";
+        var varTextSize = uniqueVariables.length >= 20 ? 6
+                                                       : uniqueVariables.length >= 10 ? 10
+                                                                                      : 16;
+        var pctTextSize = 12;
 
         lastVariable = variables[i];
         if (merge) offsetDueToMerge++;
@@ -735,7 +735,7 @@ View.prototype = {
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
         var group = s.group(wedge, variableLabel);
-        group.click(this.showVariableNameInput(i, isDraggingVar));
+        group.click(this.showVariableNameInput(i, isDraggingVar, varTextSize));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
@@ -778,7 +778,7 @@ View.prototype = {
   createSpinnerLabel: function (index, x, y, fontSize, clipping, maxLength) {
     var text = `${variables[index]}`,
       label = s.text(x, y, text).attr({
-        fontSize: fontSize,
+        fontSize: fontSize + "px",
         textAnchor: "middle",
         dy: ".25em",
         dx: getTextShift(text, maxLength),
@@ -792,7 +792,7 @@ View.prototype = {
     var _this = this;
     var text = `${percentString}%`;
     var label = s.text(x, y+5, text).attr({
-      fontSize: fontSize,
+      fontSize: fontSize + "px",
       textAnchor: "middle",
       class: `percent ${variables[index]}`,
     });
@@ -811,7 +811,7 @@ View.prototype = {
       } else if (roundX < spinnerX) {
         label.attr({dx: "-.3em"});
       }
-      label.click(_this.showPercentInput(index, percentString));
+      label.click(_this.showPercentInput(index, percentString, fontSize));
     return label;
   },
 
@@ -942,7 +942,7 @@ View.prototype = {
     this.render();
   },
 
-  showVariableNameInput: function (i, isDraggingVar) {
+  showVariableNameInput: function (i, isDraggingVar, textSize) {
     var _this = this;
 
     // don't display input if user is dragging the wedge
@@ -960,9 +960,10 @@ View.prototype = {
       // only display the input if the user actually clicks on the label
       if (xIsWithinBounds && yIsWithinBounds) {
         variableNameInput.style.display = "block";
-        variableNameInput.style.top = (loc.y + loc.height/2) + "px";
+        variableNameInput.style.top = (loc.y + 4 + loc.height/2) + "px";
         variableNameInput.style.left = (loc.x) + "px";
         variableNameInput.style.width = width;
+        variableNameInput.style.fontSize = textSize + 4 + "px";
         variableNameInput.value = text;
         variableNameInput.className = variables[i],
         variableNameInput.focus();
@@ -1052,6 +1053,7 @@ View.prototype = {
     variablePercentageInput.style.top = (loc.y + loc.height/2) + "px";
     variablePercentageInput.style.left = (loc.x) + "px";
     variablePercentageInput.style.width = width;
+    variablePercentageInput.style.fontSize = "16px"
     variablePercentageInput.value = text;
     variablePercentageInput.className = variableName;
     variablePercentageInput.focus();
@@ -1070,7 +1072,7 @@ View.prototype = {
     }
   },
 
-  showPercentInput: function (i, percentString) {
+  showPercentInput: function (i, percentString, textSize) {
     var _this = this;
     return function() {
       if (_this.isRunning() || device === "collector") return;
@@ -1082,6 +1084,7 @@ View.prototype = {
       variablePercentageInput.style.top = (loc.y + loc.height/2) + "px";
       variablePercentageInput.style.left = (loc.x) + "px";
       variablePercentageInput.style.width = width;
+      variablePercentageInput.style.fontSize = textSize + 6 + "px";
       variablePercentageInput.value = text;
       variablePercentageInput.className = variables[i];
       variablePercentageInput.focus();
