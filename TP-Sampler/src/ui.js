@@ -393,7 +393,6 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
 
   document.getElementById("variable-name-change").addEventListener("blur", (e) => {
     document.getElementById("variable-name-change").style.display = "none";
-    console.log("I am onblur event", e);
     // don't do anything if blur event was triggered by user pressing 'enter' or 'tab' keys
     if (keyPressed) {
       keyPressed = false;
@@ -418,12 +417,14 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = true;
       e.preventDefault();
       setVariableName();
+      view.render();
       document.getElementById("variable-name-change").style.display = "none";
       view.showPercentInputForUI(e.target.value);
     }
     if (e.keyCode === 13) {
       keyPressed = true;
       setVariableName();
+      view.render();
       return false;
     }
   });
@@ -435,10 +436,12 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       setPercentage();
       document.getElementById("variable-percentage-change").style.display = "none";
       view.showVariableNameInputForUI(e.target.className);
+      view.render();
     }
     if (e.keyCode === 13) {
       keyPressed = true;
       setPercentage();
+      view.render();
       return false;
     }
   });
