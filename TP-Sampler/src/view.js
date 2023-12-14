@@ -737,6 +737,7 @@ View.prototype = {
         variableLabel.append(variableHint);
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
+        // console.log("wedge", wedge, "variableLabel", variableLabel);
         var group = s.group(wedge, variableLabel);
         group.click(this.showVariableNameInput(i, isDraggingVar));
 
@@ -874,12 +875,15 @@ View.prototype = {
 
     return function (e) {
       if (_this.isRunning() || _this.isDragging) return;
+
       let isSelectedWedge = false;
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
       const pctLabels = document.getElementsByClassName("percent");
+console.log("in handleSpinnerClick e.target", e.target);
+      lastClickedElement = e.target || lastBlurredElement;
+      console.log("in handleSpinnerClick lastClickedElement", lastClickedElement);
 
-      lastClickedElement = e.target.value || lastBlurredElement;
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
       const clickedPct = e.target.classList?.contains("percent");
@@ -887,10 +891,11 @@ View.prototype = {
       const isEditing = () => {
         const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 ||               variablePercentageInput.offsetHeight > 0;
         const isNameInputVisible = variableNameInput.offsetWidth > 0 ||               variableNameInput.offsetHeight > 0;
+        console.log("variableNameInput", variableNameInput);
         return isPercentInputVisible || isNameInputVisible
       };
 
-      if ((!elsToCheck && lastBlurredElement) || isEditing) {
+      if ((!elsToCheck && lastBlurredElement) || isEditing()) {
         _this.render();
       }
 
@@ -909,7 +914,7 @@ View.prototype = {
           }
         }
 
-        let isEditingWedge = clickedPct && e.target.classList[1] === wedgeObj.variable;
+        let isEditingWedge = (clickedPct && e.target.classList[1] === wedgeObj.variable) || (clickedLabel && e.target.classList[1] === wedgeObj.variable);
         if (isSelectedWedge() || isEditingWedge) {
           wedge.attr({fill: darkTeal});
           variableLabel.attr({fill: "white", fontWeight: "bold"});
@@ -969,7 +974,6 @@ View.prototype = {
 
   showVariableNameInput: function (i, isDraggingVar) {
     var _this = this;
-
     // don't display input if user is dragging the wedge
     if (isDraggingVar) {
       variableNameInput.style.display = "none";
@@ -978,6 +982,7 @@ View.prototype = {
     return function(e) {
       if (_this.isRunning() || device === "collector") return;
       const loc = this.node.childNodes[1].getBoundingClientRect();
+      console.log("in showVariableNameInput i", variables[i]);
       const text = variables[i];
       const width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
       const xIsWithinBounds = e.x <= loc.x + loc.width && e.x >= loc.x;
@@ -997,6 +1002,8 @@ View.prototype = {
           variables[editingVariable] = "";
         } else {
           var v = variables[editingVariable];
+          console.log("in showVariableNameInput editingVariable", variables[editingVariable]);
+
           editingVariable = [];
           for (var j = 0, jj = variables.length; j < jj; j++) {
             if (variables[j] === v) {
@@ -1013,7 +1020,6 @@ View.prototype = {
 
   showVariableNameInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
-
     var nameLabels = document.getElementsByClassName(`label ${variableName}`);
     var nameLabel = nameLabels[nameLabels.length - 1];
 
