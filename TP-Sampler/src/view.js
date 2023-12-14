@@ -1219,8 +1219,13 @@ View.prototype = {
       const otherVar = uniqueVariables.find(v => v !== selectedVar);
       const varWith33 = newPct === 33 ? selectedVar : otherVar;
       const varWith67 = newPct === 33 ? otherVar : selectedVar;
-      newVariables.push(...Array.from({ length: 1 }, () => varWith33));
-      newVariables.push(...Array.from({ length: 2 }, () => varWith67));
+      uniqueVariables.forEach(varName => {
+        if (varName === varWith33) {
+          newVariables.push(...Array.from({ length: 1 }, () => varWith33));
+        } else {
+          newVariables.push(...Array.from({ length: 2 }, () => varWith67));
+        }
+      });
     } else {
       // find new common denominator to distribute whole number of mixer balls to each variable
       var commonDenom = findCommonDenominator([newPct, ...newPcts]);
