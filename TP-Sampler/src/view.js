@@ -885,11 +885,8 @@ View.prototype = {
       const clickedPct = e.target.classList?.contains("percent");
       const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : clickedPct ? pctLabels : null;
       const isEditing = () => {
-        const variablePercentageChange = document.getElementById("variable-percentage-change");
-        const variableLabelChange = document.getElementById("variable-name-change");
-
-        const isPercentInputVisible = variablePercentageChange.offsetWidth > 0 ||               variablePercentageChange.offsetHeight > 0;
-        const isNameInputVisible = variableLabelChange.offsetWidth > 0 ||               variableLabelChange.offsetHeight > 0;
+        const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 ||               variablePercentageInput.offsetHeight > 0;
+        const isNameInputVisible = variableNameInput.offsetWidth > 0 ||               variableNameInput.offsetHeight > 0;
         return isPercentInputVisible || isNameInputVisible
       };
 
