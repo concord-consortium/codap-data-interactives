@@ -737,9 +737,8 @@ View.prototype = {
         variableLabel.append(variableHint);
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
-        // console.log("wedge", wedge, "variableLabel", variableLabel);
         var group = s.group(wedge, variableLabel);
-        group.click(this.showVariableNameInput(i, isDraggingVar));
+        group.click(this.showVariableNameInput(wedgeObj.variable, isDraggingVar));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
@@ -880,10 +879,8 @@ View.prototype = {
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
       const pctLabels = document.getElementsByClassName("percent");
-console.log("in handleSpinnerClick e.target", e.target);
-      lastClickedElement = e.target || lastBlurredElement;
-      console.log("in handleSpinnerClick lastClickedElement", lastClickedElement);
 
+      lastClickedElement = e.target || lastBlurredElement;
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
       const clickedPct = e.target.classList?.contains("percent");
@@ -891,7 +888,6 @@ console.log("in handleSpinnerClick e.target", e.target);
       const isEditing = () => {
         const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 ||               variablePercentageInput.offsetHeight > 0;
         const isNameInputVisible = variableNameInput.offsetWidth > 0 ||               variableNameInput.offsetHeight > 0;
-        console.log("variableNameInput", variableNameInput);
         return isPercentInputVisible || isNameInputVisible
       };
 
@@ -972,7 +968,7 @@ console.log("in handleSpinnerClick e.target", e.target);
     this.render();
   },
 
-  showVariableNameInput: function (i, isDraggingVar) {
+  showVariableNameInput: function (varName, isDraggingVar) {
     var _this = this;
     // don't display input if user is dragging the wedge
     if (isDraggingVar) {
@@ -982,8 +978,9 @@ console.log("in handleSpinnerClick e.target", e.target);
     return function(e) {
       if (_this.isRunning() || device === "collector") return;
       const loc = this.node.childNodes[1].getBoundingClientRect();
-      console.log("in showVariableNameInput i", variables[i]);
-      const text = variables[i];
+
+      const varIdx = variables.indexOf(varName)
+      const text = varName;
       const width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
       const xIsWithinBounds = e.x <= loc.x + loc.width && e.x >= loc.x;
       const yIsWithinBounds = e.y <= loc.y + loc.height && e.y >= loc.y;
@@ -994,16 +991,13 @@ console.log("in handleSpinnerClick e.target", e.target);
         variableNameInput.style.left = (loc.x) + "px";
         variableNameInput.style.width = width;
         variableNameInput.value = text;
-        variableNameInput.className = variables[i],
+        variableNameInput.className = variables[varIdx];
         variableNameInput.focus();
-
-        editingVariable = i;
+        editingVariable = varIdx;variables[editingVariable];
         if (device == "mixer" || device == "collector") {
           variables[editingVariable] = "";
         } else {
           var v = variables[editingVariable];
-          console.log("in showVariableNameInput editingVariable", variables[editingVariable]);
-
           editingVariable = [];
           for (var j = 0, jj = variables.length; j < jj; j++) {
             if (variables[j] === v) {
