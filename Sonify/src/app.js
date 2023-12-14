@@ -1,7 +1,10 @@
 /*global codapInterface:true*/
+import packageInfo from "../package.json";
 import Vue from "vue";
 import Nexus from "nexusui";
 import { default as CodapPluginHelper } from "./CodapPluginHelper.js";
+import * as localeManager from "./localeManager.js";
+
 const helper = new CodapPluginHelper(codapInterface);
 /**
  * Replicates the csound scale function.
@@ -67,7 +70,7 @@ const app = new Vue({
   el: "#app",
   data: {
     name: "Sonify",
-    version: "v0.3.3",
+    version: packageInfo.version,
     dim: {
       width: 285,
       height: 385,
@@ -132,11 +135,12 @@ const app = new Vue({
 
     speedSlider: null,
     loopToggle: null,
-    userMessage: "Select a dataset, pitch and time and click Play",
+    userMessage: null,
     timerId: null,
     phase: 0,
     cycleEndTimerId: null,
     selectionModes: [FOCUS_MODE, CONNECT_MODE],
+    l: localeManager,
   },
   watch: {
     state: {
@@ -148,6 +152,7 @@ const app = new Vue({
   },
   methods: {
     setupUI() {
+      this.setUserMessage("DG.plugin.sonify.noDatasetMessage");
       this.playToggle = new Nexus.Toggle("#play-toggle", {
         size: [40, 20],
         state: false,
@@ -155,10 +160,10 @@ const app = new Vue({
 
       this.playToggle.on("change", (v) => {
         if (v) {
-          this.setUserMessage("Playing sounds");
+          this.setUserMessage("DG.plugin.sonify.playingMessage");
           this.play();
         } else {
-          this.setUserMessage("Stopping play");
+          this.setUserMessage("DG.plugin.sonify.stoppingMessage");
           this.resetPlay();
         }
       });
@@ -213,11 +218,11 @@ const app = new Vue({
         }
       });
     },
-    setUserMessage(msg) {
-      this.userMessage = msg;
+    setUserMessage(msgKey, ...args) {
+      this.userMessage = localeManager.tr(msgKey, args);
     },
     logMessage(msg) {
-      this.setUserMessage(`log: ${msg}`);
+      this.setUserMessage("log: %1", msg);
       console.log(`MicroRhythm: ${msg}`);
     },
     setupDrag() {
@@ -278,15 +283,6 @@ const app = new Vue({
             } else if (el.id.startsWith("time")) {
               this.state.timeAttribute = data.values.attribute.name;
               this.onTimeAttributeSelectedByUI();
-            } else if (el.id.startsWith("duration")) {
-              this.state.durationAttribute = data.values.attribute.name;
-              this.onDurationAttributeSelectedByUI();
-            } else if (el.id.startsWith("loudness")) {
-              this.state.loudnessAttribute = data.values.attribute.name;
-              this.onLoudnessAttributeSelectedByUI();
-            } else if (el.id.startsWith("stereo")) {
-              this.state.stereoAttribute = data.values.attribute.name;
-              this.onStereoAttributeSelectedByUI();
             }
           }
         });
@@ -409,8 +405,8 @@ const app = new Vue({
     onPitchAttributeSelectedByUI() {
       this.setUserMessage(
         this.state.pitchAttribute
-          ? "Pitch attribute selected..."
-          : "Please select attribute for pitch",
+          ? "DG.plugin.sonify.selectPitchMessage"
+          : "DG.plugin.sonify.deselectPitchMessage",
       );
       this.processMappedAttribute("pitch");
 
@@ -423,8 +419,8 @@ const app = new Vue({
     onTimeAttributeSelectedByUI() {
       this.setUserMessage(
         this.state.timeAttribute
-          ? "Time attribute selected..."
-          : "Please select attribute for time",
+          ? "DG.plugin.sonify.selectTimeMessage"
+          : "DG.plugin.sonify.deselectTimeMessage",
       );
       this.processMappedAttribute("time");
 
@@ -434,35 +430,11 @@ const app = new Vue({
         this.play();
       }
     },
-    onDurationAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.durationAttribute
-          ? "Duration attribute selected..."
-          : "Please select attribute for duration",
-      );
-      this.processMappedAttribute("duration");
-    },
-    onLoudnessAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.loudnessAttribute
-          ? "Loudness attribute selected..."
-          : "Please select attribute for loudness",
-      );
-      this.processMappedAttribute("loudness");
-    },
-    onStereoAttributeSelectedByUI() {
-      this.setUserMessage(
-        this.state.stereoAttribute
-          ? "Stereo attribute selected..."
-          : "Please select attribute for stereo",
-      );
-      this.processMappedAttribute("stereo");
-    },
     onConnectByCollectionSelectedByUI() {
       this.setUserMessage(
         this.state.focusedCollection
-          ? "ConnectBy collection selected..."
-          : "Please select collection for grouping",
+          ? "DG.plugin.sonify.connectByMessage"
+          : "DG.plugin.sonify.disconnectMessage",
       );
 
       if (this.state.focusedCollection === UNSELECT_VALUE) {
@@ -860,14 +832,14 @@ const app = new Vue({
       if (!this.csoundReady) {
         if (this.playToggle.state === PLAY_TOGGLE_PLAYING)
           this.playToggle.state = PLAY_TOGGLE_IDLE;
-        this.setUserMessage("Play aborted: csound not ready.");
+        this.setUserMessage("DG.plugin.sonify.notReadyMessage");
         return null;
       }
 
       if (!this.state.pitchAttribute || !this.state.timeAttribute) {
         if (this.playToggle.state === PLAY_TOGGLE_PLAYING)
           this.playToggle.state = PLAY_TOGGLE_IDLE;
-        this.setUserMessage("Please set an attribute for time and pitch");
+        this.setUserMessage("DG.plugin.sonify.missingPitchOrTimeMessage");
         return null;
       }
 
@@ -891,8 +863,8 @@ const app = new Vue({
       this.cycleEndTimerId = null;
     },
     openInfoPage() {
-      this.setUserMessage("Opening Info Page");
-      helper.openSharedInfoPage();
+      this.setUserMessage("DG.plugin.sonify.openInfoMessage");
+      helper.openSharedInfoPage("DG.plugin.sonify.openInfoMessage");
     },
     restoreSavedState(state) {
       Object.keys(state).forEach((key) => {
@@ -1002,6 +974,9 @@ const app = new Vue({
           });
       }
     },
+    tr(key, args) {
+      return this.l.tr(key, args);
+    },
     getContextTitle(contextName) {
       return helper.getContextTitle(contextName);
     },
@@ -1029,6 +1004,9 @@ const app = new Vue({
     helper.on("*", this.handleCODAPNotice);
 
     this.selectedCsd = this.csdFiles[0];
+  },
+  async beforeMount() {
+    await localeManager.init();
   },
   computed: {
     isPlayable: function () {

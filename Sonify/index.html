@@ -6,39 +6,39 @@
     <link rel="stylesheet" href="./styles/styles.css" />
   </head>
   <body>
-    <div class="loading-screen">Loading the plugin...</div>
+    <div class="loading-screen" data-text="DG.plugin.sonify.loading"></div>
     <div id="app" v-on:click="onBackgroundSelect">
       <div class="main-heading">
         <div class="controller-area">
-          <div class="controller-container" title="Enable sounds">
-            <label for="play-toggle">Play</label>
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.playTitle')">
+            <label for="play-toggle" >{{tr("DG.plugin.sonify.playToggle")}}</label>
             <span id="play-toggle"></span>
           </div>
-          <div class="controller-container" title="Enable playback looping">
-            <label for="loop-toggle">Loop</label>
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.loopTitle')">
+            <label for="loop-toggle">{{tr("DG.plugin.sonify.loopToggle")}}</label>
             <span id="loop-toggle"></span>
           </div>
-          <div class="controller-container" title="Adjust playback speed">
-            <label for="speed-slider">Speed</label>
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.speedTitle')">
+            <label for="speed-slider" >{{ tr("DG.plugin.sonify.speedSlider") }}</label>
             <span
               id="speed-slider"
-              title="Control the speed of playback"
             ></span>
           </div>
         </div>
-        <div class="message-area" title="Message area">{{userMessage}}</div>
+        <div class="message-area" v-bind:title="tr('DG.plugin.sonify.messageArea')">{{userMessage}}</div>
       </div>
 
       <div class="main-scroll-container">
-        <div class="mapper-container" title="Select Dataset">
-          Dataset
-          <label>
+        <div class="mapper-container" v-bind:title="tr('DG.plugin.sonify.datasetTitle')">
+          <label >
+            {{ tr("DG.plugin.sonify.datasetLabel") }}
             <select
               v-model="state.focusedContext"
               v-on:change="onContextFocused"
               id="contextDropArea"
             >
-              <option disabled value="" hidden>Select Dataset</option>
+              <option disabled value="" hidden>
+                {{ tr("DG.plugin.sonify.datasetDefaultOption") }}</option>
               <option v-for="context in contexts" :value="context">
                 {{getContextTitle(context)}}
               </option>
@@ -47,8 +47,8 @@
         </div>
 
         <div class="mapper-container" v-on:click="onBackgroundSelect">
-          Pitch
-          <label title="Select attribute controlling pitch">
+          <label v-bind:title="tr('DG.plugin.sonify.pitchSelectTitle')" >
+            {{tr("DG.plugin.sonify.pitchSelectLabel")}}
             <select
               v-model="state.pitchAttribute"
               v-on:change="onPitchAttributeSelectedByUI"
@@ -69,24 +69,24 @@
 
           <div>
             <label
-              title="Whether the attribute controlling pitch has date/time values or is numeric"
+              v-bind:title="tr('DG.plugin.sonify.dateTimePitchTitle')"
             >
               <input
                 type="checkbox"
                 v-model="state.pitchAttrIsDate"
-                disabled="true"
+                disabled
                 v-on:change="onPitchAttributeSelectedByUI"
               />
-              DateTime
+              {{tr('DG.plugin.sonify.dateTimeLabel')}}
             </label>
           </div>
         </div>
 
         <div class="mapper-container">
-          Time
           <label
-            title="Select the attribute controlling the sequence of samples played"
+            v-bind:title="tr('DG.plugin.sonify.timeSelectTitle')"
           >
+            {{tr("DG.plugin.sonify.timeSelectLabel")}}
             <select
               v-model="state.timeAttribute"
               v-on:change="onTimeAttributeSelectedByUI"
@@ -107,15 +107,15 @@
 
           <div>
             <label
-              title="Whether the time attribute has date/time values or numeric values"
+              v-bind:title="tr('DG.plugin.sonify.dateTimeTimeTitle')"
             >
               <input
                 type="checkbox"
                 v-model="state.timeAttrIsDate"
-                disabled="true"
+                disabled
                 v-on:change="onTimeAttributeSelectedByUI"
               />
-              DateTime
+              {{tr('DG.plugin.sonify.dateTimeLabel')}}
             </label>
           </div>
         </div>
@@ -127,8 +127,8 @@
           v-on:click="onBackgroundSelect"
           v-if="connectByAvailable"
         >
-          <label title="Select collection to connect cases by">
-            Connect cases by
+          <label v-bind:title="tr('DG.plugin.sonify.connectModeTitle')">
+            {{tr('DG.plugin.sonify.connectModeLabel')}}
             <select
               v-model="state.focusedCollection"
               v-on:change="onConnectByCollectionSelectedByUI"
@@ -142,8 +142,8 @@
         </div>
 
         <div class="mapper-container">
-          <button :disabled="!isPlayable" v-on:click="createGraph">
-            create graph
+          <button :disabled="!isPlayable" v-bind:title="tr('DG.plugin.sonify.createGraphTitle')" v-on:click="createGraph">
+            {{tr("DG.plugin.sonify.createGraphLabel")}}
           </button>
         </div>
       </div>
