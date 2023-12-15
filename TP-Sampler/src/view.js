@@ -936,6 +936,7 @@ View.prototype = {
 
   startDrag: function ( wedgeObj) {
     this.isDragging = wedgeObj.variable;
+    this.render();
   },
 
   convertDomCoordsToSvg: function (x, y) {
@@ -958,6 +959,7 @@ View.prototype = {
 
     if (isWithinBounds && (newNicePct > 1 && newNicePct < 100)) {
       this.setPercentage(newNicePct, variable, "next");
+      this.render();
     } else {
       return;
     }
