@@ -434,9 +434,9 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = true;
       e.preventDefault();
       setPercentage();
+      view.render();
       document.getElementById("variable-percentage-change").style.display = "none";
       view.showVariableNameInputForUI(e.target.className);
-      view.render();
     }
     if (e.keyCode === 13) {
       keyPressed = true;
