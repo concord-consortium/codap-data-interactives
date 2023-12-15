@@ -50,25 +50,28 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
         return key;
       }
     }
-  }
+  };
 
-  codapInterface.on('get', 'interactiveState', getStateFunc);
 
   const _this = this;
+
   // listen for changes to attribute names, and update internal names accordingly
   codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
-    if (msg.values.operation === "updateAttributes") {
+     if (msg.values.operation === "updateAttributes") {
       msg.values.result.attrIDs.forEach((id, i) => {
+        const attrName = msg.values.result.attrs[i].name;
         const attrKey = _this.findKeyById(id);
-        if (attrKey === "output" && _this.attrMap["output"].name !== msg.values.result.attrs[i].name) {
-          _this.deviceName = msg.values.result.attrs[i].name;
-          updateDeviceName(msg.values.result.attrs[i].name);
+        // update the device name if the user has changed it in the codap table
+        if (attrKey === "output" && _this.attrMap["output"].name !== attrName) {
+          _this.deviceName = attrName;
+          updateDeviceName(attrName);
         }
-        _this.attrMap[attrKey].name = msg.values.result.attrs[i].name;
+        if (_this.attrMap[attrKey]) {
+          _this.attrMap[attrKey].name = attrName;
+        }
       });
     }
   });
-
 };
 
 var targetDataSetName = 'Sampler';
@@ -85,7 +88,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.37 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.40 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
@@ -554,7 +557,7 @@ CodapCom.prototype = {
         case "median":
           return `median(\`${selections.output}\`)`;
         case "conditional_sum":
-          return `sum(\`${selections.output}\`,\` ${selections.output2}\`${selections.operator}'${selections.value}')`;
+          return `sum(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_mean":
           return `mean(\`${selections.output}\`, \`${selections.output2}\`${selections.operator}'${selections.value}')`;
         case "conditional_median":
@@ -652,9 +655,51 @@ CodapCom.prototype = {
         console.log("Error: Could not find the CODAP table");
       }
     });
-  }
+  },
+
+  getAttributesFromTable: function () {
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if (!_this.codapConnected) {
+        // we log that CODAP is not initiated. If we are in CODAP, it will
+        // respond eventually.
+        console.log('Not in CODAP');
+      }
+
+      codapInterface.sendRequest({
+        action: "get",
+        resource: `dataContext[${targetDataSetName}].collection[${_this.getCollectionNames().items}].attributeList`,
+      }, function(result) {
+        if (result && result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+  },
+
+  getAllItems: function () {
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+      if (!_this.codapConnected) {
+        // we log that CODAP is not initiated. If we are in CODAP, it will
+        // respond eventually.
+        console.log('Not in CODAP');
+      }
+
+      codapInterface.sendRequest({
+        "action": "get",
+        "resource": `dataContext[${targetDataSetName}].itemSearch[*]`
+      }, function (result) {
+        if (result.success) {
+          resolve(result.values);
+        } else {
+          resolve([]);
+        }
+      });
+    });
+  },
 };
-
-
 
 export { CodapCom };
