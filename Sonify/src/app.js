@@ -659,7 +659,7 @@ const app = new Vue({
                 value = isNaN(parseFloat(value))
                   ? NaN
                   : (value - this.timeAttrRange.min) / range;
-                const parent = connectedCasesById?.[c.id].parent;
+                const parent = connectedCasesById?.[c.id]?.parent;
                 const selected = selectedItemIdsSet.has(c.id);
                 return { id: c.id, val: value, parent, selected };
               });
@@ -981,9 +981,7 @@ const app = new Vue({
       return helper.getContextTitle(contextName);
     },
     async getSelectedItems(context) {
-      let isStrict = [CONTRAST_MODE, CONNECT_MODE].includes(
-        this.state.selectionMode,
-      );
+      let isStrict = [CONTRAST_MODE].includes(this.state.selectionMode);
       return await helper.getSelectedItems(context, !isStrict);
     },
   },
