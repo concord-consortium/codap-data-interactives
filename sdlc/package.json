@@ -8,6 +8,7 @@
   "author": "Jonathan Sandoe",
   "license": "MIT",
   "dependencies": {
+    "papaparse": "^5.4.1",
     "xml-js": "^1.6.8"
   }
 }

@@ -26,12 +26,13 @@ population.
     * one or more year or all years
     * some number of attributes of interest
     * the size of the sample
-* Database containing IPUMS microdata
-* Server-side DB access scripts
+* Server-side scripts that generate one or more csv files from the IPUMS extract, break those csv files into smaller files in sub-directories, and then upload these files to AWS
 
-### The IPUMS Extract
+### Add new data from IPUMS
 
 IPUMS provides harmonized population microdata based on the decennial US Federal Census and the American Community Survey. The following steps will allow you to recreate an extract, for example, to update the selected properties of individuals. Updates to properties need to be coordinated with the attribute definitions in `plugin/js/attributeConfig.js`.
+
+If the plugin needs to be updated with data for new years, or if new variables need to be added to the available options, follow these steps:
 
 * Create an account:
   * Go to https://usa.ipums.org/usa/,
@@ -41,60 +42,24 @@ IPUMS provides harmonized population microdata based on the decennial US Federal
 * Create an extract:
   * Go to https://usa.ipums.org/usa/,
   * click on "Select Data"
-  * ... TBD
-* Convert to SQL install script: TBD
-
-### The Database
-
-#### Technology
-
-* Mysql: tested with mysql client: 8.0.12, server: 5.7.18
-
-#### Tables
-
-The following tables are defined:
-
-* peeps: contains data as extracted from IPUMS with additional weighting rows.
-* pumas: currently not used by the application, but is intended to contain
-geographic information.
-* stats: contains sums of weights by sample year and state, including full-US samples.
-* presets: contains preselected random samples.
-
-#### Initialization
-
-1. Create database, login user, and grant permissions. We recommend avoiding the
-use of the root user for operational access.
-
-Something like
-```sql
-  CREATE DATABASE sdlc
-  USE sdlc;
-  CREATE USER 'sdlcuser'@'localhost' IDENTIFIED BY 'some password';
-  GRANT SELECT, INSERT, UPDATE, DROP, CREATE TEMPORARY TABLES, EXECUTE ON `sdlc`.* TO 'sdlcuser'@'localhost';
-```
-
-2. Create a credential file (needed by PHP scripts) with access properties.
-
-```php
-<?php
-
-$credentials = array(
-  "local" => array(
-    "user" => "sdlcuser",
-    "pass" => "sdlcuser password",
-    "dbname" => "sdlc"
-  )
-);
-
-?>
-```
-This file should be placed ... TBD
-
-3. Create tables and stored procedures: TBD
-
-```bash
-% mysql -usdlcuser -p sdlcdb < sql/createTables.sql
-```
-3. Upload data: TBD
-4. Initialize presets: TBD
-5. Start scheduled event: TBD
+  * Using codebook.xml as a guide, select desired variables from the available options.
+    * Note: you will see some attributes that appear to be duplicates of others but with an extra "D" at the end -- these are detailed versions of those attributes, and are auto-generated when you select the first one. Also note, that the SAMPLES variable has replaced the old DATANUM variable.
+  * Select the samples for the desired years.
+  * Use the full sample size.
+  * Submit extract.
+  * Download the .dat file and the codebook .xml file, and store them in the data directory (for now).
+* Convert the .dat file to CSV(s)
+  * In the terminal, for each year of downloaded data, run `./bin/createCSVFromDat path_to_datFile, path_to_codebookFile, [year], path_to_output_directory`
+* Generate "presets" files from CSV file
+  * In the terminal, for each year, run  `./bin/createPresets path_to_generated_csvFile, path_to_codebookFile, presets/[year]`
+* Upload CSV files to S3
+  * Gzip the preset csv files using the command `gzip -r presets`
+  * Run the s3-sync script: `./bin/s3-sync presets`
+* Update metadata file
+  * In the terminal, run `./bin/createMetadataFile presets path_for_output_file.json`
+    * Note: the path to the output file should be different than the current path to the metadata file, otherwise it will overwrite the current metadata file.
+  * Once the metadata is generated, copy the new data values into plugin/assets/data/metadata.json.
+  * Delete the newly-generated metadata file.
+* Delete any extraneous files
+  * Delete the .dat file, codebook file, and the csv files you generated for each year. Git will automatically ignore the presets folder.
+* Push up changes.
