@@ -52,6 +52,8 @@ var width = 205,            // svg units
     wedges = [],
 
     editingVariable = false,    // then the id of the var
+    lastBlurredElement = null,
+    lastClickedElement = null,
 
     scrambledInitialSetup = false,       // whether all balls have been mixed in mixer
     stepOffset = 0,
@@ -194,6 +196,7 @@ View.prototype = {
     samples = props.samples;
     wedges = [];
     wedgeLabels = [];
+    // lastBlurredElement = null;
 
     s.unclick(this.handleSpinnerClick);
     s.clear();
@@ -735,7 +738,7 @@ View.prototype = {
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
         var group = s.group(wedge, variableLabel);
-        group.click(this.showVariableNameInput(i, isDraggingVar, varTextSize));
+        group.click(this.showVariableNameInput(wedgeObj.variable, isDraggingVar, varTextSize));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
@@ -872,20 +875,43 @@ View.prototype = {
     return function (e) {
       if (_this.isRunning() || _this.isDragging) return;
 
+      let isSelectedWedge = false;
       const wedgeEls = document.getElementsByClassName("wedge");
       const nameLabels = document.getElementsByClassName("label");
+      const pctLabels = document.getElementsByClassName("percent");
 
+      lastClickedElement = e.target || lastBlurredElement;
       const clickedWedge = e.target.classList?.contains("wedge");
       const clickedLabel = e.target.classList?.contains("label");
       const clickedPct = e.target.classList?.contains("percent");
-      const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : null;
+      const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : clickedPct ? pctLabels : null;
+      const isEditing = () => {
+        const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 ||               variablePercentageInput.offsetHeight > 0;
+        const isNameInputVisible = variableNameInput.offsetWidth > 0 ||               variableNameInput.offsetHeight > 0;
+        return isPercentInputVisible || isNameInputVisible
+      };
+
+      if ((!elsToCheck && lastBlurredElement) || isEditing()) {
+        _this.render();
+      }
 
       for (let i = 0; i < wedgeEls.length; i ++) {
         const wedgeObj = wedges.find(w => w.variable === wedgeEls[i].classList[1]);
         const {wedge, wedgeColor, variableLabel, percentageLabel, deleteButton, line, edge} = wedgeObj.svgObj;
-        let isSelectedWedge =  elsToCheck ?  elsToCheck[i].classList.value === e.target.classList.value : false;
-        let isEditingWedge = clickedPct && e.target.classList[1] === wedgeEls[i].classList[1];
-        if (isSelectedWedge || isEditingWedge) {
+        isSelectedWedge = () => {
+          if (elsToCheck && e.target !== undefined) {
+            if (e.target.classList[1] === wedgeObj.variable) {
+              return true;
+            } else if (e.target.classList[1] === lastBlurredElement?.classList[0] && wedgeObj.variable === lastBlurredElement?.value) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+
+        let isEditingWedge = (clickedPct && e.target.classList[1] === wedgeObj.variable) || (clickedLabel && e.target.classList[1] === wedgeObj.variable);
+        if (isSelectedWedge() || isEditingWedge) {
           wedge.attr({fill: darkTeal});
           variableLabel.attr({fill: "white", fontWeight: "bold"});
           line.attr({stroke: darkTeal});
@@ -910,6 +936,7 @@ View.prototype = {
 
   startDrag: function ( wedgeObj) {
     this.isDragging = wedgeObj.variable;
+    this.render();
   },
 
   convertDomCoordsToSvg: function (x, y) {
@@ -932,6 +959,7 @@ View.prototype = {
 
     if (isWithinBounds && (newNicePct > 1 && newNicePct < 100)) {
       this.setPercentage(newNicePct, variable, "next");
+      this.render();
     } else {
       return;
     }
@@ -942,9 +970,8 @@ View.prototype = {
     this.render();
   },
 
-  showVariableNameInput: function (i, isDraggingVar, textSize) {
+  showVariableNameInput: function (varName, isDraggingVar, textSize) {
     var _this = this;
-
     // don't display input if user is dragging the wedge
     if (isDraggingVar) {
       variableNameInput.style.display = "none";
@@ -953,7 +980,9 @@ View.prototype = {
     return function(e) {
       if (_this.isRunning() || device === "collector") return;
       const loc = this.node.childNodes[1].getBoundingClientRect();
-      const text = variables[i];
+
+      const varIdx = variables.indexOf(varName)
+      const text = varName;
       const width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
       const xIsWithinBounds = e.x <= loc.x + loc.width && e.x >= loc.x;
       const yIsWithinBounds = e.y <= loc.y + loc.height && e.y >= loc.y;
@@ -965,10 +994,9 @@ View.prototype = {
         variableNameInput.style.width = width;
         variableNameInput.style.fontSize = textSize + 4 + "px";
         variableNameInput.value = text;
-        variableNameInput.className = variables[i],
+        variableNameInput.className = variables[varIdx];
         variableNameInput.focus();
-
-        editingVariable = i;
+        editingVariable = varIdx;
         if (device == "mixer" || device == "collector") {
           variables[editingVariable] = "";
         } else {
@@ -989,7 +1017,6 @@ View.prototype = {
 
   showVariableNameInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
-
     var nameLabels = document.getElementsByClassName(`label ${variableName}`);
     var nameLabel = nameLabels[nameLabels.length - 1];
 
@@ -1031,7 +1058,6 @@ View.prototype = {
 
   showPercentInputForUI: function (variableName) {
     if (this.isRunning() || device === "collector") return;
-
     var percentLabel = document.getElementsByClassName(`percent ${variableName}`)[0];
 
     const wedgeObj = wedges.find(w => w.variable === variableName);
@@ -1105,7 +1131,7 @@ View.prototype = {
     };
   },
 
-  setVariableName: function () {
+  setVariableName: function (target) {
     if (editingVariable !== false) {
       var newName = variableNameInput.value.trim();
       if (!newName) newName = "_";
@@ -1121,7 +1147,8 @@ View.prototype = {
       if (device === "spinner") {
         this.sortVariables();
       }
-      this.render();
+      // this.render();
+      lastBlurredElement = target;
       editingVariable = false;
       this.codapCom.logAction("changeItemName: %@", newName);
     }
@@ -1178,7 +1205,7 @@ View.prototype = {
     return {newPcts, newPctsMap};
   },
 
-  setPercentage: function (newPercentage, selectedVariable, lastOrNext) {
+  setPercentage: function (newPercentage, selectedVariable, lastOrNext, target) {
     const {findCommonDenominator, findEquivNum} = utils;
 
     // get selected variable
@@ -1197,8 +1224,13 @@ View.prototype = {
       const otherVar = uniqueVariables.find(v => v !== selectedVar);
       const varWith33 = newPct === 33 ? selectedVar : otherVar;
       const varWith67 = newPct === 33 ? otherVar : selectedVar;
-      newVariables.push(...Array.from({ length: 1 }, () => varWith33));
-      newVariables.push(...Array.from({ length: 2 }, () => varWith67));
+      uniqueVariables.forEach(varName => {
+        if (varName === varWith33) {
+          newVariables.push(...Array.from({ length: 1 }, () => varWith33));
+        } else {
+          newVariables.push(...Array.from({ length: 2 }, () => varWith67));
+        }
+      });
     } else {
       // find new common denominator to distribute whole number of mixer balls to each variable
       var commonDenom = findCommonDenominator([newPct, ...newPcts]);
@@ -1219,7 +1251,10 @@ View.prototype = {
     variables.push(...newVariables);
 
     variablePercentageInput.style.display = "none";
-    this.render();
+    if (target) {
+      lastBlurredElement = target;
+    }
+    // this.render();
     editingVariable = false;
   },
 

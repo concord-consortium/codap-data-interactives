@@ -405,7 +405,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = false;
       return;
     } else {
-      setVariableName();
+      setVariableName(e.target);
     }
   });
 
@@ -415,7 +415,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = false;
       return;
     } else {
-      setPercentage();
+      setPercentage(null, null, null, e.target);
     }
   });
 
@@ -424,12 +424,14 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = true;
       e.preventDefault();
       setVariableName();
+      view.render();
       document.getElementById("variable-name-change").style.display = "none";
       view.showPercentInputForUI(e.target.value);
     }
     if (e.keyCode === 13) {
       keyPressed = true;
       setVariableName();
+      view.render();
       return false;
     }
   });
@@ -439,12 +441,14 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
       keyPressed = true;
       e.preventDefault();
       setPercentage();
+      view.render();
       document.getElementById("variable-percentage-change").style.display = "none";
       view.showVariableNameInputForUI(e.target.className);
     }
     if (e.keyCode === 13) {
       keyPressed = true;
       setPercentage();
+      view.render();
       return false;
     }
   });
