@@ -788,7 +788,7 @@
     "DG.plugin.StoryBuilder.storyArea.qRevertExplanation": "%@ anlatısında yaptığınız değişiklikleri iptal etmek (ve değişiklik yapmadan önceki durumuna geri dönmek) ister misiniz?",
     "DG.plugin.StoryBuilder.storyArea.qClickLockPrompt": "Değişiklikleri kaydet ya da sil?",
     "DG.plugin.StoryBuilder.storyArea.qClickLockExplanation": "%@ anlatısında değişiklikler yaptınız. Bu değişiklikleri kaydetmek ya da silmek ister misiniz?",
-    "DG.plugin.Scrambler.name": "veri çekme aracı",
+    "DG.plugin.Scrambler.name": "Veri çekme aracı",
     "DG.plugin.Scrambler.description": "Bu eklentide bir özelliği rastgele değiştirerek hipotezler test edilebilir.",
     "DG.plugin.Scrambler.language": "İngilizce",
     "DG.plugin.Scrambler.static.scramblerTitle": "Veri Çekme Aracı",
