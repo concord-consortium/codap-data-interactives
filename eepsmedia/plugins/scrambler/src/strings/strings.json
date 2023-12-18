@@ -104,7 +104,7 @@
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "medidos_de_"
   },
   "tr": {
-    "DG.plugin.Scrambler.name": "veri çekme aracı",
+    "DG.plugin.Scrambler.name": "Veri çekme aracı",
     "DG.plugin.Scrambler.description": "Bu eklentide bir özelliği rastgele değiştirerek hipotezler test edilebilir.",
     "DG.plugin.Scrambler.language": "İngilizce",
     "DG.plugin.Scrambler.static.scramblerTitle": "Veri Çekme Aracı",
