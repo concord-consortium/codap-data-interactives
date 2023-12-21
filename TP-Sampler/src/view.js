@@ -886,8 +886,8 @@ View.prototype = {
       const clickedPct = e.target.classList?.contains("percent");
       const elsToCheck = clickedWedge ? wedgeEls : clickedLabel ? nameLabels : clickedPct ? pctLabels : null;
       const isEditing = () => {
-        const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 ||               variablePercentageInput.offsetHeight > 0;
-        const isNameInputVisible = variableNameInput.offsetWidth > 0 ||               variableNameInput.offsetHeight > 0;
+        const isPercentInputVisible = variablePercentageInput.offsetWidth > 0 || variablePercentageInput.offsetHeight > 0;
+        const isNameInputVisible = variableNameInput.offsetWidth > 0 || variableNameInput.offsetHeight > 0;
         return isPercentInputVisible || isNameInputVisible
       };
 
@@ -1265,7 +1265,9 @@ View.prototype = {
       const selectedElements = document.getElementsByClassName(selectedVariable);
 
       for (let i = 0; i < selectedElements.length; i++) {
-        selectedElements[i].remove();
+        if (selectedElements[i].nodeName !== "INPUT") {
+          selectedElements[i].remove();
+        }
       }
 
       // update variables and unique variables
@@ -1274,7 +1276,6 @@ View.prototype = {
       variables.push(...newArray);
       uniqueVariables.splice(0, variables.length);
       uniqueVariables = [...new Set(variables)];
-
       editingVariable = false;
       _this.render();
     }
