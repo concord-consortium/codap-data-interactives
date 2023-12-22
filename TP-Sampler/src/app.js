@@ -773,7 +773,7 @@ export function getOptionsForMeasure (measure) {
       if (measure === "sum" || measure === "mean" || measure === "median") {
         createAttrOptions(selectAttrElement);
       // count(output = "value") || 100 * count(output = "value")
-      } else if (measure === "conditional_count" || measure === "conditional_percentage") {
+      } else if (measure === "conditional_count" || measure === "percent") {
         setUpOptions(selectAttrElement);
       // (output="value", output2) || (output2, output = “value”) || (output2, output = “value”)
       } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
