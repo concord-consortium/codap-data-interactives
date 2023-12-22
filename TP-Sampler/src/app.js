@@ -680,7 +680,7 @@ export function getOptionsForMeasure (measure) {
             attrMap[variableAttr] = [...new Set(variables.map((variable) => variable[variableAttr]))];
           });
         } else {
-          attrMap[attrName] = [...new Set(items.map((item) => item.values[attrName]).filter((val) => val.length > 0))];
+          attrMap[attrName] = [...new Set(items.map((item) => item.values[attrName]).filter((val) => val.toString().length > 0))];
         }
       });
 
