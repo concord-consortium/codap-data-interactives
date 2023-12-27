@@ -540,7 +540,7 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     if (measure === "sum" || measure === "mean" || measure === "median") {
       const selectedOutput = document.getElementById(`${measure}-select-attribute`).value;
       sendFormulaToCodap(measure, {output: selectedOutput});
-    } else if (measure === "conditional_count" || measure === "percent") {
+    } else if (measure === "count" || measure === "percent") {
       const output = document.getElementById(`${measure}-select-attribute`).value;
       const operator = document.getElementById(`${measure}-select-operator`).value;
       const value = document.getElementById(`${measure}-select-value`).value;
