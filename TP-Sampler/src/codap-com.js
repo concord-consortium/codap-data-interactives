@@ -88,7 +88,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.42 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.43 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
@@ -548,7 +548,7 @@ CodapCom.prototype = {
       switch (measureType) {
         case "sum":
           return `sum(\`${selections.output}\`)`;
-        case "conditional_count":
+        case "count":
           return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`;
         case "percent":
           return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`;
