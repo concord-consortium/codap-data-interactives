@@ -548,7 +548,7 @@ CodapCom.prototype = {
       switch (measureType) {
         case "sum":
           return `sum(\`${selections.output}\`)`;
-        case "conditional_count":
+        case "count":
           return `count(\`${selections.output}\`${selections.operator}'${selections.value}')`;
         case "percent":
           return `100 * count(\`${selections.output}\`${selections.operator} '${selections.value}')/count()`;
