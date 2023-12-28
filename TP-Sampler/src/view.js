@@ -345,7 +345,7 @@ View.prototype = {
             label
           );
       balls.push(ball);
-      ball.click(this.showVariableNameInput(i));
+      ball.click(this.showVariableNameInput(variables[i]));
       ball.hover((function(circ, lab, size) {
         return function() {
           if (_this.isRunning() || device === "collector") return;
@@ -1039,7 +1039,7 @@ View.prototype = {
     variableNameInput.style.left = (loc.x) + "px";
     variableNameInput.style.width = width;
     variableNameInput.value = text;
-    variableNameInput.className = variableName,
+    // variableNameInput.className = variableName,
     variableNameInput.focus();
 
     editingVariable = variables.indexOf(variableName);
@@ -1146,6 +1146,9 @@ View.prototype = {
       variableNameInput.style.display = "none";
       if (device === "spinner") {
         this.sortVariables();
+      }
+      if (device === "mixer") {
+        this.render();
       }
       // this.render();
       lastBlurredElement = target;
