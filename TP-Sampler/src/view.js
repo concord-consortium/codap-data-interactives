@@ -345,7 +345,7 @@ View.prototype = {
             label
           );
       balls.push(ball);
-      ball.click(this.showVariableNameInput(variables[i]));
+      ball.click(this.showVariableNameInput(i));
       ball.hover((function(circ, lab, size) {
         return function() {
           if (_this.isRunning() || device === "collector") return;
@@ -738,7 +738,7 @@ View.prototype = {
         wedgeLabels.push(variableLabel);
         wedgeObj.svgObj = {wedge, wedgeColor, variableLabel};
         var group = s.group(wedge, variableLabel);
-        group.click(this.showVariableNameInput(wedgeObj.variable, isDraggingVar, varTextSize));
+        group.click(this.showVariableNameInput(i, isDraggingVar, varTextSize));
 
         var isFirstInstanceOfVar = (variables.filter(v => v === variables[i]).length === 1) || (!merge && variables[i + 1] === variables[i]);
         if (isFirstInstanceOfVar) {
@@ -970,7 +970,7 @@ View.prototype = {
     this.render();
   },
 
-  showVariableNameInput: function (varName, isDraggingVar, textSize) {
+  showVariableNameInput: function (varNameIdx, isDraggingVar, textSize) {
     var _this = this;
     // don't display input if user is dragging the wedge
     if (isDraggingVar) {
@@ -981,7 +981,7 @@ View.prototype = {
       if (_this.isRunning() || device === "collector") return;
       const loc = this.node.childNodes[1].getBoundingClientRect();
 
-      const varIdx = variables.indexOf(varName)
+      const varName = variables[varNameIdx]
       const text = varName;
       const width = Math.min(30, Math.max(10, text.length * 3)) + "vh";
       const xIsWithinBounds = e.x <= loc.x + loc.width && e.x >= loc.x;
@@ -994,9 +994,9 @@ View.prototype = {
         variableNameInput.style.width = width;
         variableNameInput.style.fontSize = textSize + 4 + "px";
         variableNameInput.value = text;
-        variableNameInput.className = variables[varIdx];
+        variableNameInput.className = variables[varNameIdx];
         variableNameInput.focus();
-        editingVariable = varIdx;
+        editingVariable = varNameIdx;
         if (device == "mixer" || device == "collector") {
           variables[editingVariable] = "";
         } else {
