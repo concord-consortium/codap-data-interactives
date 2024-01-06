@@ -55,6 +55,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
 
   const _this = this;
 
+  codapInterface.on('get', 'interactiveState', getStateFunc);
   // listen for changes to attribute names, and update internal names accordingly
   codapInterface.on('notify', `dataContextChangeNotice[${targetDataSetName}]`, function(msg) {
      if (msg.values.operation === "updateAttributes") {
@@ -88,7 +89,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.42 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.43 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
