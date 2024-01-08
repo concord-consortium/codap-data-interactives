@@ -6,19 +6,14 @@ This plugin creates microtonal and microrhythmic melodies from data.
 
 0. Before turning on, lower the volume of the speaker / headphones to avoid a sudden blast of sound.
 1. Assign CODAP attributes to the Pitch and Time dimensions using the drop-down menu or drag and drop.
-
-- The plugin accepts numeric as well as date values. If the attribute is in a date format, check that the "DateTime" box is ticked.
-- You may want to create an accompanying visual graph with the Time attribute mapped to X axis, and the Pitch attribute to Y axis. You can do this manually or you can press the "create graph" button.
-
+    - The plugin accepts numeric as well as date values. If the attribute is in a date format, check that the "DateTime" box is ticked.
+    - You may want to create an accompanying visual graph with the Time attribute mapped to X axis, and the Pitch attribute to Y axis. You can do this manually or you can press the "create graph" button.
 2. Toggle the Play switch to play sounds.
-
-- Data points thar are selected in CODAP have a more prominent sound.
-
+    - Data points thar are selected in CODAP have a more prominent sound.
 3. You can make the melodic pattern repeat endlessly by toggling the "Loop" switch.
 4. Toggle Click to hear the starting (i.e., ending) location in time.
-
-- For the attribute mapped to Time, you should hear sounds with the earlier in time, the lower the mapped value.
-- For the Pitch attribute, the higher the pitch, the higher the value (unless you tick the Descending mode).
+    - For the attribute mapped to Time, you should hear sounds with the earlier in time, the lower the mapped value.
+    - For the Pitch attribute, the higher the pitch, the higher the value (unless you tick the Descending mode).
 
 ## Concepts
 

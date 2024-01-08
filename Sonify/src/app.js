@@ -864,7 +864,7 @@ const app = new Vue({
     },
     openInfoPage() {
       this.setUserMessage("DG.plugin.sonify.openInfoMessage");
-      helper.openSharedInfoPage("DG.plugin.sonify.openInfoMessage");
+      helper.openSharedInfoPage();
     },
     restoreSavedState(state) {
       Object.keys(state).forEach((key) => {
