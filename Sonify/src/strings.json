@@ -18,7 +18,7 @@
     "DG.plugin.sonify.timeSelectLabel": "Time",
     "DG.plugin.sonify.timeSelectTitle": "Select the attribute controlling the sequence of samples played",
     "DG.plugin.sonify.dateTimeTimeTitle": "Whether the attribute controlling time has date/time values or is numeric",
-    "DG.plugin.sonify.connectModeLabel": "Connect cases by",
+    "DG.plugin.sonify.connectModeLabel": "Connect by",
     "DG.plugin.sonify.connectModeTitle": "Select collection to connect cases by",
     "DG.plugin.sonify.createGraphLabel": "create graph",
     "DG.plugin.sonify.createGraphTitle": "create a graph of the current selections in CODAP",
