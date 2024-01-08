@@ -870,13 +870,14 @@
       ]
     },
     {
-      "title": "Sonification",
+      "title": "Sonify",
       "description": "Listen to your data",
       "width": 325,
       "height": 274,
-      "path": "/Sonification/MicroRhythm/",
+      "path": "/Sonify/",
       "visible": "true",
       "categories": [
+        "Partners",
         "Tools"
       ]
     },

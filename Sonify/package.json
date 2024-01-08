@@ -1,0 +1,26 @@
+{
+  "name": "sonify",
+  "version": "0.3.6",
+  "description": "A CODAP Plugin that plays temporal data as sounds.",
+  "private": true,
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "test": "echo \"No automated tests at this time. See test/test-cases.md.\" && exit 1"
+  },
+  "author": "Concord Sonification Team",
+  "license": "ISC",
+  "dependencies": {
+    "nexusui": "^2.1.6",
+    "showdown": "^2.1.0",
+    "vue": "^2.7.15"
+  },
+  "devDependencies": {
+    "prettier": "3.1.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
