@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Moves Sonified</title>
+    <script type="text/javascript" src="../../Common/js/iframe-phone.js"></script>
+    <script type="text/javascript" src="../../Common/js/CodapInterface.js"></script>
+    <script type="text/javascript" src="../lib/CodapPluginHelper.js"></script>
+    <script type="text/javascript" src="../lib/vue.min.js"></script>
+    <script type="text/javascript" src="../lib/NexusUI.js"></script>
+
+    <link rel="stylesheet" href="../common/styles.css">
+
+    <script type="text/javascript" src="../common/DataMovesData.js"></script>
+</head>
+<body>
+<div id="app">
+    <div class="property-row">
+        <span id="record-toggle"></span>
+        <label for="record-toggle">Record</label>
+    </div>
+    <div class="property-row">
+        <span id="update-toggle"></span>
+        <label for="update-toggle">Update Table</label>
+    </div>
+    <div class="property-row">
+        <span id="replay-toggle"></span>
+        <label for="replay-toggle">Replay</label>
+    </div>
+    <div class="property-row">
+        <span id="interpolate-toggle"></span>
+        <label for="interpolate-toggle">Interpolate</label>
+    </div>
+
+    <div class="property-row">
+        <span id="duplicate-button"></span>
+        <label for="duplicate-button">Duplicate Selection</label>
+    </div>
+
+    <div class="property-row">
+        <span id="delete-button"></span>
+        <label for="delete-button">Delete Selection</label>
+    </div>
+
+    <div id="footer-container">
+        <img id="info-icon" src="../images/Icon-round-Question_mark.svg" alt="Information" draggable="false" @click="openInfoPage">
+        <img id="draggable-link" src="../images/Simpleicons_Interface_link-interface-symbol-1.svg" draggable="true" ondragstart="(ev => {
+            ev.dataTransfer.setData('text', window.location.href);
+            ev.dataTransfer.setData('url', window.location.href);
+        })(event)">
+    </div>
+</div>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

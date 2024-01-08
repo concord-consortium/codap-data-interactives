@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sonify</title>
+    <link rel="stylesheet" href="./styles/styles.css" />
+  </head>
+  <body>
+    <div class="loading-screen" data-text="DG.plugin.sonify.loading"></div>
+    <div id="app" v-on:click="onBackgroundSelect">
+      <div class="main-heading">
+        <div class="controller-area">
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.playTitle')">
+            <label for="play-toggle" >{{tr("DG.plugin.sonify.playToggle")}}</label>
+            <span id="play-toggle"></span>
+          </div>
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.loopTitle')">
+            <label for="loop-toggle">{{tr("DG.plugin.sonify.loopToggle")}}</label>
+            <span id="loop-toggle"></span>
+          </div>
+          <div class="controller-container" v-bind:title="tr('DG.plugin.sonify.speedTitle')">
+            <label for="speed-slider" >{{ tr("DG.plugin.sonify.speedSlider") }}</label>
+            <span
+              id="speed-slider"
+            ></span>
+          </div>
+        </div>
+        <div class="message-area" v-bind:title="tr('DG.plugin.sonify.messageArea')">{{userMessage}}</div>
+      </div>
+
+      <div class="main-scroll-container">
+        <div class="mapper-container" v-bind:title="tr('DG.plugin.sonify.datasetTitle')">
+          <label >
+            {{ tr("DG.plugin.sonify.datasetLabel") }}
+            <select
+              v-model="state.focusedContext"
+              v-on:change="onContextFocused"
+              id="contextDropArea"
+            >
+              <option disabled value="" hidden>
+                {{ tr("DG.plugin.sonify.datasetDefaultOption") }}</option>
+              <option v-for="context in contexts" :value="context">
+                {{getContextTitle(context)}}
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="mapper-container" v-on:click="onBackgroundSelect">
+          <label v-bind:title="tr('DG.plugin.sonify.pitchSelectTitle')" >
+            {{tr("DG.plugin.sonify.pitchSelectLabel")}}
+            <select
+              v-model="state.pitchAttribute"
+              v-on:change="onPitchAttributeSelectedByUI"
+              class="drop-area"
+              id="pitchAttrDropArea"
+            >
+              <option selected value="NULL">-----</option>
+              <option v-for="attribute in attributes">{{attribute}}</option>
+              <option v-if="globals.length" disabled>──────────</option>
+              <option
+                v-if="globals.length"
+                v-for="global in globals.map(g => g.name)"
+              >
+                {{global}}
+              </option>
+            </select>
+          </label>
+
+          <div>
+            <label
+              v-bind:title="tr('DG.plugin.sonify.dateTimePitchTitle')"
+            >
+              <input
+                type="checkbox"
+                v-model="state.pitchAttrIsDate"
+                disabled
+                v-on:change="onPitchAttributeSelectedByUI"
+              />
+              {{tr('DG.plugin.sonify.dateTimeLabel')}}
+            </label>
+          </div>
+        </div>
+
+        <div class="mapper-container">
+          <label
+            v-bind:title="tr('DG.plugin.sonify.timeSelectTitle')"
+          >
+            {{tr("DG.plugin.sonify.timeSelectLabel")}}
+            <select
+              v-model="state.timeAttribute"
+              v-on:change="onTimeAttributeSelectedByUI"
+              class="drop-area"
+              id="timeAttrDropArea"
+            >
+              <option selected value="NULL">-----</option>
+              <option v-for="attribute in attributes">{{attribute}}</option>
+              <option v-if="globals.length" disabled>──────────</option>
+              <option
+                v-if="globals.length"
+                v-for="global in globals.map(g => g.name)"
+              >
+                {{global}}
+              </option>
+            </select>
+          </label>
+
+          <div>
+            <label
+              v-bind:title="tr('DG.plugin.sonify.dateTimeTimeTitle')"
+            >
+              <input
+                type="checkbox"
+                v-model="state.timeAttrIsDate"
+                disabled
+                v-on:change="onTimeAttributeSelectedByUI"
+              />
+              {{tr('DG.plugin.sonify.dateTimeLabel')}}
+            </label>
+          </div>
+        </div>
+
+        <hr />
+
+        <div
+          class="mapper-container"
+          v-on:click="onBackgroundSelect"
+          v-if="connectByAvailable"
+        >
+          <label v-bind:title="tr('DG.plugin.sonify.connectModeTitle')">
+            {{tr('DG.plugin.sonify.connectModeLabel')}}
+            <select
+              v-model="state.focusedCollection"
+              v-on:change="onConnectByCollectionSelectedByUI"
+              class="drop-area"
+              id="connectByCollDropArea"
+            >
+              <option selected value="NULL">-----</option>
+              <option v-for="collection in collections">{{collection}}</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="mapper-container">
+          <button :disabled="!isPlayable" v-bind:title="tr('DG.plugin.sonify.createGraphTitle')" v-on:click="createGraph">
+            {{tr("DG.plugin.sonify.createGraphLabel")}}
+          </button>
+        </div>
+      </div>
+      <div id="footer-container">
+        <span id="info-icon" title="Information" @click="openInfoPage"
+          >&#9432;</span
+        >
+      </div>
+    </div>
+
+    <script type="text/javascript" src="../Common/js/iframe-phone.js"></script>
+    <script
+      type="text/javascript"
+      src="../Common/js/CodapInterface.js"
+    ></script>
+    <script defer type="text/javascript" src="./lib/Csound/csound.js"></script>
+
+    <script type="module" src="dist/main.js"></script>
+  </body>
+</html>
