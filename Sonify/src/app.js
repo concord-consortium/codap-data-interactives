@@ -28,7 +28,7 @@ function expcurve(x, y) {
 function flattenGroupedArrays(data) {
   if (Array.isArray(data)) {
     return data;
-  } else {
+  } else if (data) {
     return Object.values(data).flatMap(flattenGroupedArrays);
   }
 }
