@@ -874,7 +874,7 @@
       "description": "Listen to your data",
       "width": 325,
       "height": 274,
-      "path": "/Sonify/",
+      "path": "/Sonify/index.html",
       "visible": "true",
       "categories": [
         "Partners",
