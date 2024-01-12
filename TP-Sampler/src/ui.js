@@ -4,6 +4,7 @@
  * Adds listeners to DOM elements, and helpers for updating their state
  */
 import * as localeMgr from './localeManager.js';
+import {getOptionsForMeasure} from './app.js'
 var collectorCollectionName = '';
 
 function addClass(el, className) {
@@ -167,33 +168,91 @@ function toggleDevice(oldDevice, newDevice) {
   addClass(document.getElementById(newDevice), "active");
 }
 
+
+function updateSelectOptions() {
+  const selectedMeasure = document.getElementById("select-measure").value;
+  removeSelectOptions([selectedMeasure]);
+  getOptionsForMeasure(selectedMeasure);
+}
+
+function removeChildren (node) {
+  if (node) {
+    [...node.childNodes].forEach(c => c.remove());
+  }
+};
+
+function removeSelectOptions (measures) {
+  measures.forEach((m) => {
+    removeChildren(document.getElementById(`${m}-select-attribute`));
+    removeChildren(document.getElementById(`${m}-select-operator`));
+    removeChildren(document.getElementById(`${m}-select-value`));
+    removeChildren(document.getElementById(`${m}-select-attribute-2`));
+    removeChildren(document.getElementById(`${m}-select-value-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-operator-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-1-2`));
+    removeChildren(document.getElementById(`${m}-select-value-pt-1`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2`));
+    removeChildren(document.getElementById(`${m}-select-operator-pt-2`));
+    removeChildren(document.getElementById(`${m}-select-attribute-pt-2-2`));
+    removeChildren(document.getElementById(`${m}-select-value-pt-2`));
+  });
+}
+
+function removeAllSelectOptions() {
+  const allMeasures = document.getElementById("select-measure").children;
+  removeSelectOptions([...allMeasures].map(m => m.id));
+}
+
 function viewSampler() {
-  addClass(document.getElementById("tab-sampler"), "active");
+  addClass(document.getElementById("tab-devices"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
   show(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   hide(document.getElementById("options"));
+  hide(document.getElementById("about-panel"));
+  removeAllSelectOptions();
+}
+
+function viewMeasures() {
+  removeAllSelectOptions();
+  removeClass(document.getElementById("tab-devices"), "active");
+  addClass(document.getElementById("tab-measures"), "active");
+  removeClass(document.getElementById("tab-options"), "active");
+  removeClass(document.getElementById("tab-about"), "active");
+  hide(document.getElementById("sampler"));
+  show(document.getElementById("measures"));
+  hide(document.getElementById("options"));
+  hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
 }
 
 function viewOptions() {
-  removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-devices"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   addClass(document.getElementById("tab-options"), "active");
   removeClass(document.getElementById("tab-about"), "active");
   hide(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   show(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   hide(document.getElementById("about-panel"));
+  removeAllSelectOptions();
 }
 
 function viewAbout() {
-  removeClass(document.getElementById("tab-sampler"), "active");
+  removeClass(document.getElementById("tab-devices"), "active");
+  removeClass(document.getElementById("tab-measures"), "active");
   removeClass(document.getElementById("tab-options"), "active");
   addClass(document.getElementById("tab-about"), "active");
   hide(document.getElementById("sampler"));
+  hide(document.getElementById("measures"));
   hide(document.getElementById("options"));
   hide(document.getElementById("password-failed"));
   show(document.getElementById("about-panel"));
+  removeAllSelectOptions();
 }
 
 function hideModel(hidden) {
@@ -283,40 +342,130 @@ function setReplacement(withReplacement, device, hidden) {
   }
 }
 
+function updateUIDeviceName (name) {
+  document.getElementById("device_name").value = name;
+  if (document.getElementById("select-measure").value) {
+    updateSelectOptions();
+  }
+}
+
 function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runButtonPressed,
-          stopButtonPressed, resetButtonPressed, switchState, refreshCaseList, setSampleSize,
-          setNumRuns, setSpeed, view, setVariableName, setReplacement, setHidden,
-          setOrCheckPassword, reloadDefaultSettings, becomeSelected) {
+          stopButtonPressed, resetButtonPressed, switchState, setSampleSize,
+          setNumRuns, setDeviceName, setSpeed, view, setVariableName, setPercentage, setReplacement, setHidden,
+          setOrCheckPassword, reloadDefaultSettings, becomeSelected, sendFormulaToCodap,
+          setMeasureName, getRunNumber) {
   document.getElementById("add-variable").onclick = addVariable;
   document.getElementById("remove-variable").onclick = removeVariable;
   document.getElementById("add-variable-series").onclick = addVariableSeries;
   document.getElementById("run").onclick = runButtonPressed;
   document.getElementById("stop").onclick = stopButtonPressed;
   document.getElementById("reset").onclick = resetButtonPressed;
-  document.getElementById("mixer").onclick = switchState;
-  document.getElementById("spinner").onclick = switchState;
-  document.getElementById("collector").onclick = switchState;
+  document.getElementById("mixer").onclick = (e) => {
+    removeClass(document.getElementById("model"), "spinner");
+    switchState(e, "mixer")
+  };
+  document.getElementById("spinner").onclick = (e) => {
+    addClass(document.getElementById("model"), "spinner");
+    switchState(e, "spinner");
+  };
+  document.getElementById("collector").onclick = (e) => {
+    removeClass(document.getElementById("model"), "mixer");
+    switchState(e, "collector")
+  };
   document.getElementById("sample_size").addEventListener('input', function (evt) {
     setSampleSize(this.value);
   });
-  document.getElementById("repeat").addEventListener('input', function (evt) {
+  document.getElementById("repeat").addEventListener("input", function (evt) {
     setNumRuns(this.value);
   });
+
   document.getElementById("speed").addEventListener('input', function (evt) {
     var val = (this.value * 1),
         speed = val || 0.5;
     document.getElementById("speed-text").innerHTML = view.getSpeedText(val);
     setSpeed(speed);
   });
-  document.getElementById("variable-name-change").onblur = setVariableName;
-  document.getElementById("variable-name-change").onkeypress = function(e) {
+
+  let keyPressed = false;
+
+  document.getElementById("device_name").addEventListener("blur", function (e) {
+    setDeviceName(e.target.value);
+  });
+
+  document.getElementById("device_name").addEventListener("keydown", function (e) {
     if (e.keyCode === 13) {
+      this.blur(e);
+    }
+  });
+
+  document.getElementById("variable-name-change").addEventListener("blur", (e) => {
+    document.getElementById("variable-name-change").style.display = "none";
+    // don't do anything if blur event was triggered by user pressing 'enter' or 'tab' keys
+    if (keyPressed) {
+      keyPressed = false;
+      return;
+    } else {
+      setVariableName(e.target);
+    }
+  });
+
+  document.getElementById("variable-percentage-change").addEventListener("blur", (e) => {
+    document.getElementById("variable-percentage-change").style.display = "none";
+    if (keyPressed) {
+      keyPressed = false;
+      return;
+    } else {
+      setPercentage(null, null, null, e.target);
+    }
+  });
+
+  document.getElementById("variable-name-change").addEventListener("keydown", (e) => {
+    if (e.keyCode === 9) {
+      keyPressed = true;
+      e.preventDefault();
       setVariableName();
+      view.render();
+      document.getElementById("variable-name-change").style.display = "none";
+      view.showPercentInputForUI(e.target.value);
+    }
+    if (e.keyCode === 13) {
+      keyPressed = true;
+      setVariableName();
+      view.render();
       return false;
     }
-  };
-  document.getElementById("tab-sampler").onclick = viewSampler;
+  });
+
+  document.getElementById("variable-percentage-change").addEventListener("keydown", (e) => {
+    if (e.keyCode === 9) {
+      keyPressed = true;
+      e.preventDefault();
+      setPercentage();
+      view.render();
+      document.getElementById("variable-percentage-change").style.display = "none";
+      view.showVariableNameInputForUI(e.target.className);
+    }
+    if (e.keyCode === 13) {
+      keyPressed = true;
+      setPercentage();
+      view.render();
+      return false;
+    }
+  });
+
+  document.getElementById("tab-devices").onclick = viewSampler;
   document.getElementById("tab-options").onclick = viewOptions;
+  document.getElementById("tab-measures").onclick = () => {
+    viewMeasures();
+    // re-populate select options if there is a selected measure
+    if (document.getElementById('select-measure').value) {
+      getOptionsForMeasure(document.getElementById('select-measure').value);
+      // enable add run button if measure is selected and data table exists
+      if (getRunNumber() > 0) {
+        removeClass(document.getElementById("add-measure"), "disabled");
+      }
+    }
+  };
   document.getElementById("tab-about").onclick = viewAbout;
 
   document.getElementById("with-replacement").onclick = function(evt) {
@@ -353,8 +502,71 @@ function appendUIHandlers(addVariable, removeVariable, addVariableSeries, runBut
     reloadDefaultSettings();
     viewSampler();
   };
+
   document.querySelector('body').addEventListener('click',
       becomeSelected, {capture:true});
+
+  document.getElementById("select-measure").addEventListener("change", (e) => {
+    // find the select formula container for that measure and display it
+    const measure = e.target.value;
+    if (measure) {
+
+      // only enable add run button if measure is selected and data table exists
+      if (getRunNumber() > 0) {
+        removeClass(document.getElementById("add-measure"), "disabled");
+      }
+
+      const containerId = `${measure}-formula-container`;
+      const measureContainer = document.getElementById(containerId);
+      removeClass(measureContainer, "hidden");
+
+      // hide any other open measures
+      const allMeasureContainers = document.getElementsByClassName("formula");
+      const filteredMeasureContainers = [...allMeasureContainers].filter((m) => m.id !== containerId && !m.classList.contains("hidden"));
+      filteredMeasureContainers.forEach((m) => addClass(m, "hidden"));
+
+      // also remove select options for other measures
+      const allMeasures = document.getElementById("select-measure").children;
+      const filteredMeasures = [...allMeasures].map(m => m.id).filter(id => id !== measure && id.length > 0);
+      removeSelectOptions(filteredMeasures);
+
+      // add options to select element
+      getOptionsForMeasure(measure, measureContainer);
+    }
+  })
+
+  document.getElementById("add-measure").addEventListener("click", () => {
+    const measure = document.getElementById("select-measure").value;
+    if (measure === "sum" || measure === "mean" || measure === "median") {
+      const selectedOutput = document.getElementById(`${measure}-select-attribute`).value;
+      sendFormulaToCodap(measure, {output: selectedOutput});
+    } else if (measure === "count" || measure === "percent") {
+      const output = document.getElementById(`${measure}-select-attribute`).value;
+      const operator = document.getElementById(`${measure}-select-operator`).value;
+      const value = document.getElementById(`${measure}-select-value`).value;
+      sendFormulaToCodap(measure, {output, operator, value});
+    } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
+      const output = document.getElementById(`${measure}-select-attribute`).value;
+      const operator = document.getElementById(`${measure}-select-operator`).value;
+      const value = document.getElementById(`${measure}-select-value`).value;
+      const output2 = document.getElementById(`${measure}-select-attribute-2`).value;
+      sendFormulaToCodap(measure, {output, operator, value, output2});
+    } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
+      const outputPt1 = document.getElementById(`${measure}-select-attribute-pt-1`).value;
+      const outputPt12 = document.getElementById(`${measure}-select-attribute-pt-1-2`).value;
+      const operatorPt1 = document.getElementById(`${measure}-select-operator-pt-1`).value;
+      const valuePt1 = document.getElementById(`${measure}-select-value-pt-1`).value;
+      const outputPt2 = document.getElementById(`${measure}-select-attribute-pt-2`).value;
+      const outputPt22 = document.getElementById(`${measure}-select-attribute-pt-2-2`).value;
+      const operatorPt2 = document.getElementById(`${measure}-select-operator-pt-2`).value;
+      const valuePt2 = document.getElementById(`${measure}-select-value-pt-2`).value;
+      sendFormulaToCodap(measure, {outputPt1, outputPt12, operatorPt1, valuePt1, outputPt2, outputPt22, operatorPt2, valuePt2});
+    }
+  });
+
+  document.getElementById("measure-name").addEventListener("input", (e) => {
+    setMeasureName(e.target.value);
+  })
 }
 
 // Sets up the UI elements based on the loaded state of the model
@@ -378,5 +590,6 @@ export {
   renderVariableControls,
   populateContextsList,
   setRunButtonMode,
-  render
+  render,
+  updateUIDeviceName
 };
