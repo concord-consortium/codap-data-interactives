@@ -3,6 +3,7 @@ import * as localeMgr from './localeManager.js';
 import {CodapCom} from './codap-com.js';
 import {View} from './view.js';
 import * as ui from './ui.js';
+
 /* Global Snap:true */
 var s = Snap("#model svg"),
 
@@ -12,11 +13,13 @@ var s = Snap("#model svg"),
       speed: 1,
       variables: ["a", "b", "a"],
       device: "mixer",
-      withReplacement: true
+      withReplacement: true,
+      deviceName: "output"
     },
 
     dataSetName,
     device = defaultSettings.device,       // "mixer, "spinner", "collector"
+    selectedMeasureName = "",
     isCollector = device === "collector",
     withReplacement = true,
     previousExperimentDescription = '', // Used to tell when user has changed something
@@ -38,6 +41,7 @@ var s = Snap("#model svg"),
 
     numRuns = defaultSettings.repeat,
     sampleSize = defaultSettings.draw,
+    deviceName = defaultSettings.deviceName,
 
     userVariables = defaultSettings.variables.slice(0),   // clone
     caseVariables = [],
@@ -45,7 +49,7 @@ var s = Snap("#model svg"),
 
     samples = [],
 
-    uniqueVariables,
+    uniqueVariables = [...new Set(variables)],
 
     codapCom,
     view;
@@ -61,6 +65,7 @@ function getInteractiveState() {
       repeat: numRuns,
       speed: speed,
       device: device,
+      deviceName: deviceName,
       withReplacement: withReplacement,
       hidden: hidden,
       password: password,
@@ -88,6 +93,7 @@ function loadInteractiveState(state) {
     sampleSize = state.draw || sampleSize;
     numRuns = state.repeat || numRuns;
     speed = state.speed || speed;
+    deviceName = state.deviceName || deviceName;
     if (state.device) {
       switchState(null, state.device);
     }
@@ -105,6 +111,11 @@ function loadInteractiveState(state) {
   }
   view.render();
 }
+
+export function updateDeviceName (name) {
+  deviceName = name;
+  ui.updateUIDeviceName(name);
+};
 
 function setCodapDataSetName() {
   return new Promise(function (resolve, reject) {
@@ -135,9 +146,10 @@ function getProps() {
     sampleSize: sampleSize,
     numRuns: numRuns,
     device: device,
+    deviceName: deviceName,
     withReplacement: withReplacement,
     variables: variables,
-    uniqueVariables: uniqueVariables,
+    uniqueVariables: [...new Set(variables)],
     samples: samples,
     hidden: hidden
   };
@@ -183,9 +195,32 @@ function getNextVariable() {
 function addVariable() {
   this.blur();
   if (running) return;
-  variables.push(getNextVariable());
+  if (device === "spinner") {
+    const newFraction = 1 / (uniqueVariables.length + 1);
+    const pctMap = uniqueVariables.map((v) => {
+      const currentPct = (variables.filter((variable) => variable === v).length / variables.length) * 100;
+      const amtToSubtract = currentPct * newFraction;
+      return {variable: v, pct: Math.round(currentPct - amtToSubtract)};
+    });
+    pctMap.push({variable: getNextVariable(), pct: Math.round(newFraction * 100)});
+    let discrepancy = 100 - pctMap.reduce((sum, v) => sum + v.pct, 0);
+    while (discrepancy !== 0) {
+      const sign = discrepancy > 0 ? 1 : -1;
+      const index = Math.floor(Math.random() * pctMap.length);
+      pctMap[index].pct += sign;
+      discrepancy -= sign;
+    }
+    const lcd = utils.findCommonDenominator(pctMap.map((v) => v.pct));
+    variables.splice(0, variables.length);
+    pctMap.forEach((vPct) => {
+      const newNum = utils.findEquivNum(vPct.pct, lcd);
+      variables.push(...Array.from({ length: newNum }, () => vPct.variable));
+    })
+  } else {
+    variables.push(getNextVariable());
+  }
+  uniqueVariables = [...new Set(variables)];
   view.render();
-
   ui.enable("remove-variable");
   codapCom.logAction("addItem");
 }
@@ -195,6 +230,7 @@ function removeVariable() {
   if (running) return;
   if (variables.length === 1) return;
   variables.pop();
+  uniqueVariables = [...new Set(variables)];
   view.render();
 
   ui.enable("add-variable");
@@ -304,7 +340,8 @@ function stopButtonPressed() {
 
 function resetButtonPressed() {
   this.blur();
-  experimentNumber = 0;
+  experimentNumber = 1;
+  mostRecentRunNumber = 0;
   codapCom.deleteAll();
   // we used to delete all attributes, and recreate them if we were a collector.
   // we don't do that any more because it seems to take a very long time, and the request
@@ -319,7 +356,7 @@ function addNextSequenceRunToCODAP() {
   var vars = sequence[runNumberSentInCurrentSequence].map(function(i) {
     return variables[i];
   });
-  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector);
+  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector, deviceName);
   runNumberSentInCurrentSequence++;
 }
 
@@ -343,7 +380,7 @@ function run() {
           });
           ix ++;
         }
-        codapCom.addMultipleSamplesToCODAP(samples, isCollector);
+        codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
 
         if (currRunNumber >= sequence.length) {
           setup();
@@ -394,26 +431,24 @@ function run() {
     } else {
       setTimeout(selectNext, timeout);
     }
-
-    // console.log('speed: ' + speed + ', timeout: ' + timeout + ', draw: ' + draw + ', runNumber: ' + runNumber);
   }
 
-  function lookupDeviceName(device) {
-    var deviceNameMap = {
+  function lookupDeviceType(device) {
+    var deviceTypeMap = {
       mixer: "DG.plugin.Sampler.device-selection.mixer",
       spinner: "DG.plugin.Sampler.device-selection.spinner",
       collector: "DG.plugin.Sampler.device-selection.collector"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   function lookupItemName(device) {
-    var deviceNameMap = {
+    var deviceTypeMap = {
       mixer: "DG.plugin.sampler.experiment.description-mixer-item-kind",
       spinner: "DG.plugin.sampler.experiment.description-spinner-item-kind",
       collector: "DG.plugin.sampler.experiment.description-collector-item-kind"
     }
-    return localeMgr.tr(deviceNameMap[device]);
+    return localeMgr.tr(deviceTypeMap[device]);
   }
 
   var runNumber,
@@ -434,7 +469,7 @@ function run() {
           localeMgr.tr("DG.plugin.sampler.experiment.description-collector-phrase",
               [ui.getCollectorCollectionName()]) :
           " ",
-      deviceName = lookupDeviceName(device),
+      deviceType = lookupDeviceType(device),
       tDescription, // = hidden ? "hidden!" : device + " containing " + tNumItems + " " + tItems +
           //tCollectorDataset + tReplacement,
       tStringifiedVariables = JSON.stringify(variables);
@@ -444,7 +479,7 @@ function run() {
   }
   else {
     tDescription = localeMgr.tr("DG.plugin.sampler.experiment.description", [
-      deviceName,
+      deviceType,
       tNumItems,
       tItems,
       tCollectorDataset,
@@ -463,11 +498,8 @@ function run() {
   runNumber = mostRecentRunNumber;
   // this doesn't get written out in array, or change the length
   variables.EMPTY = "";
-  codapCom.findOrCreateDataContext().then(function () {
+  codapCom.findOrCreateDataContext(deviceName).then(function () {
     codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
-
-    console.log('sample group size: ' + sampleGroupSize);
-
     sequence = createRandomSequence(tSampleSize, tNumRuns);
 
     if (!hidden && (device === "mixer" || device === "collector")) {
@@ -488,7 +520,7 @@ function run() {
 // permanently sorts variables so identical ones are next to each other
 function sortVariablesForSpinner() {
   var sortedVariables = [];
-  uniqueVariables = variables.length;
+  uniqueVariables = [...new Set(variables)];
   for (var i = 0, ii = variables.length; i < ii; i++) {
     var v = variables[i],
         inserted = false,
@@ -497,7 +529,6 @@ function sortVariablesForSpinner() {
       if (sortedVariables[j] === v) {
         sortedVariables.splice(j, 0, v);
         inserted = true;
-        uniqueVariables--;
       }
     }
     if (!inserted) {
@@ -547,6 +578,21 @@ function setNumRuns(n) {
   view.render();
   updateRunButtonMode();
   codapCom.logAction("setNumSamples: %@", n);
+}
+
+function setDeviceName(name) {
+  if (name) {
+    codapCom.updateDeviceNameInTable(name);
+    codapCom.logAction("setDeviceName: %@", name);
+    deviceName = name;
+    view.render();
+    updateRunButtonMode();
+  }
+}
+
+function setMeasureName(name) {
+  selectedMeasureName = name;
+  view.render();
 }
 
 function updateRunButtonMode() {
@@ -619,20 +665,160 @@ function setup() {
   view.render();
 }
 
+export function getOptionsForMeasure (measure) {
+  // get list of attributes from CODAP
+  codapCom.getAttributesFromTable().then((attrs) => {
+    const attrNames = attrs.map((attr) => attr.name);
+    codapCom.getAllItems().then((items) => {
+      let attrMap = {};
+      attrNames.forEach((attrName) => {
+        if (attrName === deviceName && !isCollector) {
+          attrMap[attrName] = [...new Set(variables)];
+        } else if (attrName !== deviceName && isCollector) {
+          const variableAttrs = Object.keys(variables[0]);
+          variableAttrs.forEach((variableAttr) => {
+            attrMap[variableAttr] = [...new Set(variables.map((variable) => variable[variableAttr]))];
+          });
+        } else {
+          attrMap[attrName] = [...new Set(items.map((item) => item.values[attrName]).filter((val) => val.toString().length > 0))];
+        }
+      });
+
+      function createAttrOptions (selectEl) {
+        const attrOptions = Object.keys(attrMap).filter((attrName) => attrMap[attrName].length > 0);
+        attrOptions.forEach((option, i) => {
+          const outputOption = document.createElement("option");
+          outputOption.value = option;
+          outputOption.textContent = option;
+          if (i === 0) {
+            outputOption.selected = true;
+          }
+          selectEl.appendChild(outputOption);
+        });
+      };
+
+      function createValueOptions (selectEl, selectedAttribute) {
+        const attrValues = attrMap[selectedAttribute];
+        if (attrValues.length) {
+          const options = attrValues.map((v) => {return {value: v, text: v}});
+          options.forEach((option, i) => {
+            const valueOption = document.createElement("option");
+            valueOption.value = option.value;
+            valueOption.textContent = option.text;
+            if (i === 0) {
+              valueOption.selected = true;
+            }
+            selectEl.appendChild(valueOption);
+          });
+          return options;
+        }
+      };
+
+      function createOperatorOptions (selectEl, values) {
+        function isStringNumber(str) {
+          return !isNaN(parseFloat(str)) && isFinite(str);
+        }
+        const anyVariableIsNumber = values.some((v) => isStringNumber(v.value));
+        if (anyVariableIsNumber) {
+          const options = ["=", "≠", "<", ">", "≤", "≥"]
+          options.forEach((option, i) => {
+            const operatorOpt = document.createElement("option");
+            operatorOpt.value = option;
+            operatorOpt.textContent = option;
+            if (i === 0) {
+              operatorOpt.selected = true;
+            }
+            selectEl.appendChild(operatorOpt);
+          })
+        } else {
+          const equalsOpt = document.createElement("option");
+          equalsOpt.value = "=";
+          equalsOpt.textContent = "=";
+          selectEl.appendChild(equalsOpt);
+          const notEqualsOpt = document.createElement("option");
+          notEqualsOpt.value = "≠";
+          notEqualsOpt.textContent = "≠";
+          selectEl.appendChild(notEqualsOpt);
+        }
+      };
+
+      const selectAttrElement = document.getElementById(`${measure}-select-attribute`);
+
+      const handleSelectAttrChange = (e, selectValueEl, selectOperatorEl) => {
+        while (selectValueEl.firstChild) {
+          selectValueEl.removeChild(selectValueEl.lastChild);
+        }
+        const availableOptions = createValueOptions(selectValueEl, e.target.value);
+        while (selectOperatorEl.firstChild) {
+          selectOperatorEl.removeChild(selectOperatorEl.lastChild);
+        }
+        createOperatorOptions(selectOperatorEl, availableOptions);
+      }
+
+      const setUpOptions = (selectElement, suffix = "") => {
+        createAttrOptions(selectElement);
+        const selectValue = document.getElementById(`${measure}-select-value${suffix}`);
+        const availableValues = createValueOptions(selectValue, selectElement.value);
+        const selectOperator = document.getElementById(`${measure}-select-operator${suffix}`);
+        createOperatorOptions(selectOperator, availableValues);
+        selectElement.onchange = (e) => handleSelectAttrChange(e, selectValue, selectOperator);
+      }
+
+      // if no attributes in attrMap have values, don't show the options
+      if (Object.keys(attrMap).every((attrName) => attrMap[attrName].length === 0)) {
+        return;
+      }
+
+      // sum(output) || mean(output) || median(output)
+      if (measure === "sum" || measure === "mean" || measure === "median") {
+        createAttrOptions(selectAttrElement);
+      // count(output = "value") || 100 * count(output = "value")
+      } else if (measure === "count" || measure === "percent") {
+        setUpOptions(selectAttrElement);
+      // (output="value", output2) || (output2, output = “value”) || (output2, output = “value”)
+      } else if (measure === "conditional_sum" || measure === "conditional_mean" || measure === "conditional_median") {
+        createAttrOptions(selectAttrElement);
+        const selectAttrElement2 = document.getElementById(`${measure}-select-attribute-2`);
+        setUpOptions(selectAttrElement2);
+      // (output1, output2 = “value1”) – mean(output1, output2 = “value2”) || (output1, output2 = “value1”) – median(output1, output2 = “value2”)
+      } else if (measure === "difference_of_means" || measure === "difference_of_medians") {
+        const selectAttrElPt1 = document.getElementById(`${measure}-select-attribute-pt-1`);
+        createAttrOptions(selectAttrElPt1);
+        const selectAttrElPt12 = document.getElementById(`${measure}-select-attribute-pt-1-2`);
+        setUpOptions(selectAttrElPt12, "-pt-1");
+        const selectAttrElPt2 = document.getElementById(`${measure}-select-attribute-pt-2`);
+        createAttrOptions(selectAttrElPt2);
+        const selectAttrElPt22 = document.getElementById(`${measure}-select-attribute-pt-2-2`);
+        setUpOptions(selectAttrElPt22, "-pt-2");
+      }
+    });
+  });
+}
+
+function sendFormulaToCodap (formula, selections) {
+  var measureName = selectedMeasureName ? selectedMeasureName : null;
+  codapCom.sendFormulaToTable(measureName, formula, selections);
+}
+
+function getRunNumber () {
+  return experimentNumber;
+}
+
 localeMgr.init().then(() => {
   codapCom = new CodapCom(getInteractiveState, loadInteractiveState,
       localeMgr);
   codapCom.init()
       .then(setCodapDataSetName)
       .catch(codapCom.error);
+
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
-      localeMgr);
+      localeMgr, sortVariablesForSpinner);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
-      runButtonPressed, stopButtonPressed, resetButtonPressed, switchState,
-      refreshCaseList, setSampleSize, setNumRuns, setSpeed, view,
-      view.setVariableName, setReplacement, setHidden, setOrCheckPassword,
-      reloadDefaultSettings, becomeSelected);
+      runButtonPressed, stopButtonPressed, resetButtonPressed, switchState, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
+      view.setVariableName, view.setPercentage, setReplacement, setHidden, setOrCheckPassword,
+      reloadDefaultSettings, becomeSelected, sendFormulaToCodap, setMeasureName,
+      getRunNumber);
 
   // initialize and render the model
   setup();

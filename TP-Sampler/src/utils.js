@@ -77,7 +77,11 @@ function parseSpecifier(spec, rangeWord) {
         arr = arr.concat(seq);
       }
     } else {
-      arr.push(item);
+      if (item !== "") {
+        if (item !== " ") {
+          arr.push(item.trim());
+        }
+      }
     }
   });
   return arr.length?arr:null;
@@ -126,9 +130,88 @@ function testParsing() {
 // run assertion test on module load
 //testParsing();
 
+function calcPct(a, b) {
+  return Math.round(100 * (a / b));
+}
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function lcm(a, b) {
+    return (a * b) / gcd(a, b);
+}
+
+function percentageToFraction(percentage) {
+  const numerator = percentage;
+  const denominator = 100;
+  const commonFactor = gcd(numerator, denominator);
+  return [numerator / commonFactor, denominator / commonFactor];
+}
+
+function findCommonDenominator(percentages) {
+  const fractions = percentages.map((p) => percentageToFraction(p));
+  const denominators = fractions.map((f) => { return f[1]});
+  const lcdDenominator = denominators.reduce((accumulator, currentDenominator) => lcm(accumulator, currentDenominator));
+  return lcdDenominator;
+}
+
+function findEquivNum(n, lcd) {
+  return (n * (lcd / 100));
+}
+
+function fewestNumbersToSum (target, count) {
+  const result = [];
+
+  // distribute the target equally among the count of integers
+  const initialDistribution = Math.floor(target / count);
+
+  // adjust the initial distribution to ensure the sum matches the target
+  let sum = initialDistribution * count;
+  for (let i = 0; i < count; i++) {
+    result.push(initialDistribution);
+  }
+
+  // distribute the remaining difference to the numbers
+  let remainder = target - sum;
+  let i = 0;
+  while (remainder > 0) {
+    result[i % count]++;
+    remainder--;
+    i++;
+  }
+
+  return result;
+}
+
+function calculateWedgePercentage(cx, cy, x1, y1, x2, y2) {
+  // calculate angles in radians
+  var angle1 = Math.atan2(y1 - cy, x1 - cx);
+  var angle2 = Math.atan2(y2 - cy, x2 - cx);
+
+  // calculate the angle between the two points
+  var angle = angle2 - angle1;
+
+  // handle cases where the angle crosses the boundary between -π and π
+  if (angle < 0) {
+      angle += 2 * Math.PI;
+  }
+
+  // calculate the percentage of the circle's circumference
+  var percentage = (angle / (2 * Math.PI)) * 100;
+
+  return percentage;
+}
+
+
 export {
   fill,
   shuffle,
   parseSequence,
-  parseSpecifier
+  parseSpecifier,
+  calcPct,
+  findCommonDenominator,
+  findEquivNum,
+  fewestNumbersToSum,
+  calculateWedgePercentage
 };
