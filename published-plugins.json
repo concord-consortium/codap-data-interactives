@@ -134,7 +134,7 @@
     "width": 325,
     "height": 274,
     "path": "/Sonify/index.html",
-    "icon": "Sonify/src/assets/images/sonify.svg",
+    "icon": "/Sonify/src/assets/images/sonify.svg",
     "visible": "true",
     "isStandard": "true",
     "categories": [
