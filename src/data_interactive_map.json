@@ -854,6 +854,20 @@
       ]
     },
     {
+      "title": "Sonify",
+      "description": "Listen to your data",
+      "width": 325,
+      "height": 274,
+      "path": "/Sonify/index.html",
+      "icon": "/Sonify/src/assets/sonify.svg",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Partners",
+        "Tools"
+      ]
+    },
+    {
       "title": "Story Builder",
       "description": "Create a narrative of your investigation",
       "title-string": "DG.plugin.StoryBuilder.pluginName",
@@ -863,20 +877,6 @@
       "path": "/story-builder/",
       "icon": "/story-builder/story-builder-icon.svg",
       "visible": "false",
-      "isStandard": "true",
-      "categories": [
-        "Partners",
-        "Tools"
-      ]
-    },
-    {
-      "title": "Sonify",
-      "description": "Listen to your data",
-      "width": 325,
-      "height": 274,
-      "path": "/Sonify/index.html",
-      "icon": "/Sonify/src/assets/sonify.svg",
-      "visible": "true",
       "isStandard": "true",
       "categories": [
         "Partners",
