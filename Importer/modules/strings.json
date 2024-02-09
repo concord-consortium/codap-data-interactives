@@ -194,7 +194,9 @@
     "DG.plugin.Choosy.title": "Choosy",
     "DG.plugin.Choosy.description": "Organize and simplify datasets with many attributes.",
     "DG.plugin.Transformers.title": "Transformers",
-    "DG.plugin.Transformers.description": "Transform datasets with a collection of powerful tools."
+    "DG.plugin.Transformers.description": "Transform datasets with a collection of powerful tools.",
+    "DG.plugin.Sampler.tab.devices": "Model",
+    "DG.plugin.Sampler.tab.measures": "Measures"
   },
   "de": {
     "DG.plugin.Importer.title": "CSV importieren",
@@ -766,7 +768,7 @@
     "DG.plugin.StoryBuilder.emptyMoment.createAlt": "yeni anlatı oluştur",
     "DG.plugin.StoryBuilder.emptyMoment.createTitle": "Yeni bir anlatı oluşturmak için tıklayınız",
     "DG.plugin.StoryBuilder.buttons.helpAlt": "yardım al",
-    "DG.plugin.StoryBuilder.buttons.helpTitle": "Anlatı Oluşturucu kullanımına yönelik yardı al",
+    "DG.plugin.StoryBuilder.buttons.helpTitle": "Anlatı Oluşturucu kullanımına yönelik yardım al",
     "DG.plugin.StoryBuilder.buttons.autoSaveTitleAuto": "Mevcut durumda anlatılarda yapılan değişiklikler otomatik olarak kaydedilecektir. Anlatıları kaydetme ya da silme seçeneklerini görmek için tıklayınız.",
     "DG.plugin.StoryBuilder.buttons.autoSaveTitleManual": "Mevcut durumda anlatılarda yapılan değişikliklerin kaydedilmesi veya silinmesi istenecektir. Anlatılardaki değişiklikleri sormaksızın otomatik olarak kaydetmek için tıklayınız.",
     "DG.plugin.StoryBuilder.momentComponent.deleteAlt": "Bu anlatıyı sil",
@@ -897,6 +899,7 @@
     "DG.plugin.Choosy.title": "Veri indirgeyici",
     "DG.plugin.Choosy.description": "Bu eklentide çok özellikli veri setleri organize edilebilir ve veriler sadeleştirilebilir.",
     "DG.plugin.Transformers.title": "Dönüştürücüler",
-    "DG.plugin.Transformers.description": "Bu eklentide sunulan birtakım araçlar yardımıyla veri setlerinde dönüşümler yapılabilir."
+    "DG.plugin.Transformers.description": "Bu eklentide sunulan birtakım araçlar yardımıyla veri setlerinde dönüşümler yapılabilir.",
+    "DG.plugin.Sampler.tab.measures": "Ölçümler"
   }
 }
