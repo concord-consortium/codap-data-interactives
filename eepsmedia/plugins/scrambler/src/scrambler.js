@@ -425,10 +425,11 @@ const scrambler = {
      * @returns {Promise<void>}
      */
     openHelp: async function () {
-        const theURL = `help/help.${scrambler.state.lang}.html`;
+        //  const theURL = `help/help.${scrambler.state.lang}.html`;
+        const theURL = `https://codap.xyz/guides/scrambler/`;
         const response = await fetch(theURL);
 
-        if (response.status == 200) {
+        if (response.status === 200) {
             window.open(theURL, `_blank`);
         } else if (response.status === 404) {
             window.open(`help/help.en.html`, `_blank`);     //  default to English
@@ -449,7 +450,7 @@ const scrambler = {
 
     constants: {
         pluginName: "scrambler",
-        version: "1.6",
+        version: "1.7",
         dimensions: {height: 200, width: 366},      //      dimensions,
         defaultState: {
             lastDatasetName: null,
@@ -462,6 +463,7 @@ const scrambler = {
         measuresPrefixStringID: "sMeasureDatasetPrefix",
         scrambledPrefixStringID: "sScrambledDatasetPrefix",
         scrambleSetName: "scrset",
+
     },
 }
 
