@@ -1,7 +1,7 @@
 <!--
-    local just this: http://localhost/plugins/scrambler/
+    local just this: http://localhost/~tim/plugins/scrambler/
     local in local codap :
-        http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/plugins/scrambler
+        http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/codap-data-interactives/eepsmedia/plugins/scrambler
 
 -->
 
@@ -10,7 +10,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Scrambler 2021</title>
+    <title>Scrambler 2024</title>
 
     <link href='https://fonts.googleapis.com/css?family=Sirin+Stencil:400' rel='stylesheet'>
 
@@ -34,10 +34,17 @@
 <div class="scrambler-stripe">
     <div class="stripe-element" ><h1 id="scramblerTitle">scrambler</h1></div>
 
-    <div class="stripe-element" >
+    <div class="stripe-element" ><!--
         <img src="../../common/art/info.png"
              alt="help button" title="Click for detailed help"
              class="roundButton" onclick="scrambler.openHelp()">
+-->
+
+        <a href="https://codap.xyz/guides/scrambler/"
+             alt="help button" title="Click for detailed help"
+             class="roundButton" target="_blank">
+            <img src="../../common/art/info.png" width="24">
+        </a>
     </div>
 
     <div class="stripe-element" id="attributeReport"></div>
