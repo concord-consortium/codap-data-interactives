@@ -180,7 +180,7 @@ let CODAPconnect = {
         type : 'caseTable',
         dataContext : constants.datasetName,
         name : constants.caseTableName,
-        cannotClose : true
+        cannotClose : false
       }
     };
 
