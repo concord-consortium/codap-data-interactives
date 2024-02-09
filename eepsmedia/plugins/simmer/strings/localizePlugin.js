@@ -1,6 +1,6 @@
 const localizePlugin = {
 
-    languages : ['en', 'es'],
+    languages : ['en', 'es', 'de'],     //  todo: eliminate this in favor of the dictionary
 
     /**
      * Get a two-letter language code from a variety of sources.
