@@ -33,3 +33,9 @@ Instructions for updating data to query from NHANES.
 1. Start a local instance of CODAP.
 2. Navigate to `http://localhost:4020/dg?di=http://localhost:8888/nhanes/nhanes.html`. You should see the plugin in CODAP.
 
+**Upload data to CODAP server**
+To use the new data in the nhanes plugin, the existing data in the database in the CODAP server needs to be replaced with the new data.
+1. Upload the new sql file into the CODAP server. Currently, this should be stored in `var/www/html/data-science-worlds/nhanes/sql data`.
+2. Back up the old database.
+3. Drop the old database.
+4. Create a new database called `nhanesdb`, and populate it with the data from you new sql file.
