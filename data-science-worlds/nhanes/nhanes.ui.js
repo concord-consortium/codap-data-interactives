@@ -149,7 +149,7 @@ nhanes.ui = {
         out = "<p>When you press the button, you will get "
             + (tSampleSize == 1 ? "one random American" : "a random sample of " + tSampleSize + " Americans")
             + " " + tAgeFilter.agePhrase
-            + " from the 2003 "
+            + " from the 2017-2020 Pre-Pandemic "
             + "<a href='https://www.cdc.gov/nchs/nhanes/index.htm' target='_blank'>NHANES</a>.</p> "
             + "<p>The variables you will get are: "
             + "<b>" + aList.join("</b>, <b>") + "</b>.</p>";

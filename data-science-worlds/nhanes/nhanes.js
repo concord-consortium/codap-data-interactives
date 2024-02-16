@@ -79,7 +79,7 @@ let nhanes = {
         {number : 2, name : "bmx",      open : false, title : "Body measurements"},
         {number : 3, name : "bp",       open : false, title : "Blood pressure"},
         {number : 4, name : "biochem",  open : false, title : "Biochemistry (bloodwork)"},
-        {number : 5, name : "sexactivity",  open : false, title : "Sexual behavior (questionnaire)"}
+        // {number : 5, name : "sexactivity",  open : false, title : "Sexual behavior (questionnaire)"}
     ],
 
 placeOfBirth: {
