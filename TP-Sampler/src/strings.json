@@ -575,7 +575,8 @@
     "DG.plugin.MicrodataPortal.title": "Portal mikrodanych",
     "DG.plugin.NOAA-weather.description": "Zbadaj historyczne wzorce pogodowe.",
     "DG.plugin.Choosy.description": "Organizuj i upraszczaj zestawy danych z wieloma atrybutami.",
-    "DG.plugin.Transformers.description": "Transformuj zbiory danych za pomocą zestawu zaawansowanych narzędzi."
+    "DG.plugin.Transformers.description": "Transformuj zbiory danych za pomocą zestawu zaawansowanych narzędzi.",
+    "DG.plugin.Sampler.tab.measures": "Miary"
   },
   "pt-br": {
     "DG.plugin.Importer.title": "Importar CSV",
