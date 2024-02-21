@@ -340,8 +340,9 @@ function stopButtonPressed() {
 
 function resetButtonPressed() {
   this.blur();
-  experimentNumber = 1;
+  experimentNumber = 0;
   mostRecentRunNumber = 0;
+  previousSampleSize = null;
   codapCom.deleteAll();
   // we used to delete all attributes, and recreate them if we were a collector.
   // we don't do that any more because it seems to take a very long time, and the request
@@ -487,7 +488,7 @@ function run() {
     ])
   }
 
-  if( tDescription + tStringifiedVariables !== previousExperimentDescription ||
+  if( experimentNumber === 0 || tDescription + tStringifiedVariables !== previousExperimentDescription ||
       (previousSampleSize !== null && previousSampleSize !== tSampleSize)) {
     experimentNumber++;
     previousExperimentDescription = tDescription + tStringifiedVariables;
