@@ -113,6 +113,3 @@ function tr(sID, args) {
   let ix = 0;
   return s.replace(/%@[0-9]?/g, replacer);
 }
-
-
-//export {init, tr};
