@@ -71,7 +71,7 @@
     "description-string": "DG.plugin.NOAA-weather.description",
     "width": 380,
     "height": 490,
-    "path": "/NOAA-weather/",
+    "path": "/noaa-codap-plugin/",
     "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
     "visible": "true",
     "isStandard": "true",
