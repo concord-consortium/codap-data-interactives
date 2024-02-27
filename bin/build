@@ -19,11 +19,12 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy Sonify eepsmedia/plugins/scrambler "
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer sdlc/plugin eepsmedia/plugins/Choosy Sonify eepsmedia/plugins/scrambler "
 HIDDEN_DIRS="Common eepsmedia/common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
                    ../story-builder"
+                   ../noaa-codap-plugin
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 

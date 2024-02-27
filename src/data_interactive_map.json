@@ -801,7 +801,7 @@
       "description-string": "DG.plugin.NOAA-weather.description",
       "width": 380,
       "height": 490,
-      "path": "/NOAA-weather/index.html",
+      "path": "/NOAA-weather/",
       "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
       "visible": "true",
       "isStandard": "true",
