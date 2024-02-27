@@ -1,19 +1,11 @@
-### tutorial
-
-This is a React-based data interactive plugin. We translate from JSX to plain javascript
-at build time. Right now this is done with the build task in `package.json`. 
-The file `./src/onboarding.jsx` is the single source file for this implementation.
-It is converted into `./js/onboarding.js`. If you change this data interactive
-you should edit the `.jsx` file and run the build task to update the `.js`. If 
-things get more complicated we will introduce a more sophisticated build process.
-
 ### To get started
 
 - npm install
 - npm run build
 
+### Translations
+These plugins are localizable using the [CODAP Getting Started Project on POEditor](https://poeditor.com/projects/view?id=683807). To translate these into another language, add that language on POEditor and the use `npm run strings:pull` to download the latest changes across all language translations.
 
-
-This data-interactive plugin is not deployable in the usual way that plugins in this codap-data-interactives directory are because it relies on same-origin for the drag of the data file into CODAP.
+The getting started plugin at index.html is not deployable in the usual way that plugins in this codap-data-interactives directory are because it relies on same-origin for the drag of the data file into CODAP.
 
 It is normally deployed to the codap.concord.org/plugins server.
