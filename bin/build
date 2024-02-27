@@ -23,8 +23,8 @@ STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer sdlc/plugin eepsmedia/plugins/C
 HIDDEN_DIRS="Common eepsmedia/common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
-                   ../story-builder"
-                   ../noaa-codap-plugin
+                   ../story-builder
+                   ../noaa-codap-plugin"
 COPIED_DIRS="$STATIC_PLUGIN_DIRS $HIDDEN_DIRS"
 ALL_DIRS="$BUILT_PLUGIN_DIRS $COPIED_DIRS"
 
