@@ -1,0 +1,101 @@
+Edad,Altura,Sexo,Nacido en,Educación,IMC,Peso
+34,151,Femenino,Mexico,Secundaria incompleta,24.34,55.5
+5,107.8,Femenino,USA,,16.01,18.6
+68,173,Femenino,USA,Secundaria completa,36.52,109.3
+0,,Femenino,USA,,,6.5
+2,87.9,Femenino,USA,,15.92,12.3
+24,165.1,Femenino,USA,Secundaria completa,46.04,125.5
+70,151.9,Femenino,Mexico,Secundaria incompleta,28.82,66.5
+30,172.4,Femenino,USA,Secundaria completa,26.51,78.8
+59,147.1,Femenino,USA,Secundaria completa,38.73,83.8
+2,89.8,Femenino,USA,,16.62,13.4
+76,157.5,Femenino,USA,Secundaria incompleta,33.1,82.1
+46,163,Femenino,USA,Terciario,55.1,146.4
+28,159.4,Femenino,USA,Secundaria completa,24.4,62
+14,153.3,Femenino,Mexico,Secundaria incompleta,27.23,64
+11,155.2,Femenino,USA,Secundaria incompleta,16.4,39.5
+84,160.9,Femenino,USA,Secundaria incompleta,26.46,68.5
+1,,Femenino,USA,,,10
+72,155.5,Femenino,USA,Terciario,24.73,59.8
+50,161.2,Femenino,USA,Terciario,28.09,73
+8,139,Femenino,USA,Secundaria incompleta,22.98,44.4
+17,166,Femenino,USA,Secundaria incompleta,28.67,79
+21,163.2,Femenino,USA,Terciario,28.53,76
+55,172,Femenino,USA,Secundaria completa,18.76,55.5
+31,154.7,Femenino,Mexico,Secundaria incompleta,29.33,70.2
+33,158.5,Femenino,Mexico,Secundaria incompleta,26.15,65.7
+3,98.7,Femenino,USA,,19.2,18.7
+68,157.7,Femenino,Otro lugar,Secundaria incompleta,32.45,80.7
+62,158.8,Femenino,Mexico,Secundaria incompleta,25.38,64
+55,167.8,Femenino,USA,Secundaria completa,33.7,94.9
+10,141.5,Femenino,USA,Secundaria incompleta,17.48,35
+10,154.4,Femenino,USA,Secundaria incompleta,18.54,44.2
+11,159.8,Femenino,USA,Secundaria incompleta,18.68,47.7
+1,,Femenino,USA,,,13.3
+16,158.1,Femenino,USA,Secundaria incompleta,25.52,63.8
+12,148.2,Femenino,USA,Secundaria incompleta,15.3,33.6
+76,168.6,Femenino,USA,Secundaria completa,23.99,68.2
+61,159.4,Femenino,USA,Terciario,44.12,112.1
+19,163.2,Femenino,USA,Terciario,36.12,96.2
+17,164.4,Femenino,USA,Secundaria incompleta,21.72,58.7
+5,114.7,Femenino,USA,,18.93,24.9
+71,158.5,Femenino,USA,Secundaria incompleta,32.28,81.1
+13,163.3,Femenino,USA,Secundaria incompleta,22.91,61.1
+60,164.1,Femenino,USA,Terciario,32.64,87.9
+1,,Femenino,USA,,,10.7
+4,105.1,Femenino,USA,,16.11,17.8
+11,153.1,Femenino,USA,Secundaria incompleta,23,53.9
+1,,Femenino,USA,,,9.4
+2,92.7,Femenino,USA,,19.43,16.7
+72,159.8,Femenino,Mexico,Secundaria incompleta,31.72,81
+30,162.6,Femenino,USA,Secundaria completa,51.14,135.2
+10,147.2,Femenino,USA,Secundaria incompleta,18.74,40.6
+10,137,Femenino,USA,Secundaria incompleta,17.16,32.2
+1,,Femenino,USA,,,10.4
+76,169,Femenino,USA,Terciario,33.89,96.8
+26,176.1,Femenino,USA,Terciario,24.48,75.9
+46,158.2,Femenino,Otro lugar,Secundaria incompleta,24.01,60.1
+5,115.4,Femenino,USA,,19.37,25.8
+12,153.9,Femenino,USA,Secundaria incompleta,19.38,45.9
+5,123.5,Femenino,USA,,14.56,22.2
+36,173.4,Femenino,USA,Secundaria completa,23.65,71.1
+1,,Masculino,USA,,,10.8
+35,178.9,Masculino,USA,Terciario,28.12,90
+64,156.3,Masculino,Mexico,Secundaria incompleta,36.72,89.7
+15,179.3,Masculino,USA,Secundaria incompleta,21.06,67.7
+85,174.5,Masculino,USA,Secundaria completa,19.44,59.2
+66,177.9,Masculino,USA,Secundaria completa,26.13,82.7
+37,191.7,Masculino,USA,Secundaria incompleta,22.64,83.2
+20,184.1,Masculino,Otro lugar,Secundaria incompleta,20.18,68.4
+31,197.6,Masculino,USA,Secundaria completa,22.97,89.7
+13,169.1,Masculino,USA,Secundaria incompleta,28.5,81.5
+12,162.6,Masculino,USA,Secundaria incompleta,20.5,54.2
+20,182,Masculino,USA,Secundaria completa,23.97,79.4
+0,,Masculino,USA,,,6.3
+55,180.1,Masculino,USA,Terciario,25.62,83.1
+5,109.6,Masculino,USA,,23.89,28.7
+0,,Masculino,USA,,,8.8
+77,182.9,Masculino,USA,Terciario,27.38,91.6
+51,185.4,Masculino,USA,Secundaria completa,25.11,86.3
+16,174.2,Masculino,USA,Secundaria incompleta,26.63,80.8
+66,183.3,Masculino,USA,Secundaria completa,26.28,88.3
+11,154.7,Masculino,USA,Secundaria incompleta,19.51,46.7
+23,180.4,Masculino,USA,Secundaria completa,21.79,70.9
+50,178.2,Masculino,USA,Secundaria completa,28.06,89.1
+28,181,Masculino,Mexico,Terciario,28.42,93.1
+19,170.7,Masculino,USA,Terciario,22.55,65.7
+57,178.5,Masculino,USA,Secundaria completa,41.74,133
+32,173.9,Masculino,USA,Terciario,23.11,69.9
+67,174.8,Masculino,USA,Terciario,34,103.9
+68,171.6,Masculino,Mexico,Secundaria incompleta,31.14,91.7
+11,159,Masculino,USA,Secundaria incompleta,22.27,56.3
+15,172.7,Masculino,USA,Secundaria incompleta,22.87,68.2
+21,177.4,Masculino,USA,Terciario,22.59,71.1
+58,178.9,Masculino,USA,Secundaria incompleta,41.59,133.1
+13,174.3,Masculino,USA,Secundaria incompleta,23.93,72.7
+13,171.5,Masculino,USA,Secundaria incompleta,17.17,50.5
+46,186.9,Masculino,USA,Terciario,23.7,82.8
+16,173.1,Masculino,USA,Secundaria incompleta,36.74,110.1
+78,175.5,Masculino,USA,Secundaria incompleta,35.97,110.8
+20,178.1,Masculino,USA,Terciario,23.17,73.5
+6,110.2,Masculino,USA,Secundaria incompleta,15.32,18.6

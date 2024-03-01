@@ -1,0 +1,101 @@
+Sex,Age,Height,BornIn,Education,BMI,Weight
+Male,1,,USA,,,10.8
+Male,35,178.9,USA,HS incl GED,28.12,90
+Female,34,151,Mexico,Less than HS,24.34,55.5
+Male,64,156.3,Mexico,Less than HS,36.72,89.7
+Female,5,107.8,USA,,16.01,18.6
+Female,68,173,USA,More than HS,36.52,109.3
+Female,0,,USA,,,6.5
+Female,2,87.9,USA,,15.92,12.3
+Male,15,179.3,USA,Less than HS,21.06,67.7
+Female,24,165.1,USA,More than HS,46.04,125.5
+Female,70,151.9,Mexico,Less than HS,28.82,66.5
+Male,85,174.5,USA,More than HS,19.44,59.2
+Female,30,172.4,USA,More than HS,26.51,78.8
+Male,66,177.9,USA,More than HS,26.13,82.7
+Male,37,191.7,USA,Less than HS,22.64,83.2
+Male,20,184.1,Elsewhere,Less than HS,20.18,68.4
+Male,31,197.6,USA,More than HS,22.97,89.7
+Male,13,169.1,USA,Less than HS,28.5,81.5
+Male,12,162.6,USA,Less than HS,20.5,54.2
+Female,59,147.1,USA,More than HS,38.73,83.8
+Female,2,89.8,USA,,16.62,13.4
+Female,76,157.5,USA,Less than HS,33.1,82.1
+Male,20,182,USA,More than HS,23.97,79.4
+Male,0,,USA,,,6.3
+Male,55,180.1,USA,HS incl GED,25.62,83.1
+Male,5,109.6,USA,,23.89,28.7
+Female,46,163,USA,HS incl GED,55.1,146.4
+Female,28,159.4,USA,More than HS,24.4,62
+Female,14,153.3,Mexico,Less than HS,27.23,64
+Female,11,155.2,USA,Less than HS,16.4,39.5
+Female,84,160.9,USA,Less than HS,26.46,68.5
+Female,1,,USA,,,10
+Male,0,,USA,,,8.8
+Male,77,182.9,USA,HS incl GED,27.38,91.6
+Female,72,155.5,USA,HS incl GED,24.73,59.8
+Female,50,161.2,USA,HS incl GED,28.09,73
+Female,8,139,USA,Less than HS,22.98,44.4
+Female,17,166,USA,Less than HS,28.67,79
+Male,51,185.4,USA,More than HS,25.11,86.3
+Female,21,163.2,USA,HS incl GED,28.53,76
+Male,16,174.2,USA,Less than HS,26.63,80.8
+Female,55,172,USA,More than HS,18.76,55.5
+Male,66,183.3,USA,More than HS,26.28,88.3
+Female,31,154.7,Mexico,Less than HS,29.33,70.2
+Male,11,154.7,USA,Less than HS,19.51,46.7
+Male,23,180.4,USA,More than HS,21.79,70.9
+Female,33,158.5,Mexico,Less than HS,26.15,65.7
+Female,3,98.7,USA,,19.2,18.7
+Female,68,157.7,Elsewhere,Less than HS,32.45,80.7
+Female,62,158.8,Mexico,Less than HS,25.38,64
+Female,55,167.8,USA,More than HS,33.7,94.9
+Female,10,141.5,USA,Less than HS,17.48,35
+Male,50,178.2,USA,More than HS,28.06,89.1
+Female,10,154.4,USA,Less than HS,18.54,44.2
+Female,11,159.8,USA,Less than HS,18.68,47.7
+Female,1,,USA,,,13.3
+Male,28,181,Mexico,HS incl GED,28.42,93.1
+Female,16,158.1,USA,Less than HS,25.52,63.8
+Female,12,148.2,USA,Less than HS,15.3,33.6
+Female,76,168.6,USA,More than HS,23.99,68.2
+Male,19,170.7,USA,HS incl GED,22.55,65.7
+Female,61,159.4,USA,HS incl GED,44.12,112.1
+Male,57,178.5,USA,More than HS,41.74,133
+Male,32,173.9,USA,HS incl GED,23.11,69.9
+Male,67,174.8,USA,HS incl GED,34,103.9
+Female,19,163.2,USA,HS incl GED,36.12,96.2
+Male,68,171.6,Mexico,Less than HS,31.14,91.7
+Female,17,164.4,USA,Less than HS,21.72,58.7
+Female,5,114.7,USA,,18.93,24.9
+Female,71,158.5,USA,Less than HS,32.28,81.1
+Male,11,159,USA,Less than HS,22.27,56.3
+Female,13,163.3,USA,Less than HS,22.91,61.1
+Female,60,164.1,USA,HS incl GED,32.64,87.9
+Male,15,172.7,USA,Less than HS,22.87,68.2
+Female,1,,USA,,,10.7
+Male,21,177.4,USA,HS incl GED,22.59,71.1
+Female,4,105.1,USA,,16.11,17.8
+Female,11,153.1,USA,Less than HS,23,53.9
+Female,1,,USA,,,9.4
+Male,58,178.9,USA,Less than HS,41.59,133.1
+Female,2,92.7,USA,,19.43,16.7
+Female,72,159.8,Mexico,Less than HS,31.72,81
+Female,30,162.6,USA,More than HS,51.14,135.2
+Female,10,147.2,USA,Less than HS,18.74,40.6
+Male,13,174.3,USA,Less than HS,23.93,72.7
+Male,13,171.5,USA,Less than HS,17.17,50.5
+Female,10,137,USA,Less than HS,17.16,32.2
+Female,1,,USA,,,10.4
+Male,46,186.9,USA,HS incl GED,23.7,82.8
+Female,76,169,USA,HS incl GED,33.89,96.8
+Female,26,176.1,USA,HS incl GED,24.48,75.9
+Male,16,173.1,USA,Less than HS,36.74,110.1
+Male,78,175.5,USA,Less than HS,35.97,110.8
+Female,46,158.2,Elsewhere,Less than HS,24.01,60.1
+Female,5,115.4,USA,,19.37,25.8
+Male,20,178.1,USA,HS incl GED,23.17,73.5
+Female,12,153.9,USA,Less than HS,19.38,45.9
+Female,5,123.5,USA,,14.56,22.2
+Male,6,110.2,USA,Less than HS,15.32,18.6
+Female,36,173.4,USA,More than HS,23.65,71.1
