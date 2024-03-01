@@ -1,9 +1,10 @@
-hasMouse = true; // This is a kludge to prevent loading of Mammals on touch devices
+hasMouse =  !('ontouchstart' in window);
+onboarding1 = false;
 
 taskDescriptions = {
   descriptions: [{
     key: 'MakeScatterplot', label: tr("~onboarding2.make.scatterplot.task"),
-    url: './resources/' + tr("~onboarding2.make.scatterplot.movie.filename"),
+    url: './resources/' + resourceDir() + "MakeScatterplot.mp4",
     operation: 'attributeChange', type: '',
     requiresSpecialHandling: true,
     feedback: React.createElement(
@@ -17,7 +18,7 @@ taskDescriptions = {
     )
   }, {
     key: 'SelectCases', label: tr("~onboarding2.select.cases.task"),
-    url: './resources/' + tr("~onboarding2.select.cases.movie.filename"),
+    url: './resources/' + resourceDir() + "SelectCases.mp4",
     operation: 'selectCases',
     constraints: [{ property: 'cases', value: true }],
     prereq: 'MakeScatterplot',
@@ -37,7 +38,7 @@ taskDescriptions = {
     )
   }, {
     key: 'HideUnselected', label: tr("~onboarding2.hide.unselected.task"),
-    url: './resources/' + tr("~onboarding2.hide.unselected.movie.filename"),
+    url: './resources/' + resourceDir() + "HideUnselected.mp4",
     operation: 'hideUnselected', type: '',
     prereq: 'SelectCases',
     feedback: React.createElement(
@@ -56,7 +57,7 @@ taskDescriptions = {
     )
   }, {
     key: 'Deselect', label: tr("~onboarding2.deselect.task"),
-    url: './resources/' + tr("~onboarding2.deselect.movie.filename"),
+    url: './resources/' + resourceDir() + "Deselect.mp4",
     operation: 'selectCases',
     constraints: [{ property: 'cases', value: false }],
     prereq: 'HideUnselected',
@@ -71,7 +72,7 @@ taskDescriptions = {
     )
   }, {
     key: 'Rescale', label: tr("~onboarding2.rescale.task"),
-    url: './resources/' + tr("~onboarding2.rescale.movie.filename"),
+    url: './resources/' + resourceDir() + "Rescale.mp4",
     operation: 'rescaleGraph', type: '',
     prereq: 'HideUnselected',
     feedback: React.createElement(
@@ -85,7 +86,7 @@ taskDescriptions = {
     )
   }, {
     key: 'MakeLegend', label: tr("~onboarding2.add.legend.task"),
-    url: './resources/' + tr("~onboarding2.add.legend.movie.filename"),
+    url: './resources/' + resourceDir() + "MakeLegend.mp4",
     operation: 'legendAttributeChange', type: 'DG.GraphModel',
     constraints: [{ property: 'attributeName', value: tr("~legend.attribute") }],
     prereq: 'MakeScatterplot',

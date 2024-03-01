@@ -1,8 +1,9 @@
 hasMouse = !('ontouchstart' in window);
+onboarding1 = true;
 
 taskDescriptions = {
   descriptions: [hasMouse ? {
-    key: 'Drag', label: tr("~onboarding1.drag.task"), url: './resources/'+tr("~onboarding1.drag.movie.filename"),
+    key: 'Drag', label: tr("~onboarding1.drag.task"), url: './resources/' + resourceDir() + "DragCSV.mp4",
     operation: 'dataContextCountChanged',
     feedback: React.createElement(
       'div',
@@ -24,7 +25,7 @@ taskDescriptions = {
       )
     )
   } : {
-    key: 'MakeTable', label: tr("~onboarding1.make.table.task"), url: './resources/' + tr("~onboarding1.make.table.movie.filename"),
+    key: 'MakeTable', label: tr("~onboarding1.make.table.task"), url: './resources/' + resourceDir() + "MakeTable.mp4",
     feedback: React.createElement(
       'div',
       null,
@@ -45,7 +46,7 @@ taskDescriptions = {
       )
     )
   }, {
-    key: 'MakeGraph', label: tr("~onboarding1.graph.task"), url: './resources/' + tr("~onboarding1.graph.movie.filename"),
+    key: 'MakeGraph', label: tr("~onboarding1.graph.task"), url: './resources/' + resourceDir() + "MakeGraph.mp4",
     feedback: React.createElement(
       'div',
       null,
@@ -75,7 +76,7 @@ taskDescriptions = {
       )
     )
   }, {
-    key: 'MoveComponent', label: tr("~onboarding1.move.table.task"), url: './resources/' + tr("~onboarding1.move.table.movie.filename"),
+    key: 'MoveComponent', label: tr("~onboarding1.move.table.task"), url: './resources/' + resourceDir() + "MoveGraph.mp4",
     operation: 'move', type: ['DG.GraphView', 'DG.TableView'],
     feedback: React.createElement(
       'div',
@@ -103,7 +104,7 @@ taskDescriptions = {
   */
 
   {
-    key: 'AssignAttribute', label: tr("~onboarding1.drag.attribute.task"), url: './resources/' + tr("~onboarding1.drag.attribute.movie.filename"),
+    key: 'AssignAttribute', label: tr("~onboarding1.drag.attribute.task"), url: './resources/' + resourceDir() + "DragAttribute.mp4",
     feedback: React.createElement(
       'div',
       null,
@@ -124,7 +125,7 @@ taskDescriptions = {
       )
     )
   }, {
-    key: 'SecondAttribute', label: tr("~onboarding1.drag.second.attribute.task"), url: './resources/' + tr("~onboarding1.drag.second.attribute.movie.filename"),
+    key: 'SecondAttribute', label: tr("~onboarding1.drag.second.attribute.task"), url: './resources/' + resourceDir() + "Drag2ndAttribute.mp4",
     feedback: React.createElement(
       'div',
       null,
