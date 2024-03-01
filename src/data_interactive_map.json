@@ -802,7 +802,7 @@
       "width": 380,
       "height": 490,
       "path": "/noaa-codap-plugin/",
-      "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
+      "icon": "/noaa-codap-plugin/assets/images/icon-noaa-weather.svg",
       "visible": "true",
       "isStandard": "true",
       "categories": [
