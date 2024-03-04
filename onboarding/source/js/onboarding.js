@@ -95,7 +95,7 @@ class DraggableLink extends React.Component {
 
   handleDragStart(event) {
     let dt = event.dataTransfer,
-        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/"+tr("~onboarding1.csv.filename");
+        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + "mammals.csv";
     let ix;
     for (let i = 0; i < dt.items.length; i++) {
       if (dt.items[i].kind === 'file') {
@@ -403,12 +403,13 @@ function getStarted() {
     console.log(msg);
   });
 
-  if (!hasMouse) {
+  if ((!hasMouse && onboarding1) || (!onboarding1)) {
+    csvToLoad = (onboarding1 ? "mammals.csv" : "nhanes.csv");
     codapInterface.sendRequest({
       action: 'create',
       resource: 'dataContextFromURL',
       values: {
-        URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/"+tr("~onboarding1.csv.filename")
+        URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + csvToLoad
       }
     }).then(function (iResult) {
       console.log('Created data context from URL');
