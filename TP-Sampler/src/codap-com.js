@@ -187,6 +187,7 @@ CodapCom.prototype = {
                 console.log('Sampler: findOrCreateDataContext failed: ' + e);
               });
         } else if (getDatasetResult.success) {
+          console.log("***** in else if getDatasetResult.success", _this.attrMap["output"].name);
           // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
           // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
           // already updated attribute names, this won't work.
@@ -274,7 +275,7 @@ CodapCom.prototype = {
     if (oldDeviceName !== deviceName) {
       codapInterface.sendRequest({
         action: "update",
-        resource: `dataContext[${targetDataSetName}].collection[items].attribute[${oldDeviceName}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute[${oldDeviceName}]`,
         values: {
           "name": deviceName
         }
@@ -315,13 +316,13 @@ CodapCom.prototype = {
         } else {
           codapInterface.sendRequest({
             action: "get",
-            resource: `dataContext[${targetDataSetName}].collection[items].attributeList`,
+            resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attributeList`,
           }).then((res) => {
             const {values} = res;
             if (!values.length || !values.find((attr) => attr.name === deviceName)) {
               codapInterface.sendRequest({
                 action: "create",
-                resource: `dataContext[${targetDataSetName}].collection[items].attribute`,
+                resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute`,
                 values: [
                   {
                     name: deviceName,
