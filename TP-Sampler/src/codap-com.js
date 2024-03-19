@@ -187,7 +187,6 @@ CodapCom.prototype = {
                 console.log('Sampler: findOrCreateDataContext failed: ' + e);
               });
         } else if (getDatasetResult.success) {
-          console.log("***** in else if getDatasetResult.success", _this.attrMap["output"].name);
           // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
           // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
           // already updated attribute names, this won't work.
