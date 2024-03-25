@@ -32,6 +32,21 @@
     ]
   },
   {
+    "title": "Testimate",
+    "description": "Test hypotheses using classical inferential methods.",
+    "title-string": "DG.plugin.Testimate.name",
+    "description-string": "DG.plugin.Testimate.description",
+    "width": 400,
+    "height": 600,
+    "path": "/eepsmedia/plugins/testimate/index.html",
+    "icon": "/eepsmedia/plugins/testimate/images/chisq.svg",
+    "visible": "true",
+    "isStandard": "true",
+    "categories": [
+      "Tools"
+    ]
+  },
+  {
     "title": "Draw Tool",
     "description": "Annotate an image.",
     "title-string": "DG.plugin.DrawTool.title",

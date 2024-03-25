@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<!--
+
+    local in local codap :
+        http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/plugins/testimate
+    import local: http://localhost/~tim/plugins/testimate
+                    http://localhost/~tim/codap-data-interactives/eepsmedia/plugins/simmer
+
+    global :
+        http://codap.concord.org/app?di=https://codap.xyz/plugins/testimate
+-->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>testimate</title>
+
+    <!--
+        <link href='https://fonts.googleapis.com/css?family=Sirin+Stencil:400' rel='stylesheet'>
+        <link href='https://fonts.googleapis.com/css?family=Sirin+Stencil:700' rel='stylesheet'>
+    -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Sirin+Stencil:wght@400;700">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700">
+
+    <link rel='stylesheet' type='text/css' href='css/testimate.css'/>
+
+
+    <!-- These five scripts take care of the communication with CODAP  -->
+    <script src="../../common/src/iframe-phone.js"></script>
+    <script src="../../common/src/codap_helper_newAPI.js"></script>
+    <script src="../../common/src/codapInterface.js"></script>
+    <script src="../../common/src/pluginHelper.js"></script>
+    <script src="../../common/src/pluginLang.js"></script>
+
+    <script src="jstat/jstat.min.js"></script>
+    <script src="sprintf/sprintf.min.js"></script>
+
+    <script src="src/testimate.js"></script>
+    <script src="src/data.js"></script>
+    <script src="src/ui.js"></script>
+    <script src="src/handlers.js"></script>
+    <script src="src/connect.js"></script>
+    <script src="src/dropManager.js"></script>
+
+    <script src="src/Test.js"></script>
+    <script src="src/tests/one-sample-t.js"></script>
+    <script src="src/tests/two-sample-t.js"></script>
+    <script src="src/tests/one-sample-p.js"></script>
+    <script src="src/tests/binomial.js"></script>
+    <script src="src/tests/two-sample-p.js"></script>
+    <script src="src/tests/paired.js"></script>
+    <script src="src/tests/goodness.js"></script>
+    <script src="src/tests/regression.js"></script>
+    <script src="src/tests/correlation.js"></script>
+    <script src="src/tests/independence.js"></script>
+    <script src="src/tests/anova.js"></script>
+    <script src="src/tests/logistic.js"></script>
+
+    <script src="strings/localize.js"></script>
+
+</head>
+
+
+<body>
+
+<div id="entirePluginDIV">
+
+    <div id="datasetDIV">
+        <div><span id="datasetSPAN"></span></div>
+        <div>
+        <a target="_blank" href="https://codap.xyz/guides/testimate/">
+            <img src="art/info.png" class="infoIcon" alt="help button" title="Click for detailed help">
+        </a>
+        </div>
+    </div>
+
+    <div id="attributeStrip" class="hBox">
+        <div id="Xbackdrop" class="vBox">
+            <div id="xDIV" class="drag-empty">
+                <div class="attributeName" id="xAttributeName">drop attribute here</div>
+                <div>
+                    <span class="attributeHint" id="outcomePrimaryHint">outcome/primary attribute</span>
+                    <input type="button" id="xCNbutton" onclick="handlers.changeCN('x')" value="123">
+                    <span class="textButton" id="xTrashAttButton"
+                          onclick="handlers.trashAttribute('x')">&#128465;</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="Ybackdrop" class="vBox">
+            <div id="yDIV" class="drag-empty">
+                <div class="attributeName" id="yAttributeName">drop attribute here</div>
+                <div>
+                    <span class="attributeHint" id="predictorSecondaryHint">predictor/secondary attribute</span>
+                    <input type="button" id="yCNbutton" onclick="handlers.changeCN('y')" value="123">
+                    <span class="textButton" id="yTrashAttButton"
+                          onclick="handlers.trashAttribute('y')">&#128465;</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="testHeaderDIV">testID header</div>
+    <div id="resultsDIV"> results go here</div>
+    <div id="configureDIV">
+        <span id="configStart"></span>
+        <input id="sidesButton" type="button" onclick="handlers.changeTestSides()" value="≠">
+        <input id="valueBox" class="short_number_field" onchange="handlers.changeValue()"
+               type="number" value="0">
+        <label for="confBox" id="conf_label">conf&nbsp;=&nbsp;</label>
+        <input id="confBox" class="short_number_field" onchange="handlers.changeConf()"
+               type="number" value="95" step="1" min="0" max="100">%
+    </div>
+
+    <!--
+    Control how the plugin emits test results to CODAP.
+    3 modes: single | random | hierarchy
+    Different sections are made visible depending on the radio-button settings.
+    -->
+
+    <div id="emitDIV">
+        <details id="emitDetails" open>
+            <summary id="emitDetailsSummary">Emit data into CODAP</summary>
+            <div class="vBox">
+
+                <div class="hBox" id="emitSingleGroup">
+                    <input type="radio" id="chooseEmitSingle" name="emitMode"
+                           value="single" onclick="handlers.changeEmitMode()">
+                    <span id="chooseEmitSingleLabel" for="chooseEmitSingle"></span>
+                    <input type="button" id="emitSingleButton" onclick="handlers.emitSingle()"></input>
+                </div>
+
+                <div class="hBox" id="emitRandomGroup">
+                    <input type="radio" id="chooseEmitRandom" name="emitMode"
+                           value="random" onclick="handlers.changeEmitMode()">
+                    <span id="chooseEmitRandomLabel" for="chooseEmitRandom"></span>
+                    <input type="button" id="emitRandomButton"
+                           onclick="handlers.emitRandom()"></input>
+                    <input type="number" id="randomEmitNumberBox"
+                           onchange="handlers.changeRandomEmitNumber()" min="0" max="100" step="1"
+                           class="short_number_field">
+                    <label for="randomEmitNumberBox" id="randomEmitNumberBoxLabel">times</label>
+                </div>
+
+                <div class="hBox" id="emitHierarchicalGroup">
+                    <input type="radio" id="chooseEmitHierarchy" name="emitMode"
+                           value="hierarchy" onclick="handlers.changeEmitMode()">
+                    <span id="chooseEmitHierarchyLabel" for="chooseEmitHierarchy"></span>
+                    <input type="button" id="emitHierarchyButton"
+                           value="${emitRRButtonTitle}"
+                           onclick="handlers.emitHierarchy()"></input>
+                </div>
+
+            </div>
+        </details>
+    </div>
+
+</div>
+</body>
+
+<script>
+    window.onload = function () {
+        testimate.initialize();
+    }
+</script>
+
+
+</html>
