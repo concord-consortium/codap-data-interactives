@@ -76,7 +76,22 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Tools"
+        "Tools", "Partners"
+      ]
+    },
+    {
+      "title": "Testimate",
+      "description": "Test hypotheses using classical inferential methods.",
+      "title-string": "DG.plugin.Testimate.name",
+      "description-string": "DG.plugin.Testimate.description",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/testimate/index.html",
+      "icon": "/eepsmedia/plugins/testimate/images/xxx.svg",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Tools", "Partners"
       ]
     },
     {
@@ -802,7 +817,7 @@
       "width": 380,
       "height": 490,
       "path": "/noaa-codap-plugin/",
-      "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
+      "icon": "/noaa-codap-plugin/assets/images/icon-noaa-weather.svg",
       "visible": "true",
       "isStandard": "true",
       "categories": [
