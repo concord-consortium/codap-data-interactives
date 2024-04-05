@@ -1,0 +1,142 @@
+{
+    "testimate": {
+        "flags": "🇲🇽,🇪🇸,🇨🇷,🇨🇱",
+        "language": "Español",
+        "attributeDescriptions": {
+            "N": "the sample size",
+            "prop": "the sample proportion you are studying",
+            "P": "the \"P-value,\" the probability that, if the null hypothesis were true, we would see a value of the test statistic this extreme.",
+            "CImin": "the lower bound to the confidence interval",
+            "CImax": "the upper bound to the confidence interval",
+            "alpha": "the probability we use to decide if a P-value is \"significant.\" Use significance with caution.",
+            "conf": "the value, in percent, used to compute the confidence interval",
+            "t": "the t statistic, the z value divided by the square root of N",
+            "z": "the z statistic: the difference from the hypothesized value divided by the sample standard deviation",
+            "chisq": "the chi-squared statistic. It measures how far a set of counts is from the \"expected\" value.",
+            "F": "the F statistic. It measures how mauch variation is between groups as opposed to within groups.",
+            "tCrit": "a critical value for t: the value that corresponds to the probability alpha",
+            "zCrit": "a critical value for z: the value that corresponds to the probability alpha",
+            "chisqCrit": "a critical value for chi-squared: the value that corresponds to the probability alpha",
+            "value": "the hypothesized value you are comparing your test statistic to",
+            "outcome": "the name of the left-hand (outcome) variable",
+            "predictor": "the name of the right-hand (predictor) variable, even if it's not being used to predict anything",
+            "procedure": "what kind of statistical procedure was used",
+            "SSR": "the sum of squares of residuals calculated between the groups",
+            "SSE": "the sum of squares of errors, that is, calculated within the groups relative to the group means",
+            "SST": "the total sum of squares, SSR + SSE",
+            "dfTreatment": "the degrees of freedom among the groups, i.e., the number of groups minus one.",
+            "dfError": "the degrees of freedom within the groups, a little less than the number of cases.",
+            "s": "desviación estándar (DE) de la muestra",
+            "mean": "the mean of the attribute you're looking at",
+            "diff": "the difference of means (or proportions) you are studying",
+            "SE": "the standard error of the mean (or proportion)",
+            "FCrit": "a critical value for the F statistic"
+        },
+        "dropAttributeHere": "ponga aquí el atributo",
+        "tests": {
+            "oneSampleP": {
+                "menuString": "one-sample proportion of •1• = •2•",
+                "testDescription": "proporción de (•1• = •2•) •3• •4•",
+                "testQuestion": "Is the proportion of (•1• = •2•) •3• •4• ?",
+                "resultsLine1": "sample proportion = •1•, (•2• out of N = •3•)",
+                "configurationStart": "testing prop"
+            },
+            "oneSampleT": {
+                "menuString": "mean of •1•",
+                "testQuestion": "Is the mean of •1• •2• •3• ?",
+                "resultsLine2": "sample mean = •1•, •2•% CI = [•3•, •4•]",
+                "configurationStart": "testing mean"
+            },
+            "paired": {
+                "menuString": "paired test of (•1• - •2•)",
+                "testQuestion": "Is the (paired) mean difference of each (•1• – •2•) •3• •4• ?",
+                "resultsLine2": "paired mean difference = •1•, •2•% CI = [•3•, •4•]",
+                "configurationStart": "paired test of (•1• – •2•)"
+            },
+            "twoSampleT": {
+                "menuString1": "difference of means: •1• vs •2•",
+                "menuString2": "difference of means: •1• grouped by •2•",
+                "testQuestion1": "Is the difference mean(•1•) : group •2• – group •3• •4• ?",
+                "testQuestion2": "Is the difference mean(•1•) – mean(•2•) •3• ?",
+                "detailsSummary": "<summary>Difference of means, two-sample <i>t</i> procedure</summary>",
+                "configStart1": "testing mean(•1•) : group •2• – group •3•",
+                "configStart2": "testing mean(•1•) – mean (•2•)"
+            },
+            "regression": {
+                "menuString": "linear regression of (•1•) as a function of (•2•)",
+                "testQuestion": "How does (•1•) depend on (•2•) ?",
+                "detailsSummary": "<summary>Regression details</summary>",
+                "testingSlope": "testing slope"
+            },
+            "twoSampleP": {
+                "menuString1": "difference of proportions: •1• vs •2•",
+                "menuString2": "difference of proportions: •1• grouped by •2•",
+                "testQuestionHead": "Is the difference of proportions of",
+                "detailsSummary": "<summary>Difference of proportions, two-sample <i>z</i> procedure</summary>",
+                "configStart": "testing difference of proportions"
+            },
+            "goodness": {
+                "menuString": "goodness of fit for •1•",
+                "testQuestion": "Are the proportions of (•1•) as hypothesized?",
+                "detailsSummary1": "<summary>Testing goodness of fit, &chi;<sup>2</sup> procedure</summary>",
+                "detailsSummary2": "<summary>set hypothesized proportions</summary>",
+                "configurationStart": "configure goodness-of-fit test"
+            },
+            "independence": {
+                "menuString": "test independence of •1• from •2•",
+                "testQuestion": "Are (•1•) and (•2•) independent?",
+                "detailsSummary": "<summary>Testing independence, &chi;<sup>2</sup> procedure</summary>",
+                "configurationStart": "configure test for independence of (•1•) from (•2•)"
+            }
+        },
+        "attributeNames": {
+            "N": "N",
+            "prop": "prop",
+            "P": "P",
+            "CImin": "ICmin",
+            "CImax": "ICmax",
+            "alpha": "alfa",
+            "conf": "conf",
+            "t": "t",
+            "z": "z",
+            "chisq": "chisq",
+            "F": "F",
+            "tCrit": "tCrit",
+            "zCrit": "zCrit",
+            "chisqCrit": "chisqCrit",
+            "FCrit": "FCrit",
+            "value": "valor",
+            "outcome": "outcome",
+            "predictor": "predictor",
+            "procedure": "procedure",
+            "SSR": "SSR",
+            "SSE": "SSE",
+            "SST": "SST",
+            "dfTreatment": "dfTreatment",
+            "dfError": "dfError",
+            "s": "s",
+            "mean": "mean",
+            "diff": "diff",
+            "SE": "SE"
+        },
+        "staticStrings": {
+            "outcomePrimaryHint": "outcome/primary attribute",
+            "predictorSecondaryHint": "predictor/secondary attribute"
+        },
+        "datasetDIV": "Dataset: <strong>•1•</strong>, •2• cases",
+        "mean": "mean",
+        "proportion": "proportion",
+        "group": "grupo",
+        "slope": "slope",
+        "intercept": "intercept",
+        "value": "valor",
+        "values": "valores",
+        "pooled": "pooled",
+        "equalize": "equalize",
+        "observed": "observado",
+        "expected": "esperado",
+        "tips": {
+            "equalize": "make all proportions equal"
+        }
+    }
+}
