@@ -1,6 +1,6 @@
 export const pluginParameters = {
   name: 'Collect Measures',
-  version: '0.1',
+  version: '0.2',
   initialDimensions: {
     width: 280,
     height: 385
@@ -10,9 +10,7 @@ export const pluginParameters = {
 export const collectMeasuresDatasetParams = {
   name: 'Collected Measures',
   title: 'Collected Measures',
-  parentCollectionName: 'Samples',
-  parentCollectionTitle: 'Samples',
-  childCollectionName: 'Measures',
-  childCollectionTitle: 'Measures',
+  collectionName: 'Measures',
+  collectionTitle: 'Measures',
 }
 

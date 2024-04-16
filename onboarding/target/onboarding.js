@@ -95,7 +95,7 @@ class DraggableLink extends React.Component {
 
   handleDragStart(event) {
     let dt = event.dataTransfer,
-        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + "mammals.csv";
+        tUrl = window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + tr("~onboarding1.mammals.file.and.table.title");
     let ix;
     for (let i = 0; i < dt.items.length; i++) {
       if (dt.items[i].kind === 'file') {
@@ -404,7 +404,7 @@ function getStarted() {
   });
 
   if ((!hasMouse && onboarding1) || (!onboarding1)) {
-    csvToLoad = (onboarding1 ? "mammals.csv" : "nhanes.csv");
+    csvToLoad = (onboarding1 ? tr("~onboarding1.mammals.file.and.table.title") : tr("~onboarding2.nhanes.file.and.table.title"));
     codapInterface.sendRequest({
       action: 'create',
       resource: 'dataContextFromURL',

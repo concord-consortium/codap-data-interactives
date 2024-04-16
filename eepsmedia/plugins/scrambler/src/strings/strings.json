@@ -25,6 +25,36 @@
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "scrambled_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
   },
+  "de": {
+    "DG.plugin.Scrambler.name": "Mischmaschine",
+    "DG.plugin.Scrambler.language": "Deutsch",
+    "DG.plugin.Scrambler.static.scramblerTitle": "Mischmaschine",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Dies ändern, um weiter zu machen.",
+    "DG.plugin.Scrambler.static.howManyLabel": "Wie häufig?",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "Mischungen anzeigen",
+    "DG.plugin.Scrambler.sScramble": "Mischen",
+    "DG.plugin.Scrambler.sNoAttribute": "ein Merkmal fehlt 😕",
+    "DG.plugin.Scrambler.sIterationAttName": "Durchgang",
+    "DG.plugin.Scrambler.sIterationAttDescription": "Anzahl der \"Durchgänge.\" Erhöht sich jedes Mal, wenn gemischt wird.",
+    "DG.plugin.Scrambler.sScrambledAttName": "Gemischtes Merkmal",
+    "DG.plugin.Scrambler.sScrambledAttDescription": "Merkmal, welches gemischt wurde.",
+    "DG.plugin.Scrambler.sNoDataset": "Wählen Sie einen Datensatz und ziehen Sie das Merkmal hierher, welches gemischt werden soll!",
+    "DG.plugin.Scrambler.sNoScrambleAttribute": "Welches Merkmal soll gemischt werden? Hierher ziehen!",
+    "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "einen vermischten Datensatz anzeigen",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span><code>%@1</code> mischen</span>",
+    "DG.plugin.Scrambler.sfOKtoScramble": "<span><code>%@1</code> im Datensatz <code>%@2</code> kann gemischt werden</span>",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>Zuerst muss im Datensatz <code>%@1</code> etwas geändert werden. Wahrscheinlich benötigen Sie zuerst ein Merkmal mit einer Formel. Ziehen Sie ein Merkmal nach links, um etwas zum Sammeln zu haben.</span>",
+    "DG.plugin.Scrambler.sfFormulaProblem": "<span>Das Mischen von <code>%@1</code> wird nicht funktionieren, weil es eine Formel beinhaltet. Ziehen Sie ein anderes Merkmal aus der unteren Tabellenebene (<code>%@2</code>) hier hinein, z.B. <code>%@3</code>.</span>",
+    "DG.plugin.Scrambler.sfNotALeafProblem": "<span>Das Mischen von <code>%@1</code> wird nicht funktionieren, weil es sich nicht in der unteren Tabellenebene (<code>%@2</code>) befindet. Ziehen Sie ein Merkmal aus <code>%@2</code> hierher, wie <code>%@3</code>.</span> ",
+    "DG.plugin.Scrambler.sOr": "oder"
+  },
+  "he": {
+    "DG.plugin.Scrambler.language": "אנגלית",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "תקן זאת על מנת להמשיך.",
+    "DG.plugin.Scrambler.static.howManyLabel": "כמה?",
+    "DG.plugin.Scrambler.sNoAttribute": "אין מאפיין",
+    "DG.plugin.Scrambler.sOr": "או"
+  },
   "ko": {
     "DG.plugin.Scrambler.name": "스크램블러",
     "DG.plugin.Scrambler.description": "속성값을 다양하게 구성하여 가설을 검증합니다.",
