@@ -39,8 +39,8 @@ export function choicesMenu(iPrompt: string, iPlaceHolder: string, iHint: string
  * First make sure there is a "Collected Measures" dataset. If not, create one.
  * Gather the names of the attributes at the parent level in the chosen dataset.
  * Make sure these attribute names are present at the child level of the "Collected Measures" dataset.
- * If the parent level of the chosen dataset has multiple cases, make sure there is a parent collection
- * in the "Collected Measures" dataset with the attribute "Sample".
+ * If the parent level of the chosen dataset has multiple cases, make sure there is an attribute "Sample"
+ * in the "Collected Measures" dataset.
  * @return {Promise<boolean>}
  */
 export async function guaranteeMeasuresDataset(entityInfo: EntityInfo): Promise<void> {
@@ -55,15 +55,10 @@ export async function guaranteeMeasuresDataset(entityInfo: EntityInfo): Promise<
         title: params.title,
         collections: [
           {
-            name: params.childCollectionName,
-            title: params.childCollectionTitle,
-            attrs: []
-          },
-          {
-            name: params.parentCollectionName,
-            title: params.parentCollectionTitle,
+            name: params.collectionName,
+            title: params.collectionTitle,
             attrs: [
-              {name: 'Sample', title: 'Sample'},
+              {name: 'Sample', description: 'Sample number'}
             ]
           }]
       }
@@ -97,7 +92,7 @@ export async function createAttributesInCollectedMeasuresDataset(theStore: Store
   if (attrsToAdd.length > 0) {
     const createAttrsResult: any = await codapInterface.sendRequest({
         action: 'create',
-        resource: `dataContext[${theParams.name}].collection[${theParams.childCollectionName}].attribute`,
+        resource: `dataContext[${theParams.name}].collection[${theParams.collectionName}].attribute`,
         values: attrsToAdd.map((iName: string) => {
           return {name: iName}
         })
@@ -116,7 +111,7 @@ export async function createAttributesInCollectedMeasuresDataset(theStore: Store
   })
   if (getCasesResult && getCasesResult.success) {
     const measuresCollectedSoFar = await numberOfCasesInCollection(
-        theParams.name, theParams.parentCollectionName),
+        theParams.name, theParams.collectionName),
       items = getCasesResult.values.map((iCase: any) => {
         const anItem = iCase.values
         anItem.Sample = measuresCollectedSoFar + 1
