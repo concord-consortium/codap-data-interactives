@@ -67,7 +67,9 @@
     "~onboarding2.all.success.message5": "Rescaled the scatterplot to spread the points out",
     "~onboarding2.all.success.message6": "Added a legend variable to the graph",
     "~onboarding2.all.success.message7": "Deselected cases so that none are selected",
-    "~onboarding2.all.success.message8": "These are useful CODAP skills!"
+    "~onboarding2.all.success.message8": "These are useful CODAP skills!",
+    "~onboarding1.mammals.file.and.table.title": "mammals.csv",
+    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv"
   },
   "es": {
     "~header.welcome": "Les damos la bienvenida a CODAP",
@@ -129,7 +131,7 @@
     "~onboarding2.rescale.success.message": "Presionaste el botón de cambio de escala del gráfico, o sea que todos los puntos son visibles y se distribuyen lo máximo posible.",
     "~onboarding2.add.legend.task": "Agregar Sexo como leyenda al gráfico de dispersión.",
     "~onboarding2.add.legend.success.message1": "¡Maravilloso! Observar que los puntos están coloreados de acuerdo con el esquema presentado en la leyenda.",
-    "~onboarding2.add.legend.success.message2": "Pro tip: You can select all the points in one category by clicking on the legend key.",
+    "~onboarding2.add.legend.success.message2": "Tip pro: Se pueden seleccionar todos los puntos de una categoría cliqueando en la clave de leyenda en la parte inferior del gráfico.",
     "~onboarding2.all.success.message1": "¡Felicitaciones! Lograste lo siguiente:",
     "~onboarding2.all.success.message2": "Crear un gráfico de dispersión",
     "~onboarding2.all.success.message3": "Usar la herramienta de selecció para seleccionar algunos casos útiles",
@@ -137,6 +139,8 @@
     "~onboarding2.all.success.message5": "Cambiar la escala del gráfico de dispersión para diseminar los puntos",
     "~onboarding2.all.success.message6": "Agregar una leyenda al gráfico",
     "~onboarding2.all.success.message7": "Deseleccionar los casos para que no quede ninguno seleccionado",
-    "~onboarding2.all.success.message8": "Estas son habilidades muy útiles de CODAP!"
+    "~onboarding2.all.success.message8": "Estas son habilidades muy útiles de CODAP!",
+    "~onboarding1.mammals.file.and.table.title": "mamiferos.csv",
+    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv"
   }
 }

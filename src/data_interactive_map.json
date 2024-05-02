@@ -631,8 +631,8 @@
       ]
     },
     {
-      "title": "Data Sonofication",
-      "description": "The Data Sonofication plugin was created by Takahiko Tsuchiya",
+      "title": "Data Sonification",
+      "description": "The Data Sonification plugin was created by Takahiko Tsuchiya",
       "width": 600,
       "height": 400,
       "path": "https://ttsuchiya.github.io/codap/plugins/Sonification/SimpleSpectrum/index.html",
@@ -666,6 +666,21 @@
       "path": "/sdlc/plugin/index.html",
       "icon": "/sdlc/plugin/assets/images/icon-microdata-portal.svg",
       "aegis": "SDLC",
+      "visible": true,
+      "width": 380,
+      "height": 520,
+      "isStandard": "true",
+      "categories": [
+        "Partners",
+        "Portals"
+      ]
+    },
+    {
+      "title": "Purple Air",
+      "description": "Choose a location and download air quality data from the Purple Air network using stations near that location.",
+      "title-string": "DG.plugin.MicrodataPortal.title",
+      "path": "/purpleair/index.html",
+      "aegis": "NAU",
       "visible": true,
       "width": 380,
       "height": 520,
