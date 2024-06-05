@@ -388,7 +388,7 @@ class Test {
             makeMenuString: ( ) => {return Logistic.makeMenuString(`BN01`);},
             fresh:  (ix) => { return new Logistic(ix)  },
         },
-        /*
+/*
         CN01: {
             id: `CN01`,
             name: `logistic regression`,
@@ -401,8 +401,7 @@ class Test {
             makeMenuString: ( ) => {return Logistic.makeMenuString(`CN01`);},
             fresh:  (ix) => { return new Logistic(ix)  },
         },
-
-         */
+*/
     };
 
 }

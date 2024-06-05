@@ -678,13 +678,12 @@
     {
       "title": "Purple Air",
       "description": "Choose a location and download air quality data from the Purple Air network using stations near that location.",
-      "title-string": "DG.plugin.MicrodataPortal.title",
+      "title-string": "DG.plugin.PurpleAir.title",
       "path": "/purpleair/index.html",
       "aegis": "NAU",
       "visible": true,
       "width": 380,
       "height": 520,
-      "isStandard": "true",
       "categories": [
         "Partners",
         "Portals"
