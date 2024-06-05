@@ -87,7 +87,7 @@
       "width": 400,
       "height": 600,
       "path": "/eepsmedia/plugins/testimate/index.html",
-      "icon": "/eepsmedia/plugins/testimate/images/xxx.svg",
+      "icon": "/eepsmedia/plugins/testimate/art/chisq.svg",
       "visible": "true",
       "isStandard": "true",
       "categories": [
@@ -678,13 +678,12 @@
     {
       "title": "Purple Air",
       "description": "Choose a location and download air quality data from the Purple Air network using stations near that location.",
-      "title-string": "DG.plugin.MicrodataPortal.title",
+      "title-string": "DG.plugin.PurpleAir.title",
       "path": "/purpleair/index.html",
       "aegis": "NAU",
       "visible": true,
       "width": 380,
       "height": 520,
-      "isStandard": "true",
       "categories": [
         "Partners",
         "Portals"
