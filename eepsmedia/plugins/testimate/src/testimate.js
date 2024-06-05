@@ -215,7 +215,7 @@ const testimate = {
 
     constants: {
         pluginName: `testimate`,
-        version: `2024g`,
+        version: `2024h`,
         dimensions: {height: 555, width: 444},
 
         emittedDatasetName: `tests and estimates`,     //      for receiving emitted test and estimate results

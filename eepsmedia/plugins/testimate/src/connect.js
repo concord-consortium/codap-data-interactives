@@ -202,7 +202,7 @@ connect = {
     updateDatasetForLogisticGroups: async function (iValue, iAxis) {
 
         const theVariable = (iAxis === "X") ? data.xAttData.name : data.yAttData.name;
-        const theFormula = `if (${theVariable} = "${iValue}", 1, 0)`;
+        const theFormula = `\`${theVariable}\` = "${iValue}" ? 1 : 0`;
 
         const newAttributeInfo = {
             name: testimate.constants.logisticGroupAttributeName,
