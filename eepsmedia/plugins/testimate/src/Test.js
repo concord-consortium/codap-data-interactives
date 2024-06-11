@@ -272,6 +272,7 @@ class Test {
             paired: true,
             groupAxis : "",
             emitted: `P,prop1,prop2,pDiff,sign,value,N,N1,N2,z,zCrit,conf,CImin,CImax`,
+            testing : 'pDiff',
             paramExceptions: {},
             makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BB01`);},
             fresh: (ix) => { return new TwoSampleP(ix, true)  },
@@ -284,6 +285,7 @@ class Test {
             paired: false,
             groupAxis : "",
             emitted: `P,prop1,prop2,pDiff,sign,value,N,N1,N2,z,zCrit,conf,CImin,CImax`,
+            testing : 'pDiff',
             paramExceptions: {},
             makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BB02`);},
             fresh: (ix) => { return new TwoSampleP(ix, false)  },
@@ -386,6 +388,7 @@ class Test {
             makeMenuString: ( ) => {return Logistic.makeMenuString(`BN01`);},
             fresh:  (ix) => { return new Logistic(ix)  },
         },
+/*
         CN01: {
             id: `CN01`,
             name: `logistic regression`,
@@ -398,6 +401,7 @@ class Test {
             makeMenuString: ( ) => {return Logistic.makeMenuString(`CN01`);},
             fresh:  (ix) => { return new Logistic(ix)  },
         },
+*/
     };
 
 }
