@@ -764,7 +764,7 @@
     },
     {
       "title": "nhanes",
-      "description": "Data portal for 11,000-ish cases of 2003 data from NHANES",
+      "description": "Data portal for 11,000-ish cases of 2017–2020 data from NHANES",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/nhanes/nhanes.html",
