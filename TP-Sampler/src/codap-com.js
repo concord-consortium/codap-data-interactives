@@ -19,21 +19,28 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.addMultipleSamplesToCODAP = this.addMultipleSamplesToCODAP.bind(this);
   this.openTable = this.openTable.bind(this);
   this.setDataSetName = this.setDataSetName.bind(this);
-  this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
-  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-output");
+  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
   targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
   this.drawAttributes = null;
   this.collectionAttributes = null;
 
+
+
+  this.collectionMap = {
+    experiments: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments")},
+    samples: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples")},
+    items: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")}
+  };
+
   this.getCollectionNames = function () {
     return {
-      experiments: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments"),
-      samples: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples"),
-      items: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")
-    }
+      experiments: this.collectionMap.experiments.name,
+      samples: this.collectionMap.samples.name,
+      items: this.collectionMap.items.name
+    };
   };
 
   this.attrMap = {
@@ -41,7 +48,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
     sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
     sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
-    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
+    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
   };
 
   this.findKeyById = function (idToFind) {
@@ -133,14 +140,43 @@ CodapCom.prototype = {
           codapInterface.sendRequest(reqs, function(getAttrsResult) {
             getAttrsResult.forEach(res => {
               if (res.success) {
-                if (res.values.name === _this.attrMap["output"].name) {
-                  _this.attrMap["output"].id = res.values.id;
+                if (res.values.name === _this.attrMap.experiment.name) {
+                  _this.attrMap.experiment.id = res.values.id;
+                } else if (res.values.name === _this.attrMap.description.name) {
+                  _this.attrMap.description.id = res.values.id;
+                } else if (res.values.name === _this.attrMap.sample_size.name) {
+                  _this.attrMap.sample_size.id = res.values.id;
+                } else if (res.values.name === _this.attrMap.sample.name) {
+                  _this.attrMap.sample.id = res.values.id;
                 } else {
-                  _this.attrMap[res.values.name].id = res.values.id;
+                  _this.attrMap.output.id = res.values.id;
+                  _this.deviceName = res.values.name;
                 }
               }
             });
           });
+        }
+
+        function getCollectionIds() {
+          // need to get all the ids of the collections, so we can notice if they change.
+          // we will set these ids on the collectionIds object
+          const reqs = {
+              "action": "get",
+              "resource": `dataContext[${targetDataSetName}].collectionList`
+          };
+          codapInterface.sendRequest(reqs, function(getCollectionsResult) {
+            if (getCollectionsResult.success) {
+              getCollectionsResult.values.forEach(res => {
+                if (res.name === collectionNames.experiments) {
+                  _this.collectionMap.experiments.id = res.id;
+                } else if (res.name === collectionNames.samples) {
+                  _this.collectionMap.samples.id = res.id;
+                } else {
+                  _this.collectionMap.items.id = res.id;
+                }
+              });
+            }
+          }, getAttributeIds);
         }
 
         if (getDatasetResult && !getDatasetResult.success) {
@@ -181,25 +217,31 @@ CodapCom.prototype = {
                 }
               ]
             }
-          }, getAttributeIds).then(
+          }, getCollectionIds).then(
               _this.openTable,
               function (e) {
                 console.log('Sampler: findOrCreateDataContext failed: ' + e);
               });
         } else if (getDatasetResult.success) {
           // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
-          // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
-          // already updated attribute names, this won't work.
-          const onlyIds = [];
-          for (const key in _this.attrMap) {
-            onlyIds.push(_this.attrMap[key].id);
+          // created dataset before we were tracking collection and attribute changes. Try to get ids, but if the user has
+          // already updated collection or attribute names, this won't work.
+          const onlyCollectionIds = [];
+          for (const key in _this.collectionMap) {
+            onlyCollectionIds.push(_this.collectionMap[key].id);
           }
-          if (onlyIds.indexOf(null) > -1) {
+          if (onlyCollectionIds.indexOf(null) > -1) {
+            getCollectionIds();
+          }
+          const onlyAttrIds = [];
+          for (const key in _this.attrMap) {
+            onlyAttrIds.push(_this.attrMap[key].id);
+          }
+          if (onlyAttrIds.indexOf(null) > -1) {
             getAttributeIds();
           }
         }
-      }
-    );
+      });
   },
 
   error: function(msg) {
@@ -240,7 +282,10 @@ CodapCom.prototype = {
   addMultipleSamplesToCODAP: function (samples, isCollector, deviceName) {
     var _this = this;
     var oldDeviceName = _this.deviceName;
-    var collectionNames = _this.getCollectionNames();
+    const outputAttrId = _this.attrMap.output.id;
+    const itemsCollection = _this.collectionMap.items.id || _this.collectionMap.items.name;
+    const samplesCollection = _this.collectionMap.samples.id || _this.collectionMap.samples.anme;
+
     if (deviceName !== _this.attrMap["output"].name) {
       _this.attrMap["output"].name = deviceName;
     };
@@ -274,7 +319,7 @@ CodapCom.prototype = {
     if (oldDeviceName !== deviceName) {
       codapInterface.sendRequest({
         action: "update",
-        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute[${oldDeviceName}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${itemsCollection}].attribute[${outputAttrId}]`,
         values: {
           "name": deviceName
         }
@@ -286,21 +331,21 @@ CodapCom.prototype = {
         });
       });
     } else {
-    // user might have deleted all attributes in collection
-    // if so, create a new collection with attribute, and create items
-    // if not, check if attr exists
-    // if attr exists, update as normal, else create it first
+      // user might have deleted all attributes in collection
+      // if so, create a new collection with attribute, and create items
+      // if not, check if attr exists
+      // if attr exists, update as normal, else create it first
       codapInterface.sendRequest({
         action: "get",
-        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${itemsCollection}]`,
       }).then((res) => {
         if (!res.success) {
           codapInterface.sendRequest({
             action: "create",
             resource: `dataContext[${targetDataSetName}].collection`,
             values: {
-              name: collectionNames.items,
-              parent: collectionNames.samples,
+              id: itemsCollection,
+              parent: samplesCollection,
               attrs: [{name: deviceName,title: deviceName}]
             }
           }).then((res) => {
@@ -315,13 +360,13 @@ CodapCom.prototype = {
         } else {
           codapInterface.sendRequest({
             action: "get",
-            resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attributeList`,
+            resource: `dataContext[${targetDataSetName}].collection[${itemsCollection}].attributeList`,
           }).then((res) => {
             const {values} = res;
             if (!values.length || !values.find((attr) => attr.name === deviceName)) {
               codapInterface.sendRequest({
                 action: "create",
-                resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute`,
+                resource: `dataContext[${targetDataSetName}].collection[${itemsCollection}].attribute`,
                 values: [
                   {
                     name: deviceName,

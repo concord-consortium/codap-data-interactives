@@ -14,7 +14,7 @@ var s = Snap("#model svg"),
       variables: ["a", "b", "a"],
       device: "mixer",
       withReplacement: true,
-      deviceName: "output"
+      deviceName: "DG.plugin.Sampler.dataset.attr-value"
     },
 
     dataSetName,
@@ -73,7 +73,8 @@ function getInteractiveState() {
       previousExperimentDescription: previousExperimentDescription,
       previousSampleSize: previousSampleSize,
       attrNames: codapCom.attrNames,
-      attrIds: codapCom.attrIds
+      attrIds: codapCom.attrIds,
+      collectionIds: codapCom.collectionIds
     }
   };
 }
@@ -93,7 +94,7 @@ function loadInteractiveState(state) {
     sampleSize = state.draw || sampleSize;
     numRuns = state.repeat || numRuns;
     speed = state.speed || speed;
-    deviceName = state.deviceName || deviceName;
+    deviceName = state.deviceName || localeMgr.tr(deviceName);
     if (state.device) {
       switchState(null, state.device);
     }
@@ -814,6 +815,7 @@ localeMgr.init().then(() => {
 
   view = new View(getProps, isRunning, setRunning, isPaused, setup, codapCom,
       localeMgr, sortVariablesForSpinner);
+  deviceName = localeMgr.tr(deviceName);
 
   ui.appendUIHandlers(addVariable, removeVariable, addVariableSeries,
       runButtonPressed, stopButtonPressed, resetButtonPressed, switchState, setSampleSize, setNumRuns, setDeviceName, setSpeed, view,
