@@ -22,7 +22,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
-  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-output");
+  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
   targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
   this.drawAttributes = null;
@@ -41,7 +41,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
     sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
     sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
-    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
+    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
   };
 
   this.findKeyById = function (idToFind) {

@@ -14,7 +14,7 @@ var s = Snap("#model svg"),
       variables: ["a", "b", "a"],
       device: "mixer",
       withReplacement: true,
-      deviceName: "output"
+      deviceName: "DG.plugin.Sampler.dataset.attr-value"
     },
 
     dataSetName,
@@ -93,7 +93,7 @@ function loadInteractiveState(state) {
     sampleSize = state.draw || sampleSize;
     numRuns = state.repeat || numRuns;
     speed = state.speed || speed;
-    deviceName = state.deviceName || deviceName;
+    deviceName = state.deviceName || localeMgr.tr(deviceName);
     if (state.device) {
       switchState(null, state.device);
     }
