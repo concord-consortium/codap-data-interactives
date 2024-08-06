@@ -214,6 +214,7 @@ var codapInterface = {
         var success = resp && resp[1] && resp[1].success;
         var receivedFrame = success && resp[1].values;
         var savedState = receivedFrame && receivedFrame.savedState;
+        console.log("***** in codapinterface savedState", savedState);
         this_.updateInteractiveState(savedState);
         if (success) {
           // deprecated way of conveying state
@@ -259,6 +260,8 @@ var codapInterface = {
 
       if (!config.customInteractiveStateHandler) {
         this.on('get', 'interactiveState', function () {
+          const state = this.getInteractiveState();
+          console.log("***** in codapinterface state", state);
           return ({success: true, values: this.getInteractiveState()});
         }.bind(this));
       }

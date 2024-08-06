@@ -55,6 +55,7 @@ var s = Snap("#model svg"),
     view;
 
 function getInteractiveState() {
+  console.log("***** getInteractiveState");
   return {
     success: true,
     values: {
@@ -81,6 +82,7 @@ function getInteractiveState() {
 
 function loadInteractiveState(state) {
   if (state) {
+    console.log("***** state", state);
     dataSetName = state.dataSetName;
     previousExperimentDescription = state.previousExperimentDescription;
     previousSampleSize = state.previousSampleSize;
@@ -109,11 +111,16 @@ function loadInteractiveState(state) {
       codapCom.attrNames = state.attrNames;
       codapCom.attrIds = state.attrIds;
     }
+    if (state.collectionIds) {
+      console.log("***** state.collectionIds", state.collectionIds);
+      codapCom.collectionIds = state.collectionIds;
+    }
   }
   view.render();
 }
 
 export function updateDeviceName (name) {
+  console.log("***** updateDeviceName: ", name);
   deviceName = name;
   ui.updateUIDeviceName(name);
 };
@@ -382,13 +389,22 @@ function run() {
           });
           ix ++;
         }
-        codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
+        codapCom.findOrCreateDataContext(deviceName).then(function() {
+          codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
 
-        if (currRunNumber >= sequence.length) {
-          setup();
-          return;
-        }
-        if (running) setTimeout(addValuesToCODAPNoDelay, 0);
+          if (currRunNumber >= sequence.length) {
+            setup();
+            return;
+          }
+          if (running) setTimeout(addValuesToCODAPNoDelay, 0);
+        });
+        // codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
+
+        // if (currRunNumber >= sequence.length) {
+        //   setup();
+        //   return;
+        // }
+        // if (running) setTimeout(addValuesToCODAPNoDelay, 0);
       } else {
         selectNext();
       }
@@ -488,7 +504,7 @@ function run() {
       tReplacement
     ])
   }
-
+console.log("***** experimentNumber: ", experimentNumber);
   if( experimentNumber === 0 || tDescription + tStringifiedVariables !== previousExperimentDescription ||
       (previousSampleSize !== null && previousSampleSize !== tSampleSize)) {
     experimentNumber++;

@@ -100,6 +100,7 @@ CodapCom.prototype = {
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
+      console.log("***** has initial state", iInitialState);
       if (!iInitialState) { // set default dimensions, if no initial state
         return codapInterface.sendRequest({
           action: 'update',
@@ -127,6 +128,7 @@ CodapCom.prototype = {
           action:'get',
           resource: getTargetDataSetPhrase()
         }).then( function (getDatasetResult) {
+          console.log("***** has data context getDatasetResult", getDatasetResult);
 
         function getAttributeIds() {
           // need to get all the ids of the newly-created attributes, so we can notice if they change.
@@ -137,6 +139,7 @@ CodapCom.prototype = {
               "action": "get",
               "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
           }));
+          console.log("***** has data context getAttributeIds");
           codapInterface.sendRequest(reqs, function(getAttrsResult) {
             getAttrsResult.forEach(res => {
               if (res.success) {
@@ -148,13 +151,18 @@ CodapCom.prototype = {
                   _this.attrMap.sample_size.id = res.values.id;
                 } else if (res.values.name === _this.attrMap.sample.name) {
                   _this.attrMap.sample.id = res.values.id;
-                } else {
+                }
+                else {
                   _this.attrMap.output.id = res.values.id;
                   _this.deviceName = res.values.name;
+                  updateDeviceName(res.values.name);
+                  console.log("***** output id", res.values.id, res.values.name);
                 }
+              } else {
+                console.log("***** has data context getAttributeIds failed", res);
               }
             });
-          });
+          }).then(_this.openTable());
         }
 
         function getCollectionIds() {
@@ -164,6 +172,8 @@ CodapCom.prototype = {
               "action": "get",
               "resource": `dataContext[${targetDataSetName}].collectionList`
           };
+          console.log("***** has data context getCollectionIds");
+
           codapInterface.sendRequest(reqs, function(getCollectionsResult) {
             if (getCollectionsResult.success) {
               getCollectionsResult.values.forEach(res => {
@@ -176,7 +186,7 @@ CodapCom.prototype = {
                 }
               });
             }
-          }, getAttributeIds);
+          }).then(getAttributeIds());
         }
 
         if (getDatasetResult && !getDatasetResult.success) {
@@ -226,20 +236,24 @@ CodapCom.prototype = {
           // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
           // created dataset before we were tracking collection and attribute changes. Try to get ids, but if the user has
           // already updated collection or attribute names, this won't work.
+          // console.log("***** has data context getDatasetResult", getDatasetResult);
           const onlyCollectionIds = [];
           for (const key in _this.collectionMap) {
             onlyCollectionIds.push(_this.collectionMap[key].id);
           }
-          if (onlyCollectionIds.indexOf(null) > -1) {
+          // if (onlyCollectionIds.indexOf(null) > -1) {
             getCollectionIds();
-          }
-          const onlyAttrIds = [];
-          for (const key in _this.attrMap) {
-            onlyAttrIds.push(_this.attrMap[key].id);
-          }
-          if (onlyAttrIds.indexOf(null) > -1) {
-            getAttributeIds();
-          }
+              // .then(() => {
+              // _this.openTable();});
+          // }
+          // const onlyAttrIds = [];
+          // for (const key in _this.attrMap) {
+          //   onlyAttrIds.push(_this.attrMap[key].id);
+          // }
+          // if (onlyAttrIds.indexOf(null) > -1) {
+          //   getAttributeIds();
+          // }
+
         }
       });
   },
@@ -261,6 +275,11 @@ CodapCom.prototype = {
       description: description,
       sample_size: sampleSize
     };
+    return codapInterface.sendRequest({
+      action: 'create',
+      resource: 'case',
+      values: this.itemProto
+    });
   },
 
   openTable: function() {
@@ -285,7 +304,8 @@ CodapCom.prototype = {
     const outputAttrId = _this.attrMap.output.id;
     const itemsCollection = _this.collectionMap.items.id || _this.collectionMap.items.name;
     const samplesCollection = _this.collectionMap.samples.id || _this.collectionMap.samples.anme;
-
+console.log("****** itemsCollection", itemsCollection);
+console.log("***** _this.collectionMap", _this.collectionMap);
     if (deviceName !== _this.attrMap["output"].name) {
       _this.attrMap["output"].name = deviceName;
     };
@@ -299,8 +319,10 @@ CodapCom.prototype = {
         } else {
           item = Object.assign({}, v, {sample: run}, _this.itemProto);
         }
+        console.log("***** item", item);
         items.push(item);
       });
+      // console.log("***** items", items);
     });
     // rename all the attributes to any new names that the user has changed them to.
     // easiest to do this all in one place here.
@@ -315,7 +337,7 @@ CodapCom.prototype = {
         }
       })
     });
-
+console.log("***** resource:", `dataContext[${targetDataSetName}].collection[${itemsCollection}].attribute[${outputAttrId}]` );
     if (oldDeviceName !== deviceName) {
       codapInterface.sendRequest({
         action: "update",
