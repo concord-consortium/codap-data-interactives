@@ -173,7 +173,7 @@
     "DG.plugin.Sampler.dataset.attr-description": "description",
     "DG.plugin.Sampler.dataset.attr-sample_size": "sample_size",
     "DG.plugin.Sampler.dataset.attr-sample": "sample",
-    "DG.plugin.Sampler.dataset.attr-value": "value",
+    "DG.plugin.Sampler.dataset.attr-value": "output",
     "DG.plugin.Sampler.dataset.col-experiments": "experiments",
     "DG.plugin.Sampler.dataset.col-samples": "samples",
     "DG.plugin.Sampler.dataset.col-items": "items",
@@ -1029,7 +1029,7 @@
     "DG.plugin.Transformers.title": "Dönüştürücüler",
     "DG.plugin.Transformers.description": "Bu eklentide sunulan birtakım araçlar yardımıyla veri setlerinde dönüşümler yapılabilir.",
     "DG.plugin.Sampler.tab.measures": "Ölçümler",
-    "DG.plugin.Sampler.measures.instructions": "Aşağıdaki şablonu kullanarak her örneklem için ortak ölçümleri hesapla.",
+    "DG.plugin.Sampler.measures.instructions": "Aşağıda verilen seçenekleri kullanarak örnekleminiz için ortak ölçümler atayabilirsiniz.",
     "DG.plugin.Sampler.measures.select-measure": "Ölçüm seç: ",
     "DG.plugin.Sampler.measures.add-measure": "Ölçüm Ekle",
     "DG.plugin.Sampler.measures.mean": "Ortalama",
@@ -1058,6 +1058,7 @@
     "DG.plugin.Sampler.measures.percent-formula-pt-2": " / sayı()",
     "DG.plugin.Sampler.measures.name-label": "Ölçümü isimlendir: ",
     "DG.plugin.Testimate.name": "İstatistiksel sınayıcı",
-    "DG.plugin.Testimate.description": "Bu eklentide klasik çıkarımsal yöntemleri kullanarak hipotezler test edebilirsiniz."
+    "DG.plugin.Testimate.description": "Bu eklentide klasik çıkarımsal yöntemler kullanılarak hipotezler test edilebilir.",
+    "DG.plugin.PurpleAir.title": "Mor Hava"
   }
 }

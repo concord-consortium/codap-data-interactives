@@ -676,6 +676,17 @@
       ]
     },
     {
+      "title": "NASS Portal",
+      "description": "Investigate data on farms, farmers, and farm products in the U.S.",
+      "width": 380,
+      "height": 520,
+      "path": "https://nass-plugin.concord.org/",
+      "visible": true,
+      "categories": [
+        "Portals"
+      ]
+    },
+    {
       "title": "Purple Air",
       "description": "Choose a location and download air quality data from the Purple Air network using stations near that location.",
       "title-string": "DG.plugin.PurpleAir.title",
