@@ -65,7 +65,7 @@ function getInteractiveState() {
       repeat: numRuns,
       speed: speed,
       device: device,
-      deviceName: deviceName,
+      deviceName: localeMgr.tr(deviceName),
       withReplacement: withReplacement,
       hidden: hidden,
       password: password,
@@ -146,7 +146,7 @@ function getProps() {
     sampleSize: sampleSize,
     numRuns: numRuns,
     device: device,
-    deviceName: deviceName,
+    deviceName: localeMgr.tr(deviceName),
     withReplacement: withReplacement,
     variables: variables,
     uniqueVariables: [...new Set(variables)],
@@ -357,7 +357,7 @@ function addNextSequenceRunToCODAP() {
   var vars = sequence[runNumberSentInCurrentSequence].map(function(i) {
     return variables[i];
   });
-  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector, deviceName);
+  codapCom.addValuesToCODAP(++mostRecentRunNumber, vars, isCollector, localeMgr.tr(deviceName));
   runNumberSentInCurrentSequence++;
 }
 
@@ -381,7 +381,7 @@ function run() {
           });
           ix ++;
         }
-        codapCom.addMultipleSamplesToCODAP(samples, isCollector, deviceName);
+        codapCom.addMultipleSamplesToCODAP(samples, isCollector, localeMgr.tr(deviceName));
 
         if (currRunNumber >= sequence.length) {
           setup();
@@ -499,7 +499,7 @@ function run() {
   runNumber = mostRecentRunNumber;
   // this doesn't get written out in array, or change the length
   variables.EMPTY = "";
-  codapCom.findOrCreateDataContext(deviceName).then(function () {
+  codapCom.findOrCreateDataContext(localeMgr.tr(deviceName)).then(function () {
     codapCom.startNewExperimentInCODAP(experimentNumber, tDescription, tSampleSize);
     sequence = createRandomSequence(tSampleSize, tNumRuns);
 
