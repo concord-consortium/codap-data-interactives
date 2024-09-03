@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Purple Air Plugin</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="jquery.js" language="javascript"></script>
+    <script src="snap.svg.js" language="javascript"></script>
+    <script src="iframe-phone.js" language="JavaScript"></script>
+    <script src="CodapInterface.js" language="JavaScript"></script>
+    <script src="pluginHelper.js" language="JavaScript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="helper.css" />
+
+    <!-- bootstrap for html beautification -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+    />
+
+    <!-- jquery cdn -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  -->
+    <script src="purple_air.js" language="JavaScript"></script>
+
+    <script>
+      $(function () {
+        startCodapConnection();
+      });
+
+      // JavaScript to initialize and show tooltip on hover
+      $(document).ready(function () {
+        $(".info-icon").tooltip({
+          trigger: "manual", // Set trigger to 'manual'
+        });
+
+        $(".info-icon").hover(
+          function () {
+            // Show the tooltip when hovering
+            $(this).tooltip("show");
+          },
+          function () {
+            // Hide the tooltip when not hovering
+            $(this).tooltip("hide");
+          }
+        );
+      });
+
+      //Javascript to auto fill the city names
+      $(document).ready(function () {
+        const inputField = $("#city_input");
+        const resultsList = $("#autocomplete-results");
+
+        inputField.on("input", function () {
+          const inputValue = inputField.val().trim();
+
+          if (inputValue !== "") {
+            const apiUrl = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
+              inputValue
+            )}&apiKey=1b48259b810e48ddb151889f9ea58db0&type=city&lang=en&filter=countrycode:us&limit=5`;
+
+            $.ajax({
+              url: apiUrl,
+              method: "GET",
+              success: function (data) {
+                updateDropdown(data.features);
+              },
+              error: function (error) {
+                console.error("Error fetching suggestions:", error);
+              },
+            });
+          } else {
+            // If the input is empty, hide the dropdown
+            resultsList.hide();
+          }
+        });
+
+        function updateDropdown(suggestions) {
+          resultsList.empty(); // Clear existing dropdown options
+
+          if (suggestions.length > 0) {
+            suggestions.forEach((suggestion) => {
+              const listItem = $("<li>").text(
+                `${suggestion.properties.city}, ${suggestion.properties.state_code}`
+              );
+
+              // Add click event to select the suggestion
+              listItem.on("click", function () {
+                let radiusInMiles =
+                  document.getElementById("radiusRange").value;
+                let city = suggestion.properties.city;
+                let state = suggestion.properties.state_code;
+                let zip = suggestion.properties.postcode || 0;
+                let lat = suggestion.properties.lat;
+                let long = suggestion.properties.lon;
+                let bounding_box = purple_air.getBoundsFromLatLong(
+                  lat,
+                  long,
+                  radiusInMiles * milesToKms
+                );
+
+                inputField.val(`${city}, ${state}`);
+                document.getElementById(
+                  "lat_long_input"
+                ).value = `${lat}, ${long}`;
+                purple_air.save_state(
+                  city,
+                  state,
+                  zip,
+                  lat,
+                  long,
+                  bounding_box
+                );
+                resultsList.hide();
+              });
+
+              resultsList.append(listItem);
+            });
+          } else {
+            const listItem = $("<li>").text(
+              `No city is found with the search term!`
+            );
+            resultsList.append(listItem);
+          }
+
+          resultsList.show();
+        }
+
+        // Hide the dropdown when clicking outside the container
+        $(document).on("click", function (event) {
+          resultsList.hide();
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-10">
+          <span style="font-size: 12px;">Retrieve air quality data from Purple Air.</span>
+        </div>
+        <div class="col-2">
+          <i
+            class="input-group-text info-icon bi bi-info-circle"
+            data-bs-toggle="modal"
+            data-toggle="tooltip"
+            title="Get further information about this Purple Air plugin"
+            data-bs-target="#creditsModal"
+          ></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="creditsModal"
+      tabindex="-1"
+      aria-labelledby="creditsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="creditsModalLabel">About</h5>
+          </div>
+          <div class="modal-body" style="font-size: 12px;">
+            <p>These Air Quality data come from the Purple Air data repository and can be accessed at <a href="https://map.purpleair.com/" target="_blank">https://map.purpleair.com/</a>.</p>
+            <p>This plugin was developed by ASU Decision Theater and the Impactful Computing Lab at Northern Arizona University.</p>
+            <p>This material is based on work supported by the National Science Foundation under Grant No. ITEST-1949241. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors and do not necessarily reflect the views of the NSF.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-primary mt-2"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="wx-fixed-section-divider"/>
+
+    <div class="container mt-4">
+      <!-- <form class="" id="pap_form" action="#"> -->
+
+      <!-- city -->
+      <div class="input-group mb-3">
+        <i class="input-group-text bi bi-geo-alt-fill"></i>
+        <input
+          id="city_input"
+          type="text"
+          class="form-control"
+          placeholder="Enter Your City Name"
+          style="width: fit-content"
+          aria-label="Enter Your City Name"
+          aria-describedby="cityHelp"
+          autocomplete="off"
+        />
+        <ul id="autocomplete-results"></ul>
+        <!-- hover icon for City field -->
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="The name of the city where sensors are to be located. The sensors nearest this city will be the ones chosen."
+        ></i>
+      </div>
+
+      <!-- lat, long -->
+      <div class="input-group mb-3">
+        <i class="input-group-text bi bi-globe"></i>
+        <input
+          id="lat_long_input"
+          type="text"
+          class="form-control col-lg-12"
+          placeholder="0.00, 0.00"
+          aria-label="New York City"
+          aria-describedby="cityHelp"
+          style="width: fit-content"
+          onchange="
+        console.log('Lat, Long Updated ==> ' + this.value)
+        "
+          readonly
+        />
+        <!-- hover icon for Location field -->
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="The Latitude and Longitude of the location of interest."
+        ></i>
+      </div>
+
+      <!-- <button id="fetchMyLocation" onclick="purple_air.fetchLocation()" class="btn btn-info mr-2 small">Fetch my location</button> -->
+      <!-- <div class="d-flex justify-content-center mt-2">
+        <button
+          id="clearLocation"
+          onclick="purple_air.clearLocation()"
+          class="btn btn-outline-danger mr-2"
+        >
+          Clear Location
+        </button>
+        <button
+          id="searchLocation"
+          onclick="purple_air.searchLocation()"
+          class="btn btn-outline-primary"
+        >
+          Search Location
+        </button>
+      </div> -->
+
+      <!-- Radius -->
+      <div class="input-group mt-2">
+        <label for="radiusRange" class="input-group-text form-label mr-1"
+          >Radius in Miles</label
+        >
+        <input
+          type="range"
+          class="form-control bg-info mr-1"
+          min="1"
+          max="100"
+          value="1"
+          id="radiusRange"
+          oninput="this.nextElementSibling.value = this.value"
+          onchange="purple_air.changeRadius(this.value);
+        console.log('Radius Updated ==> ' + this.value);
+        console.log('Bounding Box ==> ' + purple_air.state.bounding_box)
+
+        "
+        />
+        <output id="radiusText" class="input-group-text">1</output>
+        <!-- hover icon for Radius field -->
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="Enter the radius in miles and sensors within this area will be chosen."
+        ></i>
+      </div>
+
+      <!-- start date selection -->
+      <div class="input-group mt-2">
+        <label for="startDate" class="input-group-text form-label mr-1"
+          >Start Date</label
+        >
+        <input
+          type="date"
+          id="startDate"
+          name="startDate"
+          value=""
+          min=""
+          onchange="
+            purple_air.state.startDate = this.value;
+            purple_air.updateAveragingMinutes();
+            purple_air.hideError();
+            console.log('Start Date Updated ==> ' + this.value);
+            "
+        />
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="Enter the date when you want to start collecting the data."
+        ></i>
+      </div>
+
+      <!-- end date selection -->
+      <div class="input-group mt-2">
+        <label for="endDate" class="input-group-text form-label mr-1"
+          >End Date</label
+        >
+        <input
+          type="date"
+          id="endDate"
+          name="endDate"
+          min=""
+          value=""
+          onchange="
+            purple_air.state.endDate = this.value;
+            purple_air.updateAveragingMinutes();
+            purple_air.hideError();
+            console.log('End date updated ==> ' + this.value);
+            "
+        />
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="Enter the date when you want to end collecting the data."
+        ></i>
+      </div>
+
+      <!-- averaging minutes selection -->
+      <div class="input-group mt-2">
+        <label for="minutes" class="input-group-text form-label mr-1"
+          >Averaging Minutes</label
+        >
+
+        <select
+          name="minutes"
+          id="minutes"
+          value="30"
+          onchange="
+        purple_air.state.averaginMinutes = this.value; 
+        purple_air.hideError(); 
+        console.log('Averging Minutes Value Updated ==> ' + this.value)
+        "
+        >
+          <option value="none" disabled>select minutes</option>
+          <option value="0">0</option>
+          <option value="10">10</option>
+          <option value="30" selected>30</option>
+          <option value="60">60 (1 hour)</option>
+          <option value="360">360 (6 hour)</option>
+          <option value="1440">1440 (1 day)</option>
+        </select>
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="What is the time interval for the data in minutes(1 day = 1440 minutes)."
+        ></i>
+      </div>
+
+      <div class="input-group mt-2">
+        <label for="minutes" class="input-group-text form-label mr-1"
+          >Maximum Sensors</label
+        >
+        <input
+          id="sensor_input"
+          name="sensor_input"
+          type="text"
+          class="form-control"
+          placeholder="Max Sensors"
+          value="5"
+          onchange="
+        purple_air.state.sensorNum = this.value; 
+        purple_air.hideError(); 
+        console.log('Sensor Num Value Updated ==> ' + this.value)"
+        />
+        <!-- hover icon for City field -->
+        <i
+          class="input-group-text info-icon bi bi-info-circle"
+          data-toggle="tooltip"
+          title="Max number of sensors (leave blank for all)"
+        ></i>
+      </div>
+
+      <div class="d-flex justify-content-center mt-2">
+        <!-- <button
+          id="reset"
+          onclick="purple_air.reset()"
+          class="btn btn-outline-danger mt-2 mr-2"
+        >
+          Reset Form Data
+        </button> -->
+
+        <button
+          id="stopPurpleAirData"
+          onclick="purple_air.stopPurpleAirData()"
+          class="btn btn-outline-danger mt-2 mr-2"
+          style="font-size: 0.85rem;"
+        >
+          Stop Purple Air Data
+        </button>
+
+        <button
+          id="getPurpleAirData"
+          onclick="purple_air.getPurpleAirData()"
+          class="btn btn-outline-primary mt-2"
+          style="font-size: 0.85rem;"
+        >
+          Get Purple Air Data
+        </button>
+      </div>
+
+      <div class="mt-2"></div>
+
+      <div id="spinner" style="display: none">
+        <strong><p id="sensor_list" class="mt-2">Found _ sensor(s)</p></strong>
+        <div class="d-flex mt-2">
+          <strong id="spinner_text">Loading Please Wait...</strong>
+          <div
+            class="spinner-border ml-auto"
+            role="status"
+            aria-hidden="true"
+          ></div>
+          <br />
+        </div>
+        <div class="d-flex mt-2">
+          <strong id="date_text">Loading Please Wait...</strong>
+          <div
+            class="spinner-border ml-auto"
+            role="status"
+            aria-hidden="true"
+          ></div>
+          <br />
+        </div>
+      </div>
+
+      <p id="msg" class="alert alert-danger mt-2" style="display: none"></p>
+      <!-- </form> -->
+
+      <!-- <button onclick="purple_air.disable_form_input()">Disable Form</button>
+    <button onclick="purple_air.enable_form_input()">Enable Form</button> -->
+    </div>
+
+    <style>
+      .info-icon {
+        background: none;
+        border: 0;
+      }
+    </style>
+  </body>
+
+  <!-- 
+To disable future date selection in the start and end dates
+-->
+  <script>
+    window.onload = function () {
+      var date = new Date();
+      var year = date.toLocaleString("default", { year: "numeric" });
+      var month = date.toLocaleString("default", { month: "2-digit" });
+      var day = date.toLocaleString("default", { day: "2-digit" });
+      var today = year + "-" + month + "-" + day;
+      document.getElementsByName("startDate")[0].setAttribute("max", today);
+      document.getElementsByName("endDate")[0].setAttribute("max", today);
+    };
+  </script>
+</html>

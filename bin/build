@@ -19,7 +19,7 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer sdlc/plugin eepsmedia/plugins/Choosy Sonify eepsmedia/plugins/scrambler "
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy Sonify eepsmedia/plugins/scrambler eepsmedia/plugins/testimate"
 HIDDEN_DIRS="Common eepsmedia/common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
@@ -60,7 +60,11 @@ function buildPlugins() {
       PLUGIN_BUILD_DIR=target
     fi
     echo Building $plugin
-    ( cd $plugin && npm install && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
+    if [ "$plugin" == "../noaa-codap-plugin" ] ; then
+      ( cd $plugin && npm install && npm run build && cp -r "dist" "$BUILD_DIR/$PLUGIN_NAME" )
+    else
+      ( cd $plugin && npm install && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
+    fi
   done
 }
 

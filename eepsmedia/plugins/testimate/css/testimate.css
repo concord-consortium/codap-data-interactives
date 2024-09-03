@@ -1,0 +1,220 @@
+
+/*
+    define variables for css!
+ */
+:root {
+    --codap-color : #72bfca;
+    --bg-body-color : lightgray;
+    --drag-near-bg-color : #cba;
+    --drag-over-bg-color : #fed;
+    --drag-none-bg-color : lightblue;
+    --drag-empty-bg-color : lightgray;
+
+}
+
+body {
+    margin : 0;
+    padding : 0;
+
+    color : #333;
+    font-family: "Sirin Stencil",sans-serif;
+    font-size: small;
+    min-height: 100vh;      /* make <body> fill the plugin */
+    background-color: var(--bg-body-color);
+}
+
+pre {
+    margin : 0;
+    padding : 0;
+    font-family: "Nanum Gothic Coding", monospace;
+}
+
+details {
+    padding-top: 1em;
+}
+
+summary {
+    font-weight: bold;
+    padding-bottom: 0.5em;
+    cursor : pointer;
+}
+
+#titleDIV {
+    width: 100%;
+    color: white;
+    padding: 0.5em;
+    font-weight: 700;
+    font-size: large;
+}
+
+#datasetDIV {
+    display: flex;
+    align-items: center;
+}
+
+#datasetDIV div:last-child {
+    margin-left: auto;
+}
+
+#datasetSPAN {
+    padding : 4px;
+}
+
+#attributeStrip {
+    width : 100%;
+    background-color: var(--bg-body-color);
+}
+
+.attributeHint {
+    font-size: x-small;
+    font-weight: 400;
+}
+
+#xCNbutton, #yCNbutton {
+    background-color: lightslategrey;
+    color : white;
+    border-radius: 6px;
+    margin : 0.2em;
+    padding: 0.2em;
+    cursor: pointer;
+}
+
+#Xbackdrop, #Ybackdrop {
+    width : 50%;
+    padding : 0.5em;
+    background-color: aliceblue;
+}
+
+.textButton {
+    cursor: pointer;
+}
+
+.testimateButton {
+    background-color: lightslategrey;
+    color : white;
+    border-radius: 6px;
+    margin : 0.2em;
+    padding: 0.2em;
+    cursor: pointer;
+}
+
+.chiclet {
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.infoIcon  {
+    width:  20px;
+    height: 20px;
+    padding: 4px;
+}
+
+#xDIV, #yDIV {
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: large;
+    color: black;
+    padding: 0.5em;
+}
+
+#testHeaderDIV, #configureDIV  {
+    width: 100%;
+    display : block;
+    background-color: lightblue;
+    color: black;
+    padding: 0.5em;
+    font-size: 12px;
+    line-height: 1.2em;
+
+}
+
+#resultsDIV, #emitDIV {
+    width: 100%;
+    display : block;
+    background-color: lightgray;
+    color: black;
+    padding: 0.5em;
+    font-size: 12px;
+    line-height: 1.2em;
+}
+
+
+.short_number_field {
+    width : 4em;
+    font-family: "Nanum Gothic Coding", monospace;
+    font-size: small;
+}
+
+.probability {
+
+}
+
+/*      test results table classes      */
+
+.test-results {
+    border-spacing: 1.0em 0;
+    font-family: "Nanum Gothic Coding", monospace;
+background-color: #eee;
+    padding-top : 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.headerRow {
+    border-bottom: blue;
+    /*
+    border-width: 4px;
+    background-color: lightblue;
+    */
+}
+
+table tr:nth-child(odd) td{
+    background-color: #aaa;
+    padding: 0.5em;
+}
+table tr:nth-child(even) td{
+    background-color: #ccc;
+    padding: 0.5em;
+}
+
+/*      drag-drop highlight classes     */
+
+.drag-none {
+    background-color: var(--drag-none-bg-color);
+}
+.drag-near {
+    background-color: var(--drag-near-bg-color);
+}
+.drag-over {
+    background-color: var(--drag-over-bg-color);
+}
+.drag-empty {
+    background-color: var(--drag-empty-bg-color);
+}
+
+/*		BOX CLASSES		*/
+
+.hBox	{
+    display: flex;
+    flex-direction: row;
+    /*display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	horizontal;
+    -moz-box-orient:	horizontal;
+    box-orient:	horizontal;*/
+}
+
+.vBox	{
+    display: flex;
+    flex-direction: column;
+    /*
+    display:	-webkit-box;
+    display:	-moz-box;
+    display:	box;
+    -webkit-box-orient:	vertical;
+    -moz-box-orient:	vertical;
+    box-orient:	vertical;
+    */
+}
+
+

@@ -22,7 +22,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
-  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-output");
+  this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
   targetDataSetName = localeMgr.tr("DG.plugin.Sampler.dataset.name");
 
   this.drawAttributes = null;
@@ -41,7 +41,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
     description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
     sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
     sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
-    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-output")},
+    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
   };
 
   this.findKeyById = function (idToFind) {
@@ -274,7 +274,7 @@ CodapCom.prototype = {
     if (oldDeviceName !== deviceName) {
       codapInterface.sendRequest({
         action: "update",
-        resource: `dataContext[${targetDataSetName}].collection[items].attribute[${oldDeviceName}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute[${oldDeviceName}]`,
         values: {
           "name": deviceName
         }
@@ -315,13 +315,13 @@ CodapCom.prototype = {
         } else {
           codapInterface.sendRequest({
             action: "get",
-            resource: `dataContext[${targetDataSetName}].collection[items].attributeList`,
+            resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attributeList`,
           }).then((res) => {
             const {values} = res;
             if (!values.length || !values.find((attr) => attr.name === deviceName)) {
               codapInterface.sendRequest({
                 action: "create",
-                resource: `dataContext[${targetDataSetName}].collection[items].attribute`,
+                resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute`,
                 values: [
                   {
                     name: deviceName,

@@ -76,7 +76,22 @@
       "visible": "true",
       "isStandard": "true",
       "categories": [
-        "Tools"
+        "Tools", "Partners"
+      ]
+    },
+    {
+      "title": "Testimate",
+      "description": "Test hypotheses using classical inferential methods.",
+      "title-string": "DG.plugin.Testimate.name",
+      "description-string": "DG.plugin.Testimate.description",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/testimate/index.html",
+      "icon": "/eepsmedia/plugins/testimate/art/chisq.svg",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Tools", "Partners"
       ]
     },
     {
@@ -616,8 +631,8 @@
       ]
     },
     {
-      "title": "Data Sonofication",
-      "description": "The Data Sonofication plugin was created by Takahiko Tsuchiya",
+      "title": "Data Sonification",
+      "description": "The Data Sonification plugin was created by Takahiko Tsuchiya",
       "width": 600,
       "height": 400,
       "path": "https://ttsuchiya.github.io/codap/plugins/Sonification/SimpleSpectrum/index.html",
@@ -655,6 +670,31 @@
       "width": 380,
       "height": 520,
       "isStandard": "true",
+      "categories": [
+        "Partners",
+        "Portals"
+      ]
+    },
+    {
+      "title": "NASS Portal",
+      "description": "Investigate data on farms, farmers, and farm products in the U.S.",
+      "width": 380,
+      "height": 520,
+      "path": "https://nass-plugin.concord.org/",
+      "visible": true,
+      "categories": [
+        "Portals"
+      ]
+    },
+    {
+      "title": "Purple Air",
+      "description": "Choose a location and download air quality data from the Purple Air network using stations near that location.",
+      "title-string": "DG.plugin.PurpleAir.title",
+      "path": "/purpleair/index.html",
+      "aegis": "NAU",
+      "visible": true,
+      "width": 380,
+      "height": 520,
       "categories": [
         "Partners",
         "Portals"
@@ -735,7 +775,7 @@
     },
     {
       "title": "nhanes",
-      "description": "Data portal for 11,000-ish cases of 2003 data from NHANES",
+      "description": "Data portal for 11,000-ish cases of 2017–2020 data from NHANES",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/nhanes/nhanes.html",
@@ -801,8 +841,8 @@
       "description-string": "DG.plugin.NOAA-weather.description",
       "width": 380,
       "height": 490,
-      "path": "/noaa-codap-plugin/",
-      "icon": "/NOAA-weather/assets/images/icon-noaa-weather.svg",
+      "path": "/noaa-codap-plugin/index.html",
+      "icon": "/noaa-codap-plugin/assets/images/icon-noaa-weather.svg",
       "visible": "true",
       "isStandard": "true",
       "categories": [
@@ -888,7 +928,7 @@
       "description": "Computes the day length for a year for any place in the world",
       "width": 350,
       "height": 450,
-      "path": "/DayLength/build/",
+      "path": "https://models-resources.concord.org/codap-day-length-plugin-3/branch/main/",
       "visible": "true",
       "categories": [
         "Generators",

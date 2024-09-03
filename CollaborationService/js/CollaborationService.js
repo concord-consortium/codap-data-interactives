@@ -553,7 +553,7 @@ var dispatcher = Object.create({ // jshint ignore:line
 
     init: function () {
       firebase.initializeApp({
-        apiKey: "AIzaSyBkHsVd9ZUNL0Uy6SbqbaOn8nwIvmlwW9M",
+        apiKey: atob("QUl6YVN5QmtIc1ZkOVpVTkwwVXk2U2JxYmFPbjhud0l2bWx3VzlN"),
         authDomain: "codap-collaborations.firebaseapp.com",
         databaseURL: "https://codap-collaborations.firebaseio.com",
         storageBucket: "codap-collaborations.appspot.com",
