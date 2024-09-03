@@ -928,7 +928,7 @@
       "description": "Computes the day length for a year for any place in the world",
       "width": 350,
       "height": 450,
-      "path": "/DayLength/build/",
+      "path": "https://models-resources.concord.org/codap-day-length-plugin-3/branch/main/",
       "visible": "true",
       "categories": [
         "Generators",
