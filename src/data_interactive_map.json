@@ -95,6 +95,20 @@
       ]
     },
     {
+      "title": "Simmer",
+      "description": "Create block programmed simulations that generate data.",
+      "title-string": "DG.plugin.Simmer.name",
+      "description-string": "DG.plugin.Simmer.description",
+      "width": 400,
+      "height": 600,
+      "path": "/eepsmedia/plugins/simmer/index.html",
+      "visible": "true",
+      "isStandard": "true",
+      "categories": [
+        "Tools", "Partners", "Simulators"
+      ]
+    },
+    {
       "title": "SRRI Ship Odyssey Data Game",
       "description": "Send rats on a dive to find sunken treasure with this <a target=\"_blank\" href=\"https:\/\/www.srri.umass.edu\/\">SRRI<\/a> game.",
       "width": 290,
@@ -781,6 +795,7 @@
       "path": "/data-science-worlds/nhanes/nhanes.html",
       "visible": true,
       "aegis": "DSG",
+      "isStandard": "true",
       "categories": [
         "Partners",
         "Portals"
