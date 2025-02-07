@@ -25,6 +25,12 @@
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "scrambled_",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
   },
+  "fr": {
+    "DG.plugin.Scrambler.language": "Anglais",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "Réparer pour continuer.",
+    "DG.plugin.Scrambler.static.howManyLabel": "combien?",
+    "DG.plugin.Scrambler.sOr": "ou"
+  },
   "de": {
     "DG.plugin.Scrambler.name": "Mischmaschine",
     "DG.plugin.Scrambler.language": "Deutsch",
@@ -54,6 +60,32 @@
     "DG.plugin.Scrambler.static.howManyLabel": "כמה?",
     "DG.plugin.Scrambler.sNoAttribute": "אין מאפיין",
     "DG.plugin.Scrambler.sOr": "או"
+  },
+  "ja": {
+    "DG.plugin.Scrambler.name": "スクランブラー",
+    "DG.plugin.Scrambler.description": "属性をランダムに変化させて仮説をテストします。",
+    "DG.plugin.Scrambler.language": "英語",
+    "DG.plugin.Scrambler.static.scramblerTitle": "スクランブラー",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "それを修正して続行してください。",
+    "DG.plugin.Scrambler.static.howManyLabel": "いくつか？",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "スクランブラー表示",
+    "DG.plugin.Scrambler.sScramble": "スクランブラー",
+    "DG.plugin.Scrambler.sNoAttribute": "属性はありません😕",
+    "DG.plugin.Scrambler.sIterationAttName": "バッチ",
+    "DG.plugin.Scrambler.sIterationAttDescription": "データの「バッチ」。スクランブルするたびに増加します。",
+    "DG.plugin.Scrambler.sScrambledAttName": "属性をスクランブル",
+    "DG.plugin.Scrambler.sScrambledAttDescription": "どの属性がスクランブルされたか。",
+    "DG.plugin.Scrambler.sNoDataset": "データを見つけて、スクランブルする属性をここにドラッグします",
+    "DG.plugin.Scrambler.sNoScrambleAttribute": "どの属性をスクランブルしたいですか?ここにドラッグします。",
+    "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "スクランブルされたデータセットを 1 つ表示する",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span>スクランブル <code>%@1</code></span>",
+    "DG.plugin.Scrambler.sfOKtoScramble": "<span>データ<code>%@2</code> の <code>%@1</code> をスクランブルしてもOK</span>",
+    "DG.plugin.Scrambler.sfNoMeasure": "<span>データ<code>%@1</code> には測定値が必要です。これはおそらく数式を含む属性です。その属性を左にドラッグすると、何かを収集できるようになります。</span>",
+    "DG.plugin.Scrambler.sfFormulaProblem": "<span><code>%@1</code> には数式があるため、スクランブルは機能しません。 <code>%@3</code> など、最後のコレクション (%@2) とは別の属性をドラッグします。</span>",
+    "DG.plugin.Scrambler.sfNotALeafProblem": "<span><code>%@1</code> のスクランブルは、最後のコレクション (<code>%@2</code>) にないため機能しません。 <code>%@2</code> から属性をここにドロップします (<code>%@3</code> など)。</span",
+    "DG.plugin.Scrambler.sOr": "か",
+    "DG.plugin.Scrambler.sScrambledDatasetPrefix": "スクランブルされた_",
+    "DG.plugin.Scrambler.sMeasureDatasetPrefix": "からの測定値"
   },
   "ko": {
     "DG.plugin.Scrambler.name": "스크램블러",

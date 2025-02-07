@@ -1,3 +1,6 @@
+/*  global Blockly, Blockly.JavaScript, codapInterface     */
+
+
 const bEvents = {
 
     register : function() {
@@ -28,8 +31,12 @@ const bEvents = {
                         //const newFunctionID = event.json.id;
                         //simmer.makeAutoFunctionCallBlock(newFunctionName, newFunctionID);
                         break;
-
+                    default:
+                        break;
                 }
+                break;
+
+            default:
                 break;
         }
     },
