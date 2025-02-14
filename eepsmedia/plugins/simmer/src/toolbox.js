@@ -4,17 +4,20 @@ simmer.toolbox = {
         //      CODAP
 
         {
-            "kind": "category", "name": "CODAP", "contents": [{
-                "kind": "block", "type": "codap_emit"
-            }]
+            "kind": "category", "name": "CODAP", "contents": [
+                {
+                    "kind": "block", "type": "codap_emit"
+                }
+            ]
         },
 
-//      magical variables
+        //      magical way to make variables category
+
         {
-            "kind":"category",
-            "name":"Variables",
+            "kind": "category",
+            "name": "Variables",
             //  "categorystyle":"variable_category",
-            "custom":"VARIABLE"
+            "custom": "VARIABLE"
         },
 
         //      Math: numbers and values
@@ -97,8 +100,8 @@ simmer.toolbox = {
                     }
                 },
                 {
-                    "kind":"block",
-                    "type":"random_float",
+                    "kind": "block",
+                    "type": "random_float",
                     "inputs": {
                         "LOWER": {
                             "shadow": {
@@ -122,6 +125,10 @@ simmer.toolbox = {
                     'kind': 'block',
                     'type': 'random_pick'
                 },
+                {
+                    'kind': 'block',
+                    'type': 'random_take'
+                },
 
                 {
                     'kind': 'block',
@@ -139,24 +146,6 @@ simmer.toolbox = {
                         }
                     }
                 },
-
-/*
-                {
-                    "disabled" : true,
-                    'kind': 'block',
-                    'type': 'random_pick_from_two_advanced',
-                    "inputs": {
-                        "PROP": {
-                            "shadow": {
-                                "type": "text",
-                                "fields": {
-                                    "TEXT": "1/2"
-                                }
-                            }
-                        }
-                    }
-                },
-*/
 
                 {
                     'kind': 'block',
@@ -220,12 +209,10 @@ simmer.toolbox = {
                     "kind": "block", "type": "logic_operation",
                 },
                 {
-                    "kind": "block",
-                    "type": "logic_negate"
+                    "kind": "block", "type": "logic_negate"
                 },
                 {
-                    "kind": "block",
-                    "type": "logic_ternary"
+                    "kind": "block", "type": "logic_ternary"
                 },
 
             ]
@@ -259,12 +246,27 @@ simmer.toolbox = {
                 {
                     "kind": "block",
                     "type": "controls_whileUntil"
+                },
+                {
+                    "kind": "block",
+                    "type": "loop_number_or_empty",
+                    "inputs": {
+                        "TIMES": {
+                            "shadow": {
+                                "type": "math_number",
+                                "fields": {
+                                    "NUM": 4
+                                }
+
+                            }
+                        }
+                    }
                 }
             ]
         },
 
 
-        //  functions
+        //  functions (magical, like variables)
 
         {
             "kind": "category",
@@ -272,21 +274,6 @@ simmer.toolbox = {
             "custom": "PROCEDURE"
         },
 
-        /*
-                {
-                    "kind": "category", "name": "Functions", "contents": [
-                        {
-                            "kind": "block",
-                            "type": "procedures_defnoreturn"
-                        },
-                        {
-                            "kind": "block",
-                            "type": "procedures_callnoreturn"
-                        },
-
-                    ]
-                },
-        */
 
         //  arrays and lists
 
@@ -309,7 +296,25 @@ simmer.toolbox = {
                     }
                 },
 
-                //  make a list from a string
+                //  simple make list from string
+
+                {
+                    "kind": "block", "type": "lists_simple_split",
+
+                    "inputs" : {
+                        "TEXT" : {
+                            "shadow": {
+                                "type": "text",
+                                "fields": {
+                                    "TEXT": "a,b,c,c"
+                                }
+                            }
+                        }
+                    }
+
+                },
+
+                //  make a list from a string (complete)
 
                 {
                     "kind": "block",
@@ -319,17 +324,14 @@ simmer.toolbox = {
                     },
                     "inputs": {
 
-                        //  this way of specifying INPUT doesn't work!
-
-                        "INPUT" : {
+                        "INPUT": {
                             "shadow": {
                                 "type": "text",
                                 "fields": {
-                                    "TEXT": "a, b, c, c"
+                                    "TEXT": "a,b,c,c"
                                 }
                             }
                         },
-
 
                         //  this DELIM shadow does work!
                         "DELIM": {
@@ -346,22 +348,27 @@ simmer.toolbox = {
                 {
                     'kind': 'block', 'type': 'lists_push',
                 },
+/*
+                {
+                    'kind': 'block', 'type': 'lists_pop',
+                },
+*/
 
                 {
-                    "kind":"block",
-                    "type":"lists_length"
+                    "kind": "block",
+                    "type": "lists_length"
                 },
                 {
-                    "kind":"block",
-                    "type":"lists_isEmpty"
+                    "kind": "block",
+                    "type": "lists_isEmpty"
                 },
 
                 {
-                    "kind":"block",
-                    "type":"lists_getIndex",
-                    "fields":{
-                        "MODE":"GET",
-                        "WHERE":"FROM_START"
+                    "kind": "block",
+                    "type": "lists_getIndex",
+                    "fields": {
+                        "MODE": "GET",
+                        "WHERE": "FROM_START"
                     }
                 },
 
