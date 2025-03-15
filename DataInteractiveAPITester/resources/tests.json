@@ -1096,5 +1096,32 @@
         "operation": "redoButtonPress"
       }
     }
+  },
+  {
+    "name": "Create the Categorical Attribute ColorMap",
+    "message": {
+      "action": "create",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name].colorMap",
+      "values": {
+        "colorMap": {"African Elepant": "#FF0000", "Asian Elephant": "#00FF00", "Human": "#0000FF"}
+      }
+    }
+  },
+  {
+    "name": "Get Categorical Attribute ColorMap",
+    "message": {
+      "action": "get",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name].colorMap"
+    }
+  },
+  {
+    "name": "Update Existing Categorical Attribute ColorMap",
+    "message": {
+      "action": "update",
+      "resource": "dataContext[Mammals].collection[Mammals].attribute[name].colorMap",
+      "values": {
+        "colorMap": {"African Elepant": "#FF0000", "Asian Elephant": "#00FF00", "Human": "#0000FF"}
+      }
+    }
   }
 ]

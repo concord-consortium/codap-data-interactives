@@ -35,7 +35,8 @@ $(function () {
       'undoChangeNotice',
       'formulaEngine',
       'logMessage',
-      'logMessageMonitor'
+      'logMessageMonitor',
+      'colorMap'
     ];
 
   var templates = [];
@@ -437,7 +438,8 @@ $(function () {
           itemByCaseID: 'item',
           itemByID: 'item',
           itemCount: 'item',
-          itemSearch: 'item'
+          itemSearch: 'item',
+          colorMap: 'colorMap'
         };
 
   function classifyTemplateData(templateData) {
