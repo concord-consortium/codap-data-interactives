@@ -24,6 +24,12 @@
               id="speed-slider"
             ></span>
           </div>
+          <div class="controller-container" v-bind:title="'Pitch Range'">
+            <label for="pitch-slider" style="margin-right: 10px; margin-top:5px; margin-bottom: 5px;">Pitch Range -<br>set the highest and <br>lowest tone</label>
+            <span
+              id="pitch-slider"
+            ></span>
+          </div>
         </div>
         <div class="message-area" v-bind:title="tr('DG.plugin.sonify.messageArea')">{{userMessage}}</div>
       </div>

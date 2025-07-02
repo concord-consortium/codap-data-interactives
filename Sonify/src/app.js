@@ -73,7 +73,7 @@ const app = new Vue({
     version: packageInfo.version,
     dim: {
       width: 285,
-      height: 385,
+      height: 475,
     },
     loading: true,
     // state managed by CODAP
@@ -97,6 +97,8 @@ const app = new Vue({
       stereoAttrIsDescending: false,
       connectByCollIds: null,
       playbackSpeed: 0.5,
+      minPitch: 0,
+      maxPitch: 1,
       loop: false,
       selectionMode: FOCUS_MODE,
     },
@@ -134,6 +136,7 @@ const app = new Vue({
     playing: false,
 
     speedSlider: null,
+    pitchSlider: null,
     loopToggle: null,
     userMessage: null,
     timerId: null,
@@ -196,6 +199,30 @@ const app = new Vue({
             }, remainingPlaybackTime);
           }
         }
+      });
+
+      this.pitchSlider = new Nexus.Multislider("#pitch-slider", {
+        size: [60,60],
+        numberOfSliders: 2,
+        min: 0,
+        max: 1,
+        step: 0,
+        candycane: 1,
+        values: [0.95,0.05],
+        smoothing: 0,
+        mode: "line"
+      });
+
+      this.pitchSlider.on("change", (v) => {
+        if(v[0] <= v[1]){
+          this.state.minPitch = v[0];
+          this.state.maxPitch = v[1];
+        } else {
+          this.state.minPitch = v[1];
+          this.state.maxPitch = v[0];         
+        }
+        this.getSelectedItems(this.state.focusedContext).then(
+         this.onItemsSelected,);
       });
 
       this.speedSlider = new Nexus.Slider("#speed-slider", {
@@ -561,10 +588,12 @@ const app = new Vue({
               let value = this.state[`${param}AttrIsDate`]
                 ? Date.parse(c.values[this.state[`${param}Attribute`]])
                 : c.values[this.state[`${param}Attribute`]];
-              value = isNaN(parseFloat(value))
+                value = isNaN(parseFloat(value))
                 ? NaN
-                : (value - this[`${param}AttrRange`].min) / range;
-              return { id: c.id, val: value };
+
+                : scale((value - this[`${param}AttrRange`].min) / range, this.state.maxPitch, this.state.minPitch);
+console.log("min "+this.state.minPitch+"  max "+this.state.maxPitch);
+               return { id: c.id, val: value };
             });
           }
         }
@@ -682,7 +711,7 @@ const app = new Vue({
       // ['pitch', 'duration', 'loudness', 'stereo'].forEach(param => this.prepMapping({ param: param, items: CONTRAST_MODE ? allItems : items }));
       this.prepMapping({
         param: "pitch",
-        items: [CONTRAST_MODE, CONNECT_MODE].includes(selectionMode)
+        items: [CONTRAST_MODE, CONNECT_MODE].includes(this.state.selectionMode)
           ? allItems
           : items,
       });
@@ -786,7 +815,6 @@ const app = new Vue({
           // let duration = this.durationArray.length === this.timeArray.length ? this.durationArray[i].val : 0.5;
           // let loudness = this.loudnessArray.length === this.timeArray.length ? this.loudnessArray[i].val * 0.95 + 0.05 : 0.5;
           // let stereo = this.stereoArray.length === this.timeArray.length ? this.stereoArray[i].val : 0.5;
-
           const loudness = 0.5;
           const duration = 0.2;
 
@@ -875,6 +903,9 @@ const app = new Vue({
       }
       if (this.state.loop != null) {
         this.loopToggle.state = this.state.loop;
+      }
+      if (this.state.minPitch != null && this.state.maxPitch != null) {
+        this.pitchSlider.values = [this.state.maxPitch, this.state.minPitch];
       }
       helper
         .queryAllData()
