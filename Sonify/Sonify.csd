@@ -44,8 +44,8 @@ endin
 ; The SOFT, HARD, etc. instruments actually create sounds
 instr 2, SOFT
 iatk = 0.002
-knotenum = scale(p4, 110, 55)
-ilowboost = (110 - i(knotenum)) / 55 * 0.5
+knotenum = scale(p4, 96, 48)
+ilowboost = (96 - i(knotenum)) / 48 * 0.5
 igain = (p5 + ilowboost) * 0.075
 aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
 asig oscil aenv, cpsmidinn(knotenum)
@@ -54,8 +54,8 @@ endin
 
 instr 3, HARD
 iatk = 0.002
-knotenum = scale(p4, 110, 55)
-ilowboost = (110 - i(knotenum)) / 55 * 0.5
+knotenum = scale(p4, 96, 48)
+ilowboost = (96 - i(knotenum)) / 48 * 0.5
 igain = (p5 + ilowboost) * 0.025
 aenv = madsr:a(iatk, p3-iatk, 0, 0) * igain
 asig oscil aenv, cpsmidinn(knotenum), 1
@@ -63,8 +63,8 @@ zawm asig, gimixch
 endin
 
 instr 4, CONTINUOUS
-innmin = 55
-innmax = 110
+innmin = 48
+innmax = 96
 innrange = innmax - innmin
 
 innstart = p5 * innrange + innmin

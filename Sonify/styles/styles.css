@@ -93,8 +93,34 @@ body {
   min-width: 3em;
 }
 
+.controller-container > label[for="play-pause-button"] {
+  margin-right: 5px;
+}
+
+.controller-container > label[for="smooth-sound-toggle"] {
+  min-width: 7.5em;
+}
+
+/* Ensure NexusUI components have proper vertical alignment */
+.controller-container > span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Add subtle spacing and visual consistency for toggle and slider controls */
+.controller-container > span#smooth-sound-toggle,
+.controller-container > span#loop-toggle,
+.controller-container > span#speed-slider {
+  margin-left: 0.5em;
+}
+
+/* Add 12px space between play, reset, and loop controls */
+.controller-area > .controller-container:not(:last-child) {
+  margin-right: 12px;
+}
+
 .mapper-container {
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
   padding: 0.25em 0;
 }
 
