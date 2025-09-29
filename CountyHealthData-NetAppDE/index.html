@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description"
+        content="A CODAP plugin to retrieve county health ranking data for United States counties">
+  <title>County Health Rankings (2024)</title>
+  <script src="lib/iframe-phone.js"></script>
+  <script src="lib/CodapInterface.js"></script>
+  <script src="lib/papaparse.min.js"></script>
+  <link rel="stylesheet" href="css/style.css" >
+</head>
+<body>
+<main>
+  <section id="fe-intro-section" class="fe-pop-up">
+    <div class="fe-section-header-line">
+      <span>Retrieve data about county health rankings in the US</span>
+      <span class="fe-info-button fe-pop-up-anchor icon-info" title="Get further information about this CODAP plugin"></span>
+    </div>
+    <div class="fe-cover"></div>
+    <div class="fe-pop-up-container">
+      <div class="fe-pop-up-content">
+        <div class="fe-pop-up-header">
+          Information about the plug-in
+        </div>
+        <div class="fe-pop-up-body">
+          <p>
+            The data from this plug-in was downloaded from the publicly
+            accessible dataset collected by
+            <a href="https://www.countyhealthrankings.org/" target="_blank">County Health Rankings & Roadmaps</a>,
+            provides data, evidence, guidance, and examples to build awareness of the multiple factors that influence 
+            health and support leaders in growing community power to improve health equity. 
+            The Rankings are unique in their ability to measure the health of nearly every county in all 50 states, 
+            and are complemented by guidance, tools, and resources designed to accelerate community learning and action. 
+            To see the most up-to-date dataset,
+            <a href="https://www.countyhealthrankings.org/explore-health-rankings" target="_blank">click here</a>.
+          </p>
+
+          <p>
+            This plug-in was developed in Fall 2025 by
+            <a href="https://concord.org" target="_blank">The Concord Consortium</a>
+            as part of the
+            <a href="https://codap.concord.org" target="_blank">CODAP project</a>.
+            This plug-in was part of the NetApp Data Explorers project, funded by NetApp.
+            Data curation from the full dataset was conducted by Andee Rubin, Traci Higgins, Natalya St. Clair,
+            and Chad Dorsey. Additional data processing was assisted by ChatGPT 4.
+          </p>
+        </div>
+        <div id="fe-info-close-section" class="fe-pop-up-footer">
+          <div class="fe-control-row">
+            <span><button id="fe-info-close-button" class="fe-button" title="Hide this section.">Close</button></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <hr class="fe-fixed-section-divider"/>
+  <section class="contents">
+    <div class="fe-control-row">
+      <label>
+        State: 
+        <select id="state-select" name="state">
+          <option value="">Select a state...</option>
+          <option value="AL">Alabama</option>
+          <option value="AK">Alaska</option>
+          <option value="AZ">Arizona</option>
+          <option value="AR">Arkansas</option>
+          <option value="CA">California</option>
+          <option value="CO">Colorado</option>
+          <option value="CT">Connecticut</option>
+          <option value="DE">Delaware</option>
+          <option value="FL">Florida</option>
+          <option value="GA">Georgia</option>
+          <option value="HI">Hawaii</option>
+          <option value="ID">Idaho</option>
+          <option value="IL">Illinois</option>
+          <option value="IN">Indiana</option>
+          <option value="IA">Iowa</option>
+          <option value="KS">Kansas</option>
+          <option value="KY">Kentucky</option>
+          <option value="LA">Louisiana</option>
+          <option value="ME">Maine</option>
+          <option value="MD">Maryland</option>
+          <option value="MA">Massachusetts</option>
+          <option value="MI">Michigan</option>
+          <option value="MN">Minnesota</option>
+          <option value="MS">Mississippi</option>
+          <option value="MO">Missouri</option>
+          <option value="MT">Montana</option>
+          <option value="NE">Nebraska</option>
+          <option value="NV">Nevada</option>
+          <option value="NH">New Hampshire</option>
+          <option value="NJ">New Jersey</option>
+          <option value="NM">New Mexico</option>
+          <option value="NY">New York</option>
+          <option value="NC">North Carolina</option>
+          <option value="ND">North Dakota</option>
+          <option value="OH">Ohio</option>
+          <option value="OK">Oklahoma</option>
+          <option value="OR">Oregon</option>
+          <option value="PA">Pennsylvania</option>
+          <option value="RI">Rhode Island</option>
+          <option value="SC">South Carolina</option>
+          <option value="SD">South Dakota</option>
+          <option value="TN">Tennessee</option>
+          <option value="TX">Texas</option>
+          <option value="UT">Utah</option>
+          <option value="VT">Vermont</option>
+          <option value="VA">Virginia</option>
+          <option value="WA">Washington</option>
+          <option value="WV">West Virginia</option>
+          <option value="WI">Wisconsin</option>
+          <option value="WY">Wyoming</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <hr class="wx-fixed-section-divider"/>
+
+  <!-- Attribute Selector Section -->
+  <section id="attribute-selector-container" class="fe-attribute-selector wx-dropdown-group">
+    <!-- Demographics Category -->
+    <div class="wx-dropdown wx-up" id="demographics-section">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to expand/collapse">
+        <span class="wx-section-title">Demographics</span>
+        <span class="wx-selection-count">0</span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+      <div class="wx-dropdown-body">
+        <table class="attributeCheckboxes">
+          <tbody id="demographics-attributes">
+            <!-- Attribute checkboxes and descriptions will be rendered here by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Health Category -->
+    <div class="wx-dropdown wx-up" id="health-section">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to expand/collapse">
+        <span class="wx-section-title">Health</span>
+        <span class="wx-selection-count">0</span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+      <div class="wx-dropdown-body">
+        <table class="attributeCheckboxes">
+          <tbody id="health-attributes">
+            <!-- Attribute checkboxes and descriptions will be rendered here by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Education / Youth Category -->
+    <div class="wx-dropdown wx-up" id="education_youth-section">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to expand/collapse">
+        <span class="wx-section-title">Education / Youth</span>
+        <span class="wx-selection-count">0</span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+      <div class="wx-dropdown-body">
+        <table class="attributeCheckboxes">
+          <tbody id="education_youth-attributes">
+            <!-- Attribute checkboxes and descriptions will be rendered here by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Wealth / Infrastructure Category -->
+    <div class="wx-dropdown wx-up" id="wealth_infrastructure-section">
+      <div class="wx-section-header-line wx-dropdown-header" title="Click to expand/collapse">
+        <span class="wx-section-title">Wealth / Infrastructure</span>
+        <span class="wx-selection-count">0</span>
+        <span class="wx-user-selection"></span>
+        <span class="wx-dropdown-indicator"></span>
+      </div>
+      <div class="wx-dropdown-body">
+        <table class="attributeCheckboxes">
+          <tbody id="wealth_infrastructure-attributes">
+            <!-- Attribute checkboxes and descriptions will be rendered here by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Select All Control -->
+  <div class="wx-select-all-container">
+    <a href="#" id="select-all-link" class="wx-select-all-link" title="Select or deselect all attributes">Select All</a>
+  </div>
+
+  <!-- Updated Summary Area -->
+  <div id="wx-summary-section">
+    <div class="wx-section-header-line summary-options">
+      <a href="#" class="clear-data-link" title="Clear Dataset in CODAP">
+        Clear Data
+        <span class="clear-data-icon" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-left:4px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" stroke="#177991" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="10" y1="11" x2="10" y2="17" stroke="#177991" stroke-width="2" stroke-linecap="round"/>
+            <line x1="14" y1="11" x2="14" y2="17" stroke="#177991" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </a>
+      <div class="button-group">
+        <button class="fe-fetch-button wx-button" title="Get data and send to CODAP">Add State Data</button>
+      </div>
+    </div>
+  </div>
+
+  <p>
+
+  </p>
+</main>
+<div id="clear-data-modal" class="modal-overlay fe-hide" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">Confirm Data Deletion</div>
+      <div class="modal-body">Are you sure you want to clear all data? This action cannot be undone.</div>
+      <div class="modal-footer">
+        <button class="modal-confirm fe-button">Delete</button>
+        <button class="modal-cancel fe-button">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/index.js?v=20250103c" type="module"></script>
+</body>
+</html>

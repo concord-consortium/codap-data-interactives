@@ -102,6 +102,7 @@
       "width": 400,
       "height": 600,
       "path": "/eepsmedia/plugins/simmer/index.html",
+      "icon": "/eepsmedia/plugins/simmer/art/simmer.svg",
       "visible": "true",
       "isStandard": "true",
       "categories": [
@@ -793,6 +794,7 @@
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/nhanes/nhanes.html",
+      "icon": "/data-science-worlds/nhanes/assets/images/nhanes.svg",
       "visible": true,
       "aegis": "DSG",
       "isStandard": "true",
@@ -972,6 +974,19 @@
       "categories": [
         "Portals"
       ]
+    },
+    {
+      "title": "County Health Rankings",
+      "description": "Explore data from the <a target=\"_blank\" href=\"https://www.countyhealthrankings.org/\">County Health Rankings & Roadmaps</a> website, a store of data about demographics, health, education, youth, wealth, and infrastructure for all counties in the United States.",
+      "width": 350,
+      "height": 450,
+      "path": "/CountyHealthData-NetAppDE/",
+      "visible": "true",
+      "categories": [
+        "Portals",
+        "Partners"
+      ]
     }
+
   ]
 }
