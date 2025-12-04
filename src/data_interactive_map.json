@@ -496,17 +496,6 @@
       ]
     },
     {
-      "title": "GeoJSON Importer",
-      "description": "",
-      "width": 600,
-      "height": 400,
-      "path": "/GeoJSONImporter/GeoJSONImporter.html",
-      "visible": false,
-      "categories": [
-        "Utilities"
-      ]
-    },
-    {
       "title": "GoogleSheets",
       "description": "",
       "width": 600,
@@ -563,8 +552,8 @@
       "title": "CODAP Onboarding",
       "description": "This is the onboarding plugin for CODAP",
       "path": "https://codap.concord.org/plugins/releases/latest/onboarding",
-      "width":600,
-      "height":400,
+      "width": 600,
+      "height": 400,
       "visible": false,
       "categories": [
         "Utilities"
@@ -717,7 +706,7 @@
     },
     {
       "title": "acs",
-      "description": "ACS data portal: 20000 Californans in 2013",
+      "description": "ACS data portal: 20000 Californians in 2013",
       "width": 600,
       "height": 400,
       "path": "/data-science-worlds/acs/acs.html",
