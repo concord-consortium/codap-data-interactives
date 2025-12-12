@@ -211,7 +211,7 @@
       "oneSampleP": {
         "menuString": "one-sample proportion of •1• = •2•",
         "testQuestion": "Is the proportion of (•1• = •2•) •3• •4• ?",
-        "resultsLine1": "sample proportion = •1•, (•2• out of N = •3•)",
+        "resultsLine1": "sample proportion = •1•, (•2• out of n = •3•)",
         "configurationStart": "testing prop",
         "usingZProc" : "using the z procedure",
         "usingBinomialProc" : "using the exact binomial procedure"

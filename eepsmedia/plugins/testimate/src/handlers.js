@@ -223,11 +223,14 @@ const handlers = {
      */
     emitRandom: async function() {
 
+        testimate.iteratingRandom = true;   //  set the flag
+
         for (let i = 0; i < testimate.state.randomEmitNumber; i++) {
             await connect.rerandomizeSource(testimate.state.dataset.name);
             await this.emitSingle();
         }
 
+        testimate.iteratingRandom = false;  //  clear the flag
         testimate.refreshDataAndTestResults();
     },
 

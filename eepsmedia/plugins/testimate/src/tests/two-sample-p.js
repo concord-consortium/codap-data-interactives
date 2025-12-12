@@ -109,25 +109,17 @@ class TwoSampleP extends Test {
     }
 
     makeResultsString() {
-        const N = this.results.N;
-        const N2 = this.results.N2;
-        const N1 = this.results.N1;
+        const NString = Test.makeResultValueString("N", this.results.N);
+
         const pDiff = ui.numberToString(this.results.pDiff, 3);
-        const SE = ui.numberToString(this.results.SE);
         const SEinterval = ui.numberToString(this.results.SEinterval);
 
-        const p1 = ui.numberToString(this.results.prop1);
-        const p2 = ui.numberToString(this.results.prop2);
+        const PString = Test.makePString(this.results.P);
+        const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
 
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const CImin = ui.numberToString(this.results.CImin);
-        const CImax = ui.numberToString(this.results.CImax);
         const zCrit = ui.numberToString(this.results.zCrit, 3);
 
-        const z = ui.numberToString(this.results.z, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
+        const zString = Test.makeResultValueString("z", this.results.z, 3);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const DSdetails = document.getElementById("DSdetails");
@@ -143,8 +135,8 @@ class TwoSampleP extends Test {
             `${localize.getString("tests.twoSampleP.testQuestionHead")} ${nonGroupingPhrase} ${comparison}?`;
 
         out += `${resultHed} <br>`;
-        out += `<br>    N = ${N}, diff = ${pDiff}, z = ${z}, ${P}`;
-        out += `<br>    ${conf}% CI = [${CImin}, ${CImax}],  SE(CI) = ${SEinterval} `;
+        out += `<br>    ${NString}, ${localize.getString("attributeNames.diff")} = ${pDiff}, ${zString}, ${PString}`;
+        out += `<br>    ${CIString},  ${localize.getString("attributeNames.SE")}(${localize.getString("CI")}) = ${SEinterval} `;
 
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.twoSampleP.detailsSummary");
@@ -182,7 +174,8 @@ class TwoSampleP extends Test {
         const groupRowLabelB = this.grouping ? this.results.labelB : `${this.results.labelB} = ${this.results.successValueB}`;
 
         out += `<table class="test-results">`;
-        out += `<tr class="headerRow"><th>${groupColHead}</th><th>N</th><th>${propColHead}</th><th>SE</th></tr>`;
+        out += `<tr class="headerRow"><th>${groupColHead}</th><th>${localize.getString("attributeNames.N")}</th>`;
+        out += `<th>${propColHead}</th><th>${localize.getString("attributeNames.SE")}</th></tr>`;
         out += `<tr><td>${groupRowLabelA}</td><td>${succA} / ${N1}</td><td>${p1}</td><td>${SE1}</td></tr>`;
         out += `<tr><td>${groupRowLabelB}</td><td>${succB} / ${N2}</td><td>${p2}</td><td>${SE2}</td></tr>`;
         out += `<tr><td>${pooled}</td><td>${succA + succB} / ${N}</td><td>${prop}</td><td>${SE}</td></tr>`;

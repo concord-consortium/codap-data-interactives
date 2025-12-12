@@ -61,6 +61,40 @@ class Test {
 
 
     /**
+     * format a p-value and its value, as a suitable string, its name localized,
+     * as in "pWert = 0.023"
+     *
+     * @param p     the floating value of p
+     * @returns {string}
+     */
+    static makePString(p) {
+        const PString = (p < 0.0001) ?
+            `${localize.getString("attributeNames.P")} < 0.0001` :
+            `${localize.getString("attributeNames.P")} = ${ui.numberToString(p)}`;
+        return PString;
+    }
+
+    /**
+     * Format a string of the form "foo = 5.6" given the name (foo) and the value (5.6).
+     * Importantly, the name is an attribute that must be localized.
+     *
+     * @param iName     the name of the attribute
+     * @param iValue    its value
+     * @param iFigs     how many decimal places?
+     * @returns {string}
+     */
+
+    static makeResultValueString(iName, iValue, iFigs = 4) {
+        const theName = localize.getString(`attributeNames.${iName}`);
+        const theValue =  ui.numberToString(iValue, iFigs);
+        return `${theName} = ${theValue}`;
+    }
+
+    static makeConfCIString(iConf, iCImin, iCImax) {
+        return `${ui.numberToString(iConf, 2)}% ${localize.getString("CI")} = [${ui.numberToString(iCImin)}, ${ui.numberToString(iCImax)}]`;
+    }
+
+    /**
      *   Compute array of compatible test IDs given `data.xAttData` and `data.yAttData`. (e.g., NN01...).
      *   This depends only on their existence and variable type (numeric or categorical)
      * @returns {[]}    Array of test configuration IDs

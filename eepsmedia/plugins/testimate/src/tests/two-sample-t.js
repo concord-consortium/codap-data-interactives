@@ -112,22 +112,16 @@ class TwoSampleT extends Test {
 
     makeResultsString() {
 
-        const N = this.results.N;
-        const diff = ui.numberToString(this.results.diff, 3);
-        const s = ui.numberToString(this.results.s);
-        const SE = ui.numberToString(this.results.SE);
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const PString = Test.makePString(this.results.P);
+        const diffString  = Test.makeResultValueString("diff", this.results.diff, 3);
 
-        const mean1 = ui.numberToString(this.results.mean1);
-        const mean2 = ui.numberToString(this.results.mean2);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const CImin = ui.numberToString(this.results.CImin);
-        const CImax = ui.numberToString(this.results.CImax);
+        const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
+
         const tCrit = ui.numberToString(this.results.tCrit, 3);
-        const df = ui.numberToString(this.results.df, 3);
-        const t = ui.numberToString(this.results.t, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const DSdetails = document.getElementById("DSdetails");
@@ -144,13 +138,13 @@ class TwoSampleT extends Test {
         let out = "<pre>";
 
         out += `${resultHed} <br>`;
-        out += `<br>    N = ${N}, t = ${t}, ${P}`;
-        out += `<br>    diff = ${diff},  ${conf}% ${localize.getString("CI")} = [${CImin}, ${CImax}] `;
+        out += `<br>    ${NString}, ${tString}, ${PString}`;
+        out += `<br>    ${diffString}, ${CIString} `;
 
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.twoSampleT.detailsSummary");      //   `<summary>Difference of means, <i>t</i> procedure</summary>`;
         out += this.makeTwoSampleTable();
-        out += `<br>    df = ${df}, &alpha; = ${alpha},  t* = ${tCrit}`;
+        out += `<br>    ${dfString}, &alpha; = ${alpha},  t* = ${tCrit}`;
         out += `</details>`;
 
         out += `</pre>`;
@@ -178,12 +172,14 @@ class TwoSampleT extends Test {
 
         const groupColHed = this.grouping ? `${testimate.state.y.name}` : group;
         const meanColHead = this.grouping ? `${mean}(${testimate.state.x.name})` : mean;
+        const pooled = localize.getString("pooled");
 
         let out = "";
-        out += `<table class="test-results"><tr class="headerRow"><th>${groupColHed}</th><th>N</th><th>${meanColHead}</th><th>s</th><th>SE</th></tr>`;
+        out += `<table class="test-results"><tr class="headerRow"><th>${groupColHed}</th><th>N</th>`;
+        out += `<th>${meanColHead}</th><th>${localize.getString("attributeNames.s")}</th><th>${localize.getString("attributeNames.SE")}</th></tr>`;
         out += `<tr><td>${this.results.group1Name}</td><td>${N1}</td><td>${mean1}</td><td>${s1}</td><td>${SE1}</td></tr>`;
         out += `<tr><td>${this.results.group2Name}</td><td>${N2}</td><td>${mean2}</td><td>${s2}</td><td>${SE2}</td></tr>`;
-        out += `<tr><td>pooled</td><td>${N}</td><td>diff = <br>${diff}</td><td>${s}</td><td>${SE}</td></tr>`;
+        out += `<tr><td>${pooled}</td><td>${N}</td><td>${localize.getString("attributeNames.diff")} = <br>${diff}</td><td>${s}</td><td>${SE}</td></tr>`;
         out += `</table>`;
         return out;
     }

@@ -10,6 +10,7 @@ const testimate = {
     compatibleTestIDs : [],
     refreshCount : 0,
     OKtoRespondToCaseChanges : true,
+    iteratingRandom : false,      //  has the user pressed the button that rerandomizes the CODAP data and makes a new test?
 
     initialize: async function () {
         console.log(`initializing...`);
@@ -69,7 +70,7 @@ const testimate = {
      */
     adjustTestSides : function() {
         this.state.testParams.theSidesOp = "≠";
-        if (this.state.testParams.sides === 1) {
+        if (this.state.testParams.sides === 1 && !this.iteratingRandom) {
             this.state.testParams.theSidesOp = (this.theTest.results[this.theTest.theConfig.testing] > testimate.state.testParams.value ? ">" : "<");
         }
     },
@@ -218,7 +219,7 @@ const testimate = {
 
     constants: {
         pluginName: `testimate`,
-        version: `2025a`,
+        version: `2025b0`,
         dimensions: {height: 555, width: 444},
 
         emittedDatasetName: `tests and estimates`,     //      for receiving emitted test and estimate results

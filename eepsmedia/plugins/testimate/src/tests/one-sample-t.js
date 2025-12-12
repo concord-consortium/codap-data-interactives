@@ -19,7 +19,7 @@ class OneSampleT extends Test {
         this.results.N = jX.cols();
         this.results.df = this.results.N - 1;
         this.results.mean = jX.mean();
-        this.results.s = jX.stdev(true);    //      true means SAMPLE SD
+        this.results.s = jX.stdev(true);    //      `true` means SAMPLE SD
         this.results.SE = this.results.s / Math.sqrt(this.results.N);
         this.results.P = jX.ttest(testimate.state.testParams.value, testimate.state.testParams.sides);
         this.results.tCrit = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
@@ -30,21 +30,21 @@ class OneSampleT extends Test {
 
     makeResultsString() {
 
-        const testDesc = `mean of ${testimate.state.x.name}`;
+        //  const testDesc = `mean of ${testimate.state.x.name}`;
 
-        const N = this.results.N;
         const mean = ui.numberToString(this.results.mean, 3);
-        const s = ui.numberToString(this.results.s);
-        const SE = ui.numberToString(this.results.SE);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
+        const conf = ui.numberToString(testimate.state.testParams.conf);
         const CImin = ui.numberToString(this.results.CImin);
         const CImax = ui.numberToString(this.results.CImax);
+
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const PString = Test.makePString(this.results.P);
+        const sString = Test.makeResultValueString("s", this.results.s);
+        const SEString = Test.makeResultValueString("SE", this.results.SE);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
+
         const tCrit = ui.numberToString(this.results.tCrit, 3);
-        const df = ui.numberToString(this.results.df, 3);
-        const t = ui.numberToString(this.results.t, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
         const value = ui.numberToString(testimate.state.testParams.value);
 
@@ -55,9 +55,10 @@ class OneSampleT extends Test {
         let out = "<pre>";
 
         out += testQuestion;
-        out += `<br><br>    N = ${N}, t = ${t},  ${P}`;
+        out += `<br><br>    ${NString}, ${tString}, ${PString}`;
         out += `<br>    ${r2}`;
-        out += `<br>    s = ${s}, SE = ${SE}, df = ${df}, &alpha; = ${alpha}, t* = ${tCrit}`;
+        out += `<br>    ${sString}, ${SEString}, `;
+        out += `${dfString}, &alpha; = ${alpha}, t* = ${tCrit}`;
         out += `<br> `;
 
         out += `</pre>`;
