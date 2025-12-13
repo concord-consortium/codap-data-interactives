@@ -65,14 +65,13 @@ class Independence extends Test {
     }
 
     makeResultsString() {
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const PString = Test.makePString(this.results.P);
+        const dfString  = Test.makeResultValueString("df", this.results.df, 3);
+
         const chisq = ui.numberToString(this.results.chisq);
         const chisqCrit = ui.numberToString(this.results.chisqCrit);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const df = ui.numberToString(this.results.df, 3);
-        //  const conf = ui.numberToString(testimate.state.testParams.conf);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const TIdetails = document.getElementById("TIdetails");
@@ -81,12 +80,12 @@ class Independence extends Test {
         let out = "<pre>";
         out += localize.getString("tests.independence.testQuestion",
             testimate.state.y.name, testimate.state.x.name);
-        out += `<br>    N = ${N}, ${this.results.columnLabels.length} columns by ${this.results.rowLabels.length} rows, `;
-        out += `&chi;<sup>2</sup> = ${chisq}, ${P}`;
+        out += `<br>    ${NString}, ${this.results.columnLabels.length} columns by ${this.results.rowLabels.length} rows, `;
+        out += `&chi;<sup>2</sup> = ${chisq}, ${PString}`;
         out += `<details id="TIdetails" ${TIopen ? "open" : ""}>`;
         out += localize.getString("tests.independence.detailsSummary", testimate.state.testParams.sides);
         out += this.makeIndependenceTable();
-        out += `<br>    df = ${df}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
+        out += `<br>    ${dfString}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
         out += `</details>`;
 
         out += `</pre>`;

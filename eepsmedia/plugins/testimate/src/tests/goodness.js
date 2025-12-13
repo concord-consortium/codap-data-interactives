@@ -52,14 +52,12 @@ class Goodness extends Test {
 
     makeResultsString() {
 
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const PString = Test.makePString(this.results.P);
+        const dfString  = Test.makeResultValueString("df", this.results.df, 3);
+
         const chisq = ui.numberToString(this.results.chisq);
         const chisqCrit = ui.numberToString(this.results.chisqCrit);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const df = ui.numberToString(this.results.df, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const GFdetails = document.getElementById("GFdetails");
@@ -68,11 +66,11 @@ class Goodness extends Test {
         let out = "<pre>";
         out += localize.getString("tests.goodness.testQuestion", data.xAttData.name);
         //  out += `Are the proportions of ${data.xAttData.name} as hypothesized?`;
-        out += `<br>    N = ${N}, ${this.results.groupNames.length} ${localize.getString("groups")}, &chi;<sup>2</sup> = ${chisq}, ${P}`;
+        out += `<br>    ${NString}, ${this.results.groupNames.length} ${localize.getString("groups")}, &chi;<sup>2</sup> = ${chisq}, ${PString}`;
         out += `<details id="GFdetails" ${GFopen ? "open" : ""}>`;
         out += localize.getString("tests.goodness.detailsSummary1", testimate.state.testParams.sides);
         out += this.makeGoodnessTable();
-        out += `    df = ${df}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
+        out += `    ${dfString}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
         out += `</details>`;
 
         out += `</pre>`;

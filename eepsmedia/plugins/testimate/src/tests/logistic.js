@@ -132,8 +132,9 @@ class Logistic extends Test {
     }
 
     makeResultsString() {
-        const N = this.results.N;
-        const cost = ui.numberToString(this.results.cost, 4);
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const costString = Test.makeResultValueString("cost", this.results.cost, 4);
+
         const LSlope = ui.numberToString(this.results.LSlope, 4);
         const pos = ui.numberToString(this.results.pos, 4);
         const LRPbox = ui.logisticRegressionProbeBoxHTML(testimate.state.testParams.probe);
@@ -152,7 +153,7 @@ class Logistic extends Test {
         let out = "<pre>";
 
         out += localize.getString("tests.logistic.intro");
-        out += `<br>       N = ${N}, ${this.results.iterations} ${localize.getString("iterations")}, ${localize.getString("cost")} = ${cost} ${more10button}<br><br>`;
+        out += `<br>       ${NString}, ${this.results.iterations} ${localize.getString("iterations")}, ${costString} ${more10button}<br><br>`;
 
         //  model
         out += `<br>${localize.getString("tests.logistic.model1", testimate.state.y.name, pos)}.`;

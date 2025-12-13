@@ -38,21 +38,23 @@ class Paired extends Test {
     }
 
     makeResultsString() {
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const PString = Test.makePString(this.results.P);
+        const sString  = Test.makeResultValueString("s", this.results.s);
+        const SEString = Test.makeResultValueString("SE", this.results.SE);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
+
+
+        //  for `r2` (second row text)
         const mean = ui.numberToString(this.results.mean, 3);
-        const s = ui.numberToString(this.results.s);
-        const SE = ui.numberToString(this.results.SE);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
         const CImin = ui.numberToString(this.results.CImin);
         const CImax = ui.numberToString(this.results.CImax);
-        const tCrit = ui.numberToString(this.results.tCrit, 3);
-        const df = ui.numberToString(this.results.df, 3);
-        const t = ui.numberToString(this.results.t, 3);
         const conf = ui.numberToString(testimate.state.testParams.conf);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
         const value = ui.numberToString(testimate.state.testParams.value);
+        const tCrit = ui.numberToString(this.results.tCrit, 3);
 
         const testQuestion = testimate.state.testParams.reversed ?
             localize.getString("tests.paired.testQuestion",
@@ -64,9 +66,9 @@ class Paired extends Test {
         let out = "<pre>";
 
         out += testQuestion;
-        out += `<br><br>    N = ${N}, t = ${t},  ${P}`;
+        out += `<br><br>    ${NString}, ${tString},  ${PString}`;
         out += `<br>    ${r2}`;
-        out += `<br>    s = ${s}, SE = ${SE}, df = ${df}, &alpha; = ${alpha}, t* = ${tCrit} `;
+        out += `<br>    ${sString}, ${SEString}, ${dfString}, &alpha; = ${alpha}, t* = ${tCrit} `;
         out += `<br> `;
 
         out += `</pre>`;

@@ -198,7 +198,7 @@
       },
       "regression": {
         "menuString": "linear regression of (•1•) as a function of (•2•)",
-        "testQuestion": "How does (•1•) depend on (•2•) ?",
+        "testQuestion": "How does (•1•) depend on (•2•)?",
         "detailsSummary": "<summary>Regression details</summary>",
         "testingSlope": "testing slope"
       },

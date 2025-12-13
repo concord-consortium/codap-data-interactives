@@ -70,7 +70,10 @@ class Regression extends Test {
 
     makeResultsString() {
         //  const testDesc = `mean of ${testimate.state.x.name}`;
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const PString = Test.makePString(this.results.P);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
 
         const slope = ui.numberToString(this.results.slope);       //  CI of slope
         const intercept = ui.numberToString(this.results.intercept);       //  CI of slope
@@ -78,16 +81,12 @@ class Regression extends Test {
         const CISmax = ui.numberToString(this.results.slopeCImax);
         const CIImin = ui.numberToString(this.results.interceptCImin);   //  CI of intercept
         const CIImax = ui.numberToString(this.results.interceptCImax);
-        const df = ui.numberToString(this.results.df);
         const rho = ui.numberToString(this.results.rho);
         const rsq = ui.numberToString(this.results.rsq);
-        const t = ui.numberToString(this.results.t, 3);
+
         const tCrit = ui.numberToString(this.results.tCrit, 3);
         const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
 
         const theSign = intercept >= 0 ? "+" : '-';
 
@@ -105,16 +104,16 @@ class Regression extends Test {
 
         //  out += `How does (${X}) depend on (${Y})?`
         out += localize.getString("tests.regression.testQuestion", X, Y);
-        out += `<br>    LSRL: ${X} = ${slope} (${Y}) ${theSign} ${Math.abs(intercept)} `;  //  note reversal!
-        out += `<br>    N = ${N}, &rho; = ${rho}, r<sup>2</sup> = ${rsq}<br>`;
+        out += `<br>    LSRL: ${X} = ${slope}(${Y}) ${theSign} ${Math.abs(intercept)} `;  //  note reversal!
+        out += `<br>    ${NString}, &rho; = ${rho}, r<sup>2</sup> = ${rsq}<br>`;
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.regression.detailsSummary", X, Y);
         out += `<table><tr><td>${slopeWord}</td><td>${slope}</td><td>${conf}% ${localize.getString("CI")} = [${CISmin}, ${CISmax}]</td></tr>`;
         out += `<tr><td>${interceptWord}</td><td>${intercept}</td><td>${conf}% ${localize.getString("CI")} = [${CIImin}, ${CIImax}]</td></tr></table>`;
         out += `<br> `;
         out += `${testingSlopePhrase} ${testimate.state.testParams.theSidesOp} ${testimate.state.testParams.value} `;
-        out += `<br>    t = ${t}, ${P}`;
-        out += `<br>    df = ${df},  &alpha; = ${alpha}, t* = ${tCrit}, `;
+        out += `<br>    ${tString}, ${PString}`;
+        out += `<br>    ${dfString},  &alpha; = ${alpha}, t* = ${tCrit}, `;
         out += `</details>`;
         out += `<br> `;
         out += `</pre>`;

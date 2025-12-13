@@ -85,13 +85,12 @@ class ANOVA extends Test {
 
     makeResultsString() {
 
-        const N = this.results.N;
-        const F = ui.numberToString(this.results.F);
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const FString = Test.makeResultValueString("F", this.results.F);
         const FCrit = ui.numberToString(this.results.FCrit);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const conf = ui.numberToString(testimate.state.testParams.conf);
+        const PString = Test.makePString(this.results.P);
+
+        //  const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const DSdetails = document.getElementById("DSdetails");
@@ -102,7 +101,7 @@ class ANOVA extends Test {
         let out = "<pre>";
         out += localize.getString("tests.anova.testQuestion",
             testimate.state.x.name, testimate.state.y.name);
-        out += `<br>    N = ${N}, F = ${F}, ${P}<br>`;
+        out += `<br>    ${NString}, ${FString}, ${PString}<br>`;
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.anova.detailsSummary1");
         out += this.makeDescriptiveTable();

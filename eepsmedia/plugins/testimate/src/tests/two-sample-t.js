@@ -175,7 +175,7 @@ class TwoSampleT extends Test {
         const pooled = localize.getString("pooled");
 
         let out = "";
-        out += `<table class="test-results"><tr class="headerRow"><th>${groupColHed}</th><th>N</th>`;
+        out += `<table class="test-results"><tr class="headerRow"><th>${groupColHed}</th><th>${localize.getString("attributeNames.N")}</th>`;
         out += `<th>${meanColHead}</th><th>${localize.getString("attributeNames.s")}</th><th>${localize.getString("attributeNames.SE")}</th></tr>`;
         out += `<tr><td>${this.results.group1Name}</td><td>${N1}</td><td>${mean1}</td><td>${s1}</td><td>${SE1}</td></tr>`;
         out += `<tr><td>${this.results.group2Name}</td><td>${N2}</td><td>${mean2}</td><td>${s2}</td><td>${SE2}</td></tr>`;

@@ -148,7 +148,9 @@ const data = {
         console.log(`    cleaned xAttData (${this.xAttData.theArray.length})`);
 
         if (this.xAttData.theArray.length < 20)
-            console.log(`cleaned x = ${JSON.stringify(this.xAttData.theArray)} \ncleaned y = ${JSON.stringify(this.yAttData.theArray)}`);
+            console.log(`cleaned x = ${JSON.stringify(this.xAttData.theArray)}`);
+        if (this.yAttData && this.yAttData.theArray && this.yAttData.theArray.length < 20)
+            console.log(`\ncleaned y = ${JSON.stringify(this.yAttData.theArray)}`);
     },
 
     /**
