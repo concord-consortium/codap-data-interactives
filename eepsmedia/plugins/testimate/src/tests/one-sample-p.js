@@ -152,7 +152,7 @@ class OneSampleP extends Test {
     makeConfigureGuts() {
         const configStart = localize.getString("tests.oneSampleP.configurationStart");
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value, 0.0, 1.0, 0.05);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         const group = ui.focusGroupButtonXHTML(testimate.state.testParams.focusGroupX);

@@ -214,7 +214,7 @@ class TwoSampleT extends Test {
             chiclet ;
 
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
 

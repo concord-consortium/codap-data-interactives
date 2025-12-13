@@ -13,29 +13,47 @@ class OneSampleT extends Test {
 
     updateTestResults() {
         const jX = jStat(data.xAttData.theArray);      //  jStat version of x array
-
-        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
+        const theHypothesizedValue = (testimate.state.testParams.value);
 
         this.results.N = jX.cols();
         this.results.df = this.results.N - 1;
         this.results.mean = jX.mean();
         this.results.s = jX.stdev(true);    //      `true` means SAMPLE SD
         this.results.SE = this.results.s / Math.sqrt(this.results.N);
-        this.results.P = jX.ttest(testimate.state.testParams.value, testimate.state.testParams.sides);
-        this.results.tCrit = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
-        this.results.CImax = this.results.mean + this.results.tCrit * this.results.SE;
-        this.results.CImin = this.results.mean - this.results.tCrit * this.results.SE;
-        this.results.t = (this.results.mean - testimate.state.testParams.value) / this.results.SE;
+        this.results.t = (this.results.mean - theHypothesizedValue) / this.results.SE;  //  can be negative
+
+        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
+        let theCritParam = theCIparam;
+        if (testimate.state.testParams.sides === 1) {
+            theCritParam = (testimate.state.testParams.theSidesOp === "<") ? testimate.state.testParams.alpha : 1 - testimate.state.testParams.alpha;
+        }
+        this.results.tCrit = jStat.studentt.inv(theCritParam, this.results.df);
+
+        this.results.xCrit = theHypothesizedValue + this.results.tCrit * this.results.SE;
+
+        const jStatP = jX.ttest(theHypothesizedValue, testimate.state.testParams.sides);
+        console.log(`jstat's p-value is ${jStatP}. Sides op is currently [${testimate.state.testParams.theSidesOp}].`);
+        if (testimate.state.testParams.sides === 1) {
+            if (theHypothesizedValue < this.results.mean) {
+                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? jStatP : 1 - jStatP;
+            } else {
+                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - jStatP : jStatP;
+            }
+        } else {
+            this.results.P = jStatP;
+        }
+
+        const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
+        this.results.CImax = this.results.mean + CIHalfWidth * this.results.SE;
+        this.results.CImin = this.results.mean - CIHalfWidth * this.results.SE;
     }
 
     makeResultsString() {
-
+        const varXName = testimate.state.x.title;
         //  const testDesc = `mean of ${testimate.state.x.name}`;
 
-        const mean = ui.numberToString(this.results.mean, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
-        const CImin = ui.numberToString(this.results.CImin);
-        const CImax = ui.numberToString(this.results.CImax);
+        //  const mean = ui.numberToString(this.results.mean, 3);
+        const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
 
         const NString = Test.makeResultValueString("N", this.results.N);
         const tString = Test.makeResultValueString("t", this.results.t, 3);
@@ -43,22 +61,23 @@ class OneSampleT extends Test {
         const sString = Test.makeResultValueString("s", this.results.s);
         const SEString = Test.makeResultValueString("SE", this.results.SE);
         const dfString = Test.makeResultValueString("df", this.results.df, 3);
+        const sampleMeanString = `${localize.getString("tests.oneSampleT.sampleMean")} = ${ui.numberToString(this.results.mean, 3)}`;
 
         const tCrit = ui.numberToString(this.results.tCrit, 3);
+        const xCrit = ui.numberToString(this.results.xCrit, 3);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
         const value = ui.numberToString(testimate.state.testParams.value);
 
         const testQuestion = localize.getString("tests.oneSampleT.testQuestion",
             data.xAttData.name, testimate.state.testParams.theSidesOp, value);
-        const r2 = localize.getString("tests.oneSampleT.resultsLine2", mean, conf, CImin, CImax);
+        //  const r2 = localize.getString("tests.oneSampleT.resultsLine2", mean, conf, CImin, CImax);
 
         let out = "<pre>";
 
         out += testQuestion;
-        out += `<br><br>    ${NString}, ${tString}, ${PString}`;
-        out += `<br>    ${r2}`;
-        out += `<br>    ${sString}, ${SEString}, `;
-        out += `${dfString}, &alpha; = ${alpha}, t* = ${tCrit}`;
+        out += `<br><br>    ${NString}, ${sampleMeanString}, ${sString}, ${SEString}` ;
+        out += `<br>    ${tString}, ${dfString}, &alpha; = ${alpha}, t* = ${tCrit}, (${varXName})* = ${xCrit}`;
+        out += `<br>    ${PString}, ${CIString}`;
         out += `<br> `;
 
         out += `</pre>`;
@@ -82,7 +101,7 @@ class OneSampleT extends Test {
     makeConfigureGuts() {
         const configStart = localize.getString("tests.oneSampleT.configurationStart");
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         let theHTML = `${configStart}(${data.xAttData.name}) ${sides} ${value} ${conf}`;

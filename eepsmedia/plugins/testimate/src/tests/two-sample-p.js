@@ -203,7 +203,7 @@ class TwoSampleP extends Test {
         const intro = (this.grouping) ?
             `${configStart}: <br>&emsp;(${testimate.state.x.name} = ${ui.focusGroupButtonXHTML(testimate.state.testParams.focusGroupX)} ) : ${ui.focusGroupButtonYHTML(testimate.state.testParams.focusGroupY)} - ${this.results.labelB}` :
             `${configStart}: <br>&emsp;(${testimate.state.x.name} = ${ui.focusGroupButtonXHTML(testimate.state.testParams.focusGroupX)}) - (${testimate.state.y.name} = ${ui.focusGroupButtonYHTML(testimate.state.testParams.focusGroupY)}) `;
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value, 0.0, 1.0, 0.05);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         let theHTML = `${intro} ${sides} ${value} <br>&emsp;${conf}`;

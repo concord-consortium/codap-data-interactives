@@ -45,6 +45,7 @@ class Test {
         const theParams = testimate.state.testParams;
 
         theParams.theSidesOp = "≠";
+        console.log(`xxx in Test.makeResultsString()`);
         if (theParams.sides === 1) {
             theParams.theSidesOp = (this.results[this.theConfig.testing] > theParams.value ? ">" : "<");
         }

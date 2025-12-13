@@ -133,7 +133,7 @@ class Regression extends Test {
     makeConfigureGuts() {
         const testingSlopePhrase = localize.getString("tests.regression.testingSlope");
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         let theHTML = `${testingSlopePhrase} ${sides} ${value} ${conf}`;

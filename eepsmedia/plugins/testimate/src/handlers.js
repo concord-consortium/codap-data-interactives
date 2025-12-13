@@ -23,13 +23,26 @@ const handlers = {
      * todo: remove this in favor of changeSides12?
      */
     changeTestSides: function () {
-        const iSign = document.getElementById(`sidesButton`).value;    // 1 or 2
-        testimate.state.testParams.sides = (iSign === `≠`) ? 1 : 2;
+        const theParams = testimate.state.testParams;
+        const newSides = theParams.sides === 1 ? 2 : 1;
+
+        theParams.theSidesOp = "≠";
+        if (newSides === 1) {
+            const testStat = testimate.theTest.results[testimate.theTest.theConfig.testing];  //  testing what? mean? xbar? diff? slope?
+            theParams.theSidesOp = (testStat > theParams.value ? ">" : "<");
+        }
+        testimate.state.testParams.sides = newSides;
+
         testimate.refreshDataAndTestResults();
     },
 
     changeSides12 : function() {
         const newSides = testimate.state.testParams.sides === 1 ? 2 : 1;
+        if (newSides === 2) {
+            testimate.state.testParams.theSidesOp = "≠";
+        } else {
+            testimate.state.testParams.theSidesOp = "≠";
+        }
         testimate.state.testParams.sides = newSides;
         testimate.refreshDataAndTestResults();
     },
@@ -50,7 +63,7 @@ const handlers = {
 
     changeValue: function () {
         const v = document.getElementById(`valueBox`);
-        testimate.state.testParams.value = v.value;
+        testimate.state.testParams.value = Number(v.value);
         testimate.refreshDataAndTestResults();
     },
 

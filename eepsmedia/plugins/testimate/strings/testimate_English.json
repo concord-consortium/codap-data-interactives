@@ -178,7 +178,8 @@
         "menuString": "mean of •1•",
         "testQuestion": "Is the mean of •1• •2• •3• ?",
         "resultsLine2": "sample mean = •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "testing mean"
+        "configurationStart": "testing mean",
+        "sampleMean" : "sample mean"
       },
       "paired": {
         "menuString": "paired test of (•1• – •2•)",

@@ -49,7 +49,7 @@ const testimate = {
             if (this.theTest && this.theTest.testID) {
                 //  remember the test parameters for this type of test
                 testimate.state.testParamDictionary[testimate.theTest.testID] = testimate.state.testParams;
-                this.adjustTestSides();     //  todo: figure out if this is correct; shouldn't we compute the value before we do this?
+                //  this.adjustTestSides();     //  todo: figure out if this is correct; shouldn't we compute the value before we do this?
 
                 data.removeInappropriateCases();    //  depends on the test's parameters being known (paired, numeric, etc.)
                 await this.theTest.updateTestResults();      //  with the right data and the test, we can calculate these results.
@@ -66,9 +66,11 @@ const testimate = {
     },
 
     /**
-     * Something wrong here; check ui.sidesBoxHTML to see where this is apparently computed??   //      todo: attend to sides, >, <, etc!
+     * Something wrong here; check ui.sidesChicletButtonHTML to see where this is apparently computed??   //      todo: attend to sides, >, <, etc!
      */
     adjustTestSides : function() {
+        console.log(`xxx in testimate.adjustTestSides()`);
+
         this.state.testParams.theSidesOp = "≠";
         if (this.state.testParams.sides === 1 && !this.iteratingRandom) {
             this.state.testParams.theSidesOp = (this.theTest.results[this.theTest.theConfig.testing] > testimate.state.testParams.value ? ">" : "<");

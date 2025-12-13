@@ -76,7 +76,8 @@
         "menuString": "Arithmetisches Mittel von •1•",
         "testQuestion": "Ist das arithmetische Mittel von •1• •2• •3• ?",
         "resultsLine2": "Arithmetisches Mittel =  •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "Test auf Mittelwert"
+        "configurationStart": "Test auf Mittelwert",
+        "sampleMean": "Arithmetisches Mittel"
       },
       "paired": {
         "menuString": "Test auf (•1• – •2•) für abhängige Stichproben",

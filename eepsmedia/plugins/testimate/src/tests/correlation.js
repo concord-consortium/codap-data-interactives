@@ -106,7 +106,7 @@ class Correlation extends Test {
     makeConfigureGuts() {
         const testingCorrelationPhrase = localize.getString("tests.correlation.testingCorrelation");
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = "0";  //  ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         let theHTML = `${testingCorrelationPhrase} ${sides} ${value},  ${conf}`;
