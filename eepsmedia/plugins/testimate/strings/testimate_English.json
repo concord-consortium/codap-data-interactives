@@ -182,16 +182,17 @@
         "sampleMean" : "sample mean"
       },
       "paired": {
-        "menuString": "paired test of (•1• – •2•)",
+        "menuString": "paired test of (•1• - •2•)",
         "testQuestion": "Is the (paired) mean difference of each (•1• – •2•) •3• •4• ?",
         "resultsLine2": "mean paired difference = •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "paired test: mean of"
+        "configurationStart": "paired test: mean of",
+        "meanPairedDifference": "mean paired difference"
       },
       "twoSampleT": {
         "menuString1": "difference of means: •1• vs •2•",
         "menuString2": "difference of means: •1• grouped by •2•",
         "testQuestion1": "Is the difference mean(•1•) : group •2• – group •3• •4• ?",
-        "testQuestion2": "Is the difference mean(•1•) – mean(•2•) •3• ?",
+        "testQuestion2": "Is the difference mean(•1•) &ndash; mean(•2•) •3• ?",
         "detailsSummary": "<summary>Difference of means, two-sample <i>t</i> procedure</summary>",
         "configStartPaired" : "testing mean(•1•)",
         "configStart1": "group •1• – group •2•",

@@ -37,11 +37,13 @@ class TwoSampleT extends Test {
 
     updateTestResults() {
 
-        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
         let A = data.xAttData.theArray;
         let B = data.yAttData.theArray;
+        const theHypothesizedValue = (testimate.state.testParams.value);
+
         this.results.group1Name = data.xAttData.name;
         this.results.group2Name = data.yAttData.name;
+
 
         if (this.grouping) {
             [A, B] = Test.splitByGroup(A, B, testimate.state.testParams.focusGroupY);
@@ -59,7 +61,6 @@ class TwoSampleT extends Test {
         this.results.N2 = j1.cols();
         this.results.N = this.results.N1 + this.results.N2;
 
-        this.results.df = this.results.N1 + this.results.N2 - 2;
         this.results.mean1 = j0.mean();
         this.results.mean2 = j1.mean();
         this.results.s1 = j0.stdev(true);    //      true means SAMPLE SD
@@ -67,36 +68,70 @@ class TwoSampleT extends Test {
         this.results.SE1 = this.results.s1 / Math.sqrt(this.results.N1);
         this.results.SE2 = this.results.s2 / Math.sqrt(this.results.N2);
 
+        this.results.df = this.results.N1 + this.results.N2 - 2;
+
         /*
         See https://en.wikipedia.org/wiki/Student%27s_t-test#Independent_two-sample_t-test.
         I'm using "Equal or unequal sample sizes, similar variance."
         Maybe we should go one further and use Welch's, which follows
         in that wikipedia article.
          */
-        const sArg = ((this.results.N1 - 1) * this.results.s1 ** 2 +
-                (this.results.N2 - 1) * this.results.s2 ** 2) /
-            (this.results.N1 + this.results.N2 - 2);
-        this.results.s = Math.sqrt(sArg);       //  pooled SD
-        this.results.SE = this.results.s * Math.sqrt((1 / this.results.N1) + (1 / this.results.N2));
+
+        if (testimate.state.testParams.pooledVariances) {
+            const sArg = ((this.results.N1 - 1) * this.results.s1 ** 2 +
+                    (this.results.N2 - 1) * this.results.s2 ** 2) /
+                (this.results.N1 + this.results.N2 - 2);
+            this.results.s = Math.sqrt(sArg);       //  pooled SD
+
+            this.results.SE = this.results.s * Math.sqrt((1 / this.results.N1) + (1 / this.results.N2));
+        } else {
+            const sArg = ((this.results.N1 - 1) * this.results.s1 ** 2 +
+                    (this.results.N2 - 1) * this.results.s2 ** 2) /
+                (this.results.N1 + this.results.N2 - 2);
+            this.results.s = Math.sqrt(sArg);       //  pooled SD
+
+            this.results.SE = this.results.s * Math.sqrt((1 / this.results.N1) + (1 / this.results.N2));
+        }
+
         this.results.diff = testimate.state.testParams.reversed ?
             this.results.mean2 - this.results.mean1 : this.results.mean1 - this.results.mean2;
         this.results.t = (this.results.diff - testimate.state.testParams.value) / this.results.SE;
 
+        this.results.P = Test.computePFromT(theHypothesizedValue, this.results.diff, this.results.t, this.results.df);
+        /*
+                const tTail = 1 - jStat.studentt.cdf(Math.abs(this.results.t), this.results.df);
+                if (testimate.state.testParams.sides === 1) {
+                    if (theHypothesizedValue < this.results.diff) {
+                        this.results.P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
+                    } else {
+                        this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
+                    }
+                } else {
+                    this.results.P = 2 * tTail;     //      double the usual because sides = 2.
+                }
+        */
+
+
+
+/*
         const var1oN = j0.variance(true) / this.results.N1;
         const var2oN = j1.variance(true) / this.results.N2;     //  sample variance/N = s^2/N
+*/
         //  const df2 = (var1oN + var2oN) ** 2 / (var1oN ** 2 / (this.results.N1 - 1) + var2oN ** 2 / (this.results.N2)); //  variance for
         //  const df1 = this.results.N1 + this.results.N2 - 1;
 
         //  this.results.df = df2;      //  just use the df calculated earlier: N1 + N2 - 2.
+        /*
+                const tAbs = Math.abs(this.results.t);
+                this.results.P = jStat.studentt.cdf(-tAbs, this.results.df);
+                if (testimate.state.testParams.sides === 2) this.results.P *= 2;
+        */
 
-        this.results.tCrit = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
-        const tAbs = Math.abs(this.results.t);
-        this.results.P = jStat.studentt.cdf(-tAbs, this.results.df);
-        if (testimate.state.testParams.sides === 2) this.results.P *= 2;
 
         this.results.CImax = this.results.diff + this.results.tCrit * this.results.SE;
         this.results.CImin = this.results.diff - this.results.tCrit * this.results.SE;
 
+        //  we do this because the emitted attributes have different names depending on grouping or not
         if (this.grouping) {
             this.results.meanNB1 = this.results.mean1;
             this.results.meanNB2 = this.results.mean2;
@@ -108,6 +143,21 @@ class TwoSampleT extends Test {
             this.results.sNN1 = this.results.s1;
             this.results.sNN2 = this.results.s2;
         }
+
+        //  confidence intervals
+        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
+        const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
+        this.results.CImax = this.results.diff + CIHalfWidth * this.results.SE;
+        this.results.CImin = this.results.diff - CIHalfWidth * this.results.SE;
+
+        //  critical values for t and difference
+        let theCritParam = theCIparam;
+        if (testimate.state.testParams.sides === 1) {
+            theCritParam = (testimate.state.testParams.theSidesOp === "<") ? testimate.state.testParams.alpha : 1 - testimate.state.testParams.alpha;
+        }
+        this.results.tCrit = jStat.studentt.inv(theCritParam, this.results.df);
+        this.results.diffCrit = theHypothesizedValue + this.results.tCrit * this.results.SE;
+
     }
 
     makeResultsString() {
@@ -119,10 +169,12 @@ class TwoSampleT extends Test {
 
         const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
 
-        const tCrit = ui.numberToString(this.results.tCrit, 3);
         const dfString = Test.makeResultValueString("df", this.results.df, 3);
 
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
+
+        const tCrit = ui.numberToString(this.results.tCrit, 3);
+        const diffCrit = ui.numberToString(this.results.diffCrit, 3);
 
         const DSdetails = document.getElementById("DSdetails");
         const DSopen = DSdetails && DSdetails.hasAttribute("open");
@@ -138,13 +190,13 @@ class TwoSampleT extends Test {
         let out = "<pre>";
 
         out += `${resultHed} <br>`;
-        out += `<br>    ${NString}, ${tString}, ${PString}`;
-        out += `<br>    ${diffString}, ${CIString} `;
+        out += `<br>    ${NString}, ${diffString}`;
+        out += `<br>    ${tString}, ${dfString}, &alpha; = ${alpha}, t* = ${tCrit}, (${localize.getString("attributeNames.diff")})* = ${diffCrit}`;
+        out += `<br>    ${PString}, ${CIString} `;
 
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.twoSampleT.detailsSummary");      //   `<summary>Difference of means, <i>t</i> procedure</summary>`;
         out += this.makeTwoSampleTable();
-        out += `<br>    ${dfString}, &alpha; = ${alpha},  t* = ${tCrit}`;
         out += `</details>`;
 
         out += `</pre>`;

@@ -8,7 +8,6 @@ class OneSampleT extends Test {
         testimate.state.testParams.value
             = testimate.state.valueDictionary[this.testID]
             ? testimate.state.valueDictionary[this.testID] : 0;
-
     }
 
     updateTestResults() {
@@ -16,43 +15,49 @@ class OneSampleT extends Test {
         const theHypothesizedValue = (testimate.state.testParams.value);
 
         this.results.N = jX.cols();
-        this.results.df = this.results.N - 1;
         this.results.mean = jX.mean();
         this.results.s = jX.stdev(true);    //      `true` means SAMPLE SD
         this.results.SE = this.results.s / Math.sqrt(this.results.N);
         this.results.t = (this.results.mean - theHypothesizedValue) / this.results.SE;  //  can be negative
+        this.results.df = this.results.N - 1;
 
+        this.results.P = Test.computePFromT(theHypothesizedValue, this.results.mean, this.results.t, this.results.df);
+
+/*
+        const tTail = 1 - jStat.studentt.cdf(Math.abs(this.results.t), this.results.df);
+        if (testimate.state.testParams.sides === 1) {
+            if (theHypothesizedValue < this.results.mean) {
+                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
+            } else {
+                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
+            }
+        } else {
+            this.results.P = 2 * tTail;
+        }
+*/
+
+        //      for confidence interval
         const theCIparam = 1 - testimate.state.testParams.alpha / 2;
+        const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
+        this.results.CImax = this.results.mean + CIHalfWidth * this.results.SE;
+        this.results.CImin = this.results.mean - CIHalfWidth * this.results.SE;
+
+        //  for critical values
         let theCritParam = theCIparam;
         if (testimate.state.testParams.sides === 1) {
             theCritParam = (testimate.state.testParams.theSidesOp === "<") ? testimate.state.testParams.alpha : 1 - testimate.state.testParams.alpha;
         }
         this.results.tCrit = jStat.studentt.inv(theCritParam, this.results.df);
-
         this.results.xCrit = theHypothesizedValue + this.results.tCrit * this.results.SE;
 
-        const jStatP = jX.ttest(theHypothesizedValue, testimate.state.testParams.sides);
-        console.log(`jstat's p-value is ${jStatP}. Sides op is currently [${testimate.state.testParams.theSidesOp}].`);
-        if (testimate.state.testParams.sides === 1) {
-            if (theHypothesizedValue < this.results.mean) {
-                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? jStatP : 1 - jStatP;
-            } else {
-                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - jStatP : jStatP;
-            }
-        } else {
-            this.results.P = jStatP;
-        }
+        const timP = 1 - jStat.studentt.cdf(this.results.t, this.results.df);
+        console.log(`Tim's p-value is ${timP}`);
 
-        const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
-        this.results.CImax = this.results.mean + CIHalfWidth * this.results.SE;
-        this.results.CImin = this.results.mean - CIHalfWidth * this.results.SE;
     }
 
     makeResultsString() {
         const varXName = testimate.state.x.title;
-        //  const testDesc = `mean of ${testimate.state.x.name}`;
 
-        //  const mean = ui.numberToString(this.results.mean, 3);
         const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
 
         const NString = Test.makeResultValueString("N", this.results.N);

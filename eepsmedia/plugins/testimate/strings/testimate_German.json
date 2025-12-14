@@ -83,7 +83,8 @@
         "menuString": "Test auf (•1• – •2•) für abhängige Stichproben",
         "testQuestion": "Ist die (gepaarte) Mittelwertsdifferenz of jedem (•1• – •2•) •3• •4• ?",
         "resultsLine2": "Gepaare Mittelwertdifferenz = = •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "Test für abhängige Stichproben: Mittelwert von"
+        "configurationStart": "Test für abhängige Stichproben: Mittelwert von",
+        "meanPairedDifference": "gepaarte Mittelwertsdifferenz"
       },
       "twoSampleT": {
         "menuString1": "Differenz der Mittelwerte: •1• vs •2•",

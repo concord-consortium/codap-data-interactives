@@ -33,6 +33,7 @@ class Test {
         theSidesOp: "≠",   //  the sign  todo: eliminate this in favor of using .sides.
         conf: 95,    //  confidence level 1 - alpha
         reversed : false,
+        pooledVariances : false,
         focusGroupX: null,
         focusGroupY: null,
     }
@@ -95,6 +96,29 @@ class Test {
         return `${ui.numberToString(iConf, 2)}% ${localize.getString("CI")} = [${ui.numberToString(iCImin)}, ${ui.numberToString(iCImax)}]`;
     }
 
+    /**
+     * Compute the p-value for a t-test with this information
+     *
+     * @param iHyp  the hypothesized value
+     * @param iX    the test statistic (mean, difference, etc)
+     * @param iT    the value of t already computed
+     * @param idf   degrees of freedom
+     * @returns {number}
+     */
+    static computePFromT(iHyp, iX, iT, idf) {
+        let P = 0;
+        const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
+        if (testimate.state.testParams.sides === 1) {
+            if (iHyp < iX) {
+                P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
+            } else {
+                P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
+            }
+        } else {
+            P = 2 * tTail;
+        }
+        return P;
+    }
     /**
      *   Compute array of compatible test IDs given `data.xAttData` and `data.yAttData`. (e.g., NN01...).
      *   This depends only on their existence and variable type (numeric or categorical)

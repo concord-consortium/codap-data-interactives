@@ -87,7 +87,6 @@ and hold additional information, such as whether the attribute is numeric or cat
 * `this.checkTestConfiguration()` creates a list of all compatible tests;
 if the current test is not on the list, it picks a new one and 
 stores it in `testimate.theTest`.
-* `this.adjustTestSides()` may be gone soon, but it takes care of the one- or two-sided nature of the test.
 *  `data.removeInappropriateCases()` adjusts the x and y arrays depending on the test.
 For example, in a regression, it ensures that each pair of values are both numeric.
 The result is cleaned arrays suitable for the stats package we use for calculation.
@@ -127,7 +126,7 @@ and linear regression.)
 
 The configuration above also gives you hints about other things.
 For example, the class `TwoSampleT` is the subclass of `Test` in which the test is performed.
-Its code is in `src/test/two-sample-t.js`.
+Its code is in `src/tests/two-sample-t.js`.
 We also infer that it will have a (`static`) method called `makeMenuString(iConfigID)`, 
 and as you might expect it's responsible for creating the text of the menu item
 that the user can choose.
@@ -182,7 +181,7 @@ part that outputs the confidence interval:
 ```
 
 #### makeConfigureGuts()
-...makes the HTML that fills the "configuration" stripe taht appears below the results. 
+...makes the HTML that fills the "configuration" stripe that appears below the results. 
 There, the user specifies important _parameters_ for the test
 such as 
 
@@ -192,6 +191,64 @@ such as
 
 These are stored not in `results` but in the global `state` variable,
 such as `testimate.state.testParams.conf`, which is the confidence level.
+
+#### About one-sided tests
+
+A test based on _t_ or _z_ can be one-sided. 
+Managing these tests is tricky, 
+as I found out (a bit late) in December 2025.
+
+That flurry of work involved reworking some underlying structures
+and procedures. 
+You will discover a number of static methods in `Test.js` such as this one:
+
+```javascript
+/**
+ * Compute the p-value for a t-test with this information
+ *
+ * @param iHyp  the hypothesized value
+ * @param iX    the test statistic (mean, difference, etc)
+ * @param iT    the value of t already computed
+ * @param idf   degrees of freedom
+ * @returns {number}
+ */
+static computePFromT(iHyp, iX, iT, idf) {
+    let P = 0;
+    const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
+    if (testimate.state.testParams.sides === 1) {
+        if (iHyp < iX) {
+            P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
+        } else {
+            P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
+        }
+    } else {
+        P = 2 * tTail;
+    }
+return P;
+}
+```
+Notice how we use the various configurations---which are global---to
+figure things out. 
+Also see how tricky this computation is.
+I would not be surprised if it turned out to be wrong!
+
+The tricky bit has to do with allowing one-sided _p_-values over 0.5.
+This happens, for example, if you're testing whether the mean of {1, 2, 3, 4}
+is _less_ than zero. 
+You would never do this in real life, but you would if you were 
+creating _random_ samples. 
+Previously, the direction of the inequality was recomputed (and could change)
+with each iteration, depending on the test statistic (e.g., the mean) and its
+relation to the "value," the number being tested against.
+
+For the user, the situation should be as follows:
+* We start with a two-sided test, that is, with the "≠" operator.
+* When you change to one-sided, the software chooses ">" or "<" depending on
+where the test statistic is in relation to the "value." This is 
+equivalent to the sign of _t_ or _z_.
+* You can now change other aspects of the test, for example, by
+changing data or the "value," which could change the sign of _t_.
+* Pressing the operator button again changes it back to two-sided ("≠")
 
 ### Test parameters
 
@@ -418,7 +475,7 @@ when calculating test results.
 In the "update" method, `testimate.refreshDataAndTestResults()`,
 we call `data.makeXandYArrays(data.allCODAPitems)`.
 This is where `data.XattDataX` and `data.YattData` get created.
-After some additional, processingwe call `data.removeInappropriateCases()`.
+After some additional processing, we call `data.removeInappropriateCases()`.
 This method populates the `.theArray` members of the x and y `AttData`s.
 
 This involves several nitty-gritty steps such as, 
