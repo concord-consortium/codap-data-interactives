@@ -100,8 +100,14 @@ class TwoSampleP extends Test {
             this.results.zCrit = jStat.normal.inv(theCIparam, 0, 1);    //  1.96-ish for 0.95
 
             const zAbs = Math.abs(this.results.z);
+
+            const theTail = jStat.normal.cdf(-zAbs, 0, 1);
+            this.results.P = Test.computePFromTail(theTail, this.results.z >= 0);
+
+/*
             this.results.P = jStat.normal.cdf(-zAbs, 0, 1);
             if (testimate.state.testParams.sides === 2) this.results.P *= 2;
+*/
 
             this.results.CImax = this.results.pDiff + this.results.zCrit * this.results.SEinterval;
             this.results.CImin = this.results.pDiff - this.results.zCrit * this.results.SEinterval;
@@ -111,7 +117,7 @@ class TwoSampleP extends Test {
     makeResultsString() {
         const NString = Test.makeResultValueString("N", this.results.N);
 
-        const pDiff = ui.numberToString(this.results.pDiff, 3);
+        const   diff = ui.numberToString(this.results.pDiff, 3);
         const SEinterval = ui.numberToString(this.results.SEinterval);
 
         const PString = Test.makePString(this.results.P);
@@ -120,6 +126,8 @@ class TwoSampleP extends Test {
         const zCrit = ui.numberToString(this.results.zCrit, 3);
 
         const zString = Test.makeResultValueString("z", this.results.z, 3);
+        const diffString = Test.makeResultValueString("diff", this.results.z, 3);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const DSdetails = document.getElementById("DSdetails");
@@ -135,8 +143,8 @@ class TwoSampleP extends Test {
             `${localize.getString("tests.twoSampleP.testQuestionHead")} ${nonGroupingPhrase} ${comparison}?`;
 
         out += `${resultHed} <br>`;
-        out += `<br>    ${NString}, ${localize.getString("attributeNames.diff")} = ${pDiff}, ${zString}, ${PString}`;
-        out += `<br>    ${CIString},  ${localize.getString("attributeNames.SE")}(${localize.getString("CI")}) = ${SEinterval} `;
+        out += `<br>    ${NString}, ${diffString}, ${zString}`;
+        out += `<br>    ${PString}, ${CIString},  ${localize.getString("attributeNames.SE")}(${localize.getString("CI")}) = ${SEinterval} `;
 
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.twoSampleP.detailsSummary");

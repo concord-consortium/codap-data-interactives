@@ -22,7 +22,6 @@ class OneSampleP extends Test {
     }
 
     async updateTestResults() {
-        //  todo: use exact binomial for small N, prop near 0 or 1
         const A = data.xAttData.theArray;
         const G = testimate.state.testParams.focusGroupX;
 
@@ -36,7 +35,7 @@ class OneSampleP extends Test {
         const theCIparam = 1 - testimate.state.testParams.alpha / 2;
 
         if (N > 0) {
-            const p0 = testimate.state.testParams.value;
+            const p0 = testimate.state.testParams.value;    //  hypothesized (null) proportion
             const pHat = this.results.successes / N;     //  sample proportion p-hat
             this.results.N = N;
             this.results.prop = pHat;
@@ -48,12 +47,21 @@ class OneSampleP extends Test {
                 /**
                  * jStat.binomial.cdf(k, N, p) is the probability that you get between 0 and k successes in N trials
                  */
-                if (pHat > p0) {    //  the sample prop is high, we'll find the upper tail
-                    this.results.P = 1 - jStat.binomial.cdf(this.results.successes - 1, this.results.N, p0);     //
-                } else {        //  the sample prop is LOW, we'll find the lower tail
-                    this.results.P = jStat.binomial.cdf(this.results.successes, this.results.N, p0);     //
+                switch (testimate.state.testParams.theSidesOp) {
+                    case "≠":
+                        this.results.P = 2 * (1 - jStat.binomial.cdf(this.results.successes - 1, this.results.N, p0));
+                        break;
+                    case ">":
+                        this.results.P = 1 - jStat.binomial.cdf(this.results.successes - 1, this.results.N, p0);     //
+                        break;
+                    case "<":
+                        this.results.P = jStat.binomial.cdf(this.results.successes, this.results.N, p0);     //
+                        break;
+                    default:
+                        alert(`odd result in oneSampleP: could not compute P-value.`);
+
                 }
-                if (testimate.state.testParams.sides === 2) this.results.P *= 2;
+
                 if (this.results.P > 1) this.results.P = 1.00;
 
                 this.results.SE = Math.sqrt((this.results.prop) * (1 - this.results.prop) / this.results.N);
@@ -74,8 +82,11 @@ class OneSampleP extends Test {
 
                 this.results.zCrit = jStat.normal.inv(theCIparam, 0, 1);    //  1.96-ish for 0.95
                 const zAbs = Math.abs(this.results.z);
-                this.results.P = jStat.normal.cdf(-zAbs, 0, 1);
-                if (testimate.state.testParams.sides === 2) this.results.P *= 2;
+
+                const theTail = jStat.normal.cdf(-zAbs, 0, 1);
+                this.results.P = Test.computePFromTail(theTail, p0 <= pHat);
+
+                //  if (testimate.state.testParams.sides === 2) this.results.P *= 2;
 
                 //  Note: CI uses the SE of the sample (this.results.SE)
                 this.results.CImax = pHat + this.results.zCrit * this.results.SE;
@@ -120,9 +131,9 @@ class OneSampleP extends Test {
             const zCrit = ui.numberToString(this.results.zCrit, 3);
             const zString = Test.makeResultValueString("z", this.results.z, 3);
 
-            out += `<br>    ${zString}, ${PString}`;
-            out += `<br>    ${CIString}`;
-            out += `<br>    ${SEString}, &alpha; = ${alpha}, z* = ${zCrit}`;
+            out += `<br>    ${r1}` ;        //      sample proportion = 0.5, (18 out of n = 36)
+            out += `<br>    ${SEString}, ${zString}, &alpha; = ${alpha}, z* = ${zCrit}`;
+            out += `<br>    ${PString}, ${CIString}`;
             out += `<br>        (${localize.getString("tests.oneSampleP.usingZProc")})`;
         }
 

@@ -106,8 +106,10 @@ class Test {
      * @returns {number}
      */
     static computePFromT(iHyp, iX, iT, idf) {
-        let P = 0;
         const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
+        return Test.computePFromTail(tTail, iHyp <= iX);
+
+/*
         if (testimate.state.testParams.sides === 1) {
             if (iHyp < iX) {
                 P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
@@ -118,7 +120,24 @@ class Test {
             P = 2 * tTail;
         }
         return P;
+*/
     }
+
+    static computePFromTail(iTail, iStatAboveHypothesis) {
+        let P = 0;
+        if (testimate.state.testParams.sides === 1) {
+            if (iStatAboveHypothesis) {
+                P = (testimate.state.testParams.theSidesOp === ">") ? iTail : 1 - iTail;
+            } else {
+                P = (testimate.state.testParams.theSidesOp === ">") ? 1 - iTail : iTail;
+            }
+        } else {
+            P = 2 * iTail;
+        }
+        return P;
+    }
+
+
     /**
      *   Compute array of compatible test IDs given `data.xAttData` and `data.yAttData`. (e.g., NN01...).
      *   This depends only on their existence and variable type (numeric or categorical)
@@ -350,20 +369,34 @@ class Test {
             makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BB02`);},
             fresh: (ix) => { return new TwoSampleP(ix, false)  },
         },
-/*
-        B_02: {
-            id: `B_02`,
-            name: `goodness of fit`,
+        BC01: {         //  compare props using split
+            id: `BC01`,
+            name: `compare proportions (grouped)`,
             xType: 'binary',
-            yType: null,
-            paired: false,
-             groupAxis : "",
-           emitted: `N,P,chisq,df,chisqCrit,alpha`,
-                    paramExceptions: {},
-    makeMenuString: ( ) => {return Goodness.makeMenuString(`B_02`);},
-            fresh: (ix) => { return new Goodness(ix)  },
+            yType: `categorical`,
+            paired: true,
+            groupAxis : "",
+            emitted: `P,prop1,prop2,pDiff,sign,value,N,N1,N2,z,zCrit,conf,CImin,CImax`,
+            testing : 'pDiff',
+            paramExceptions: {},
+            makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BC01`);},
+            fresh: (ix) => { return new TwoSampleP(ix, true)  },
         },
-*/
+
+        /*
+                B_02: {
+                    id: `B_02`,
+                    name: `goodness of fit`,
+                    xType: 'binary',
+                    yType: null,
+                    paired: false,
+                     groupAxis : "",
+                   emitted: `N,P,chisq,df,chisqCrit,alpha`,
+                            paramExceptions: {},
+            makeMenuString: ( ) => {return Goodness.makeMenuString(`B_02`);},
+                    fresh: (ix) => { return new Goodness(ix)  },
+                },
+        */
         C_01: {
             id: `C_01`,
             name: `goodness of fit`,

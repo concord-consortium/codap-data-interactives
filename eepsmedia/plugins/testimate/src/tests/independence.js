@@ -137,13 +137,13 @@ class Independence extends Test {
     }
 
     makeConfigureGuts() {
-        const sides12Button = ui.sides12ButtonHTML(testimate.state.testParams.sides);
+        // const sides12Button = ui.sides12ButtonHTML(testimate.state.testParams.sides);
 
         const start = localize.getString("tests.independence.configurationStart",
             testimate.state.y.name, testimate.state.x.name);
         //  const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         const alpha = ui.alphaBoxHTML(testimate.state.testParams.alpha);
-        let theHTML = `${start}:<br>&emsp;${alpha}&emsp;${sides12Button}`;
+        let theHTML = `${start}:<br>&emsp;${alpha}`;        //      used to have "&emsp;${sides12Button}"
 
         return theHTML;
     }
