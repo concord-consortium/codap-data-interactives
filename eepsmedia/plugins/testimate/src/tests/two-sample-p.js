@@ -104,11 +104,6 @@ class TwoSampleP extends Test {
             const theTail = jStat.normal.cdf(-zAbs, 0, 1);
             this.results.P = Test.computePFromTail(theTail, this.results.z >= 0);
 
-/*
-            this.results.P = jStat.normal.cdf(-zAbs, 0, 1);
-            if (testimate.state.testParams.sides === 2) this.results.P *= 2;
-*/
-
             this.results.CImax = this.results.pDiff + this.results.zCrit * this.results.SEinterval;
             this.results.CImin = this.results.pDiff - this.results.zCrit * this.results.SEinterval;
         }

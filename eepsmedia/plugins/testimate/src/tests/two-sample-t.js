@@ -75,6 +75,9 @@ class TwoSampleT extends Test {
         I'm using "Equal or unequal sample sizes, similar variance."
         Maybe we should go one further and use Welch's, which follows
         in that wikipedia article.
+
+        The following structure has two possibilities, currently both identical because we don't
+        yet know if we ever want to use pooled variances again.
          */
 
         if (testimate.state.testParams.pooledVariances) {
@@ -98,35 +101,6 @@ class TwoSampleT extends Test {
         this.results.t = (this.results.diff - testimate.state.testParams.value) / this.results.SE;
 
         this.results.P = Test.computePFromT(theHypothesizedValue, this.results.diff, this.results.t, this.results.df);
-        /*
-                const tTail = 1 - jStat.studentt.cdf(Math.abs(this.results.t), this.results.df);
-                if (testimate.state.testParams.sides === 1) {
-                    if (theHypothesizedValue < this.results.diff) {
-                        this.results.P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
-                    } else {
-                        this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
-                    }
-                } else {
-                    this.results.P = 2 * tTail;     //      double the usual because sides = 2.
-                }
-        */
-
-
-
-/*
-        const var1oN = j0.variance(true) / this.results.N1;
-        const var2oN = j1.variance(true) / this.results.N2;     //  sample variance/N = s^2/N
-*/
-        //  const df2 = (var1oN + var2oN) ** 2 / (var1oN ** 2 / (this.results.N1 - 1) + var2oN ** 2 / (this.results.N2)); //  variance for
-        //  const df1 = this.results.N1 + this.results.N2 - 1;
-
-        //  this.results.df = df2;      //  just use the df calculated earlier: N1 + N2 - 2.
-        /*
-                const tAbs = Math.abs(this.results.t);
-                this.results.P = jStat.studentt.cdf(-tAbs, this.results.df);
-                if (testimate.state.testParams.sides === 2) this.results.P *= 2;
-        */
-
 
         this.results.CImax = this.results.diff + this.results.tCrit * this.results.SE;
         this.results.CImin = this.results.diff - this.results.tCrit * this.results.SE;

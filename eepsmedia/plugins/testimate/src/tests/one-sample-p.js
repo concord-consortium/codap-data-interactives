@@ -86,8 +86,6 @@ class OneSampleP extends Test {
                 const theTail = jStat.normal.cdf(-zAbs, 0, 1);
                 this.results.P = Test.computePFromTail(theTail, p0 <= pHat);
 
-                //  if (testimate.state.testParams.sides === 2) this.results.P *= 2;
-
                 //  Note: CI uses the SE of the sample (this.results.SE)
                 this.results.CImax = pHat + this.results.zCrit * this.results.SE;
                 this.results.CImin = pHat - this.results.zCrit * this.results.SE;
@@ -131,7 +129,6 @@ class OneSampleP extends Test {
             const zCrit = ui.numberToString(this.results.zCrit, 3);
             const zString = Test.makeResultValueString("z", this.results.z, 3);
 
-            out += `<br>    ${r1}` ;        //      sample proportion = 0.5, (18 out of n = 36)
             out += `<br>    ${SEString}, ${zString}, &alpha; = ${alpha}, z* = ${zCrit}`;
             out += `<br>    ${PString}, ${CIString}`;
             out += `<br>        (${localize.getString("tests.oneSampleP.usingZProc")})`;

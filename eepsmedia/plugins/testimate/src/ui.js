@@ -197,11 +197,6 @@ ui = {
      */
     sidesChicletButtonHTML: function (iSides) {
         const theParams = testimate.state.testParams;
-        // theParams.theSidesOp = "≠";
-        // if (iSides === 1) {
-        //     const testStat = testimate.theTest.results[testimate.theTest.theConfig.testing];  //  testing what? mean? xbar? diff? slope?
-        //     theParams.theSidesOp = (testStat > theParams.value ? ">" : "<");
-        // }
 
         return `<input id="sidesButton" type="button" class="chiclet" onclick="handlers.changeTestSides()" 
                 value="${theParams.theSidesOp}">`;

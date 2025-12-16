@@ -36,6 +36,7 @@ const handlers = {
         testimate.refreshDataAndTestResults();
     },
 
+    //  todo: see if we ever use this any more
     changeSides12 : function() {
         const newSides = testimate.state.testParams.sides === 1 ? 2 : 1;
         if (newSides === 2) {

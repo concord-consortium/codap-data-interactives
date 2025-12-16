@@ -82,7 +82,7 @@ class Test {
      *
      * @param iName     the name of the attribute
      * @param iValue    its value
-     * @param iFigs     how many decimal places?
+     * @param iFigs     how many sig figs?
      * @returns {string}
      */
 
@@ -108,19 +108,6 @@ class Test {
     static computePFromT(iHyp, iX, iT, idf) {
         const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
         return Test.computePFromTail(tTail, iHyp <= iX);
-
-/*
-        if (testimate.state.testParams.sides === 1) {
-            if (iHyp < iX) {
-                P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
-            } else {
-                P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
-            }
-        } else {
-            P = 2 * tTail;
-        }
-        return P;
-*/
     }
 
     static computePFromTail(iTail, iStatAboveHypothesis) {

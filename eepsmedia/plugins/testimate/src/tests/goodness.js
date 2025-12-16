@@ -154,7 +154,6 @@ class Goodness extends Test {
     }
 
     makeConfigureGuts() {
-        //  const sides12Button = ui.sides12ButtonHTML(testimate.state.testParams.sides);
         const alpha = ui.alphaBoxHTML(testimate.state.testParams.alpha);
 
         let theHTML = `${localize.getString("tests.goodness.configurationStart")}`;

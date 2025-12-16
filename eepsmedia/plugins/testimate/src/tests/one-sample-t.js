@@ -23,19 +23,6 @@ class OneSampleT extends Test {
 
         this.results.P = Test.computePFromT(theHypothesizedValue, this.results.mean, this.results.t, this.results.df);
 
-/*
-        const tTail = 1 - jStat.studentt.cdf(Math.abs(this.results.t), this.results.df);
-        if (testimate.state.testParams.sides === 1) {
-            if (theHypothesizedValue < this.results.mean) {
-                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
-            } else {
-                this.results.P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
-            }
-        } else {
-            this.results.P = 2 * tTail;
-        }
-*/
-
         //      for confidence interval
         const theCIparam = 1 - testimate.state.testParams.alpha / 2;
         const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
@@ -75,7 +62,6 @@ class OneSampleT extends Test {
 
         const testQuestion = localize.getString("tests.oneSampleT.testQuestion",
             data.xAttData.name, testimate.state.testParams.theSidesOp, value);
-        //  const r2 = localize.getString("tests.oneSampleT.resultsLine2", mean, conf, CImin, CImax);
 
         let out = "<pre>";
 
