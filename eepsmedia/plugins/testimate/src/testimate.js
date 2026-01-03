@@ -31,8 +31,6 @@ const testimate = {
         }
 
         ui.redraw();
-
-        let foo = jStat.hypgeom.cdf( 0, 6, 3, 3 );
     },
 
     /**

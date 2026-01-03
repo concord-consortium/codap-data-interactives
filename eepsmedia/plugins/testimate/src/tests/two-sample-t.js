@@ -76,6 +76,10 @@ class TwoSampleT extends Test {
         Unpooled, use Welch's test, described there also.
 
         Also, for Welch: https://stataiml.com/posts/welch_t_test_r/
+
+        2026-01-03 for 2025c: we use unpooled (Welch) ALWAYS,
+        but keep the code for pooled variances here in case we need it.
+        There is no UI to change to pooled.
          */
 
         if (testimate.state.testParams.pooledVariances) {
