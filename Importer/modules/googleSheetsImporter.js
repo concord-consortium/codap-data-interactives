@@ -20,7 +20,7 @@
 
 import {extractFirstTable} from './simpleTableModel.js';
 
-async function loadGApiClient() {
+async function loadGApiClient(apiKeyParam) {
   return new Promise((resolve, reject) => {
     function initClient() {
       const kAPIKeyURL = 'https://codap.concord.org/releases/.gapikey';
@@ -30,30 +30,37 @@ async function loadGApiClient() {
       // const kScope = 'https://www.googleapis.com/auth/drive.readonly';
       const kDiscoveryDocs = ['https://sheets.googleapis.com/$discovery/rest?version=v4'];
 
-      fetch(kAPIKeyURL).then(
-        function (result) {
-          if (!result.ok) {
-            reject(result.statusText);
-          } else {
-            result.text()
-                .then(function(apiKey) {
-                  gapi.client.init({
-                    apiKey: apiKey.trim(),
-                    //        clientId: kClientID,
-                    //        scope: kScope,
-                    discoveryDocs: kDiscoveryDocs,
-                  })
-                  .then(
-                    resolve,
-                    function (resp) {
-                      console.log(`Network error: ${resp.errorText}`)
-                      reject(resp.errorText);
-                    });
-                });
-          }
-        },
-        reject
-      );
+      function initGapiClient(apiKey) {
+        gapi.client.init({
+          apiKey: apiKey.trim(),
+          //        clientId: kClientID,
+          //        scope: kScope,
+          discoveryDocs: kDiscoveryDocs,
+        })
+        .then(
+          resolve,
+          function (resp) {
+            console.log(`Network error: ${resp.errorText}`)
+            reject(resp.errorText);
+          });
+      }
+
+      // If API key was passed as a parameter, use it directly
+      if (apiKeyParam) {
+        initGapiClient(apiKeyParam);
+      } else {
+        // Otherwise, fetch from server
+        fetch(kAPIKeyURL).then(
+          function (result) {
+            if (!result.ok) {
+              reject(result.statusText);
+            } else {
+              result.text().then(initGapiClient);
+            }
+          },
+          reject
+        );
+      }
     }
 
     gapi.load("client", {
@@ -167,7 +174,7 @@ async function retrieveData(config) {
   let match = url && kSheetsRE.exec(url);
   let docId = match && match[1];
   // initialize google api client
-  await loadGApiClient();
+  await loadGApiClient(config.googleApiKey);
   // fetch sheets document
   let spreadsheet = await fetchSpreadsheet(docId);
   // fetch data from first sheet
