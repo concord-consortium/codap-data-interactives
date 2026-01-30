@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "./static/css/main.9a7a30ca.chunk.css",
+    "main.js": "./static/js/main.d14afb28.chunk.js",
+    "main.js.map": "./static/js/main.d14afb28.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.cd9a9180.js",
+    "runtime-main.js.map": "./static/js/runtime-main.cd9a9180.js.map",
+    "static/js/2.d4fc84b0.chunk.js": "./static/js/2.d4fc84b0.chunk.js",
+    "static/js/2.d4fc84b0.chunk.js.map": "./static/js/2.d4fc84b0.chunk.js.map",
+    "index.html": "./index.html",
+    "precache-manifest.59b40791d39474aea7a13ff5af8250a6.js": "./precache-manifest.59b40791d39474aea7a13ff5af8250a6.js",
+    "service-worker.js": "./service-worker.js",
+    "static/css/main.9a7a30ca.chunk.css.map": "./static/css/main.9a7a30ca.chunk.css.map",
+    "static/js/2.d4fc84b0.chunk.js.LICENSE.txt": "./static/js/2.d4fc84b0.chunk.js.LICENSE.txt",
+    "static/media/codap.ico": "./static/media/codap.c02541ff.ico"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cd9a9180.js",
+    "static/js/2.d4fc84b0.chunk.js",
+    "static/css/main.9a7a30ca.chunk.css",
+    "static/js/main.d14afb28.chunk.js"
+  ]
+}
