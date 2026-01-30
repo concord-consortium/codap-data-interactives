@@ -87,7 +87,6 @@ and hold additional information, such as whether the attribute is numeric or cat
 * `this.checkTestConfiguration()` creates a list of all compatible tests;
 if the current test is not on the list, it picks a new one and 
 stores it in `testimate.theTest`.
-* `this.adjustTestSides()` may be gone soon, but it takes care of the one- or two-sided nature of the test.
 *  `data.removeInappropriateCases()` adjusts the x and y arrays depending on the test.
 For example, in a regression, it ensures that each pair of values are both numeric.
 The result is cleaned arrays suitable for the stats package we use for calculation.
@@ -127,7 +126,7 @@ and linear regression.)
 
 The configuration above also gives you hints about other things.
 For example, the class `TwoSampleT` is the subclass of `Test` in which the test is performed.
-Its code is in `src/test/two-sample-t.js`.
+Its code is in `src/tests/two-sample-t.js`.
 We also infer that it will have a (`static`) method called `makeMenuString(iConfigID)`, 
 and as you might expect it's responsible for creating the text of the menu item
 that the user can choose.
@@ -182,7 +181,7 @@ part that outputs the confidence interval:
 ```
 
 #### makeConfigureGuts()
-...makes the HTML that fills the "configuration" stripe taht appears below the results. 
+...makes the HTML that fills the "configuration" stripe that appears below the results. 
 There, the user specifies important _parameters_ for the test
 such as 
 
@@ -193,12 +192,70 @@ such as
 These are stored not in `results` but in the global `state` variable,
 such as `testimate.state.testParams.conf`, which is the confidence level.
 
+#### About one-sided tests
+
+A test based on _t_ or _z_ can be one-sided. 
+Managing these tests is tricky, 
+as I found out (a bit late) in December 2025.
+
+That flurry of work involved reworking some underlying structures
+and procedures. 
+You will discover a number of static methods in `Test.js` such as this one:
+
+```javascript
+/**
+ * Compute the p-value for a t-test with this information
+ *
+ * @param iHyp  the hypothesized value
+ * @param iX    the test statistic (mean, difference, etc)
+ * @param iT    the value of t already computed
+ * @param idf   degrees of freedom
+ * @returns {number}
+ */
+static computePFromT(iHyp, iX, iT, idf) {
+    let P = 0;
+    const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
+    if (testimate.state.testParams.sides === 1) {
+        if (iHyp < iX) {
+            P = (testimate.state.testParams.theSidesOp === ">") ? tTail : 1 - tTail;
+        } else {
+            P = (testimate.state.testParams.theSidesOp === ">") ? 1 - tTail : tTail;
+        }
+    } else {
+        P = 2 * tTail;
+    }
+return P;
+}
+```
+Notice how we use the various configurations---which are global---to
+figure things out. 
+Also see how tricky this computation is.
+I would not be surprised if it turned out to be wrong!
+
+The tricky bit has to do with allowing one-sided _p_-values over 0.5.
+This happens, for example, if you're testing whether the mean of {1, 2, 3, 4}
+is _less_ than zero. 
+You would never do this in real life, but you would if you were 
+creating _random_ samples. 
+Previously, the direction of the inequality was recomputed (and could change)
+with each iteration, depending on the test statistic (e.g., the mean) and its
+relation to the "value," the number being tested against.
+
+For the user, the situation should be as follows:
+* We start with a two-sided test, that is, with the "≠" operator.
+* When you change to one-sided, the software chooses ">" or "<" depending on
+where the test statistic is in relation to the "value." This is 
+equivalent to the sign of _t_ or _z_.
+* You can now change other aspects of the test, for example, by
+changing data or the "value," which could change the sign of _t_.
+* Pressing the operator button again changes it back to two-sided ("≠")
+
 ### Test parameters
 
 When you perform a test, you do so using a number of parameters such as
 the alpha level and whether it is 1- or 2-sided.
 These parameters vary from test to test.
-They are used extensively in each test's `updatetestResults()` method.
+They are used extensively in each test's `updateTestResults()` method.
 
 The current parameters are an object stored in a `state` field,
 that is, `testimate.state.testParams`. 
@@ -278,6 +335,118 @@ in the dictionary:
         testimate.state.testParamDictionary[testimate.theTest.testID] = testimate.state.testParams;
 ... etc ...
 ```
+### Two-sample t, special note
+
+In late 2025, at the suggestion of Lee Creighton, we changed from the ordinary
+Student's _t_ test to Welch's, which does not assume nearly-equal variances.
+
+Information about Welch is easily found in Wikipedia,
+but I found this description of the calculation clearer:
+https://stataiml.com/posts/welch_t_test_r/.
+
+Lee provided these pithy quotes:
+
+* “Our advice: Never use the pooled t procedures if you have software that will carry out [the unpooled version]." 
+(Starnes Tabor Yates and Moore _The Practice of Statistics_ 5th edition, p. 650)
+*  “So when should you use pooled-t methods rather than two-sample t methods? Never. What never? Well, hardly ever.”
+(Deveaux and Velleman’s _Intro Stats_, p. 464)
+* ”[The pooled t] was widely used in the past, but has fallen into some disfavor 
+because it is quite sensitive to departures from the assumption of equal population variances…In general, 
+the two-sample t procedure is a better choice than the pooled t test.”
+(Peck Olsen and Devore _Introduction to Statistics & Data Analysis_ 5th edition, p. 572)
+
+### Implementing focus groups
+
+Key ideas:
+* The current focus group is stored in
+  `testimate.state.testParams.focusGroupX`. (or Y)
+* A dictionary of focus groups, by attribute name, is stored in
+`testimate.state.focusGroupDictionary`.
+* Users can advance the focus group to the next possible value.
+* If the desired value is not available, we look first
+at the dictionary, and if it's not there, we default back to teh first value.
+
+
+In a number of tests with categorical attributes,
+we want to focus on one of those values,
+often to use it as the "numerator" in a calculation
+and to display it at the left or top of a table
+(see especially Fisher exact).
+
+For example, in a test of proportion in a baseball dataset, with an attribute
+`atBat` that has values of `hit` and `out` (say), 
+we would calculate the proportion of _something_,
+so we need to decide if it's hits or outs.
+If we wanted to test the proportion of hits, we would say that
+the string
+"hit" was the "focus group" for the attribute `atBat`.
+Then, in calculations, we would count how many of the data values
+matched that string.
+
+By default, the focus group is the value of that attribute in the first case,
+which is often not what's wanted.
+So the user can click on that value, displayed in the configuration box,
+to change it.
+
+This invokes a handler (in `handlers.js`). For the "X" (outcome) value, 
+it looks like this:
+
+```javascript
+changeFocusGroupX: function () {
+    const initialGroup = testimate.state.testParams.focusGroupX;
+    const valueSet = [...data.xAttData.valueSet];
+    const nextValue = this.nextValueInList(valueSet, initialGroup);
+    testimate.state.testParams.focusGroupX = testimate.setFocusGroup(data.xAttData, nextValue);
+    testimate.determineSidesOp();   //      the data are there already; this changes the sign, which changes pValue
+    testimate.refreshDataAndTestResults();
+}
+```
+You can see basically how this works.
+We get the current focus group, which is stored in `testParams`. 
+We then send the set of values and that current value to 
+`testimate.setFocusGroup()`, where the magic happens:
+
+```javascript
+setFocusGroup:  function (iAttData, iValue) {
+    const theName = iAttData.name;
+    const theValues = [...iAttData.valueSet];  //  possible values for groups
+    const defaultValue = this.state.focusGroupDictionary[theName] ?
+        this.state.focusGroupDictionary[theName] :
+        theValues[0];
+
+    const theValue = theValues.includes(iValue) ? iValue : defaultValue;
+
+    this.state.focusGroupDictionary[theName] = theValue;
+
+    return theValue;
+}
+```
+Now: after this handler-testimate dance happens, the system calls
+`testimate.refreshDataAndTestResults()`, which recreates the `AttData`
+objects.
+In `data.makeXandYArrays()`, the method calls `testimate.setFocusGroup()` 
+_again_, with a null suggested value.
+`testimate` returns the newly-set dictionary value.
+
+### Two-sample t, special note
+
+In late 2025, at the suggestion of Lee Creighton, we changed from the ordinary
+Student's _t_ test to Welch's, which does not assume nearly-equal variances.
+
+Information about Welch is easily found in Wikipedia,
+but I found this description of the calculation clearer:
+https://stataiml.com/posts/welch_t_test_r/.
+
+Lee provided these pithy quotes:
+
+* “Our advice: Never use the pooled t procedures if you have software that will carry out [the unpooled version]." 
+(Starnes Tabor Yates and Moore _The Practice of Statistics_ 5th edition, p. 650)
+*  “So when should you use pooled-t methods rather than two-sample t methods? Never. What never? Well, hardly ever.”
+(Deveaux and Velleman’s _Intro Stats_, p. 464)
+* ”[The pooled t] was widely used in the past, but has fallen into some disfavor 
+because it is quite sensitive to departures from the assumption of equal population variances…In general, 
+the two-sample t procedure is a better choice than the pooled t test.”
+(Peck Olsen and Devore _Introduction to Statistics & Data Analysis_ 5th edition, p. 572)
 
 
 ## Communicating with CODAP
@@ -337,7 +506,7 @@ That method, `data.updateData()`, contains these lines:
 
 ```javascript
 this.sourceDatasetInfo = await connect.getSourceDatasetInfo(testimate.state.dataset.name);
-this.hasRandom = this.sourceDSHasRandomness();
+this.hasRandom = this.checkIfSourceDataHasRandomness();
 this.isGrouped = this.sourceDSisHierarchical();
 
 this.topCases = (this.isGrouped) ? await connect.retrieveTopLevelCases() : [];
@@ -410,15 +579,15 @@ that we might use for grouping.
 The constructor also counts up missing and numeric values,
 and stuffs the clean values into `this.rawArray`. 
 
-Later, we process `this.rawArray` into `this.theArray`, which is what gets used 
+Later, we process `this.theRawArray` into `this.theArray`, which is what gets used 
 when calculating test results. 
 
 ### Making AttData.theArray
 
 In the "update" method, `testimate.refreshDataAndTestResults()`,
 we call `data.makeXandYArrays(data.allCODAPitems)`.
-This is where `data.XattDataX` and `data.YattData` get created.
-After some additional, processingwe call `data.removeInappropriateCases()`.
+This is where `data.xAttData` and `data.yAttData` get created.
+After some additional processing, we call `data.removeInappropriateCases()`.
 This method populates the `.theArray` members of the x and y `AttData`s.
 
 This involves several nitty-gritty steps such as, 

@@ -1,3 +1,6 @@
+/* global testimate, data, Test, jStat, ui, localize */
+
+
 class Goodness extends Test {
 
     constructor(iID) {
@@ -24,12 +27,12 @@ class Goodness extends Test {
         this.results.groupNames.forEach( v => {
             this.results.observed[v] = 0;
             this.results.expected[v] = this.results.N * testimate.state.testParams.groupProportions[v];
-        })
+        });
 
         //`count the observed values in each category
         A.forEach( a => {
             this.results.observed[a]++;
-        })
+        });
 
         //  counts array now has all counts.
 
@@ -39,7 +42,7 @@ class Goodness extends Test {
             const cellValue = (this.results.observed[v] - this.results.expected[v])**2
                 / this.results.expected[v];
             this.results.chisq += cellValue;
-        })
+        });
 
         const theCIparam = 1 - testimate.state.testParams.alpha / testimate.state.testParams.sides;   //  the large number
         this.results.df = this.results.groupNames.length - 1;
@@ -49,27 +52,26 @@ class Goodness extends Test {
 
     makeResultsString() {
 
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const PString = Test.makePString(this.results.P);
+        const dfString  = Test.makeResultValueString("df", this.results.df, 3);
+
         const chisq = ui.numberToString(this.results.chisq);
         const chisqCrit = ui.numberToString(this.results.chisqCrit);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const df = ui.numberToString(this.results.df, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const GFdetails = document.getElementById("GFdetails");
         const GFopen = GFdetails && GFdetails.hasAttribute("open");
 
         let out = "<pre>";
-        out += localize.getString("tests.goodness.testQuestion", data.xAttData.name);
-        //  out += `Are the proportions of ${data.xAttData.name} as hypothesized?`;
-        out += `<br>    N = ${N}, ${this.results.groupNames.length} ${localize.getString("groups")}, &chi;<sup>2</sup> = ${chisq}, ${P}`;
+        out += localize.getString("tests.goodness.testQuestion", data.xName());
+        //  out += `Are the proportions of ${data.xName()} as hypothesized?`;
+        out += `<br>    ${NString}, ${this.results.groupNames.length} ${localize.getString("groups")}, &chi;<sup>2</sup> = ${chisq}`;
+        out += `<br>    ${PString}`;
         out += `<details id="GFdetails" ${GFopen ? "open" : ""}>`;
         out += localize.getString("tests.goodness.detailsSummary1", testimate.state.testParams.sides);
         out += this.makeGoodnessTable();
-        out += `    df = ${df}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
+        out += `    ${dfString}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
         out += `</details>`;
 
         out += `</pre>`;
@@ -78,7 +80,7 @@ class Goodness extends Test {
 
     makeGoodnessTable() {
 
-        let nameRow = `<tr><th>${data.xAttData.name} =</th>`;
+        let nameRow = `<tr><th>${data.xName()} =</th>`;
         let observedRow = `<tr><td>${localize.getString("observed")}</td>`;
         let expectedRow = `<tr><td>${localize.getString("expected")}</td>`;
 
@@ -86,7 +88,7 @@ class Goodness extends Test {
             nameRow += `<th>${v}</th>`;
             observedRow += `<td>${this.results.observed[v]}</td>`;
             expectedRow += `<td>${ui.numberToString(this.results.expected[v], 3)}</td>`;
-        })
+        });
 
         nameRow += `</tr>`;
         observedRow += `</tr>`;
@@ -121,7 +123,7 @@ class Goodness extends Test {
                 out[old] = newVal;
                 sum += newVal;
             }
-        })
+        });
 
         //  how many do we still have to find?
         const leftOut = newGroups.length - Object.keys(out).length;
@@ -134,13 +136,13 @@ class Goodness extends Test {
             if (!out.hasOwnProperty(n))   {       //  haven't done it yet!
                 out[n] = (1 - sum)/leftOut;
             }
-        })
+        });
 
         return out;
     }
 
     makeTestDescription( ) {
-        return `goodness of fit: ${testimate.state.x.name}`;
+        return `goodness of fit: ${data.xName()}`;
     }
 
     /**
@@ -148,19 +150,17 @@ class Goodness extends Test {
      * @returns {string}    what shows up in a menu.
      */
     static makeMenuString() {
-        return localize.getString("tests.goodness.menuString",testimate.state.x.name);
-        //  return `goodness of fit for ${testimate.state.x.name}`;
+        return localize.getString("tests.goodness.menuString",data.xName());
     }
 
     makeConfigureGuts() {
-        const sides12Button = ui.sides12ButtonHTML(testimate.state.testParams.sides);
         const alpha = ui.alphaBoxHTML(testimate.state.testParams.alpha);
 
         let theHTML = `${localize.getString("tests.goodness.configurationStart")}`;
-        theHTML += `<br>&emsp;${alpha}&emsp;${sides12Button}`;
+        theHTML += `<br>&emsp;${alpha}`;      //  used to have `&emsp;${sides12Button}`
 
 
-        let nameRow =   `<tr><th>${testimate.state.x.name} &rarr; </th>`;
+        let nameRow =   `<tr><th>${data.xName()} &rarr; </th>`;
         let valueRow =   `<tr><th>${this.equalExpectationsButton()}</th>`;
 
         //  is the goodness-of-fit configuration details element [extant and] open?
@@ -175,12 +175,12 @@ class Goodness extends Test {
 
         //  start the table of values. These are not results per se, but we class the table that way.
 
-        theHTML += `<table class="test-results">`
+        theHTML += `<table class="test-results">`;
 
         //  the last group name will absorb any leftover proportion
         const lastGroupName = this.results.groupNames[this.results.groupNames.length - 1];
         this.results.groupNames.forEach( g => {
-            const theProp  = ui.numberToString(testimate.state.testParams.groupProportions[g],3)
+            const theProp  = ui.numberToString(testimate.state.testParams.groupProportions[g],3);
             nameRow += `<th>${g}</th>`;
             valueRow += (g === lastGroupName) ?   //  (the last one)
                 `<td id="lastProp">${theProp}</td>` :
@@ -188,7 +188,7 @@ class Goodness extends Test {
                     step=".01" min="0" max="1"
                     id="GProp_${g}"
                     onchange="handlers.changeGoodnessProp('${lastGroupName}')"></input></td>`;
-        })
+        });
 
         theHTML += `${nameRow}${valueRow}</table>`;
         theHTML += `</details>`;
@@ -201,7 +201,7 @@ class Goodness extends Test {
         const theLabel = localize.getString("equalize") + "&nbsp;&rarr;";
         return `<input id="equalExpectationsButton" type="button" 
                 onclick="Goodness.equalizeExpectations()" 
-                value=${theLabel} title="${theTip}">`
+                value=${theLabel} title="${theTip}">`;
     }
 
     static equalizeExpectations() {

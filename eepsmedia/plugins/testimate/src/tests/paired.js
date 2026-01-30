@@ -1,5 +1,7 @@
-class Paired extends Test {
+/* global testimate, data, Test, jStat, ui, localize */
 
+
+class Paired extends Test {
 
     constructor(iID) {
         super(iID);
@@ -7,6 +9,8 @@ class Paired extends Test {
     }
 
     updateTestResults() {
+        const theHypothesizedValue = (testimate.state.testParams.value);
+
         const X = data.xAttData.theArray;
         const Y = data.yAttData.theArray;
         const N = X.length;
@@ -18,53 +22,61 @@ class Paired extends Test {
         for (let i = 0; i < N; i++) {
             Z[i] = testimate.state.testParams.reversed ? Y[i] - X[i] : X[i] - Y[i];
         }
-
         const jX = jStat(Z);      //  jStat version of difference array
 
-        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
-
         this.results.N = jX.cols();
-        this.results.df = this.results.N - 1;
         this.results.mean = jX.mean();
         this.results.s = jX.stdev(true);    //      true means SAMPLE SD
         this.results.SE = this.results.s / Math.sqrt(this.results.N);
-        this.results.P = jX.ttest(testimate.state.testParams.value, testimate.state.testParams.sides);
-        this.results.tCrit = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
-        this.results.CImax = this.results.mean + this.results.tCrit * this.results.SE;
-        this.results.CImin = this.results.mean - this.results.tCrit * this.results.SE;
-        this.results.t = (this.results.mean - testimate.state.testParams.value) / this.results.SE;
+        this.results.df = this.results.N - 1;
+        this.results.t = (this.results.mean - theHypothesizedValue) / this.results.SE;
+
+        //      for confidence interval
+        const theCIparam = 1 - testimate.state.testParams.alpha / 2;
+        const CIHalfWidth = jStat.studentt.inv(theCIparam, this.results.df);    //  1.96-ish for 0.95
+        this.results.CImax = this.results.mean + CIHalfWidth * this.results.SE;
+        this.results.CImin = this.results.mean - CIHalfWidth * this.results.SE;
+
+        //  for critical values
+        let theCritParam = theCIparam;
+        if (testimate.state.testParams.sides === 1) {
+            theCritParam = (testimate.state.testParams.theSidesOp === "<") ? testimate.state.testParams.alpha : 1 - testimate.state.testParams.alpha;
+        }
+        this.results.tCrit = jStat.studentt.inv(theCritParam, this.results.df);
+        this.results.xCrit = theHypothesizedValue + this.results.tCrit * this.results.SE;
+
+        this.results.P = Test.computePFromT(theHypothesizedValue, this.results.mean, this.results.t, this.results.df);
     }
 
     makeResultsString() {
-        const N = this.results.N;
-        const mean = ui.numberToString(this.results.mean, 3);
-        const s = ui.numberToString(this.results.s);
-        const SE = ui.numberToString(this.results.SE);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const CImin = ui.numberToString(this.results.CImin);
-        const CImax = ui.numberToString(this.results.CImax);
-        const tCrit = ui.numberToString(this.results.tCrit, 3);
-        const df = ui.numberToString(this.results.df, 3);
-        const t = ui.numberToString(this.results.t, 3);
-        const conf = ui.numberToString(testimate.state.testParams.conf);
+
+        const CIString = Test.makeConfCIString(testimate.state.testParams.conf, this.results.CImin, this.results.CImax);
+
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const sString  = Test.makeResultValueString("s", this.results.s);
+        const SEString = Test.makeResultValueString("SE", this.results.SE);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
+
+        const PString = Test.makePString(this.results.P);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
         const value = ui.numberToString(testimate.state.testParams.value);
+        const tCrit = ui.numberToString(this.results.tCrit, 3);
 
         const testQuestion = testimate.state.testParams.reversed ?
             localize.getString("tests.paired.testQuestion",
-                testimate.state.y.name, testimate.state.x.name, testimate.state.testParams.theSidesOp, value) :
+                data.yName(), data.xName(), testimate.state.testParams.theSidesOp, value) :
             localize.getString("tests.paired.testQuestion",
-                testimate.state.x.name, testimate.state.y.name, testimate.state.testParams.theSidesOp, value) ;
-        const r2 = localize.getString( "tests.paired.resultsLine2", mean, conf, CImin, CImax);
+                data.xName(), data.yName(), testimate.state.testParams.theSidesOp, value) ;
+        const MPDstring = `${localize.getString( "tests.paired.meanPairedDifference")} = ${ui.numberToString(this.results.mean, 3)}`;
 
         let out = "<pre>";
 
         out += testQuestion;
-        out += `<br><br>    N = ${N}, t = ${t},  ${P}`;
-        out += `<br>    ${r2}`;
-        out += `<br>    s = ${s}, SE = ${SE}, df = ${df}, &alpha; = ${alpha}, t* = ${tCrit} `;
+        out += `<br><br>    ${NString}, ${sString}, ${SEString}`;
+        out += `<br>    ${MPDstring}, ${tString}, ${dfString}, &alpha; = ${alpha}, t* = ${tCrit}`;
+        out += `<br>    ${PString}, ${CIString}`;
         out += `<br> `;
 
         out += `</pre>`;
@@ -72,7 +84,7 @@ class Paired extends Test {
     }
 
     makeTestDescription( ) {
-        return `paired test of ${data.xAttData.name} - ${data.yAttData.name}`;
+        return `paired test of ${data.xName()} - ${data.yName()}`;
     }
 
     /**
@@ -80,11 +92,11 @@ class Paired extends Test {
      * @returns {string}    what shows up in a menu.
      */
     static makeMenuString() {
-        //  return `paired test of ${data.xAttData.name} - ${data.yAttData.name}`;
+        //  return `paired test of ${data.xName()} - ${data.yName()}`;
         if (testimate.state.testParams.reversed) {
-            return localize.getString("tests.paired.menuString", testimate.state.y.name, testimate.state.x.name);
+            return localize.getString("tests.paired.menuString", data.yName(), data.xName());
         } else {
-            return localize.getString("tests.paired.menuString", testimate.state.x.name, testimate.state.y.name);
+            return localize.getString("tests.paired.menuString", data.xName(), data.yName());
         }
     }
 
@@ -92,14 +104,14 @@ class Paired extends Test {
         const configStart = localize.getString("tests.paired.configurationStart");
 
         const chicletGuts = (testimate.state.testParams.reversed) ?
-            `${testimate.state.y.name} – ${testimate.state.x.name}` :
-            `${testimate.state.x.name} – ${testimate.state.y.name}` ;
+            `${data.yName()} – ${data.xName()}` :
+            `${data.xName()} – ${data.yName()}` ;
 
-        const chiclet = ui.chicletButtonHTML(chicletGuts);
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const reverseSubChiclet = ui.reverseSubtractionChicletButtonHTML(chicletGuts);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
-        let theHTML = `${configStart}<br>&emsp;${chiclet} ${sides} ${value}<br>&emsp;</br>${conf}`;
+        let theHTML = `${configStart}<br>&emsp;${reverseSubChiclet} ${sides} ${value}<br>&emsp;</br>${conf}`;
 
         return theHTML;
     }

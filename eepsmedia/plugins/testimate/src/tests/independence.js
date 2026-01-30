@@ -1,3 +1,6 @@
+/* global testimate, data, Test, jStat, ui, localize */
+
+
 class Independence extends Test {
 
     constructor(iID) {
@@ -25,6 +28,7 @@ class Independence extends Test {
         this.results.rowTotals = new Array(this.results.rowLabels.length).fill(0);
         this.results.columnTotals = new Array(this.results.columnLabels.length).fill(0);
 
+
         for (let r = 0; r < this.results.rowLabels.length; r++) {
             for (let c = 0; c < this.results.columnLabels.length; c++) {
                 this.results.observed[c][r] = 0;
@@ -38,22 +42,37 @@ class Independence extends Test {
             const row = this.results.rowLabels.indexOf(X[ix]);
             const column = this.results.columnLabels.indexOf(Y[ix]);
             this.results.observed[column][row]++;
-            this.results.rowTotals[row]++
+            this.results.rowTotals[row]++;
             this.results.columnTotals[column]++;
         }
 
         //  calculate expected values and chisquare contributions
         this.results.chisq = 0;
+        let totalCells = 0;
+        let totalZeroCells = 0;
+        let totalCellsFive = 0;
+
 
         for (let r = 0; r < this.results.rowLabels.length; r++) {
             for (let c = 0; c < this.results.columnLabels.length; c++) {
                 this.results.expected[c][r] = this.results.columnTotals[c] * this.results.rowTotals[r] / this.results.N;
                 const contrib = (this.results.observed[c][r] - this.results.expected[c][r]) ** 2
                     / this.results.expected[c][r];
-                this.results.chisq += contrib
+                this.results.chisq += contrib;
+
+                totalCells++;       //  the count of cells
+                if (this.results.observed[c][r] === 0) totalZeroCells++;
+                if (this.results.observed[c][r] <= 5) totalCellsFive++;
             }
         }
 
+        console.log(`independence: ${totalCells} cells, ${totalCellsFive} <= 5, ${totalZeroCells} zero.`);
+        if (totalZeroCells || totalCellsFive) {
+            testimate.warning = localize.getString("tests.independence.warning");
+            if (this.results.rowLabels.length === 2 && this.results.columnLabels.length === 2) {
+                testimate.warning = localize.getString("tests.independence.warningFisher");
+            }
+        }
 
         const theCIparam = 1 - testimate.state.testParams.alpha / testimate.state.testParams.sides;     //  2;   //  the large number
         this.results.df = (this.results.rowLabels.length - 1) * (this.results.columnLabels.length - 1);
@@ -62,14 +81,13 @@ class Independence extends Test {
     }
 
     makeResultsString() {
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const PString = Test.makePString(this.results.P);
+        const dfString  = Test.makeResultValueString("df", this.results.df, 3);
+
         const chisq = ui.numberToString(this.results.chisq);
         const chisqCrit = ui.numberToString(this.results.chisqCrit);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
-        const df = ui.numberToString(this.results.df, 3);
-        //  const conf = ui.numberToString(testimate.state.testParams.conf);
+
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
 
         const TIdetails = document.getElementById("TIdetails");
@@ -77,13 +95,14 @@ class Independence extends Test {
 
         let out = "<pre>";
         out += localize.getString("tests.independence.testQuestion",
-            testimate.state.y.name, testimate.state.x.name);
-        out += `<br>    N = ${N}, ${this.results.columnLabels.length} columns by ${this.results.rowLabels.length} rows, `
-        out += `&chi;<sup>2</sup> = ${chisq}, ${P}`;
+            data.yName(), data.xName());
+        out += `<br>    ${NString}, ${localize.getString("tests.fisher.columnsByRows", this.results.columnLabels.length, this.results.rowLabels.length)} `;
+        out += `&chi;<sup>2</sup> = ${chisq}`;
+        out += `<br>    ${PString}`;
         out += `<details id="TIdetails" ${TIopen ? "open" : ""}>`;
-        out += localize.getString("tests.independence.detailsSummary", testimate.state.testParams.sides);
+        out += localize.getString("tests.independence.detailsSummary");
         out += this.makeIndependenceTable();
-        out += `<br>    df = ${df}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
+        out += `<br>    ${dfString}, &alpha; = ${alpha}, &chi;<sup>2</sup>* = ${chisqCrit} <br>`;
         out += `</details>`;
 
         out += `</pre>`;
@@ -92,12 +111,8 @@ class Independence extends Test {
 
     makeIndependenceTable() {
 
-        let headerRow = `<tr><td>${localize.getString("observed")}<br>${localize.getString("expected")}</td><th>${data.yAttData.name} = </th>`;
+        let headerRow = `<tr><td>${localize.getString("observed")}<br>${localize.getString("expected")}</td><th>${data.yName()} = </th>`;
         let tableRows = "";
-/*
-        let observedRow = `<tr><td>${localize.getString("observed")}</td>`;
-        let expectedRow = `<tr><td>${localize.getString("expected")}</td>`;
-*/
 
         //  construct a header
 
@@ -111,12 +126,13 @@ class Independence extends Test {
 
         for (let r = 0; r < this.results.rowLabels.length; r++) {
             const row = this.results.rowLabels[r];      //  the string row label
-            const attLabel = (r === 0) ? `<th>${data.xAttData.name} = ` : `<th></th>`;
+            const attLabel = (r === 0) ? `<th>${data.xName()} = ` : `<th></th>`;
             let thisRow = `${attLabel}<th>${row}</th>`;
             for (let c = 0; c < this.results.columnLabels.length; c++) {
+                const obs = this.results.observed[c][r];
                 const exp = ui.numberToString(this.results.expected[c][r], 4);
-                const col = this.results.columnLabels[c];   //  the string label
-                thisRow += `<td>${this.results.observed[c][r]}<br>${exp}</td>`;     //  observed value in the cell
+                const warn = obs <= 5 ? 'class = "warning"' : "";
+                thisRow += `<td ${warn}>${obs}<br>${exp}</td>`;     //  observed value in the cell
             }
             thisRow += `</tr>`;
             tableRows += thisRow;
@@ -131,17 +147,17 @@ class Independence extends Test {
      */
     static makeMenuString() {
         return localize.getString("tests.independence.menuString",
-            testimate.state.y.name,testimate.state.x.name);
+            data.yName(),data.xName());
     }
 
     makeConfigureGuts() {
-        const sides12Button = ui.sides12ButtonHTML(testimate.state.testParams.sides);
-
         const start = localize.getString("tests.independence.configurationStart",
-            testimate.state.y.name, testimate.state.x.name);
-        //  const conf = ui.confBoxHTML(testimate.state.testParams.conf);
+            data.yName(), data.xName());
+
         const alpha = ui.alphaBoxHTML(testimate.state.testParams.alpha);
-        let theHTML = `${start}:<br>&emsp;${alpha}&emsp;${sides12Button}`;
+        let theHTML = `${start}:<br>&emsp;${alpha}`;        //      used to have "&emsp;${sides12Button}"
+
+        theHTML = "";
 
         return theHTML;
     }

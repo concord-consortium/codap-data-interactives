@@ -1,3 +1,6 @@
+/* global data, Test, ui, localize, connect */
+
+
 const testimate = {
 
     state: {},
@@ -7,6 +10,8 @@ const testimate = {
     compatibleTestIDs : [],
     refreshCount : 0,
     OKtoRespondToCaseChanges : true,
+    iteratingRandom : false,      //  has the user pressed the button that rerandomizes the CODAP data and makes a new test?
+    warning : "",       //  string exists if there is an active warning about test results.
 
     initialize: async function () {
         console.log(`initializing...`);
@@ -15,10 +20,7 @@ const testimate = {
         await localize.initialize(localize.figureOutLanguage('en'));
         ui.initialize();
 
-        // this.state = codapInterface.getInteractiveState();    //  get stored state if any
         this.state = {...this.constants.defaultState, ...this.state};   //  have all fields in default!
-        //  codapInterface.updateInteractiveState(this.state);    //
-
 
         if (this.state.dataset) {
             data.dirtyData = true;
@@ -32,43 +34,35 @@ const testimate = {
      * This makes sure data is current
      */
     refreshDataAndTestResults: async function () {
-
         this.refreshCount++;
         console.log(`refresh data: ${this.refreshCount}`);
+
         if (this.state.dataset) {
             await data.updateData();
             await data.makeXandYArrays(data.allCODAPitems);
-            this.dirtyData = false;     //  todo: do we need this any more?
+            await data.checkIfSourceDataHasRandomness();
+            this.dirtyData = false;     //  set in data when CODAP sends notifications of changes. todo: do we need this any more?
 
             this.checkTestConfiguration();      //  ensure that this.theTest holds a suitable "Test"
 
             if (this.theTest && this.theTest.testID) {
+                this.warning = "";
+
                 //  remember the test parameters for this type of test
                 testimate.state.testParamDictionary[testimate.theTest.testID] = testimate.state.testParams;
-                this.adjustTestSides();     //  todo: figure out if this is correct; shouldn't we compute the value before we do this?
 
-                data.removeInappropriateCases();    //  depends on the test's parameters being known (paired, numeric, etc)
+                data.removeInappropriateCases();    //  depends on the test's parameters being known (paired, numeric, etc.)
                 await this.theTest.updateTestResults();      //  with the right data and the test, we can calculate these results.
             } else {
-                console.log(`Unexpected: refreshing data and we don't have a test.`)
+                console.log(`Unexpected: refreshing data and we don't have a test.`);
             }
 
         } else {
-            console.log(`trying to refresh data but there is no dataset`)
+            console.log(`trying to refresh data but there is no dataset`);
         }
 
         //  codapInterface.updateInteractiveState(this.state);
         ui.redraw();
-    },
-
-    /**
-     * Something wrong here; check ui.sidesBoxHTML to see where this is apparently computed??   //      todo: attend to sides, >, <, etc!
-     */
-    adjustTestSides : function() {
-        this.state.testParams.theSidesOp = "≠";
-        if (this.state.testParams.sides === 1) {
-            this.state.testParams.theSidesOp = (this.theTest.results[this.theTest.theConfig.testing] > testimate.state.testParams.value ? ">" : "<");
-        }
     },
 
     checkTestConfiguration: function () {
@@ -78,16 +72,16 @@ const testimate = {
             if (!this.compatibleTestIDs.includes(this.state.testID)) {
                 //  if the current test is incompatible with the current data,
                 //  pick the first compatible one
-                this.makeFreshTest(this.compatibleTestIDs[0])
+                this.makeFreshTest(this.compatibleTestIDs[0]);
             }
         } else if (this.compatibleTestIDs.includes(this.state.testID)) {
-            //  there is no current theTest (e.g., we're restoring from save)
+            //  there is no current theTest (e.g., we're restoring from save),
             //  but there is a suitable testID (from the saved state)
             this.makeFreshTest(this.state.testID);
         } else if (this.compatibleTestIDs.length) {
             //  it should ALWAYS be possible to find a possible test.
             //  set theTest to the first one in the list
-            this.makeFreshTest(this.compatibleTestIDs[0])
+            this.makeFreshTest(this.compatibleTestIDs[0]);
         } else {
             alert(`somehow, we see no possible test IDs.`);
         }
@@ -119,8 +113,6 @@ const testimate = {
             await this.setDataset(iDataset);
         } else if (this.state.dataset.name !== iDataset.name) {
             await this.setDataset(iDataset);
-            this.setX(this.emptyAttribute);
-            this.setY(this.emptyAttribute);    //  change of dataset, remove attributes
         }
 
         if (theElement === ui.xDIV) {
@@ -139,8 +131,11 @@ const testimate = {
     setDataset: async function (iDataset) {
         this.state.dataset = iDataset;
         this.state.testID = null;
-        this.setX(this.emptyAttribute);
-        this.setY(this.emptyAttribute);    //  change of dataset, remove attributes
+        this.state.x = null;
+        this.state.y = null;    //  change of dataset, remove attributes
+        data.xAttData = null;
+        data.yAttData = null;
+        data.dirtyData = true;
 
         await connect.registerForCaseChanges(this.state.dataset.name);
         await connect.registerForAttributeEvents(this.state.dataset.name);
@@ -150,7 +145,7 @@ const testimate = {
 
     setX: async function (iAtt) {
         data.dirtyData = true;
-        this.state.x = iAtt;        //  the whole attribute structure, with .name and .title
+        this.state.x = iAtt;        //  the dropped attribute structure, with .id, .name, and .title
         console.log(`set X to ${iAtt.name}`);
     },
 
@@ -164,14 +159,44 @@ const testimate = {
         }
     },
 
+    /**
+     * Determine which operator to use in "sides": "≠", "<", or ">".
+     *
+     * Depends on what test we're running.
+     */
+
+    determineSidesOp() {
+        const theParams = testimate.state.testParams;
+
+        if (this.theTest.theConfig.name === "Fisher exact") {
+            if (theParams.sides === 2) {
+                theParams.theSidesOp = "≠";
+            } else {
+                theParams.theSidesOp = (this.theTest.results.a > this.theTest.results.aExpected) ? ">" : "<";
+                console.log(`op is ${theParams.theSidesOp} because ${this.theTest.results.a } ${theParams.theSidesOp} ${this.theTest.results.aExpected}`);
+            }
+        } else {
+            if (theParams.sides === 2) {
+                theParams.theSidesOp = "≠";
+            } else  {
+                const testStat = testimate.theTest.results[testimate.theTest.theConfig.testing];  //  testing what? mean? xbar? diff? slope?
+                theParams.theSidesOp = (testStat > theParams.value ? ">" : "<");
+            }
+        }
+    },
 
     /**
      * Set the value of the "focusGroup" in the test parameters.
+     *
+     * A 'group' in this case is an identified value of a categorical attribute.
+     * For example, in "gender" you might focus on "Female."
+     * That means that you'll look at proportions of "Female" in tests.
+     *
      * Also, remember it for later.
      *
      * @param iAttData       the attribute data we're looking at
      * @param iValue         proposed value
-     *  @returns {Promise<void>}
+     *  @returns {Promise<void>}    the value for the focus group (becomes testimate.state.testParams.focusGroupX or ...Y.)
      */
     setFocusGroup:  function (iAttData, iValue) {
         const theName = iAttData.name;
@@ -185,6 +210,17 @@ const testimate = {
         this.state.focusGroupDictionary[theName] = theValue;
 
         return theValue;
+    },
+
+    putFocusFirst: function(iValues, iFocus) {
+        let out = [iFocus ? iFocus : iValues[0]];
+        iValues.forEach(v => {
+            if (v !== iFocus) {
+                out.push(v);
+            }
+        });
+
+        return out;
     },
 
     setLogisticFocusGroup: async function(iAttData, iValue) {
@@ -204,18 +240,12 @@ const testimate = {
     },
 
     predictorExists: function () {
-        return (testimate.state.y && testimate.state.y.name);
-    },
-
-    emptyAttribute: {
-        name: "",
-        title: "",
-        id: -1,
+        return (data.yName());
     },
 
     constants: {
         pluginName: `testimate`,
-        version: `2024i`,
+        version: `2026d`,
         dimensions: {height: 555, width: 444},
 
         emittedDatasetName: `tests and estimates`,     //      for receiving emitted test and estimate results
@@ -237,4 +267,4 @@ const testimate = {
             valueDictionary : {},       //  records the number in the "value" box
         }
     }
-}
+};

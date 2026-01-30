@@ -1,3 +1,6 @@
+/* global testimate, data, Test, localize */
+
+
 let ui;
 
 ui = {
@@ -16,6 +19,8 @@ ui = {
     configDIV: null,
     emitControls: null,
 
+    graphTitle: "graph",
+
     emitMode: "single",
 
     initialize: function () {
@@ -31,6 +36,7 @@ ui = {
         this.datasetSPAN = document.getElementById(`datasetSPAN`);
         this.testHeaderDIV = document.getElementById(`testHeaderDIV`);
         this.resultsDIV = document.getElementById(`resultsDIV`);
+        this.warningDIV = document.getElementById(`warningDIV`);
         this.configDIV = document.getElementById(`configureDIV`);
 
         this.emitControls = document.getElementById(`emitControls`);
@@ -55,6 +61,11 @@ ui = {
                 this.configDIV.innerHTML = testimate.theTest.makeConfigureGuts();
                 document.getElementById("randomEmitNumberBox").value = testimate.state.randomEmitNumber;
                 this.adjustEmitGuts();
+
+                if (testimate.warning) {
+                    //  set warning guts to warning text
+                    this.warningDIV.innerHTML = testimate.warning;
+                }
             }
         }
 
@@ -76,6 +87,8 @@ ui = {
         document.getElementById('emitSingleGroup').style.display = "block";     //  always show single
         document.getElementById('emitRandomGroup').style.display = (data.hasRandom) ? "block" : "none";
         document.getElementById('emitHierarchicalGroup').style.display = (data.isGrouped) ? "block" : "none";
+
+        this.warningDIV.style.display = (testimate.warning) ? "block" : "none";
 
         //  emit mode visibility
 
@@ -121,9 +134,9 @@ ui = {
         const xTrash = document.getElementById(`xTrashAttButton`);
         const yTrash = document.getElementById(`yTrashAttButton`);
 
-        if (testimate.state.x && testimate.state.x.name) {
-            this.xNameDIV.textContent = testimate.state.x.name;
-            xType.value = testimate.state.dataTypes[testimate.state.x.name] === 'numeric' ? '123' : 'abc';
+        if (data.xName()) {
+            this.xNameDIV.textContent = data.xName();
+            xType.value = testimate.state.dataTypes[data.xName()] === 'numeric' ? '123' : 'abc';
             xTrash.style.display = "inline";
             xType.style.display = "inline";
             this.xDIV.className = "drag-none";
@@ -133,9 +146,9 @@ ui = {
             xType.style.display = "none";
             this.xDIV.className = "drag-empty";
         }
-        if (testimate.state.y && testimate.state.y.name) {
-            this.yNameDIV.textContent = testimate.state.y.name;
-            yType.value = testimate.state.dataTypes[testimate.state.y.name] === 'numeric' ? '123' : 'abc';
+        if (data.yName()) {
+            this.yNameDIV.textContent = data.yName();
+            yType.value = testimate.state.dataTypes[data.yName()] === 'numeric' ? '123' : 'abc';
             yTrash.style.display = "inline";
             yType.style.display = "inline";
             this.yDIV.className = "drag-none";
@@ -192,16 +205,11 @@ ui = {
      * @param iSides
      * @returns string containing the html for that button
      */
-    sidesBoxHTML: function (iSides) {
+    sidesChicletButtonHTML: function (iSides) {
         const theParams = testimate.state.testParams;
-        theParams.theSidesOp = "≠";
-        if (iSides === 1) {
-            const testStat = testimate.theTest.results[testimate.theTest.theConfig.testing];  //  testing what? mean? xbar? diff? slope?
-            theParams.theSidesOp = (testStat > theParams.value ? ">" : "<");
-        }
 
         return `<input id="sidesButton" type="button" class="chiclet" onclick="handlers.changeTestSides()" 
-                value="${theParams.theSidesOp}">`
+                value="${theParams.theSidesOp}">`;
     },
 
     /**
@@ -214,37 +222,52 @@ ui = {
      */
     focusGroupButtonXHTML: function (iGroup) {
         return `<input id="focusGroupButtonX" class="chiclet" type="button" onclick="handlers.changeFocusGroupX()" 
-                value="${iGroup}">`
+                value="${iGroup}">`;
     },
 
     focusGroupButtonYHTML: function (iGroup) {
         return `<input id="focusGroupButtonY" class="chiclet" type="button" onclick="handlers.changeFocusGroupY()" 
-                value="${iGroup}">`
+                value="${iGroup}">`;
     },
 
-    chicletButtonHTML : function(iGuts) {
+    reverseSubtractionChicletButtonHTML : function(iGuts) {
         return `<input id="chicletButton" class="chiclet" type="button" onclick="handlers.reverseTestSubtraction()" 
-                value="${iGuts}">`
+                value="${iGuts}">`;
     },
 
-    sides12ButtonHTML : function(iSides) {
-        const buttonTitle = localize.getString("Nsided", iSides);
-        return `<input id="sides12Button" class="chiclet" type="button" onclick="handlers.changeSides12()" 
-                value="${buttonTitle}">`
+    /**
+     * simple button 1-sided, 2-sided.
+     * Used only in Fisher
+     *
+     * @param iSides
+     * @returns {`<input id="sidesFisherButton" class="chiclet" type="button" onclick="handlers.changeSidesFisher()"
+                value="${string}">`}
+     */
+    sidesFisherButtonHTML : function(iSides) {
+        const buttonTitle = localize.getString("Nsided", iSides);   //  localized 1-sided or 2-sided
+        return `<input id="sidesFisherButton" class="chiclet" type="button" onclick="handlers.changeTestSides()" 
+                value="${buttonTitle}">`;
     },
 
     getFocusGroupName: function () {
         if (!testimate.state.testParams.focusGroup) {
             testimate.setFocusGroup(data.xAttData, null);
         }
-        return testimate.state.focusGroupDictionary[data.xAttData.name];
+        return testimate.state.focusGroupDictionary[data.xName()];
     },
 
-    makeLogisticGraphButtonHTML: function (iGroup) {
+    makeRegressionGraphButtonHTML: function (iFormula) {
         const theLabel = localize.getString("showGraph");
-        return `<input id="logisticGraphButton" type="button" 
-                onclick="handlers.showLogisticGraph()" 
-                value="${theLabel}">`
+        return `<input id="regressionGraphButton" type="button" 
+                onclick="handlers.showRegressionGraph('${iFormula}')" 
+                value="${theLabel}">`;
+    },
+
+    makeCopyFormulaButtonHTML: function (iFormula) {
+        const copyFormulaWords = localize.getString("copyFormula");
+        return `<input id="copyFormulaButton" type="button" 
+                onclick="navigator.clipboard.writeText('${iFormula}')"
+                value="${copyFormulaWords}">`;
     },
 
     /**
@@ -333,7 +356,7 @@ ui = {
                     let chosen = testimate.theTest.testID === theID ? "selected" : "";
                     const menuString = Test.configs[theID].makeMenuString();
                     theMenu += `<option value='${theID}' ${chosen}> ${menuString} </option>`;
-                })
+                });
                 theMenu += `</select>`;
                 out += theMenu;
             }
@@ -351,13 +374,13 @@ ui = {
      * @returns {Promise<string>}
      */
     makeDatasetGuts: async function () {
-        const randomPhrase = ui.hasRandom ? localize.getString('hasRandom') : localize.getString('noRandom');
+        const randomPhrase = data.hasRandom ? localize.getString('hasRandom') : localize.getString('noRandom');
 
         return localize.getString("datasetDIV", testimate.state.dataset.title, data.allCODAPitems.length, randomPhrase);
     },
 
     adjustEmitGuts: function () {
-        const summaryClause = `<summary>${localize.getString("tests.emitSummary")}</summary>`
+        const summaryClause = `<summary>${localize.getString("tests.emitSummary")}</summary>`;
         const singleEmitButtonTitle = localize.getString("emit");
         const randomEmitButtonTitle = localize.getString("emitRR", testimate.state.randomEmitNumber);
         const hierarchyEmitButtonTitle = localize.getString("emitHierarchy", data.topCases.length);
@@ -366,35 +389,7 @@ ui = {
         document.getElementById("emitRandomButton").value = randomEmitButtonTitle;
         document.getElementById("emitHierarchyButton").value = hierarchyEmitButtonTitle;
 
-        /*        const emitClause = `<input type="button" id="emitButton"
-                    value="${emitButtonTitle}"
-                    onclick="handlers.emit()"></input>
-        `;
-                const emitRRButton = `<input type="button"  id="rrEmitButton"
-                    value="${emitRRButtonTitle}"
-                    onclick="handlers.rrEmit(${testimate.state.rrEmitNumber})"></input>`;
-                const emitRRBox =  `<input type="number" id="rrEmitBox" value="${testimate.state.rrEmitNumber}"
-                       onclick="handlers.changeRREmit()" min="0" max = "100" step="1"
-                       class="short_number_field">
-                       <label for="rrEmitBox">times</label>
-                    `;
-
-                let randomClause = "";
-                if (ui.hasRandom) {
-                    randomClause = `${emitRRButton} &emsp; ${emitRRBox}`;
-                }
-
-                let hierarchicalClause = "";
-                if (this.hierarchyInfo && this.hierarchyInfo.nCollections > 1) {
-                    const emitHierarchyButtonTitle = localize.getString("emitHierarchy", this.hierarchyInfo.topLevelCases.length);
-                    const emitHierarchyButton =
-                        `<input type="button"  id="hierarchyEmitButton"
-                            value="${emitHierarchyButtonTitle}"
-                            onclick="handlers.hierarchyEmit()">
-                        </input>`;
-                    hierarchicalClause = emitHierarchyButton;
-                }*/
     },
 
 
-}
+};

@@ -5,12 +5,13 @@
 // Roy Hung 2019
 
 
+
 const beta = {
     PDF: function (x, a, b) {
         // Beta probability density function impementation
         // using logarithms, no factorials involved.
         // Overcomes the problem with large integers
-        return Math.exp(this.lnPDF(x, a, b))
+        return Math.exp(this.lnPDF(x, a, b));
     },
 
     lnPDF: function (x, a, b) {
@@ -40,4 +41,4 @@ const beta = {
         // Beta(x,y) = e^(ln(Beta(x,y))
         return Math.exp(this.lnFunc(x, y));
     }
-}
+};

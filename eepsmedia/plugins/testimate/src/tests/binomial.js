@@ -1,3 +1,6 @@
+/* global  jStat */
+
+
 const binomial =
     {
 
@@ -184,7 +187,7 @@ const binomial =
             document.getElementById("result").innerHTML = `${CItext}`;
 
         }
-    }
+    };
 
 
 /*

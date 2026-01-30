@@ -2,10 +2,14 @@
 
 <!--
 
+
     local in local codap :
+        2025-12-04
+        http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-data-interactives/eepsmedia/plugins/testimate/
+
         http://localhost/~tim/codap/static/dg/en/cert/index.html?di=https://localhost/~tim/plugins/testimate
     import local: http://localhost/~tim/plugins/testimate
-                    http://localhost/~tim/codap-data-interactives/eepsmedia/plugins/simmer
+                    http://localhost/~tim/codap-data-interactives/eepsmedia/plugins/testimate
 
     global :
         http://codap.concord.org/app?di=https://codap.xyz/plugins/testimate
@@ -36,7 +40,6 @@
     <script src="../../common/src/pluginLang.js"></script>
 
     <script src="jstat/jstat.min.js"></script>
-    <script src="sprintf/sprintf.min.js"></script>
 
     <script src="src/testimate.js"></script>
     <script src="src/data.js"></script>
@@ -56,6 +59,7 @@
     <script src="src/tests/regression.js"></script>
     <script src="src/tests/correlation.js"></script>
     <script src="src/tests/independence.js"></script>
+    <script src="src/tests/fisherExact.js"></script>    <!-- new 2026-01-02 -->
     <script src="src/tests/anova.js"></script>
     <script src="src/tests/logistic.js"></script>
 
@@ -106,6 +110,7 @@
 
     <div id="testHeaderDIV">testID header</div>
     <div id="resultsDIV"> results go here</div>
+    <div id="warningDIV"> warnings go here</div>
     <div id="configureDIV">
         <span id="configStart"></span>
         <input id="sidesButton" type="button" onclick="handlers.changeTestSides()" value="≠">

@@ -1,4 +1,4 @@
-
+/* global testimate, ui, data */
 
 testimate.dropManager = {
 
@@ -55,7 +55,7 @@ testimate.dropManager = {
             const theElement = currentElement.closest('#xDIV, #yDIV');
             if (theElement) {
                 if (theElement === ui.xDIV || theElement === ui.yDIV) {
-                    if (this.currentlyOverDIV && (theElement != this.currentlyOverDIV)) {
+                    if (this.currentlyOverDIV && (theElement !== this.currentlyOverDIV)) {
                         this.currentlyOverDIV.classList.replace(`drag-over`, `drag-near`);
                         console.log(`    change drop zone to ${theElement.id}`);
                     }
@@ -75,11 +75,11 @@ testimate.dropManager = {
     },
 
     highlightNone: function() {
-        ui.xDIV.className = (testimate.state.x && testimate.state.x.name) ? `drag-none` : `drag-empty`;
-        ui.yDIV.className = (testimate.state.y && testimate.state.y.name) ? `drag-none` : `drag-empty`;
+        ui.xDIV.className = data.xName() ? `drag-none` : `drag-empty`;
+        ui.yDIV.className = data.yName() ? `drag-none` : `drag-empty`;
         this.currentlyOverDIV = null;
 
     },
 
 
-}
+};

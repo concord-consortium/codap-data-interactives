@@ -1,3 +1,6 @@
+/* global testimate, data, Test, jStat, ui, localize */
+
+
 class Regression extends Test {
 
     constructor(iID, iGrouping) {
@@ -66,30 +69,30 @@ class Regression extends Test {
     }
 
     makeResultsString() {
-        //  const testDesc = `mean of ${testimate.state.x.name}`;
-        const N = this.results.N;
+        const NString = Test.makeResultValueString("N", this.results.N);
+        const tString = Test.makeResultValueString("t", this.results.t, 3);
+        const PString = Test.makePString(this.results.P);
+        const dfString = Test.makeResultValueString("df", this.results.df, 3);
 
-        const slope = ui.numberToString(this.results.slope);       //  CI of slope
-        const intercept = ui.numberToString(this.results.intercept);       //  CI of slope
+        const slope = ui.numberToString(this.results.slope);
+        const intercept = ui.numberToString(this.results.intercept);
         const CISmin = ui.numberToString(this.results.slopeCImin);       //  CI of slope
         const CISmax = ui.numberToString(this.results.slopeCImax);
         const CIImin = ui.numberToString(this.results.interceptCImin);   //  CI of intercept
         const CIImax = ui.numberToString(this.results.interceptCImax);
-        const df = ui.numberToString(this.results.df);
         const rho = ui.numberToString(this.results.rho);
         const rsq = ui.numberToString(this.results.rsq);
-        const t = ui.numberToString(this.results.t, 3);
+
         const tCrit = ui.numberToString(this.results.tCrit, 3);
         const conf = ui.numberToString(testimate.state.testParams.conf);
         const alpha = ui.numberToString(testimate.state.testParams.alpha);
-        const P = (this.results.P < 0.0001) ?
-            `P < 0.0001` :
-            `P = ${ui.numberToString(this.results.P)}`;
 
         const theSign = intercept >= 0 ? "+" : '-';
 
-        const X = testimate.state.x.name;
-        const Y = testimate.state.y.name;
+        const X = data.xName();
+        const Y = data.yName();
+
+        ui.graphTitle = `${data.xName()} vs ${data.yName()}`;
 
         const DSdetails = document.getElementById("DSdetails");
         const DSopen = DSdetails && DSdetails.hasAttribute("open");
@@ -98,20 +101,29 @@ class Regression extends Test {
         const slopeWord = localize.getString("slope");
         const interceptWord = localize.getString("intercept");
 
+        const theLongFormula = `${this.results.slope} * (${Y}) ${theSign} ${Math.abs(this.results.intercept)}`;  //  note reversal!
+
+        const graphButton = ui.makeRegressionGraphButtonHTML();
+        const copyFormulaButton = ui.makeCopyFormulaButtonHTML(theLongFormula);
+
         let out = "<pre>";
 
         //  out += `How does (${X}) depend on (${Y})?`
         out += localize.getString("tests.regression.testQuestion", X, Y);
-        out += `<br>    LSRL: ${X} = ${slope} (${Y}) ${theSign} ${Math.abs(intercept)} `;  //  note reversal!
-        out += `<br>    N = ${N}, &rho; = ${rho}, r<sup>2</sup> = ${rsq}<br>`;
+        out += `<br>    LSRL: ${X} = ${slope} * (${Y}) ${theSign} ${Math.abs(intercept)} `;  //  note reversal!
+        out += `<br>    ${NString}, &rho; = ${rho}, r<sup>2</sup> = ${rsq}<br>`;
+
+        out += `<br>${graphButton}&emsp;${copyFormulaButton}<br><br>`;
+
+
         out += `<details id="DSdetails" ${DSopen ? "open" : ""}>`;
         out += localize.getString("tests.regression.detailsSummary", X, Y);
-        out += `<table><tr><td>${slopeWord}</td><td>${slope}</td><td>${conf}% ${localize.getString("CI")} = [${CISmin}, ${CISmax}]</td></tr>`;
+        out += `<table class="test-results"><tr><td>${slopeWord}</td><td>${slope}</td><td>${conf}% ${localize.getString("CI")} = [${CISmin}, ${CISmax}]</td></tr>`;
         out += `<tr><td>${interceptWord}</td><td>${intercept}</td><td>${conf}% ${localize.getString("CI")} = [${CIImin}, ${CIImax}]</td></tr></table>`;
         out += `<br> `;
-        out += `${testingSlopePhrase} ${testimate.state.testParams.theSidesOp} ${testimate.state.testParams.value} `
-        out += `<br>    t = ${t}, ${P}`;
-        out += `<br>    df = ${df},  &alpha; = ${alpha}, t* = ${tCrit}, `
+        out += `${testingSlopePhrase} ${testimate.state.testParams.theSidesOp} ${testimate.state.testParams.value} `;
+        out += `<br>    ${tString}, ${PString}`;
+        out += `<br>    ${dfString},  &alpha; = ${alpha}, t* = ${tCrit}, `;
         out += `</details>`;
         out += `<br> `;
         out += `</pre>`;
@@ -124,14 +136,13 @@ class Regression extends Test {
      * @returns {string}    what shows up in a menu.
      */
     static makeMenuString() {
-        return localize.getString("tests.regression.menuString",testimate.state.x.name, testimate.state.y.name);
-        //  return `linear regression of (${testimate.state.x.name}) as a function of (${testimate.state.y.name})`;
+        return localize.getString("tests.regression.menuString",data.xName(), data.yName());
     }
 
     makeConfigureGuts() {
         const testingSlopePhrase = localize.getString("tests.regression.testingSlope");
 
-        const sides = ui.sidesBoxHTML(testimate.state.testParams.sides);
+        const sides = ui.sidesChicletButtonHTML(testimate.state.testParams.sides);
         const value = ui.valueBoxHTML(testimate.state.testParams.value);
         const conf = ui.confBoxHTML(testimate.state.testParams.conf);
         let theHTML = `${testingSlopePhrase} ${sides} ${value} ${conf}`;

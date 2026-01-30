@@ -1,3 +1,6 @@
+/* global testimate, connect, data, ui */
+
+
 const handlers = {
 
     getPluginState : function() {
@@ -17,17 +20,11 @@ const handlers = {
 
     /**
      * User has clicked a button that changes whether a test is one- or two-sided
-     * todo: remove this in favor of changeSides12?
      */
     changeTestSides: function () {
-        const iSign = document.getElementById(`sidesButton`).value;    // 1 or 2
-        testimate.state.testParams.sides = (iSign === `≠`) ? 1 : 2;
-        testimate.refreshDataAndTestResults();
-    },
-
-    changeSides12 : function() {
-        const newSides = testimate.state.testParams.sides === 1 ? 2 : 1;
-        testimate.state.testParams.sides = newSides;
+        const theParams = testimate.state.testParams;
+        theParams.sides = theParams.sides === 1 ? 2 : 1;
+        testimate.determineSidesOp();
         testimate.refreshDataAndTestResults();
     },
 
@@ -47,7 +44,7 @@ const handlers = {
 
     changeValue: function () {
         const v = document.getElementById(`valueBox`);
-        testimate.state.testParams.value = v.value;
+        testimate.state.testParams.value = Number(v.value);
         testimate.refreshDataAndTestResults();
     },
 
@@ -102,6 +99,7 @@ const handlers = {
         const valueSet = [...data.xAttData.valueSet];
         const nextValue = this.nextValueInList(valueSet, initialGroup);
         testimate.state.testParams.focusGroupX = testimate.setFocusGroup(data.xAttData, nextValue);
+        testimate.determineSidesOp();   //      the data are there already; this changes the sign, which changes pValue
         testimate.refreshDataAndTestResults();
     },
 
@@ -110,6 +108,7 @@ const handlers = {
         const valueSet = [...data.yAttData.valueSet];
         const nextValue = this.nextValueInList(valueSet, initialGroup);
         testimate.state.testParams.focusGroupY = testimate.setFocusGroup(data.yAttData, nextValue);
+        testimate.determineSidesOp();
         testimate.refreshDataAndTestResults();
     },
 
@@ -123,7 +122,7 @@ const handlers = {
      * @param iXY
      */
     changeCN: function (iXY) {
-        const aName = (iXY === 'x') ? testimate.state.x.name : testimate.state.y.name;
+        const aName = (iXY === 'x') ? data.xName() : data.yName();
         const newType = (testimate.state.dataTypes[aName] === 'numeric' ? 'categorical' : 'numeric');
         testimate.state.dataTypes[aName] = newType;
         testimate.refreshDataAndTestResults();
@@ -141,7 +140,7 @@ const handlers = {
             let theBoxValue = 0;
             if (g !== lastGroup) {
                 theBoxValue = Number(document.getElementById(`GProp_${g}`).value);
-                const oldPropSum = propSum
+                const oldPropSum = propSum;
                 propSum += theBoxValue;
                 if (propSum > 1) {
                     theBoxValue = 1 - oldPropSum;
@@ -153,7 +152,7 @@ const handlers = {
                 theLastBox.innerHTML = ui.numberToString(theBoxValue);
             }
             testimate.state.testParams.groupProportions[g] = (theBoxValue);
-        })
+        });
         testimate.refreshDataAndTestResults();
     },
 
@@ -167,27 +166,22 @@ const handlers = {
         testimate.refreshDataAndTestResults();
     },
 
-    showLogisticGraph: function() {
-        const formulas = testimate.theTest.makeFormulaString();
-        connect.showLogisticGraph(formulas.longFormula);
+    showRegressionGraph: function(iFormula) {
+        //  const formulas = testimate.theTest.makeFormulaStrings();
+        const xName = testimate.theTest.theConfig.name === "logistic regression" ?
+            testimate.constants.logisticGroupAttributeName : data.xName();
+        connect.showRegressionGraph(data.yName(), xName, iFormula);
     },
 
-
-    getNextGroupValue: function(initialValue) {
-        const valueSet = [...data.xAttData.valueSet];
-
-        if (initialValue) {
-            const nextValue = this.nextValueInList(valueSet, initialValue);
-            return nextValue ? nextValue : null;
-        } else {
-            return valueSet[0];
-        }
-    },
 
     nextValueInList: function (iList, iValue) {
-        const iOrig = iList.indexOf(iValue);
-        const iNext = (iOrig + 1 >= iList.length) ? 0 : iOrig + 1;
-        return iList[iNext];
+        if (iValue) {
+            const iOrig = iList.indexOf(iValue);
+            const iNext = (iOrig + 1 >= iList.length) ? 0 : iOrig + 1;
+            return iList[iNext];
+        } else {
+            return iList[0];
+        }
     },
 
 
@@ -220,11 +214,14 @@ const handlers = {
      */
     emitRandom: async function() {
 
+        testimate.iteratingRandom = true;   //  set the flag
+
         for (let i = 0; i < testimate.state.randomEmitNumber; i++) {
             await connect.rerandomizeSource(testimate.state.dataset.name);
             await this.emitSingle();
         }
 
+        testimate.iteratingRandom = false;  //  clear the flag
         testimate.refreshDataAndTestResults();
     },
 
@@ -251,4 +248,4 @@ const handlers = {
         await testimate.refreshDataAndTestResults();
     },
 
-}
+};

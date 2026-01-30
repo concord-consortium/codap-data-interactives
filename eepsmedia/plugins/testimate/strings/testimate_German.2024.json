@@ -3,12 +3,12 @@
     "flags": "🇩🇪,🇦🇹,🇨🇭",
     "language": "Deutsch",
     "attributeDescriptions": {
-      "N": "Stichprobengröße",
+      "N": "Stichprobe",
       "prop": "der untersuchte Stichprobenanteil",
       "P": "der \"p-Wert\", also die Wahrscheinlichkeit, diesen oder einen noch extremeren Teststatistikwert zu erhalten, wenn die Nullhypothese wahr ist.",
       "CImin": "die untere Grenze des Konfidenzintervalls",
       "CImax": "die obere Grenze des Konfidenzintervalls",
-      "alpha": "die festgelegte Wahrscheinlichkeit, um zu entscheiden, ob der p-Wert \"signifikant\" ist. Vorsicht beim Signifikanzbegriff.",
+      "alpha": "die festgelegte Wahrscheinlichkeit, um zu entscheiden, ob der p-Wert \"signifikant\" ist. Vorsicht bei Signifikanz.",
       "conf": "der Wert, in Prozent, der genutzt wird, um das Konfidenzintervall zu bestimmen",
       "t": "die t-Statistik, das Residuum geteilt durch durch den Standardfehler",
       "z": "die z-Statistik: Die Differenz vom hypothetischen Wert, geteilt durch die Stichprobenstandardsabweichung",
@@ -52,20 +52,7 @@
       "LSlope": "Die Steigung der Kurve bei x = pos",
       "cost": "die abstrakten Kosten der Anpassung (man denke an die Summe der Quadrate), die es zu minimieren gilt",
       "rate": "Iterationsparameter für die Anpassung",
-      "iterations": "Anzahl der Wiederholungen",
-      "sNN1": "Stichprobenstandardabweichung des linken Merkmals",
-      "sNN2": "Stichprobenstandardabweichung des rechten Merkmals",
-      "sNB1": "Stichprobenstandardabweichung, Gruppe 1",
-      "sNB2": "Stichprobenstandardabweichung, Gruppe 2",
-      "meanNN1": "Der Mittelwert des linken Merkmals",
-      "meanNN2": "Der Mittelwert des rechten Merkmals",
-      "meanNB1": "Der Mittelwert der 1. Gruppe",
-      "meanNB2": "der Mittelwert der zweiten Gruppe",
-      "relativeRisk": "das Verhältnis des Risiken zwischen zwei Gruppen",
-      "oddsRatio": "das Verhältnis zweier Chancen zwischen zwei Gruppen",
-      "a": "die Anzahl in der Zelle oben-links in der Fisher-Tabelle",
-      "aExpected": "die erwartete Anzahl in der Zelle oben-links, wenn die Nullhypothese wahr wäre",
-      "pObserved": "die Wahrscheinlichkeit unter der Nullhypothese so eine Anzahl in der Zelle oben-links zu sehen"
+      "iterations": "Anzahl der Wiederholungen"
     },
     "dropAttributeHere": "Merkmal hier ablegen",
     "tests": {
@@ -81,15 +68,13 @@
         "menuString": "Arithmetisches Mittel von •1•",
         "testQuestion": "Ist das arithmetische Mittel von •1• •2• •3• ?",
         "resultsLine2": "Arithmetisches Mittel =  •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "Test auf Mittelwert",
-        "sampleMean": "Stichprobenmittelwert"
+        "configurationStart": "Test auf Mittelwert"
       },
       "paired": {
         "menuString": "Test auf (•1• – •2•) für abhängige Stichproben",
         "testQuestion": "Ist die (gepaarte) Mittelwertsdifferenz of jedem (•1• – •2•) •3• •4• ?",
         "resultsLine2": "Gepaare Mittelwertdifferenz = = •1•, •2•% CI = [•3•, •4•]",
-        "configurationStart": "Test für abhängige Stichproben: Mittelwert von",
-        "meanPairedDifference": "gepaarte Mittelwertsdifferenz"
+        "configurationStart": "Test für abhängige Stichproben: Mittelwert von"
       },
       "twoSampleT": {
         "menuString1": "Differenz der Mittelwerte: •1• vs •2•",
@@ -99,9 +84,7 @@
         "detailsSummary": "<summary>Differenz der Mittelwerte, 2-Stichprobenfall <i>t</i> Verfahren</summary>",
         "configStart1": "Gruppe •1• – Gruppe •2•",
         "configStartPaired": "Test auf Mittelwert(•1•)",
-        "configStartUnpaired": "unabhängiger Test",
-        "pooledVariance": "gepoolte Varianz",
-        "unpooledVariance": "ungepoolte Varianz"
+        "configStartUnpaired": "unabhängiger Test"
       },
       "regression": {
         "menuString": "Lineare Regression von (•1•) als eine Funktion von (•2•)",
@@ -127,10 +110,7 @@
         "menuString": "Test auf Unabhängigkeit von •1• und •2•",
         "testQuestion": "Sind (•1•) und (•2•) unabhängig?",
         "detailsSummary": "<summary>Test auf Unabhängigkeit, •1•-seitig &chi;<sup>2</sup> Zusammenfassung</summary>",
-        "configurationStart": "konfiguriere Test auf Unabhängigkeit von (•1•) und (•2•)",
-        "columnsByRows": "•1• Spalte und •2• Reihen",
-        "warning": "⚠️😱&emsp;WARNUNG!<br>Manche Zellen haben zu wenige Fälle! Fasse ggfs. Zeilen und/oder Spalten zusammen.",
-        "warningFisher": "⚠️😱&emsp;WARNUNG!<br>Manche Zellen haben zu wenige Fälle! Fasse ggfs. Zeilen und/oder Spalten zusammen ... oder führe einen exakten Test nach Fisher durch."
+        "configurationStart": "konfiguriere Test auf Unabhängigkeit von (•1•) und (•2•)"
       },
       "anova": {
         "menuString": "ANOVA: •1• durch •2•",
@@ -156,28 +136,12 @@
         "testQuestion": "Ist die Korrelation &rho; zwischen (•1•) und (•2•) •3• •4•?",
         "detailsSummary": "<summary>Korrelation Zusammenfassung</summary>",
         "testingCorrelation": "Teste Korrelation"
-      },
-      "fisher": {
-        "menuString": "Exakter Test nach Fisher auf Unabhängikeit von •1• und •2•",
-        "testQuestion": "Sind <kbd>•1•</kbd> und <kbd>•2•</kbd> unabhängig?",
-        "columnsByRows": "•1• Spalten und •2• Zeilen",
-        "columnPctLabel": "(Spalten %)",
-        "detailsSummary": "<summary>Test auf Unabhängigkeit, 2x2 Exakter Test nach Fisher</summary>",
-        "discussionSummary": "<summary>Diskussion</summary>",
-        "configurationStart": "Konfiguriere •1• Exakten Test nach Fisher",
-        "configureFocus": "<br>fokussiere auf <kbd>•1•</kbd> = •2• und <kbd>•3•</kbd> = •4•.",
-        "configureDataShow": "<li><b>In den Daten</b>: Fälle mit <kbd>•1•</kbd> = <kbd>•2•</kbd><br>",
-        "configureMoreOrLess": "&emsp;are <var>•1•</var> hat <kbd>•2•</kbd> = <kbd>•3•</kbd><br>",
-        "configureThanAlternative": "&emsp;als solche mit <kbd>•1•</kbd> = <kbd>•2•</kbd>.",
-        "nullStatement1": "<li><b>Null Hypothese</b>: Es gibt keine Abhängigkeit<br>&emsp;zwischen <kbd>•1•</kbd> und <kbd>•2•</kbd>.",
-        "oneSidedDef": "<li>Der <b>p-Wer</b> ist die Wahrscheinlichkeit, unter der Annahme der Nullhypothese,<br>solche oder noch extremere Daten zu beobachten, <br>in die gleiche Richtung.",
-        "twoSidedDef": "<li>Der <b>p-Wert</b> ist die Wahrscheinlichkeit, unter der Annahme der Nullhypothese,<br>solche oder noch extremere Daten zu beobachten, <br>in die entgegengesetzte Richtung."
       }
     },
     "attributeNames": {
       "N": "n",
       "prop": "Anteil",
-      "P": "p-Wert",
+      "P": "pWert",
       "CImin": "KI_min",
       "CImax": "KI_max",
       "alpha": "alpha",
@@ -203,8 +167,8 @@
       "mean": "Arithmetisches Mittel",
       "diff": "diff",
       "SE": "SE",
-      "N1": "n1",
-      "N2": "n2",
+      "N1": "N1",
+      "N2": "N2",
       "prop1": "Anteil1",
       "prop2": "Anteil2",
       "df": "df",
@@ -224,22 +188,7 @@
       "LSlope": "Steigung",
       "cost": "cost",
       "rate": "rate",
-      "iterations": "Wiederholungen",
-      "s1": "s1",
-      "s2": "s2",
-      "sNN1": "sLinks",
-      "sNN2": "sRechts",
-      "sNB1": "s1",
-      "sNB2": "s2",
-      "meanNN1": "Mittelwert1",
-      "meanNN2": "Mittelwert2",
-      "meanNB1": "Mittelwert1",
-      "meanNB2": "Mittelwert2",
-      "relativeRisk": "relatives Risiko",
-      "oddsRatio": "Chancenverhältnis",
-      "a": "a",
-      "aExpected": "aErwartet",
-      "pObserved": "WahrA"
+      "iterations": "Wiederholungen"
     },
     "staticStrings": {
       "outcomePrimaryHint": "Zielvariable/erstes Merkmal",
@@ -285,15 +234,6 @@
     "conf": "konf",
     "notP": "nicht •1•",
     "datasetName": "Testergebnisse und Schätzer",
-    "Nsided": "•1•-seitig",
-    "moreLikely": "wahrscheinlicher",
-    "lessLikely": "weniger wahrscheinlich",
-    "justAsLikely": "gleich wahrscheinlich",
-    "and": "und"
-  },
-  "tests": {
-    "oneSampleT": {
-      "sampleMean": "Stichprobenmittelwert"
-    }
+    "Nsided": "•1•-seitig"
   }
 }

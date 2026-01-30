@@ -1,0 +1,21 @@
+html {
+    background: linear-gradient(#eef, #ccd);
+    height: 100%;
+}
+
+body  {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    margin : 0px;
+    padding : 6px;
+    color: #333;
+}
+
+.fine-print {
+    font-size: 11px;
+}
+
+input[type='number']{
+    width: 77px;
+}

@@ -51,7 +51,7 @@
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "measures_from_"
   },
   "fr": {
-    "DG.plugin.Scrambler.name": "mélangeur",
+    "DG.plugin.Scrambler.name": "Mélangeur",
     "DG.plugin.Scrambler.description": "Tester des hypothèses en faisant varier un attribut de manière aléatoire.",
     "DG.plugin.Scrambler.language": "Anglais",
     "DG.plugin.Scrambler.static.scramblerTitle": "Mélangeur",
@@ -59,15 +59,15 @@
     "DG.plugin.Scrambler.static.howManyLabel": "combien?",
     "DG.plugin.Scrambler.static.scrambledDataButtonName": "Afficher les données mélangées",
     "DG.plugin.Scrambler.sScramble": "Mélanger",
-    "DG.plugin.Scrambler.sNoAttribute": "aucun attribut 😕",
-    "DG.plugin.Scrambler.sIterationAttName": "lot",
+    "DG.plugin.Scrambler.sNoAttribute": "Aucun attribut 😕",
+    "DG.plugin.Scrambler.sIterationAttName": "Lot",
     "DG.plugin.Scrambler.sIterationAttDescription": "Quel \"lot\" de données. Ce nombre augmente à chaque mélange.",
     "DG.plugin.Scrambler.sScrambledAttName": "Attribut mélangé",
     "DG.plugin.Scrambler.sScrambledAttDescription": "Quel attribut a été mélangé.",
     "DG.plugin.Scrambler.sNoDataset": "Trouvez un jeu de données et faites glisser ici l’attribut que vous souhaitez mélanger !",
     "DG.plugin.Scrambler.sNoScrambleAttribute": "Quel attribut souhaitez-vous mélanger ? Faites-le glisser ici.",
     "DG.plugin.Scrambler.shShowScrambledButtonHelpText": "Afficher un jeu de données mélangé",
-    "DG.plugin.Scrambler.sfScrambledAttribute": "<span>mélanger <code>%@1</code></span>",
+    "DG.plugin.Scrambler.sfScrambledAttribute": "<span>Mélanger <code>%@1</code></span>",
     "DG.plugin.Scrambler.sfOKtoScramble": "<span>OK pour mélanger <code>%@1</code> dans l'ensemble de données <code>%@2</code></span>",
     "DG.plugin.Scrambler.sfNoMeasure": "<span>Votre jeu de données, <code>%@1</code>, a besoin d’une mesure, probablement un attribut contenant une formule. Faites glisser cet attribut vers la gauche afin d’avoir quelque chose à collecter!</span>",
     "DG.plugin.Scrambler.sfFormulaProblem": "<span>Impossible de mélanger <code>%@1</code> car il contient une formule. Faites glisser un autre attribut de la dernière collection (%@2), comme <code>%@3</code>.</span>",
@@ -157,6 +157,17 @@
     "DG.plugin.Scrambler.sOr": "또는",
     "DG.plugin.Scrambler.sScrambledDatasetPrefix": "스크램블된",
     "DG.plugin.Scrambler.sMeasureDatasetPrefix": "측정값"
+  },
+  "fa": {
+    "DG.plugin.Scrambler.name": "ابزار به‌هم‌ریختن داده‌ها",
+    "DG.plugin.Scrambler.description": "آزمون فرضیه با تغییر تصادفی یک صفت.",
+    "DG.plugin.Scrambler.language": "انگلیسی",
+    "DG.plugin.Scrambler.static.scramblerTitle": "ابزار به‌هم‌ریختن داده‌ها",
+    "DG.plugin.Scrambler.static.cantScrambleStripe": "برای ادامه، این مورد را اصلاح کنید.",
+    "DG.plugin.Scrambler.static.howManyLabel": "چند تا؟",
+    "DG.plugin.Scrambler.static.scrambledDataButtonName": "نمایش داده‌های به‌هم‌ریخته",
+    "DG.plugin.Scrambler.sScramble": "به‌هم‌ریختن",
+    "DG.plugin.Scrambler.sNoAttribute": "بدون صفت؟"
   },
   "pl": {
     "DG.plugin.Scrambler.name": "mieszacz",

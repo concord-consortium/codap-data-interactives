@@ -1,3 +1,6 @@
+/* global testimate, connect, Test */
+
+
 const data = {
 
     dirtyData: true,
@@ -13,27 +16,31 @@ const data = {
     sourceDatasetInfo: {},
 
 
-
     /**
      * called from testimate.refreshDataAndTestResults().
      *
-     * Before we write anything on the screen, we ensure that the data we have is current.
+     * Before we write anything on the screen, we ensure that we have the current data.
      *
      * @returns {Promise<void>}
      */
     updateData: async function () {
         if (testimate.state.dataset) {
+            this.sourceDatasetInfo = await connect.getSourceDatasetInfo(testimate.state.dataset.name);
+            this.isGrouped = this.sourceDSisHierarchical();
 
             if (this.dirtyData) {
-                this.sourceDatasetInfo = await connect.getSourceDatasetInfo(testimate.state.dataset.name);
-                this.hasRandom = this.sourceDSHasRandomness();
-                this.isGrouped = this.sourceDSisHierarchical();
-
                 this.topCases = (this.isGrouped) ? await connect.retrieveTopLevelCases() : [];
-
-                await this.retrieveAllItemsFromCODAP();
+                this.allCODAPitems = await this.retrieveAllItemsFromCODAP();
             }
         }
+    },
+
+    xName: function() {
+        return (this.xAttData && this.xAttData.name);
+    },
+
+    yName: function() {
+        return this.yAttData && this.yAttData.name;
     },
 
     /*      Coping with getting data from CODAP and responding to changes       */
@@ -46,56 +53,58 @@ const data = {
      * @returns {Promise<void>}
      */
     retrieveAllItemsFromCODAP: async function () {
+        let theItems = [];
+
         if (testimate.state.x) {
-            this.allCODAPitems = await connect.getAllItems();      //  this.dataset is now set as array of objects (result.values)
+            theItems = await connect.getAllItems();      //  this.dataset is now set as array of objects (result.values)
             if (this.allCODAPitems) {
             }
         } else {
             console.log(`no x variable`);
         }
+        return theItems;
     },
 
     /**
      * Construct xAttData and yAttData, the INTERNAL Arrays of the data in each attribute.
      *
+     * Called from testimate.js (refreshDataAndTestResults()) just after updateData()
+     *
      * Those constructors evaluate the values to tell whether the attributes are numeric or categorical.
      * We need this in order to figure out which tests are appropriate,
      * and (importantly) to set a test if it has not yet been set.
      *
-     * @param xName
-     * @param yName
      * @param data
      * @returns {Promise<void>}
      */
-    makeXandYArrays : async function(data) {
+    makeXandYArrays: async function (data) {
         if (testimate.state.x) {
-            this.xAttData = new AttData(testimate.state.x.name, data);
-            if (!testimate.state.focusGroupDictionary[this.xAttData.name]) {
-                testimate.state.testParams.focusGroupX = testimate.setFocusGroup(this.xAttData, null);
-            }
+            this.xAttData = new AttData(testimate.state.x, data);
+            testimate.state.testParams.focusGroupX = testimate.setFocusGroup(this.xAttData, null);
         }
         if (testimate.state.y) {
-            this.yAttData = new AttData(testimate.state.y.name, data);
+            this.yAttData = new AttData(testimate.state.y, data);
             testimate.state.testParams.focusGroupY = testimate.setFocusGroup(this.yAttData, null);
         }
-        if (this.xAttData)  console.log(`    made xAttData (${this.xAttData.theRawArray.length})`);
+
+        if (this.xAttData) console.log(`    made xAttData (${this.xAttData.theRawArray.length})`);
     },
 
     removeInappropriateCases: async function () {
 
         if (!testimate.theTest) return;
 
-        let newXArray = []
-        let newYArray = []
+        let newXArray = [];
+        let newYArray = [];
 
-        const paired = Test.configs[testimate.theTest.testID].paired;
+        const paired = Test.configs[testimate.theTest.testID].paired;   //  are we doing a paired test?
 
 
         //  make intermediate arrays that have only the right type of values (e.g., numeric)
-        //  same length as original!
+        //  same length as original! (filled in with nulls)
 
         let xIntermediate = [];
-        if (testimate.state.x) {
+        if (this.xAttData) {
             const xMustBeNumeric = (testimate.state.dataTypes[testimate.state.x.name] === 'numeric');
             this.xAttData.theRawArray.forEach(xx => {
                 if (xMustBeNumeric) {
@@ -103,11 +112,11 @@ const data = {
                 } else {
                     xIntermediate.push(xx);     //  strings and nulls
                 }
-            })
+            });
         }
 
         let yIntermediate = [];
-        if (testimate.state.y) {
+        if (this.yAttData) {
             const yMustBeNumeric = (testimate.state.dataTypes[testimate.state.y.name] === 'numeric');
             this.yAttData.theRawArray.forEach(xx => {
                 if (yMustBeNumeric) {
@@ -115,7 +124,7 @@ const data = {
                 } else {
                     yIntermediate.push(xx);     //  strings and nulls
                 }
-            })
+            });
         }
 
         //  now go through the intermediate arrays prudently eliminating null values
@@ -142,12 +151,14 @@ const data = {
         }
 
         this.xAttData.theArray = newXArray;
-        if (testimate.state.y) this.yAttData.theArray = newYArray;
+        if (this.yAttData) this.yAttData.theArray = newYArray;
 
         console.log(`    cleaned xAttData (${this.xAttData.theArray.length})`);
 
         if (this.xAttData.theArray.length < 20)
-            console.log(`cleaned x = ${JSON.stringify(this.xAttData.theArray)} \ncleaned y = ${JSON.stringify(this.yAttData.theArray)}`)
+            console.log(`cleaned x = ${JSON.stringify(this.xAttData.theArray)}`);
+        if (this.yAttData && this.yAttData.theArray && this.yAttData.theArray.length < 20)
+            console.log(`\ncleaned y = ${JSON.stringify(this.yAttData.theArray)}`);
     },
 
     /**
@@ -159,7 +170,7 @@ const data = {
      * @returns {Promise<void>}
      */
     handleCaseChangeNotice: async function (iMessage) {
-        const theOp = iMessage.values.operation
+        const theOp = iMessage.values.operation;
         let tMess = theOp;
         //  console.log(`start ${tMess}`);
         switch (theOp) {
@@ -177,6 +188,7 @@ const data = {
                 //      includes attribute name change!
                 const theUpdatedAtts = iMessage.values.result.attrs;    //  array of objects, form {name : newName...}
                 theUpdatedAtts.forEach(att => {
+                    //  todo: see if we can do this using xAttData and yAttData
                     if (testimate.state.x && att.id === testimate.state.x.id) {    //  saved id of x-attribute
                         const oldName = testimate.state.x.name;
                         console.log(`att X changing from ${oldName} to ${att.title}`);
@@ -191,13 +203,15 @@ const data = {
                         testimate.state.y.name = att.name;       //  new name
                         testimate.state.dataTypes[att.name] = testimate.state.dataTypes[oldName];
                     }
-                })
+                });
                 data.dirtyData = true;
                 if (testimate.OKtoRespondToCaseChanges) await testimate.refreshDataAndTestResults();
                 break;
 
             case `deleteAttributes`:
             case `createAttributes`:
+            case "moveAttribute":
+            case "createCollection":
                 data.dirtyData = true;
                 if (testimate.OKtoRespondToCaseChanges) await testimate.refreshDataAndTestResults();
                 break;
@@ -213,21 +227,41 @@ const data = {
         console.log(`attribute change!`);
     },
 
-    sourceDSHasRandomness: function () {
+    /**
+     * Checks if there is randomness in formulas.
+     *
+     * @returns {boolean}
+     */
+    checkIfSourceDataHasRandomness: async function () {
         let out = false;
+        let xHasFormula = false;
+        let yHasFormula = false;
 
         if (this.sourceDatasetInfo) {
+
+            //  see if ANY attribute has a formula
             this.sourceDatasetInfo.collections.forEach(c => {
                 c.attrs.forEach(a => {
                     const f = a.formula;
                     if (f && f.indexOf("random") > -1) {
                         out = true;
                     }
-                })
-            })
+                    if (f && testimate.state.x && testimate.state.x.name === a.name) {
+                        xHasFormula = true;
+                    }
+                    if (f && testimate.state.y && testimate.state.y.name === a.name) {
+                        yHasFormula = true;
+                    }
+                });
+            });
+
+            //  if x has a formula or y has a formula... (if not, there is no randomness possible, and out is false)
+            if (!xHasFormula && !yHasFormula) {
+                out = false;
+            }
         }
 
-        return out;
+        this.hasRandom = out;
     },
 
     sourceDSisHierarchical: function () {
@@ -237,20 +271,20 @@ const data = {
         return null;
     },
 
-    filterGroupCases: function(theWholeDataset, theFilterValues) {
-        out = [];
-        theWholeDataset.forEach( d => {
+    filterGroupCases: function (theWholeDataset, theFilterValues) {
+        let out = [];
+        theWholeDataset.forEach(d => {
             const theItem = d.values;
             let matches = true;
-            Object.keys(theFilterValues).forEach(k=>{
+            Object.keys(theFilterValues).forEach(k => {
                 if (theItem[k] !== theFilterValues[k]) {
                     matches = false;
                 }
-            })
+            });
             if (matches) {
                 out.push({values: theItem});
             }
-        })
+        });
 
         return out;
     },
@@ -261,16 +295,18 @@ const data = {
      * @returns {boolean}
      */
     isNumericString: function (str) {
-        if (typeof str != "string") return false;       // we only process strings!
+        if (typeof str !== "string") return false;       // we only process strings!
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+            !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
     },
 
-}
+};
 
 class AttData {
-    constructor(iAttName, iData) {
+    constructor(iAtt, iData) {
+        const iAttName = iAtt.name;
         this.name = iAttName ? iAttName : null;
+        this.title = iAtt.title;
         this.theRawArray = [];
         this.theArray = [];     //  stays empty in constructor
         this.valueSet = new Set();
@@ -294,7 +330,7 @@ class AttData {
                 this.theRawArray.push(cooked);
                 this.numericCount++;
                 this.valueSet.add(cooked);
-            } else {        //  non-numeric         //  non-numeric strings are strings
+            } else {        //  non-numeric strings are strings
                 this.theRawArray.push(rawDatum);
                 this.nonNumericCount++;
                 this.valueSet.add(rawDatum);
@@ -321,7 +357,7 @@ class AttData {
     }
 
     isBinary() {
-        return (this.valueSet.size === 2 ||  this.valueSet.size === 1);
+        return (this.valueSet.size === 2 || this.valueSet.size === 1);
     }
 
 

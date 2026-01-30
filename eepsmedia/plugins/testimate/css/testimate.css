@@ -4,11 +4,17 @@
  */
 :root {
     --codap-color : #72bfca;
-    --bg-body-color : lightgray;
+    --bg-body-color : #ddd;
+    --bg-darker-table-color : #bbb;
+    --bg-table-color : #eee;
     --drag-near-bg-color : #cba;
     --drag-over-bg-color : #fed;
     --drag-none-bg-color : lightblue;
-    --drag-empty-bg-color : lightgray;
+    --drag-empty-bg-color : #ddd;
+    --warn-color : pink;
+    --att-bg-color : #fed;
+    --body-text-color : #333;
+    --bg-stripe-color : lightblue;
 
 }
 
@@ -16,7 +22,7 @@ body {
     margin : 0;
     padding : 0;
 
-    color : #333;
+    color : var(--body-text-color);
     font-family: "Sirin Stencil",sans-serif;
     font-size: small;
     min-height: 100vh;      /* make <body> fill the plugin */
@@ -29,8 +35,21 @@ pre {
     font-family: "Nanum Gothic Coding", monospace;
 }
 
+kbd {
+    font-family: "Nanum Gothic Coding", monospace;
+    font-size: smaller;
+    background-color: var(--att-bg-color);
+    border-radius: 3px;
+    padding: 1px 2px 0;
+    padding-bottom: 2px;
+    /*
+    border: 1px solid black;
+    */
+}
+
 details {
     padding-top: 1em;
+    word-wrap: anywhere;
 }
 
 summary {
@@ -85,6 +104,39 @@ summary {
     background-color: aliceblue;
 }
 
+/*      test results table classes      */
+
+.test-results {
+    border-spacing: 1.0em 0;
+    font-family: "Nanum Gothic Coding", monospace;
+    background-color: var(--bg-table-color);
+    padding-top : 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.headerRow {
+    border-bottom: blue;
+    /*
+    border-width: 4px;
+    background-color: lightblue;
+    */
+}
+
+.corner {
+    background-color: revert-layer;
+}
+
+table tr:nth-child(odd) td{
+    background-color: var(--bg-darker-table-color);
+    padding: 0.5em;
+}
+table tr:nth-child(even) td{
+    background-color: var(--bg-body-color);
+    padding: 0.5em;
+}
+
+/*      other classes       */
+
 .textButton {
     cursor: pointer;
 }
@@ -109,6 +161,9 @@ summary {
     padding: 4px;
 }
 
+/*      specific IDs        */
+
+
 #xDIV, #yDIV {
     border-radius: 6px;
     font-weight: 700;
@@ -120,7 +175,7 @@ summary {
 #testHeaderDIV, #configureDIV  {
     width: 100%;
     display : block;
-    background-color: lightblue;
+    background-color: var(--bg-stripe-color);
     color: black;
     padding: 0.5em;
     font-size: 12px;
@@ -131,13 +186,25 @@ summary {
 #resultsDIV, #emitDIV {
     width: 100%;
     display : block;
-    background-color: lightgray;
+    background-color: var(--bg-body-color);
+    color: black;
+    padding: 0.5em;
+    font-size: 12px;
+    line-height: 1.2em;
+}
+#warningDIV {
+    width: 100%;
+    display : block;
+    background-color: var(--warn-color);
     color: black;
     padding: 0.5em;
     font-size: 12px;
     line-height: 1.2em;
 }
 
+table tr td.warning {
+    background-color: var(--warn-color);
+}
 
 .short_number_field {
     width : 4em;
@@ -149,32 +216,6 @@ summary {
 
 }
 
-/*      test results table classes      */
-
-.test-results {
-    border-spacing: 1.0em 0;
-    font-family: "Nanum Gothic Coding", monospace;
-background-color: #eee;
-    padding-top : 0.5em;
-    padding-bottom: 0.5em;
-}
-
-.headerRow {
-    border-bottom: blue;
-    /*
-    border-width: 4px;
-    background-color: lightblue;
-    */
-}
-
-table tr:nth-child(odd) td{
-    background-color: #aaa;
-    padding: 0.5em;
-}
-table tr:nth-child(even) td{
-    background-color: #ccc;
-    padding: 0.5em;
-}
 
 /*      drag-drop highlight classes     */
 

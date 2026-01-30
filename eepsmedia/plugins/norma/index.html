@@ -1,0 +1,90 @@
+<!--// ==========================================================================-->
+<!--// Project:   Sampler-->
+<!--// ==========================================================================-->
+
+<!--/**-->
+ <!--* @fileoverview Defines Sampler component to be embedded in DG to generate random samples.-->
+ <!--* @author williamfinzer@gmail.com (William Finzer)-->
+ <!--*/-->
+
+<!--
+
+Tim's redo 2026-January-15 et seq.
+
+local in local codap :
+http://localhost/codap/static/dg/en/cert/index.html?di=https://localhost/codap-data-interactives/eepsmedia/plugins/Norma/
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+
+    <link rel='stylesheet' type='text/css' href='css/norma.css'/>
+
+    <script src="strings/localize.js"></script>
+
+    <!-- These five scripts take care of the communication with CODAP  -->
+    <script src="../../common/src/iframe-phone.js"></script>
+    <script src="../../common/src/codap_helper_newAPI.js"></script>
+    <script src="../../common/src/codapInterface.js"></script>
+    <script src="../../common/src/pluginHelper.js"></script>
+    <script src="../../common/src/pluginLang.js"></script>
+
+    <!-- to get random normals  -->
+
+    <script src="../../common/src/TEEUtils.js"></script>
+
+    <title>Norma</title>
+</head>
+
+<body>
+<div>
+<!--
+    <img src="art/normaSmaller.png">
+-->
+    <h1>Norma</h1>
+
+</div>
+<p id="greeting">Let's make some normally-distributed data.</p>
+<form name="form1">
+
+    <label for="popName" id = "popNameLabel">popName</label>:
+    <input type="text" id="popName" size=15 maxlength=30 value="People"><br>
+
+    <label for="attName" id = "attNameLabel">attName</label>:
+    <input type="text" id="attName" size=15 maxlength=30  value="height"><br>
+
+    <br>
+
+    <label for="popMean" id = "popMeanLabel">popMEan</label>:
+    <input type="number" size=7 maxlength=12 id="popMean" value="168"><br>
+
+    <label for="popSD" id = "popSDLabel">popSD</label>:
+    <input type="number" size=7 maxlength=12 id="popSD" value="10"><br>
+
+    <label for="sampleSize" id = "sampleSizeLabel">sampleSize</label>:
+    <input type="number" size=7 maxlength=12 id="sampleSize" value="5"><br>
+
+    <label for="numSamples" id = "numSamplesLabel">numSamples</label>:
+    <input type="number" size=7 maxlength=12 id="numSamples" value="3"><br>
+    <br>
+	<input type="button" id="sampleButton" value="do it">
+</form>
+
+<div id="status"></div>
+</body>
+
+<script type="module">
+    import {initialize} from "./src/norma.js";
+
+    initialize();
+</script>
+
+</html>
+

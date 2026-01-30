@@ -1,4 +1,6 @@
 {
+  "esversion" : 9,    //  accept ES6 syntax + other newer stuff
+
   /*
    * Enforcing options
    */

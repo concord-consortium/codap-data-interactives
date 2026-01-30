@@ -1,0 +1,27 @@
+{
+  "norma": {
+    "flags": "🇬🇧,🇺🇸",
+    "language": "English",
+    "staticStrings": {
+      "popNameLabel": "Name of population",
+      "attNameLabel": "Name of value attribute",
+      "popMeanLabel": "Population mean",
+      "popSDLabel": "Population SD",
+      "sampleSizeLabel": "Sample size",
+      "numSamplesLabel": "Number of samples",
+      "sampleButton" : "Generate samples",
+      "greeting" : "Norma can make normally-distributed data for you."
+    },
+
+    "attributeNames": {
+      "sample": "sample",
+      "popMean" : "popMean",
+      "popSD" : "popSD"
+    },
+
+
+    "frameTitle": "Norma: a random normal sampler",
+    "outputDatasetTitle": "random normal data",
+    "dataTopCollectionTitle": "Samples"
+  }
+}

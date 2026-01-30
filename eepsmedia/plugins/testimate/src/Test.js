@@ -27,12 +27,13 @@ class Test {
     }
 
     static defaultTestParams = {
-        alpha: 0.05,
+        alpha : 0.05,
         value: 0.0,    //  to be tested against
         sides: 2,
         theSidesOp: "≠",   //  the sign  todo: eliminate this in favor of using .sides.
         conf: 95,    //  confidence level 1 - alpha
         reversed : false,
+        pooledVariances : false,
         focusGroupX: null,
         focusGroupY: null,
     }
@@ -45,6 +46,7 @@ class Test {
         const theParams = testimate.state.testParams;
 
         theParams.theSidesOp = "≠";
+        console.log(`xxx in Test.makeResultsString()`);
         if (theParams.sides === 1) {
             theParams.theSidesOp = (this.results[this.theConfig.testing] > theParams.value ? ">" : "<");
         }
@@ -57,6 +59,69 @@ class Test {
 
     makeTestDescription(iTestID, includeName) {
         return `this is a default description for a test (${iTestID})`;
+    }
+
+
+    /**
+     * format a p-value and its value, as a suitable string, its name localized,
+     * as in "pWert = 0.023"
+     *
+     * @param p     the floating value of p
+     * @returns {string}
+     */
+    static makePString(p) {
+        const PString = (p < 0.0001) ?
+            `${localize.getString("attributeNames.P")} < 0.0001` :
+            `${localize.getString("attributeNames.P")} = ${ui.numberToString(p)}`;
+        return PString;
+    }
+
+    /**
+     * Format a string of the form "foo = 5.6" given the name (foo) and the value (5.6).
+     * Importantly, the name is an attribute that must be localized.
+     *
+     * @param iName     the name of the attribute
+     * @param iValue    its value
+     * @param iFigs     how many sig figs?
+     * @returns {string}
+     */
+
+    static makeResultValueString(iName, iValue, iFigs = 4) {
+        const theName = localize.getString(`attributeNames.${iName}`);
+        const theValue =  ui.numberToString(iValue, iFigs);
+        return `${theName} = ${theValue}`;
+    }
+
+    static makeConfCIString(iConf, iCImin, iCImax) {
+        return `${ui.numberToString(iConf, 2)}% ${localize.getString("CI")} = [${ui.numberToString(iCImin)}, ${ui.numberToString(iCImax)}]`;
+    }
+
+    /**
+     * Compute the p-value for a t-test with this information
+     *
+     * @param iHyp  the hypothesized value
+     * @param iX    the test statistic (mean, difference, etc)
+     * @param iT    the value of t already computed
+     * @param idf   degrees of freedom
+     * @returns {number}
+     */
+    static computePFromT(iHyp, iX, iT, idf) {
+        const tTail = 1 - jStat.studentt.cdf(Math.abs(iT), idf);
+        return Test.computePFromTail(tTail, iHyp <= iX);
+    }
+
+    static computePFromTail(iTail, iStatAboveHypothesis) {
+        let P = 0;
+        if (testimate.state.testParams.sides === 1) {
+            if (iStatAboveHypothesis) {
+                P = (testimate.state.testParams.theSidesOp === ">") ? iTail : 1 - iTail;
+            } else {
+                P = (testimate.state.testParams.theSidesOp === ">") ? 1 - iTail : iTail;
+            }
+        } else {
+            P = 2 * iTail;
+        }
+        return P;
     }
 
 
@@ -79,6 +144,11 @@ class Test {
             console.log(`finding tests for ${X && X.name} (${xType}) vs ${Y && Y.name} (${yType}) `);
             let passed = "";
 
+            /*
+            todo: reconsider this pairable thing.
+            (a) just having the same length is not sufficient!
+            (b) maybe it doesn't matter; just do the computation if both values are not missing.
+             */
             const pairable = X && Y && X.theRawArray &&
                 Y.theRawArray &&
                 (data.xAttData.theRawArray.length === data.yAttData.theRawArray.length);
@@ -106,7 +176,7 @@ class Test {
         }
         console.log(`    ... compatible tests: ${out.join(", ")}`);
         return out;
-    };
+    }
 
     /**
      * Make a text description of the test configuration.
@@ -177,7 +247,7 @@ class Test {
             yType: null,
             paired: false,
             groupAxis : "",
-            emitted: `P,mean,sign,value,SE,t,tCrit,N,conf,CImin,CImax,df`,
+            emitted: `P,mean,sign,value,s,SE,t,tCrit,N,conf,CImin,CImax,df`,
             testing: `mean`,
             paramExceptions: {},
             makeMenuString: ( ) => {return OneSampleT.makeMenuString(`N_01`);},
@@ -206,7 +276,7 @@ class Test {
             yType: 'numeric',
             paired: false,
             groupAxis : "",
-            emitted: `P,mean1,mean2,diff,sign,value,t,tCrit,N,conf,CImin,CImax,df`,
+            emitted: `P,meanNN1,meanNN2,sNN1,sNN2,diff,sign,value,t,tCrit,N,conf,CImin,CImax,df`,
             testing: `diff`,
             paramExceptions: {},
             makeMenuString: ( ) => {return TwoSampleT.makeMenuString(`NN02`);},
@@ -214,6 +284,7 @@ class Test {
         },
         NN03: {
             id: `NN03`,
+
             name: 'linear regression',
             xType: 'numeric',
             yType: 'numeric',
@@ -238,14 +309,14 @@ class Test {
             fresh: (ix) => { return new Correlation(ix)  },
             testing: `slope`,
         },
-        NB01: {
+        NB01: {     //  difference of means, X grouped by Y
             id: `NB01`,
             name: `two-sample t`,
             xType: 'numeric',
             yType: 'binary',
             paired: true,
             groupAxis : "",
-            emitted: `P,mean1,mean2,diff,sign,value,t,tCrit,N,conf,CImin,CImax,df`,
+            emitted: `P,meanNB1,meanNB2,sNB1,sNB2,diff,sign,value,t,tCrit,N,conf,CImin,CImax,df`,
             testing : 'diff',
             paramExceptions: {},
             makeMenuString: ( ) => {return TwoSampleT.makeMenuString(`NB01`);},
@@ -290,20 +361,35 @@ class Test {
             makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BB02`);},
             fresh: (ix) => { return new TwoSampleP(ix, false)  },
         },
-/*
-        B_02: {
-            id: `B_02`,
-            name: `goodness of fit`,
+        /*
+        BC01: {         //  compare props using split
+            id: `BC01`,
+            name: `compare proportions (grouped)`,
             xType: 'binary',
-            yType: null,
-            paired: false,
-             groupAxis : "",
-           emitted: `N,P,chisq,df,chisqCrit,alpha`,
-                    paramExceptions: {},
-    makeMenuString: ( ) => {return Goodness.makeMenuString(`B_02`);},
-            fresh: (ix) => { return new Goodness(ix)  },
+            yType: `categorical`,
+            paired: true,
+            groupAxis : "",
+            emitted: `P,prop1,prop2,pDiff,sign,value,N,N1,N2,z,zCrit,conf,CImin,CImax`,
+            testing : 'pDiff',
+            paramExceptions: {},
+            makeMenuString: ( ) => {return TwoSampleP.makeMenuString(`BC01`);},
+            fresh: (ix) => { return new TwoSampleP(ix, true)  },
         },
 */
+        /*
+                B_02: {
+                    id: `B_02`,
+                    name: `goodness of fit`,
+                    xType: 'binary',
+                    yType: null,
+                    paired: false,
+                     groupAxis : "",
+                   emitted: `N,P,chisq,df,chisqCrit,alpha`,
+                            paramExceptions: {},
+            makeMenuString: ( ) => {return Goodness.makeMenuString(`B_02`);},
+                    fresh: (ix) => { return new Goodness(ix)  },
+                },
+        */
         C_01: {
             id: `C_01`,
             name: `goodness of fit`,
@@ -328,7 +414,20 @@ class Test {
             makeMenuString: ( ) => {return Independence.makeMenuString(`CC01`);},
             fresh: (ix) => { return new Independence(ix)  },
         },
-/*        CB01: {
+        BB03: {
+            id: `BB03`,
+            name: `Fisher exact`,
+            xType: 'binary',
+            yType: `binary`,
+            paired: true,
+            groupAxis : "",
+            emitted: `N,P,relativeRisk,oddsRatio,sign,sides,a,aExpected,pObserved`,
+            paramExceptions: {},
+            makeMenuString: ( ) => {return Fisher.makeMenuString(`BB03`);},
+            fresh: (ix) => { return new Fisher(ix)  },
+        },
+/*
+        CB01: {
             id: `CB01`,
             name: `independence`,
             xType: 'categorical',
@@ -352,18 +451,8 @@ class Test {
            makeMenuString: ( ) => {return Test.makeMenuString(`BC01`);},
             fresh: (ix) => { return new Test(ix)  },
         },
-        BB03: {
-            id: `BB03`,
-            name: `independence`,
-            xType: 'binary',
-            yType: `binary`,
-            paired: true,
-               groupAxis : "",
-         emitted: `N,P`,
-             paramExceptions: {},
-           makeMenuString: ( ) => {return Test.makeMenuString(`BB03`);},
-            fresh: (ix) => { return new Test(ix)  },
-        },*/
+
+*/
         NC01: {
             id: `NC01`,
             name: `ANOVA`,
