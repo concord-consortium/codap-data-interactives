@@ -22,7 +22,10 @@ var OceanTracksModel = {
                 function (ds) {
                     return [ds.name, ds.title].includes(OceanTracksModel.kDatasetName);
                 })) {
-            await codapHelper.createDataset({
+            await codapInterface.sendRequest({
+                action: 'create',
+                resource: 'dataContext',
+                values: {
                 name: OceanTracksModel.kDatasetName,
                 title: OceanTracksModel.kDatasetName,
                 collections: [
@@ -63,7 +66,7 @@ var OceanTracksModel = {
                         }
                     }
                 ]
-            });
+            }});
         }
 
         await codapInterface.sendRequest({
