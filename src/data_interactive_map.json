@@ -36,10 +36,10 @@
   "data_interactives": [
     {
       "title": "Ocean Tracks Selector",
-      "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project. Note that this plugin will not load in SSL.",
-      "width": 550,
-      "height": 500,
-      "path": "https://oceantracks.org/map/trackmenu_1.html",
+      "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project.",
+      "width": 250,
+      "height": 400,
+      "path": "OceanTracksSelector/index.html",
       "visible": "true",
       "aegis": "Ocean Tracks",
       "categories": [

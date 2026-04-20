@@ -1,0 +1,434 @@
+<html>
+<head>
+    <title>Ocean Tracks Track Selector</title>
+    <link rel="stylesheet" href="./css/ocean_tracks.css" type="text/css" media="screen"/>
+    <script src="https://code.jquery.com/jquery-1.8.3.js"></script>
+    <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="../Common/js/iframe-phone.js"></script>
+    <script src="../Common/js/codap_helper.js"></script>
+    <script src="./js/codapInterface.js?v=1"></script>
+    <script src="./js/notifications.js?v=1"></script>
+    <script src="./js/ocean_tracks_model.js?v=1"></script>
+    <script>
+      function prepareList() {
+        $('#trackList').find('li:has(ul)')
+            .click(function (event) {
+              if (this == event.target) {
+                $(this).toggleClass('expanded')
+                $(this).children('ul').toggle('medium')
+              }
+            })
+            .addClass('collapsed')
+            .children('ul').hide()
+
+        $('#libraryList').find('li:has(ul)')
+            .click(function (event) {
+              if (this == event.target) {
+                $(this).toggleClass('expanded')
+                $(this).children('ul').toggle('medium')
+              }
+            })
+            .addClass('collapsed')
+            .children('ul').hide()
+      }
+
+      function disableCheckbox(tid) {
+        $('#trackSelectForm').find('.trackCB').each(function (j, obj) {
+          obj.disabled = true
+        })
+      }
+
+      function enableCheckbox(tid) {
+        $('#trackSelectForm').find('.trackCB').each(function (j, obj) {
+          obj.disabled = false
+        })
+      }
+
+      function selectCheckbox(tid) {
+        $('#trackSelectForm').find('.trackCB').each(function (j, obj) {
+          if (obj.value == tid) obj.checked = true
+        })
+      }
+
+      function toggleTrack(tid) {
+        var checkbox = $('#trackSelectForm').find('.trackCB').filter(function () {
+          return this.value == tid
+        })[0]
+        if (checkbox && checkbox.checked) {
+          OceanTracksModel.loadTracks([tid])
+        } else {
+          OceanTracksModel.deleteTrack(tid)
+        }
+      }
+
+      function toggleAll(species) {
+        if (!species) return
+        var trackIds = []
+        var mode = $('#toggle' + species).is(':checked') ? 1 : 0
+        $('#' + species).find('.trackCB').each(function (i, obj) {
+          if (!obj.checked && mode == 1) {
+            obj.checked = true
+            trackIds.push(obj.value)
+          } else if (obj.checked && mode == 0) {
+            obj.checked = false
+            OceanTracksModel.deleteTrack(obj.value)
+          }
+        })
+        if (trackIds.length > 0) {
+          OceanTracksModel.loadTracks(trackIds)
+        }
+      }
+
+      jQuery(document).ready(function ($) {
+        prepareList()
+        OceanTracksModel.initialize()
+      })
+    </script>
+</head>
+<body>
+
+
+<div class="tracks-slide-out-div" style="height:auto!important">
+    <div class="paper-bg">
+        <a class="tracks-handle" style="background-position:right 0!important"></a>
+        <h3>Ocean Tracks Species</h3>
+        <div class="acc-section">
+            <div class="acc-content">
+                <form id="trackSelectForm">
+                    <div id="trackListContainer">
+                        <ul id="trackList">
+                            <li id="Albatross" class="noBorder">Laysan Albatross
+                                <ul>
+                                    <li>
+                                        <table>
+                                            <tr>
+                                                <th style="text-align:left">Track ID (Year)</th>
+                                                <th>Show</th>
+                                            </tr>
+                                            <tr>
+                                                <td>#278 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(14)' class="trackCB"
+                                                           value="14"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#282 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(15)' class="trackCB"
+                                                           value="15"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#281 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1052)' class="trackCB"
+                                                           value="1052"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#466 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1051)' class="trackCB"
+                                                           value="1051"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#465 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1050)' class="trackCB"
+                                                           value="1050"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#465 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1035)' class="trackCB"
+                                                           value="1035"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#278 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1034)' class="trackCB"
+                                                           value="1034"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#282 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1033)' class="trackCB"
+                                                           value="1033"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#466 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1032)' class="trackCB"
+                                                           value="1032"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#552 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1039)' class="trackCB"
+                                                           value="1039"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#283 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1036)' class="trackCB"
+                                                           value="1036"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#555 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1040)' class="trackCB"
+                                                           value="1040"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#463 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1038)' class="trackCB"
+                                                           value="1038"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#469 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(1037)' class="trackCB"
+                                                           value="1037"/></td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="Tuna">Bluefin Tuna
+                                <ul>
+                                    <li>
+                                        <table>
+                                            <tr>
+                                                <th style="text-align:left">Track ID (Year)</th>
+                                                <th>Show</th>
+                                            </tr>
+                                            <tr>
+                                                <td>#001 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4)' class="trackCB"
+                                                           value="4"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#506600 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3001)' class="trackCB"
+                                                           value="3001"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#508400 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3002)' class="trackCB"
+                                                           value="3002"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#510900 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3004)' class="trackCB"
+                                                           value="3004"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#509300 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3003)' class="trackCB"
+                                                           value="3003"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#603600 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3005)' class="trackCB"
+                                                           value="3005"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#604200 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3006)' class="trackCB"
+                                                           value="3006"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#604700 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3008)' class="trackCB"
+                                                           value="3008"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#604300 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3007)' class="trackCB"
+                                                           value="3007"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#703700 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3009)' class="trackCB"
+                                                           value="3009"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#703800 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3010)' class="trackCB"
+                                                           value="3010"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#704500 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(3011)' class="trackCB"
+                                                           value="3011"/></td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="Seal">Elephant Seal
+                                <ul>
+                                    <li>
+                                        <table>
+                                            <tr>
+                                                <th style="text-align:left">Track ID (Year)</th>
+                                                <th>Show</th>
+                                            </tr>
+                                            <tr>
+                                                <td>#302 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(8)' class="trackCB"
+                                                           value="8"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#516 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(9)' class="trackCB"
+                                                           value="9"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#528 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(10)' class="trackCB"
+                                                           value="10"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#536 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(11)' class="trackCB"
+                                                           value="11"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#541 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(12)' class="trackCB"
+                                                           value="12"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#546 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(13)' class="trackCB"
+                                                           value="13"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#771 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2000)' class="trackCB"
+                                                           value="2000"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#781 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2002)' class="trackCB"
+                                                           value="2002"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#788 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2003)' class="trackCB"
+                                                           value="2003"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#975 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2004)' class="trackCB"
+                                                           value="2004"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#981 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2005)' class="trackCB"
+                                                           value="2005"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1159 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2006)' class="trackCB"
+                                                           value="2006"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1266 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2007)' class="trackCB"
+                                                           value="2007"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1271 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2008)' class="trackCB"
+                                                           value="2008"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1275 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2009)' class="trackCB"
+                                                           value="2009"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#1278 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(2010)' class="trackCB"
+                                                           value="2010"/></td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="Shark">White Shark
+                                <ul>
+                                    <li>
+                                        <table>
+                                            <tr>
+                                                <th style="text-align:left">Track ID (Year)</th>
+                                                <th>Show</th>
+                                            </tr>
+                                            <tr>
+                                                <td>#005 (2005)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(5)' class="trackCB"
+                                                           value="5"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#501600 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4001)' class="trackCB"
+                                                           value="4001"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#501900 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4002)' class="trackCB"
+                                                           value="4002"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#502000 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4003)' class="trackCB"
+                                                           value="4003"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#502800 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4004)' class="trackCB"
+                                                           value="4004"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#600100 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4005)' class="trackCB"
+                                                           value="4005"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#600200 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4006)' class="trackCB"
+                                                           value="4006"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#600800 (2006)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4007)' class="trackCB"
+                                                           value="4007"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#602500 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4008)' class="trackCB"
+                                                           value="4008"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#702800 (2007)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4010)' class="trackCB"
+                                                           value="4010"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#702000 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4009)' class="trackCB"
+                                                           value="4009"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#702900 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4011)' class="trackCB"
+                                                           value="4011"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>#704100 (2008)</td>
+                                                <td><input type="checkbox" onclick='toggleTrack(4012)' class="trackCB"
+                                                           value="4012"/></td>
+                                            </tr>
+                                        </table>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="buttonBar">
+    <button id="clearDataButton" onclick="OceanTracksModel.clearData()">Clear Data</button>
+</div>
+</body>
+</html>

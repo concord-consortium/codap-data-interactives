@@ -54,6 +54,7 @@ function echoPlugins() {
 }
 
 function buildPlugins() {
+  FAILED_PLUGINS=""
   for plugin in "$@"; do
     PLUGIN_BUILD_DIR=build
     PLUGIN_NAME=$(basename $plugin)
@@ -62,11 +63,18 @@ function buildPlugins() {
     fi
     echo Building $plugin
     if [ "$plugin" == "../noaa-codap-plugin" ] ; then
-      ( cd $plugin && npm install && npm run build && cp -r "dist" "$BUILD_DIR/$PLUGIN_NAME" )
+      ( cd $plugin && npm ci && npm run build && cp -r "dist" "$BUILD_DIR/$PLUGIN_NAME" )
     else
-      ( cd $plugin && npm install && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
+      ( cd $plugin && npm ci && npm run build && cp -r $PLUGIN_BUILD_DIR "$BUILD_DIR/$PLUGIN_NAME" )
+    fi
+    if [ $? -ne 0 ] ; then
+      echo "${PROGNAME}: ERROR - Failed to build $plugin" 1>&2
+      FAILED_PLUGINS="$FAILED_PLUGINS $plugin"
     fi
   done
+  if [ -n "$FAILED_PLUGINS" ] ; then
+    echo "${PROGNAME}: ERROR - The following plugins failed to build:$FAILED_PLUGINS" 1>&2
+  fi
 }
 
 function copyStaticPlugins() {

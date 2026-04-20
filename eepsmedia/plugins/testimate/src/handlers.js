@@ -129,6 +129,12 @@ const handlers = {
     },
 
 
+    /**
+     * Change the proportions of the groups for a goodness of fit test.  
+     * The last one is always 1 minus the sum of the others.
+     * 
+     * @param {*} iLast 
+     */
     changeGoodnessProp: function(iLast) {
         console.log(`changing goodness prop for ${iLast}`);
         const theTest = testimate.theTest;
@@ -218,6 +224,7 @@ const handlers = {
 
         for (let i = 0; i < testimate.state.randomEmitNumber; i++) {
             await connect.rerandomizeSource(testimate.state.dataset.name);
+            await testimate.refreshDataAndTestResults();     //  recompute before emitting
             await this.emitSingle();
         }
 
