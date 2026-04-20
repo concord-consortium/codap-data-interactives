@@ -39,7 +39,7 @@
       "description": "Compare the tracks of Pacific Ocean animals tagged by the <a target=\"_blank\" href=\"https:\/\/oceantracks.org\/\">Ocean Tracks<\/a> project.",
       "width": 250,
       "height": 400,
-      "path": "OceanTracksSelector/index.html",
+      "path": "/OceanTracksSelector/index.html",
       "visible": "true",
       "aegis": "Ocean Tracks",
       "categories": [
