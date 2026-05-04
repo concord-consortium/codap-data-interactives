@@ -10,11 +10,8 @@
  * @preserve (c) 2012 KCP Technologies, Inc.
  */
 
-function ShuffleModel(codapPhone, iDoAppCommandFunc)
+function ShuffleModel()
 {
-  this.codapPhone = codapPhone;
-  //this.doAppCommandFunc = iDoAppCommandFunc;
-
   this.eventDispatcher = new EventDispatcher();
   this.levelManager = new LevelManager( ShuffleLevels, this, 'ShuffleGame.model.handleLevelButton(event, ##);',
                                         this, this.isLevelEnabled);
@@ -66,48 +63,65 @@ function ShuffleModel(codapPhone, iDoAppCommandFunc)
 /**
  * Inform DG about this game
  */
-ShuffleModel.prototype.initialize = function()
+ShuffleModel.prototype.initialize = async function()
 {
-    this.codapPhone.call({
-        action:'initGame',
-        args: {
-            name: "Shuffleboard",
-            version: "2.0",
-            dimensions: { width: 504, height: 338 },
-            collections: [
-                {
-                    name: "Games",
-                    attrs: [
-                        {"name": "game" , "type" : "numeric" , "precision" : 0, defaultMin: 1, defaultMax: 5, "description": "game number" } ,
-                        {"name": "score" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 300, "description": "game score"   } ,
-                        {"name": "disks" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 6, "description": "how many disks were pushed"   } ,
-                        {"name": "formula" , "type" : "nominal", "description": "what formula was used for autoplay"   } ,
-                        {"name": "level", "type" : "nominal", 'description': 'what level of the game was played' }
-                    ],
-                    childAttrName: "Turn",
-                    defaults: {
-                        xAttr: "game",
-                        yAttr: "score"
-                    }
-                },
-                {
-                    name: "Disks",
-                    attrs: [
-                        { "name" : "disk" , "type" : "numeric" , "precision" : 0, defaultMin: 1, defaultMax: 6, "description": "which disk in a game"   } ,
-                        { "name" : "push" , "type" : "numeric" , "precision" : 1, defaultMin: 0, defaultMax: 100, "description": "the amount of push given to the disk"  } ,
-                        { "name" : "startPos" , "type" : "numeric" , "precision" : 1, defaultMin: 0, defaultMax: 50, "description": "the starting position of the disk"  } ,
-                        { "name" : "endPos" , "type" : "numeric" , "precision" : 1, defaultMin: 0, defaultMax: 500, "description": "the disk position at end of turn"   } ,
-                        { "name" : "pad" , "type" : "nominal" , "description": "the pad the disk landed on"   } ,
-                        { "name" : "points" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 100, "description": "points for this disk at time of push"   }
-                    ],
-                    defaults: {
-                        xAttr: "push",
-                        yAttr: "endPos"
-                    }
-                }
-            ]
+  let interactiveState = codapInterface.getInteractiveState();
+
+  // Create the dataset if it doesn't already exist
+  const iResult = await codapInterface.sendRequest({
+    action: 'get',
+    resource: 'dataContextList'
+  });
+  if (iResult.success && !iResult.values.some(ds => [ds.name, ds.title].includes("Games/Disks"))) {
+    await codapHelper.createDataset({
+      name: "Games/Disks",
+      collections: [
+        {
+          name: "Games",
+          attrs: [
+            {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number"},
+            {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 300, "description": "game score"},
+            {"name": "disks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 6, "description": "how many disks were pushed"},
+            {"name": "formula", "type": "categorical", "description": "what formula was used for autoplay"},
+            {"name": "level", "type": "categorical", "description": "what level of the game was played"}
+          ],
+          labels: {
+            singleCase: "game",
+            pluralCase: "games",
+            singleCaseWithArticle: "a game",
+            setOfCases: "match",
+            setOfCasesWithArticle: "a match"
+          },
+          defaults: {
+            xAttr: "game",
+            yAttr: "score"
+          }
+        },
+        {
+          name: "Disks",
+          parent: "Games",
+          attrs: [
+            {"name": "disk", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 6, "description": "which disk in a game"},
+            {"name": "push", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 100, "description": "the amount of push given to the disk"},
+            {"name": "startPos", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 50, "description": "the starting position of the disk"},
+            {"name": "endPos", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 500, "description": "the disk position at end of turn"},
+            {"name": "pad", "type": "categorical", "description": "the pad the disk landed on"},
+            {"name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points for this disk at time of push"}
+          ],
+          defaults: {
+            xAttr: "push",
+            yAttr: "endPos"
+          }
         }
-    }, function(){console.log("Initialize game")});
+      ],
+      type: 'DG.GameContext',
+    });
+  }
+
+  notificatons.registerForDocumentChanges();
+  if (interactiveState) {
+    this.restoreGameState(interactiveState);
+  }
 
   this.setPush( 50);
 };
@@ -115,77 +129,100 @@ ShuffleModel.prototype.initialize = function()
 /**
  * If we don't already have an open game case, open one now.
  */
-ShuffleModel.prototype.openNewGameCase = function()
+ShuffleModel.prototype.openNewGameCase = async function()
 {
   if( !this.openGameCase) {
-    this.codapPhone.call({
-        action:'openCase',
-        args:{
-            collection: "Games",
-            values:[this.gameNumber, '', '', '', this.level.levelName]
+    var iResult = await codapInterface.sendRequest({
+      action: 'create',
+      resource: "dataContext[Games/Disks].collection[Games].case",
+      values: [
+        {
+          values: {
+            game: this.gameNumber,
+            score: '',
+            disks: '',
+            formula: '',
+            level: this.level.levelName
+          }
         }
-    }, function(result){
-        if(result.success){
-            this.openGameCase = result.caseID;
-            console.log("I have caseID" + result.caseID);
-        } else {
-            console.log("Shuffleboard: Error calling 'openCase'");
-        }
-    }.bind(this));
+      ]
+    });
+    if (iResult.success) {
+      this.openGameCase = iResult.values[0].id;
+      this.isFirstDisk = true;
+    } else {
+      console.log("Shuffleboard: Error creating new game case");
+    }
   }
 };
 
 /**
  * Pass DG the values for the turn that just got completed
  */
-ShuffleModel.prototype.addTurnCase = function() //called from endTurn line 316
+ShuffleModel.prototype.addTurnCase = async function()
 {
-  this.openNewGameCase(); // Does nothing if already open
+  var values = {
+    disk: this.disk + 1,
+    push: this.push,
+    startPos: this.startPos,
+    endPos: this.endPos,
+    pad: this.pad,
+    points: this.oneScore
+  };
 
-  // Create the new Turn case
-    var createCase = function(){
-        this.codapPhone.call({
-            action:'createCase',
-            args: {
-                collection:"Disks",
-                parent: this.openGameCase,
-                values:
-                    [
-                        this.disk + 1,
-                        this.push,
-                        this.startPos,
-                        this.endPos,
-                        this.pad,
-                        this.oneScore
-                    ]
-            }
-        });
-    }.bind(this);
-    createCase();
-
+  if (this.isFirstDisk) {
+    // First disk: update the auto-created child case
+    var iResult = await codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext[Games/Disks].collection[Games].caseByID[' + this.openGameCase + ']'
+    });
+    if (iResult.success) {
+      var idOfFirstChild = iResult.values.case.children[0];
+      await codapInterface.sendRequest({
+        action: 'update',
+        resource: "dataContext[Games/Disks].collection[Disks].caseByID[" + idOfFirstChild + "]",
+        values: {
+          values: values
+        }
+      });
+    } else {
+      console.log("Shuffleboard: Error finding existing disk case");
+    }
+    this.isFirstDisk = false;
+  } else {
+    // Subsequent disks: create new child case
+    await codapInterface.sendRequest({
+      action: "create",
+      resource: "dataContext[Games/Disks].collection[Disks].case",
+      values: [
+        {
+          parent: this.openGameCase,
+          values: values
+        }
+      ]
+    });
+  }
 };
 
 /**
  * Let DG know that the current game is complete.
  * Stash relevant values for the level and check to see if any levels are newly unlocked.
  */
-ShuffleModel.prototype.addGameCase = function() //line 344
+ShuffleModel.prototype.addGameCase = async function()
 {
   var this_ = this;
-  this.codapPhone.call({
-      action:'closeCase',
-      args: {
-          collection: "Games",
-          caseID: this.openGameCase,
-          values:
-              [
-                  this.gameNumber,
-                  this.score,
-                      this.disk + 1,
-                  this.formula,
-                  this.level.levelName
-              ]
+  await codapInterface.sendRequest({
+    action: 'update',
+    resource: 'dataContext[Games/Disks].collection[Games].caseByID[' + this.openGameCase + ']',
+    values: {
+      values: {
+        game: this.gameNumber,
+        score: this.score,
+        disks: this.disk + 1,
+        formula: this.formula,
+        level: this.level.levelName
       }
+    }
   });
 
   this.openGameCase = null;
@@ -209,7 +246,7 @@ ShuffleModel.prototype.addGameCase = function() //line 344
 /**
  * Prepare for the new game that is beginning.
  */
-ShuffleModel.prototype.playGame = function() //called from index.html
+ShuffleModel.prototype.playGame = function()
 {
   var tLevel = this.level;
 
@@ -229,11 +266,12 @@ ShuffleModel.prototype.playGame = function() //called from index.html
   this.initialXMin = tLevel.initialXMin;
   this.initialXMax = tLevel.initialXMax;
 
-  this.openNewGameCase(); //line 118
-  this.changeGameState( 'playing'); // Our view will update line 291
+  this.openNewGameCase();  // fire and forget
+  this.changeGameState( 'playing');
 
-  this.setupDisk(); //line 242
-  this.changeTurnState('waiting');//line 304
+  this.setupDisk();
+  this.changeTurnState('waiting');
+  this.updateInteractiveState();
 };
 
 /**
@@ -313,7 +351,7 @@ ShuffleModel.prototype.changeTurnState = function( iNewState)
  * The disk has stopped. Change turnState to waiting, but
  * If the number of disks has reached its limit, end the game.
  */
-ShuffleModel.prototype.endTurn = function()//called from table_view.js line 165
+ShuffleModel.prototype.endTurn = function()
 {
   if( this.disk === 0) {
     // Record first disk for possible use in autoplay
@@ -321,10 +359,10 @@ ShuffleModel.prototype.endTurn = function()//called from table_view.js line 165
     this.disk1end = this.endPos;
     this.disk1push = this.push;
   }
-  this.addTurnCase(); //line 141
+  this.addTurnCase();
   this.oneScore = 0;
   if( this.disk + 1 >= ShuffleSettings.disksPerGame)
-    this.endGame(); //line 339
+    this.endGame();
   else {
     this.setupDisk();
     this.changeTurnState('waiting');
@@ -341,7 +379,7 @@ ShuffleModel.prototype.endGame = function()
   var this_ = this;
 
   function endIt() {
-    this_.addGameCase(); //line 172
+    this_.addGameCase();
     this_.changeGameState( 'gameEnded');
   }
 
@@ -389,10 +427,10 @@ ShuffleModel.prototype.getImpulse = function() {
 /**
  * The user has pushed the Push button. Start the current disk moving
  */
-ShuffleModel.prototype.handlePushButton = function()//called from index.html
+ShuffleModel.prototype.handlePushButton = function()
 {
   this.fastPush = window.event && window.event.altKey;
-  this.changeTurnState('pushing');//calls changeTurnState in table_view.js with 'pushing' state
+  this.changeTurnState('pushing');
   this.fastPush = false;
 };
 
@@ -427,53 +465,33 @@ ShuffleModel.prototype.getFormulaObjectDescription = function()
 };
 
 /**
- * Request that a formula object show with which the user can input a strategy
+ * Request that a formula object show with which the user can input a strategy.
+ * NOTE: Formula object support is not yet available in CODAP V3.
  */
-ShuffleModel.prototype.handleStrategyButton = function() //called from index.html to handle Strategy button push
+ShuffleModel.prototype.handleStrategyButton = function()
 {
-    this.codapPhone.call({
-        action:'requestFormulaObject',
-        args:this.getFormulaObjectDescription()
-    });
-  //this.dgApi.doCommand( "requestFormulaObject", this.getFormulaObjectDescription());
+  console.log("Shuffleboard: Formula object (Set Strategy) is not yet supported in CODAP V3");
 };
 
 /**
- * If the formula object is visible, it will get new contents based on the current level
+ * If the formula object is visible, it will get new contents based on the current level.
+ * NOTE: Formula object support is not yet available in CODAP V3.
  */
 ShuffleModel.prototype.updateStrategyEditor = function()
 {
-    this.codapPhone.call({
-        action:'updateFormulaObject',
-        args:  this.getFormulaObjectDescription()
-    });
-    };
+  console.log("Shuffleboard: Formula object (Update Strategy) is not yet supported in CODAP V3");
+};
 
 /**
  * User has pressed Autoplay button. If there's a strategy, we push the disks automatically
  */
 ShuffleModel.prototype.handleAutoButton = function() {
 
-
-  var startAutoPlay = function (tTest) {
-    if (tTest.exists) {
-      this.autoplay = true; // So animation speeds up
-      this.disk1push = this.push;
-      this.disk1start = this.startPos;
-      this.currAutoPlayPad = 0;
-      this.autoplay = this.doAutoDisk();
-    }
-    else {
-      var tEvent = new Event('strategyError');
-      tEvent.error = ((tTest.error === '') || (tTest.error === undefined)) ?
-        "There must be a valid formula for push." :
-        tTest.error;
-      this.eventDispatcher.dispatchEvent(tEvent);
-    }
-  }.bind(this);
-
-  this.strategyExists(startAutoPlay);
- };
+  // Formula object support is not yet available in CODAP V3
+  var tEvent = new Event('strategyError');
+  tEvent.error = "Autoplay requires formula support, which is not yet available in CODAP V3.";
+  this.eventDispatcher.dispatchEvent(tEvent);
+};
 
 
 /**
@@ -498,7 +516,7 @@ ShuffleModel.prototype.doAutoDisk = function()
       this.handlePushButton();
       this.currAutoPlayPad++;
     }.bind(this);
-    this.getPushFromDG(handlePush); //line 545
+    this.getPushFromDG(handlePush);
   }
   else
     tResult = false;
@@ -507,78 +525,23 @@ ShuffleModel.prototype.doAutoDisk = function()
 
 /**
  * Determine whether there is an evaluable formula.
+ * NOTE: Formula object support is not yet available in CODAP V3.
  * @return {Object}
  */
 ShuffleModel.prototype.strategyExists = function(callback)
 {
-  var requestFormulaValue = function(){
-      this.codapPhone.call({
-          action:'requestFormulaValue',
-          args:{
-              output: 'push',
-              curStart: 10,
-              start1: 10,
-              end1: 100,
-              push1: 50,
-              padLeft: 100,
-              padRight: 150
-
-          }
-      }, function(tResult){
-        var tExists,
-          tTest;
-        tExists = (tResult.formula !== '') && (typeof( tResult.push) === 'number') && isFinite( tResult.push);
-        tTest= { exists: tExists, error: tResult.error };
-        callback(tTest);
-      });
-
-  }.bind(this);
-
-  requestFormulaValue();
+  callback({ exists: false, error: "Formula support is not yet available in CODAP V3." });
 };
 
 /**
  * Previously the user has set the strategy with a formula. We now pass values that can be used to
  * evaluate the formula and return the result.
+ * NOTE: Formula object support is not yet available in CODAP V3.
  * @return {Number}
  */
 ShuffleModel.prototype.getPushFromDG = function(callback)
 {
-  var tPadLeft = this.firstPadLeft + this.currAutoPlayPad * this.padOffset,
-      tPadRight = tPadLeft + this.padWidth,
-      tResult;
-
-  var requestFormulaValue = function(){
-      this.codapPhone.call({
-          action:'requestFormulaValue',
-          args:{
-              output: 'push',
-              curStart: this.startPos,
-              start1: this.disk1start,
-              end1: this.disk1end,
-              push1: this.disk1push,
-              padLeft: tPadLeft,
-              padRight: tPadRight
-          }
-      }, function(tResult) {
-        var tPush;
-        if( (typeof(tResult.push) !== 'number') || !isFinite( tResult.push) || (tResult.formula === '') || (tResult.error !== '')) {
-          var tEvent = new Event( 'strategyError');
-          if( (typeof(tResult.push) === 'number') && !isFinite( tResult.push))
-            tEvent.error = "Push must be a finite number, not " + tResult.push;
-          else
-            tEvent.error = tResult.error;
-          this.eventDispatcher.dispatchEvent( tEvent);
-          this.formula = '';
-          tPush= false;
-        }
-        this.formula = tResult.formula; // Side effect. We remember the most recently used formula
-        tPush= Math.floor( tResult.push);
-        callback(tPush);
-      }.bind(this));
-  }.bind(this);
-  requestFormulaValue();
-
+  callback(false);
 };
 
 /**
@@ -610,6 +573,7 @@ ShuffleModel.prototype.handleLevelButton = function( iEvent, iLevelIndex)
       this.eventDispatcher.dispatchEvent( new Event( "firstTimeLevelChanged"));
     }
   }
+  this.updateInteractiveState();
 };
 
 /**
@@ -659,25 +623,20 @@ ShuffleModel.prototype.isLevelEnabled = function( iLevelSpec)
 };
 
 /**
-  Saves the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @returns  {Object}    { success: {Boolean}, state: {Object} }
+ * Push the current state to codapInterface for automatic save/restore.
  */
-ShuffleModel.prototype.saveGameState = function() {
-  return {
-            success: true,
-            state: {
-              gameNumber: this.gameNumber,
-              currentLevel: this.level && this.level.levelName,
-              levelsMap: this.levelManager.getLevelsLockState()
-            }
-          };
+ShuffleModel.prototype.updateInteractiveState = function() {
+  var currentInteractiveState = {
+    gameNumber: this.gameNumber,
+    currentLevel: this.level && this.level.levelName,
+    levelsMap: this.levelManager.getLevelsLockState()
+  };
+  codapInterface.updateInteractiveState(currentInteractiveState);
 };
 
 /**
-  Restores the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @param    {Object}    iState -- The state as saved previously by saveGameState().
+  Restores the game state for the game.
+  @param    {Object}    iState -- The state as saved previously.
  */
 ShuffleModel.prototype.restoreGameState = function( iState) {
   if( iState) {
@@ -689,7 +648,10 @@ ShuffleModel.prototype.restoreGameState = function( iState) {
     }
     if( iState.levelsMap)
       this.levelManager.setLevelsLockState( iState.levelsMap);
-    this.playGame();
+    if (this.gameNumber > 0) {
+      this.changeGameState('playing');
+      this.changeGameState('gameEnded');
+    }
   }
   return { success: true };
 };

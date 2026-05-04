@@ -2,19 +2,23 @@
 <html lang="en">
 	<head>
 		<title>Lunar Lander</title>
-		
+
         <link rel="stylesheet" type="text/css" href="../Common/css/kcpcommon.css" />
 		<link rel="stylesheet" type="text/css" href="style/LunarLayout.css" />
 
         <script src="../Common/js/jquery.js" type="text/javascript"></script>
         <script type="text/javascript" src="../Common/js/kcpcommon.js"></script>
-        <script type="text/javascript" src="../Common/js/dgapi.js"></script>
         <script type="text/javascript" src="../Common/js/events.js"></script>
       	<script type="text/javascript" src="../Common/js/raphael.js"></script>
 
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+        <script src="../Common/js/codap_helper.js" type="text/javascript"></script>
+        <script src="js/codapInterface.js?v=1" type="text/javascript"></script>
+        <script src="js/notifications.js?v=2" type="text/javascript"></script>
+
         <script type="text/javascript" src="js/LunarSettings.js"></script>
-        <script type="text/javascript" src="js/LunarLanderModel.js"></script>
-        <script type="text/javascript" src="js/LanderModel.js"></script>
+        <script type="text/javascript" src="js/LunarLanderModel.js?v=1"></script>
+        <script type="text/javascript" src="js/LanderModel.js?v=1"></script>
         <script type="text/javascript" src="js/SetupView.js"></script>
         <script type="text/javascript" src="js/GaugeView.js"></script>
         <script type="text/javascript" src="js/LanderView.js"></script>
@@ -22,41 +26,30 @@
         <script type="text/javascript" src="js/LunarLanderController.js"></script>
         <script type="text/javascript" src="js/LunarLanderView.js"></script>
 
-        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
-
         <script type="text/javascript">
             /*This global is here to make it obvious how things get going*/
             var LunarLanderGame = {
-                  initializeGame:function () {
-                      this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback) {
-                          var operation = iCmd && iCmd.operation,
-                                  args = iCmd && iCmd.args,
-                                  model = LunarLanderGame.model;
-                          switch(operation) {
-                              case 'saveState':
-                                  callback(model.saveGameState());
-                                  break;
-                              case 'restoreState':
-                                  callback(model.restoreGameState( args.state));
-                                  break;
-                              default:
-                                callback({success:false});
-                          }
-                      }, "codap-game", window.parent);
-                      this.model = new LunarLanderModel(this.codapPhone, LunarLanderGame.doAppCommand);
+                  initializeGame: async function () {
+                      this.model = new LunarLanderModel(LunarLanderGame.doAppCommand);
                       this.view = new LunarLanderView( this.model );
                       this.controller = new LunarLanderController( this.model, this.view );
                       $( '#right_gauge' ).toggle( false);
 
-                      // Call initGame from here after construction is complete.
-                      this.model.initGame();
+                      await codapInterface.init({
+                        name: "Lunar Lander",
+                        title: "Lunar Lander",
+                        version: "3.1",
+                        dimensions: { width: 357, height: 576 }
+                      }, null);
+
+                      await this.model.initialize();
                   }
              };
 
         </script>
     </head>
 	<body onload="LunarLanderGame.initializeGame()" >
-		
+
 		<div id="backgroundBox">
             <div id="buttons">
                 <!--<img src="img/platform.png" alt="" id="platform">-->

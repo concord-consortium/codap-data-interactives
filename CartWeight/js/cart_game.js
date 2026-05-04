@@ -1,8 +1,9 @@
+"use strict";
 // ==========================================================================
 // Project:   Cart Weight
 // Copyright: ©2012 KCP Technologies, Inc.
 // ==========================================================================
-/*global CartModel, CartView, DataGamesAPI */
+/*global CartModel, CartView */
 
 /**
  * @fileoverview Defines CartGame, the top-level controller for the Cart Weight game
@@ -18,36 +19,41 @@ function CartGame() {
 
 // Singleton global instance
 var cartGame = new CartGame();
-var codapPhone=null;
 
 /**
   Initialize the Cart Weight game.
   Called from 'onload' handler in index.html.
  */
-CartGame.prototype.initializeGame = function() {
+CartGame.prototype.initializeGame = async function() {
 
-    this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function( iCommand, callback) {
-      switch( iCommand.operation) {
-      
-      case 'saveState':
-        callback(cartGame.model.saveState()
-        );
-        break;
-      
-      case 'restoreState':
-        callback(cartGame.model.restoreState( iCommand.args && iCommand.args.state));
-        break;
-      
-      default:
-        callback({ success: false });
-      }
+    console.log("CartWeight: initializeGame started");
+    try {
+      this.model = new CartModel();
+      console.log("CartWeight: model created");
+      this.view = new CartView(this.model);
+      this.view.initialize();
+      console.log("CartWeight: view initialized, listeners registered");
+    } catch(e) {
+      console.error("CartWeight: error during model/view setup:", e);
+    }
 
-    }, "codap-game", window.parent);
+    try {
+      await codapInterface.init({
+        name: "Cart Weight",
+        title: "Cart Weight",
+        version: "2.1",
+        dimensions: { width: 289, height: 382 }
+      }, null);
+      console.log("CartWeight: codapInterface.init resolved");
+    } catch(e) {
+      console.error("CartWeight: codapInterface.init failed:", e);
+    }
 
-    this.model = new CartModel(this.codapPhone, this.doAppCommand);
-    this.view = new CartView(this.model);
-
-    this.model.initialize();
-    this.view.initialize();
+    try {
+      await this.model.initialize();
+      console.log("CartWeight: model.initialize completed");
+    } catch(e) {
+      console.error("CartWeight: model.initialize failed:", e);
+    }
 
 };

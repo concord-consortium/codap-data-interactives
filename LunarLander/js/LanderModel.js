@@ -17,17 +17,15 @@
 /**
  * Set up properties and their defaults
  * @param iSide - left or right
- * @param iDgAPI
  * @constructor
  */
-function LanderModel( iSide, codapPhone) {
+function LanderModel( iSide) {
   this.eventDispatcher = new EventDispatcher();
   this.side = iSide;
-  this.codapPhone = codapPhone;
   this.landerState = 'inactive';  // inactive, active
   this.openGameCase = null; // ID of DG case for a landing attempt
+  this.isFirstFlightRecord = false; // Track whether next record is first child
   this.kGravity = 1;
-  this.kPreviousGameCaseClosed = true;
 
   // landing attempt properties
   this.attempt_num = 0;
@@ -128,7 +126,7 @@ LanderModel.prototype.startDescent = function( iState) {
 
     this.attempt_num++;
     this.initProperties();
-    this.openNewGameCase();
+    this.openNewGameCase();  // fire and forget
     this.setState('descending');
     tick();
 
@@ -137,51 +135,81 @@ LanderModel.prototype.startDescent = function( iState) {
 /**
  * If we don't already have an open game case, open one now.
  */
-LanderModel.prototype.openNewGameCase = function()
+LanderModel.prototype.openNewGameCase = async function()
 {
   if( !this.openGameCase) {
-    this.codapPhone.call({
-        action:'openCase',
-        args: {
-            collection: "Landing Attempts",
-            values:[this.attempt_num, this.craft, this.pilot, this.side, '', '', '']
+    var iResult = await codapInterface.sendRequest({
+      action: 'create',
+      resource: "dataContext[Landing Attempts/Flight Record].collection[Landing Attempts].case",
+      values: [
+        {
+          values: {
+            attempt_num: this.attempt_num,
+            craft: this.craft,
+            pilot: this.pilot,
+            side: this.side,
+            total_time: '',
+            impact: '',
+            fuel_remaining: ''
+          }
         }
-    }, function(result){
-        if(result.success){
-            this.openGameCase=result.caseID;
-            this.kPreviousGameCaseClosed=false;
-            console.log('kPreviousGameCaseClosed is '+this.kPreviousGameCaseClosed);
-            console.log("I have caseID "+result.caseID);
-        } else {
-            console.log("Lunar Lander: Error calling 'openCase'");
-        }
-    }.bind(this));
+      ]
+    });
+    if (iResult.success) {
+      this.openGameCase = iResult.values[0].id;
+      this.isFirstFlightRecord = true;
+    } else {
+      console.log("Lunar Lander: Error creating new landing attempt case");
+    }
   }
 };
 
 /**
- * If we don't already have an open game case, open one now.
+ * Add a flight record case as a child of the current landing attempt.
  */
-LanderModel.prototype.addFlightRecordCase = function()
+LanderModel.prototype.addFlightRecordCase = async function()
 {
-  var createCase = function(){
-      this.codapPhone.call({
-          action:"createCase",
-          args:{
-              collection: "Flight Record",
-              parent: this.openGameCase,
-              values:[
-                      this.total_time,
-                      this.altitude,
-                      this.velocity,
-                      this.fuel_remaining,
-                      this.thrust
-                  ]
-          }
+  var values = {
+    time: this.total_time,
+    altitude: this.altitude,
+    velocity: this.velocity,
+    fuel: this.fuel_remaining,
+    thrust: this.thrust
+  };
+
+  if (this.openGameCase !== null) {
+    if (this.isFirstFlightRecord) {
+      // First flight record: update the auto-created child case
+      var iResult = await codapInterface.sendRequest({
+        action: 'get',
+        resource: 'dataContext[Landing Attempts/Flight Record].collection[Landing Attempts].caseByID[' + this.openGameCase + ']'
       });
-  }.bind(this);
-  if (this.openGameCase!==null) {
-    createCase();
+      if (iResult.success) {
+        var idOfFirstChild = iResult.values.case.children[0];
+        await codapInterface.sendRequest({
+          action: 'update',
+          resource: "dataContext[Landing Attempts/Flight Record].collection[Flight Record].caseByID[" + idOfFirstChild + "]",
+          values: {
+            values: values
+          }
+        });
+      } else {
+        console.log("Lunar Lander: Error finding existing flight record case");
+      }
+      this.isFirstFlightRecord = false;
+    } else {
+      // Subsequent flight records: create new child case
+      await codapInterface.sendRequest({
+        action: "create",
+        resource: "dataContext[Landing Attempts/Flight Record].collection[Flight Record].case",
+        values: [
+          {
+            parent: this.openGameCase,
+            values: values
+          }
+        ]
+      });
+    }
   } else {
     console.log("Lunar Lander: Error no caseID");
   }
@@ -210,25 +238,21 @@ LanderModel.prototype.endFlight = function()
     this.fuel_remaining = null;
     this.broadcastUpdate();
   }
-  if (this.openGameCase!==null) {
-    this.codapPhone.call({
-      action: 'closeCase',
-      args: {
-        collection: "Landing Attempts",
-        caseID: this.openGameCase,
-        values: [
-          this.attempt_num,
-          this.craft,
-          this.pilot,
-          this.side,
-          this.total_time,
-          this.velocity,
-          this.fuel_remaining
-        ]
+  if (this.openGameCase !== null) {
+    codapInterface.sendRequest({
+      action: 'update',
+      resource: 'dataContext[Landing Attempts/Flight Record].collection[Landing Attempts].caseByID[' + this.openGameCase + ']',
+      values: {
+        values: {
+          attempt_num: this.attempt_num,
+          craft: this.craft,
+          pilot: this.pilot,
+          side: this.side,
+          total_time: this.total_time,
+          impact: this.velocity,
+          fuel_remaining: this.fuel_remaining
+        }
       }
-    }, function(){
-      this.kPreviousGameCaseClosed=true;
-      console.log('kPreviousGameCaseClosed is '+this.kPreviousGameCaseClosed);
     });
   } else {
     console.log("Lunar Lander: Error no caseID");
@@ -314,7 +338,7 @@ LanderModel.prototype.copyState = function( iFrom, iTo) {
 };
 
 /**
-  Returns an object which contains a copy of all of the properties 
+  Returns an object which contains a copy of all of the properties
   of this lander which should be saved/restored with the document.
   @returns  {Object}  An object containing the relvant lander properties
  */
@@ -331,8 +355,7 @@ LanderModel.prototype.saveLanderState = function() {
 LanderModel.prototype.restoreLanderState = function( iState) {
   if( iState)
     this.copyState( iState, this);
-    
+
   this.setState( this.landerState);
   this.eventDispatcher.dispatchEvent( new Event('setupChange'));
 };
-

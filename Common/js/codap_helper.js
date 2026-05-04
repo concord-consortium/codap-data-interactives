@@ -6,6 +6,14 @@ var codapHelper = {
   codapPhone: null,
   initAccomplished: false,
 
+  createDataset: async function( iDatasetDescription) {
+    await codapInterface.sendRequest({
+      action: 'create',
+      resource: 'dataContext',
+      values: iDatasetDescription
+    })
+  },
+
   initSim: function( simDescription, doCommandFunc) {
     this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(doCommandFunc, "codap-game", window.parent);
 

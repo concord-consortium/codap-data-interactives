@@ -14,6 +14,7 @@
     left: 0;
     width: 290px;
     height: 344px;
+    visibility: hidden;
 }
 
 #welcome_panel

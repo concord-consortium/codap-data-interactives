@@ -15,10 +15,10 @@
 
 /**
  * Build the model layer and init the game with DG.
- * @param dgAPI
+ * @param iDoAppCommandFunc
  * @constructor
  */
-function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
+function LunarLanderModel( iDoAppCommandFunc) {
   var this_ = this;
   /**
    * If neither lander is active, change state and notify
@@ -48,13 +48,12 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
     }
   }
 
-  this.codapPhone = codapPhone;
   this.doAppCommandFunc = iDoAppCommandFunc;
   this.eventDispatcher = new EventDispatcher();
 
   this.landers = [];
   KCPCommon.keys( LunarSettings.defaultNames).forEach( function( iName) {
-    this.landers.push( new LanderModel( iName, this.codapPhone));
+    this.landers.push( new LanderModel( iName));
   }.bind( this));
 
   this.landers.forEach( function( iLander) {
@@ -65,57 +64,74 @@ function LunarLanderModel( codapPhone, iDoAppCommandFunc) {
 }
 
 /**
- * Let DG know about Lunar Lander
+ * Initialize the dataset in CODAP
  */
-LunarLanderModel.prototype.initGame = function() {
-  this.codapPhone.call({
-    action:'initGame',
-    args:{
-        name: "Lunar Lander",
-        version:"3.0",
-        dimensions:{width: 341, height:529},
-        collections: [
-            {
-                name: "Landing Attempts",
-                attrs: [
-                    {name: "attempt_num", type: "numeric", precision: 0, defaultMin: 0, defaultMax: 3, description: "attempt number for this lander"},
-                    {name: "craft", type: "nominal", description: "name of lander"},
-                    {name: "pilot", type: "nominal", description: "name of pilot"},
-                    {name: "side", type: "nominal", description: "left or right"},
-                    {name: "total_time", type: "numeric", precision: 2, defaultMin: 10, defaultMax: 30, description: "how long the landing lasted in seconds"},
-                    {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final velocity of lander"},
-                    {name: "fuel_remaining", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 100, description: "fuel remaining after landing"}
-                ],
-                childAttrName: "flight_record",
-                defaults: {
-                    xAttr: "attempt_num",
-                    yAttr: "impact"
-                }
-            },
-            {
-                name: "Flight Record",
-                attrs: [
-                    {name: "time", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "seconds since beginning of attempt"},
-                    {name: "altitude", type: "numeric", precision: 1, defaultMin: 0, defaultMax: 360, description: "distance above the lunar surface"},
-                    {name: "velocity", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "velocity of lander"},
-                    {name: "fuel", type: "numeric", defaultMin: 0, defaultMax: 100, precision: 2, description: "fuel left"},
-                    {name: "thrust", type: "nominal", description: "TD+/- turn on or off down thruster, TU+/- turn on or off the up thruster"}
-                ],
-                labels: {
-                    singleCase: "measurement",
-                    pluralCase: "measurements",
-                    singleCaseWithArticle: "a measurement",
-                    setOfCases: "flight record",
-                    setOfCasesWithArticle: "a flight record"
-                },
-                defaults: {
-                    xAttr: "time",
-                    yAttr: "altitude"
-                }
-            }
-        ]
-    } //doCommandFunc: this.doAppCommandFunc
-    },function(){console.log("Initializing game.")});
+LunarLanderModel.prototype.initialize = async function() {
+  let interactiveState = codapInterface.getInteractiveState();
+
+  // Create the dataset if it doesn't already exist
+  const iResult = await codapInterface.sendRequest({
+    action: 'get',
+    resource: 'dataContextList'
+  });
+  if (iResult.success && !iResult.values.some(ds => [ds.name, ds.title].includes("Landing Attempts/Flight Record"))) {
+    await codapHelper.createDataset({
+      name: "Landing Attempts/Flight Record",
+      collections: [
+        {
+          name: "Landing Attempts",
+          attrs: [
+            {name: "attempt_num", type: "numeric", precision: 0, defaultMin: 0, defaultMax: 3, description: "attempt number for this lander"},
+            {name: "craft", type: "categorical", description: "name of lander"},
+            {name: "pilot", type: "categorical", description: "name of pilot"},
+            {name: "side", type: "categorical", description: "left or right"},
+            {name: "total_time", type: "numeric", precision: 2, defaultMin: 10, defaultMax: 30, description: "how long the landing lasted in seconds"},
+            {name: "impact", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 70, description: "final velocity of lander"},
+            {name: "fuel_remaining", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 100, description: "fuel remaining after landing"}
+          ],
+          labels: {
+            singleCase: "landing attempt",
+            pluralCase: "landing attempts",
+            singleCaseWithArticle: "a landing attempt",
+            setOfCases: "match",
+            setOfCasesWithArticle: "a match"
+          },
+          defaults: {
+            xAttr: "attempt_num",
+            yAttr: "impact"
+          }
+        },
+        {
+          name: "Flight Record",
+          parent: "Landing Attempts",
+          attrs: [
+            {name: "time", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "seconds since beginning of attempt"},
+            {name: "altitude", type: "numeric", precision: 1, defaultMin: 0, defaultMax: 360, description: "distance above the lunar surface"},
+            {name: "velocity", type: "numeric", precision: 2, defaultMin: 0, defaultMax: 30, description: "velocity of lander"},
+            {name: "fuel", type: "numeric", defaultMin: 0, defaultMax: 100, precision: 2, description: "fuel left"},
+            {name: "thrust", type: "categorical", description: "TD+/- turn on or off down thruster, TU+/- turn on or off the up thruster"}
+          ],
+          labels: {
+            singleCase: "measurement",
+            pluralCase: "measurements",
+            singleCaseWithArticle: "a measurement",
+            setOfCases: "flight record",
+            setOfCasesWithArticle: "a flight record"
+          },
+          defaults: {
+            xAttr: "time",
+            yAttr: "altitude"
+          }
+        }
+      ],
+      type: 'DG.GameContext',
+    });
+  }
+
+  notificatons.registerForDocumentChanges();
+  if (interactiveState) {
+    this.restoreGameState(interactiveState);
+  }
 };
 
 /**
@@ -165,27 +181,21 @@ LunarLanderModel.prototype.prepareForSetup = function() {
 };
 
 /**
-  Saves the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @returns  {Object}    { success: {Boolean}, state: {Object} }
+ * Push the current state to codapInterface for automatic save/restore.
  */
-LunarLanderModel.prototype.saveGameState = function() {
+LunarLanderModel.prototype.updateInteractiveState = function() {
   var landers = [];
   this.landers.forEach( function( iLander) {
-                          landers.push( iLander.saveLanderState());
-                        });
-  return {
-            success: true,
-            state: {
-              landers: landers
-            }
-          };
+    landers.push( iLander.saveLanderState());
+  });
+  codapInterface.updateInteractiveState({
+    landers: landers
+  });
 };
 
 /**
-  Restores the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @param    {Object}    iState -- The state as saved previously by saveGameState().
+  Restores the game state for the game.
+  @param    {Object}    iState -- The state as saved previously.
  */
 LunarLanderModel.prototype.restoreGameState = function( iState) {
   var restoredLanders = iState && iState.landers;
@@ -198,4 +208,3 @@ LunarLanderModel.prototype.restoreGameState = function( iState) {
   }
   return { success: true };
 };
-

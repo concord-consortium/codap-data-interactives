@@ -125,16 +125,14 @@ Measurer.prototype.initMeasureMechanism = function() {
     this_.measureInstructions.hide();
     this_.measureText.animate({ "fill-opacity": 0 }, 1000, "<>")
     this_.measureCover.hide();
-    var logAction = function(){
-        ProximityGame.codapPhone.call({ action: "logAction",
-            args: {
-                formatStr: "Measurement: %@",
-                replaceArgs: [ tDist ]
-            }
-        });
-
-    }.bind(this);
-      logAction();
+    codapInterface.sendRequest({
+        action: 'notify',
+        resource: 'logMessage',
+        values: {
+            formatStr: "Measurement: %@",
+            replaceArgs: [ tDist ]
+        }
+    });
     this_.startHintTimeout();
   }
 

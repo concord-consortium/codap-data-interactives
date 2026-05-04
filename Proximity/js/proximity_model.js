@@ -11,20 +11,17 @@
  */
 
 
-function ProximityModel(codapPhone, iDoAppCommandFunc)
+function ProximityModel()
 {
-  this.codapPhone = codapPhone;
-  //this.doAppCommandFunc = iDoAppCommandFunc;
-  
   this.eventDispatcher = new EventDispatcher();
   this.levelManager = new LevelManager( ProximityLevels, this, 'ProximityGame.model.handleLevelButton(event, ##);',
                                         this, this.isLevelEnabled);
 
   this.currentState = "welcome";  // "welcome" or "playing" or "gameEnded" or "levelsMode"
-  
+
   // DG vars
   this.openGameCase = null;
-  
+
   // game vars
   this.gameNumber = 0;
   this.score = 0;
@@ -46,143 +43,172 @@ function ProximityModel(codapPhone, iDoAppCommandFunc)
 /**
  * Inform DG about this game
  */
-/* Called by index.html*/
-ProximityModel.prototype.initialize = function()
+ProximityModel.prototype.initialize = async function()
 {
-  this.codapPhone.call({
-      action:'initGame',
-      args:{
-          name: "Proximity",
-          version: "2.0",
-          dimensions: { width: 447, height: 330 },
-          collections: [
-              {
-                  name: "Games",
-                  attrs: [
-                      {"name": "game" , "type" : "numeric" , "precision" : 0, defaultMin: 1, defaultMax: 5, "description": "game number" } ,
-                      {"name": "score" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 500, "description": "game score"   } ,
-                      {"name": "goals" , "type" : "numeric" , "precision" : 0, defaultMin: 1, defaultMax: 6, "description": "how many goals"   } ,
-                      {"name": "level", "type" : "nominal" }
-                  ],
-                  childAttrName: "Turn",
-                  defaults: {
-                      xAttr: "game",
-                      yAttr: "score"
-                  }
-              },
-              {
-                  name: "Turns",
-                  attrs: [
-                      { "name" : "push" , "type" : "numeric" , "precision" : 1, defaultMin: 0, defaultMax: 30, "description": "how hard you pushed"   } ,
-                      { "name" : "distance" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 200, "description": "how far it went (net)"  } ,
-                      { "name" : "goalNum" , "type" : "numeric" , "precision" : 0, defaultMin: 1, defaultMax: 6, "description": "which goal"   } ,
-                      { "name" : "points" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 100, "description": "points scored on this goal"   } ,
-                      { "name" : "goalDist" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 200, "description": "original distance to the goal"   } ,
-                      { "name" : "nBounce" , "type" : "numeric" , "precision" : 0, defaultMin: 0, defaultMax: 2, "description": "how many bounces"   }
-                  ],
-                  defaults: {
-                      xAttr: "push",
-                      yAttr: "distance"
-                  }
-              }
-          ]
-          //doCommandFunc: this.doAppCommandFunc
-      }
-  }, function(){console.log("Initializing game")});
+  let interactiveState = codapInterface.getInteractiveState();
+
+  // Create the dataset if it doesn't already exist
+  const iResult = await codapInterface.sendRequest({
+    action: 'get',
+    resource: 'dataContextList'
+  });
+  if (iResult.success && !iResult.values.some(ds => [ds.name, ds.title].includes("Games/Turns"))) {
+    await codapHelper.createDataset({
+      name: "Games/Turns",
+      collections: [
+        {
+          name: "Games",
+          title: "Games",
+          attrs: [
+            {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number"},
+            {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 500, "description": "game score"},
+            {"name": "goals", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 6, "description": "how many goals"},
+            {"name": "level", "type": "categorical"}
+          ],
+          labels: {
+            singleCase: "game",
+            pluralCase: "games",
+            singleCaseWithArticle: "a game",
+            setOfCases: "match",
+            setOfCasesWithArticle: "a match"
+          },
+          defaults: {
+            xAttr: "game",
+            yAttr: "score"
+          }
+        },
+        {
+          name: "Turns",
+          title: "Turns",
+          parent: "Games",
+          attrs: [
+            {"name": "push", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "how hard you pushed"},
+            {"name": "distance", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 200, "description": "how far it went (net)"},
+            {"name": "goalNum", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 6, "description": "which goal"},
+            {"name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points scored on this goal"},
+            {"name": "goalDist", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 200, "description": "original distance to the goal"},
+            {"name": "nBounce", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 2, "description": "how many bounces"}
+          ],
+          labels: {
+            singleCase: "turn",
+            pluralCase: "turns",
+            singleCaseWithArticle: "a turn",
+            setOfCases: "game",
+            setOfCasesWithArticle: "a game"
+          },
+          defaults: {
+            xAttr: "push",
+            yAttr: "distance"
+          }
+        }
+      ],
+      type: 'DG.GameContext',
+    });
+  }
+
+  notificatons.registerForDocumentChanges();
+  if (interactiveState) {
+    this.restoreGameState(interactiveState);
+  }
 };
 
 /**
  * If we don't already have an open game case, open one now.
  */
-
-/*Called by addTurnCase() and playGame() in this model*/
-ProximityModel.prototype.openNewGameCase = function()
+ProximityModel.prototype.openNewGameCase = async function()
 {
   if( !this.openGameCase) {
-    this.codapPhone.call({
-        action:'openCase',
-        args: {
-            collection: "Games",
-            values:[this.gameNumber, '', '', this.level.levelName]
+    await codapInterface.sendRequest({
+      action: 'create',
+      resource: "dataContext[Games/Turns].collection[Games].case",
+      values: [
+        {
+          values: {
+            game: this.gameNumber,
+            score: 0,
+            goals: 0,
+            level: this.level.levelName
+          }
         }
-    }, function(result){
-        if (result.success){
-            this.openGameCase = result.caseID;
-            this.changeState( "playing"); // Our view will update
-            console.log("I have caseID" + result.caseID);
-        } else {
-            console.log("Cart Weight: Error calling 'openCase'");
-        }
+      ]
+    }).then(function(iResult) {
+      if(iResult.success) {
+        this.openGameCase = iResult.values[0].id;
+      } else {
+        console.log("Proximity: Error creating new game case");
+      }
     }.bind(this));
-    /*var result = this.dgApi.doCommand("openCase",
-                    {
-                      collection: "Games",
-                      values:
-                      [
-                        this.gameNumber, '', '', this.level.levelName
-                      ]
-                    });
-    // Stash the ID of the opened case so we can close it when done
-    if( result.success)
-      this.openGameCase = result.caseID;*/
   }
 };
 
 /**
  * Pass DG the values for the turn that just got completed
  */
-/* Called from proximity_view.js handleEndOfShot()*/
-ProximityModel.prototype.addTurnCase = function()
+ProximityModel.prototype.addTurnCase = async function()
 {
   this.score += this.oneScore;
   this.eventDispatcher.dispatchEvent( new Event( "scoreChange"));
-  this.openNewGameCase(); // Does nothing if already open
 
-  // Create the new Turn case
+  var values = {
+    push: this.push,
+    distance: this.distance,
+    goalNum: this.goalNum,
+    points: this.oneScore,
+    goalDist: this.goalDist,
+    nBounce: this.nBounce
+  };
 
-  var createCase = function(){
-      this.codapPhone.call({
-          action:'createCase',
-          args: {
-              collection:"Turns",
-              parent: this.openGameCase,
-              values:
-                  [
-                      this.push,
-                      this.distance,
-                      this.goalNum,
-                      this.oneScore,
-                      this.goalDist,
-                      this.nBounce
-                  ]
-          }
+  if (this.goalNum === 1) {
+    // Update the auto-created first turn case
+    var iResult = await codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext[Games/Turns].collection[Games].caseByID[' + this.openGameCase + ']'
+    });
+    if (iResult.success) {
+      var idOfFirstTurnCase = iResult.values.case.children[0];
+      await codapInterface.sendRequest({
+        action: 'update',
+        resource: "dataContext[Games/Turns].collection[Turns].caseByID[" + idOfFirstTurnCase + "]",
+        values: {
+          values: values
+        }
       });
-  }.bind(this);
-    createCase();
-
+    } else {
+      console.log("Proximity: Error finding existing turn case");
+    }
+  } else {
+    // Create a new Turn case
+    await codapInterface.sendRequest({
+      action: "create",
+      resource: "dataContext[Games/Turns].collection[Turns].case",
+      values: [
+        {
+          parent: this.openGameCase,
+          values: values
+        }
+      ]
+    });
+  }
 };
 
 /**
  * Let DG know that the current game is complete.
  * Stash relevant values for the level and check to see if any levels are newly unlocked.
  */
-/* Called from addGameCase() in this model*/
-ProximityModel.prototype.addGameCase = function()
+ProximityModel.prototype.addGameCase = async function()
 {
   var this_ = this;
-  this.codapPhone.call({
-      action:'closeCase',
-      args: {
-          collection: "Games",
-          caseID: this.openGameCase,
-          values:
-              [
-                  this.gameNumber,
-                  this.score,
-                  this.goalNum,
-                  this.level.levelName
-              ]
+  await codapInterface.sendRequest({
+    action: 'update',
+    resource: 'dataContext[Games/Turns].collection[Games].caseByID[' + this.openGameCase + ']',
+    values: {
+      values: {
+        game: this.gameNumber,
+        score: this.score,
+        goals: this.goalNum,
+        level: this.level.levelName
       }
+    }
   });
 
   this.openGameCase = null;
@@ -206,7 +232,6 @@ ProximityModel.prototype.addGameCase = function()
 /**
  * Prepare for the new game that is beginning.
  */
-/* Called from index.html when the user clicks on the start game button */
 ProximityModel.prototype.playGame = function()
 {
   this.gameNumber++;
@@ -223,8 +248,9 @@ ProximityModel.prototype.playGame = function()
   this.isMoving = false;
 
   this.setGoal();
-  this.openNewGameCase();
-
+  this.openNewGameCase();  // fire and forget
+  this.changeState( "playing");
+  this.updateInteractiveState();
 };
 
 /**
@@ -329,6 +355,7 @@ ProximityModel.prototype.handleLevelButton = function( iEvent, iLevelIndex)
     this.level = tClickedLevel;
     this.playGame();
   }
+  this.updateInteractiveState();
 };
 
 /**
@@ -378,25 +405,21 @@ ProximityModel.prototype.isLevelEnabled = function( iLevelSpec)
 };
 
 /**
-  Saves the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @returns  {Object}    { success: {Boolean}, state: {Object} }
+ * Push the current state to codapInterface for automatic save/restore.
  */
-ProximityModel.prototype.saveGameState = function() {
-  return {
-            success: true,
-            state: {
-              gameNumber: this.gameNumber,
-              currentLevel: this.level && this.level.levelName,
-              levelsMap: this.levelManager.getLevelsLockState()
-            }
-          };
+ProximityModel.prototype.updateInteractiveState = function() {
+  var currentInteractiveState = {
+    gameNumber: this.gameNumber,
+    currentLevel: this.level && this.level.levelName,
+    levelsMap: this.levelManager.getLevelsLockState()
+  };
+  codapInterface.updateInteractiveState(currentInteractiveState);
 };
 
 /**
-  Restores the game state for the game. Currently, only level information
-  is saved so that the user need not unlock levels again, for instance.
-  @param    {Object}    iState -- The state as saved previously by saveGameState().
+  Restores the game state from the specified state object.
+  @param    {Object}  iState -- The saved state object
+  @returns  {Object}  { success: true }
  */
 ProximityModel.prototype.restoreGameState = function( iState) {
   if( iState) {
@@ -408,8 +431,10 @@ ProximityModel.prototype.restoreGameState = function( iState) {
     }
     if( iState.levelsMap)
       this.levelManager.setLevelsLockState( iState.levelsMap);
-    this.playGame();
+    if (this.gameNumber > 0) {
+      this.changeState('playing');
+      this.changeState('gameEnded');
+    }
   }
   return { success: true };
 };
-

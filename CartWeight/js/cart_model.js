@@ -1,3 +1,4 @@
+"use strict";
 // ==========================================================================
 // Project:   Cart
 // Copyright: ©2012 KCP Technologies, Inc.
@@ -10,20 +11,18 @@
  * @preserve (c) 2012 KCP Technologies, Inc.
  */
 
-function CartModel(codapPhone)
+function CartModel()
 {
-  this.codapPhone = codapPhone;
-
   this.eventDispatcher = new EventDispatcher();
   this.levelManager = new LevelManager( CartLevels, this, 'cartGame.model.handleLevelButton(event, ##);',
                                         this, this.isLevelEnabled);
 
   this.gameState = "welcome";  // "welcome" or "playing" or "gameEnded" or "levelsMode"
   this.turnState = "";         // "", "guessing", or "weighing"
-  
+
   // DG vars
   this.openGameCase = null;
-  
+
   // game vars
   this.gameNumber = 0;
   this.score = 0;
@@ -49,61 +48,73 @@ function CartModel(codapPhone)
 /**
  * Inform DG about this game
  */
-CartModel.prototype.initialize = function()
+CartModel.prototype.initialize = async function()
 {
-  this.codapPhone.call({
-      action:'initGame',
-      args: {
-            name: "Cart Weight",
-            version:"2.0",
-            dimensions:{width: 274, height:338},
-            collections: [
-            {
-              name: "Games",
-              attrs: [
-                  {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number" } ,
-                  {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 300, "description": "game score"   } ,
-                  {"name": "carts", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 5, "description": "how many cart weights were guessed"   } ,
-                  {"name": "level", "type": "nominal" }
-              ],
-              childAttrName: "Turn",
-              labels: {
-                singleCase: "game",
-                pluralCase: "games",
-                singleCaseWithArticle: "a game",
-                setOfCases: "match",
-                setOfCasesWithArticle: "a match"
-              },
-              defaults: {
-                  xAttr: "game",
-                  yAttr: "score"
-              }
-            },
-            {
-              name: "Carts",
-              attrs: [
-                  { "name": "cart", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "which cart in a game"   } ,
-                  { "name": "bricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 20, "description": "how many bricks on the cart"  } ,
-                  { "name": "weight", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "actual weight of the cart"   } ,
-                  { "name": "guess", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "your guess for the cart weight"   } ,
-                  { "name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points earned for this cart"   } ,
-                  { "name": "smBricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 10, "description": "how many small bricks on the cart"   }
-              ],
-              labels: {
-                singleCase: "cart",
-                pluralCase: "carts",
-                singleCaseWithArticle: "a cart",
-                setOfCases: "game",
-                setOfCasesWithArticle: "a game"
-              },
-              defaults: {
-                  xAttr: "bricks",
-                  yAttr: "weight"
-              }
-            }
-        ]
-    }
-}, function(){console.log("Initializing game")});
+  console.log("CartWeight initialize: getting interactive state");
+  let interactiveState = codapInterface.getInteractiveState();
+  console.log("CartWeight initialize: got state:", interactiveState);
+
+  // Create the dataset if it doesn't already exist
+  console.log("CartWeight initialize: about to sendRequest for dataContextList");
+  const iResult = await codapInterface.sendRequest({
+    action: 'get',
+    resource: 'dataContextList'
+  });
+  console.log("CartWeight initialize: got dataContextList:", iResult);
+  if (iResult.success && !iResult.values.some(ds => [ds.name, ds.title].includes("Games/Carts"))) {
+    console.log("CartWeight initialize: about to createDataset");
+    await codapHelper.createDataset({
+      name: "Games/Carts",
+      collections: [
+        {
+          name: "Games",
+          title: "Games",
+          attrs: [
+            {"name": "game", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "game number"},
+            {"name": "score", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 300, "description": "game score"},
+            {"name": "carts", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 5, "description": "how many cart weights were guessed"},
+            {"name": "level", "type": "categorical"}
+          ],
+          labels: {
+            singleCase: "game",
+            pluralCase: "games",
+            singleCaseWithArticle: "a game",
+            setOfCases: "match",
+            setOfCasesWithArticle: "a match"
+          },
+          defaults: {
+            xAttr: "game",
+            yAttr: "score"
+          }
+        },
+        {
+          name: "Carts",
+          title: "Carts",
+          parent: "Games",
+          attrs: [
+            {"name": "cart", "type": "numeric", "precision": 0, defaultMin: 1, defaultMax: 5, "description": "which cart in a game"},
+            {"name": "bricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 20, "description": "how many bricks on the cart"},
+            {"name": "weight", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "actual weight of the cart"},
+            {"name": "guess", "type": "numeric", "precision": 1, defaultMin: 0, defaultMax: 30, "description": "your guess for the cart weight"},
+            {"name": "points", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 100, "description": "points earned for this cart"},
+            {"name": "smBricks", "type": "numeric", "precision": 0, defaultMin: 0, defaultMax: 10, "description": "how many small bricks on the cart"}
+          ],
+          labels: {
+            singleCase: "cart",
+            pluralCase: "carts",
+            singleCaseWithArticle: "a cart",
+            setOfCases: "game",
+            setOfCasesWithArticle: "a game"
+          },
+          defaults: {
+            xAttr: "bricks",
+            yAttr: "weight"
+          }
+        }
+      ],
+      type: 'DG.GameContext',
+    });
+  }
 
   $('#guess_input_box' ).bind({
     keypress: function( iEvent) {
@@ -113,81 +124,117 @@ CartModel.prototype.initialize = function()
       return iEvent.keyCode !== 9;
     }
   });
+
+  console.log("CartWeight initialize: about to registerForDocumentChanges");
+  notificatons.registerForDocumentChanges();
+  console.log("CartWeight initialize: about to restoreState");
+  if (interactiveState) {
+    this.restoreState(interactiveState);
+  }
+  console.log("CartWeight initialize: complete");
 };
 
 /**
  * If we don't already have an open game case, open one now.
  */
-CartModel.prototype.openNewGameCase = function()
+CartModel.prototype.openNewGameCase = async function()
 {
-
-    if( !this.openGameCase) {
-    this.codapPhone.call({
-        action:'openCase',
-        args: {
-            collection: "Games",
-            values:[this.gameNumber, '', '', this.level.levelName]
+  if( !this.openGameCase) {
+    await codapInterface.sendRequest({
+      action: 'create',
+      resource: "dataContext[Games/Carts].collection[Games].case",
+      values: [
+        {
+          values: {
+            game: this.gameNumber,
+            score: 0,
+            carts: 0,
+            level: this.level.levelName
+          }
         }
-    }, function(result){
-        if(result.success){
-            this.openGameCase = result.caseID;
-            console.log("I have caseID" + result.caseID);
-        } else {
-            console.log("Cart Weight: Error calling 'openCase'");
-        }
+      ]
+    }).then(function(iResult) {
+      if(iResult.success) {
+        this.openGameCase = iResult.values[0].id;
+        console.log("I have caseID " + iResult.values[0].id);
+      } else {
+        console.log("Cart Weight: Error creating new game case");
+      }
     }.bind(this));
-  /*  var result = this.dgApi.doCommand("openCase",
-                    {
-                      collection: "Games",
-                      values:
-                      [
-                        this.gameNumber, '', '', this.level.levelName
-                      ]
-                    });
-    // Stash the ID of the opened case so we can close it when done
-    if( result.success)
-      this.openGameCase = result.caseID;*/
   }
 };
 
 /**
  * Pass DG the values for the turn that just got completed
  */
-CartModel.prototype.addTurnCase = function()
+CartModel.prototype.addTurnCase = async function()
 {
   this.eventDispatcher.dispatchEvent( new Event( "scoreChange"));
-  this.openNewGameCase(); // Does nothing if already open
 
-  // Create the new Turn case
-  var createCase = function(){
-      this.codapPhone.call({
-          action: "createCase",
-          args: {
-              collection: "Carts",
-              parent: this.openGameCase,
-              values: [this.cartNum, this.bricks, this.weight, this.guess, this.oneScore, this.smallBricks]
-          }
+  var values = {
+    cart: this.cartNum,
+    bricks: this.bricks,
+    weight: this.weight,
+    guess: this.guess,
+    points: this.oneScore,
+    smBricks: this.smallBricks
+  };
+
+  if (this.cartNum === 1) {
+    // Update the auto-created first cart case
+    var iResult = await codapInterface.sendRequest({
+      action: 'get',
+      resource: 'dataContext[Games/Carts].collection[Games].caseByID[' + this.openGameCase + ']'
+    });
+    if (iResult.success) {
+      var idOfFirstCartCase = iResult.values.case.children[0];
+      await codapInterface.sendRequest({
+        action: 'update',
+        resource: "dataContext[Games/Carts].collection[Carts].caseByID[" + idOfFirstCartCase + "]",
+        values: {
+          values: values
+        }
       });
-
-  }.bind(this);
-    createCase();
+    } else {
+      console.log("Cart Weight: Error finding existing cart case");
+    }
+  } else {
+    // Create a new Cart case
+    await codapInterface.sendRequest({
+      action: "create",
+      resource: "dataContext[Games/Carts].collection[Carts].case",
+      values: [
+        {
+          parent: this.openGameCase,
+          values: values
+        }
+      ]
+    });
+  }
 };
 
 /**
  * Let DG know that the current game is complete.
  * Stash relevant values for the level and check to see if any levels are newly unlocked.
  */
-CartModel.prototype.addGameCase = function()
+CartModel.prototype.addGameCase = async function()
 {
   var this_ = this;
-  this.codapPhone.call({
-      action: "closeCase",
-      args: {
-          collection: "Games",
-          caseID: this.openGameCase,
-          values: [this.gameNumber, this.score, this.cartNum, this.level.levelName]
+  var iResult = await codapInterface.sendRequest({
+    action: 'update',
+    resource: `dataContext[Games/Carts].collection[Games].caseByID[${this.openGameCase}]`,
+    values: {
+      values: {
+        game: this.gameNumber,
+        score: this.score,
+        carts: this.cartNum,
+        level: this.level.levelName
       }
+    }
   });
+  if(!iResult.success) {
+    console.log("Cart Weight: Error updating game case");
+  }
 
   this.openGameCase = null;
 
@@ -210,8 +257,10 @@ CartModel.prototype.addGameCase = function()
 /**
  * Prepare for the new game that is beginning.
  */
-CartModel.prototype.playGame = function()
+CartModel.prototype.playGame = async function()
 {
+  console.log("CartWeight: playGame called");
+  try {
   this.gameNumber++;
   this.score = 0;
   this.cartNum = 0;
@@ -228,9 +277,15 @@ CartModel.prototype.playGame = function()
   this.smallBrickHistory = [];
   this.changeIsBlocked = false;
 
-  this.openNewGameCase();
+  this.openNewGameCase();  // fire and forget, matching old callback-based behavior
   this.turnState = 'guessing';
+  console.log("CartWeight: about to changeGameState to 'playing'");
   this.changeGameState( 'playing'); // Our view will update
+  console.log("CartWeight: changeGameState completed");
+  this.updateInteractiveState();
+  } catch(e) {
+    console.error("CartWeight: error in playGame:", e);
+  }
 };
 
 /**
@@ -295,12 +350,17 @@ CartModel.prototype.incrementCart = function()
  */
 CartModel.prototype.changeGameState = function( iNewState, iIsRestoring)
 {
+  console.log("CartWeight: changeGameState from '" + this.gameState + "' to '" + iNewState + "'");
   var tEvent = new Event('stateChange');
+  console.log("CartWeight: Event created, type:", tEvent.type, "instanceof Event:", tEvent instanceof Event);
   tEvent.priorState = this.gameState;
   tEvent.newState = iNewState;
   tEvent.isRestoring = iIsRestoring;
   this.gameState = iNewState;
+  var listeners = this.eventDispatcher.eventListeners['stateChange'];
+  console.log("CartWeight: stateChange listeners:", listeners ? listeners.length : 'none');
   this.eventDispatcher.dispatchEvent( tEvent);
+  console.log("CartWeight: dispatchEvent completed");
 };
 
 /**
@@ -386,7 +446,6 @@ CartModel.prototype.handleKeypress = function( iElement, iEvent)
     this.isHandlingKeypress = true;
     iElement.blur();
     $('#guess_button').click();
-    //this.handleTurnButton();
   }
   else if( tCode === 27) {  // esc
     iElement.blur();
@@ -459,6 +518,7 @@ CartModel.prototype.handleLevelButton = function( iEvent, iLevelIndex)
     this.level = tClickedLevel;
     this.playGame();
   }
+  this.updateInteractiveState();
 };
 
 /**
@@ -508,54 +568,19 @@ CartModel.prototype.isLevelEnabled = function( iLevelSpec)
 };
 
 /**
-  Saves the state of the game into a stoage object, which is returned from this method.
-  This storage object is then used to restore the state of the game when it is passed
-  back to the restoreState method.
-  @returns  {Object}    The object in which the state of the game is stored
-                        { success: {Boolean}, state: {Object} }
+ * Push the current state to codapInterface for automatic save/restore.
  */
-CartModel.prototype.saveState = function() {
-  return {
-            success: true,
-            state: {
-              gameNumber: this.gameNumber,
-              currentLevel: this.level && this.level.levelName,
-              levelsMap: this.levelManager.getLevelsLockState()
-            }
-          };
-
-/*  This earlier attempt saved all game state, not just levels.
-    Left here commented out in case we ever want to return to it.
-  
-      // If we're guessing, then we've generated the next cart already,
-      // but that cart was never weighed (and never will be).
-  var completedCarts = this.turnState === 'guessing'
-                        ? Math.max( 0, this.cartNum - 1)
-                        : this.cartNum,
-      state = {
-        gameState: this.gameState,
-        turnState: this.turnState === 'weighing' ? 'guessing' : this.turnState,
-        gameNumber: this.gameNumber,
-        level: this.level && this.level.levelName,
-        score: this.score,
-        cartNum: completedCarts,
-        tare: this.tare,
-        brickWeight: this.brickWeight,
-        smBrickWeight: this.smBrickWeight,
-        // Only include completed entries in the saved history
-        brickHistory: this.brickHistory.slice( 0, completedCarts),  // copy the array
-        smallBrickHistory: this.smallBrickHistory.slice( 0, completedCarts) // copy the array
-      };
-  if( this.openGameCase)
-    state._links_ = { openGameCase: this.openGameCase };
-
-  return { success: true, state: state };
-*/
+CartModel.prototype.updateInteractiveState = function() {
+  var currentInteractiveState = {
+    gameNumber: this.gameNumber,
+    currentLevel: this.level && this.level.levelName,
+    levelsMap: this.levelManager.getLevelsLockState()
+  };
+  codapInterface.updateInteractiveState(currentInteractiveState);
 };
 
 /**
-  Restores the state of the game from the specified game state, which should have
-  been created by the CartModel.prototype.saveState() method.
+  Restores the state of the game from the specified game state.
   @param    {Object}  iState -- The saved state object
   @returns  {Object}  { success: true }
  */
@@ -569,30 +594,10 @@ CartModel.prototype.restoreState = function( iState) {
     }
     if( iState.levelsMap)
       this.levelManager.setLevelsLockState( iState.levelsMap);
-    this.playGame();
+    if (this.gameNumber > 0) {
+      this.changeGameState('playing');
+      this.changeGameState('gameEnded');
+    }
   }
   return { success: true };
-
-/*  This earlier attempt saved all game state, not just levels.
-    Left here commented out in case we ever want to return to it.
-  
-  this.turnState = iState.turnState;
-  if( iState._links_ && iState._links_.openGameCase)
-    this.openGameCase = iState._links_.openGameCase;
-  this.gameNumber = iState.gameNumber;
-  this.level = this.levelManager.getLevelNamed( iState.level);
-  this.score = iState.score;
-  this.cartNum = iState.cartNum;
-  this.tare = iState.tare;
-  this.brickWeight = iState.brickWeight;
-  this.smBrickWeight = iState.smBrickWeight;
-  if( iState.brickHistory)
-    this.brickHistory = iState.brickHistory.slice(0); // copy the array
-  if( iState.smallBrickHistory)
-    this.smallBrickHistory = iState.smallBrickHistory.slice(0); // copy the array
-  this.changeGameState( iState.gameState, true);
-  return { success: true };
-*/
 };
-
-

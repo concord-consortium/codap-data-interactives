@@ -8,43 +8,35 @@
 
 		<script src="../Common/js/kcpcommon.js" type="text/javascript"></script>
         <script src="../Common/js/raphael.js" type="text/javascript"></script>
-		<script src="../Common/js/dgapi.js" type="text/javascript"></script>
 		<script src="../Common/js/events.js" type="text/javascript"></script>
+        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
+        <script src="../Common/js/codap_helper.js" type="text/javascript"></script>
+        <script src="js/codapInterface.js" type="text/javascript"></script>
+        <script src="js/notifications.js" type="text/javascript"></script>
 		<script src="js/fargo_model.js" type="text/javascript"></script>
 		<script src="js/fargo_settings.js" type="text/javascript"></script>
 		<script src="js/fargo_view.js" type="text/javascript"></script>
 
-        <script src="../Common/js/iframe-phone.js" language="javascript"></script>
-
     <script type="text/javascript">
 
       var FargoGame = {
-            initializeGame: function() {
-              //this.dataGamesAPI = new DataGamesAPI();
-              this.codapPhone = new iframePhone.IframePhoneRpcEndpoint(function(iCmd, callback){
-                    var operation = iCmd && iCmd.operation,
-                            args = iCmd && iCmd.args,
-                            model = FargoGame.model;
-                    switch( operation) {
-                        case 'saveState':
-                            callback(model.saveGameState());
-                            break;
-                        case 'restoreState':
-                            callback(model.restoreGameState( args.state));
-                            break;
-                        default:
-                            callback({success:false});
-                    }
-                }, "codap-game", window.parent);
-              this.model = new FargoModel(FargoGame.codapPhone, FargoGame.doAppCommand);
+            initializeGame: async function() {
+              await codapInterface.init({
+                name: "Floyd's of Fargo",
+                title: "Floyd's of Fargo",
+                version: "2.1",
+                dimensions: { width: 564, height: 436 }
+              }, null);
+
+              this.model = new FargoModel();
               this.view = new FargoView();
-    
+
               this.view.initialize();
               this.model.initialize();
-    
+
               this.view.eventDispatcher.addEventListener("onFinishTurn", this.model.finishTurn, this.model);
               this.model.eventDispatcher.addEventListener("onFargoModelUpdated", this.view.update, this.view);
-              
+
               this.model.updateView();
             }
       }

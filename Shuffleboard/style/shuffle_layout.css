@@ -15,6 +15,7 @@
     left: 0;
     right: 0px;
     bottom: 0px;
+    visibility: hidden;
 }
 
 #welcome_panel
