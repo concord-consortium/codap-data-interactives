@@ -69,7 +69,9 @@
     "~onboarding2.all.success.message7": "Deselected cases so that none are selected",
     "~onboarding2.all.success.message8": "These are useful CODAP skills!",
     "~onboarding1.mammals.file.and.table.title": "mammals.csv",
-    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv"
+    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv",
+    "~onboarding1.mammals.table.title": "Mammals",
+    "~onboarding2.nhanes.table.title": "NHANES"
   },
   "es": {
     "~header.welcome": "Les damos la bienvenida a CODAP",
@@ -141,6 +143,8 @@
     "~onboarding2.all.success.message7": "Deseleccionar los casos para que no quede ninguno seleccionado",
     "~onboarding2.all.success.message8": "Estas son habilidades muy útiles de CODAP!",
     "~onboarding1.mammals.file.and.table.title": "mamiferos.csv",
-    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv"
+    "~onboarding2.nhanes.file.and.table.title": "nhanes.csv",
+    "~onboarding1.mammals.table.title": "Mamíferos",
+    "~onboarding2.nhanes.table.title": "NHANES"
   }
 }
