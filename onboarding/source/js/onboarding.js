@@ -309,7 +309,7 @@ class TutorialView extends React.Component {
         handleDataContextCountChanged();
         break;
       case 'create':
-        if (iNotification.values.type === 'graph') this.handleAccomplishment('MakeGraph', !this.isAccomplished('Drag'));else if (iNotification.values.type === 'caseTable', !this.isAccomplished('Drag')) this.handleAccomplishment('MakeTable');
+        if (iNotification.values.type === 'graph') this.handleAccomplishment('MakeGraph', !this.isAccomplished('Drag'));else if (iNotification.values.type === 'table') this.handleAccomplishment('MakeTable', !this.isAccomplished('Drag'));
         break;
       case 'move':
         if (iNotification.values.type === 'DG.GraphView' || iNotification.values.type === 'DG.TableView') this.handleAccomplishment('MoveComponent');
@@ -405,11 +405,13 @@ function getStarted() {
 
   if ((!hasMouse && onboarding1) || (!onboarding1)) {
     csvToLoad = (onboarding1 ? tr("~onboarding1.mammals.file.and.table.title") : tr("~onboarding2.nhanes.file.and.table.title"));
+    var dataContextTitle = (onboarding1 ? tr("~onboarding1.mammals.table.title") : tr("~onboarding2.nhanes.table.title"));
     codapInterface.sendRequest({
       action: 'create',
       resource: 'dataContextFromURL',
       values: {
-        URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + csvToLoad
+        URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + csvToLoad,
+        title: dataContextTitle
       }
     }).then(function (iResult) {
       console.log('Created data context from URL');

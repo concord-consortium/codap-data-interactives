@@ -1038,6 +1038,11 @@ function resolveAttributes(datasetSpec, attributeNames) {
     attributeList = attributeList.concat(relevantAdditionalAttrs);
   }
   attributeList.forEach(attr => {
+    // CODAP V3 only accepts the type 'numeric' (V2 tolerated 'numerical').
+    // Normalize any legacy 'numerical' so the attribute spec validates in both.
+    if (attr.type === 'numerical') {
+      attr.type = 'numeric';
+    }
     if (!attr.description) {
       console.warn(`[resolveAttributes] Attribute '${attr.name}' is missing a description in export.`);
     }
