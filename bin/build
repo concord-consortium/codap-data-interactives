@@ -19,9 +19,16 @@ BUILD_NUM=`cat lib/build-num.txt`
 BUILD_DIR="$WORKING/plugins"
 ZIP_FILENAME=codap-data-interactives-${BUILD_NUM}.zip
 
-STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin eepsmedia/plugins/Choosy Sonify
-eepsmedia/plugins/scrambler eepsmedia/plugins/testimate eepsmedia/plugins/simmer data-science-worlds/nhanes"
-HIDDEN_DIRS="Common eepsmedia/common"
+# NOTE: The eepsmedia plugins (Choosy, scrambler, simmer, testimate) moved to
+# https://github.com/concord-consortium/eepsmedia on 2026-07-31 (CODAP-1423) and are no longer
+# copied by this build. They are still listed in published-plugins.json because that file describes
+# what a V2 build should contain, so a V2 build needs them copied in by hand.
+#
+# WHERE that manual copy has to happen is not obvious -- see warnEepsmediaNotBuilt() below, which
+# prints the instructions at the end of every run.
+STATIC_PLUGIN_DIRS="TP-Sampler DrawTool Importer NOAA-weather sdlc/plugin Sonify
+data-science-worlds/nhanes"
+HIDDEN_DIRS="Common"
 BUILT_PLUGIN_DIRS="onboarding
                    ../codap-transformers
                    ../story-builder
@@ -84,6 +91,60 @@ function copyStaticPlugins() {
   done
 }
 
+# The eepsmedia plugins are listed in published-plugins.json but are no longer produced by this
+# build, so a V2 build assembled from it will offer four plugins whose folders are absent. Nothing
+# fails loudly when that happens -- the plugins just 404 from CODAP's plugin menu -- so say so here.
+function warnEepsmediaNotBuilt() {
+  cat 1>&2 <<'EOF'
+
+################################################################################
+##                                                                            ##
+##   WARNING: THE eepsmedia PLUGINS WERE NOT BUILT                            ##
+##            A V2 BUILD REQUIRES MANUAL INTERVENTION                         ##
+##                                                                            ##
+################################################################################
+
+  Choosy, scrambler, simmer and testimate moved to
+  https://github.com/concord-consortium/eepsmedia on 2026-07-31 (CODAP-1423).
+  They are still listed in published-plugins.json, because that file describes
+  what a V2 build SHOULD contain -- but this script no longer produces them.
+
+  Ship a V2 build as-is and those four plugins 404 from CODAP's plugin menu.
+
+  TO FIX (recommended): copy them on the server AFTER the build is deployed,
+  the same way the codap-v2-build skill recovers any other missing plugin:
+
+      ssh codap-server.concord.org \
+        "sudo cp -r /var/www/html/releases/build_PREV/extn/plugins/eepsmedia \
+                    /var/www/html/releases/build_NEW/extn/plugins/eepsmedia"
+
+  See Phase 3, Step 8 of the codap-v2-build skill in the codap repo.
+
+  ALTERNATIVE (local, harder): copy into <build>/extn/plugins/eepsmedia/ AFTER
+  codap/bin/makeExtn finishes and BEFORE the zip is sealed. That window is
+  narrow because neither earlier destination survives:
+
+    - makeExtn rsyncs into extn/plugins with --delete, which removes anything
+      you pre-placed there;
+    - this script does rm -rf on its working dir, so pre-placing the folders in
+      target/build/plugins does not survive either.
+
+  Either way, the source is the previous build or
+  s3://codap-resources/plugins/eepsmedia/, and the layout to reproduce mirrors
+  the eepsmedia repo root:
+
+      extn/plugins/eepsmedia/common/
+      extn/plugins/eepsmedia/plugins/{Choosy,scrambler,simmer,testimate}/
+
+  Note the capital C in Choosy -- it is case-sensitive on Linux.
+
+  See eepsmedia/README.md in this repo for the full rationale.
+
+################################################################################
+
+EOF
+}
+
 function usage() {
   echo usage $PROGNAME 1>&2
 }
@@ -108,5 +169,8 @@ makeIndexJSON $ALL_DIRS
 cp "$PUBLISHED_PLUGIN_MAP_FILE" "$BUILD_DIR"
 
  ( cd "$WORKING" ; zip -rq "$TARGET/$ZIP_FILENAME" plugins )
+
+# Last thing printed, so it is still on screen when the build finishes.
+warnEepsmediaNotBuilt
 #rm $BUILD_DIR
 #rm $PUBLISHED_PLUGIN_MAP_FILE

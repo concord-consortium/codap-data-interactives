@@ -3,7 +3,9 @@
 # Assumes that each of the plugins has an NPM package.json at its root directory
 # and that this file has a run target named "strings:pull".
 PROGNAME=`basename $0`
-TRANSLATED_PLUGIN_ROOTS="./Importer ./TP-sampler ./eepsmedia/plugins/scrambler"
+# Scrambler's strings moved with it to https://github.com/concord-consortium/eepsmedia
+# (CODAP-1423); pull them from that repo instead.
+TRANSLATED_PLUGIN_ROOTS="./Importer ./TP-sampler"
 ARGS=$*
 for t in `echo $TRANSLATED_PLUGIN_ROOTS`; do
   echo Pulling $t ...
