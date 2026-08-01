@@ -36,7 +36,7 @@ cd PluginName && npm install && npm run build
 
 **Translations:**
 ```bash
-npm run strings:pull    # Update translations for Importer, TP-Sampler, Scrambler, Testimate
+npm run strings:pull    # Update translations for Importer, TP-Sampler
 ```
 
 ## Architecture
@@ -79,18 +79,25 @@ Categories: Partners, Portals, Simulators, Generators, Tools, Dev, Search.
 - `src/` - React 16 app for the plugin browser/index page
 - `bin/` - Build scripts: `build`, `check`, `increment-build-number`, `update-strings`
 - `Common/` - Shared libraries for root-level plugins (CodapInterface.js, iframe-phone.js, codap_helper.js, csv.js, jQuery, Raphael)
-- `eepsmedia/` - Partner plugins (Choosy, Scrambler, Testimate, Simmer) with own shared code in `eepsmedia/common/src/`
+- `eepsmedia/` - Tombstone only. These partner plugins (Choosy, Scrambler, Testimate, Simmer) moved to [concord-consortium/eepsmedia](https://github.com/concord-consortium/eepsmedia) on 2026-07-31. Do not re-add plugin code here; see `eepsmedia/README.md`.
 - `data-science-worlds/` - Collection of data science game plugins
 
 ### Build Process (bin/build)
 
 The standard build script handles three tiers:
-1. **Static plugins** (copied as-is via rsync): TP-Sampler, DrawTool, Importer, NOAA-weather, sdlc/plugin, eepsmedia plugins, Sonify, nhanes
+1. **Static plugins** (copied as-is via rsync): TP-Sampler, DrawTool, Importer, NOAA-weather, sdlc/plugin, Sonify, nhanes
 2. **Built plugins in this repo**: onboarding (outputs to `target/`)
 3. **Built plugins in sibling repos**: `../codap-transformers`, `../story-builder`, `../noaa-codap-plugin` (output to `build/` or `dist/`)
-4. **Hidden dirs** (Common, eepsmedia/common) are copied but not listed as plugins
+4. **Hidden dirs** (Common) are copied but not listed as plugins
 5. Generates `published-plugins.json` by filtering for `isStandard: "true"`
 6. Creates `target/codap-data-interactives-{BUILD_NUM}.zip`
+
+This build targets CODAP **V2**, which serves plugins from folders co-located with the built
+application. (V3 deploys plugins independently of the application and does not use
+`published-plugins.json`.) The eepsmedia plugins are still listed in `published-plugins.json` and
+`src/data_interactive_map.json` even though `bin/build` no longer copies them — that file describes
+what a V2 build should contain, so if another V2 build is ever needed, copy those folders in
+manually. See `eepsmedia/README.md`.
 
 ### Technology Stack
 
@@ -99,7 +106,6 @@ The codebase is heterogeneous — identify which pattern a plugin uses before mo
 - **TypeScript + React**: DayLength, CollectMeasures — use CRA, each has own `tsconfig.json`
 - **ES6 modules, no build step**: Importer — uses `"type": "module"` in package.json, runs directly in browser
 - **Vue.js + Webpack**: Sonify
-- **Webpack + vanilla JS**: Scrambler, Testimate, Simmer (eepsmedia plugins)
 - **Plain JavaScript**: Most static plugins — reference `Common/js/` via script tags
 
 ### CODAP Communication Libraries
@@ -120,11 +126,9 @@ Two approaches exist — prefer CodapInterface for new code:
 
 TypeScript plugins (DayLength, CollectMeasures) bundle their own TypeScript versions of CodapInterface in `src/lib/`.
 
-The eepsmedia plugins use their own copy at `eepsmedia/common/src/codapInterface.js`.
-
 ### Internationalization
 
-- Translated plugins: Importer, TP-Sampler, Scrambler, Testimate
+- Translated plugins: Importer, TP-Sampler (Scrambler and Testimate moved to the eepsmedia repo)
 - Translation keys follow pattern: `DG.plugin.PluginName.key`
 - Strings stored in JSON files within each plugin (e.g., `modules/strings.json`)
 - Pull updates from translation service via `npm run strings:pull` (root) or `npm run strings:pull` (individual plugin)
