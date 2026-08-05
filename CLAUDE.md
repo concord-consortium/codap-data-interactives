@@ -80,7 +80,10 @@ Categories: Partners, Portals, Simulators, Generators, Tools, Dev, Search.
 - `bin/` - Build scripts: `build`, `check`, `increment-build-number`, `update-strings`
 - `Common/` - Shared libraries for root-level plugins (CodapInterface.js, iframe-phone.js, codap_helper.js, csv.js, jQuery, Raphael)
 - `eepsmedia/` - Tombstone only. These partner plugins (Choosy, Scrambler, Testimate, Simmer) moved to [concord-consortium/eepsmedia](https://github.com/concord-consortium/eepsmedia) on 2026-07-31. Do not re-add plugin code here; see `eepsmedia/README.md`.
-- `data-science-worlds/` - Collection of data science game plugins
+- `data-science-worlds/` - Collection of data science game plugins, all by Tim Erickson / eeps media.
+  Migrating them into the eepsmedia repo has been discussed but **not** done — unlike `eepsmedia/`,
+  this code is still live here. Only `nhanes` is built. Note that `sdlc/plugin` and `NOAA-weather`
+  also carry Erickson authorship headers but are Concord-maintained, and are not part of that idea.
 
 ### Build Process (bin/build)
 
@@ -98,6 +101,23 @@ application. (V3 deploys plugins independently of the application and does not u
 `src/data_interactive_map.json` even though `bin/build` no longer copies them — that file describes
 what a V2 build should contain, so if another V2 build is ever needed, copy those folders in
 manually. See `eepsmedia/README.md`.
+
+**Which registry serves which application.** Getting this wrong is an easy and costly mistake, so
+be explicit about it before reasoning from any of these files. As of this writing (2026-08), and
+noting that the two entries in the codap repo can move without anything here changing:
+
+| Application | Plugin registry | Where |
+|---|---|---|
+| V2 menu | `hierarchical_plugins.json` | codap repo, `apps/dg/resources/json/`, `master` |
+| V2 build manifest | `published-plugins.json` | generated here by `bin/build` |
+| V3 menu | `standard-plugins.json` | codap repo, `v3/src/components/tool-shelf/`, **`main`** |
+
+V3 builds from `v3/` on `main`; V2 builds from `master`. **V3 does not read
+`published-plugins.json` or `src/data_interactive_map.json` at all** — neither file is evidence
+about V3 behaviour, however convenient it looks. V3's paths are mostly relative and resolve against
+`https://codap.concord.org/codap-resources/plugins/`, so a plugin's real home is usually the
+`codap-resources` S3 bucket, not this repo. Verify against the current codap repo before relying on
+any of this.
 
 ### Technology Stack
 
@@ -153,3 +173,17 @@ TypeScript plugins (DayLength, CollectMeasures) bundle their own TypeScript vers
 
 - `master` - Main development branch
 - `gh-pages` - GitHub Pages deployment (plugin browser + static plugins)
+
+> ⚠️ **`gh-pages` is load-bearing and is updated by hand.** No workflow or script syncs it, so it
+> still holds content that `master` no longer has, and live applications point at it. As of this
+> writing (2026-08):
+>
+> - CODAP **V3** serves the NHANES plugin from
+>   `concord-consortium.github.io/codap-data-interactives/data-science-worlds/nhanes/nhanes.html`,
+>   hardcoded in V3's `standard-plugins.json`. V2 pins the same URL independently.
+> - The branch still carries the eepsmedia plugin files, and the plugin browser it publishes links
+>   to `/eepsmedia/plugins/...`, which no longer exist on `master`.
+>
+> Regenerating `gh-pages` from `master` would therefore break NHANES in both applications and the
+> eepsmedia links at the same time. Repointing either application requires a release of that
+> application. Check whether both are still true, and deal with them, before regenerating.
