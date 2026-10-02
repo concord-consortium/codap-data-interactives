@@ -411,7 +411,9 @@ function getStarted() {
       resource: 'dataContextFromURL',
       values: {
         URL: window.location.href.replace(/\/[^\/]*$/, "") + "/resources/" + resourceDir() + csvToLoad,
-        title: dataContextTitle
+        title: dataContextTitle,
+        // the first tutorial asks the user to make the table themselves
+        showCaseTable: !onboarding1
       }
     }).then(function (iResult) {
       console.log('Created data context from URL');
