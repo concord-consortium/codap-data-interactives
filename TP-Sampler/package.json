@@ -6,7 +6,7 @@
   "type": "module",
   "devDependencies": {
     "node-fetch": "^3.2.10",
-    "node-jq": "^2.3.3",
+    "node-jq": "^2.3.5",
     "strip-json-comments": "^5.0.0"
   },
   "scripts": {
