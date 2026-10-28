@@ -224,3 +224,8 @@ button {
 /*.di-name-field {*/
   /*width: 15%;*/
 /*}*/
+
+.di-template-source {
+  font-weight: normal;
+  font-size: smaller;
+}

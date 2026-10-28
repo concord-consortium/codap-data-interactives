@@ -13,15 +13,19 @@ $(function () {
   //   successes: 0
   // }
 
-  var actions = [
+  // The resource and action lists are built from the templates. These set the order they are
+  // shown in; a resource type not listed here follows the listed ones, alphabetically.
+  var kActionOrder = [
       'get',
       'create',
       'update',
       'delete',
-      'notify'
+      'notify',
+      'register',
+      'unregister'
     ];
 
-  var resourceTypes = [
+  var kResourceTypeOrder = [
       'interactiveFrame',
       'component',
       'dataContext',
@@ -320,7 +324,15 @@ $(function () {
       var $div = $('<div>').addClass('di-item');
       var message = getTemplateMessage(template);
       if (template.name) {
-        $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
+        var $name = $('<div>').addClass('di-template-name').text(template.name).appendTo($div);
+        if (template.source) {
+          $name.append(' ').append($('<a>')
+              .addClass('di-template-source')
+              .prop({href: template.source, target: '_blank', title: 'open this example in the API reference'})
+              .text('reference')
+              // opening the reference should not also replace the message being prepared
+              .on('click', function (ev) { ev.stopPropagation(); }));
+        }
       }
       $('<div>').addClass('di-template-text').text(JSON.stringify(message, null, '  ')).appendTo($div);
       $div.appendTo('.di-template-list');
@@ -374,6 +386,17 @@ $(function () {
     return 'row: ' + rows + " col: " + cols;
   }
 
+  /**
+   * Whether a message still holds a `"...": "..."` placeholder, as some reference examples do in
+   * place of content too large to show, such as a whole document. Sent as is, it would be acted
+   * on as real values.
+   */
+  function hasPlaceholder(value) {
+    if (!value || typeof value !== 'object') return false;
+    if (!Array.isArray(value) && value.hasOwnProperty('...')) return true;
+    return Object.keys(value).some(function (key) { return hasPlaceholder(value[key]); });
+  }
+
   function makeRequestBuilderSection($el, resourceTypes, actions/*, templates*/) {
     var $templateSelectorSection = makeTemplateSelector(resourceTypes, actions).appendTo($el);
     /*var $editAreaLabel = */$('<div>').addClass('di-label').text('message prep').appendTo($el);
@@ -407,7 +430,12 @@ $(function () {
         // parse
         try {
           messageObj = JSON.parse(message);
-          sendTest(messageObj);
+          if (hasPlaceholder(messageObj)) {
+            logMessage('error', interactiveState.stats.seq,
+                'This message contains a "..." placeholder. Replace it with real values before sending.');
+          } else {
+            sendTest(messageObj);
+          }
         } catch (ex) {
           var match = ex.message.match(/^.*in JSON at position ([0-9]+)/)
           if (match) {
@@ -422,6 +450,7 @@ $(function () {
   }
 
   var resourceMap = {
+          adornmentList: 'adornment',
           attributeList: 'attribute',
           allCases: 'case',
           caseByIndex: 'case',
@@ -431,6 +460,7 @@ $(function () {
           caseFormulaSearch: 'case',
           collectionList: 'collection',
           componentList: 'component',
+          configurationList: 'configuration',
           dataContextFromURL: 'dataContext',
           dataContextList: 'dataContext',
           globalList: 'global',
@@ -612,15 +642,53 @@ $(function () {
     });
   }
 
-  // request template repository
-  $.get('./resources/tests.json', function (data) {
+  /**
+   * Order names by their position in a preferred list; names not in it follow, alphabetically.
+   */
+  function orderBy(preferred, names) {
+    return names.slice().sort(function (a, b) {
+      var ia = preferred.indexOf(a), ib = preferred.indexOf(b);
+      if (ia < 0) ia = preferred.length;
+      if (ib < 0) ib = preferred.length;
+      return (ia - ib) || a.localeCompare(b);
+    });
+  }
+
+  /**
+   * Fetch a template file. A file that cannot be read contributes no templates, so the tester
+   * still starts with the other.
+   * @return {Promise} resolves to an array of templates
+   */
+  function loadTemplates(url, pickTemplates) {
+    var deferred = $.Deferred();
+    $.getJSON(url)
+        .done(function (data) { deferred.resolve(pickTemplates(data) || []); })
+        .fail(function () {
+          console.log('Could not load templates from ' + url);
+          deferred.resolve([]);
+        });
+    return deferred.promise();
+  }
+
+  // request template repository: the templates generated from the API reference, followed by the
+  // hand-made ones that have no counterpart there
+  $.when(
+      loadTemplates('./resources/reference-templates.json', function (data) { return data.templates; }),
+      loadTemplates('./resources/tests.json', function (data) { return data; })
+  ).done(function (referenceTemplates, handMadeTemplates) {
     var $testSection = $("#ctl");
 
-    templates = data;
+    templates = referenceTemplates.concat(handMadeTemplates);
 
     classifyTemplateData(templates);
 
     templateMap = makeTemplateMap(templates);
+
+    var resourceTypes = orderBy(kResourceTypeOrder, Object.keys(templateMap));
+    var actions = orderBy(kActionOrder, Object.keys(templates.reduce(function (found, template) {
+      if (template.action) found[template.action] = true;
+      return found;
+    }, {})));
 
     makeRequestBuilderSection($testSection, resourceTypes, actions/*, templates*/);
 
