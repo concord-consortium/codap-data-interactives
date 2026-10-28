@@ -131,7 +131,7 @@
     "minimatch": "^3.0.4",
     "miller-rabin": "^4.0.1",
     "minimalistic-assert": "^1.0.1",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "mkdirp": "^0.5.5",
     "module-deps": "^5.0.1",
     "minimalistic-crypto-utils": "^1.0.1",
