@@ -59,6 +59,6 @@
     ]
   },
   "devDependencies": {
-    "node-jq": "^2.3.3"
+    "node-jq": "^2.3.5"
   }
 }
