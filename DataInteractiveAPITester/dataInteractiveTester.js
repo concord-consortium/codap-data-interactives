@@ -393,7 +393,7 @@ $(function () {
    */
   function hasPlaceholder(value) {
     if (!value || typeof value !== 'object') return false;
-    if (!Array.isArray(value) && value.hasOwnProperty('...')) return true;
+    if (!Array.isArray(value) && Object.prototype.hasOwnProperty.call(value, '...')) return true;
     return Object.keys(value).some(function (key) { return hasPlaceholder(value[key]); });
   }
 
