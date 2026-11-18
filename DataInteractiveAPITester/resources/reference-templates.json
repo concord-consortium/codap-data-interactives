@@ -676,7 +676,7 @@
       "source": "https://github.com/concord-consortium/codap/blob/main/v3/doc/plugin-api/resources/document.md#examples"
     },
     {
-      "name": "Replace the document",
+      "name": "Replace the document (paste a whole v2 document into values)",
       "message": {
         "action": "update",
         "resource": "document",
