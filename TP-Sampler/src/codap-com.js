@@ -19,7 +19,6 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.addMultipleSamplesToCODAP = this.addMultipleSamplesToCODAP.bind(this);
   this.openTable = this.openTable.bind(this);
   this.setDataSetName = this.setDataSetName.bind(this);
-  this.findOrCreateDataContext = this.findOrCreateDataContext.bind(this);
   this.deleteAllAttributes = this.deleteAllAttributes.bind(this);
   this.localeMgr = localeMgr;
   this.deviceName = localeMgr.tr("DG.plugin.Sampler.dataset.attr-value");
@@ -28,20 +27,28 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
   this.drawAttributes = null;
   this.collectionAttributes = null;
 
-  this.getCollectionNames = function () {
+  this.getCollectionTitles = function () {
     return {
       experiments: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments"),
       samples: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples"),
       items: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")
-    }
+    };
   };
 
+  this.collectionMap = {
+    experiments: {name: "experiments", id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.col-experiments")},
+    samples: {name: "samples", id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.col-samples")},
+    items: {name: "items", id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.col-items")}
+  };
+
+  // These are the attributes that Sampler uses in the CODAP table. There may be more that the user has added.
   this.attrMap = {
-    experiment: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment")},
-    description: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description")},
-    sample_size: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size")},
-    sample: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample")},
-    output: {id: null, name: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value")},
+    experiments: {  experiment: {id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.attr-experiment"), name: "experiment"},
+                    description: {id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.attr-description"), name: "description"},
+                    sample_size: {id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample_size"), name: "sample_size"}
+                  },
+    samples: {  sample: {id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.attr-sample"), name: "sample"} },
+    items: {  output: {id: null, title: localeMgr.tr("DG.plugin.Sampler.dataset.attr-value"), name: "output"}}
   };
 
   this.findKeyById = function (idToFind) {
@@ -63,7 +70,7 @@ var CodapCom = function(getStateFunc, loadStateFunc, localeMgr) {
         const attrName = msg.values.result.attrs[i].name;
         const attrKey = _this.findKeyById(id);
         // update the device name if the user has changed it in the codap table
-        if (attrKey === "output" && _this.attrMap["output"].name !== attrName) {
+        if (attrKey === "output" && _this.attrMap.items["output"].name !== attrName) {
           _this.deviceName = attrName;
           updateDeviceName(attrName);
         }
@@ -89,7 +96,7 @@ CodapCom.prototype = {
     return codapInterface.init({
       name: this.localeMgr.tr('DG.plugin.Sampler.title'),
       title: this.localeMgr.tr('DG.plugin.Sampler.title'),
-      version: 'v0.44 (#' + window.codapPluginConfig.buildNumber + ')',
+      version: 'v0.45 (#' + window.codapPluginConfig.buildNumber + ')',
       preventDataContextReorg: false,
       stateHandler: this.loadStateFunc
     }).then( function( iInitialState) {
@@ -110,96 +117,133 @@ CodapCom.prototype = {
   },
 
   findOrCreateDataContext: function (deviceName) {
-    const _this = this;
-    const collectionNames = this.getCollectionNames();
+    return new Promise((resolve, reject) => {
+      const _this = this;
+      const collectionNames = this.getCollectionTitles();
 
-    this.codapConnected = true;
-    // Determine if CODAP already has the Data Context we need.
-    // If not, create it.
-    return codapInterface.sendRequest({
-          action:'get',
-          resource: getTargetDataSetPhrase()
-        }).then( function (getDatasetResult) {
+      this.codapConnected = true;
+      // Determine if CODAP already has the Data Context we need.
+      // If not, create it.
+      codapInterface.sendRequest({
+            action:'get',
+            resource: getTargetDataSetPhrase()
+          }).then( function (getDatasetResult) {
+            function getCollections() {
+              return new Promise((resolve, reject) => {
+                const reqs = {
+                  action: "get",
+                  resource: `dataContext[${targetDataSetName}].collectionList`
+                };
+                codapInterface.sendRequest(reqs).then(getCollectionsResult => {
+                  if (!getCollectionsResult || !getCollectionsResult.success) {
+                    console.error("Sampler: getCollectionsResult is not in the expected format or does not have enough elements.");
+                    reject("Failed to retrieve collections");
+                    return;
+                  }
+                  _this.collectionMap.experiments.id = getCollectionsResult.values[0].id;
+                  _this.collectionMap.experiments.title = getCollectionsResult.values[0].title;
+                  _this.collectionMap.samples.id = getCollectionsResult.values[1].id;
+                  _this.collectionMap.samples.title = getCollectionsResult.values[1].title;
+                  _this.collectionMap.items.id = getCollectionsResult.values[2].id;
+                  _this.collectionMap.items.title = getCollectionsResult.values[2].title;
 
-        function getAttributeIds() {
-          // need to get all the ids of the newly-created attributes, so we can notice if they change.
-          // we will set these ids on the attrIds object
-          const allAttrs = [["experiments", _this.attrMap.experiment.name],["experiments", _this.attrMap.description.name],
-                            ["experiments", _this.attrMap.sample_size.name], ["samples", _this.attrMap.sample.name], ["items", _this.attrMap["output"].name]];
-          const reqs = allAttrs.map(collectionAttr => ({
-              "action": "get",
-              "resource": `dataContext[${targetDataSetName}].collection[${collectionAttr[0]}].attribute[${collectionAttr[1]}]`
-          }));
-          codapInterface.sendRequest(reqs, function(getAttrsResult) {
-            getAttrsResult.forEach(res => {
-              if (res.success) {
-                if (res.values.name === _this.attrMap["output"].name) {
-                  _this.attrMap["output"].id = res.values.id;
-                } else {
-                  _this.attrMap[res.values.name].id = res.values.id;
-                }
-              }
-            });
-          });
-        }
-
-        if (getDatasetResult && !getDatasetResult.success) {
-          if (deviceName && deviceName !== _this.attrMap["output"].name) {
-            _this.deviceName = deviceName;
-            _this.attrMap["output"].name = deviceName;
-          }
-          codapInterface.sendRequest({
-            action: 'create',
-            resource: 'dataContext',
-            values: {
-              name: targetDataSetName,
-              collections: [
-                {
-                  name: collectionNames.experiments,
-                  attrs: [
-                    {name: _this.attrMap.experiment.name, type: 'categorical'},
-                    {name: _this.attrMap.description.name, type: 'categorical'},
-                    {name:  _this.attrMap.sample_size.name, type: 'categorical'}
-                  ],
-                  // childAttrName: "experiment"
-                },
-                {
-                  name: collectionNames.samples,
-                  parent: collectionNames.experiments,
-                  // The parent collection has just one attribute
-                  attrs: [{name: _this.attrMap.sample.name, type: 'categorical'}],
-                  // childAttrName: "sample"
-                },
-                {
-                  name: collectionNames.items,
-                  parent: collectionNames.samples,
-                  // labels: {
-                  //   pluralCase: "items"
-                  // },
-                  // The child collection also has just one attribute
-                  attrs: [{name: _this.attrMap["output"].name}]
-                }
-              ]
-            }
-          }, getAttributeIds).then(
-              _this.openTable,
-              function (e) {
-                console.log('Sampler: findOrCreateDataContext failed: ' + e);
+                  resolve();
+                }).catch(error => {
+                  console.error("Sampler: Error in getCollections", error);
+                  reject(error);
+                });
               });
-        } else if (getDatasetResult.success) {
-          // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
-          // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
-          // already updated attribute names, this won't work.
-          const onlyIds = [];
-          for (const key in _this.attrMap) {
-            onlyIds.push(_this.attrMap[key].id);
-          }
-          if (onlyIds.indexOf(null) > -1) {
-            getAttributeIds();
-          }
+            }
+
+            function getAttributeIds() {
+              // Loop through each collectionKey in collectionMap
+              for (const collectionKey in _this.collectionMap) {
+                // Create a request for the current collectionKey
+                codapInterface.sendRequest({
+                  action: "get",
+                  resource: `dataContext[${targetDataSetName}].collection[${_this.collectionMap[collectionKey].id}].attributeList`
+                }).then(res => {
+                  if (res.success) {
+                    const collection = _this.attrMap[collectionKey];
+                    // Assign the first res.values based on the number of keys in the collection to the attributes in the collection
+                    for (let i = 0; i < Object.keys(collection).length; i++) {
+                      const attr = res.values[i];
+                      collection[Object.keys(collection)[i]].id = attr.id;
+                      collection[Object.keys(collection)[i]].title = attr.title;
+                    }
+                    _this.attrMap[collectionKey] = collection;
+                  }
+                }).catch(error => {
+                  console.error(`Error fetching attribute list for ${collectionKey}:`, error);
+                });
+              }
+            }
+
+            if (getDatasetResult && !getDatasetResult.success) {
+              if (deviceName && deviceName !== _this.attrMap.items["output"].name) {
+                _this.deviceName = deviceName;
+                _this.attrMap.items["output"].name = deviceName;
+              }
+              codapInterface.sendRequest({
+                action: 'create',
+                resource: 'dataContext',
+                values: {
+                  name: targetDataSetName,
+                  collections: [
+                    {
+                      name: collectionNames.experiments,
+                      attrs: [
+                        {name: _this.attrMap.experiment.name, type: 'categorical'},
+                        {name: _this.attrMap.description.name, type: 'categorical'},
+                        {name:  _this.attrMap.sample_size.name, type: 'categorical'}
+                      ],
+                      // childAttrName: "experiment"
+                    },
+                    {
+                      name: collectionNames.samples,
+                      parent: collectionNames.experiments,
+                      // The parent collection has just one attribute
+                      attrs: [{name: _this.attrMap.sample.name, type: 'categorical'}],
+                      // childAttrName: "sample"
+                    },
+                    {
+                      name: collectionNames.items,
+                      parent: collectionNames.samples,
+                      // labels: {
+                      //   pluralCase: "items"
+                      // },
+                      // The child collection also has just one attribute
+                      attrs: [{name: _this.attrMap.items["output"].name}]
+                    }
+                  ]
+                }
+              }, getAttributeIds).then(
+                  _this.openTable,
+                  function (e) {
+                    console.log('Sampler: findOrCreateDataContext failed: ' + e);
+                  });
+            } else if (getDatasetResult.success) {
+              // DataSet already exists. If we haven't loaded in attribute ids from saved state, that means user
+              // created dataset before we were tracking attribute changes. Try to get ids, but if the user has
+              // already updated attribute names, this won't work.
+              getCollections().then(() => {
+                getAttributeIds();  // Now this will be called after getCollections has populated the collectionMap
+              }).catch(error => {
+                console.error("Sampler: Failed to retrieve collections and attribute IDs", error);
+              });
+            }
         }
-      }
-    );
+      );
+      // Simulate an asynchronous operation before adding values to CODAP
+      setTimeout(() => {
+        try {
+          resolve(); // Call resolve when the operation is complete
+        } catch (error) {
+          console.error("findOrCreateDataContext: error occurred", error);
+          reject(error); // Call reject if there is an error
+        }
+      }, 1000); // Simulate a 1-second delay
+    });
   },
 
   error: function(msg) {
@@ -213,11 +257,12 @@ CodapCom.prototype = {
       console.log('Not in CODAP');
       return;
     }
-
+    const experimentsCollection = _this.attrMap.experiments;
+    // Use attributeIds to create a new item
     this.itemProto = {
-      experiment: experimentNumber,
-      description: description,
-      sample_size: sampleSize
+      [experimentsCollection.experiment.id]: experimentNumber,
+      [experimentsCollection.description.id]: description,
+      [experimentsCollection.sample_size.id]: sampleSize
     };
   },
 
@@ -240,19 +285,20 @@ CodapCom.prototype = {
   addMultipleSamplesToCODAP: function (samples, isCollector, deviceName) {
     var _this = this;
     var oldDeviceName = _this.deviceName;
-    var collectionNames = _this.getCollectionNames();
-    if (deviceName !== _this.attrMap["output"].name) {
-      _this.attrMap["output"].name = deviceName;
-    };
+    if (deviceName !== _this.attrMap.items["output"].title) {
+      _this.attrMap.items["output"].title = deviceName;
+    }
     var items = [];
+    const sampleId = _this.attrMap.samples.sample.id;
+    const outputId = _this.attrMap.items.output.id;
     samples.forEach(function (sample) {
       var run = sample.run;
       var item;
       sample.values.forEach(function(v) {
         if (!isCollector) {
-          item = Object.assign({}, {sample: run, output: v}, _this.itemProto);
+          item = Object.assign({}, {[sampleId]: run, [outputId]: v}, _this.itemProto);
         } else {
-          item = Object.assign({}, v, {sample: run}, _this.itemProto);
+          item = Object.assign({}, v, {[sampleId]: run}, _this.itemProto);
         }
         items.push(item);
       });
@@ -262,21 +308,29 @@ CodapCom.prototype = {
     items.forEach(function (item) {
       const attrKeys = Object.keys(item);
       attrKeys.forEach(function (attrKey) {
-        if (Object.keys(_this.attrMap).includes(attrKey)) {
-          if (_this.attrMap[attrKey].name !== attrKey) {
-            item[_this.attrMap[attrKey].name] = item[attrKey];
-            delete item[attrKey];
+        // Loop through the keys in attrMap to find the matching attribute
+        for (const mapKey in _this.attrMap) {
+          const attr = _this.attrMap[mapKey];
+
+          // If the attribute key from the item matches an entry in attrMap
+          if (attrKey === mapKey) {
+            // If the name has changed, update the item's key to the new name
+            if (attr.name !== attrKey) {
+              item[attr.name] = item[attrKey];
+              delete item[attrKey]; // Remove the old key from the item
+            }
           }
         }
       })
     });
-
+    var itemsCollectionId = _this.collectionMap.items.id;
+    var outputAttrId = _this.attrMap.items.output.id;
     if (oldDeviceName !== deviceName) {
       codapInterface.sendRequest({
         action: "update",
-        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute[${oldDeviceName}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${itemsCollectionId}].attribute[${outputAttrId}]`,
         values: {
-          "name": deviceName
+          "title": deviceName
         }
       }, () => _this.deviceName = deviceName).then(() => {
         codapInterface.sendRequest({
@@ -292,42 +346,37 @@ CodapCom.prototype = {
     // if attr exists, update as normal, else create it first
       codapInterface.sendRequest({
         action: "get",
-        resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}]`,
+        resource: `dataContext[${targetDataSetName}].collection[${itemsCollectionId}]`,
       }).then((res) => {
         if (!res.success) {
           codapInterface.sendRequest({
             action: "create",
             resource: `dataContext[${targetDataSetName}].collection`,
             values: {
-              name: collectionNames.items,
-              parent: collectionNames.samples,
-              attrs: [{name: deviceName,title: deviceName}]
+              name: _this.collectionMap.items.name,
+              parent: _this.collectionMap.samples.id,
+              attrs: [{title: deviceName}]
             }
           }).then((res) => {
             if (res.success) {
               codapInterface.sendRequest({
                 action: "create",
-                resource: getTargetDataSetPhrase() + "item",
+                resource: getTargetDataSetPhrase() + ".item",
                 values: items
               });
             }
-          })
+          });
         } else {
           codapInterface.sendRequest({
             action: "get",
-            resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attributeList`,
+            resource: `dataContext[${targetDataSetName}].collection[${itemsCollectionId}].attributeList`,
           }).then((res) => {
             const {values} = res;
-            if (!values.length || !values.find((attr) => attr.name === deviceName)) {
+            if (!values.length || !values.find((attr) => attr.title === deviceName)) {
               codapInterface.sendRequest({
                 action: "create",
-                resource: `dataContext[${targetDataSetName}].collection[${collectionNames.items}].attribute`,
-                values: [
-                  {
-                    name: deviceName,
-                    title: deviceName
-                  }
-                ]
+                resource: `dataContext[${targetDataSetName}].collection[${itemsCollectionId}].attribute`,
+                values: [{title: deviceName, name: "output"}]
               }).then((res) => {
                 if (res.success) {
                   codapInterface.sendRequest({
@@ -364,11 +413,12 @@ CodapCom.prototype = {
   // not used any more, kept for record-keeping
   deleteAllAttributes: function(device, populateContextsList) {
     var _this = this;
-    var collectionNames = this.getCollectionNames();
+    var itemsCollectionId = _this.collectionMap.items.id;
+
     codapInterface.sendRequest( {
       action: 'get',
       resource: getTargetDataSetPhrase() + '.collection[' +
-          collectionNames.items + '].attributeList'
+                    itemsCollectionId + '].attributeList'
     }).then( function( iResult) {
       var tMsgList = [];
       if( iResult.success) {
@@ -377,7 +427,7 @@ CodapCom.prototype = {
             tMsgList.push( {
               action: 'delete',
               resource: getTargetDataSetPhrase() +
-                  '.collection[' + collectionNames.items +
+                  '.collection[' + itemsCollectionId +
                   '].attribute[' + iAttribute.name + ']'
             });
           }
@@ -451,7 +501,7 @@ CodapCom.prototype = {
             requests.push({
               action: 'create',
               resource: getTargetDataSetPhrase() + '.collection[' +
-                  _this.getCollectionNames().items + '].attribute',
+                  _this.getCollectionTitles().items + '].attribute',
               values: [attr]
             });
           }
@@ -470,7 +520,7 @@ CodapCom.prototype = {
             {     // get the existing columns in the draw table
               action: 'get',
               resource: getTargetDataSetPhrase() + '.collection[' +
-                  _this.getCollectionNames().items + '].attributeList'
+                  _this.collectionMap.items.id + '].attributeList'
             },
             {     // get the columns we'll be needing
               action: 'get',
@@ -543,7 +593,7 @@ CodapCom.prototype = {
   },
 
   sendFormulaToTable: async function (measureName, measureType, selections) {
-    var samplesColl = this.getCollectionNames().samples;
+    var samplesColl = this.collectionMap.samples.name;
 
     function getFormula() {
       switch (measureType) {
@@ -640,13 +690,13 @@ CodapCom.prototype = {
       if (res.success) {
         codapInterface.sendRequest({
           action: "update",
-          resource: `dataContext[${targetDataSetName}].collection[items].attribute[${_this.deviceName}]`,
+          resource: `dataContext[${targetDataSetName}].collection[${_this.collectionMao.items.id}].attribute["output"]`,
           values: {
-            "name": name
+            "title": name
           }
         }).then((res) => {
           if (res.success) {
-            _this.attrMap["output"].name = name;
+            _this.attrMap.items["output"].title = name;
             _this.deviceName = name;
           } else {
             console.log(`Error: Could not update the CODAP attribute ${_this.deviceName}`);
@@ -669,7 +719,7 @@ CodapCom.prototype = {
 
       codapInterface.sendRequest({
         action: "get",
-        resource: `dataContext[${targetDataSetName}].collection[${_this.getCollectionNames().items}].attributeList`,
+        resource: `dataContext[${targetDataSetName}].collection[${_this.collectionMao.items.id}].attributeList`,
       }, function(result) {
         if (result && result.success) {
           resolve(result.values);
