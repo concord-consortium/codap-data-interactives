@@ -119,7 +119,7 @@
     "is-finite": "^1.1.0",
     "js-tokens": "^3.0.2",
     "jsesc": "^1.3.0",
-    "json5": "^0.5.1",
+    "json5": "^1.0.2",
     "json-stable-stringify": "^0.0.1",
     "labeled-stream-splicer": "^2.0.2",
     "jsonify": "^0.0.0",
