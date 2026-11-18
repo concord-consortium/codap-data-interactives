@@ -214,6 +214,17 @@
       "source": "https://github.com/concord-consortium/codap/blob/main/v3/doc/plugin-api/resources/case-by-id.md#examples"
     },
     {
+      "name": "Move the mammal to the top of its diet's mammals",
+      "message": {
+        "action": "notify",
+        "resource": "dataContext[Mammals].caseByID[13]",
+        "values": {
+          "caseOrder": "first"
+        }
+      },
+      "source": "https://github.com/concord-consortium/codap/blob/main/v3/doc/plugin-api/resources/case-by-id.md#examples"
+    },
+    {
       "name": "Delete a parent case, and with it every mammal grouped under it",
       "message": {
         "action": "delete",
@@ -238,6 +249,17 @@
           "values": {
             "Mass": 6000
           }
+        }
+      },
+      "source": "https://github.com/concord-consortium/codap/blob/main/v3/doc/plugin-api/resources/case-by-index.md#examples"
+    },
+    {
+      "name": "Move the third mammal to the top of its diet's mammals",
+      "message": {
+        "action": "notify",
+        "resource": "dataContext[Mammals].collection[Mammals].caseByIndex[2]",
+        "values": {
+          "caseOrder": "first"
         }
       },
       "source": "https://github.com/concord-consortium/codap/blob/main/v3/doc/plugin-api/resources/case-by-index.md#examples"
